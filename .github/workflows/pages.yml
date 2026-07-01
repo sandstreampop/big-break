@@ -7,7 +7,6 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - claude/big-break-v0-1-6bbjas
       - main
   workflow_dispatch:
 
