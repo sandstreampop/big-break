@@ -9,6 +9,7 @@ import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
 import * as save from './save.js';
 import { artFor } from './art.js';
+import { buildChart, playerChartInfo } from './charts.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
@@ -136,7 +137,12 @@ function renderHud() {
   game.classList.toggle('burnout-warm', run.stats.burnout >= 50 && run.stats.burnout < 72);
   game.classList.toggle('burnout-hot', run.stats.burnout >= 72);
   const top = el('div', 'hud-top');
-  top.append(el('span', 'hud-act', `ACT ${run.act} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][run.act]}`));
+  const actWrap = el('span', 'hud-act-wrap');
+  actWrap.append(el('span', 'hud-act', `ACT ${run.act} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][run.act]}`));
+  const chartBtn = el('button', 'chart-btn', '📈');
+  chartBtn.addEventListener('click', () => { sfx.ui(); showChart(); });
+  actWrap.append(chartBtn);
+  top.append(actWrap);
   const counters = el('span', 'hud-counters');
   if (run.encore > 0) counters.append(el('span', 'hud-encore', `🎇${run.encore > 1 ? '×' + run.encore : ''}`));
   counters.append(el('span', 'hud-fame', `★ ${run.fame}`));
@@ -328,6 +334,37 @@ function commitSwipe(side, dx = 0, dy = 0) {
     card.style.opacity = '0';
     setTimeout(fly, 240);
   }
+}
+
+// ---------- The Hot 10 chart overlay (Pass 6) ----------
+
+function showChart() {
+  const ov = $('#overlay');
+  ov.innerHTML = '';
+  ov.classList.add('active');
+  const box = el('div', 'result-card chart-card');
+  box.append(el('div', 'tier-badge', 'THE BIG BREAK HOT 10'));
+  const info = playerChartInfo(run);
+  box.append(el('p', 'chart-sub', info.entries
+    ? `You have ${info.entries} song${info.entries > 1 ? 's' : ''} charting. Peak: #${info.peak}.`
+    : 'You are not on it. The chart does not know you exist. Yet.'));
+  const list = el('div', 'chart-list');
+  for (const row of buildChart(run)) {
+    const r = el('div', 'chart-row' + (row.you ? ' you' : '') + (row.rival ? ' rival' : ''));
+    r.append(el('span', 'chart-pos', `${row.pos}`));
+    r.append(el('span', 'chart-song', `<b>${row.song}</b><br><span>${row.artist}</span>`));
+    r.append(el('span', 'chart-weeks', `${row.weeks}w`));
+    list.append(r);
+  }
+  box.append(list);
+  box.append(el('p', 'tap-hint', 'tap to close'));
+  ov.append(box);
+  const done = () => {
+    ov.classList.remove('active');
+    ov.removeEventListener('click', done);
+  };
+  setTimeout(() => ov.addEventListener('click', done), 200);
+  save.saveRun(run); // chartTitles may have been generated
 }
 
 // ---------- Result overlay ----------
