@@ -16,7 +16,7 @@ function defaultMeta() {
     successPaths: [],           // paths won (for EGOT-Adjacent)
     firstTimeBonuses: [],       // `${path}_${result}` milestones already paid
     best: { fame: 0, lp: 0 },
-    settings: { sound: true, reducedMotion: null }, // null = follow system
+    settings: { sound: true, music: true, reducedMotion: null }, // null = follow system
   };
 }
 

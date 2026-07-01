@@ -9,7 +9,7 @@ import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
 import * as save from './save.js';
 import { artFor } from './art.js';
-import { sfx, setSoundEnabled, initAudio } from './audio.js';
+import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
 let run = null;
@@ -45,12 +45,15 @@ function show(id) {
 
 export function boot() {
   setSoundEnabled(meta.settings.sound);
+  setMusicEnabled(meta.settings.music !== false);
+  music.setMood('title');
   document.addEventListener('pointerdown', initAudio, { once: true });
   renderTitle();
   show('#screen-title');
 }
 
 function renderTitle() {
+  music.setMood('title');
   const s = $('#screen-title');
   s.innerHTML = '';
   s.append(el('div', 'title-logo', 'BIG<br>BREAK'));
@@ -127,6 +130,7 @@ function resumeRun() {
 function renderHud() {
   const hud = $('#hud');
   hud.innerHTML = '';
+  music.setMood('act' + run.act);
   // Burnout vignette: the screen itself runs hot as you do
   const game = $('#screen-game');
   game.classList.toggle('burnout-warm', run.stats.burnout >= 50 && run.stats.burnout < 72);
@@ -544,6 +548,7 @@ function renderGameOver(endingKey) {
 }
 
 function renderEndingScreen(ending, lp, trophies, evalr) {
+  music.setMood('ending');
   const s = $('#screen-ending');
   s.innerHTML = '';
   const wrap = el('div', 'ending-wrap');
@@ -657,9 +662,15 @@ function renderSettings() {
   s.innerHTML = '';
   s.append(el('h2', 'screen-head', 'Settings'));
   const menu = el('div', 'menu');
-  menu.append(btn(`Sound: ${meta.settings.sound ? 'ON' : 'OFF'}`, '', () => {
+  menu.append(btn(`Sound effects: ${meta.settings.sound ? 'ON' : 'OFF'}`, '', () => {
     meta.settings.sound = !meta.settings.sound;
     setSoundEnabled(meta.settings.sound);
+    save.saveMeta(meta);
+    renderSettings();
+  }));
+  menu.append(btn(`Music: ${meta.settings.music !== false ? 'ON' : 'OFF'}`, '', () => {
+    meta.settings.music = meta.settings.music === false;
+    setMusicEnabled(meta.settings.music);
     save.saveMeta(meta);
     renderSettings();
   }));
