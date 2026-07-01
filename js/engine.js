@@ -99,6 +99,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     rngUses: 0,
     daily: null,    // 'YYYY-MM-DD' when this is a Daily Grind run
     tierLog: [],
+    cardLog: [],    // [{e: eventId, t: tier, a: act, s: side}] — scrapbook
     contract: null, // signed contract id (see data/contracts.js)
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
@@ -292,6 +293,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   // Shop affordability: a declined card is comedy, not a roll (spec §8 shop note)
   if (choice.cost && state.money < choice.cost) {
     (state.tierLog = state.tierLog || []).push('declined');
+    (state.cardLog = state.cardLog || []).push({ e: ev.id, t: 'declined', a: state.act, s: side });
     const result = {
       tier: 'declined',
       text: 'Your card declines with an audible, judgmental beep. You pretend you “forgot your other wallet.” Everyone pretends to believe you.',
@@ -311,6 +313,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   else tier = 'good';
   state.badStreak = tier === 'bad' ? (state.badStreak || 0) + 1 : 0;
   (state.tierLog = state.tierLog || []).push(tier);
+  (state.cardLog = state.cardLog || []).push({ e: ev.id, t: tier, a: state.act, s: side });
   let encoreEarned = false;
   if (tier === 'incredible' && (state.encore || 0) < CONFIG.encoreCap && !contractMods(state).disableEncore) {
     state.encore = (state.encore || 0) + 1;
@@ -606,6 +609,7 @@ export function runSummary(state) {
       ? Math.max(1, Math.min(10, 11 - Math.floor((state.fame + state.hits * 15) / 12)))
       : null,
     tierLog: state.tierLog || [],
+    cardLog: state.cardLog || [],
     daily: state.daily || null,
     contract: state.contract || null,
   };

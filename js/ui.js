@@ -654,6 +654,17 @@ function finishMeta(summary, lp) {
       meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path, fame: summary.fame };
     }
   }
+  meta.runHistory = meta.runHistory || [];
+  meta.runHistory.unshift({
+    date: todayStr(),
+    instrument: summary.instrument,
+    path: summary.path,
+    result: summary.result,
+    endingKey: summary.endingKey,
+    fame: summary.fame,
+    daily: !!summary.daily,
+  });
+  meta.runHistory = meta.runHistory.slice(0, 10);
 
   const earned = [];
   for (const t of TROPHIES) {
@@ -750,6 +761,9 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   }
 
   const menu = el('div', 'menu');
+  if (summary?.cardLog?.length) {
+    menu.append(btn('📖 Scrapbook (how it went down)', '', () => showScrapbook(summary)));
+  }
   if (summary) {
     const shareBtn = btn('📣 Share this run', '', async () => {
       const text = shareTextFor(summary, lp);
@@ -769,6 +783,35 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   wrap.append(menu);
   s.append(wrap);
   show('#screen-ending');
+}
+
+// ---------- Scrapbook (Pass 11) ----------
+
+function showScrapbook(summary) {
+  const ov = $('#overlay');
+  ov.innerHTML = '';
+  ov.classList.add('active');
+  const box = el('div', 'result-card scrapbook');
+  box.append(el('div', 'tier-badge', 'THE SCRAPBOOK'));
+  let lastAct = 0;
+  for (const entry of summary.cardLog) {
+    if (entry.a !== lastAct) {
+      lastAct = entry.a;
+      box.append(el('h3', 'scrap-act', `ACT ${entry.a} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][entry.a]}`));
+    }
+    const ev = EVENTS.find((e) => e.id === entry.e);
+    if (!ev) continue;
+    const choice = ev.choices[entry.s];
+    const row = el('div', 'scrap-row t-' + entry.t);
+    row.append(el('span', 'scrap-tier', TIER_EMOJI[entry.t] || '⬜'));
+    row.append(el('span', 'scrap-text',
+      `<b>${fillText(ev.context)}</b> — “${choice ? choice.label : '?'}”`));
+    box.append(row);
+  }
+  box.append(el('p', 'tap-hint', 'tap to close'));
+  ov.append(box);
+  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
+  setTimeout(() => ov.addEventListener('click', done), 200);
 }
 
 // ---------- Career Wall ----------
@@ -820,6 +863,21 @@ function renderTrophies() {
   s.innerHTML = '';
   s.append(el('h2', 'screen-head', 'Trophy Room'));
   s.append(el('p', 'screen-sub', `${meta.trophies.length}/${TROPHIES.length} collected. Each one cost you something.`));
+
+  if (meta.runHistory?.length) {
+    s.append(el('h3', 'wall-tier', 'Past Lives'));
+    const hist = el('div', 'history-list');
+    for (const h of meta.runHistory) {
+      const inst = instrumentById(h.instrument);
+      const res = h.result ? h.result.toUpperCase()
+        : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[h.endingKey] || 'DNF';
+      const pathName = h.path ? PATHS[h.path].name : '—';
+      hist.append(el('div', 'history-row res-' + (h.result || 'fail'),
+        `<span>${h.daily ? '📅 ' : ''}${inst ? inst.name : '?'} → ${pathName}</span>` +
+        `<b>${res}</b><span class="hist-fame">★${h.fame}</span>`));
+    }
+    s.append(hist);
+  }
   const grid = el('div', 'trophy-grid');
   for (const t of TROPHIES) {
     const owned = meta.trophies.includes(t.id);
