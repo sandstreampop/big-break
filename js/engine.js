@@ -12,6 +12,38 @@ const STATS = ['skill', 'cred', 'creativity', 'network'];
 function randInt(rng, min, max) {
   return Math.floor(rng() * (max - min + 1)) + min;
 }
+
+// ---------- Seeded, resume-safe RNG ----------
+// Every run carries a seed + draw counter, so a run replays identically
+// after a tab death, and Daily Grind runs are identical for everyone.
+
+export function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const rngCache = new WeakMap();
+export function stateRng(state) {
+  if (!state.seed) { // legacy saves: fall back to Math.random
+    return Math.random;
+  }
+  return () => {
+    let c = rngCache.get(state);
+    if (!c || c.uses !== (state.rngUses || 0) || c.seed !== state.seed) {
+      const gen = mulberry32(state.seed);
+      for (let i = 0; i < (state.rngUses || 0); i++) gen();
+      c = { gen, uses: state.rngUses || 0, seed: state.seed };
+      rngCache.set(state, c);
+    }
+    c.uses += 1;
+    state.rngUses = c.uses;
+    return c.gen();
+  };
+}
 function clamp(v, lo, hi) {
   return Math.max(lo, Math.min(hi, v));
 }
@@ -53,6 +85,10 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     copingSeen: [],
     chartSeed: Math.floor(rng() * 1e9) + 1,
     chartTitles: [],
+    seed: null,     // play RNG seed (set by caller; null = legacy Math.random)
+    rngUses: 0,
+    daily: null,    // 'YYYY-MM-DD' when this is a Daily Grind run
+    tierLog: [],
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
     path: null,
@@ -237,6 +273,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
 
   // Shop affordability: a declined card is comedy, not a roll (spec §8 shop note)
   if (choice.cost && state.money < choice.cost) {
+    (state.tierLog = state.tierLog || []).push('declined');
     const result = {
       tier: 'declined',
       text: 'Your card declines with an audible, judgmental beep. You pretend you “forgot your other wallet.” Everyone pretends to believe you.',
@@ -255,6 +292,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   else if (roll >= CONFIG.tierIncredibleAt) tier = 'incredible';
   else tier = 'good';
   state.badStreak = tier === 'bad' ? (state.badStreak || 0) + 1 : 0;
+  (state.tierLog = state.tierLog || []).push(tier);
   let encoreEarned = false;
   if (tier === 'incredible' && (state.encore || 0) < CONFIG.encoreCap) {
     state.encore = (state.encore || 0) + 1;
@@ -544,5 +582,7 @@ export function runSummary(state) {
     chartPeak: (state.fame + state.hits * 15) >= 20
       ? Math.max(1, Math.min(10, 11 - Math.floor((state.fame + state.hits * 15) / 12)))
       : null,
+    tierLog: state.tierLog || [],
+    daily: state.daily || null,
   };
 }

@@ -72,8 +72,15 @@ function renderTitle() {
       startNewRun();
     }));
   } else {
-    menu.append(btn('▶ New Run', 'primary', startNewRun));
+    menu.append(btn('▶ New Run', 'primary', () => startNewRun()));
   }
+  const today = todayStr();
+  const dailyDone = meta.dailyResults?.[today];
+  menu.append(btn(
+    dailyDone
+      ? `📅 Daily Grind ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
+      : `📅 Daily Grind — ${today}`,
+    '', () => { save.clearRun(); startNewRun(true); }));
   menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', renderWall));
   menu.append(btn('🎖 Trophy Room', '', renderTrophies));
   menu.append(btn('⚙ Settings', '', renderSettings));
@@ -89,12 +96,24 @@ function btn(label, cls, onTap) {
 
 // ---------- Instrument select ----------
 
-function startNewRun() {
-  const offered = engine.offerInstruments(save.unlockedInstrumentIds(meta));
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+function hashStr(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return Math.abs(h | 0) + 1;
+}
+
+function startNewRun(daily = false) {
+  const seed = daily ? hashStr('bigbreak-daily-' + todayStr()) : Math.floor(Math.random() * 1e9) + 1;
+  const offered = engine.offerInstruments(save.unlockedInstrumentIds(meta), engine.mulberry32(seed));
   const s = $('#screen-instruments');
   s.innerHTML = '';
-  s.append(el('h2', 'screen-head', 'Choose your weapon'));
-  s.append(el('p', 'screen-sub', 'Each one is almost useless. That’s the point.'));
+  s.append(el('h2', 'screen-head', daily ? `Daily Grind — ${todayStr()}` : 'Choose your weapon'));
+  s.append(el('p', 'screen-sub', daily
+    ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
+    : 'Each one is almost useless. That’s the point.'));
   const row = el('div', 'pick-row');
   for (const inst of offered) {
     const card = el('div', 'pick-card');
@@ -105,7 +124,9 @@ function startNewRun() {
     card.append(el('p', 'pick-quirk', `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`));
     card.addEventListener('click', () => {
       sfx.commit();
-      run = engine.newRun(inst.id, save.unlockedPackIds(meta));
+      run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1));
+      run.seed = seed + 2;
+      run.daily = daily ? todayStr() : null;
       save.saveRun(run);
       dealCard();
     });
@@ -192,7 +213,7 @@ function dealCard() {
   encoreArmed = false;
   show('#screen-game');
   renderHud();
-  const ev = engine.drawNextCard(run);
+  const ev = engine.drawNextCard(run, engine.stateRng(run));
   if (!ev) { // deck ran dry — act ends early
     run.cardsPlayedInAct = CONFIG.actLengths[run.act];
     routeAdvance(engine.advance(run));
@@ -318,7 +339,7 @@ function commitSwipe(side, dx = 0, dy = 0) {
   currentCard = null;
   sfx.swipe();
 
-  const result = engine.resolveSwipe(run, side, Math.random, { encore: encoreArmed });
+  const result = engine.resolveSwipe(run, side, engine.stateRng(run), { encore: encoreArmed });
   encoreArmed = false;
   $('#encore-bar').innerHTML = '';
   save.saveRun(run);
@@ -540,6 +561,12 @@ function finishMeta(summary, lp) {
   meta.lpEarnedTotal += lp;
   meta.best.fame = Math.max(meta.best.fame, summary.fame);
   meta.best.lp = Math.max(meta.best.lp, lp);
+  if (summary.daily) {
+    meta.dailyResults = meta.dailyResults || {};
+    if (!meta.dailyResults[summary.daily]) {
+      meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path, fame: summary.fame };
+    }
+  }
 
   const earned = [];
   for (const t of TROPHIES) {
@@ -573,7 +600,7 @@ function renderFinale() {
 
   const ending = ENDINGS[run.path][evalr.result];
   if (evalr.result === 'success') sfx.win(); else if (evalr.result === 'failure') sfx.gameover(); else sfx.good();
-  renderEndingScreen(ending, lp, earned, evalr);
+  renderEndingScreen(ending, lp, earned, evalr, summary);
 }
 
 function renderGameOver(endingKey) {
@@ -581,10 +608,23 @@ function renderGameOver(endingKey) {
   const lp = engine.legacyPoints(run);
   const earned = finishMeta(summary, lp);
   sfx.gameover();
-  renderEndingScreen(ENDINGS[endingKey], lp, earned, null);
+  renderEndingScreen(ENDINGS[endingKey], lp, earned, null, summary);
 }
 
-function renderEndingScreen(ending, lp, trophies, evalr) {
+const TIER_EMOJI = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
+
+function shareTextFor(summary, lp) {
+  const inst = instrumentById(summary.instrument);
+  const head = summary.daily ? `BIG BREAK Daily ${summary.daily}` : 'BIG BREAK';
+  const pathName = summary.path ? PATHS[summary.path].name : 'the void';
+  const res = summary.result ? summary.result.toUpperCase()
+    : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[summary.endingKey] || 'GAME OVER';
+  const line = (summary.tierLog || []).map((t) => TIER_EMOJI[t] || '⬜').join('');
+  const peak = summary.chartPeak ? ` · Hot 10 #${summary.chartPeak}` : '';
+  return `${head}\n${inst ? inst.name : '?'} → ${pathName} → ${res}\n${line}\n★${summary.fame}${peak} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/`;
+}
+
+function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   music.setMood('ending');
   const s = $('#screen-ending');
   s.innerHTML = '';
@@ -613,13 +653,29 @@ function renderEndingScreen(ending, lp, trophies, evalr) {
     wrap.append(gates);
   }
 
+  if (summary?.tierLog?.length) {
+    wrap.append(el('p', 'tier-strip', summary.tierLog.map((t) => TIER_EMOJI[t] || '⬜').join('')));
+  }
   wrap.append(el('p', 'lp-award', `+${lp} Legacy Points`));
   for (const t of trophies) {
     wrap.append(el('p', 'trophy-toast', `${t.icon} Trophy: <b>${t.name}</b> — ${t.desc}`));
   }
 
   const menu = el('div', 'menu');
-  menu.append(btn('▶ Run It Back', 'primary', startNewRun));
+  if (summary) {
+    const shareBtn = btn('📣 Share this run', '', async () => {
+      const text = shareTextFor(summary, lp);
+      try {
+        if (navigator.share) await navigator.share({ text });
+        else {
+          await navigator.clipboard.writeText(text);
+          shareBtn.textContent = '📋 Copied!';
+        }
+      } catch (e) { /* user cancelled the share sheet */ }
+    });
+    menu.append(shareBtn);
+  }
+  menu.append(btn('▶ Run It Back', 'primary', () => startNewRun()));
   menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', renderWall));
   menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title'); }));
   wrap.append(menu);
