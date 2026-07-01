@@ -249,6 +249,27 @@ body {
 .risk-mid { background: var(--accent); }
 .risk-high { background: var(--bad); }
 .risk-hot { background: var(--hot); box-shadow: 0 0 8px var(--hot); }
+.risk-hidden {
+  background: none; width: auto; height: auto;
+  color: var(--dim); font-size: 11px; font-weight: 900;
+}
+
+/* ---------- Contracts ---------- */
+.contract-head { font-size: 14px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; margin: 14px 0 8px; }
+.contract-row { display: flex; flex-direction: column; gap: 8px; padding-bottom: 16px; }
+.contract-chip {
+  appearance: none; text-align: left;
+  background: var(--bg2); border: 1px dashed #4b4066; color: var(--ink);
+  border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.35;
+  cursor: pointer;
+}
+.contract-chip span { color: var(--dim); font-size: 12px; }
+.contract-chip.signed {
+  border-style: solid; border-color: var(--accent);
+  background: #3b2b1c;
+}
+.contract-chip-mini { background: #3b1c2b; color: var(--accent2); border-color: #5a2040; }
+.lp-mult { font-size: 13px; color: var(--dim); font-weight: 600; }
 
 /* ---------- Choice buttons ---------- */
 #choice-buttons { display: flex; gap: 10px; padding-top: 10px; }

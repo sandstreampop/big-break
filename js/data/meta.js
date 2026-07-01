@@ -86,9 +86,17 @@ export const WALL_ITEMS = [
     name: 'Sampler / MPC', desc: 'Instrument: +Creativity +Network, Studio +8. Sixteen pads, infinite lawsuits.' },
   { id: 'acc_rolodex', tier: 2, cost: 50, kind: 'accessory', target: 'session_rolodex',
     name: 'Session Rolodex', desc: 'Accessory: Network/Deal/Studio +8. Physical. Alphabetized. Feared.' },
+  { id: 'ct_one_take', tier: 2, cost: 40, kind: 'contract', target: 'one_take',
+    name: 'Contract: One-Take Wonder', desc: 'No Encores, wilder luck. ×1.4 LP. Tape is rolling.' },
+  { id: 'ct_imposter', tier: 2, cost: 40, kind: 'contract', target: 'imposter',
+    name: 'Contract: Imposter Syndrome', desc: 'Risk dots hidden. ×1.4 LP. Just like real life.' },
   // Tier 3
   { id: 'inst_voice', tier: 3, cost: 70, kind: 'instrument', target: 'own_voice',
     name: 'Your Own Voice', desc: 'Instrument: free, portable, and everyone has an opinion about it. Vocal +10.' },
+  { id: 'ct_overnight', tier: 3, cost: 55, kind: 'contract', target: 'overnight',
+    name: 'Contract: Overnight Success', desc: 'Acts run 6/9/6 cards. ×1.6 LP. Same gates, fewer chances.' },
+  { id: 'ct_kazoo', tier: 3, cost: 65, kind: 'contract', target: 'kazoo_clause',
+    name: 'Contract: The Kazoo Clause', desc: 'Kazoo only. ×2.0 LP. Sign here. SIGN HERE.' },
 ];
 
 // ---- Trophy Room (spec §9) ----
@@ -124,6 +132,9 @@ export const TROPHIES = [
   { id: 'hits_5', name: 'The Machine', icon: '⚙️',
     desc: 'Write 5+ Hits in one run. Nobody asks if the machine sleeps.',
     check: (s) => s.hits >= 5 },
+  { id: 'fine_print', name: 'Read The Fine Print', icon: '🖋️',
+    desc: 'Win any path with a Contract active. The clause was real and so are you.',
+    check: (s) => !!s.contract && s.result === 'success' },
   { id: 'chart_topper', name: '#1 With A Bullet', icon: '📈',
     desc: 'Top the Big Break Hot 10. Above The Algorithm. Above Brayden. Above Craig.',
     check: (s) => s.chartPeak === 1 },

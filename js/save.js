@@ -77,3 +77,17 @@ function wallTarget(wallId) {
 export function unlockedPackIds(meta) {
   return meta.unlockedWall.filter((id) => id.startsWith('pack_'));
 }
+
+export function unlockedContractIds(meta) {
+  if (meta.runs < 1) return []; // contracts appear after your first finished run
+  const wall = new Set(meta.unlockedWall);
+  const wallTargets = {
+    ct_one_take: 'one_take', ct_imposter: 'imposter',
+    ct_overnight: 'overnight', ct_kazoo: 'kazoo_clause',
+  };
+  const ids = ['nepo_baby', 'straight_edge'];
+  for (const [wallId, cid] of Object.entries(wallTargets)) {
+    if (wall.has(wallId)) ids.push(cid);
+  }
+  return ids;
+}

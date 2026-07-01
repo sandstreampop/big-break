@@ -6,6 +6,16 @@ import { EVENTS } from './data/events.js';
 import { INSTRUMENTS, instrumentById } from './data/instruments.js';
 import { ACCESSORIES, accessoryById } from './data/accessories.js';
 import { randomRival } from './data/rivals.js';
+import { contractById } from './data/contracts.js';
+
+function contractMods(state) {
+  return contractById(state.contract)?.mods || {};
+}
+
+// Act length can be shortened by a contract (Overnight Success)
+export function actLength(state, act) {
+  return contractMods(state).actLengths?.[act] ?? CONFIG.actLengths[act];
+}
 
 const STATS = ['skill', 'cred', 'creativity', 'network'];
 
@@ -89,6 +99,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     rngUses: 0,
     daily: null,    // 'YYYY-MM-DD' when this is a Daily Grind run
     tierLog: [],
+    contract: null, // signed contract id (see data/contracts.js)
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
     path: null,
@@ -107,6 +118,12 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     }
   }
   return state;
+}
+
+export function signContract(state, contractId) {
+  state.contract = contractId;
+  const mods = contractMods(state);
+  if (mods.startMoney !== undefined) state.money = mods.startMoney;
 }
 
 // ---------- Deck assembly (spec §8.4) ----------
@@ -243,8 +260,9 @@ export function rollComponents(state, choice, opts = {}) {
 
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
   const pityBonus = Math.min((state.badStreak || 0) * CONFIG.pityPerBad, CONFIG.pityCap);
-  const encoreBonus = opts.encore ? CONFIG.encoreBonus : 0;
-  const jitter = inst?.quirk?.hooks?.jitter || [CONFIG.jitterMin, CONFIG.jitterMax];
+  const cMods = contractMods(state);
+  const encoreBonus = opts.encore && !cMods.disableEncore ? CONFIG.encoreBonus : 0;
+  const jitter = cMods.jitter || inst?.quirk?.hooks?.jitter || [CONFIG.jitterMin, CONFIG.jitterMax];
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
     gearBonus + quirkBonus + burnoutPenalty + pityBonus + encoreBonus;
   return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, base, jitter, appliedAccessories: applied };
@@ -268,7 +286,7 @@ export function choiceOdds(state, choice, opts = {}) {
 export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   const ev = EVENTS.find((e) => e.id === state.currentEventId);
   const choice = ev.choices[side];
-  const useEncore = !!opts.encore && (state.encore || 0) > 0;
+  const useEncore = !!opts.encore && (state.encore || 0) > 0 && !contractMods(state).disableEncore;
   if (useEncore) state.encore -= 1;
 
   // Shop affordability: a declined card is comedy, not a roll (spec §8 shop note)
@@ -294,7 +312,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   state.badStreak = tier === 'bad' ? (state.badStreak || 0) + 1 : 0;
   (state.tierLog = state.tierLog || []).push(tier);
   let encoreEarned = false;
-  if (tier === 'incredible' && (state.encore || 0) < CONFIG.encoreCap) {
+  if (tier === 'incredible' && (state.encore || 0) < CONFIG.encoreCap && !contractMods(state).disableEncore) {
     state.encore = (state.encore || 0) + 1;
     encoreEarned = true;
   }
@@ -363,10 +381,12 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
 
   const push = (key, amount) => { if (amount) deltas.push({ key, amount }); };
 
+  const cMods = contractMods(state);
   for (const stat of STATS) {
     let v = effects[stat] || 0;
     if (!v) continue;
     if (stat === 'cred' && v > 0 && hooks.credGainMult) v = Math.round(v * hooks.credGainMult);
+    if (stat === 'cred' && v > 0 && cMods.credGainMult) v = Math.round(v * cMods.credGainMult);
     const before = state.stats[stat];
     state.stats[stat] = clamp(before + v, 0, 100);
     push(stat, state.stats[stat] - before);
@@ -386,6 +406,8 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
       if (acc.sideEffect?.burnoutPerMatch) v += acc.sideEffect.burnoutPerMatch;
     }
     if (hooks.liveBurnout && tags.includes('live')) v += hooks.liveBurnout;
+    if (v > 0 && cMods.burnoutGainMult) v *= cMods.burnoutGainMult;
+    if (v < 0 && cMods.burnoutHealMult) v *= cMods.burnoutHealMult;
     v = Math.round(v);
     if (v) {
       const before = state.stats.burnout;
@@ -483,7 +505,7 @@ export function advance(state) {
     return { kind: 'gameover', endingKey: failed };
   }
   if (state.pendingChainId) return { kind: 'card' };
-  if (state.cardsPlayedInAct >= CONFIG.actLengths[state.act]) {
+  if (state.cardsPlayedInAct >= actLength(state, state.act)) {
     if (state.act === 1) {
       state.phase = 'crossroads';
       return { kind: 'crossroads' };
@@ -559,7 +581,8 @@ export function legacyPoints(state) {
   const base = Math.round((state.fame + s.skill + s.cred + s.creativity + s.network) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
-  return Math.max(1, base + bonus);
+  const mult = contractById(state.contract)?.lpMult || 1;
+  return Math.max(1, Math.round((base + bonus) * mult));
 }
 
 export function runSummary(state) {
@@ -584,5 +607,6 @@ export function runSummary(state) {
       : null,
     tierLog: state.tierLog || [],
     daily: state.daily || null,
+    contract: state.contract || null,
   };
 }
