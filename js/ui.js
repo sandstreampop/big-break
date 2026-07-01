@@ -10,6 +10,7 @@ import * as engine from './engine.js';
 import * as save from './save.js';
 import { artFor } from './art.js';
 import { buildChart, playerChartInfo } from './charts.js';
+import { CONTRACTS, contractById } from './data/contracts.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
@@ -107,13 +108,44 @@ function hashStr(s) {
 
 function startNewRun(daily = false) {
   const seed = daily ? hashStr('bigbreak-daily-' + todayStr()) : Math.floor(Math.random() * 1e9) + 1;
-  const offered = engine.offerInstruments(save.unlockedInstrumentIds(meta), engine.mulberry32(seed));
+  let chosenContract = null;
   const s = $('#screen-instruments');
-  s.innerHTML = '';
-  s.append(el('h2', 'screen-head', daily ? `Daily Grind — ${todayStr()}` : 'Choose your weapon'));
-  s.append(el('p', 'screen-sub', daily
-    ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
-    : 'Each one is almost useless. That’s the point.'));
+
+  const buildScreen = () => {
+    const cMods = contractById(chosenContract)?.mods || {};
+    const pool = cMods.forceInstrument
+      ? [cMods.forceInstrument]
+      : save.unlockedInstrumentIds(meta);
+    const offered = engine.offerInstruments(pool, engine.mulberry32(seed));
+    s.innerHTML = '';
+    s.append(el('h2', 'screen-head', daily ? `Daily Grind — ${todayStr()}` : 'Choose your weapon'));
+    s.append(el('p', 'screen-sub', daily
+      ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
+      : 'Each one is almost useless. That’s the point.'));
+    renderInstrumentRow(s, offered, seed, daily, () => chosenContract);
+    // Contract picker (Pass 9): optional clause, at most one
+    const contracts = save.unlockedContractIds(meta).map((id) => contractById(id)).filter(Boolean);
+    if (contracts.length && !daily) {
+      s.append(el('h3', 'contract-head', 'Optional: sign a contract'));
+      const row = el('div', 'contract-row');
+      for (const c of contracts) {
+        const chip = el('button', 'contract-chip' + (chosenContract === c.id ? ' signed' : ''),
+          `${c.icon} <b>${c.name}</b> ×${c.lpMult} LP<br><span>${c.desc}</span>`);
+        chip.addEventListener('click', () => {
+          sfx.ui();
+          chosenContract = chosenContract === c.id ? null : c.id;
+          buildScreen();
+        });
+        row.append(chip);
+      }
+      s.append(row);
+    }
+  };
+  buildScreen();
+  show('#screen-instruments');
+}
+
+function renderInstrumentRow(s, offered, seed, daily, getContract) {
   const row = el('div', 'pick-row');
   for (const inst of offered) {
     const card = el('div', 'pick-card');
@@ -127,13 +159,14 @@ function startNewRun(daily = false) {
       run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1));
       run.seed = seed + 2;
       run.daily = daily ? todayStr() : null;
+      const contract = getContract();
+      if (contract) engine.signContract(run, contract);
       save.saveRun(run);
       dealCard();
     });
     row.append(card);
   }
   s.append(row);
-  show('#screen-instruments');
 }
 
 function modsText(mods) {
@@ -193,6 +226,8 @@ function renderHud() {
   const gearRow = el('div', 'gear-row');
   const inst = instrumentById(run.instrument);
   gearRow.append(el('span', 'gear-chip inst-chip', `${inst.name}`));
+  const contract = contractById(run.contract);
+  if (contract) gearRow.append(el('span', 'gear-chip contract-chip-mini', `${contract.icon} ${contract.name}`));
   for (const id of run.accessories) {
     const acc = accessoryById(id);
     const active = accActive(acc);
@@ -215,7 +250,7 @@ function dealCard() {
   renderHud();
   const ev = engine.drawNextCard(run, engine.stateRng(run));
   if (!ev) { // deck ran dry — act ends early
-    run.cardsPlayedInAct = CONFIG.actLengths[run.act];
+    run.cardsPlayedInAct = engine.actLength(run, run.act);
     routeAdvance(engine.advance(run));
     return;
   }
@@ -243,22 +278,25 @@ function dealCard() {
   bR.addEventListener('click', () => commitSwipe('right'));
   controls.append(bL, bR);
 
-  // Risk dots recompute when an Encore is armed/disarmed
+  // Risk dots recompute when an Encore is armed/disarmed.
+  // The Imposter Syndrome contract hides them entirely.
+  const hideRisk = !!contractById(run.contract)?.mods?.hideRisk;
+  const dot = (o) => hideRisk ? '<span class="risk risk-hidden">?</span>' : `<span class="risk ${riskClass(o)}"></span>`;
   const paintOdds = () => {
     const opts = { encore: encoreArmed };
     const oL = engine.choiceOdds(run, ev.choices.left, opts);
     const oR = engine.choiceOdds(run, ev.choices.right, opts);
-    hintL.innerHTML = `<span class="risk ${riskClass(oL)}"></span>${ev.choices.left.label}`;
-    hintR.innerHTML = `${ev.choices.right.label}<span class="risk ${riskClass(oR)}"></span>`;
-    bL.innerHTML = `<span class="dir">◀</span><span class="risk ${riskClass(oL)}"></span> ${ev.choices.left.label}`;
-    bR.innerHTML = `${ev.choices.right.label} <span class="risk ${riskClass(oR)}"></span><span class="dir">▶</span>`;
+    hintL.innerHTML = `${dot(oL)}${ev.choices.left.label}`;
+    hintR.innerHTML = `${ev.choices.right.label}${dot(oR)}`;
+    bL.innerHTML = `<span class="dir">◀</span>${dot(oL)} ${ev.choices.left.label}`;
+    bR.innerHTML = `${ev.choices.right.label} ${dot(oR)}<span class="dir">▶</span>`;
   };
   paintOdds();
 
   // Encore arm toggle (Pass 2 mechanic)
   const encoreBar = $('#encore-bar');
   encoreBar.innerHTML = '';
-  if ((run.encore || 0) > 0) {
+  if ((run.encore || 0) > 0 && !contractById(run.contract)?.mods?.disableEncore) {
     const eb = el('button', 'encore-btn', `🎇 Encore ready — spend for a boosted roll`);
     eb.addEventListener('click', () => {
       encoreArmed = !encoreArmed;
@@ -656,7 +694,8 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   if (summary?.tierLog?.length) {
     wrap.append(el('p', 'tier-strip', summary.tierLog.map((t) => TIER_EMOJI[t] || '⬜').join('')));
   }
-  wrap.append(el('p', 'lp-award', `+${lp} Legacy Points`));
+  const endContract = summary?.contract ? contractById(summary.contract) : null;
+  wrap.append(el('p', 'lp-award', `+${lp} Legacy Points${endContract ? ` <span class="lp-mult">(${endContract.icon} ${endContract.name} ×${endContract.lpMult})</span>` : ''}`));
   for (const t of trophies) {
     wrap.append(el('p', 'trophy-toast', `${t.icon} Trophy: <b>${t.name}</b> — ${t.desc}`));
   }
