@@ -24,6 +24,7 @@ const EMOJI = {
   ev_secret: '🤫', ev_mudfest: '🌧️', ev_lineup: '🥒', ev_secret_set: '⛺',
   ev_clash: '⚔️', ev_rival_intro: '😤', ev_rival_collab: '🤝', ev_rival_leap: '🛥️',
   ev_rival_showdown: '🥊', ev_rival_super: '📋',
+  ev_coping_wall: '🧱', ev_coping_floor: '🫠',
   instrument_kazoo: '🎺', instrument_melodica: '🎹', instrument_buckets: '🥁',
   instrument_cigarbox: '🎸', instrument_glock: '🔔', instrument_theremin: '👋',
   instrument_electric: '🎸', instrument_sampler: '🎛️', instrument_voice: '🗣️',
@@ -61,7 +62,7 @@ const SCENE = {
   ev_busk: 'street', ev_tour: 'street', ev_dayjob: 'street',
   // home & rest
   ev_roommate: 'home', ev_rest: 'home', ev_crash: 'crisis', ev_friend: 'home',
-  ev_lessons: 'home',
+  ev_lessons: 'home', ev_coping_wall: 'crisis', ev_coping_floor: 'home',
   // shops
   ev_pawn_shop: 'shop', ev_gear_shop: 'shop', ev_last_shop: 'shop',
   // endings

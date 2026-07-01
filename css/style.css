@@ -168,6 +168,21 @@ body {
 .inst-chip { background: #3b2b1c; color: var(--accent); border-color: #5a4020; font-weight: 700; }
 .gear-chip.inert { opacity: .45; }
 
+/* Burnout vignette — the UI runs hot as you do */
+#screen-game::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s;
+  box-shadow: inset 0 0 90px 20px rgba(255, 80, 60, .35);
+  z-index: 40;
+}
+#screen-game.burnout-warm::after { opacity: .45; }
+#screen-game.burnout-hot::after { opacity: 1; animation: heat 2.2s ease-in-out infinite; }
+@keyframes heat { 50% { box-shadow: inset 0 0 120px 34px rgba(255, 60, 40, .45); } }
+@media (prefers-reduced-motion: reduce) { #screen-game.burnout-hot::after { animation: none; } }
+
 /* ---------- Card ---------- */
 #card-area {
   flex: 1;
