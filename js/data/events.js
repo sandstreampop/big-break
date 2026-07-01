@@ -1801,6 +1801,64 @@ export const EVENTS = [
     },
   },
 
+  // ═══════════════ BURNOUT COPING (forced interstitials) ═══════════════
+  {
+    id: 'coping_50', act: [1, 2, 3], pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_coping_wall', context: 'Your body, filing a complaint',
+    prompt: 'You snap at a soundcheck. Over a cable. A cable that was, on reflection, fine. Something needs to give, and it’s trying to be you.',
+    tags: ['rest'],
+    choices: {
+      left: {
+        label: 'Take one real day off',
+        governingStats: { cred: 0.6, network: 0.6 },
+        tags: ['rest', 'safe'],
+        outcomes: {
+          bad: { text: 'You take the day off but spend it composing apology texts in your head. Rest: technically achieved.', effects: { burnout: -10 } },
+          good: { text: 'Phone in a drawer. A long walk. Food that required cooking. You return human-adjacent.', effects: { burnout: -18, creativity: 2 } },
+          incredible: { text: 'The day off becomes a ritual. Your calendar now has a recurring block labeled “NO.” Revolutionary technology.', effects: { burnout: -24, creativity: 3, cred: 2 } },
+        },
+      },
+      right: {
+        label: 'Monetize the breakdown (post about it)',
+        governingStats: { network: 1.0 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'Your burnout post reads as a humblebrag. “So blessed to be this tired.” The ratio is swift and educational.', effects: { burnout: -3, cred: -3, fame: 2 } },
+          good: { text: 'The honest post resonates. Burnout content does numbers — the industry’s darkest little joke.', effects: { burnout: -6, fame: 7, network: 3 } },
+          incredible: { text: 'Your exhaustion goes viral. A wellness brand offers a sponsorship. You are now professionally tired.', effects: { burnout: -8, fame: 12, money: 150, cred: -2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'coping_75', act: [1, 2, 3], pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_coping_floor', context: '3:40 a.m., bathroom floor, venue unknown',
+    prompt: 'You’re sitting on a bathroom floor listening to your own song through the wall, unable to remember why you started doing this. The tile is cold. The question isn’t.',
+    tags: ['rest'],
+    choices: {
+      left: {
+        label: 'Call someone who loves you',
+        governingStats: { cred: 0.5, network: 0.5 },
+        tags: ['rest', 'safe'],
+        outcomes: {
+          bad: { text: 'Voicemail. But you leave a message so honest you feel lighter anyway. They call back at 7 a.m. It helps.', effects: { burnout: -14, cred: 2 } },
+          good: { text: 'They pick up on the second ring. They don’t ask about the career once. You remember you’re a person who plays music, not a music product.', effects: { burnout: -24, cred: 3, creativity: 3 } },
+          incredible: { text: 'They drive out. They bring food. You play them the unfinished song at sunrise and remember exactly why you started.', effects: { burnout: -32, creativity: 5, cred: 3, addFlag: 'grounded' } },
+        },
+      },
+      right: {
+        label: 'Buy the cold plunge course ($80)',
+        governingStats: { creativity: 0.6 },
+        tags: ['risky'],
+        cost: 80,
+        outcomes: {
+          bad: { text: 'The course is 40 videos of a man named Brayden yelling “DISCOMFORT IS A DOOR.” The only door you use is the refund page. It doesn’t work.', effects: { money: -80, burnout: -2, cred: -2 } },
+          good: { text: 'It’s pseudoscience wrapped in a hoodie, but the morning routine accidentally contains actual sleep hygiene. Annoyingly, you feel better.', effects: { money: -80, burnout: -15 } },
+          incredible: { text: 'You become insufferable about cold water AND genuinely rested. Brayden features your testimonial. Cursed. Effective. Cursed.', effects: { money: -80, burnout: -26, fame: 4 } },
+        },
+      },
+    },
+  },
   // ═══════════════ FESTIVAL CIRCUIT (Career Wall event pack) ═══════════════
   {
     id: 'f_mud_fest', act: 2, pathAffinity: [], weight: 9, pack: 'pack_festival',

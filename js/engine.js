@@ -50,6 +50,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     badStreak: 0,
     encore: 0,
     encoreChained: false,
+    copingSeen: [],
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
     path: null,
@@ -287,6 +288,20 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   }
 
   if (effects.chainEventId) state.pendingChainId = effects.chainEventId;
+
+  // Burnout coping interstitials: crossing a threshold interrupts the deck
+  // once per run with a forced coping card (unless a chain is already queued)
+  if (!state.pendingChainId && ev.id !== 'coping_50' && ev.id !== 'coping_75') {
+    state.copingSeen = state.copingSeen || [];
+    const b = state.stats.burnout;
+    if (b >= 75 && !state.copingSeen.includes('coping_75') && b < CONFIG.burnoutFail) {
+      state.copingSeen.push('coping_75');
+      state.pendingChainId = 'coping_75';
+    } else if (b >= 50 && !state.copingSeen.includes('coping_50')) {
+      state.copingSeen.push('coping_50');
+      state.pendingChainId = 'coping_50';
+    }
+  }
   finishCard(state, ev);
   return result;
 }
@@ -522,5 +537,6 @@ export function runSummary(state) {
     rivalry: state.rivalry ?? 3,
     rival: state.rival,
     encoreChained: !!state.encoreChained,
+    copingCount: (state.copingSeen || []).length,
   };
 }

@@ -127,6 +127,10 @@ function resumeRun() {
 function renderHud() {
   const hud = $('#hud');
   hud.innerHTML = '';
+  // Burnout vignette: the screen itself runs hot as you do
+  const game = $('#screen-game');
+  game.classList.toggle('burnout-warm', run.stats.burnout >= 50 && run.stats.burnout < 72);
+  game.classList.toggle('burnout-hot', run.stats.burnout >= 72);
   const top = el('div', 'hud-top');
   top.append(el('span', 'hud-act', `ACT ${run.act} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][run.act]}`));
   const counters = el('span', 'hud-counters');
