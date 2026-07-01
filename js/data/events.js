@@ -377,6 +377,34 @@ export const EVENTS = [
       },
     },
   },
+  {
+    id: 'a1_algorithm_oracle', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_oracle', context: 'Your friend Dex, who “understands the algorithm”',
+    prompt: '“Post at 7:43 p.m. on Thursdays. Third hashtag must be misspelled. Trust me.” Dex has 41 followers. Dex speaks with total confidence.',
+    tags: ['social'],
+    choices: {
+      left: {
+        label: 'Follow the Dex method',
+        governingStats: { network: 1.0 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'The Dex method delivers Dex-level numbers. He blames Mercury. Mercury is unavailable for comment.', effects: { fame: 1, burnout: 3 } },
+          good: { text: 'Somehow, 7:43 on Thursday works. Correlation, causation, whatever — you’ll take it.', effects: { fame: 6, network: 3 } },
+          incredible: { text: 'The misspelled hashtag becomes a thing. Dex updates his bio to “strategist.” You update yours to “viral.”', effects: { fame: 11, network: 5, creativity: 2 } },
+        },
+      },
+      right: {
+        label: 'Post whenever, like an animal',
+        governingStats: { creativity: 0.8, cred: 0.5 },
+        tags: ['social', 'indie'],
+        outcomes: {
+          bad: { text: 'You post at 3 a.m. The only engagement is a bot and, of course, Dex: “told you.”', effects: { creativity: 2 } },
+          good: { text: 'Chaotic posting builds a chaotic little audience. They match your energy alarmingly well.', effects: { creativity: 4, fame: 4, cred: 2 } },
+          incredible: { text: 'Your unscheduled, unhinged post is your first real hit. Dex claims it proves his system. Let him.', effects: { creativity: 6, fame: 9, cred: 3 } },
+        },
+      },
+    },
+  },
   // ═══════════════════════ ACT 2 — THE GRIND ═══════════════════════
   // ---- Path-agnostic ----
   {
@@ -889,6 +917,118 @@ export const EVENTS = [
       },
     },
   },
+  {
+    id: 'a2_ms_stan_army', act: 2, pathAffinity: ['megastar'], weight: 9,
+    art: 'ev_stans', context: 'Your fans, self-organizing',
+    prompt: 'Your fans have named themselves the “Breakers,” built a wiki, and are currently feuding with another fandom over a poll you’ve never seen.',
+    tags: ['fame', 'social'],
+    choices: {
+      left: {
+        label: 'Embrace the army',
+        governingStats: { network: 1.0 },
+        tags: ['social', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You reply to one Breaker and 4,000 others develop theories about what it Means. The wiki gains a “Lore” tab.', effects: { fame: 5, burnout: 6 } },
+          good: { text: 'You feed them one in-joke per week. Engagement soars. The wiki is now better organized than your label.', effects: { fame: 11, network: 4, burnout: 4 } },
+          incredible: { text: 'The Breakers mobilize and stream your single to a chart record. Terrifying. Useful. Terrifying.', effects: { fame: 20, network: 5, burnout: 5, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Set gentle boundaries',
+        governingStats: { cred: 1.0 },
+        tags: ['social', 'safe'],
+        outcomes: {
+          bad: { text: 'Your boundaries post is screenshot into seventeen different discourse threads. The poll feud intensifies.', effects: { cred: 2, fame: -2, burnout: 4 } },
+          good: { text: '“Please be normal” lands, somehow. The fandom polices itself now. Mostly.', effects: { cred: 5, fame: 3 } },
+          incredible: { text: 'Your boundaries become the fandom’s constitution. Other artists ask how you did it. Nobody knows. Not even you.', effects: { cred: 8, fame: 7, network: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_ms_feature', act: 2, pathAffinity: ['megastar'], weight: 9,
+    art: 'ev_feature', context: 'A superstar’s manager, all smiles',
+    prompt: '“She loves your song. She wants on it. Sixty percent, top billing, and we choose the single art. This is a gift.”',
+    tags: ['deal', 'fame'],
+    choices: {
+      left: {
+        label: 'Take the feature',
+        governingStats: { network: 1.0 },
+        tags: ['deal', 'mainstream'],
+        outcomes: {
+          bad: { text: 'The remix drops. Radio says “featuring YOU” so fast it sounds like a sneeze. Sixty percent of a lot is still... hm.', effects: { fame: 8, money: 200, cred: -3 } },
+          good: { text: 'Her verse elevates it. Her audience finds you. The math was insulting; the exposure is real.', effects: { fame: 16, money: 300, network: 4 } },
+          incredible: { text: 'The song becomes HER biggest single in years — and everyone knows whose song it was first. Leverage: banked.', effects: { fame: 24, money: 450, network: 6, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Keep the song yours',
+        governingStats: { cred: 0.8, creativity: 0.5 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Your version does fine. Her team cuts a suspiciously similar song with someone hungrier. It does better.', effects: { cred: 4, fame: 3, burnout: 3 } },
+          good: { text: 'The song grows at your speed, on your name. Slower. Yours. The offer, notably, comes back later — at 50/50.', effects: { cred: 6, fame: 8, creativity: 2 } },
+          incredible: { text: 'Your version explodes on its own. The superstar posts it with a crown emoji. You owe nobody sixty percent of anything.', effects: { cred: 8, fame: 18, creativity: 3, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_ms_junket', act: 2, pathAffinity: ['megastar'], weight: 8,
+    art: 'ev_junket', context: 'Press junket, hour six',
+    prompt: 'Forty interviews. The same five questions. A publicist mouths your own answers along with you from behind the camera, like a stage mom.',
+    tags: ['fame', 'social'],
+    choices: {
+      left: {
+        label: 'Stay on message',
+        governingStats: { network: 1.0 },
+        tags: ['safe', 'mainstream'],
+        outcomes: {
+          bad: { text: 'Your answers are so polished one outlet runs the headline “ROBOT OR RISING STAR?” with a poll. The poll is close.', effects: { fame: 4, burnout: 6 } },
+          good: { text: 'Clean quotes, zero scandals, forty checkmarks. The publicist cries a single professional tear.', effects: { fame: 9, network: 4, burnout: 5 } },
+          incredible: { text: 'One perfectly-crafted soundbite gets picked up everywhere. Media training: weaponized.', effects: { fame: 16, network: 5, burnout: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Go rogue. Answer honestly.',
+        governingStats: { cred: 0.7, creativity: 0.6 },
+        tags: ['risky'],
+        outcomes: {
+          bad: { text: 'You describe the industry as “a haunted mall.” The quote follows you to every interview forever. The publicist resigns via text.', effects: { cred: 3, fame: 4, network: -3 } },
+          good: { text: 'The honest interview is the only one anyone remembers. Journalists start requesting you specifically.', effects: { cred: 6, fame: 8, network: 2 } },
+          incredible: { text: 'Your unfiltered hour becomes a masterclass in charisma. Late shows call. The publicist un-resigns.', effects: { cred: 7, fame: 14, network: 5, chainEventId: 'a2c_ms_quote' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2c_ms_quote', act: 2, pathAffinity: ['megastar'], weight: 0, chainOnly: true,
+    art: 'ev_quote', context: 'The haunted mall follows you home',
+    prompt: 'One line from your interview — “fame is a haunted mall” — is now a meme, a mural downtown, and, as of this morning, an unlicensed T-shirt.',
+    tags: ['fame', 'deal'],
+    choices: {
+      left: {
+        label: 'Sell the official shirt',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'mainstream'],
+        outcomes: {
+          bad: { text: 'Your official shirt ships late and slightly haunted (the ink smells). The bootleg remains superior. Respect.', effects: { money: 120, fame: 3, cred: -2 } },
+          good: { text: 'The drop sells out in a day. You are now a phrase people wear. Surreal. Profitable. Surreal.', effects: { money: 300, fame: 8 } },
+          incredible: { text: 'The shirt funds the next tour. The mural artist collabs on the album cover. The mall metaphor completes itself.', effects: { money: 500, fame: 12, network: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Let the meme run free',
+        governingStats: { cred: 1.0 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'A fast-fashion brand trademarks YOUR quote. Their lawyers send YOU a cease and desist. The mall was haunted after all.', effects: { cred: 3, fame: 3, burnout: 4 } },
+          good: { text: 'Unmonetized, the quote stays cool forever. “They never sold out the mall thing” becomes part of your legend.', effects: { cred: 7, fame: 5 } },
+          incredible: { text: 'The meme becomes shorthand for the whole industry. Your name is cited in a dictionary of slang. Immortality, lowercase.', effects: { cred: 9, fame: 9, creativity: 3 } },
+        },
+      },
+    },
+  },
   // ---- Act 2: STUDIO LEGEND ----
   {
     id: 'a2_session_sub', act: 2, pathAffinity: ['studio'], weight: 10,
@@ -1027,6 +1167,90 @@ export const EVENTS = [
           bad: { text: 'Take 40 sounds like take 1 with despair on it. The producer comps take 2. Of course.', effects: { skill: 4, burnout: 11, money: 100 } },
           good: { text: 'Somewhere around take 25 you find gold. Expensive gold. Worth-it gold.', effects: { skill: 7, cred: 4, money: 160, burnout: 8 } },
           incredible: { text: 'Take 33 becomes a reference take other producers play to other players. “Like THIS.”', effects: { skill: 10, cred: 8, money: 200, burnout: 7, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_st_ghost_solo', act: 2, pathAffinity: ['studio'], weight: 9,
+    art: 'ev_ghost_solo', context: 'An NDA and a very famous band',
+    prompt: 'That solo everyone’s calling “the guitar moment of the year”? You played it. Anonymously. At 2 a.m. In one take. The band’s guitarist is doing interviews about his “process.”',
+    tags: ['studio', 'deal'],
+    choices: {
+      left: {
+        label: 'Cash the check, keep the secret',
+        governingStats: { cred: 0.8 },
+        tags: ['studio', 'safe'],
+        outcomes: {
+          bad: { text: 'You watch him mime YOUR solo on TV, slightly wrong. Your eye twitches in time. The check clears. It helps. Some.', effects: { money: 250, burnout: 5, skill: 2 } },
+          good: { text: 'Word travels in the only circle that matters: producers. “That was you?” Yes. It was.', effects: { money: 300, cred: 6, network: 4 } },
+          incredible: { text: 'The band quietly books you for the ENTIRE next album. The guitarist thanks you at the door. Growth.', effects: { money: 400, cred: 8, network: 6, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Let the truth leak, deniably',
+        governingStats: { network: 0.8 },
+        tags: ['risky', 'social'],
+        outcomes: {
+          bad: { text: 'The leak traces straight back to you. NDA lawyers write letters with your name spelled very correctly.', effects: { money: -100, cred: -3, burnout: 6 } },
+          good: { text: 'A gear forum figures it out from the amp hum. You confirm nothing. Your rate doubles anyway.', effects: { cred: 6, fame: 4, network: 4 } },
+          incredible: { text: 'The story becomes industry legend — “the 2 a.m. take.” You never confirm it. You never have to.', effects: { cred: 9, fame: 7, network: 5, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_st_gear_lord', act: 2, pathAffinity: ['studio'], weight: 8,
+    art: 'ev_gearlord', context: 'A producer with a museum, not a studio',
+    prompt: '“We only track through gear older than your parents. That compressor? It has war stories. Touch nothing without gloves.”',
+    tags: ['studio', 'tone'],
+    choices: {
+      left: {
+        label: 'Master the museum pieces',
+        governingStats: { skill: 1.0 },
+        tags: ['studio', 'tone', 'safe'],
+        outcomes: {
+          bad: { text: 'You spend four hours learning a tape machine and eleven seconds erasing the wrong reel with it. The silence has war stories now.', effects: { skill: 4, cred: -2, burnout: 6 } },
+          good: { text: 'The old gear rewards patience. Your takes come back warmer, slower, better. Fine. FINE. The producer was right.', effects: { skill: 7, cred: 4, money: 150 } },
+          incredible: { text: 'You coax a sound out of the haunted compressor that makes the producer sit down. “It’s never done that for anyone.”', effects: { skill: 9, cred: 7, money: 200, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Propose a blind A/B test',
+        governingStats: { cred: 0.7, creativity: 0.5 },
+        tags: ['risky'],
+        outcomes: {
+          bad: { text: 'The producer fails his own test, picks the $40 plugin, and bans A/B testing from the studio forever. You are also banned. Briefly.', effects: { cred: -2, creativity: 3, burnout: 4 } },
+          good: { text: 'The test ends in a draw and a two-hour conversation about what “warmth” even means. Mutual respect: achieved.', effects: { cred: 5, creativity: 3, skill: 2 } },
+          incredible: { text: 'The blind test becomes a monthly ritual and YOU become its referee. The museum now has a scientist in residence.', effects: { cred: 8, creativity: 4, network: 4, money: 100 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_st_pit', act: 2, pathAffinity: ['studio'], weight: 8,
+    art: 'ev_pit', context: 'A jukebox musical, eight shows a week',
+    prompt: '“MAMMA MIA! but for nu-metal” needs a pit musician. Steady money, same 22 songs, a conductor who cries during the ballad. Every night.',
+    tags: ['live', 'work'],
+    choices: {
+      left: {
+        label: 'Take the pit',
+        governingStats: { skill: 1.0 },
+        tags: ['live', 'work', 'safe'],
+        outcomes: {
+          bad: { text: 'By week three you can play the show unconscious, and some nights, spiritually, you do.', effects: { money: 250, skill: 4, burnout: 9, creativity: -2 } },
+          good: { text: 'Eight shows a week forges you into a machine with perfect time. The conductor cries; your click never does.', effects: { money: 300, skill: 7, burnout: 7 } },
+          incredible: { text: 'A Broadway contractor hears the pit and asks who the ringer is. It’s you. You’re the ringer.', effects: { money: 350, skill: 9, cred: 5, network: 5, burnout: 6, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Decline. Protect the ears and soul.',
+        governingStats: { creativity: 0.8 },
+        tags: ['safe', 'indie'],
+        outcomes: {
+          bad: { text: 'You skip the money and spend the month “developing your sound,” which mostly develops your napping.', effects: { creativity: 3, burnout: -4 } },
+          good: { text: 'Freed from nu-metal ABBA, you take better sessions and sleep like a person.', effects: { creativity: 4, skill: 3, burnout: -6 } },
+          incredible: { text: 'The session you took instead becomes a cult record. The pit, you hear, is still crying. Nightly.', effects: { creativity: 6, cred: 5, skill: 3, burnout: -5 } },
         },
       },
     },
@@ -1225,6 +1449,91 @@ export const EVENTS = [
           bad: { text: 'Your one-liner reads as bitter instead of wry. Number 8 gives a gracious interview and leapfrogs you culturally.', effects: { cred: -2, fame: 2 } },
           good: { text: 'The deadpan lands. You seem unbothered, which on the internet is indistinguishable from power.', effects: { cred: 4, fame: 5 } },
           incredible: { text: 'The quote becomes a T-shirt. Not yours — the blog’s. But everyone knows who said it. Mythology accrues.', effects: { cred: 6, fame: 10, network: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_hf_ai_demo', act: 2, pathAffinity: ['hitfactory'], weight: 9,
+    art: 'ev_ai_demo', context: 'An A&R, avoiding eye contact',
+    prompt: '“So the label generated this demo with, um, software. It just needs a human to... make it good. Also legal says a human has to have touched it. For reasons.”',
+    tags: ['write', 'deal'],
+    choices: {
+      left: {
+        label: 'Refuse. Loudly. On principle.',
+        governingStats: { cred: 1.0 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Your principled post gets quote-tweeted by the software company. Their reply does numbers. The machine is better at discourse too.', effects: { cred: 4, fame: 2, burnout: 4 } },
+          good: { text: 'Twelve other writers follow your refusal. The label shelves the demo “for strategic reasons.” The drawer wins again — but righteously.', effects: { cred: 7, network: 4 } },
+          incredible: { text: 'Your refusal becomes an open letter, the letter becomes a movement, and your next session is booked out of pure solidarity.', effects: { cred: 10, network: 6, fame: 5, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Rewrite it so completely it becomes yours',
+        governingStats: { creativity: 1.0 },
+        tags: ['write'],
+        outcomes: {
+          bad: { text: 'You keep one chord and replace everything else. The A&R says “great, the AI really nailed it.” You age a year.', effects: { creativity: 4, money: 150, cred: -2, burnout: 5 } },
+          good: { text: 'What ships shares zero DNA with the demo. A quiet victory for humans, invoiced at your full rate.', effects: { creativity: 6, money: 250, hits: 1 } },
+          incredible: { text: 'Your “polish” is a total rewrite that becomes a smash. The software gets a gold plaque. You get the publishing. Fair trade.', effects: { creativity: 8, money: 400, hits: 1, cred: 3, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_hf_hook_vault', act: 2, pathAffinity: ['hitfactory'], weight: 8,
+    art: 'ev_vault', context: 'A publisher who has heard about The Vault',
+    prompt: 'You keep a folder of 114 unused hooks. A publisher offers to buy it. All of it. Sight unseen. “Name a number,” he says, naming a number first.',
+    tags: ['write', 'deal'],
+    choices: {
+      left: {
+        label: 'Sell the vault',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'He flips hook #38 into a hit within a month. You do the math on what you left on the table. Don’t do the math. You do the math.', effects: { money: 500, creativity: -4, burnout: 5 } },
+          good: { text: 'A life-changing check for melodies you’d forgotten. Weirdly light feeling. New folder starts tonight.', effects: { money: 700, creativity: -2, cred: 2 } },
+          incredible: { text: 'The vault sale funds a home studio AND he cuts you in on placements. Hooks: liquid. You: liquid-adjacent.', effects: { money: 900, network: 5, hits: 1 } },
+        },
+      },
+      right: {
+        label: 'License one hook. Keep the vault.',
+        governingStats: { cred: 0.7, creativity: 0.5 },
+        tags: ['deal', 'safe'],
+        outcomes: {
+          bad: { text: 'You license hook #7. It gets attached to a crypto ad without your knowledge. #7 was your mother’s favorite.', effects: { money: 150, cred: -2 } },
+          good: { text: 'One hook out, at a fair rate, with approval rights. The vault appreciates in mystery.', effects: { money: 250, cred: 3, hits: 1 } },
+          incredible: { text: 'The licensed hook becomes a hit and triples the vault’s market value. Publishers now bid on RUMORS of folder names.', effects: { money: 350, cred: 5, hits: 1, network: 4, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_hf_forecaster', act: 2, pathAffinity: ['hitfactory'], weight: 8,
+    art: 'ev_forecast', context: 'A “trend forecaster” with a deck of slides',
+    prompt: '“Next summer is minor-key sea shanties with 808s. I’m never wrong. I predicted yacht rock’s third comeback.” The consultation costs $200.',
+    tags: ['write', 'deal'],
+    choices: {
+      left: {
+        label: 'Buy the forecast ($200)',
+        governingStats: { network: 0.7 },
+        tags: ['deal', 'risky', 'mainstream'],
+        cost: 200,
+        outcomes: {
+          bad: { text: 'You write three shanty-trap hybrids. Next summer turns out to be ambient polka. He is never wrong except always.', effects: { money: -200, creativity: -2, burnout: 5 } },
+          good: { text: 'The shanties land in a pirate-themed prestige drama. Not the chart, but the checks are chart-adjacent.', effects: { money: 100, hits: 1, creativity: 2 } },
+          incredible: { text: 'He was RIGHT. Your shanty-808 single owns the summer. You book him annually and tell no one.', effects: { money: 250, hits: 1, fame: 8, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Trust your own ears',
+        governingStats: { creativity: 1.0 },
+        tags: ['write', 'indie'],
+        outcomes: {
+          bad: { text: 'Your ears vote for a sound the market table-flips. Early. You were early. That’s the expensive kind of right.', effects: { creativity: 4, cred: 2 } },
+          good: { text: 'You write what moves you and it moves enough other people. The old-fashioned supply chain.', effects: { creativity: 6, hits: 1, cred: 3 } },
+          incredible: { text: 'You SET next summer’s trend. The forecaster adds your song to his slides. You invoice him for the slide.', effects: { creativity: 9, hits: 1, fame: 6, cred: 4, pathProgress: 1 } },
         },
       },
     },
@@ -1573,6 +1882,62 @@ export const EVENTS = [
       },
     },
   },
+  {
+    id: 'a3_ms_worldtour', act: 3, pathAffinity: ['megastar'], weight: 9,
+    art: 'ev_worldtour', context: 'A routing map with too many pins',
+    prompt: 'The agency presents two tours: “EVEREST” (40 cities, 5 continents, a jet with your face on it) or “CAMPFIRE” (12 rooms, no production, faces you can see).',
+    tags: ['tour', 'live', 'fame'],
+    choices: {
+      left: {
+        label: 'EVEREST. All of it.',
+        governingStats: { network: 0.8, skill: 0.5 },
+        tags: ['tour', 'live', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'City 23 breaks you. You call the crowd by the wrong city’s name and the wrong city never forgets.', effects: { fame: 12, money: 300, burnout: 16, cred: -2 } },
+          good: { text: 'Forty cities, one blur, your name in fonts you’ve never licensed. The jet photo alone is a career.', effects: { fame: 20, money: 450, network: 5, burnout: 13 } },
+          incredible: { text: 'EVEREST sells out. All of it. The tour documentary practically films itself. You are, verifiably, everywhere.', effects: { fame: 30, money: 600, network: 7, burnout: 12, pathProgress: 2 } },
+        },
+      },
+      right: {
+        label: 'CAMPFIRE. Twelve perfect rooms.',
+        governingStats: { cred: 0.9, creativity: 0.5 },
+        tags: ['tour', 'live', 'indie'],
+        outcomes: {
+          bad: { text: 'The intimate tour is SO intimate a fan hands you soup mid-song. The soup is good. The boundary is gone.', effects: { cred: 4, fame: 4, burnout: 5 } },
+          good: { text: 'Twelve nights people will describe to their grandchildren, inaccurately, with tears. The recordings become a live album.', effects: { cred: 8, fame: 8, creativity: 3, money: 150, burnout: 4 } },
+          incredible: { text: 'Scarcity detonates demand. Scalpers weep at the door of a 200-cap room. The mythology is worth ten Everests.', effects: { cred: 10, fame: 14, creativity: 4, burnout: 3, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_ms_persona', act: 3, pathAffinity: ['megastar'], weight: 8,
+    art: 'ev_persona', context: 'A mirror, backstage',
+    prompt: 'You catch your own reflection doing the Interview Smile. Unprompted. Off-camera. The persona has started wearing YOU.',
+    tags: ['fame'],
+    choices: {
+      left: {
+        label: 'Kill the persona',
+        governingStats: { cred: 0.7, creativity: 0.6 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You “rebrand as yourself.” Three publications call it a rebrand. The persona sends a postcard: “you’ll be back.”', effects: { cred: 4, fame: -3, creativity: 3, burnout: 3 } },
+          good: { text: 'You retire the Smile. Interviews get weirder and realer. The right fans lean in closer.', effects: { cred: 7, creativity: 5, fame: 3 } },
+          incredible: { text: 'The unmasking becomes the most compelling era of your career. Critics call it “a debut, again.”', effects: { cred: 9, creativity: 7, fame: 10, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Become it. Fully. On purpose.',
+        governingStats: { network: 0.9 },
+        tags: ['fame', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'You commit to the bit so hard you answer your mother’s call with the Interview Voice. She hangs up. Fair.', effects: { fame: 8, cred: -4, burnout: 8 } },
+          good: { text: 'The persona is bulletproof, bookable, and never tired. You clock out of it at 6 p.m. like a job. Healthy? Unclear. Effective? Very.', effects: { fame: 14, network: 4, burnout: 5, cred: -2 } },
+          incredible: { text: 'The persona becomes iconic — a character the culture agrees to love. Somewhere inside it, you take notes for the memoir.', effects: { fame: 24, network: 6, burnout: 6, pathProgress: 1 } },
+        },
+      },
+    },
+  },
   // ---- Act 3: STUDIO LEGEND ----
   {
     id: 'a3_legend_album', act: 3, pathAffinity: ['studio'], weight: 10,
@@ -1682,6 +2047,90 @@ export const EVENTS = [
           bad: { text: 'The kid quits after two lessons to become a streamer. You keep the folding chair angled toward the door.', effects: { cred: 3, burnout: -3 } },
           good: { text: 'The kid is good. The kid gets better. You remember why any of this matters.', effects: { cred: 6, creativity: 3, burnout: -6 } },
           incredible: { text: 'The kid is a prodigy and tells everyone who made them. Your legacy walks around town playing better than you.', effects: { cred: 10, network: 4, burnout: -5, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_st_supersession', act: 3, pathAffinity: ['studio'], weight: 9,
+    art: 'ev_supersession', context: 'Three legends, one night, no charts',
+    prompt: 'A late-night “supersession”: three legends jamming for an album nobody has approved. The drummer points at you: “Bring your thing. You have one, right?”',
+    tags: ['studio'],
+    choices: {
+      left: {
+        label: 'Bring your thing',
+        governingStats: { creativity: 0.7, skill: 0.7 },
+        tags: ['studio', 'risky'],
+        outcomes: {
+          bad: { text: 'Your thing collides with a legend’s thing. His thing has seniority. You spend the night comping his thing.', effects: { skill: 4, cred: 2, burnout: 6 } },
+          good: { text: 'At 3 a.m. your thing locks with their things and becomes, briefly, THE thing. The engineer marks the take with a heart.', effects: { skill: 6, creativity: 5, cred: 6, chainEventId: 'a3c_st_credits' } },
+          incredible: { text: 'The jam becomes side B of the album. Your thing is now canon. Music historians will footnote you. FOOTNOTE you.', effects: { skill: 7, creativity: 6, cred: 9, money: 200, pathProgress: 1, chainEventId: 'a3c_st_credits' } },
+        },
+      },
+      right: {
+        label: 'Be the glue, not the star',
+        governingStats: { skill: 1.0 },
+        tags: ['studio', 'safe'],
+        outcomes: {
+          bad: { text: 'You hold it down so invisibly that at dawn a legend asks if you “just got here.” You’ve been here nine hours.', effects: { skill: 5, burnout: 5 } },
+          good: { text: 'You are the reason the chaos lands anywhere. Legends notice glue. Glue gets called back.', effects: { skill: 7, cred: 6, network: 4 } },
+          incredible: { text: 'The bassist — THE bassist — takes your number and says four words that reroute your life: “every session. you. always.”', effects: { skill: 8, cred: 9, network: 7, pathProgress: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3c_st_credits', act: 3, pathAffinity: ['studio'], weight: 0, chainOnly: true,
+    art: 'ev_credits', context: 'The liner notes, six weeks later',
+    prompt: 'The supersession album ships. The credits list you as “additional musician: STEVE.” You are not, and have never been, Steve.',
+    tags: ['deal'],
+    choices: {
+      left: {
+        label: 'Demand a correction',
+        governingStats: { cred: 0.9 },
+        tags: ['deal'],
+        outcomes: {
+          bad: { text: 'The label “fixes” it in the streaming metadata to “Steve (feat. you).” Somehow worse. Steve is winning.', effects: { cred: 2, burnout: 4 } },
+          good: { text: 'Corrected in the repress. Your actual name, on an actual classic. Worth every email. All forty of them.', effects: { cred: 7, network: 3 } },
+          incredible: { text: 'The correction comes with an apology call from the legend himself, who then hires you — by name — for the next record.', effects: { cred: 9, network: 6, money: 200, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Become Steve',
+        governingStats: { creativity: 0.8 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'You lean in and register STEVE as a side project. Steve’s demo gets rejected. You are now failing as two people.', effects: { creativity: 3, fame: 1, burnout: 4 } },
+          good: { text: '“Who is Steve?” becomes a forum mystery. Steve develops a cult following. Steve does not exist. Steve is thriving.', effects: { creativity: 6, fame: 6, cred: 3 } },
+          incredible: { text: 'Steve releases one perfect single and retires. The myth outearns the session. You attend Steve’s farewell in sunglasses.', effects: { creativity: 8, fame: 10, money: 250, cred: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_st_loyalty', act: 3, pathAffinity: ['studio'], weight: 8,
+    art: 'ev_loyalty', context: 'Two calls, one Tuesday',
+    prompt: 'A legend’s comeback session and your best friend’s debut album land on the same day. Both say the same sentence: “It has to be you.”',
+    tags: ['studio', 'network'],
+    choices: {
+      left: {
+        label: 'The legend. Career logic.',
+        governingStats: { skill: 0.9 },
+        tags: ['studio', 'mainstream'],
+        outcomes: {
+          bad: { text: 'The legend cancels last minute — “creative rest.” Your friend’s album tracks without you. Both chairs, empty. The Tuesday haunts.', effects: { skill: 2, network: -3, burnout: 6 } },
+          good: { text: 'The session is flawless; the credit is gold. Your friend forgives you in a text with one period too many.', effects: { skill: 6, cred: 6, money: 250, network: -1 } },
+          incredible: { text: 'The legend’s record wins everything and your name rides it. Your friend’s toast at the afterparty: “Tuesday traitor” — said with love. Mostly love.', effects: { skill: 7, cred: 9, money: 300, fame: 5, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'The friend. Loyalty logic.',
+        governingStats: { cred: 0.8, network: 0.6 },
+        tags: ['studio', 'indie'],
+        outcomes: {
+          bad: { text: 'The debut stalls at 4,000 streams. The legend’s record — with someone else in your chair — wins a statue. You reread your choice at 3 a.m., then reread the text where your friend calls you family. It balances. Barely.', effects: { cred: 4, network: 3, burnout: 4 } },
+          good: { text: 'You give the debut everything the big rooms never would. It becomes a slow-burn classic in your city.', effects: { cred: 7, network: 5, creativity: 4 } },
+          incredible: { text: 'The debut breaks out — and its liner notes tell everyone who showed up on the Tuesday that mattered. Your loyalty becomes your legend.', effects: { cred: 10, network: 7, fame: 6, pathProgress: 1 } },
         },
       },
     },
@@ -1801,6 +2250,62 @@ export const EVENTS = [
     },
   },
 
+  {
+    id: 'a3_hf_diane', act: 3, pathAffinity: ['hitfactory'], weight: 9,
+    art: 'ev_diane', context: 'Diane’s people (Diane herself never calls)',
+    prompt: 'Diane — THE Diane — wants “Cousin’s Wedding,” the song you wrote about the night everything almost fell apart. The most personal thing in the vault. Her people call it “a smash template.”',
+    tags: ['write', 'deal'],
+    choices: {
+      left: {
+        label: 'Let Diane have it',
+        governingStats: { network: 0.9 },
+        tags: ['deal', 'mainstream'],
+        outcomes: {
+          bad: { text: 'Diane’s version swaps your bridge for a drop. It’s enormous. At weddings, people scream the drop. Your therapist raises her rate.', effects: { money: 400, hits: 1, creativity: -3, fame: 4 } },
+          good: { text: 'Diane sings it almost straight. Millions hear your night. They think it’s hers, but the publishing knows the truth.', effects: { money: 550, hits: 1, fame: 6, cred: 3 } },
+          incredible: { text: 'Diane performs it at the awards show and dedicates it, on live TV, “to the writer.” The entire industry googles you at once.', effects: { money: 700, hits: 1, fame: 12, cred: 6, network: 6, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Keep it. Sing it yourself.',
+        governingStats: { creativity: 0.8, cred: 0.5 },
+        tags: ['record', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Your version reaches the people it was about, and almost no one else. Diane cuts something similar. It goes to #2. You check the math on your integrity weekly.', effects: { creativity: 4, cred: 4, fame: 2 } },
+          good: { text: 'The writer-sings-it version becomes a critics’ favorite. Smaller. Truer. The vault stays yours.', effects: { creativity: 6, cred: 7, fame: 6, hits: 1 } },
+          incredible: { text: 'Your own voice on your own night connects like nothing you’ve ghostwritten ever has. The industry re-files you: not just a factory. An artist.', effects: { creativity: 9, cred: 9, fame: 12, hits: 1, pathProgress: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_hf_prodigy', act: 3, pathAffinity: ['hitfactory'], weight: 8,
+    art: 'ev_prodigy', context: 'A 17-year-old with terrifying instincts',
+    prompt: 'The label asks you to mentor Wren: seventeen, self-taught, writes hooks in the time it takes you to open your laptop. The kid is the asteroid. You are, possibly, the dinosaur.',
+    tags: ['write', 'network'],
+    choices: {
+      left: {
+        label: 'Mentor the asteroid',
+        governingStats: { cred: 0.7, network: 0.6 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'Wren absorbs your entire toolkit in three sessions and outgrows you by the fourth. “Thanks,” they say, meaning it, leaving.', effects: { cred: 4, network: 2, burnout: 4 } },
+          good: { text: 'You teach craft; Wren teaches you what phones hear. The co-writes split the difference and the royalties.', effects: { cred: 6, network: 5, creativity: 4, hits: 1 } },
+          incredible: { text: 'Wren’s debut thanks you by name in the first line of the notes. Half the industry now wants your “development instincts.” The dinosaur, it turns out, taught the asteroid to aim.', effects: { cred: 9, network: 7, hits: 1, money: 200, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Compete. Quietly. Pettily.',
+        governingStats: { creativity: 1.0 },
+        tags: ['write', 'risky'],
+        outcomes: {
+          bad: { text: 'You pull three all-nighters to out-write a teenager. The teenager slept. The teenager won. The teenager doesn’t know there was a contest.', effects: { creativity: 4, burnout: 9 } },
+          good: { text: 'The private rivalry sharpens you. Your next three songs are your best in years. Wren remains unaware. Wren must never know.', effects: { creativity: 7, hits: 1, burnout: 5 } },
+          incredible: { text: 'Fear of obsolescence produces your masterpiece. Wren posts about it: “this is the one that made me want to write.” You close the laptop. You needed that.', effects: { creativity: 10, hits: 1, cred: 5, fame: 6, pathProgress: 1 } },
+        },
+      },
+    },
+  },
   // ═══════════════ BURNOUT COPING (forced interstitials) ═══════════════
   {
     id: 'coping_50', act: [1, 2, 3], pathAffinity: [], weight: 0, chainOnly: true,
