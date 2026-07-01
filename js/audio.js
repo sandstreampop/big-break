@@ -1,17 +1,24 @@
-// Tiny WebAudio feedback synth. No assets, no loops — just short cues.
-// iOS requires a user gesture before audio starts; init() is called on
-// the first pointerdown anywhere.
+// WebAudio: short synthesized cues + a generative lo-fi soundtrack.
+// Everything is synthesized — no assets, works offline. iOS requires a
+// user gesture before audio starts; init() is called on first pointerdown.
 
 let ctx = null;
 let enabled = true;
+let musicEnabled = true;
 
 export function setSoundEnabled(v) { enabled = v; }
+export function setMusicEnabled(v) {
+  musicEnabled = v;
+  if (!v) music.stop();
+  else music.start(music.mood || 'title');
+}
 
 export function initAudio() {
   if (ctx) return;
   try {
     ctx = new (window.AudioContext || window.webkitAudioContext)();
   } catch (e) { ctx = null; }
+  if (ctx && musicEnabled) music.start(music.mood || 'title');
 }
 
 function blip(freq, dur, type = 'triangle', gainPeak = 0.08, when = 0) {
@@ -29,6 +36,143 @@ function blip(freq, dur, type = 'triangle', gainPeak = 0.08, when = 0) {
   osc.start(t);
   osc.stop(t + dur + 0.05);
 }
+
+// ---------- Generative lo-fi soundtrack ----------
+// A chord-pad progression with optional bass/hats, scheduled ahead of time.
+// Moods: title (slow, warm), act1 (garage haze), act2 (busier, hats),
+// act3 (tense, deep bass), ending (spacious).
+
+const midi = (n) => 440 * Math.pow(2, (n - 69) / 12);
+// chords as midi note arrays (voiced low-mid, lo-fi friendly)
+const CH = {
+  Am7: [57, 60, 64, 67], Fmaj7: [53, 57, 60, 64], Cmaj7: [48, 52, 55, 59],
+  G7: [55, 59, 62, 65], Dm7: [50, 53, 57, 60], Em7: [52, 55, 59, 62],
+  Bbmaj7: [58, 62, 65, 69], E7: [52, 56, 59, 62],
+};
+const MOODS = {
+  title:  { bpm: 72,  barsPerChord: 2, prog: [CH.Am7, CH.Fmaj7, CH.Cmaj7, CH.G7], hats: false, bass: false, cutoff: 640 },
+  act1:   { bpm: 82,  barsPerChord: 2, prog: [CH.Cmaj7, CH.Am7, CH.Fmaj7, CH.G7], hats: false, bass: true,  cutoff: 720 },
+  act2:   { bpm: 96,  barsPerChord: 1, prog: [CH.Dm7, CH.G7, CH.Cmaj7, CH.Am7],  hats: true,  bass: true,  cutoff: 900 },
+  act3:   { bpm: 90,  barsPerChord: 1, prog: [CH.Am7, CH.Bbmaj7, CH.Am7, CH.E7], hats: true,  bass: true,  cutoff: 820 },
+  ending: { bpm: 66,  barsPerChord: 2, prog: [CH.Fmaj7, CH.Cmaj7, CH.Am7, CH.G7], hats: false, bass: false, cutoff: 600 },
+};
+
+function padChord(notes, t, dur, cutoff, dest) {
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(cutoff, t);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(0.038, t + dur * 0.3);
+  g.gain.setValueAtTime(0.038, t + dur * 0.7);
+  g.gain.linearRampToValueAtTime(0.0001, t + dur + 0.4);
+  filter.connect(g).connect(dest);
+  for (const n of notes) {
+    for (const det of [-4, 4]) {
+      const o = ctx.createOscillator();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(midi(n), t);
+      o.detune.setValueAtTime(det, t);
+      o.connect(filter);
+      o.start(t);
+      o.stop(t + dur + 0.6);
+    }
+  }
+}
+
+function bassNote(note, t, dur, dest) {
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = 'triangle';
+  o.frequency.setValueAtTime(midi(note - 24), t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(0.055, t + 0.03);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(dest);
+  o.start(t);
+  o.stop(t + dur + 0.1);
+}
+
+let noiseBuf = null;
+function hat(t, dest, open = false) {
+  if (!noiseBuf) {
+    noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  const src = ctx.createBufferSource();
+  src.buffer = noiseBuf;
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 7000;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(open ? 0.02 : 0.014, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + (open ? 0.12 : 0.04));
+  src.connect(hp).connect(g).connect(dest);
+  src.start(t);
+}
+
+export const music = {
+  mood: null,
+  _timer: null,
+  _nextTime: 0,
+  _step: 0,
+  _gain: null,
+
+  start(mood) {
+    this.mood = mood;
+    if (!ctx || !musicEnabled) return;
+    if (!this._gain) {
+      this._gain = ctx.createGain();
+      this._gain.gain.value = 1;
+      this._gain.connect(ctx.destination);
+    }
+    if (this._timer) return; // scheduler already running; mood picks up next chord
+    this._nextTime = ctx.currentTime + 0.1;
+    this._step = 0;
+    this._timer = setInterval(() => this._schedule(), 180);
+  },
+
+  stop() {
+    if (this._timer) { clearInterval(this._timer); this._timer = null; }
+  },
+
+  setMood(mood) {
+    if (this.mood === mood) return;
+    this.mood = mood;
+    if (ctx && musicEnabled && !this._timer) this.start(mood);
+  },
+
+  _schedule() {
+    if (!ctx || !musicEnabled) return;
+    if (ctx.state === 'suspended') { ctx.resume(); return; }
+    const m = MOODS[this.mood] || MOODS.title;
+    const beat = 60 / m.bpm;
+    const chordDur = beat * 4 * m.barsPerChord;
+    // schedule chord-by-chord, 0.4s lookahead
+    while (this._nextTime < ctx.currentTime + 0.4) {
+      const t = this._nextTime;
+      const chord = m.prog[this._step % m.prog.length];
+      padChord(chord, t, chordDur, m.cutoff, this._gain);
+      if (m.bass) {
+        bassNote(chord[0], t, beat * 1.6, this._gain);
+        bassNote(chord[0], t + beat * 2, beat * 1.2, this._gain);
+        if (m.barsPerChord === 2) {
+          bassNote(chord[0], t + beat * 4, beat * 1.6, this._gain);
+          bassNote(chord[0] + (this._step % 2 ? -2 : 3), t + beat * 6, beat * 1.2, this._gain);
+        }
+      }
+      if (m.hats) {
+        const bars = m.barsPerChord;
+        for (let b = 0; b < bars * 4; b++) {
+          hat(t + b * beat + beat * 0.5, this._gain, b % 4 === 3);
+        }
+      }
+      this._nextTime += chordDur;
+      this._step += 1;
+    }
+  },
+};
 
 export const sfx = {
   swipe() { blip(320, 0.08, 'sine', 0.05); },
