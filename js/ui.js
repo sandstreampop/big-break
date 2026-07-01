@@ -130,6 +130,7 @@ function renderHud() {
   const top = el('div', 'hud-top');
   top.append(el('span', 'hud-act', `ACT ${run.act} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][run.act]}`));
   const counters = el('span', 'hud-counters');
+  if (run.encore > 0) counters.append(el('span', 'hud-encore', `🎇${run.encore > 1 ? '×' + run.encore : ''}`));
   counters.append(el('span', 'hud-fame', `★ ${run.fame}`));
   counters.append(el('span', 'hud-money' + (run.money < 0 ? ' neg' : ''), `$${run.money}`));
   if (run.path === 'hitfactory' || run.hits > 0) counters.append(el('span', 'hud-hits', `♪ ${run.hits} hit${run.hits === 1 ? '' : 's'}`));
@@ -171,8 +172,10 @@ function accActive(acc) {
 }
 
 let currentCard = null;
+let encoreArmed = false;
 
 function dealCard() {
+  encoreArmed = false;
   show('#screen-game');
   renderHud();
   const ev = engine.drawNextCard(run);
@@ -196,23 +199,43 @@ function dealCard() {
   area.append(card);
   currentCard = card;
 
-  const odds = {
-    left: engine.choiceOdds(run, ev.choices.left),
-    right: engine.choiceOdds(run, ev.choices.right),
-  };
-  hintL.innerHTML = `<span class="risk ${riskClass(odds.left)}"></span>${ev.choices.left.label}`;
-  hintR.innerHTML = `${ev.choices.right.label}<span class="risk ${riskClass(odds.right)}"></span>`;
-
   // Tap-friendly fallback buttons (spec §10/§12)
   const controls = $('#choice-buttons');
   controls.innerHTML = '';
   const bL = el('button', 'choice-btn choice-left');
-  bL.innerHTML = `<span class="dir">◀</span><span class="risk ${riskClass(odds.left)}"></span> ${ev.choices.left.label}`;
   const bR = el('button', 'choice-btn choice-right');
-  bR.innerHTML = `${ev.choices.right.label} <span class="risk ${riskClass(odds.right)}"></span><span class="dir">▶</span>`;
   bL.addEventListener('click', () => commitSwipe('left'));
   bR.addEventListener('click', () => commitSwipe('right'));
   controls.append(bL, bR);
+
+  // Risk dots recompute when an Encore is armed/disarmed
+  const paintOdds = () => {
+    const opts = { encore: encoreArmed };
+    const oL = engine.choiceOdds(run, ev.choices.left, opts);
+    const oR = engine.choiceOdds(run, ev.choices.right, opts);
+    hintL.innerHTML = `<span class="risk ${riskClass(oL)}"></span>${ev.choices.left.label}`;
+    hintR.innerHTML = `${ev.choices.right.label}<span class="risk ${riskClass(oR)}"></span>`;
+    bL.innerHTML = `<span class="dir">◀</span><span class="risk ${riskClass(oL)}"></span> ${ev.choices.left.label}`;
+    bR.innerHTML = `${ev.choices.right.label} <span class="risk ${riskClass(oR)}"></span><span class="dir">▶</span>`;
+  };
+  paintOdds();
+
+  // Encore arm toggle (Pass 2 mechanic)
+  const encoreBar = $('#encore-bar');
+  encoreBar.innerHTML = '';
+  if ((run.encore || 0) > 0) {
+    const eb = el('button', 'encore-btn', `🎇 Encore ready — spend for a boosted roll`);
+    eb.addEventListener('click', () => {
+      encoreArmed = !encoreArmed;
+      eb.classList.toggle('armed', encoreArmed);
+      eb.textContent = encoreArmed
+        ? '🎇 ENCORE ARMED — this swipe rolls hot'
+        : '🎇 Encore ready — spend for a boosted roll';
+      sfx.ui();
+      paintOdds();
+    });
+    encoreBar.append(eb);
+  }
 
   if (!reducedMotion()) {
     card.classList.add('deal-in');
@@ -281,7 +304,9 @@ function commitSwipe(side, dx = 0, dy = 0) {
   currentCard = null;
   sfx.swipe();
 
-  const result = engine.resolveSwipe(run, side);
+  const result = engine.resolveSwipe(run, side, Math.random, { encore: encoreArmed });
+  encoreArmed = false;
+  $('#encore-bar').innerHTML = '';
   save.saveRun(run);
 
   const fly = () => showResult(result);
@@ -317,6 +342,8 @@ function showResult(result) {
   box.append(el('p', 'result-text', fillText(result.text)));
 
   const chips = el('div', 'delta-chips');
+  if (result.encoreSpent) chips.append(el('span', 'chip chip-encore', '🎇 Encore spent'));
+  if (result.encoreEarned) chips.append(el('span', 'chip chip-encore', '🎇 ENCORE earned — bank it for the right card'));
   for (const d of result.deltas) {
     chips.append(deltaChip(d.key, d.amount));
   }

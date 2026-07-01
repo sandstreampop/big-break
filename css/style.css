@@ -333,6 +333,32 @@ body {
 .chip-bad { background: #4a2030; color: var(--bad); }
 .chip-gear { background: #3b2b1c; color: var(--accent); }
 .chip-rival { background: #33203f; color: var(--hot); }
+.chip-encore { background: linear-gradient(135deg, #3b2b1c, #33203f); color: var(--accent); }
+
+/* Encore arm toggle */
+#encore-bar:empty { display: none; }
+#encore-bar { padding-top: 8px; }
+.encore-btn {
+  width: 100%;
+  appearance: none;
+  border: 1px dashed var(--accent);
+  background: #2a2138;
+  color: var(--accent);
+  font-size: 13px; font-weight: 700;
+  padding: 10px 12px;
+  border-radius: 12px;
+  min-height: 40px;
+  cursor: pointer;
+  transition: transform .08s, background .15s, box-shadow .2s;
+}
+.encore-btn:active { transform: scale(.97); }
+.encore-btn.armed {
+  border-style: solid;
+  background: linear-gradient(135deg, #4a3413, #431f33);
+  box-shadow: 0 0 18px rgba(255, 179, 71, .35);
+  animation: shimmer 1.2s infinite;
+}
+.hud-encore { color: var(--accent); }
 
 .gear-blurb { font-size: 13.5px; color: var(--dim); background: #1c1729; border-radius: 10px; padding: 10px; line-height: 1.4; }
 .gear-choices { display: flex; flex-direction: column; gap: 8px; }

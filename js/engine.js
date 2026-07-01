@@ -48,6 +48,8 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     hits: 0,
     pathProgress: 0,
     badStreak: 0,
+    encore: 0,
+    encoreChained: false,
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
     path: null,
@@ -171,7 +173,8 @@ function tagsIntersect(a, b) {
 }
 
 // Roll components for a choice; used by both resolution and the risk tell.
-export function rollComponents(state, choice) {
+// opts.encore adds the armed-Encore bonus so odds and rolls stay in sync.
+export function rollComponents(state, choice, opts = {}) {
   const gs = choice.governingStats || {};
   let sum = 0, wsum = 0;
   for (const [stat, w] of Object.entries(gs)) {
@@ -201,15 +204,16 @@ export function rollComponents(state, choice) {
 
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
   const pityBonus = Math.min((state.badStreak || 0) * CONFIG.pityPerBad, CONFIG.pityCap);
+  const encoreBonus = opts.encore ? CONFIG.encoreBonus : 0;
   const jitter = inst?.quirk?.hooks?.jitter || [CONFIG.jitterMin, CONFIG.jitterMax];
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
-    gearBonus + quirkBonus + burnoutPenalty + pityBonus;
-  return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, base, jitter, appliedAccessories: applied };
+    gearBonus + quirkBonus + burnoutPenalty + pityBonus + encoreBonus;
+  return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, base, jitter, appliedAccessories: applied };
 }
 
 // Risk tell (spec §10): probability each tier fires, given uniform jitter.
-export function choiceOdds(state, choice) {
-  const c = rollComponents(state, choice);
+export function choiceOdds(state, choice, opts = {}) {
+  const c = rollComponents(state, choice, opts);
   const base = c.base;
   const [jMin, jMax] = c.jitter;
   const span = jMax - jMin + 1;
@@ -222,9 +226,11 @@ export function choiceOdds(state, choice) {
   return { bad: bad / span, good: (span - bad - incredible) / span, incredible: incredible / span };
 }
 
-export function resolveSwipe(state, side, rng = Math.random) {
+export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   const ev = EVENTS.find((e) => e.id === state.currentEventId);
   const choice = ev.choices[side];
+  const useEncore = !!opts.encore && (state.encore || 0) > 0;
+  if (useEncore) state.encore -= 1;
 
   // Shop affordability: a declined card is comedy, not a roll (spec §8 shop note)
   if (choice.cost && state.money < choice.cost) {
@@ -238,7 +244,7 @@ export function resolveSwipe(state, side, rng = Math.random) {
     return result;
   }
 
-  const c = rollComponents(state, choice);
+  const c = rollComponents(state, choice, { encore: useEncore });
   const jitter = randInt(rng, c.jitter[0], c.jitter[1]);
   const roll = c.base + jitter;
   let tier;
@@ -246,6 +252,12 @@ export function resolveSwipe(state, side, rng = Math.random) {
   else if (roll >= CONFIG.tierIncredibleAt) tier = 'incredible';
   else tier = 'good';
   state.badStreak = tier === 'bad' ? (state.badStreak || 0) + 1 : 0;
+  let encoreEarned = false;
+  if (tier === 'incredible' && (state.encore || 0) < CONFIG.encoreCap) {
+    state.encore = (state.encore || 0) + 1;
+    encoreEarned = true;
+  }
+  if (tier === 'incredible' && useEncore) state.encoreChained = true;
 
   const outcome = choice.outcomes[tier];
   const effects = { ...outcome.effects };
@@ -259,7 +271,10 @@ export function resolveSwipe(state, side, rng = Math.random) {
   }
 
   const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories);
-  const result = { tier, roll: Math.round(roll), text: outcome.text, deltas, event: ev, side };
+  const result = {
+    tier, roll: Math.round(roll), text: outcome.text, deltas, event: ev, side,
+    encoreEarned, encoreSpent: useEncore,
+  };
 
   // Lucky Pick-style gear: lost when it applied and things went Bad
   if (tier === 'bad') {
@@ -506,5 +521,6 @@ export function runSummary(state) {
     pathProgress: state.pathProgress,
     rivalry: state.rivalry ?? 3,
     rival: state.rival,
+    encoreChained: !!state.encoreChained,
   };
 }

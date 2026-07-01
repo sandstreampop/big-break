@@ -80,7 +80,10 @@ for (let i = 0; i < RUNS; i++) {
         side = scoreChoice(state, ev.choices.left) >= scoreChoice(state, ev.choices.right) ? 'left' : 'right';
       }
       const act = state.act;
-      const result = engine.resolveSwipe(state, side);
+      // Encore usage: smart spends in act 2+, narrative spends on a whim
+      const armEncore = (state.encore || 0) > 0 &&
+        (POLICY === 'smart' ? state.act >= 2 : Math.random() < 0.5);
+      const result = engine.resolveSwipe(state, side, Math.random, { encore: armEncore });
       tally.tierCounts[result.tier]++;
       tally.tiersByAct[act][result.tier]++;
       if (result.tier === 'bad') badCards++;
