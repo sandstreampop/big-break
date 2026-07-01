@@ -43,12 +43,17 @@ const tally = {
   cardsSum: 0, drySum: 0,
   finaleStats: { skill: 0, cred: 0, creativity: 0, network: 0, burnout: 0, fame: 0, hits: 0, count: 0 },
   tierCounts: { bad: 0, good: 0, incredible: 0, declined: 0 },
+  tiersByAct: { 1: { bad: 0, good: 0, incredible: 0, declined: 0 },
+                2: { bad: 0, good: 0, incredible: 0, declined: 0 },
+                3: { bad: 0, good: 0, incredible: 0, declined: 0 } },
+  worstRunBadPct: 0, runsOver60Bad: 0,
 };
 
 for (let i = 0; i < RUNS; i++) {
   const inst = DEFAULT_INSTRUMENTS[Math.floor(Math.random() * DEFAULT_INSTRUMENTS.length)];
   const state = engine.newRun(inst, []);
   let cards = 0;
+  let badCards = 0;
   let guard = 0;
 
   while (state.phase !== 'ended' && guard++ < 200) {
@@ -66,11 +71,19 @@ for (let i = 0; i < RUNS; i++) {
       let side;
       if (POLICY === 'random') {
         side = Math.random() < 0.5 ? 'left' : 'right';
+      } else if (POLICY === 'narrative') {
+        // A human following the story: usually whim, sometimes the safer side
+        side = Math.random() < 0.65
+          ? (Math.random() < 0.5 ? 'left' : 'right')
+          : (scoreChoice(state, ev.choices.left) >= scoreChoice(state, ev.choices.right) ? 'left' : 'right');
       } else {
         side = scoreChoice(state, ev.choices.left) >= scoreChoice(state, ev.choices.right) ? 'left' : 'right';
       }
+      const act = state.act;
       const result = engine.resolveSwipe(state, side);
       tally.tierCounts[result.tier]++;
+      tally.tiersByAct[act][result.tier]++;
+      if (result.tier === 'bad') badCards++;
       const pend = result.deltas.pendingGear;
       if (pend) {
         if (state.accessories.length >= CONFIG.accessorySlots) {
@@ -98,6 +111,11 @@ for (let i = 0; i < RUNS; i++) {
   tally.cardsSum += cards;
   tally.lpTotal += engine.legacyPoints(state);
   tally.fameSum += state.fame;
+  if (cards >= 10) {
+    const badPct = badCards / cards;
+    tally.worstRunBadPct = Math.max(tally.worstRunBadPct, badPct);
+    if (badPct > 0.6) tally.runsOver60Bad++;
+  }
 }
 
 const pct = (n) => ((100 * n) / RUNS).toFixed(1) + '%';
@@ -105,6 +123,11 @@ console.log(`\n=== BIG BREAK simulation — ${RUNS} runs, policy=${POLICY} ===`)
 console.log(`avg cards/run: ${(tally.cardsSum / RUNS).toFixed(1)}   deck-dry events: ${tally.drySum}`);
 const t = tally.tierCounts, tot = t.bad + t.good + t.incredible + t.declined;
 console.log(`tiers: bad ${((100 * t.bad) / tot).toFixed(1)}% / good ${((100 * t.good) / tot).toFixed(1)}% / incredible ${((100 * t.incredible) / tot).toFixed(1)}% / declined ${((100 * t.declined) / tot).toFixed(1)}%`);
+for (const act of [1, 2, 3]) {
+  const a = tally.tiersByAct[act], atot = a.bad + a.good + a.incredible + a.declined || 1;
+  console.log(`  act ${act}: bad ${((100 * a.bad) / atot).toFixed(1)}% / good ${((100 * a.good) / atot).toFixed(1)}% / incredible ${((100 * a.incredible) / atot).toFixed(1)}%`);
+}
+console.log(`worst single-run bad rate: ${(100 * tally.worstRunBadPct).toFixed(0)}%   runs >60% bad: ${tally.runsOver60Bad} (${pct(tally.runsOver60Bad)})`);
 console.log(`\nfail states (early game-overs):`);
 for (const [k, v] of Object.entries(tally.byEnding)) console.log(`  ${k}: ${v} (${pct(v)})`);
 console.log(`\nfinale outcomes:`);
