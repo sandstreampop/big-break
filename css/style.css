@@ -153,6 +153,22 @@ body {
 .stat-bar { width: 100%; height: 5px; background: #322a47; border-radius: 3px; overflow: hidden; }
 .stat-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .5s; }
 .stat-val { font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.stat { position: relative; }
+.stat-floater {
+  position: absolute; top: -4px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px; font-weight: 900;
+  pointer-events: none;
+  animation: floatUp 1.3s ease-out forwards;
+  z-index: 5;
+}
+.stat-floater.up { color: var(--good); }
+.stat-floater.down { color: var(--bad); }
+@keyframes floatUp {
+  0% { opacity: 0; transform: translate(-50%, 6px); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -16px); }
+}
 .stat-burnout .stat-fill { background: var(--good); }
 .stat-burnout.warn .stat-fill { background: var(--accent); }
 .stat-burnout.danger .stat-fill { background: var(--bad); }
@@ -417,6 +433,36 @@ body {
 .gear-blurb { font-size: 13.5px; color: var(--dim); background: #1c1729; border-radius: 10px; padding: 10px; line-height: 1.4; }
 .gear-choices { display: flex; flex-direction: column; gap: 8px; }
 .tap-hint { color: var(--dim); font-size: 12px; text-align: center; margin-top: 4px; opacity: .8; }
+
+/* ---------- Juice: confetti, shake, flashes, glow ---------- */
+.confetti-box { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 60; }
+.confetti {
+  position: absolute; top: 45%;
+  width: 8px; height: 12px;
+  border-radius: 2px;
+  animation: confettiFly 1.25s cubic-bezier(.15,.6,.4,1) forwards;
+}
+@keyframes confettiFly {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); }
+}
+.result-card.shake { animation: rise .28s cubic-bezier(.2,.9,.3,1.15), shake .4s .1s; }
+@keyframes shake {
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+#overlay.flash-bad { background: rgba(50, 8, 16, .78); }
+.card.encore-glow {
+  box-shadow: 0 18px 50px rgba(0,0,0,.45), 0 0 34px rgba(255, 179, 71, .45);
+  border-color: var(--accent);
+}
+.hud-money, .hud-fame { transition: transform .2s; }
+@media (prefers-reduced-motion: reduce) {
+  .confetti, .result-card.shake { animation: none; }
+  .stat-floater { animation: none; opacity: 0; }
+}
 
 /* ---------- Ending ---------- */
 .ending-wrap { display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px; }
