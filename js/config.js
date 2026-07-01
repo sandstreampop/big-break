@@ -30,6 +30,11 @@ export const CONFIG = {
   // Pity: each consecutive Bad adds a stacking roll bonus (bad-luck brake)
   pityPerBad: 6,
   pityCap: 18,
+  // Encore: rolling an Incredible banks a token (cap below); the player can
+  // arm one on a later card for a flat roll bonus — spend the hot streak
+  // when it matters.
+  encoreBonus: 18,
+  encoreCap: 2,
 
   // Deck assembly (spec §8.4)
   pathWeightMult: 2.5,     // weight boost for events matching committed path
