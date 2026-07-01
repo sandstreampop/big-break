@@ -402,6 +402,7 @@ body {
 .ending-art { width: 100%; aspect-ratio: 16/9; border-radius: 16px; object-fit: cover; }
 .ending-title { font-size: 30px; font-weight: 900; line-height: 1.05; }
 .ending-text { font-size: 15.5px; line-height: 1.55; color: var(--ink); }
+.tier-strip { font-size: 13px; letter-spacing: 1px; word-break: break-all; line-height: 1.5; text-align: center; }
 .lp-award {
   font-size: 22px; font-weight: 900; color: var(--accent);
   text-align: center; padding: 8px;
