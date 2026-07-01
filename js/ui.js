@@ -243,11 +243,53 @@ function accActive(acc) {
 
 let currentCard = null;
 let encoreArmed = false;
+let prevStats = null; // for stat-rail delta floaters
+
+function vibrate(pattern) {
+  try { navigator.vibrate?.(pattern); } catch (e) {}
+}
+
+// Floating +N/−N chips over the stat rail when values changed since last card
+function spawnStatFloaters() {
+  if (!prevStats || reducedMotion()) { prevStats = snapshotStats(); return; }
+  const cur = snapshotStats();
+  document.querySelectorAll('#hud .stat').forEach((item) => {
+    const key = item.dataset.stat;
+    const d = cur[key] - (prevStats[key] ?? cur[key]);
+    if (!d) return;
+    const goodDelta = key === 'burnout' ? d < 0 : d > 0;
+    const f = el('span', 'stat-floater ' + (goodDelta ? 'up' : 'down'), (d > 0 ? '+' : '') + d);
+    item.append(f);
+    setTimeout(() => f.remove(), 1400);
+  });
+  prevStats = cur;
+}
+function snapshotStats() {
+  return { ...run.stats, fame: run.fame, money: run.money };
+}
+
+function spawnConfetti(host) {
+  if (reducedMotion()) return;
+  const box = el('div', 'confetti-box');
+  for (let i = 0; i < 26; i++) {
+    const p = el('span', 'confetti');
+    p.style.left = 50 + (Math.random() * 40 - 20) + '%';
+    p.style.background = `hsl(${Math.floor(Math.random() * 360)} 90% 65%)`;
+    p.style.setProperty('--dx', (Math.random() * 240 - 120) + 'px');
+    p.style.setProperty('--dy', -(80 + Math.random() * 220) + 'px');
+    p.style.setProperty('--rot', Math.floor(Math.random() * 720 - 360) + 'deg');
+    p.style.animationDelay = (Math.random() * 0.12) + 's';
+    box.append(p);
+  }
+  host.append(box);
+  setTimeout(() => box.remove(), 1600);
+}
 
 function dealCard() {
   encoreArmed = false;
   show('#screen-game');
   renderHud();
+  spawnStatFloaters();
   const ev = engine.drawNextCard(run, engine.stateRng(run));
   if (!ev) { // deck ran dry — act ends early
     run.cardsPlayedInAct = engine.actLength(run, run.act);
@@ -301,6 +343,7 @@ function dealCard() {
     eb.addEventListener('click', () => {
       encoreArmed = !encoreArmed;
       eb.classList.toggle('armed', encoreArmed);
+      currentCard?.classList.toggle('encore-glow', encoreArmed);
       eb.textContent = encoreArmed
         ? '🎇 ENCORE ARMED — this swipe rolls hot'
         : '🎇 Encore ready — spend for a boosted roll';
@@ -433,15 +476,21 @@ const TIER_LABEL = {
 };
 
 function showResult(result) {
-  if (result.tier === 'incredible') sfx.incredible();
+  if (result.tier === 'incredible') { sfx.incredible(); vibrate([30, 40, 30, 40, 60]); }
   else if (result.tier === 'good') sfx.good();
-  else sfx.bad();
+  else { sfx.bad(); vibrate(80); }
 
   const ov = $('#overlay');
   ov.innerHTML = '';
   ov.classList.add('active');
 
   const box = el('div', `result-card tier-${result.tier}`);
+  if (result.tier === 'incredible') spawnConfetti(ov);
+  if ((result.tier === 'bad' || result.tier === 'declined') && !reducedMotion()) {
+    box.classList.add('shake');
+    ov.classList.add('flash-bad');
+    setTimeout(() => ov.classList.remove('flash-bad'), 500);
+  }
   box.append(el('div', 'tier-badge', TIER_LABEL[result.tier]));
   box.append(el('p', 'result-text', fillText(result.text)));
 
