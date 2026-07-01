@@ -499,6 +499,28 @@ body {
 .wall-owned { color: var(--good); font-size: 11px; font-weight: 800; letter-spacing: .08em; }
 .wall-item .btn { min-height: 40px; padding: 8px 14px; font-size: 14px; white-space: nowrap; }
 
+/* Scrapbook + run history */
+.scrap-act { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; margin-top: 6px; }
+.scrap-row {
+  display: flex; gap: 10px; align-items: baseline;
+  font-size: 13px; line-height: 1.35;
+  padding: 5px 8px; border-radius: 8px; background: #1c1729;
+}
+.scrap-row.t-incredible { background: #2b1c3b; }
+.scrap-row.t-bad, .scrap-row.t-declined { opacity: .75; }
+.scrap-text b { color: var(--accent2); font-weight: 700; }
+.history-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.history-row {
+  display: flex; gap: 10px; align-items: baseline; justify-content: space-between;
+  background: var(--card); border: 1px solid #372d4e; border-radius: 10px;
+  padding: 8px 12px; font-size: 13px;
+}
+.history-row b { font-size: 12px; letter-spacing: .04em; }
+.history-row.res-success b { color: var(--good); }
+.history-row.res-partial b { color: var(--accent); }
+.history-row.res-failure b, .history-row.res-fail b { color: var(--bad); }
+.hist-fame { color: var(--dim); font-size: 12px; }
+
 .trophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 12px; }
 .trophy {
   background: var(--card); border: 1px solid #372d4e; border-radius: 14px;
