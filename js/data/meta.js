@@ -1,0 +1,139 @@
+// Endings copy, Career Wall unlocks, and trophies (spec §7, §9).
+
+export const ENDINGS = {
+  megastar: {
+    success: {
+      title: 'MEGASTAR',
+      art: 'end_megastar_win',
+      text: 'The stadium chants a name your mother didn’t give you. Your face is on a bus. You are the bus. Somewhere in the crowd, your old roommate holds up a sign: “I MANAGED THIS.” Technically true. You made it — enormously, ridiculously, all the way.',
+    },
+    partial: {
+      title: 'Regionally Enormous',
+      art: 'end_megastar_partial',
+      text: 'You’re famous. Airport-recognition famous, in four states. The label calls you “an incredible story we’re still figuring out how to tell.” It’s not the summit. But from here you can see the summit, and honestly? The parking is better.',
+    },
+    failure: {
+      title: 'Exposure (Died Of)',
+      art: 'end_megastar_fail',
+      text: 'The showcases were unpaid, the trends moved on, and the algorithm — may it be ashamed — never called back. A venue near you is showing your old flyer. The pickle tent got bigger billing. There’s always next run.',
+    },
+  },
+  studio: {
+    success: {
+      title: 'STUDIO LEGEND',
+      art: 'end_studio_win',
+      text: 'Your phone rings at 8 a.m. It’s always for a session, and it’s always for you. Producers describe a sound by pointing at your chair. Nobody on the street knows your face; everyone on every record knows your take. First-call. Forever-call. Legend.',
+    },
+    partial: {
+      title: 'Second-Call Royalty',
+      art: 'end_studio_partial',
+      text: 'When the first-call player is busy — and they’re often busy — the phone finds you. You’re on more records than you can remember, which is the job. The wall of the pawn shop has your photo now. Signed. Almost there.',
+    },
+    failure: {
+      title: 'Thank You (The Two Worst Words)',
+      art: 'end_studio_fail',
+      text: 'The takes were almost. The charts were charts-adjacent. The bandleader said “thank you” and the room moved on. You still practice at 2 a.m., which either means it’s over or it’s starting. Run it back.',
+    },
+  },
+  hitfactory: {
+    success: {
+      title: 'HIT FACTORY',
+      art: 'end_hitfactory_win',
+      text: 'Three songs in today’s top ten are yours. None of them say so loudly — but the checks arrive like weather, and every A&R in the industry has your number saved under a codename. You are the machine, the boutique, and the ghost. Everyone hums your work. You wrote the summer.',
+    },
+    partial: {
+      title: 'B-Side Economy',
+      art: 'end_hitfactory_partial',
+      text: 'Your songs chart — other people’s versions of them, mostly, with one word changed. The splits meetings still have eleven writers, but now you’re the one they’re scared of. One more smash and the codename becomes a name.',
+    },
+    failure: {
+      title: 'Shelved With Honors',
+      art: 'end_hitfactory_fail',
+      text: 'The hooks were there. The rooms said “love it” in the way that means no. Your best song is in a drawer labeled “strategic reasons.” Somewhere, a demo folder waits for a superstar who never texts back. Write it again. Better. Angrier.',
+    },
+  },
+  // Fail states (run ends early — spec §7.3)
+  burnout: {
+    title: 'You Quit Music To Do UX For A Fintech',
+    art: 'end_burnout',
+    text: 'It happened quietly. One skipped rehearsal, one deleted voice memo, one LinkedIn recruiter with impeccable timing. Your title is now “Senior Experience Designer.” The pay is great. The kombucha is free. Sometimes, in a parking lot, you hear a kazoo — and your eye twitches in 4/4.',
+  },
+  cancelled: {
+    title: 'Cancelled / Blacklisted',
+    art: 'end_cancelled',
+    text: 'Nobody returns your calls. Not the venues, not Dario, not even the pickle tent. Your cred hit absolute zero — a number so round the scene uses it as a cautionary tale at parties you’re no longer invited to. The industry forgets fast. It remembers faster. Time for a new name and a new run.',
+  },
+  debt: {
+    title: 'Repossessed',
+    art: 'end_debt',
+    text: 'Curtis was polite to the end. He even helped carry the amp out. The clipboard is closed, the balance is settled, and your instrument now lives at Second Chances Pawn & Loan, radiating YOUR abandoned dream at the next kid who walks in. Maybe they’ll buy it. Maybe you will. Next run.',
+  },
+};
+
+// ---- Career Wall (spec §9) ----
+export const WALL_ITEMS = [
+  // Tier 1
+  { id: 'acc_ring_light', tier: 1, cost: 25, kind: 'accessory', target: 'ring_light',
+    name: 'Ring Light', desc: 'Accessory: Social/Fame choices +10. You now have a good side.' },
+  { id: 'acc_tour_van', tier: 1, cost: 30, kind: 'accessory', target: 'tour_van',
+    name: 'Tour Van (Runs)', desc: 'Accessory: Tour/Live +6, less tour burnout. The check-engine light is load-bearing.' },
+  { id: 'pack_festival', tier: 1, cost: 35, kind: 'pack', target: 'pack_festival',
+    name: 'Festival Circuit', desc: 'Event pack: 4 new festival cards enter the deck. Bring boots.' },
+  // Tier 2
+  { id: 'inst_electric', tier: 2, cost: 45, kind: 'instrument', target: 'electric_guitar',
+    name: 'Electric Guitar', desc: 'Instrument: an actual instrument. +Skill +Cred, Live +8. Feels like cheating.' },
+  { id: 'inst_sampler', tier: 2, cost: 45, kind: 'instrument', target: 'sampler',
+    name: 'Sampler / MPC', desc: 'Instrument: +Creativity +Network, Studio +8. Sixteen pads, infinite lawsuits.' },
+  { id: 'acc_rolodex', tier: 2, cost: 50, kind: 'accessory', target: 'session_rolodex',
+    name: 'Session Rolodex', desc: 'Accessory: Network/Deal/Studio +8. Physical. Alphabetized. Feared.' },
+  // Tier 3
+  { id: 'inst_voice', tier: 3, cost: 70, kind: 'instrument', target: 'own_voice',
+    name: 'Your Own Voice', desc: 'Instrument: free, portable, and everyone has an opinion about it. Vocal +10.' },
+];
+
+// ---- Trophy Room (spec §9) ----
+// `check(summary)` gets a run summary at run end.
+export const TROPHIES = [
+  { id: 'first_run', name: 'Participation', icon: '🎗️',
+    desc: 'Finish a run. Any run. The industry thanks you for your content.',
+    check: (s) => true },
+  { id: 'burnout_death', name: 'Do It For The Love', icon: '💼',
+    desc: 'Burn out completely. The fintech has great snacks.',
+    check: (s) => s.endingKey === 'burnout' },
+  { id: 'cancelled', name: 'Problematic', icon: '🚫',
+    desc: 'Hit zero Cred. The group chats are still going. About you.',
+    check: (s) => s.endingKey === 'cancelled' },
+  { id: 'repo_man', name: 'Gear: Gone', icon: '📋',
+    desc: 'Get repossessed by Curtis. He was polite about it.',
+    check: (s) => s.endingKey === 'debt' },
+  { id: 'win_megastar', name: 'Household Name', icon: '🌟',
+    desc: 'Achieve the Megastar ending. Your face is a bus now.',
+    check: (s) => s.path === 'megastar' && s.result === 'success' },
+  { id: 'win_studio', name: 'First Call', icon: '📞',
+    desc: 'Achieve the Studio Legend ending. The chair is yours.',
+    check: (s) => s.path === 'studio' && s.result === 'success' },
+  { id: 'win_hitfactory', name: 'The Codename', icon: '🏭',
+    desc: 'Achieve the Hit Factory ending. You wrote the summer.',
+    check: (s) => s.path === 'hitfactory' && s.result === 'success' },
+  { id: 'partial_any', name: 'Almost Famous', icon: '🥈',
+    desc: 'Earn a Partial ending. You made it, sort of. The “sort of” builds character.',
+    check: (s) => s.result === 'partial' },
+  { id: 'fame_100', name: 'Oversaturated', icon: '📈',
+    desc: 'End a run with 100+ Fame. People are tired of you. This is success.',
+    check: (s) => s.fame >= 100 },
+  { id: 'hits_5', name: 'The Machine', icon: '⚙️',
+    desc: 'Write 5+ Hits in one run. Nobody asks if the machine sleeps.',
+    check: (s) => s.hits >= 5 },
+  { id: 'kazoo_win', name: 'Kazoo Hero', icon: '🎺',
+    desc: 'Win any path with the Kazoo. Technically a membranophone. Spiritually a legend.',
+    check: (s) => s.instrument === 'kazoo' && s.result === 'success' },
+  { id: 'broke_finish', name: 'Starving Artist', icon: '🍜',
+    desc: 'Finish a full run with negative money. Exposure, sadly, is not legal tender.',
+    check: (s) => s.result !== null && s.money < 0 },
+  { id: 'zen_master', name: 'Well Rested', icon: '🧘',
+    desc: 'Reach the finale with Burnout under 20. Suspicious. Teach us.',
+    check: (s) => s.result !== null && s.burnout < 20 },
+  { id: 'all_paths', name: 'EGOT-Adjacent', icon: '👑',
+    desc: 'Achieve all three Success endings across your career. Touch grass, superstar.',
+    special: 'all_paths' },
+];

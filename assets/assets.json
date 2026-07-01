@@ -1,0 +1,21 @@
+{
+  "_readme": "Art slot manifest (spec §11). Each key is an art slot id referenced by events/instruments/accessories/endings. To ship real art: export to assets/art/<slot>.webp at the listed size, then register the path in js/data/assets.js (ASSET_MANIFEST). Placeholders render automatically for any slot without a path — no code changes needed.",
+  "_style_brief": "Flat, characterful editorial-cartoon look; limited palette; dry-comic energy matching the writing. Consistent protagonist silhouette across all ev_* cards. Never depict or name real living artists or brands.",
+  "_specs": {
+    "event_cards": { "slots": "ev_*", "size": "1080x675 (16:10), 2x retina", "safe_area": "top 20% low-detail (context label overlays)", "bleed": "full-bleed" },
+    "instruments": { "slots": "instrument_*", "size": "512x512, transparent background" },
+    "gear": { "slots": "gear_*", "size": "512x512, transparent background" },
+    "endings": { "slots": "end_*", "size": "1080x608 (16:9), full-bleed, splash treatment" }
+  },
+  "_notes": {
+    "ev_open_mic": "Dive bar open mic, nacho-scented despair, protagonist clutching janky instrument",
+    "ev_busk": "Farmers market corner standoff with a bagpiper (Craig)",
+    "ev_debt": "Polite man with clipboard (Curtis), ominous but courteous",
+    "ev_tour": "Dying van at night, 'FISH' airbrushed on the side",
+    "ev_stadium": "Stadium tunnel POV, wall of light and crowd ahead",
+    "end_burnout": "Protagonist at a fintech standing desk, kombucha tap, dead eyes, tiny kazoo in a drawer",
+    "end_megastar_win": "Stadium crowd from the stage, name in lights (bus optional)",
+    "end_studio_win": "Studio wall of gold records, phone ringing, worn instrument case",
+    "end_hitfactory_win": "Mixing console at golden hour, three charting phones face-up"
+  }
+}
