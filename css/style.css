@@ -332,6 +332,7 @@ body {
 .chip-good { background: #1e3c2b; color: var(--good); }
 .chip-bad { background: #4a2030; color: var(--bad); }
 .chip-gear { background: #3b2b1c; color: var(--accent); }
+.chip-rival { background: #33203f; color: var(--hot); }
 
 .gear-blurb { font-size: 13.5px; color: var(--dim); background: #1c1729; border-radius: 10px; padding: 10px; line-height: 1.4; }
 .gear-choices { display: flex; flex-direction: column; gap: 8px; }

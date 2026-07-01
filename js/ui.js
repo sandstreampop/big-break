@@ -3,6 +3,7 @@
 import { CONFIG, PATHS, STAT_META } from './config.js';
 import { ENDINGS, WALL_ITEMS, TROPHIES } from './data/meta.js';
 import { instrumentById, INSTRUMENTS } from './data/instruments.js';
+import { rivalById } from './data/rivals.js';
 import { accessoryById } from './data/accessories.js';
 import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
@@ -20,6 +21,13 @@ const el = (tag, cls, html) => {
   if (html !== undefined) n.innerHTML = html;
   return n;
 };
+
+// Fill {rival}/{rivalVibe} placeholders with this run's generated rival
+function fillText(s) {
+  if (!s || !run) return s;
+  const r = rivalById(run.rival);
+  return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe);
+}
 
 function reducedMotion() {
   if (meta.settings.reducedMotion !== null) return meta.settings.reducedMotion;
@@ -180,8 +188,8 @@ function dealCard() {
 
   const card = el('div', 'card');
   card.append(artFor(ev.art, 'card-art'));
-  card.append(el('div', 'card-context', ev.context));
-  card.append(el('div', 'card-prompt', ev.prompt));
+  card.append(el('div', 'card-context', fillText(ev.context)));
+  card.append(el('div', 'card-prompt', fillText(ev.prompt)));
   const hintL = el('div', 'swipe-hint hint-left', '');
   const hintR = el('div', 'swipe-hint hint-right', '');
   card.append(hintL, hintR);
@@ -306,7 +314,7 @@ function showResult(result) {
 
   const box = el('div', `result-card tier-${result.tier}`);
   box.append(el('div', 'tier-badge', TIER_LABEL[result.tier]));
-  box.append(el('p', 'result-text', result.text));
+  box.append(el('p', 'result-text', fillText(result.text)));
 
   const chips = el('div', 'delta-chips');
   for (const d of result.deltas) {
@@ -349,12 +357,17 @@ function showResult(result) {
 }
 
 function deltaChip(key, amount) {
+  const sign = amount > 0 ? '+' : '';
+  if (key === 'rivalry') {
+    const r = rivalById(run.rival);
+    return el('span', 'chip chip-rival',
+      `⚔ ${amount > 0 ? 'Feud with' : 'Peace with'} ${r.name} ${sign}${amount}`);
+  }
   const label = key === 'fame' ? 'Fame' : key === 'money' ? '$' : key === 'hits' ? 'Hit!'
     : key === 'pathProgress' ? 'Momentum' : (STAT_META[key]?.name || key);
   const icon = key === 'fame' ? '★' : key === 'money' ? '' : key === 'hits' ? '♪'
     : key === 'pathProgress' ? '▲' : (STAT_META[key]?.icon || '');
   const goodDelta = key === 'burnout' ? amount < 0 : amount > 0;
-  const sign = amount > 0 ? '+' : '';
   return el('span', 'chip ' + (goodDelta ? 'chip-good' : 'chip-bad'),
     `${icon} ${sign}${amount} ${label}`);
 }

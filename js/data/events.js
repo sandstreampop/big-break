@@ -349,6 +349,34 @@ export const EVENTS = [
     },
   },
 
+  {
+    id: 'a1_rival_intro', act: 1, pathAffinity: [], weight: 14,
+    art: 'ev_rival_intro', context: 'The act after yours',
+    prompt: 'You finish your set. Then {rival} — {rivalVibe} — walks up and plays the best thing you’ve heard all year. On YOUR stage. To YOUR nineteen fans.',
+    tags: ['live', 'rival'],
+    choices: {
+      left: {
+        label: 'Befriend them, learn everything',
+        governingStats: { network: 1.0 },
+        tags: ['network'],
+        outcomes: {
+          bad: { text: 'You compliment {rival} so hard it sounds sarcastic. They now think you’re a hater with a strategy.', effects: { network: 2, rivalry: 1 } },
+          good: { text: 'You buy {rival} a drink. They tell you exactly which venues pay and which “pay.” Priceless intel.', effects: { network: 6, cred: 2, rivalry: -2 } },
+          incredible: { text: 'Closing time jam session. You and {rival} — instant, unfair chemistry. The bartender films it, weeping.', effects: { network: 8, creativity: 4, fame: 3, rivalry: -3 } },
+        },
+      },
+      right: {
+        label: 'Swear silent, eternal rivalry',
+        governingStats: { creativity: 1.0 },
+        tags: ['risky'],
+        outcomes: {
+          bad: { text: 'You glare at {rival} from the merch table. They wave warmly. Somehow this makes it worse.', effects: { creativity: 3, burnout: 3, rivalry: 2 } },
+          good: { text: 'Spite is a renewable resource. You go home and write until 4 a.m. Best thing you’ve made in months.', effects: { creativity: 6, skill: 2, rivalry: 2 } },
+          incredible: { text: 'You channel it into a song so good even {rival} shares it, captioned “ok. heard.” The feud is ON and it is PRODUCTIVE.', effects: { creativity: 9, fame: 5, cred: 3, rivalry: 3 } },
+        },
+      },
+    },
+  },
   // ═══════════════════════ ACT 2 — THE GRIND ═══════════════════════
   // ---- Path-agnostic ----
   {
@@ -631,6 +659,62 @@ export const EVENTS = [
           bad: { text: 'Curtis finds you. Curtis always finds you. The clipboard has your setlist on it.', effects: { money: -80, cred: -4, burnout: 8, addFlag: 'debt' } },
           good: { text: 'You lay low for a month. Curtis leaves a card that just says “soon.”', effects: { burnout: 5 } },
           incredible: { text: 'You write a song about dodging Curtis. It slaps. Even Curtis streams it. Royalties cover the debt.', effects: { money: 200, fame: 6, creativity: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_rival_collab', act: 2, pathAffinity: [], weight: 9,
+    art: 'ev_rival_collab', context: '{rival}, sliding into your DMs',
+    prompt: '“Collab? One track. Your sound, my sound. The scene keeps comparing us anyway — might as well profit.” {rival} attaches a demo. It’s annoyingly good.',
+    tags: ['rival', 'write'],
+    choices: {
+      left: {
+        label: 'Collab. Bury the hatchet in a hit.',
+        governingStats: { network: 0.7, creativity: 0.6 },
+        tags: ['write', 'network'],
+        outcomes: {
+          bad: { text: 'Creative differences from minute one. The track dies in the group chat. The screenshots live forever.', effects: { network: 2, burnout: 5, rivalry: 2 } },
+          good: { text: 'The track works. Both fanbases claim victory. You split the streams and the compliments evenly-ish.', effects: { fame: 8, network: 5, creativity: 3, rivalry: -2 } },
+          incredible: { text: 'The collab outperforms everything either of you has done alone. Uncomfortable. Lucrative. Repeatable?', effects: { fame: 14, network: 7, creativity: 4, money: 150, rivalry: -3, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Decline. Drop a diss track instead.',
+        governingStats: { creativity: 1.0 },
+        tags: ['write', 'risky'],
+        outcomes: {
+          bad: { text: 'Your diss track has a typo in the title. {rival}’s response diss corrects your grammar. In harmony.', effects: { creativity: 3, fame: 2, cred: -2, rivalry: 3 } },
+          good: { text: 'The diss is surgical. {rival} responds within a week. The scene eats. Everyone streams both.', effects: { creativity: 5, fame: 9, cred: 3, rivalry: 3 } },
+          incredible: { text: 'Your diss is SO good it transcends beef and becomes simply a great song. Even {rival} performs it live once, bitterly.', effects: { creativity: 8, fame: 15, cred: 5, rivalry: 2, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_rival_leapfrog', act: 2, pathAffinity: [], weight: 8,
+    art: 'ev_rival_leap', context: 'The algorithm, twisting the knife',
+    prompt: '{rival} just got the playlist slot you’ve been chasing for months. Their announcement post uses the word “blessed” and, somehow, a yacht.',
+    tags: ['rival', 'social'],
+    choices: {
+      left: {
+        label: 'Congratulate them publicly',
+        governingStats: { cred: 0.8, network: 0.5 },
+        tags: ['social', 'safe'],
+        outcomes: {
+          bad: { text: 'Your gracious comment gets more likes than your last single. The internet is a comedy of cruelty.', effects: { cred: 3, burnout: 3, rivalry: -1 } },
+          good: { text: 'Class recognized. The playlist curator notices the classiest comment and clicks your profile.', effects: { cred: 5, network: 4, rivalry: -2 } },
+          incredible: { text: '{rival} DMs you: “that meant a lot. i told the curator about you.” The feud economy pays dividends.', effects: { cred: 6, network: 7, fame: 6, rivalry: -3 } },
+        },
+      },
+      right: {
+        label: 'Train harder. Montage mode.',
+        governingStats: { skill: 1.0 },
+        tags: ['practice'],
+        outcomes: {
+          bad: { text: 'You practice until your hands ache, fueled entirely by one yacht photo. Unsustainable. Effective. Unsustainable.', effects: { skill: 4, burnout: 7, rivalry: 1 } },
+          good: { text: 'Six focused weeks. Your live set gets measurably sharper than {rival}’s. You have receipts. Graphs, even.', effects: { skill: 7, cred: 2, burnout: 4, rivalry: 1 } },
+          incredible: { text: 'You emerge from the woodshed a different musician. The next promoter books you FIRST and {rival} as support. Balance restored.', effects: { skill: 10, cred: 4, fame: 4, burnout: 4, rivalry: 2 } },
         },
       },
     },
@@ -1257,6 +1341,64 @@ export const EVENTS = [
           bad: { text: '“That spot’s reserved.” For whom? “Someone who doesn’t ask.” Cold. Fair. Cold.', effects: { cred: 1 } },
           good: { text: 'The owner tells you an hour of stories about everyone on that wall. Free masterclass in how careers actually happen.', effects: { network: 5, cred: 4, creativity: 3 } },
           incredible: { text: 'The owner hands you the marker. “Sign it now. Pay me by making it true.” No pressure. All pressure.', effects: { cred: 7, network: 5, fame: 4, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_rival_showdown', act: 3, pathAffinity: [], weight: 14,
+    requires: { rivalryMin: 6 },
+    art: 'ev_rival_showdown', context: 'Festival main stage — the beef, televised',
+    prompt: 'The festival books you and {rival} back to back and calls it “THE RECKONING” on the poster. Neither of you approved this. Both of you are absolutely doing it.',
+    tags: ['rival', 'live', 'fame'],
+    choices: {
+      left: {
+        label: 'Play the set of your life',
+        governingStats: { skill: 0.8, creativity: 0.6 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: '{rival} takes the night. They bow to you from the stage — respectful, devastating, extremely shareable.', effects: { skill: 3, fame: 5, burnout: 8, rivalry: 1 } },
+          good: { text: 'You edge it. Not a knockout — a decision. The crowd chants both names but yours slightly louder. You counted.', effects: { skill: 4, fame: 12, cred: 5, burnout: 6, pathProgress: 1 } },
+          incredible: { text: 'You leave nothing. The set becomes legend by morning. {rival} posts one word — “gg” — and the internet weeps. THE moment of your career.', effects: { skill: 5, fame: 22, cred: 8, network: 5, burnout: 6, rivalry: -4, pathProgress: 2 } },
+        },
+      },
+      right: {
+        label: 'Invite them out mid-set (twist)',
+        governingStats: { network: 0.8, cred: 0.5 },
+        tags: ['live', 'network', 'risky'],
+        outcomes: {
+          bad: { text: '{rival} declines. On mic. From side-stage. The awkwardness is measurable on seismographs.', effects: { fame: 4, cred: -2, burnout: 6, rivalry: 2 } },
+          good: { text: 'They walk out. The crowd loses it. The feud dies onstage and something better replaces it.', effects: { fame: 12, network: 6, cred: 4, rivalry: -4 } },
+          incredible: { text: 'The surprise duet headlines every recap. “THE RECKONING becomes THE REUNION.” Promoters bid for the sequel.', effects: { fame: 18, network: 8, cred: 6, money: 200, rivalry: -5, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_rival_supergroup', act: 3, pathAffinity: [], weight: 14,
+    requires: { rivalryMax: 2 },
+    art: 'ev_rival_super', context: '{rival}, with a whiteboard',
+    prompt: '“Hear me out: supergroup. You, me, one album, we split everything, we tell no one until it drops.” {rival} has clearly rehearsed this. There are diagrams.',
+    tags: ['rival', 'write'],
+    choices: {
+      left: {
+        label: 'Join the supergroup',
+        governingStats: { network: 0.7, creativity: 0.7 },
+        tags: ['write', 'studio'],
+        outcomes: {
+          bad: { text: 'Two lead singers, zero rhythm sections. The supergroup dissolves over a track listing. The friendship survives, barely.', effects: { creativity: 3, network: 2, burnout: 6, rivalry: 1 } },
+          good: { text: 'The album is good — better together than apart, which stings and delights in equal measure.', effects: { creativity: 6, fame: 10, network: 5, money: 150, pathProgress: 1 } },
+          incredible: { text: 'The surprise drop detonates. Critics call it “the collaboration of the year.” The diagrams were right. {rival} was right.', effects: { creativity: 8, fame: 18, network: 7, cred: 5, money: 300, pathProgress: 2 } },
+        },
+      },
+      right: {
+        label: 'Stay solo — but produce their album',
+        governingStats: { cred: 0.7, creativity: 0.6 },
+        tags: ['studio', 'deal'],
+        outcomes: {
+          bad: { text: 'Producing your friend is a minefield of feelings. Track 7 nearly ends everything. You keep the receipts and the friendship.', effects: { cred: 3, creativity: 2, burnout: 5, money: 80 } },
+          good: { text: 'Their album, your fingerprints. It does numbers and your name rides the credits into new rooms.', effects: { cred: 6, creativity: 4, network: 4, money: 200, hits: 1 } },
+          incredible: { text: '{rival}’s album becomes their breakthrough — and the industry learns who shaped it. Your phone changes weight class.', effects: { cred: 8, creativity: 5, network: 7, money: 300, hits: 1, pathProgress: 1 } },
         },
       },
     },
