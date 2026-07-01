@@ -46,6 +46,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     money: CONFIG.moneyStart,
     hits: 0,
     pathProgress: 0,
+    badStreak: 0,
     path: null,
     instrument: instrumentId,
     accessories: [],
@@ -194,14 +195,17 @@ export function rollComponents(state, choice) {
   }
 
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
+  const pityBonus = Math.min((state.badStreak || 0) * CONFIG.pityPerBad, CONFIG.pityCap);
   const jitter = inst?.quirk?.hooks?.jitter || [CONFIG.jitterMin, CONFIG.jitterMax];
-  return { aptitude, gearBonus, quirkBonus, burnoutPenalty, jitter, appliedAccessories: applied };
+  const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
+    gearBonus + quirkBonus + burnoutPenalty + pityBonus;
+  return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, base, jitter, appliedAccessories: applied };
 }
 
 // Risk tell (spec §10): probability each tier fires, given uniform jitter.
 export function choiceOdds(state, choice) {
   const c = rollComponents(state, choice);
-  const base = c.aptitude + c.gearBonus + c.quirkBonus + c.burnoutPenalty;
+  const base = c.base;
   const [jMin, jMax] = c.jitter;
   const span = jMax - jMin + 1;
   let bad = 0, incredible = 0;
@@ -231,11 +235,12 @@ export function resolveSwipe(state, side, rng = Math.random) {
 
   const c = rollComponents(state, choice);
   const jitter = randInt(rng, c.jitter[0], c.jitter[1]);
-  const roll = c.aptitude + c.gearBonus + c.quirkBonus + c.burnoutPenalty + jitter;
+  const roll = c.base + jitter;
   let tier;
   if (roll < CONFIG.tierBadBelow) tier = 'bad';
   else if (roll >= CONFIG.tierIncredibleAt) tier = 'incredible';
   else tier = 'good';
+  state.badStreak = tier === 'bad' ? (state.badStreak || 0) + 1 : 0;
 
   const outcome = choice.outcomes[tier];
   const effects = { ...outcome.effects };
@@ -292,9 +297,10 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     push(stat, state.stats[stat] - before);
   }
 
-  // Burnout: quirk + accessory multipliers on tag-matched gains, plus per-use side effects
+  // Burnout: quirk + accessory multipliers on tag-matched gains, plus per-use
+  // side effects and passive act wear
   {
-    let v = effects.burnout || 0;
+    let v = (effects.burnout || 0) + (ev ? (CONFIG.actWear[state.act] || 0) : 0);
     if (v > 0) {
       if (hooks.burnoutTagMult && tagsIntersect(hooks.burnoutTagMult.tags, tags)) v *= hooks.burnoutTagMult.mult;
       for (const acc of accs) {
