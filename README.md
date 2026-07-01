@@ -9,7 +9,13 @@ you into content. A full run takes 5–10 minutes. Failing is frequent and
 funny; Legacy Points persist across runs and unlock new instruments, gear,
 and event packs on the Career Wall.
 
-**Play it:** open the deployed URL on your phone (portrait). Swipe the card
+**Play it (no install, phone Safari/Chrome):**
+- https://raw.githack.com/sandstreampop/big-break/gh-pages/index.html — live now
+- https://sandstreampop.github.io/big-break/ — after enabling Pages once:
+  repo **Settings → Pages → Deploy from a branch → `gh-pages` / (root)**.
+  The workflow in `.github/workflows/pages.yml` keeps it updated on every push.
+
+Open it on your phone (portrait). Swipe the card
 left/right, or use the buttons. The colored dot next to each choice is a
 vague risk tell — green is safe, red can go badly, purple glows when a big
 upside is in reach. Watch the 🔥 Burnout bar: hit 100 and you quit music to
