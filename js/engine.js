@@ -5,6 +5,7 @@ import { CONFIG } from './config.js';
 import { EVENTS } from './data/events.js';
 import { INSTRUMENTS, instrumentById } from './data/instruments.js';
 import { ACCESSORIES, accessoryById } from './data/accessories.js';
+import { randomRival } from './data/rivals.js';
 
 const STATS = ['skill', 'cred', 'creativity', 'network'];
 
@@ -47,6 +48,8 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     hits: 0,
     pathProgress: 0,
     badStreak: 0,
+    rival: randomRival(rng).id,
+    rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
     path: null,
     instrument: instrumentId,
     accessories: [],
@@ -81,6 +84,8 @@ function meetsRequires(ev, state) {
   if (r.burnoutMin !== undefined && state.stats.burnout < r.burnoutMin) return false;
   if (r.fameMin !== undefined && state.fame < r.fameMin) return false;
   if (r.gear && !r.gear.every((g) => state.accessories.includes(g))) return false;
+  if (r.rivalryMin !== undefined && (state.rivalry ?? 0) < r.rivalryMin) return false;
+  if (r.rivalryMax !== undefined && (state.rivalry ?? 0) > r.rivalryMax) return false;
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');
@@ -342,6 +347,11 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
 
   if (effects.hits) { state.hits += effects.hits; push('hits', effects.hits); }
   if (effects.pathProgress) { state.pathProgress += effects.pathProgress; push('pathProgress', effects.pathProgress); }
+  if (effects.rivalry) {
+    const before = state.rivalry ?? 3;
+    state.rivalry = clamp(before + effects.rivalry, 0, 10);
+    push('rivalry', state.rivalry - before);
+  }
 
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
@@ -494,5 +504,7 @@ export function runSummary(state) {
     stats: { ...state.stats },
     instrument: state.instrument,
     pathProgress: state.pathProgress,
+    rivalry: state.rivalry ?? 3,
+    rival: state.rival,
   };
 }
