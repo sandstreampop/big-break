@@ -51,6 +51,8 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     encore: 0,
     encoreChained: false,
     copingSeen: [],
+    chartSeed: Math.floor(rng() * 1e9) + 1,
+    chartTitles: [],
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
     path: null,
@@ -538,5 +540,9 @@ export function runSummary(state) {
     rival: state.rival,
     encoreChained: !!state.encoreChained,
     copingCount: (state.copingSeen || []).length,
+    // Hot 10 peak (mirrors js/charts.js playerChartInfo)
+    chartPeak: (state.fame + state.hits * 15) >= 20
+      ? Math.max(1, Math.min(10, 11 - Math.floor((state.fame + state.hits * 15) / 12)))
+      : null,
   };
 }
