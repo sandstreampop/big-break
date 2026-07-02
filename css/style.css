@@ -190,7 +190,11 @@ body {
   font-size: 11px; padding: 3px 9px; border-radius: 999px;
   background: #2a2340; color: var(--dim); border: 1px solid #3b3352;
   white-space: nowrap;
+  cursor: pointer;
 }
+.gear-chip:active { transform: scale(.95); }
+.stat { cursor: pointer; }
+.inspect-art { width: 100%; aspect-ratio: 16/9; border-radius: 12px; object-fit: cover; }
 .inst-chip { background: #3b2b1c; color: var(--accent); border-color: #5a4020; font-weight: 700; }
 .gear-chip.inert { opacity: .45; }
 .hustle-chip { background: #1e3c2b; color: var(--good); border-color: #2a5a3d; }

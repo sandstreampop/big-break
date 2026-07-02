@@ -310,6 +310,7 @@ function renderHud() {
     const v = run.stats[key];
     const item = el('div', 'stat' + (key === 'burnout' ? ' stat-burnout' : ''));
     item.dataset.stat = key;
+    item.addEventListener('click', () => { sfx.ui(); showInspectStat(key); });
     if (key === 'burnout' && v >= 70) item.classList.add('danger');
     else if (key === 'burnout' && v >= 45) item.classList.add('warn');
     item.title = STAT_META[key].name;
@@ -324,20 +325,42 @@ function renderHud() {
   hud.append(rail);
 
   const gearRow = el('div', 'gear-row');
+  const chip = (cls, html, sheet) => {
+    const c = el('span', cls, html);
+    c.addEventListener('click', () => { sfx.ui(); showInspect(sheet); });
+    gearRow.append(c);
+  };
   const inst = instrumentById(run.instrument);
-  gearRow.append(el('span', 'gear-chip inst-chip', `${inst.name}`));
+  chip('gear-chip inst-chip', inst.name, {
+    art: inst.art, title: inst.name, lines: [
+      inst.flavor, `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`,
+      `Family: ${inst.family} — gear with a family requirement only works when it matches.`,
+    ],
+  });
   const contract = contractById(run.contract);
-  if (contract) gearRow.append(el('span', 'gear-chip contract-chip-mini', `${contract.icon} ${contract.name}`));
+  if (contract) chip('gear-chip contract-chip-mini', `${contract.icon} ${contract.name}`, {
+    emoji: contract.icon, title: `${contract.name} (contract, ×${contract.lpMult} LP)`, lines: [contract.desc],
+  });
   const genre = genreById(run.genre);
-  if (genre) gearRow.append(el('span', 'gear-chip genre-chip-mini', `${genre.icon} ${genre.name}`));
+  if (genre) chip('gear-chip genre-chip-mini', `${genre.icon} ${genre.name}`, {
+    emoji: genre.icon, title: `${genre.name} (your sound)`, lines: [genre.flavor, `<b>Effect:</b> ${genre.blurb}`],
+  });
   for (const id of run.accessories) {
     const acc = accessoryById(id);
     const active = accActive(acc);
-    gearRow.append(el('span', 'gear-chip' + (active ? '' : ' inert'), acc.name + (active ? '' : ' 💤')));
+    chip('gear-chip' + (active ? '' : ' inert'), acc.name + (active ? '' : ' 💤'), {
+      art: acc.art, title: acc.name, lines: [
+        acc.flavor, `<b>Effect:</b> ${acc.blurb}`,
+        active ? '' : '💤 <b>Dormant:</b> this item doesn’t fit your current instrument’s family.',
+      ].filter(Boolean),
+    });
   }
   for (const id of run.hustles || []) {
     const h = hustleById(id);
-    if (h) gearRow.append(el('span', 'gear-chip hustle-chip', `${h.icon} +$${h.moneyPerAct}/act`));
+    if (h) chip('gear-chip hustle-chip', `${h.icon} +$${h.moneyPerAct}/act`, {
+      emoji: h.icon, title: `${h.name} (side hustle)`,
+      lines: [h.blurb, `<b>Pays:</b> $${h.moneyPerAct} at every act break and at the finale.`],
+    });
   }
   hud.append(gearRow);
 }
@@ -558,6 +581,39 @@ function commitSwipe(side, dx = 0, dy = 0) {
     card.style.opacity = '0';
     setTimeout(fly, 240);
   }
+}
+
+// ---------- Inspector (Pass 30): tap any chip or stat ----------
+
+const STAT_INFO = {
+  skill: 'Raw musicianship. Feeds the <b>Studio Legend</b> gate and steadies live/studio choices.',
+  cred: 'Industry respect — the floor under every path. Hits 0 in Act 2+ and you’re cancelled.',
+  creativity: 'Original ideas. Feeds the <b>Hit Factory</b> gate and weird/indie choices.',
+  network: 'Who owes you a favor. Feeds the <b>Megastar</b> gate and every deal.',
+  burnout: 'The danger stat. Every point drags all rolls down; at 100 you quit music for a fintech. Rest cards and coping moments push it back.',
+};
+
+function showInspect(sheet) {
+  const ov = $('#overlay');
+  ov.innerHTML = '';
+  ov.classList.add('active');
+  const box = el('div', 'result-card');
+  box.append(el('div', 'tier-badge', 'INSPECT'));
+  if (sheet.art) box.append(artFor(sheet.art, 'inspect-art'));
+  box.append(el('p', 'result-text', `${sheet.emoji ? sheet.emoji + ' ' : ''}<b>${sheet.title}</b>`));
+  for (const line of sheet.lines || []) box.append(el('p', 'gear-blurb', line));
+  box.append(el('p', 'tap-hint', 'tap to close'));
+  ov.append(box);
+  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
+  setTimeout(() => ov.addEventListener('click', done), 200);
+}
+
+function showInspectStat(key) {
+  showInspect({
+    emoji: STAT_META[key].icon,
+    title: `${STAT_META[key].name}: ${run.stats[key]}`,
+    lines: [STAT_INFO[key]],
+  });
 }
 
 // ---------- Help sheet + first-run coach marks (Pass 12) ----------
