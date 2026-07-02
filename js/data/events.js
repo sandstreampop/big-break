@@ -1826,6 +1826,35 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a2_soundcheck_hell', act: [1, 2], pathAffinity: [], weight: 9,
+    art: 'ev_checkhell', context: 'Soundcheck. The board is “vintage.” The sound guy is “at lunch.”',
+    prompt: 'Every channel on this desk has a personality disorder and the monitors squeal if you look at them with intent. Doors in forty minutes. The room is yours to tame — or to flee.',
+    tags: ['live', 'tone'],
+    choices: {
+      left: {
+        label: 'Ride the board yourself',
+        minigame: 'feedback',
+        governingStats: { skill: 0.9 },
+        tags: ['tone', 'risky'],
+        outcomes: {
+          bad: { text: 'You chase the squeal through six channels like a rat through drywall. Doors open to a hum you’ve decided is “ambience.” Two people ask if it’s part of the set. You say yes. It is now.', effects: { skill: 3, burnout: 5, cred: 1 } },
+          good: { text: 'Channel by channel, you strangle every squeal. By doors, the vintage desk purrs like it’s 1974 and proud of it. The returning sound guy inspects your gain staging and says “huh” — the highest honor.', effects: { skill: 5, cred: 4, network: 2 } },
+          incredible: { text: 'You don’t just tame the board, you FIX the room — a folded beer mat under the monitor, a mystery cable retired, the squeal gone at the source. Tonight the venue sounds better than it has in years, and everyone who works here knows exactly why.', effects: { skill: 7, cred: 6, network: 4, fame: 2 } },
+        },
+      },
+      right: {
+        label: 'Play the room acoustic, no board',
+        governingStats: { cred: 0.8, creativity: 0.5 },
+        tags: ['live', 'indie', 'safe'],
+        outcomes: {
+          bad: { text: 'Unplugged in a room built for volume: the fridge behind the bar wins the low end. Intimate, yes. Audible, in places.', effects: { cred: 3, fame: 1, burnout: 3 } },
+          good: { text: 'You pull the crowd into a half-circle and play into the silence the dead PA left behind. No squeal. No net. It works the old way — the oldest way.', effects: { cred: 6, creativity: 3, fame: 2 } },
+          incredible: { text: 'The unplugged set becomes the story: forty people leaning in, the bartender killing the fridge for the quiet song. Someone posts it captioned “no mic no fear.” The venue books you back for MORE money, no PA required.', effects: { cred: 8, creativity: 4, fame: 4, money: 80 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_afterparty', act: 2, pathAffinity: [], weight: 11,
     art: 'ev_afterparty', context: 'Somebody’s loft. Everybody’s business cards.',
     prompt: 'The showcase afterparty. Dario is here. Grub is here. A blogger who spells your name three ways is here. A&R Kim — the actual reason anyone came — is here. Everyone is one drifting conversation away from forgetting you exist.',
