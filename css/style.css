@@ -1099,3 +1099,9 @@ body.big-text #app { zoom: 1.18; }
 @media (prefers-reduced-motion: reduce) { .mg-shaky { animation: none; } }
 .mg-shaky-note { text-align: center; font-size: 12px; font-weight: 800; color: var(--bad); }
 .mg-pad-you { background: #1e3c2b; border-color: var(--good); box-shadow: 0 0 16px rgba(95,214,138,.4); }
+
+/* scrapbook performance badges */
+.scrap-mg { font-size: 10px; font-weight: 900; letter-spacing: .05em; padding: 1px 6px; border-radius: 999px; background: #322a47; color: var(--dim); }
+.scrap-mg-golden { background: #3b2b1c; color: var(--accent); }
+.scrap-mg-botched { background: #4a2030; color: var(--bad); }
+.scrap-mg-solid { background: #1e3c2b; color: var(--good); }

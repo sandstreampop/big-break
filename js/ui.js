@@ -775,6 +775,7 @@ function commitSwipe(side, dx = 0, dy = 0) {
       if (score != null) {
         meta.minigamesPlayed = meta.minigamesPlayed || {};
         meta.minigamesPlayed[mgId] = (meta.minigamesPlayed[mgId] || 0) + 1;
+        if (verdict.label === 'GOLDEN') meta.mgGolden = (meta.mgGolden || 0) + 1;
         save.saveMeta(meta);
       }
       currentCard = card; // hand back for the normal path
@@ -795,6 +796,8 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
   const result = engine.resolveSwipe(run, side, engine.stateRng(run), { encore: encoreArmed, bonus: perf?.bonus || 0 });
   if (perf) {
     result.minigameInfo = perf;
+    const logEntry = run.cardLog?.[run.cardLog.length - 1];
+    if (logEntry) logEntry.m = perf.label; // the scrapbook remembers the performance
     // skill echoes: standout performances enter the fiction as flags
     if (perf.label === 'GOLDEN' && !run.flags.includes('mg_golden')) run.flags.push('mg_golden');
     if (perf.label === 'GOLDEN' && run.stats.burnout >= 60 && !run.flags.includes('mg_steady')) run.flags.push('mg_steady');
@@ -1758,8 +1761,9 @@ function showScrapbook(summary) {
     const choice = ev.choices[entry.s];
     const row = el('div', 'scrap-row t-' + entry.t);
     row.append(el('span', 'scrap-tier', TIER_EMOJI[entry.t] || '⬜'));
+    const perfBadge = entry.m ? ` <span class="scrap-mg scrap-mg-${entry.m.toLowerCase()}">🎮 ${entry.m}</span>` : '';
     row.append(el('span', 'scrap-text',
-      `<b>${fillText(ev.context)}</b> — “${choice ? choice.label : '?'}”`));
+      `<b>${fillText(ev.context)}</b> — “${choice ? choice.label : '?'}”${perfBadge}`));
     box.append(row);
   }
   box.append(el('p', 'tap-hint', 'tap to close'));
@@ -1902,6 +1906,9 @@ function renderResume() {
   row('Best fame', `★${meta.best.fame}`);
   row('Legacy earned', `${meta.lpEarnedTotal} LP`);
   row('Dailies played', Object.keys(meta.dailyResults || {}).length);
+  const mgPlays = Object.values(meta.minigamesPlayed || {}).reduce((a, b) => a + b, 0);
+  if (mgPlays) row('Performances played', `${mgPlays} (${Object.keys(meta.minigamesPlayed).length} kinds)`);
+  if (meta.mgGolden) row('GOLDEN moments', meta.mgGolden);
 
   list.append(el('h3', 'wall-tier', 'By path'));
   for (const [pid, p] of Object.entries(lt.byPath)) {
