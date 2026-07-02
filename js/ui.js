@@ -686,8 +686,11 @@ function attachDrag(card, bL, bR) {
     const t = Math.min(1, Math.abs(dx) / 70);
     card.querySelector('.hint-left').style.opacity = dx < 0 ? t : 0;
     card.querySelector('.hint-right').style.opacity = dx > 0 ? t : 0;
+    const wasArmed = bL.classList.contains('armed') || bR.classList.contains('armed');
     bL.classList.toggle('armed', dx < -threshold);
     bR.classList.toggle('armed', dx > threshold);
+    const isArmed = bL.classList.contains('armed') || bR.classList.contains('armed');
+    if (isArmed && !wasArmed) vibrate(10); // tactile "past the point of no return"
   });
   const release = (e) => {
     if (!dragging || (pid !== null && e.pointerId !== pid)) return;
