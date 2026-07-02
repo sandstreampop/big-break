@@ -21,6 +21,7 @@ import { buildEpilogue } from './epilogue.js';
 import { renderShareImage } from './sharecard.js';
 import { buildDiscography } from './discography.js';
 import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
+import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from './analytics.js';
 
 let meta = save.loadMeta();
 let run = null;
@@ -58,6 +59,7 @@ function show(id) {
 // ---------- Title ----------
 
 export function boot() {
+  initAnalytics(meta.settings);
   setSoundEnabled(meta.settings.sound);
   setMusicEnabled(meta.settings.music !== false);
   music.setMood('title');
@@ -121,6 +123,7 @@ function renderTitle() {
     // First install: the game opens with a playable lesson, not a manual
     menu.append(btn('▶ Play — Your First Gig', 'primary', startTutorial));
     menu.append(btn('Skip the gig — I know the drill', 'ghost', () => {
+      track('tutorial_skip', {});
       meta.tutorialDone = true;
       save.saveMeta(meta);
       startNewRun();
@@ -221,6 +224,12 @@ function startNewRun(daily = false, comeback = false) {
     if (comeback) engine.applyComeback(run);
     run.nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 2; // 3rd+ meeting
     save.saveRun(run);
+    track('run_start', {
+      instrument: inst.id, contract: chosenContract || null,
+      genre: chosenGenre || null, venue: chosenVenue || null,
+      mode: daily ? 'daily' : comeback ? 'comeback' : 'normal',
+      mastery: lv, career_runs: meta.runs || 0,
+    });
     dealCard();
   };
 
@@ -749,7 +758,13 @@ function commitSwipe(side, dx = 0, dy = 0) {
   currentCard = null;
   sfx.swipe();
 
+  const armed = encoreArmed;
   const result = engine.resolveSwipe(run, side, engine.stateRng(run), { encore: encoreArmed });
+  track('swipe', {
+    card: result.event?.id, side, tier: result.tier,
+    act: run.act, path: run.path || null, tutorial: !!run.tutorial,
+    encore_armed: armed, burnout: run.stats.burnout,
+  });
   encoreArmed = false;
   $('#encore-bar').innerHTML = '';
   save.saveRun(run);
@@ -1067,6 +1082,7 @@ function startTutorial() {
   run = engine.newTutorialRun(engine.mulberry32(seed));
   run.seed = seed + 2;
   save.saveRun(run);
+  track('tutorial_start', { replay: !!meta.tutorialDone });
   dealCard();
 }
 
@@ -1075,6 +1091,7 @@ function startTutorial() {
 function renderTutorialEnd() {
   save.clearRun();
   const firstTime = !meta.tutorialDone;
+  track('tutorial_complete', { first_time: firstTime });
   meta.tutorialDone = true;
   // the generic coach marks would re-teach what the gig just taught
   meta.coach = { ...(meta.coach || {}), card: true, result: true };
@@ -1493,6 +1510,12 @@ function renderFinale() {
   const earned = finishMeta(summary, lp);
 
   const ending = ENDINGS[run.path][evalr.result];
+  track('run_end', {
+    outcome: evalr.result, path: run.path, cause: 'finale',
+    cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
+    burnout: run.stats.burnout, lp, instrument: summary.instrument,
+    contract: summary.contract || null, chart_peak: summary.chartPeak || null,
+  });
   if (evalr.result === 'success') sfx.winPath(run.path); else if (evalr.result === 'failure') sfx.gameover(); else sfx.good();
   renderEndingScreen(ending, lp, earned, evalr, summary);
 }
@@ -1507,6 +1530,12 @@ function renderGameOver(endingKey) {
   summary.exitChoice = run.exitChoice || null;
   let lp = engine.legacyPoints(run) + (run.exitLpBonus || 0);
   const earned = finishMeta(summary, lp);
+  track('run_end', {
+    outcome: 'gameover', path: run.path || null, cause: endingKey,
+    cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
+    burnout: run.stats.burnout, lp, instrument: summary.instrument,
+    contract: summary.contract || null,
+  });
   sfx.gameover();
   renderEndingScreen(ENDINGS[endingKey], lp, earned, null, summary);
 }
@@ -1886,6 +1915,10 @@ function renderSettings() {
     meta.settings.bigText = !meta.settings.bigText;
     document.body.classList.toggle('big-text', meta.settings.bigText);
   });
+  toggleRow('Anonymous analytics', analyticsEnabled(), () => {
+    meta.settings.analytics = !analyticsEnabled();
+    setAnalyticsEnabled(meta.settings.analytics);
+  });
 
   menu.append(el('h3', 'contract-head', 'Career data'));
   menu.append(btn('❓ How to play', '', showHelp));
@@ -1903,6 +1936,14 @@ function renderSettings() {
     }
   });
   menu.append(exportBtn);
+  const diagBtn = btn('🔬 Send session data (for playtests)', '', async () => {
+    const blob = exportEvents();
+    try {
+      if (navigator.share) await navigator.share({ text: blob });
+      else { await navigator.clipboard.writeText(blob); diagBtn.textContent = '📋 Copied — paste it to the dev.'; }
+    } catch (e) { prompt('Copy your session data:', blob); }
+  });
+  menu.append(diagBtn);
   menu.append(btn('📥 Import save (paste code)', '', () => {
     const code = prompt('Paste your BIG BREAK save code (starts with BB1.):');
     if (!code) return;
