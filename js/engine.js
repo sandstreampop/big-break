@@ -271,8 +271,29 @@ export function chartTick(state) {
     }
     s.hype = Math.round(s.hype * 0.55);
   }
+  // The chart war: your best song vs the rival's single, same ten slots
+  const best = state.songs.filter((s) => s.status === 'charting' && s.pos)
+    .sort((a, b) => a.pos - b.pos)[0];
+  if (best) {
+    const rp = rivalChartPos(state);
+    if (best.pos < rp && !state.flags.includes('chart_passed_rival')) {
+      state.flags.push('chart_passed_rival');
+      notes.push(`♪ “${best.title}” passes your rival on the chart. First blood.`);
+      moves.push({ title: best.title, kind: 'rivalPassed', from: rp, to: best.pos, weeks: best.weeks });
+    } else if (Math.abs(best.pos - rp) === 1) {
+      moves.push({ title: best.title, kind: 'rivalNeck', from: rp, to: best.pos, weeks: best.weeks });
+    }
+  }
   state.lastChartWeek = moves.length ? { act: state.act, moves } : null;
   return notes;
+}
+
+// Where the rival's single sits on the Hot 10 (shared with charts.js so the
+// rendered chart and the chart-war logic never disagree): they start high
+// and sink as your fame grows — but a hot rivalry keeps them sharp.
+export function rivalChartPos(state) {
+  return Math.max(1, Math.min(10,
+    9 - Math.floor(state.fame / 22) - Math.floor((state.rivalry ?? 3) / 3)));
 }
 
 // The song most worth talking about right now (for {song} templating)

@@ -4,6 +4,7 @@
 // rival is always lurking somewhere in it.
 
 import { rivalById } from './data/rivals.js';
+import { rivalChartPos } from './engine.js';
 
 function mulberry32(a) {
   return function () {
@@ -59,8 +60,7 @@ function industryRows(state) {
       you: false, rival: false,
     });
   }
-  const rivalPos = Math.max(1, Math.min(10,
-    9 - Math.floor(state.fame / 22) - Math.floor((state.rivalry ?? 3) / 3)));
+  const rivalPos = rivalChartPos(state);
   rows[rivalPos - 1] = {
     artist: rival.name, song: songName(rng), weeks: 2 + Math.floor(rng() * 6),
     you: false, rival: true,
