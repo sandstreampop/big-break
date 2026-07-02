@@ -57,8 +57,8 @@ export const CONFIG = {
 
   winGates: {
     megastar:   { fame: 95, network: 72, cred: 35 },
-    studio:     { skill: 75, cred: 62, network: 48 },
-    hitfactory: { creativity: 88, cred: 62, hits: 4 },
+    studio:     { skill: 73, cred: 62, network: 48 },
+    hitfactory: { creativity: 92, cred: 64, hits: 4 },
   },
 
   // Passive burnout per card resolved in each act — the grind wears you
