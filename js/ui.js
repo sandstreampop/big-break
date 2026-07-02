@@ -854,31 +854,33 @@ function showResult(result) {
   box.append(el('div', 'tier-badge', TIER_LABEL[result.tier]));
   box.append(el('p', 'result-text', fillText(result.text)));
 
+  // Numeric stat deltas: compact uniform chips.
   const chips = el('div', 'delta-chips');
-  if (result.encoreSpent) chips.append(el('span', 'chip chip-encore', '🎇 Encore spent'));
-  if (result.encoreEarned) chips.append(el('span', 'chip chip-encore', '🎇 ENCORE earned — bank it for the right card'));
   for (const d of result.deltas) {
     chips.append(deltaChip(d.key, d.amount));
   }
-  if (result.gearLost) chips.append(el('span', 'chip chip-bad', `− ${result.gearLost.name} (lost!)`));
-  if (result.venueLeveled) chips.append(el('span', 'chip chip-gear', `${result.venueLeveled.venue.icon} ${result.venueLeveled.venue.name} → ${result.venueLeveled.tier.name}!`));
-  else if (result.venueHosted) chips.append(el('span', 'chip chip-good', `${result.venueHosted.venue.icon} home crowd +${result.venueHosted.tier.showBonus}`));
-  for (const p of result.promisesKept || []) chips.append(el('span', 'chip chip-good', `🤞 Promise kept: ${p.label}`));
-  for (const p of result.promisesBroken || []) chips.append(el('span', 'chip chip-bad', `💔 Promise broken: ${p.label}`));
-  if (result.promiseMade) chips.append(el('span', 'chip chip-gear', `🤞 Promised: ${result.promiseMade.label} (${result.promiseMade.cards} cards)`));
-  const joined = result.deltas.bandmateJoined;
-  if (joined) chips.append(el('span', 'chip chip-gear', `${joined.icon} ${joined.name} joins the band!`));
-  if (result.deltas.bandmateLeft) chips.append(el('span', 'chip chip-bad', `${result.deltas.bandmateLeft.icon} ${result.deltas.bandmateLeft.name} quits`));
-  const hustle = result.deltas.hustleGained;
-  if (hustle) {
-    chips.append(el('span', 'chip chip-gear', `${hustle.icon} Side hustle: ${hustle.name} (+$${hustle.moneyPerAct}/act)`));
-  }
-  const newInst = result.deltas.instrumentSet;
-  if (newInst) chips.append(el('span', 'chip chip-gear', `🎸 Now playing: ${newInst.name}`));
   box.append(chips);
-  if (hustle?.blurb) box.append(el('p', 'gear-blurb', `${hustle.icon} ${hustle.blurb}`));
-  if (joined) box.append(el('p', 'gear-blurb', `${joined.icon} <b>${joined.name}</b> (${joined.role}) — ${joined.quirkDesc}`));
-  if (newInst) box.append(el('p', 'gear-blurb', `🎸 <b>${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`));
+
+  // Everything with a sentence to say gets a full-width notice row —
+  // long text wraps inside its own row instead of a distorted pill.
+  const notices = el('div', 'result-notices');
+  const notice = (cls, html) => notices.append(el('div', `notice ${cls}`, html));
+  if (result.encoreSpent) notice('notice-encore', '🎇 Encore spent — that roll was boosted');
+  if (result.encoreEarned) notice('notice-encore', '🎇 <b>Encore earned</b> — bank it for the right card');
+  if (result.gearLost) notice('notice-bad', `🧰 <b>${result.gearLost.name}</b> — lost!`);
+  if (result.venueLeveled) notice('notice-gear', `${result.venueLeveled.venue.icon} <b>${result.venueLeveled.venue.name}</b> levels up: ${result.venueLeveled.tier.name}`);
+  else if (result.venueHosted) notice('notice-good', `${result.venueHosted.venue.icon} Home crowd: +${result.venueHosted.tier.showBonus} on that roll`);
+  for (const p of result.promisesKept || []) notice('notice-good', `🤞 <b>Promise kept:</b> ${p.label}`);
+  for (const p of result.promisesBroken || []) notice('notice-bad', `💔 <b>Promise broken:</b> ${p.label}`);
+  if (result.promiseMade) notice('notice-gear', `🤞 <b>Promised:</b> ${result.promiseMade.label} — ${result.promiseMade.cards} cards to deliver`);
+  const joined = result.deltas.bandmateJoined;
+  if (joined) notice('notice-gear', `${joined.icon} <b>${joined.name}</b> (${joined.role}) joins the band — ${joined.quirkDesc}`);
+  if (result.deltas.bandmateLeft) notice('notice-bad', `${result.deltas.bandmateLeft.icon} <b>${result.deltas.bandmateLeft.name}</b> quits the band`);
+  const hustle = result.deltas.hustleGained;
+  if (hustle) notice('notice-gear', `${hustle.icon} <b>Side hustle: ${hustle.name}</b> (+$${hustle.moneyPerAct}/act)${hustle.blurb ? ' — ' + hustle.blurb : ''}`);
+  const newInst = result.deltas.instrumentSet;
+  if (newInst) notice('notice-gear', `🎸 <b>Now playing: ${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`);
+  box.append(notices);
 
   // Shop shelf: choose which item you actually bought (Pass 33)
   const shelf = result.deltas.pendingGearChoices;
@@ -909,9 +911,8 @@ function showResult(result) {
     if (run.accessories.length < CONFIG.accessorySlots) {
       const extra = engine.equipAccessory(run, pending.id) || [];
       save.saveRun(run);
-      chips.append(el('span', 'chip chip-gear', `+ ${pending.name}`));
       for (const d of extra) chips.append(deltaChip(d.key, d.amount));
-      if (pending.blurb) box.append(el('p', 'gear-blurb', `🧰 <b>${pending.name}</b> — ${pending.blurb}`));
+      notice('notice-gear', `🧰 <b>${pending.name}</b> is yours${pending.blurb ? ' — ' + pending.blurb : ''}`);
     } else {
       box.append(el('p', 'gear-blurb', `🧰 <b>${pending.name}</b> is yours — but your ${CONFIG.accessorySlots} slots are full.`));
       box.append(btn('Choose what to keep', 'primary', () => {
@@ -950,11 +951,15 @@ function deltaChip(key, amount) {
     return el('span', 'chip chip-rival',
       `⚔ ${amount > 0 ? 'Feud with' : 'Peace with'} ${nemesis ? 'your nemesis ' : ''}${r.name} ${sign}${amount}`);
   }
-  const label = key === 'fame' ? 'Fame' : key === 'money' ? '$' : key === 'hits' ? 'Hit!'
-    : key === 'pathProgress' ? 'Momentum' : (STAT_META[key]?.name || key);
-  const icon = key === 'fame' ? '★' : key === 'money' ? '' : key === 'hits' ? '♪'
-    : key === 'pathProgress' ? '▲' : (STAT_META[key]?.icon || '');
   const goodDelta = key === 'burnout' ? amount < 0 : amount > 0;
+  if (key === 'money') {
+    return el('span', 'chip ' + (goodDelta ? 'chip-good' : 'chip-bad'),
+      `${amount > 0 ? '+' : '−'}$${Math.abs(amount)}`);
+  }
+  const label = key === 'fame' ? 'Fame' : key === 'hits' ? 'Hit!'
+    : key === 'pathProgress' ? 'Momentum' : (STAT_META[key]?.name || key);
+  const icon = key === 'fame' ? '★' : key === 'hits' ? '♪'
+    : key === 'pathProgress' ? '▲' : (STAT_META[key]?.icon || '');
   return el('span', 'chip ' + (goodDelta ? 'chip-good' : 'chip-bad'),
     `${icon} ${sign}${amount} ${label}`);
 }
