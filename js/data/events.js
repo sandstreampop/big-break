@@ -3405,6 +3405,96 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a3_shed_doc', act: 3, pathAffinity: [], weight: 16,
+    requires: { flagsAll: ['home_studio', 'docu_gold'] },
+    art: 'ev_shed_doc', context: 'Juniper, standing in the shed, arms wide',
+    prompt: '“THIS. This is the final scene of the doc — you, in the room you built, playing the thing the whole film has been walking toward.” Juniper has already lit it. The shed has never looked so much like a cathedral with a rooster problem.',
+    tags: ['record', 'fame'],
+    choices: {
+      left: {
+        label: 'One take, in the shed, cameras rolling',
+        minigame: 'take',
+        governingStats: { skill: 0.6, creativity: 0.6 },
+        tags: ['record', 'risky'],
+        outcomes: {
+          bad: { text: 'The take is human — a flub in the bridge, a laugh you can hear, the rooster exactly on cue. Juniper keeps ALL of it. “Perfect was never the assignment.” The scene is honest, which is better.', effects: { creativity: 4, cred: 4, fame: 3, addFlag: 'constellation' } },
+          good: { text: 'The take lands whole, and the shed does its shed thing — warm, close, true. On screen it will look like the entire career happened so this room could exist. It sort of did.', effects: { creativity: 6, cred: 6, fame: 5, addFlag: 'constellation' } },
+          incredible: { text: 'The take Juniper captures in the shed becomes the doc’s final three minutes, unbroken, one shot. Festival audiences will sit silent through the credits. The shed — a SHED — gets its own applause break at the premiere.', effects: { creativity: 8, cred: 8, fame: 8, pathProgress: 1, addFlag: 'constellation' } },
+        },
+      },
+      right: {
+        label: '“The shed stays off camera.”',
+        governingStats: { cred: 1.0 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'Juniper argues, loses, and shoots the finale at the venue instead. It’s fine. You keep one room that belongs to no narrative. Some Tuesdays that feels like the wrong call. Most Tuesdays it doesn’t.', effects: { cred: 4, addFlag: 'constellation' } },
+          good: { text: '“Some rooms are for making things, not filming them.” Juniper, to their credit, puts THAT line in the doc instead — over a shot of the shed’s closed door. It plays better than any interior could have.', effects: { cred: 7, creativity: 2, addFlag: 'constellation' } },
+          incredible: { text: 'The closed shed door becomes the doc’s most discussed image — the room the film never enters. Critics call it “the last private place in a public life.” You read that in the shed, laughing, with the door shut.', effects: { cred: 9, fame: 4, addFlag: 'constellation' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_bloom_festival', act: 3, pathAffinity: [], weight: 16,
+    requires: { flagsAll: ['helped_bloom'], rivalryMin: 6 },
+    art: 'ev_bloom_fest', context: 'Static Bloom’s festival. One slot left. Two names on the shortlist.',
+    prompt: 'Static Bloom curates a festival now, and the last slot is between you and {rival} — who has already texted you a single knife emoji. Bloom calls: “We owe you the amp debt. But they drew better numbers last quarter. Help us out: settle it yourselves.”',
+    tags: ['live', 'rival'],
+    choices: {
+      left: {
+        label: 'Soundclash. Winner takes the slot.',
+        minigame: 'crowd',
+        governingStats: { skill: 0.7, cred: 0.5 },
+        tags: ['live', 'risky', 'rival'],
+        outcomes: {
+          bad: { text: 'The clash is close — closer than your pride wanted. {rival} takes it on crowd noise, then, at the mic: “Give the slot to them anyway. The amp story is better than my numbers.” Losing has never been this complicated.', effects: { fame: 5, cred: 4, rivalry: -1, addFlag: 'constellation' } },
+          good: { text: 'You win the clash clean, and {rival} concedes with a bow so theatrical it loops back to sincere. Bloom posts the whole thing. The festival slot is yours, and the feud gains a chapter everyone enjoyed.', effects: { fame: 9, cred: 5, network: 3, rivalry: 1, addFlag: 'constellation' } },
+          incredible: { text: 'The soundclash becomes the festival’s origin myth — two rivals emptying the tank while Static Bloom watches like proud parents. You win, barely, and the crowd demands BOTH of you play the slot. So you do. Together. The knife emoji becomes a tattoo you both get. Allegedly.', effects: { fame: 14, cred: 7, network: 4, rivalry: -2, pathProgress: 1, addFlag: 'constellation' } },
+        },
+      },
+      right: {
+        label: 'Cede the slot. Call in the debt LATER.',
+        governingStats: { network: 0.9 },
+        tags: ['deal', 'safe'],
+        outcomes: {
+          bad: { text: 'You cede gracefully. {rival} plays the slot and kills. The debt sits in Bloom’s ledger accruing… something. Interest, hopefully. Patience, definitely.', effects: { network: 3, cred: 3, addFlag: 'constellation' } },
+          good: { text: '“Give them the slot. I’ll take the favor.” Bloom’s manager writes it down — an IOU from the biggest band in the country, on paper, witnessed. {rival} plays great and knows exactly what you bought. It costs them the win a little.', effects: { network: 6, cred: 4, addFlag: 'constellation' } },
+          incredible: { text: 'The favor you bank instead turns out to be Bloom producing your next record — announced casually in an interview before they told YOU. {rival} got one festival evening. You got a co-sign that reroutes a career. The ledger closes; the amp debt is finally, absurdly, repaid.', effects: { network: 8, cred: 6, fame: 5, pathProgress: 1, addFlag: 'constellation' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_shed_collab', act: 3, pathAffinity: [], weight: 16,
+    requires: { flagsAll: ['home_studio', 'collab'] },
+    art: 'ev_shed_collab', context: 'A very nice car, parked very badly, outside a shed',
+    prompt: '{collabArtist} heard about the room. “Every studio I book sounds like a bank. Yours sounds like a SECRET.” They’re standing in your garden holding their own mic like an offering. The neighbors are at their windows.',
+    tags: ['record', 'fame'],
+    choices: {
+      left: {
+        label: 'Run the session. Shed rules apply.',
+        minigame: 'take',
+        governingStats: { creativity: 0.7, network: 0.4 },
+        tags: ['record', 'indie'],
+        outcomes: {
+          bad: { text: 'A chart artist in a shed is a physics problem — their entourage waits outside in shifts. The session is awkward till the rooster interrupts a take and {collabArtist} laughs so hard they keep the laugh in the song.', effects: { creativity: 4, network: 3, fame: 3, addFlag: 'constellation' } },
+          good: { text: 'Shed rules: no entourage, no clock, warm mics. {collabArtist} sings looser than they have in years — “this is what I sounded like BEFORE.” The track needs nothing. The shed strikes again.', effects: { creativity: 6, network: 5, fame: 5, money: 200, addFlag: 'constellation' } },
+          incredible: { text: 'The shed session leaks — one phone photo of a superstar’s very nice car outside a very humble shed — and becomes the myth that eats the industry: THE room. {collabArtist} credits it by name. Your garden has a waiting list now. The rooster has a rider.', effects: { creativity: 8, network: 7, fame: 8, money: 350, pathProgress: 1, addFlag: 'constellation' } },
+        },
+      },
+      right: {
+        label: 'Protect the secret. Offer the venue instead.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'indie'],
+        outcomes: {
+          bad: { text: 'You redirect them to the good studio across town. They go, mildly wounded. The shed stays a secret, which was the point, and costs a story, which was the price.', effects: { cred: 4, addFlag: 'constellation' } },
+          good: { text: '“The shed doesn’t take bookings. But I’ll produce you AT a place that does.” The session works, your fee is real, and the shed’s legend grows precisely because the door stayed shut.', effects: { cred: 6, money: 250, network: 3, addFlag: 'constellation' } },
+          incredible: { text: '{collabArtist} respects the no so much they write a song called “The Shed” about a room they never entered. It charts. Your unlisted garden building now has fan theories. You mow the lawn around a legend.', effects: { cred: 8, fame: 6, money: 150, addFlag: 'constellation' } },
+        },
+      },
+    },
+  },
+  {
     id: 'a3_golden_hands', act: 3, pathAffinity: [], weight: 12,
     requires: { flagsAll: ['mg_golden'] },
     art: 'ev_goldhands', context: 'A stranger at load-in, holding coffee like an offering',
