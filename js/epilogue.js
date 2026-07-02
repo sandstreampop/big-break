@@ -38,6 +38,20 @@ export function buildEpilogue(state) {
     `Historians call it the ${genreById(state.genre)?.name || ''} wave. You call it Tuesday nights in a room that smelled like nachos.`);
   add(state.money < 0,
     'Curtis, at least, always answers your calls. Some relationships outlast the balance.');
+  add(flags.includes('home_studio'),
+    'The shed is still there. Musicians you’ve never met call it “the room.” The rooster, now elderly, has a windowsill and opinions.');
+  add(flags.includes('docu_gold'),
+    '“ALMOST” screens at a film class every semester. Students write essays about the backstage scene. You’ve read two. You only cried at one.');
+  add(flags.includes('docu_dirt'),
+    'The blooper reel resurfaces every few years like a comet. You’ve learned to add the air-horn yourself before anyone else can.');
+  add(flags.includes('helped_bloom'),
+    'Static Bloom thanks the amp in every award speech. It has become a bit. The amp has a better publicist than you do.');
+  add(flags.includes('constellation'),
+    'The strangest thing about the whole career: the way the stories found each other, like they’d been written to meet.');
+  add((state.hustles || []).includes('wedding_circuit'),
+    'You still play four weddings a year. You know every venue’s power situation by heart. You cry at exactly the right moment, every time, on purpose.');
+  add(flags.includes('mg_steady'),
+    'People who were in the room that night still describe your hands: steady, when nothing else was.');
   add(state.money >= 800,
     'You bought the pawn shop. The owner still works Saturdays, by choice, telling kids the wall of gear has songs left in it.');
   add(state.fame >= 90,

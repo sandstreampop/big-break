@@ -43,6 +43,22 @@ export function generateDMs(state, count = 2) {
     'DISCOMFORT IS A DOOR. also we miss you in the comments. the water misses you. 11% off code: SHIVER');
   add((state.hustles || []).includes('compost_corner'), 'Craig (Bagpipes)',
     'compost corner accords hold. a mime tried to claim 11am. I handled it. you owe me one (1) duet.');
+  add(flags.includes('home_studio'), 'The landlord',
+    'shed update: the pinball guy asked if YOU would move so HE could have it. said no obviously. rent’s the same. the wiring question expires never.');
+  add((state.hustles || []).includes('shed_rental'), 'Shed calendar (automated)',
+    'This week: Tue (noise duo, deposit paid), Thu (harpist??), Sat 2AM–6AM (unnamed, cash, polite). The room is winning.');
+  add(flags.includes('helped_bloom'), 'Static Bloom 🌸',
+    'played a stadium last night. encore amp cut out. crowd of 40,000 and I told them about YOURS. they cheered for an amp. thought you should know.');
+  add(flags.includes('snubbed_bloom'), 'Static Bloom 🌸',
+    'no hard feelings btw. the rental amp taught us distortion. anyway. interviewer asked about our origin story today. we kept it vague. -ish.');
+  add(flags.includes('docu_crew'), 'Juniper 🎬',
+    'logging footage. found 40 seconds of you tuning + staring at nothing. it’s the best thing i’ve ever shot. this is going IN.');
+  add((state.hustles || []).includes('wedding_circuit'), 'Braydenn’s mom',
+    'the Hendersons want you for their vow renewal!!! i said you’d “check the tour schedule” (I know there’s no tour rn — I said it for LEVERAGE)');
+  add(flags.includes('mg_golden'), 'Grub',
+    'people keep asking me about your hands. i tell them the truth. faders don’t lie.');
+  add(state.venueLevel >= 3, 'Your venue’s owner',
+    'kid asked me tonight who plays here. said “the one who made this place a place.” they didn’t get it. they will.');
   add(state.hits >= 2, 'Unknown number',
     'hey it’s the A&R from the thing. loved the thing. do you have more things? call me. don’t text. calls only. it’s a whole thing.');
   add(state.stats.burnout >= 60, 'Your calendar',
