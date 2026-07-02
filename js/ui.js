@@ -29,11 +29,13 @@ const el = (tag, cls, html) => {
   return n;
 };
 
-// Fill {rival}/{rivalVibe} placeholders with this run's generated rival
+// Fill {rival}/{rivalVibe}/{genre} placeholders with this run's identities
 function fillText(s) {
   if (!s || !run) return s;
   const r = rivalById(run.rival);
-  return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe);
+  const g = genreById(run.genre);
+  return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe)
+    .replaceAll('{genre}', g ? g.name : 'your genre');
 }
 
 function reducedMotion() {
