@@ -149,3 +149,86 @@ register('take', {
     stage.addEventListener('pointerdown', lock);
   },
 });
+
+// ═══════════ CROWD WAVE — live rhythm (tap when the note hits the ring) ═══════════
+register('crowd', {
+  name: 'Crowd Wave', icon: '🎤',
+  how: 'Notes fly toward the ring. Tap ON the beat — each hit lifts the crowd, each miss drops it. Eight notes. Own the room.',
+  run(stage, ctx, done) {
+    const NOTES = 8;
+    const TRAVEL = 1500;   // ms from spawn to ring
+    const GAP = 650;       // ms between notes
+    const results = [];
+
+    const meter = el('div', 'mg-crowdmeter');
+    const meterFill = el('div', 'mg-crowdfill');
+    meter.append(meterFill);
+    const lane = el('div', 'mg-lane');
+    const ring = el('div', 'mg-ring');
+    lane.append(ring);
+    stage.append(meter, lane, el('div', 'mg-hint', 'tap anywhere on the beat'));
+
+    const live = []; // { node, born }
+    let spawned = 0, judged = 0, over = false;
+
+    function crowd() {
+      const avg = results.length ? results.reduce((a, b) => a + b, 0) / results.length : 0.5;
+      meterFill.style.width = `${Math.round(avg * 100)}%`;
+      meterFill.className = 'mg-crowdfill ' + (avg > 0.65 ? 'mg-crowd-hot' : avg < 0.35 ? 'mg-crowd-cold' : '');
+    }
+    crowd();
+
+    const spawner = setInterval(() => {
+      if (spawned >= NOTES) { clearInterval(spawner); return; }
+      spawned++;
+      const n = el('div', 'mg-note', '♪');
+      n.style.animationDuration = `${TRAVEL}ms`;
+      lane.append(n);
+      live.push({ node: n, born: performance.now() });
+    }, GAP);
+
+    // a note that sails past the ring untapped is a miss
+    const sweeper = setInterval(() => {
+      const now = performance.now();
+      for (let i = live.length - 1; i >= 0; i--) {
+        if (now - live[i].born > TRAVEL + 160) {
+          live[i].node.classList.add('mg-note-miss');
+          setTimeout((node) => node.remove(), 250, live[i].node);
+          live.splice(i, 1);
+          results.push(0); judged++; crowd(); maybeEnd();
+        }
+      }
+    }, 60);
+
+    function maybeEnd() {
+      if (judged >= NOTES && !over) {
+        over = true;
+        clearInterval(spawner); clearInterval(sweeper);
+        stage.removeEventListener('pointerdown', tap);
+        setTimeout(() => done(results.reduce((a, b) => a + b, 0) / NOTES), 250);
+      }
+    }
+
+    function tap() {
+      if (over || !live.length) return;
+      // judge the note nearest the ring
+      const now = performance.now();
+      let best = 0, bestDiff = Infinity;
+      for (let i = 0; i < live.length; i++) {
+        const diff = Math.abs(now - live[i].born - TRAVEL);
+        if (diff < bestDiff) { bestDiff = diff; best = i; }
+      }
+      const { node } = live[best];
+      live.splice(best, 1);
+      // ±90ms perfect, fades to 0 at ±330ms
+      const s = Math.max(0, 1 - Math.max(0, bestDiff - 90) / 240);
+      results.push(s); judged++;
+      node.classList.add(s > 0.5 ? 'mg-note-hit' : 'mg-note-miss');
+      ring.classList.add(s > 0.5 ? 'mg-ring-hit' : 'mg-ring-miss');
+      setTimeout(() => ring.classList.remove('mg-ring-hit', 'mg-ring-miss'), 160);
+      setTimeout((n2) => n2.remove(), 250, node);
+      crowd(); maybeEnd();
+    }
+    stage.addEventListener('pointerdown', tap);
+  },
+});
