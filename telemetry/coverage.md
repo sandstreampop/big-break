@@ -6,11 +6,11 @@ side comes from `telemetry/latest.json`, the catalog side from
 `js/data/*` and `js/minigames.js`. "Never" sections are the cut/fix
 candidates — or the content that needs better signposting.
 
-**Data through:** 2026-07-02T19:17:06.383000Z · 1021 events · 13 players
+**Data through:** 2026-07-02T19:19:22.790000Z · 1025 events · 13 players
 
 | catalog | seen | never | rare |
 |---|---|---|---|
-| Cards | 100/209 | 109 | 57 |
+| Cards | 166/209 | 43 | 102 |
 | Minigames | 14/15 | 1 | 7 |
 | Finale endings (path × outcome) | 6/9 | 3 | 0 |
 | Game-over endings | 0/3 | 3 | 0 |
@@ -18,44 +18,26 @@ candidates — or the content that needs better signposting.
 | Trophies | 0/51 | 51 | 0 |
 | Contracts | 6/9 | 3 | 3 |
 | Instruments | 14/16 | 2 | 10 |
-| Genres | 8/12 | 4 | 4 |
+| Genres | 6/9 | 3 | 3 |
 | Home venues | 6/7 | 1 | 3 |
 | Rivals | 0/11 | 11 | 0 |
-| Bandmates | 0/14 | 14 | 0 |
+| Bandmates | 0/10 | 10 | 0 |
 | Gear | 0/23 | 23 | 0 |
 | Hustles | 0/10 | 10 | 0 |
 
-## Cards — 100/209 seen
+## Cards — 166/209 seen
 
-### Never reached (109)
+### Never reached (43)
 
 | id | notes |
 |---|---|
-| sm_meet | act 1 |
 | sm_birthday | act 2 · gated |
-| sm_question | act 3 · gated |
-| cb_remembered | act 1 · gated |
 | cb_nostalgia_fest | act 2 · gated |
-| cb_fan_exec | act 2 · gated |
-| wt_offer | act 3 · gated |
-| wt_tokyo | act 3 · chain-only |
-| wt_berlin | act 3 · chain-only |
-| wt_saopaulo | act 3 · chain-only |
-| cl_dm | act 2 · gated |
-| cl_session | act 2 · chain-only |
 | cl_reprise | act 3 · gated |
 | cl_regret | act 3 · gated |
 | bs_ludo_parade | act 2,3 · gated |
 | bs_greta_archive | act 2,3 · gated |
-| bs_saul_clause | act 2,3 · gated |
-| bs_fish_van | act 2,3 · gated |
-| bs_tanya_empire | act 2,3 · gated |
-| bs_pearl_checkin | act 2,3 · gated |
-| finale_label_meeting | act 3 · finale |
-| finale_the_call | act 3 · finale |
-| finale_credits | act 3 · finale |
 | a3_band_ultimatum | act 3 · gated |
-| a3_song_finale | act 3 · gated |
 | a3_song_regret | act 3 · gated |
 | debt_collector | act 2,3 · gated |
 | a2_shed_nights | act 2 · gated |
@@ -63,15 +45,8 @@ candidates — or the content that needs better signposting.
 | cb_poster_wall | act 2 · gated |
 | cb_old_flame_band | act 2 · gated |
 | a3_tv_taping | act 3 · gated |
-| dc_offer | act 2 · gated |
-| dc_blizzard | act 2 · chain-only |
-| dc_birthday | act 2 · chain-only |
-| dc_lastnight | act 2 · chain-only |
 | a2_truce_tour | act 2 · gated |
 | a2_diss_track | act 2 · gated |
-| a3_hf_placement | act 3 |
-| a3_hf_heir | act 3 |
-| a3_gala_circuit | act 3 · gated |
 | a2c_ms_quote | act 2 · chain-only |
 | a3_bloom_return | act 3 · gated |
 | a3_bloom_cold | act 3 · gated |
@@ -82,50 +57,9 @@ candidates — or the content that needs better signposting.
 | a3_shed_doc | act 3 · gated |
 | a3_bloom_festival | act 3 · gated |
 | a3_shed_collab | act 3 · gated |
-| a3_music_video | act 3 · gated |
-| a3_masters_buyback | act 3 · gated |
-| a3_golden_hands | act 3 · gated |
 | a3_blooper | act 3 · gated |
-| a3_old_friend | act 3 |
-| a3_shop_last | act 3 |
-| a3_rival_showdown | act 3 · gated |
-| a3_rival_supergroup | act 3 · gated |
-| a3_hometown | act 3 |
-| a3_voice_coach | act 3 |
-| a3_scandal | act 3 |
-| a3_stadium_call | act 3 · gated |
-| a3_ms_worldtour | act 3 |
-| a3_ms_persona | act 3 |
-| a3_legend_album | act 3 |
-| a3_tv_band | act 3 |
-| a3_one_take | act 3 |
-| a3_masterclass | act 3 |
-| a3_st_supersession | act 3 |
-| a3c_st_credits | act 3 · chain-only |
-| a3_st_loyalty | act 3 |
-| a3_song_of_summer | act 3 |
-| a3_three_peat | act 3 · gated |
-| a3_secret_album | act 3 |
-| a3_hf_diane | act 3 |
-| a3_hf_prodigy | act 3 |
-| a3_genre_face | act 3 · gated |
 | a2_hustle_audit | act 2,3 · gated |
 | a3_hustle_profile | act 3 · gated |
-| db_chicken_wire | act 1,2 · pack:pack_divebar |
-| db_tuesday_residency | act 2 · pack:pack_divebar |
-| db_jukebox | act 2 · pack:pack_divebar |
-| db_inspector | act 2,3 · pack:pack_divebar |
-| db_last_call | act 3 · pack:pack_divebar |
-| coping_50 | act 1,2,3 · chain-only |
-| coping_75 | act 1,2,3 · chain-only |
-| f_mud_fest | act 2 · pack:pack_festival |
-| f_lineup_font | act 2 · pack:pack_festival |
-| f_secret_set | act 3 · pack:pack_festival |
-| f_headline_clash | act 3 · pack:pack_festival |
-| a3_last_single | act 3 · gated |
-| a3_playlist_guy | act 3 · gated |
-| a3_hotel_ballad | act 3 |
-| a3c_album_drop | act 3 · chain-only |
 | a3_nadia_spotlight | act 3 · gated |
 | a3_fan_tattoo | act 3 · gated |
 | a3_fan_wars | act 3 · gated |
@@ -145,7 +79,6 @@ candidates — or the content that needs better signposting.
 
 | id | swipes | notes |
 |---|---|---|
-| a1_borrowed_van | 1 | act 1 |
 | a1_first_drop | 1 | act 1 · gated |
 | a2_fan_account | 1 | act 2 · gated |
 | a2_ghostwrite | 1 | act 2 |
@@ -158,19 +91,48 @@ candidates — or the content that needs better signposting.
 | a2c_trend_part2 | 1 | act 2 · chain-only |
 | a3_album_offer | 1 | act 3 · gated |
 | a3_chart_war | 1 | act 3 · gated |
+| a3_legend_album | 1 | act 3 |
+| a3_masterclass | 1 | act 3 |
+| a3_masters_buyback | 1 | act 3 · gated |
+| a3_ms_persona | 1 | act 3 |
+| a3_rival_supergroup | 1 | act 3 · gated |
+| a3_song_finale | 1 | act 3 · gated |
+| a3c_album_drop | 1 | act 3 · chain-only |
+| bs_fish_van | 1 | act 2,3 · gated |
+| bs_pearl_checkin | 1 | act 2,3 · gated |
+| bs_saul_clause | 1 | act 2,3 · gated |
+| bs_tanya_empire | 1 | act 2,3 · gated |
+| cb_fan_exec | 1 | act 2 · gated |
+| f_headline_clash | 1 | act 3 · pack:pack_festival |
+| sm_question | 1 | act 3 · gated |
+| a1_borrowed_van | 2 | act 1 |
 | a1_first_fan | 2 | act 1 |
 | a1_open_mic | 2 | act 1 |
-| a1_opendeck | 2 | act 1 |
 | a2_ar_listen | 2 | act 2 · gated |
 | a2_beat_leak | 2 | act 2 |
 | a2_hf_forecaster | 2 | act 2 |
 | a2_ms_junket | 2 | act 2 |
 | a2_press_piece | 2 | act 2 |
 | a2_st_ghost_solo | 2 | act 2 |
+| a3_gala_circuit | 2 | act 3 · gated |
+| a3_genre_face | 2 | act 3 · gated |
+| a3_golden_hands | 2 | act 3 · gated |
+| a3_hf_heir | 2 | act 3 |
+| a3_playlist_guy | 2 | act 3 · gated |
+| a3_rival_showdown | 2 | act 3 · gated |
+| a3_st_loyalty | 2 | act 3 |
+| a3_stadium_call | 2 | act 3 · gated |
+| a3_three_peat | 2 | act 3 · gated |
+| a3c_st_credits | 2 | act 3 · chain-only |
+| cb_remembered | 2 | act 1 · gated |
+| cl_dm | 2 | act 2 · gated |
+| cl_session | 2 | act 2 · chain-only |
+| db_tuesday_residency | 2 | act 2 · pack:pack_divebar |
 | a1_algorithm_oracle | 3 | act 1 |
 | a1_craigslist | 3 | act 1 |
 | a1_docu_pitch | 3 | act 1 |
 | a1_noise_cop | 3 | act 1 |
+| a1_opendeck | 3 | act 1 |
 | a1_shower_hook | 3 | act 1 |
 | a1_subway_clip | 3 | act 1 |
 | a2_auditions | 3 | act 2 |
@@ -185,6 +147,16 @@ candidates — or the content that needs better signposting.
 | a2_union | 3 | act 2 |
 | a2_writing_camp | 3 | act 2 |
 | a3_biopic_rumor | 3 | act 3 |
+| a3_hf_prodigy | 3 | act 3 |
+| a3_hotel_ballad | 3 | act 3 |
+| a3_music_video | 3 | act 3 · gated |
+| a3_scandal | 3 | act 3 |
+| a3_song_of_summer | 3 | act 3 |
+| a3_voice_coach | 3 | act 3 |
+| dc_birthday | 3 | act 2 · chain-only |
+| dc_blizzard | 3 | act 2 · chain-only |
+| dc_lastnight | 3 | act 2 · chain-only |
+| dc_offer | 3 | act 2 · gated |
 | a1_cover_band | 4 | act 1 |
 | a2_afterparty | 4 | act 2 |
 | a2_band_drama | 4 | act 2 |
@@ -202,6 +174,13 @@ candidates — or the content that needs better signposting.
 | a3_arena_support | 4 | act 3 |
 | a3_award_perf | 4 | act 3 |
 | a3_exec_notes | 4 | act 3 |
+| a3_hf_placement | 4 | act 3 |
+| a3_ms_worldtour | 4 | act 3 |
+| a3_one_take | 4 | act 3 |
+| a3_secret_album | 4 | act 3 |
+| a3_tv_band | 4 | act 3 |
+| f_lineup_font | 4 | act 2 · pack:pack_festival |
+| sm_meet | 4 | act 1 |
 
 ## Minigames — 14/15 seen
 
@@ -360,15 +339,14 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | workhorse | 1 |  |
 | bucket_drums | 2 |  |
 
-## Genres — 8/12 seen
+## Genres — 6/9 seen
 
-### Never reached (4)
+### Never reached (3)
 
 | id | notes |
 |---|---|
 | bedroom_pop |  |
 | yacht_metal |  |
-| gothgrass |  |
 | gothgrass | wave 2 |
 
 ### Rarely reached (< 3 runs)
@@ -376,7 +354,6 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | id | runs | notes |
 |---|---|---|
 | doom_jazz | 1 |  |
-| stadium_shanty | 1 |  |
 | stadium_shanty | 1 | wave 2 |
 | folk_punk | 2 |  |
 
@@ -416,11 +393,11 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | mothra |  |
 | trend |  |
 
-## Bandmates — 0/14 seen
+## Bandmates — 0/10 seen
 
 _tracked since app 2.2 — "never" means "not since tracking began"._
 
-### Never reached (14)
+### Never reached (10)
 
 | id | notes |
 |---|---|
@@ -430,10 +407,6 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | tanya |  |
 | deacon |  |
 | pearl |  |
-| ludo |  |
-| greta |  |
-| saul |  |
-| nadia |  |
 | ludo | wave 2 |
 | greta | wave 2 |
 | saul | wave 2 |

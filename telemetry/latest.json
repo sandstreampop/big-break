@@ -8,7 +8,7 @@
     "results": [
       [
         "swipe",
-        744,
+        747,
         7
       ],
       [
@@ -33,8 +33,8 @@
       ],
       [
         "run_start",
-        20,
-        2
+        21,
+        3
       ],
       [
         "tutorial_start",
@@ -58,8 +58,8 @@
     "results": [
       [
         "2026-07-02T11:11:48.171000Z",
-        "2026-07-02T19:17:06.383000Z",
-        1021,
+        "2026-07-02T19:19:22.790000Z",
+        1025,
         13
       ]
     ]
@@ -83,7 +83,7 @@
       ],
       [
         "2.1",
-        11,
+        16,
         1
       ]
     ]
@@ -99,9 +99,9 @@
     "results": [
       [
         "2026-07-02",
-        20,
+        21,
         24,
-        744,
+        748,
         13
       ]
     ]
@@ -118,11 +118,11 @@
     "results": [
       [
         "a1_pawn_shop",
+        25,
+        76,
         24,
-        79,
-        21,
-        79,
-        33
+        76,
+        36
       ],
       [
         "a2_shop_gearhead",
@@ -654,7 +654,7 @@
     "results": [
       [
         1,
-        191,
+        195,
         10,
         82,
         8,
@@ -807,7 +807,7 @@
         5,
         3,
         0,
-        2,
+        3,
         2,
         2
       ]
@@ -822,7 +822,7 @@
     ],
     "results": [
       [
-        2,
+        3,
         0,
         0,
         0
@@ -932,8 +932,8 @@
     "results": [
       [
         "normal",
-        17,
-        1
+        18,
+        2
       ],
       [
         "comeback",
@@ -1024,6 +1024,10 @@
       ],
       [
         "doom_jazz",
+        1
+      ],
+      [
+        "none",
         1
       ],
       [
@@ -1161,7 +1165,7 @@
       ],
       [
         "a1_borrowed_van",
-        1
+        2
       ],
       [
         "a1_busk",
@@ -1237,11 +1241,11 @@
       ],
       [
         "a1_opendeck",
-        2
+        3
       ],
       [
         "a1_pawn_shop",
-        24
+        25
       ],
       [
         "a1_phone_demo",
@@ -1253,7 +1257,7 @@
       ],
       [
         "a1_rival_intro",
-        8
+        9
       ],
       [
         "a1_roommate",
@@ -1546,6 +1550,270 @@
       [
         "a3_exec_notes",
         4
+      ],
+      [
+        "a3_gala_circuit",
+        2
+      ],
+      [
+        "a3_genre_face",
+        2
+      ],
+      [
+        "a3_golden_hands",
+        2
+      ],
+      [
+        "a3_hf_diane",
+        5
+      ],
+      [
+        "a3_hf_heir",
+        2
+      ],
+      [
+        "a3_hf_placement",
+        4
+      ],
+      [
+        "a3_hf_prodigy",
+        3
+      ],
+      [
+        "a3_hometown",
+        5
+      ],
+      [
+        "a3_hotel_ballad",
+        3
+      ],
+      [
+        "a3_last_single",
+        5
+      ],
+      [
+        "a3_legend_album",
+        1
+      ],
+      [
+        "a3_masterclass",
+        1
+      ],
+      [
+        "a3_masters_buyback",
+        1
+      ],
+      [
+        "a3_ms_persona",
+        1
+      ],
+      [
+        "a3_ms_worldtour",
+        4
+      ],
+      [
+        "a3_music_video",
+        3
+      ],
+      [
+        "a3_old_friend",
+        5
+      ],
+      [
+        "a3_one_take",
+        4
+      ],
+      [
+        "a3_playlist_guy",
+        2
+      ],
+      [
+        "a3_rival_showdown",
+        2
+      ],
+      [
+        "a3_rival_supergroup",
+        1
+      ],
+      [
+        "a3_scandal",
+        3
+      ],
+      [
+        "a3_secret_album",
+        4
+      ],
+      [
+        "a3_shop_last",
+        24
+      ],
+      [
+        "a3_song_finale",
+        1
+      ],
+      [
+        "a3_song_of_summer",
+        3
+      ],
+      [
+        "a3_st_loyalty",
+        2
+      ],
+      [
+        "a3_st_supersession",
+        5
+      ],
+      [
+        "a3_stadium_call",
+        2
+      ],
+      [
+        "a3_three_peat",
+        2
+      ],
+      [
+        "a3_tv_band",
+        4
+      ],
+      [
+        "a3_voice_coach",
+        3
+      ],
+      [
+        "a3c_album_drop",
+        1
+      ],
+      [
+        "a3c_st_credits",
+        2
+      ],
+      [
+        "bs_fish_van",
+        1
+      ],
+      [
+        "bs_pearl_checkin",
+        1
+      ],
+      [
+        "bs_saul_clause",
+        1
+      ],
+      [
+        "bs_tanya_empire",
+        1
+      ],
+      [
+        "cb_fan_exec",
+        1
+      ],
+      [
+        "cb_remembered",
+        2
+      ],
+      [
+        "cl_dm",
+        2
+      ],
+      [
+        "cl_session",
+        2
+      ],
+      [
+        "coping_50",
+        18
+      ],
+      [
+        "coping_75",
+        7
+      ],
+      [
+        "db_chicken_wire",
+        8
+      ],
+      [
+        "db_inspector",
+        7
+      ],
+      [
+        "db_jukebox",
+        6
+      ],
+      [
+        "db_last_call",
+        5
+      ],
+      [
+        "db_tuesday_residency",
+        2
+      ],
+      [
+        "dc_birthday",
+        3
+      ],
+      [
+        "dc_blizzard",
+        3
+      ],
+      [
+        "dc_lastnight",
+        3
+      ],
+      [
+        "dc_offer",
+        3
+      ],
+      [
+        "f_headline_clash",
+        1
+      ],
+      [
+        "f_lineup_font",
+        4
+      ],
+      [
+        "f_mud_fest",
+        5
+      ],
+      [
+        "f_secret_set",
+        6
+      ],
+      [
+        "finale_credits",
+        8
+      ],
+      [
+        "finale_label_meeting",
+        8
+      ],
+      [
+        "finale_the_call",
+        8
+      ],
+      [
+        "sm_meet",
+        4
+      ],
+      [
+        "sm_question",
+        1
+      ],
+      [
+        "wt_berlin",
+        5
+      ],
+      [
+        "wt_offer",
+        5
+      ],
+      [
+        "wt_saopaulo",
+        5
+      ],
+      [
+        "wt_tokyo",
+        5
       ]
     ]
   },
@@ -1615,6 +1883,10 @@
         1
       ],
       [
+        "none",
+        1
+      ],
+      [
         "ricochet",
         1
       ],
@@ -1679,33 +1951,15 @@
   "coverage": {
     "Cards": {
       "total": 209,
-      "seen": 100,
+      "seen": 166,
       "never": [
-        "sm_meet",
         "sm_birthday",
-        "sm_question",
-        "cb_remembered",
         "cb_nostalgia_fest",
-        "cb_fan_exec",
-        "wt_offer",
-        "wt_tokyo",
-        "wt_berlin",
-        "wt_saopaulo",
-        "cl_dm",
-        "cl_session",
         "cl_reprise",
         "cl_regret",
         "bs_ludo_parade",
         "bs_greta_archive",
-        "bs_saul_clause",
-        "bs_fish_van",
-        "bs_tanya_empire",
-        "bs_pearl_checkin",
-        "finale_label_meeting",
-        "finale_the_call",
-        "finale_credits",
         "a3_band_ultimatum",
-        "a3_song_finale",
         "a3_song_regret",
         "debt_collector",
         "a2_shed_nights",
@@ -1713,15 +1967,8 @@
         "cb_poster_wall",
         "cb_old_flame_band",
         "a3_tv_taping",
-        "dc_offer",
-        "dc_blizzard",
-        "dc_birthday",
-        "dc_lastnight",
         "a2_truce_tour",
         "a2_diss_track",
-        "a3_hf_placement",
-        "a3_hf_heir",
-        "a3_gala_circuit",
         "a2c_ms_quote",
         "a3_bloom_return",
         "a3_bloom_cold",
@@ -1732,50 +1979,9 @@
         "a3_shed_doc",
         "a3_bloom_festival",
         "a3_shed_collab",
-        "a3_music_video",
-        "a3_masters_buyback",
-        "a3_golden_hands",
         "a3_blooper",
-        "a3_old_friend",
-        "a3_shop_last",
-        "a3_rival_showdown",
-        "a3_rival_supergroup",
-        "a3_hometown",
-        "a3_voice_coach",
-        "a3_scandal",
-        "a3_stadium_call",
-        "a3_ms_worldtour",
-        "a3_ms_persona",
-        "a3_legend_album",
-        "a3_tv_band",
-        "a3_one_take",
-        "a3_masterclass",
-        "a3_st_supersession",
-        "a3c_st_credits",
-        "a3_st_loyalty",
-        "a3_song_of_summer",
-        "a3_three_peat",
-        "a3_secret_album",
-        "a3_hf_diane",
-        "a3_hf_prodigy",
-        "a3_genre_face",
         "a2_hustle_audit",
         "a3_hustle_profile",
-        "db_chicken_wire",
-        "db_tuesday_residency",
-        "db_jukebox",
-        "db_inspector",
-        "db_last_call",
-        "coping_50",
-        "coping_75",
-        "f_mud_fest",
-        "f_lineup_font",
-        "f_secret_set",
-        "f_headline_clash",
-        "a3_last_single",
-        "a3_playlist_guy",
-        "a3_hotel_ballad",
-        "a3c_album_drop",
         "a3_nadia_spotlight",
         "a3_fan_tattoo",
         "a3_fan_wars",
@@ -1792,10 +1998,6 @@
         "a2_trend_unmask"
       ],
       "rare": [
-        {
-          "id": "a1_borrowed_van",
-          "n": 1
-        },
         {
           "id": "a1_first_drop",
           "n": 1
@@ -1845,15 +2047,71 @@
           "n": 1
         },
         {
+          "id": "a3_legend_album",
+          "n": 1
+        },
+        {
+          "id": "a3_masterclass",
+          "n": 1
+        },
+        {
+          "id": "a3_masters_buyback",
+          "n": 1
+        },
+        {
+          "id": "a3_ms_persona",
+          "n": 1
+        },
+        {
+          "id": "a3_rival_supergroup",
+          "n": 1
+        },
+        {
+          "id": "a3_song_finale",
+          "n": 1
+        },
+        {
+          "id": "a3c_album_drop",
+          "n": 1
+        },
+        {
+          "id": "bs_fish_van",
+          "n": 1
+        },
+        {
+          "id": "bs_pearl_checkin",
+          "n": 1
+        },
+        {
+          "id": "bs_saul_clause",
+          "n": 1
+        },
+        {
+          "id": "bs_tanya_empire",
+          "n": 1
+        },
+        {
+          "id": "cb_fan_exec",
+          "n": 1
+        },
+        {
+          "id": "f_headline_clash",
+          "n": 1
+        },
+        {
+          "id": "sm_question",
+          "n": 1
+        },
+        {
+          "id": "a1_borrowed_van",
+          "n": 2
+        },
+        {
           "id": "a1_first_fan",
           "n": 2
         },
         {
           "id": "a1_open_mic",
-          "n": 2
-        },
-        {
-          "id": "a1_opendeck",
           "n": 2
         },
         {
@@ -1881,6 +2139,62 @@
           "n": 2
         },
         {
+          "id": "a3_gala_circuit",
+          "n": 2
+        },
+        {
+          "id": "a3_genre_face",
+          "n": 2
+        },
+        {
+          "id": "a3_golden_hands",
+          "n": 2
+        },
+        {
+          "id": "a3_hf_heir",
+          "n": 2
+        },
+        {
+          "id": "a3_playlist_guy",
+          "n": 2
+        },
+        {
+          "id": "a3_rival_showdown",
+          "n": 2
+        },
+        {
+          "id": "a3_st_loyalty",
+          "n": 2
+        },
+        {
+          "id": "a3_stadium_call",
+          "n": 2
+        },
+        {
+          "id": "a3_three_peat",
+          "n": 2
+        },
+        {
+          "id": "a3c_st_credits",
+          "n": 2
+        },
+        {
+          "id": "cb_remembered",
+          "n": 2
+        },
+        {
+          "id": "cl_dm",
+          "n": 2
+        },
+        {
+          "id": "cl_session",
+          "n": 2
+        },
+        {
+          "id": "db_tuesday_residency",
+          "n": 2
+        },
+        {
           "id": "a1_algorithm_oracle",
           "n": 3
         },
@@ -1894,6 +2208,10 @@
         },
         {
           "id": "a1_noise_cop",
+          "n": 3
+        },
+        {
+          "id": "a1_opendeck",
           "n": 3
         },
         {
@@ -1950,6 +2268,46 @@
         },
         {
           "id": "a3_biopic_rumor",
+          "n": 3
+        },
+        {
+          "id": "a3_hf_prodigy",
+          "n": 3
+        },
+        {
+          "id": "a3_hotel_ballad",
+          "n": 3
+        },
+        {
+          "id": "a3_music_video",
+          "n": 3
+        },
+        {
+          "id": "a3_scandal",
+          "n": 3
+        },
+        {
+          "id": "a3_song_of_summer",
+          "n": 3
+        },
+        {
+          "id": "a3_voice_coach",
+          "n": 3
+        },
+        {
+          "id": "dc_birthday",
+          "n": 3
+        },
+        {
+          "id": "dc_blizzard",
+          "n": 3
+        },
+        {
+          "id": "dc_lastnight",
+          "n": 3
+        },
+        {
+          "id": "dc_offer",
           "n": 3
         },
         {
@@ -2018,6 +2376,34 @@
         },
         {
           "id": "a3_exec_notes",
+          "n": 4
+        },
+        {
+          "id": "a3_hf_placement",
+          "n": 4
+        },
+        {
+          "id": "a3_ms_worldtour",
+          "n": 4
+        },
+        {
+          "id": "a3_one_take",
+          "n": 4
+        },
+        {
+          "id": "a3_secret_album",
+          "n": 4
+        },
+        {
+          "id": "a3_tv_band",
+          "n": 4
+        },
+        {
+          "id": "f_lineup_font",
+          "n": 4
+        },
+        {
+          "id": "sm_meet",
           "n": 4
         }
       ]
@@ -2224,21 +2610,16 @@
       ]
     },
     "Genres": {
-      "total": 12,
-      "seen": 8,
+      "total": 9,
+      "seen": 6,
       "never": [
         "bedroom_pop",
         "yacht_metal",
-        "gothgrass",
         "gothgrass"
       ],
       "rare": [
         {
           "id": "doom_jazz",
-          "n": 1
-        },
-        {
-          "id": "stadium_shanty",
           "n": 1
         },
         {
@@ -2291,7 +2672,7 @@
       "rare": []
     },
     "Bandmates": {
-      "total": 14,
+      "total": 10,
       "seen": 0,
       "never": [
         "fish",
@@ -2300,10 +2681,6 @@
         "tanya",
         "deacon",
         "pearl",
-        "ludo",
-        "greta",
-        "saul",
-        "nadia",
         "ludo",
         "greta",
         "saul",
