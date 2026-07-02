@@ -3704,6 +3704,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Play the set of your life',
+        minigame: 'duel',
         governingStats: { skill: 0.8, creativity: 0.6 },
         tags: ['live', 'risky'],
         outcomes: {
