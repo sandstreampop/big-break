@@ -40,7 +40,17 @@ It's a PWA: add it to your home screen and it works offline.
 - **Contracts** — opt-in run modifiers (kazoo-only, hidden risk dots,
   6/9/6 acts...) for LP multipliers.
 - **Career Wall & Trophy Room** — unlocks (instruments/gear/packs/
-  contracts/perks), 20+ satirical trophies, and your last 10 careers.
+  contracts/perks), 25+ satirical trophies, and your last 10 careers.
+- **Genres** — claim a sound (Doom Jazz, Yacht Metal...) that tilts
+  tag-matched odds; the scene politics cards react to it.
+- **The world talks back** — trade headlines AND text messages from
+  people you've met (Curtis checks in politely), plus procedural
+  epilogues on every ending.
+- **The Gauntlet** — a weekly forced-build challenge; **Mastery** —
+  instruments level up (★–★★★) the more you finish runs with them.
+- **The Final Set** — pick your closer before the career is judged.
+- **Poster share cards** — runs export as a 1080×1080 PNG via the share
+  sheet; saves export/import as backup codes.
 
 ## Running locally
 

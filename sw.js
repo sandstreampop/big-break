@@ -1,14 +1,15 @@
 // BIG BREAK service worker: network-first (updates always win when online),
 // cache fallback (full game works offline once visited).
 
-const CACHE = 'bigbreak-v2';
+const CACHE = 'bigbreak-v3';
 const CORE = [
   './', 'index.html', 'css/style.css', 'manifest.webmanifest',
   'js/main.js', 'js/ui.js', 'js/engine.js', 'js/save.js', 'js/audio.js',
   'js/art.js', 'js/charts.js', 'js/headlines.js', 'js/config.js',
   'js/data/events.js', 'js/data/instruments.js', 'js/data/accessories.js',
   'js/data/meta.js', 'js/data/rivals.js', 'js/data/contracts.js',
-  'js/data/hustles.js', 'js/data/assets.js',
+  'js/data/hustles.js', 'js/data/assets.js', 'js/data/genres.js',
+  'js/dms.js', 'js/epilogue.js', 'js/sharecard.js',
   'assets/icon-180.png', 'assets/icon-512.png',
 ];
 
