@@ -666,6 +666,9 @@ body.big-text #app { zoom: 1.18; }
 .hist-fame { color: var(--dim); font-size: 12px; }
 
 .trophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 12px; }
+.trophy-meter { height: 8px; background: #322a47; border-radius: 4px; overflow: hidden; margin-bottom: 14px; }
+.trophy-meter-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .8s; }
+.locked-icon { filter: grayscale(1); opacity: .5; }
 .trophy {
   background: var(--card); border: 1px solid #372d4e; border-radius: 14px;
   padding: 14px 12px; display: flex; flex-direction: column; gap: 5px;

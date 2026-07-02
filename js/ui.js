@@ -1617,6 +1617,41 @@ function renderTrophies() {
   s.append(el('h2', 'screen-head', 'Trophy Room'));
   s.append(el('p', 'screen-sub', `${meta.trophies.length}/${TROPHIES.length} collected. Each one cost you something.`));
 
+  const owned = new Set(meta.trophies);
+  const pct = Math.round((100 * meta.trophies.length) / TROPHIES.length);
+  const meter = el('div', 'trophy-meter');
+  const fill = el('div', 'trophy-meter-fill');
+  fill.style.width = pct + '%';
+  meter.append(fill);
+  s.append(meter);
+
+  const CATS = [['endings', 'Ways It Ends'], ['feats', 'Feats'], ['career', 'The Long Game']];
+  for (const [cat, label] of CATS) {
+    const group = TROPHIES.filter((t) => (t.cat || 'feats') === cat);
+    if (!group.length) continue;
+    s.append(el('h3', 'wall-tier', label));
+    const grid = el('div', 'trophy-grid');
+    for (const t of group) {
+      const has = owned.has(t.id);
+      const cell = el('div', 'trophy' + (has ? ' owned' : ''));
+      if (has) {
+        cell.append(el('div', 'trophy-icon', t.icon));
+        cell.append(el('div', 'trophy-name', t.name));
+        cell.append(el('div', 'trophy-desc', t.desc));
+      } else if (t.secret) {
+        cell.append(el('div', 'trophy-icon', '❓'));
+        cell.append(el('div', 'trophy-name', '???'));
+        cell.append(el('div', 'trophy-desc', 'Some trophies announce themselves only once.'));
+      } else {
+        cell.append(el('div', 'trophy-icon locked-icon', t.icon));
+        cell.append(el('div', 'trophy-name', t.name));
+        cell.append(el('div', 'trophy-desc', t.desc));
+      }
+      grid.append(cell);
+    }
+    s.append(grid);
+  }
+
   if (meta.runHistory?.length) {
     s.append(el('h3', 'wall-tier', 'Past Lives'));
     const hist = el('div', 'history-list');
@@ -1631,16 +1666,6 @@ function renderTrophies() {
     }
     s.append(hist);
   }
-  const grid = el('div', 'trophy-grid');
-  for (const t of TROPHIES) {
-    const owned = meta.trophies.includes(t.id);
-    const cell = el('div', 'trophy' + (owned ? ' owned' : ''));
-    cell.append(el('div', 'trophy-icon', owned ? t.icon : '❓'));
-    cell.append(el('div', 'trophy-name', owned ? t.name : '???'));
-    cell.append(el('div', 'trophy-desc', owned ? t.desc : 'Keep grinding.'));
-    grid.append(cell);
-  }
-  s.append(grid);
   const menu = el('div', 'menu');
   menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
   s.append(menu);
