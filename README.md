@@ -70,7 +70,20 @@ It's a PWA: add it to your home screen and it works offline.
   Berlin → São Paulo), and a Hot 10 chart artist who steps out of the
   chart to DM you about a feature — both branches echo in Act 3.
 - **Discography** — every run leaves a record: an album-by-album career
-  writeup generated from what actually happened.
+  writeup generated from what actually happened — including records that
+  only exist because a storyline did ("The Shed Sessions").
+- **Performance minigames (v3)** — twelve one-thumb skill moments (≤30s)
+  on flagship choices: studio takes, crowd rhythm, lyric-grabbing,
+  networking triage, band-pattern echo, feedback whack-a-mole, merch
+  rush, coin-catch busking, interview speed-reads, held notes, van
+  Tetris, and a mirrored duel with your rival. Verdicts (BOTCHED →
+  GOLDEN) tilt the roll, burnout makes your hands shake, gear and
+  contracts bet on your skill, and the scrapbook remembers every one.
+  Skippable, with a relaxed mode in Settings.
+- **Deep arcs & constellations** — multi-beat storylines (the
+  Documentary, the Shed, Static Bloom's amp debt, the Dirt Circuit,
+  late-night TV) that branch on how you played — and rare
+  "constellation" events that only exist when two arcs collide.
 
 ## Running locally
 
