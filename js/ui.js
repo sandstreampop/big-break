@@ -8,7 +8,7 @@ import { accessoryById } from './data/accessories.js';
 import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
 import * as save from './save.js';
-import { artFor } from './art.js';
+import { artFor, sceneFor } from './art.js';
 import { buildChart, playerChartInfo } from './charts.js';
 import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
@@ -16,7 +16,7 @@ import { generateHeadlines } from './headlines.js';
 import { offerGenres, genreById } from './data/genres.js';
 import { generateDMs } from './dms.js';
 import { buildEpilogue } from './epilogue.js';
-import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
+import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
 let run = null;
@@ -217,6 +217,7 @@ function renderHud() {
   const hud = $('#hud');
   hud.innerHTML = '';
   music.setMood('act' + run.act);
+  music.setStress(run.stats.burnout / 100);
   // Burnout vignette: the screen itself runs hot as you do
   const game = $('#screen-game');
   game.classList.toggle('burnout-warm', run.stats.burnout >= 50 && run.stats.burnout < 72);
@@ -344,6 +345,7 @@ function dealCard() {
   area.innerHTML = '';
 
   const card = el('div', 'card');
+  ambient(sceneFor(ev.art));
   card.append(artFor(ev.art, 'card-art'));
   card.append(el('div', 'card-context', fillText(ev.context)));
   card.append(el('div', 'card-prompt', fillText(ev.prompt)));
