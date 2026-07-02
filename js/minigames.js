@@ -15,6 +15,14 @@
 //   score < .35 → BOTCHED  (−8)   .35–.65 → SCRAPPY (+4)
 //   .65–.88     → SOLID    (+14)  ≥ .88   → GOLDEN  (+24)
 
+import { sfx } from './audio.js';
+
+// tiny shared feedback: sound + a haptic tick (games call these freely)
+export const fx = {
+  hit() { try { sfx.mgHit(); navigator.vibrate?.(8); } catch (e) {} },
+  miss() { try { sfx.mgMiss(); navigator.vibrate?.(20); } catch (e) {} },
+};
+
 const GAMES = {};
 export function register(id, def) { GAMES[id] = def; }
 export function minigameById(id) { return GAMES[id] || null; }
@@ -52,6 +60,11 @@ export function playMinigame(id, ctx = {}) {
       const verdict = verdictFor(score);
       if (score == null) { layer.remove(); resolve({ score, verdict }); return; }
       // verdict beat: one readable moment before the card resolves
+      try {
+        if (verdict.label === 'GOLDEN') { sfx.mgGolden(); navigator.vibrate?.([20, 30, 20, 30, 40]); }
+        else if (verdict.label === 'BOTCHED') { sfx.mgBotched(); navigator.vibrate?.(60); }
+        else sfx.good();
+      } catch (e) {}
       box.innerHTML = '';
       box.append(el('div', `mg-verdict ${verdict.cls}`, verdict.label));
       box.append(el('div', 'mg-verdict-sub',
@@ -136,6 +149,7 @@ register('take', {
       // 1.0 dead-center → fades to 0 outside the zone
       const s = Math.max(0, 1 - Math.abs(pos - c) / (half * 1.6));
       scores.push(s);
+      (s > 0.55 ? fx.hit : fx.miss)();
       needle.classList.add(s > 0.55 ? 'mg-hit' : 'mg-miss');
       dots.textContent = scores.map((x) => (x > 0.55 ? '●' : '✕')).join(' ') +
         (scores.length < 3 ? ' ○'.repeat(3 - scores.length) : '');
@@ -229,6 +243,7 @@ register('crowd', {
       // ±90ms perfect, fades to 0 at ±330ms
       const s = Math.max(0, 1 - Math.max(0, bestDiff - 90) / 240);
       results.push(s); judged++;
+      (s > 0.5 ? fx.hit : fx.miss)();
       node.classList.add(s > 0.5 ? 'mg-note-hit' : 'mg-note-miss');
       ring.classList.add(s > 0.5 ? 'mg-ring-hit' : 'mg-ring-miss');
       setTimeout(() => ring.classList.remove('mg-ring-hit', 'mg-ring-miss'), 160);
@@ -287,8 +302,8 @@ register('ideas', {
         e.stopPropagation();
         if (over || w.dataset.donePick) return;
         w.dataset.donePick = '1';
-        if (item.good) { grabbed++; w.classList.add('mg-word-hit'); }
-        else { stung++; w.classList.add('mg-word-sting'); }
+        if (item.good) { grabbed++; fx.hit(); w.classList.add('mg-word-hit'); }
+        else { stung++; fx.miss(); w.classList.add('mg-word-sting'); }
         tally.textContent = `💡 ${grabbed}${stung ? `  💩 ${stung}` : ''}`;
         setTimeout(() => w.remove(), 300);
       });
@@ -329,6 +344,7 @@ register('room', {
         e.stopPropagation();
         if (p.gone || over) return;
         p.level = Math.min(1, p.level + 0.38);
+        fx.hit();
         c.classList.add('mg-guest-talk');
         setTimeout(() => c.classList.remove('mg-guest-talk'), 200);
       });
@@ -419,10 +435,12 @@ register('tighten', {
       e.stopPropagation();
       if (!accepting) return;
       if (i === seq[pos]) {
+        fx.hit();
         flash(i, 180);
         earned++; pos++;
         if (pos >= seq.length) endRound(true);
       } else {
+        fx.miss();
         b.classList.add('mg-pad-bad');
         setTimeout(() => b.classList.remove('mg-pad-bad'), 300);
         endRound(false); // botched round: keep what you earned, move on
@@ -498,6 +516,7 @@ register('feedback', {
       if (i === hot) {
         // faster kill = closer to perfect; anything under 350ms is elite
         const dt = performance.now() - hotAt;
+        fx.hit();
         hits += dt < 350 ? 1 : dt < 900 ? 0.85 : 0.6;
         clearHot(false);
         resolved++;
@@ -506,6 +525,7 @@ register('feedback', {
         setTimeout(nextSqueal, 260 + Math.random() * 420);
       } else {
         wrongs++;
+        fx.miss();
         s.classList.add('mg-strip-wrong');
         setTimeout(() => s.classList.remove('mg-strip-wrong'), 250);
         scoreboard();
@@ -547,9 +567,11 @@ register('merch', {
           if (it === want) {
             const dt = performance.now() - servedAt;
             served += dt < 1100 ? 1 : dt < 2000 ? 0.8 : 0.6;
+            fx.hit();
             b.classList.add('mg-item-yes');
             next(true);
           } else {
+            fx.miss();
             b.classList.add('mg-item-no');
             setTimeout(() => b.classList.remove('mg-item-no'), 220);
             served = Math.max(0, served - 0.15); // fumbling the order
@@ -636,11 +658,13 @@ register('hat', {
           streak++;
           caught += 1 + Math.min(0.5, (streak - 1) * 0.1); // streak sweetener
           bestBonus = Math.max(bestBonus, streak);
+          fx.hit();
           coin.classList.add('mg-coin-caught');
           hat.classList.add('mg-hat-pop');
           setTimeout(() => hat.classList.remove('mg-hat-pop'), 150);
         } else {
           streak = 0;
+          fx.miss();
           coin.classList.add('mg-coin-lost');
         }
         tally.textContent = `streak ×${streak}`;
@@ -701,6 +725,7 @@ register('interview', {
       clearTimeout(deadline); clearInterval(tick);
       const correct = saidIt === current.good;
       if (correct) right++;
+      (correct ? fx.hit : fx.miss)();
       quote.classList.add(correct ? 'mg-quote-good' : 'mg-quote-bad');
       tally.textContent = `on message: ${right}/${idx + 1}`;
       current = null;
@@ -827,12 +852,14 @@ register('pack', {
         if (over || b.dataset.gone) return;
         if (it.size === next) {
           b.dataset.gone = '1';
+          fx.hit();
           b.classList.add('mg-gear-in');
           packed++; next--;
           tally.textContent = `van: ${packed}/${GEAR.length}`;
           if (packed >= GEAR.length) end();
         } else {
           fumbles++;
+          fx.miss();
           b.classList.add('mg-gear-no');
           setTimeout(() => b.classList.remove('mg-gear-no'), 220);
         }
