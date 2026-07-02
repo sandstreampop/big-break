@@ -5550,4 +5550,92 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ THE FIRST FAN (3-beat arc: someone knew the words first) ═══════════
+  {
+    id: 'a1_first_fan', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_first_fan', context: 'After the set. Row zero.',
+    prompt: 'Someone in the front row sang along tonight. Not hummed — SANG, every word, including the verse you almost cut. You have, apparently, one (1) fan. They are waiting by the door with a sharpie and tremendous courage.',
+    tags: ['live', 'network'],
+    choices: {
+      left: {
+        label: 'Talk. Ask how they found you.',
+        governingStats: { network: 0.7, cred: 0.3 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'The conversation is 90% you apologizing for the sound mix. They don’t care about the mix. “The words,” they say, tapping their chest, leaving. You think about that tap all week.', effects: { network: 3, addFlag: 'superfan' } },
+          good: { text: 'They found you through a friend of a friend’s playlist, three layers deep, like a secret. You sign the sharpie itself as a bit. They laugh like it’s the best thing that ever happened. Keep them.', effects: { network: 5, creativity: 2, addFlag: 'superfan' } },
+          incredible: { text: 'They quote your own lyric back to you to explain their year, and for one vertiginous second you understand what the job actually is. You will chase this feeling through every arena you never fill.', effects: { network: 5, creativity: 4, cred: 2, addFlag: 'superfan' } },
+        },
+      },
+      right: {
+        label: 'Nod from the stage. Stay a poster.',
+        governingStats: { cred: 0.8 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'The nod comes out as a wince. They wave the sharpie anyway, undeterred. Some fans choose you harder than you choose yourself.', effects: { cred: 2, addFlag: 'superfan' } },
+          good: { text: 'One nod, held one second. In the mythology this fan is already writing, that nod is chapter one. Mystery is a gift you give them.', effects: { cred: 4, addFlag: 'superfan' } },
+          incredible: { text: 'You close with the song they came for and look at row zero on the last line. That’s it. That’s the whole transaction. It is somehow enormous.', effects: { cred: 5, fame: 2, addFlag: 'superfan' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_fan_account', act: 2, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['superfan'] },
+    art: 'ev_fan_account', context: 'A fan account you did not authorize',
+    prompt: 'There is now a fan account. It posts your set times before venues do, corrects journalists’ facts with citations, and has a banner image of you mid-blink. It is run — of course — by row zero. It has more followers than you.',
+    tags: ['social'],
+    choices: {
+      left: {
+        label: 'Follow it back. Bless the archive.',
+        governingStats: { network: 0.6, creativity: 0.4 },
+        tags: ['social', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You follow back and the account posts ONLY a screenshot of the notification with seventeen exclamation points. The mid-blink banner stays. You have blessed the blink. The blink is canon now.', effects: { fame: 3, network: 2, hypeSong: 8 } },
+          good: { text: 'The account becomes your unofficial press office, faster and more accurate than the real one. Journalists start citing IT. Your song stats climb wherever it aims.', effects: { fame: 6, network: 4, hypeSong: 16 } },
+          incredible: { text: 'You send the account ONE unreleased voice memo, no caption. The resulting archaeological thread is better music writing than any review you’ve gotten. The scene reads it. The numbers move.', effects: { fame: 8, network: 5, cred: 3, hypeSong: 26 } },
+        },
+      },
+      right: {
+        label: 'Never acknowledge it. Sacred distance.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie'],
+        outcomes: {
+          bad: { text: 'Your silence gets its own conspiracy thread. The account handles it with more grace than your actual label would. The archive grows either way.', effects: { cred: 3, hypeSong: 4 } },
+          good: { text: 'The distance keeps the account HUNGRY — it documents you like a wildlife photographer, and the mythology compounds. Unbothered. Documented. Perfect.', effects: { cred: 6, fame: 2, hypeSong: 10 } },
+          incredible: { text: 'Years of silence, then the account posts “they know we exist. that’s enough.” and the post does numbers that embarrass the industry. Restraint, archived, is legend.', effects: { cred: 8, fame: 4, hypeSong: 14 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_fan_tattoo', act: 3, pathAffinity: [], weight: 14,
+    requires: { flagsAll: ['superfan'] },
+    art: 'ev_fan_tattoo', context: 'Load-in. A rolled-up sleeve.',
+    prompt: 'Row zero is at load-in with a rolled-up sleeve: a line from “{song}” tattooed in typewriter font, slightly crooked, absolutely permanent. “The artist did it for free,” they say. “Fan of yours too.” Your words live on a stranger’s arm now. They were never only yours.',
+    tags: ['network', 'home'],
+    choices: {
+      left: {
+        label: 'Sign under it. Make it a set.',
+        governingStats: { network: 0.6, creativity: 0.4 },
+        tags: ['network', 'risky'],
+        outcomes: {
+          bad: { text: 'Your handwriting betrays you under pressure and the signature comes out like a ransom note. They get THAT tattooed too, verbatim. You are now permanently, legally illegible on a human being.', effects: { fame: 4, network: 3, addFlag: 'fan_family' } },
+          good: { text: 'You sign small, under the line, like a footnote — which is what you are to this tattoo, and you know it. The tattoo artist inks it that week. The photo does gentle, permanent numbers.', effects: { fame: 6, network: 4, cred: 2, addFlag: 'fan_family' } },
+          incredible: { text: 'You write the NEXT line of the song — the unreleased one — under the tattooed one. Now their arm contains something no stream can serve. The account posts one photo, cropped tight, captioned “patience.” The internet loses its mind.', effects: { fame: 9, network: 5, cred: 4, addFlag: 'fan_family' } },
+        },
+      },
+      right: {
+        label: 'Put them on the permanent guest list',
+        governingStats: { cred: 0.7, network: 0.4 },
+        tags: ['home', 'safe'],
+        outcomes: {
+          bad: { text: 'The venue’s guest list system rejects “FOREVER” as a date. You argue with a dropdown menu for ten minutes and lose. Row zero buys a ticket anyway, like always. The gesture counted. The dropdown did not.', effects: { cred: 3, network: 2, addFlag: 'fan_family' } },
+          good: { text: 'Name, plus one, every show, forever. They cry exactly once, briefly, professionally — then ask if the plus one can be their mom. It can. It is ALWAYS their mom.', effects: { cred: 5, network: 3, addFlag: 'fan_family' } },
+          incredible: { text: 'You put it in writing on a setlist: “row zero — permanent.” The venue frames a copy by the door. Other bands’ fans start pointing at it like a landmark. It is one.', effects: { cred: 7, network: 4, fame: 3, addFlag: 'fan_family' } },
+        },
+      },
+    },
+  },
 ];
