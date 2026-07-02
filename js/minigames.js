@@ -509,3 +509,79 @@ register('feedback', {
     setTimeout(nextSqueal, 700);
   },
 });
+
+// ═══════════ MERCH RUSH — the table after the show (find what they want) ═══════════
+register('merch', {
+  name: 'Merch Rush', icon: '👕',
+  how: 'The line is deep and everybody wants something different. Tap the item each customer asks for before their patience runs out. Eight customers. Exact change is a myth.',
+  run(stage, ctx, done) {
+    const ITEMS = ['👕', '🧢', '📼', '📀', '🧣', '📛'];
+    const CUSTOMERS = 8;
+    const PATIENCE = 2600; // ms per customer
+
+    const ask = el('div', 'mg-ask');
+    const patience = el('div', 'mg-crowdmeter');
+    const pFill = el('div', 'mg-crowdfill');
+    patience.append(pFill);
+    const grid = el('div', 'mg-merch');
+    const tally = el('div', 'mg-dots', '');
+    stage.append(ask, patience, grid, tally);
+
+    // shelf: shuffled every customer so it's search, not memory
+    let want = null, servedAt = 0, served = 0, doneCount = 0, over = false;
+    let pTimer = null, tickTimer = null;
+
+    function shelf() {
+      grid.innerHTML = '';
+      [...ITEMS].sort(() => Math.random() - 0.5).forEach((it) => {
+        const b = el('button', 'mg-item', it);
+        b.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          if (over || !want) return;
+          if (it === want) {
+            const dt = performance.now() - servedAt;
+            served += dt < 1100 ? 1 : dt < 2000 ? 0.8 : 0.6;
+            b.classList.add('mg-item-yes');
+            next(true);
+          } else {
+            b.classList.add('mg-item-no');
+            setTimeout(() => b.classList.remove('mg-item-no'), 220);
+            served = Math.max(0, served - 0.15); // fumbling the order
+          }
+        });
+        grid.append(b);
+      });
+    }
+
+    function next(soldOrLost) {
+      clearTimeout(pTimer); clearInterval(tickTimer);
+      if (want !== null) {
+        doneCount++;
+        tally.textContent = `served ${Math.round(served * 10) / 10}/${CUSTOMERS}`;
+        want = null;
+      }
+      if (doneCount >= CUSTOMERS) {
+        over = true;
+        setTimeout(() => done(served / CUSTOMERS), 300);
+        return;
+      }
+      setTimeout(() => {
+        want = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+        servedAt = performance.now();
+        ask.innerHTML = `customer wants: <b>${want}</b>`;
+        shelf();
+        pFill.style.width = '100%';
+        pFill.className = 'mg-crowdfill';
+        tickTimer = setInterval(() => {
+          const left = 1 - (performance.now() - servedAt) / PATIENCE;
+          pFill.style.width = `${Math.max(0, left * 100)}%`;
+          if (left < 0.33) pFill.classList.add('mg-crowd-cold');
+        }, 80);
+        pTimer = setTimeout(() => { ask.innerHTML = 'they left. line moves on.'; next(false); }, PATIENCE);
+      }, 320);
+    }
+
+    shelf();
+    next(false);
+  },
+});
