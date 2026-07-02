@@ -233,11 +233,14 @@ function crownCheck(state, s, notes) {
   return false;
 }
 
-// One chart week passes: act breaks and the finale call this.
+// One chart week passes: act breaks and the finale call this. Returns notes
+// (strings) and records the structured week on state.lastChartWeek so the
+// act interstitial can stage it as a real moment (resume-safe: plain data).
 export function chartTick(state) {
   ensureSongs(state);
   const rng = stateRng(state);
   const notes = [];
+  const moves = [];
   for (const s of state.songs) {
     if (s.status !== 'charting') continue;
     s.prevPos = s.pos ?? null;
@@ -245,17 +248,30 @@ export function chartTick(state) {
     if (s.pos) {
       s.weeks += 1;
       if (s.peak == null || s.pos < s.peak) s.peak = s.pos;
-      if (!crownCheck(state, s, notes)) {
-        if (!s.prevPos) notes.push(`♪ “${s.title}” debuts at #${s.pos}`);
-        else if (s.pos < s.prevPos) notes.push(`♪ “${s.title}” climbs to #${s.pos}`);
-        else if (s.pos > s.prevPos) notes.push(`♪ “${s.title}” slips to #${s.pos}`);
+      if (crownCheck(state, s, notes)) {
+        moves.push({ title: s.title, kind: 'crown', from: s.prevPos, to: s.pos, weeks: s.weeks });
+      } else if (!s.prevPos) {
+        notes.push(`♪ “${s.title}” debuts at #${s.pos}`);
+        moves.push({ title: s.title, kind: 'debut', from: null, to: s.pos, weeks: s.weeks });
+      } else if (s.pos < s.prevPos) {
+        notes.push(`♪ “${s.title}” climbs to #${s.pos}`);
+        moves.push({ title: s.title, kind: 'climb', from: s.prevPos, to: s.pos, weeks: s.weeks });
+      } else if (s.pos > s.prevPos) {
+        notes.push(`♪ “${s.title}” slips to #${s.pos}`);
+        moves.push({ title: s.title, kind: 'slip', from: s.prevPos, to: s.pos, weeks: s.weeks });
+      } else {
+        moves.push({ title: s.title, kind: 'hold', from: s.prevPos, to: s.pos, weeks: s.weeks });
       }
     } else {
-      if (s.prevPos) notes.push(`♪ “${s.title}” drops off the Hot 10 after ${s.weeks} week${s.weeks === 1 ? '' : 's'}`);
+      if (s.prevPos) {
+        notes.push(`♪ “${s.title}” drops off the Hot 10 after ${s.weeks} week${s.weeks === 1 ? '' : 's'}`);
+        moves.push({ title: s.title, kind: 'drop', from: s.prevPos, to: null, weeks: s.weeks });
+      }
       s.status = 'faded';
     }
     s.hype = Math.round(s.hype * 0.55);
   }
+  state.lastChartWeek = moves.length ? { act: state.act, moves } : null;
   return notes;
 }
 
@@ -712,6 +728,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
         origin: ev?.id || null, status: 'charting', hype: 60,
       });
       if (!s.crowned) { s.crowned = true; state.hits += 1; } else { /* crowned at debut */ }
+      (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true });
     }
     push('hits', effects.hits);
     state._chartTitleHandled = !!effects.chartTitle;
@@ -732,10 +749,11 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   }
   if (effects.chartTitle && !state._chartTitleHandled) {
     const tierQ = tier === 'incredible' ? 66 : tier === 'good' ? 58 : 50;
-    addSong(state, {
+    const s = addSong(state, {
       title: effects.chartTitle.replace('{collabArtist}', collabArtistFor(state)),
       quality: tierQ, origin: ev?.id || null, status: 'charting', hype: 62,
     });
+    (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: s.crowned });
   }
   state._chartTitleHandled = false;
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
