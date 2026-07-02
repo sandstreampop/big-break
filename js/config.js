@@ -23,10 +23,18 @@ export const CONFIG = {
   rollBase: 14,
   aptitudeScale: 0.8,
   tierBadBelow: 30,        // roll < this  -> Bad
-  tierIncredibleAt: 75,    // roll >= this -> Incredible
+  // U1 (Rush): INCREDIBLE is an event, not a default. 75→82, and the
+  // roll compresses above softCap so a maxed build still sweats jitter.
+  // Rarer × bigger (see incrediblePayloadMult) ≈ same EV, more variance.
+  tierIncredibleAt: 80,
+  rollSoftCap: 90,         // roll above this is halved (soft diminishing)
+  incrediblePayloadMult: 1.3, // positive stat/fame/money gains on Incredible
   burnoutCoeff: 0.4,       // penalty = -(burnout * coeff)
   jitterMin: -15,
   jitterMax: 15,
+  // U1: jitter widens with the acts — late game keeps both tails alive.
+  // Instrument/contract jitter overrides still win.
+  jitterByAct: { 1: [-15, 15], 2: [-18, 18], 3: [-22, 22] },
   // Pity: each consecutive Bad adds a stacking roll bonus (bad-luck brake)
   pityPerBad: 6,
   pityCap: 18,
@@ -49,6 +57,15 @@ export const CONFIG = {
   noveltyWeightMult: 1.75, // weight boost for cards this player never saw
   seenCardsCap: 600,       // meta.seenCards ring-buffer cap
 
+  // Rush (design doc §4)
+  flashpointChance: 0.25,  // U2: ~this share of runs contains a flashpoint
+  flashpointWindow: [8, 22], // global card index where the window opens
+  hotStreakAt: 3,          // U3: non-Bad tiers in a row to light ON A ROLL
+  viralChance: 0.05,       // U4: 1-in-20 song releases go overnight viral
+  viralPosBoost: 4,        // chart slots an overnight-viral debut jumps
+  actTwistChance: 0.2,     // U5: once per run, an act plays ±2 cards
+  actTwistDelta: 2,
+
   // Equipment
   accessorySlots: 3,
 
@@ -62,7 +79,7 @@ export const CONFIG = {
   // Momentum (pathProgress) upgrade: if every gate >= nearMissRatio and
   // momentum >= momentumForUpgrade, a Partial upgrades to Success.
   partialRatio: 0.72,
-  nearMissRatio: 0.85,
+  nearMissRatio: 0.83,
   momentumForUpgrade: 3,   // R4: gates are meaner, so the clutch is kinder
 
   // R4 (can-lose pass): gates sit slightly above the old comfortable

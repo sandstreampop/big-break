@@ -7,6 +7,10 @@
 import { ASSET_MANIFEST } from './data/assets.js';
 
 const EMOJI = {
+  // flashpoints (Rush U2)
+  ev_fp_seance: '🕯️', ev_fp_prince: '👑', ev_fp_blackout: '🔦', ev_fp_capsule: '📼',
+  ev_fp_slot: '🌩️', ev_fp_masked: '🎭', ev_fp_suit: '⚖️', ev_fp_cruise: '🛳️',
+  ev_fp_glitch: '💸', ev_fp_billboard: '🏙️',
   ev_open_mic: '🎤', ev_roommate: '🛏️', ev_wedding: '💒', ev_craigslist: '📰',
   ev_phone_demo: '📱', ev_busk: '🎩', ev_pawn_shop: '🏷️', ev_clips: '🎞️',
   ev_battle: '🏆', ev_lessons: '📖', ev_dayjob: '🥤', ev_house_show: '🏚️',
@@ -64,6 +68,11 @@ const EMOJI = {
 
 // Which composed scene each event/ending slot uses
 const SCENE = {
+  // flashpoints (Rush U2)
+  ev_fp_seance: 'home', ev_fp_prince: 'phone', ev_fp_blackout: 'arena',
+  ev_fp_capsule: 'phone', ev_fp_slot: 'festival', ev_fp_masked: 'studio',
+  ev_fp_suit: 'office', ev_fp_cruise: 'street', ev_fp_glitch: 'phone',
+  ev_fp_billboard: 'street',
   // stages & venues
   ev_open_mic: 'stage', ev_wedding: 'stage', ev_battle: 'stage', ev_house_show: 'stage',
   ev_loop_show: 'stage', ev_showcase: 'stage', ev_opener: 'stage', ev_arena: 'arena',

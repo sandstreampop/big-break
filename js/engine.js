@@ -25,10 +25,13 @@ function contractMods(state) {
   return contractById(state.contract)?.mods || {};
 }
 
-// Act length can be shortened by a contract (Overnight Success)
+// Act length can be shortened by a contract (Overnight Success) or bent
+// by this run's act twist (U5: the tour got cut short / extended)
 export function actLength(state, act) {
   if (state.tutorial) return TUTORIAL_EVENTS.length;
-  return contractMods(state).actLengths?.[act] ?? CONFIG.actLengths[act];
+  const base = contractMods(state).actLengths?.[act] ?? CONFIG.actLengths[act];
+  const twist = state.actTwist && state.actTwist.act === act ? state.actTwist.delta : 0;
+  return Math.max(3, base + twist);
 }
 
 const STATS = ['skill', 'cred', 'creativity', 'network'];
@@ -129,6 +132,15 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     // setup cards get a guaranteed window, their payoffs draw hot.
     seeds: rollSeeds(rng, CONFIG.seedCount),
     seenCards: null, // per-player seen-card ids (set by the UI from meta)
+    // Rush: ~25% of runs schedule one flashpoint card (U2); ~20% of runs
+    // have one act play short or long (U5); hot streaks tracked live (U3)
+    flashpointAt: rng() < CONFIG.flashpointChance
+      ? randInt(rng, CONFIG.flashpointWindow[0], CONFIG.flashpointWindow[1]) : null,
+    flashpointSeen: false,
+    hotStreak: 0,
+    actTwist: rng() < CONFIG.actTwistChance
+      ? { act: randInt(rng, 2, 3), delta: rng() < 0.5 ? -CONFIG.actTwistDelta : CONFIG.actTwistDelta }
+      : null,
     path: null,
     instrument: instrumentId,
     firstInstrument: instrumentId,
@@ -230,6 +242,13 @@ function debutSong(state, s) {
   const rng = stateRng(state);
   s.releasedAct = state.act; // The Deadline contract audits this
   s.pos = positionSong(state, s, rng);
+  // U4: the overnight-viral jackpot — 1 in 20 releases catches the wave.
+  // Charts are the game's natural slot machine; this is the triple-7s.
+  if (s.pos && !state.tutorial && rng() < CONFIG.viralChance) {
+    s.viral = true;
+    s.hype = clamp(s.hype + 30, 0, 100);
+    s.pos = Math.max(1, s.pos - CONFIG.viralPosBoost);
+  }
   if (s.pos) {
     s.weeks = 1;
     s.peak = s.pos;
@@ -460,27 +479,47 @@ export function drawNextCard(state, rng = Math.random) {
   }
   let pool = eligibleEvents(state).filter((e) => !e.finaleCard); // climax is queued by advance()
   if (!pool.length) return null; // act runs dry -> caller advances act
-  // Guarantee an opportunity/shop card once per act (spec §8.4.4)
-  const shopDue = state.cardsPlayedInAct >= CONFIG.shopSlot[state.act] && !state.shopPlayedInAct;
-  if (shopDue) {
-    const shops = pool.filter((e) => e.shop);
-    if (shops.length) pool = shops;
-  }
-  // Story Seeds (R1): an unlit seeded arc gets its setup card dealt on
-  // schedule — same mechanism as the shop slot. Acts 1–2 only (an arc
-  // seeded in act 3 could never pay off).
-  if (!shopDue && !state.tutorial && state.act <= 2 &&
-      state.cardsPlayedInAct >= (CONFIG.seedSetupSlot[state.act] ?? 99)) {
-    const due = [];
-    for (const arcId of state.seeds || []) {
-      const arc = arcById(arcId);
-      if (!arc || requiresOk(arc.lit, state)) continue; // already lit
-      if (arc.setup.some((id) => state.usedEvents.includes(id))) continue; // setup came & went
-      due.push(...arc.setup);
+  // Flashpoints (U2) live outside the normal deck: max one per run, only
+  // in runs that scheduled one, dealt when the window opens — or summoned
+  // early by a hot streak (U3). Unique frame + sting; the story you retell.
+  const streakHot = !state.tutorial && (state.hotStreak || 0) >= CONFIG.hotStreakAt;
+  const flashDue = state.flashpointAt != null && !state.flashpointSeen &&
+    ((state.cardLog || []).length >= state.flashpointAt || streakHot);
+  const flashes = flashDue ? pool.filter((e) => e.flashpoint) : [];
+  pool = pool.filter((e) => !e.flashpoint);
+  if (!pool.length && !flashes.length) return null;
+  if (flashes.length) {
+    pool = flashes;
+  } else {
+    // Guarantee an opportunity/shop card once per act (spec §8.4.4)
+    const shopDue = state.cardsPlayedInAct >= CONFIG.shopSlot[state.act] && !state.shopPlayedInAct;
+    if (shopDue) {
+      const shops = pool.filter((e) => e.shop);
+      if (shops.length) pool = shops;
     }
-    if (due.length) {
-      const setups = pool.filter((e) => due.includes(e.id));
-      if (setups.length) pool = setups;
+    // Story Seeds (R1): an unlit seeded arc gets its setup card dealt on
+    // schedule — same mechanism as the shop slot. Acts 1–2 only (an arc
+    // seeded in act 3 could never pay off).
+    if (!shopDue && !state.tutorial && state.act <= 2 &&
+        state.cardsPlayedInAct >= (CONFIG.seedSetupSlot[state.act] ?? 99)) {
+      const due = [];
+      for (const arcId of state.seeds || []) {
+        const arc = arcById(arcId);
+        if (!arc || requiresOk(arc.lit, state)) continue; // already lit
+        if (arc.setup.some((id) => state.usedEvents.includes(id))) continue; // setup came & went
+        due.push(...arc.setup);
+      }
+      if (due.length) {
+        const setups = pool.filter((e) => due.includes(e.id));
+        if (setups.length) pool = setups;
+      }
+    }
+    // U3 spotlight: while ON A ROLL, the deck leans all the way into
+    // what this player has never seen — streaks are for discovering.
+    if (streakHot && !shopDue && state.seenCards) {
+      const seenSet = new Set(state.seenCards);
+      const unseen = pool.filter((e) => !seenSet.has(e.id));
+      if (unseen.length) pool = unseen;
     }
   }
   // Lit seeded arcs: their payoff cards draw hot for the rest of the run.
@@ -577,10 +616,19 @@ export function rollComponents(state, choice, opts = {}) {
   const encoreBonus = opts.encore && !cMods.disableEncore ? CONFIG.encoreBonus : 0;
   // Performance bonus: a minigame result (UI-side skill) folded into the roll
   const perfBonus = opts.bonus || 0;
-  const jitter = cMods.jitter || inst?.quirk?.hooks?.jitter || [CONFIG.jitterMin, CONFIG.jitterMax];
+  const jitter = cMods.jitter || inst?.quirk?.hooks?.jitter ||
+    CONFIG.jitterByAct?.[state.act] || [CONFIG.jitterMin, CONFIG.jitterMax];
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
     gearBonus + quirkBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
   return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
+}
+
+// U1: rolls compress above the soft cap — a maxed-out build still sweats
+// the jitter instead of auto-clearing the INCREDIBLE bar every card.
+function softCap(roll) {
+  return roll > CONFIG.rollSoftCap
+    ? CONFIG.rollSoftCap + (roll - CONFIG.rollSoftCap) * 0.5
+    : roll;
 }
 
 // Risk tell (spec §10): probability each tier fires, given uniform jitter.
@@ -591,7 +639,7 @@ export function choiceOdds(state, choice, opts = {}) {
   const span = jMax - jMin + 1;
   let bad = 0, incredible = 0;
   for (let j = jMin; j <= jMax; j++) {
-    const r = base + j;
+    const r = softCap(base + j);
     if (r < CONFIG.tierBadBelow) bad++;
     else if (r >= CONFIG.tierIncredibleAt) incredible++;
   }
@@ -620,7 +668,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
 
   const c = rollComponents(state, choice, { encore: useEncore, bonus: opts.bonus || 0 });
   const jitter = randInt(rng, c.jitter[0], c.jitter[1]);
-  const roll = c.base + jitter;
+  const roll = softCap(c.base + jitter);
   let tier;
   if (roll < CONFIG.tierBadBelow) tier = 'bad';
   else if (roll >= CONFIG.tierIncredibleAt) tier = 'incredible';
@@ -630,6 +678,9 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   const forced = ev.forceTier?.[side];
   if (forced) tier = forced === 'encoreUp' ? (useEncore ? 'incredible' : 'good') : forced;
   state.badStreak = tier === 'bad' ? (state.badStreak || 0) + 1 : 0;
+  // U3: the hot streak — was it already lit when this swipe happened?
+  const streakWasHot = !state.tutorial && (state.hotStreak || 0) >= CONFIG.hotStreakAt;
+  state.hotStreak = (tier === 'good' || tier === 'incredible') ? (state.hotStreak || 0) + 1 : 0;
   (state.tierLog = state.tierLog || []).push(tier);
   (state.cardLog = state.cardLog || []).push({ e: ev.id, t: tier, a: state.act, s: side });
   let encoreEarned = false;
@@ -639,9 +690,23 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
     encoreEarned = true;
   }
   if (tier === 'incredible' && useEncore) state.encoreChained = true;
+  // U3: riding the streak — an armed Encore that lands INCREDIBLE while
+  // ON A ROLL refunds its token on top of the normal earn, cap be damned.
+  let encoreRefunded = false;
+  if (streakWasHot && useEncore && tier === 'incredible' && !contractMods(state).disableEncore) {
+    state.encore = (state.encore || 0) + 1;
+    encoreRefunded = true;
+  }
 
   const outcome = choice.outcomes[tier];
   const effects = { ...outcome.effects };
+  // U1: rarer × bigger — INCREDIBLE payloads land ~25% harder (positive
+  // stat/fame/money gains only; costs and story effects stay authored)
+  if (tier === 'incredible' && CONFIG.incrediblePayloadMult) {
+    for (const k of ['skill', 'cred', 'creativity', 'network', 'fame', 'money']) {
+      if ((effects[k] || 0) > 0) effects[k] = Math.round(effects[k] * CONFIG.incrediblePayloadMult);
+    }
+  }
 
   // Instrument quirk: bonus effects on Incredible (e.g. Kazoo's Novelty)
   const inst = instrumentById(state.instrument);
@@ -668,7 +733,8 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories, opts.mgDetail || null);
   const result = {
     tier, roll: Math.round(roll), text: outcome.text, deltas, event: ev, side,
-    encoreEarned, encoreSpent: useEncore,
+    encoreEarned, encoreSpent: useEncore, encoreRefunded,
+    hotStreak: state.hotStreak, streakWasHot,
   };
 
   // Promises (short-horizon objectives): a matching-tagged choice fulfills;
@@ -753,6 +819,7 @@ function finishCard(state, ev) {
   if (!state.usedEvents.includes(ev.id)) state.usedEvents.push(ev.id);
   state.cardsPlayedInAct += 1;
   if (ev.shop) state.shopPlayedInAct = true;
+  if (ev.flashpoint) state.flashpointSeen = true; // one per run, spent
   state.currentEventId = null;
 }
 
@@ -835,7 +902,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
         origin: ev?.id || null, status: 'charting', hype: 60,
       });
       if (!s.crowned) { s.crowned = true; state.hits += 1; } else { /* crowned at debut */ }
-      (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true });
+      (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true, viral: !!s.viral });
     }
     push('hits', effects.hits);
     state._chartTitleHandled = !!effects.chartTitle;
@@ -860,7 +927,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
       title: effects.chartTitle.replace('{collabArtist}', collabArtistFor(state)),
       quality: tierQ, origin: ev?.id || null, status: 'charting', hype: 62,
     });
-    (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: s.crowned });
+    (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: s.crowned, viral: !!s.viral });
   }
   if (effects.hypeSong) {
     // Promo: pour hype into your best charting song. Hype decays hard every
@@ -880,7 +947,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     const demos = (state.songs || []).filter((s) => s.status === 'demo');
     for (const d of demos) {
       releaseSong(state, d.id, hype);
-      (deltas.songDebuts = deltas.songDebuts || []).push({ title: d.title, pos: d.pos, hit: d.crowned, released: true });
+      (deltas.songDebuts = deltas.songDebuts || []).push({ title: d.title, pos: d.pos, hit: d.crowned, released: true, viral: !!d.viral });
     }
     for (const s of (state.songs || []).filter((x) => x.status === 'charting' && x.pos && !demos.includes(x))) {
       s.hype = clamp(s.hype + 12, 0, 100);
@@ -895,7 +962,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
       const best = demos.slice().sort((a, b) => b.quality - a.quality)[0];
       const hype = (typeof effects.releaseDemo === 'number' ? effects.releaseDemo : 55) + (hooks.releaseHype || 0) + accs.reduce((n, a) => n + (a.releaseHype || 0), 0) + ((state.perks || []).includes('promoter') ? 6 : 0);
       releaseSong(state, best.id, hype);
-      (deltas.songDebuts = deltas.songDebuts || []).push({ title: best.title, pos: best.pos, hit: best.crowned, released: true });
+      (deltas.songDebuts = deltas.songDebuts || []).push({ title: best.title, pos: best.pos, hit: best.crowned, released: true, viral: !!best.viral });
     }
   }
   if (effects.polishDemo) {
@@ -1156,6 +1223,12 @@ function startAct(state, act) {
   }
   notes.push(...deadlineAudit(state, act - 1));
   notes.push(...chartTick(state));
+  // U5: the act twist is telegraphed the moment the act opens
+  if (state.actTwist && state.actTwist.act === act) {
+    notes.push(state.actTwist.delta < 0
+      ? `✂️ The routing collapses — this leg runs ${-state.actTwist.delta} cards SHORT. Make them count.`
+      : `➕ The promoter adds dates — this leg runs ${state.actTwist.delta} cards LONG. Pace yourself.`);
+  }
   return notes;
 }
 

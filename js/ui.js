@@ -444,6 +444,12 @@ function renderHud() {
   top.append(counters);
   hud.append(top);
 
+  // U3: the hot streak is a visible thing you're riding
+  if (!run.tutorial && (run.hotStreak || 0) >= CONFIG.hotStreakAt) {
+    const roll = el('div', 'on-a-roll', `🔥 ON A ROLL ×${run.hotStreak} — the deck is showing you things`);
+    hud.append(roll);
+  }
+
   const rail = el('div', 'stat-rail');
   for (const key of ['skill', 'cred', 'creativity', 'network', 'burnout']) {
     const v = run.stats[key];
@@ -599,8 +605,14 @@ function dealCard() {
   const area = $('#card-area');
   area.innerHTML = '';
 
-  const card = el('div', 'card');
+  const card = el('div', 'card' + (ev.flashpoint ? ' flashpoint' : ''));
   ambient(sceneFor(ev.art));
+  if (ev.flashpoint) {
+    // U2: the moment must be LEGIBLE — foil frame, sting, badge
+    sfx.flashpoint();
+    vibrate([20, 30, 20, 30, 60]);
+    card.append(el('div', 'flashpoint-badge', '⚡ FLASHPOINT'));
+  }
   card.append(artFor(ev.art, 'card-art', {
     fame: run.fame, network: run.stats.network, burnout: run.stats.burnout,
   }));
@@ -1049,8 +1061,12 @@ function showResult(result) {
     notice(m.bonus >= 0 ? 'notice-good' : 'notice-bad',
       `🎮 Performance: <b>${m.label}</b> — ${m.bonus >= 0 ? '+' : ''}${m.bonus} on that roll`);
   }
-  if (result.encoreSpent) notice('notice-encore', '🎇 Encore spent — that roll was boosted');
+  if (result.encoreRefunded) notice('notice-encore', '🔥🎇 <b>ENCORE REFUNDED</b> — you spent it ON A ROLL and it came back');
+  else if (result.encoreSpent) notice('notice-encore', '🎇 Encore spent — that roll was boosted');
   if (result.encoreEarned) notice('notice-encore', '🎇 <b>Encore earned</b> — bank it for the right card');
+  if (!result.streakWasHot && (result.hotStreak || 0) === CONFIG.hotStreakAt && !run.tutorial) {
+    notice('notice-encore', '🔥 <b>ON A ROLL</b> — three clean cards straight. While it lasts, the deck deals what you’ve never seen.');
+  }
   if (result.gearLost) notice('notice-bad', `🧰 <b>${result.gearLost.name}</b> — lost!`);
   if (result.venueLeveled) notice('notice-gear', `${result.venueLeveled.venue.icon} <b>${result.venueLeveled.venue.name}</b> levels up: ${result.venueLeveled.tier.name}`);
   else if (result.venueHosted) notice('notice-good', `${result.venueHosted.venue.icon} Home crowd: +${result.venueHosted.tier.showBonus} on that roll`);
@@ -1079,10 +1095,12 @@ function showResult(result) {
     notice('notice-good', `🎙 <b>Demo taped: “${sw.title}”</b>${sw.fromHook ? ' <i>(that hook you grabbed)</i>' : ''} — ${feel}`);
   }
   for (const sd of result.deltas.songDebuts || []) {
-    if (sd.hit) notice('notice-encore', `👑 <b>“${sd.title}”</b> enters the Hot 10 at <b>#${sd.pos}</b> — instant HIT`);
+    if (sd.viral) notice('notice-viral', `🌋 <b>OVERNIGHT VIRAL</b> — “${sd.title}” detonates on release and debuts at <b>#${sd.pos}</b>${sd.hit ? ' — instant HIT 👑' : ''}. Nobody can explain it. Nobody wants to.`);
+    else if (sd.hit) notice('notice-encore', `👑 <b>“${sd.title}”</b> enters the Hot 10 at <b>#${sd.pos}</b> — instant HIT`);
     else if (sd.pos) notice('notice-good', `♪ <b>“${sd.title}”</b> debuts at <b>#${sd.pos}</b> on the Hot 10`);
     else notice('notice-bad', `♪ <b>“${sd.title}”</b> ships… and misses the Hot 10. For now, hype can bring it back.`);
   }
+  if ((result.deltas.songDebuts || []).some((sd) => sd.viral)) { spawnConfetti(ov); sfx.win(); }
   box.append(notices);
 
   // Shop shelf: choose which item you actually bought (Pass 33)
@@ -1484,6 +1502,11 @@ function actInterstitial(step) {
     : 'Higher stakes, fewer excuses. The summit is visible. So is the drop.'));
   for (const n of step.notes || []) {
     if (n.startsWith('♪')) continue; // chart news gets its own stage below
+    if (n.startsWith('✂️') || n.startsWith('➕')) {
+      // U5: the act twist is a headline, not a line item
+      box.append(el('p', 'act-twist-note', n));
+      continue;
+    }
     box.append(el('p', 'upkeep-note', `💸 ${n}`));
   }
 

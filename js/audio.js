@@ -239,6 +239,12 @@ export const sfx = {
     } else this.win();
   },
   ui() { blip(880, 0.05, 'sine', 0.03); },
+  // U2: the flashpoint sting — a rising shimmer that says THIS ONE COUNTS
+  flashpoint() {
+    [392, 523, 659, 784, 1047].forEach((f, i) => blip(f, 0.12, 'sawtooth', 0.035, i * 0.05));
+    blip(1568, 0.6, 'triangle', 0.06, 0.28);
+    blip(1976, 0.5, 'triangle', 0.04, 0.34);
+  },
   // minigame feedback: light, fast, distinct from result stingers
   mgHit() { blip(1175, 0.06, 'triangle', 0.05); },
   mgMiss() { blip(196, 0.1, 'sawtooth', 0.04); },

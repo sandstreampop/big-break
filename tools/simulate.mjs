@@ -60,20 +60,26 @@ const tally = {
   worstRunBadPct: 0, runsOver60Bad: 0,
   reach: {},          // eventId -> number of runs in which it appeared
   seedsRolled: 0, seedsLit: 0, seedsPaid: 0, // Story Seeds funnel (R1)
+  flashpoints: 0, // U2: runs that hit their flashpoint
   spikeSum: 0,        // total ±20-point swing moments across all runs
   spikeRuns0: 0,      // runs with zero swing moments
   cardCountHist: {},  // cards-per-run distribution (rhythm variance)
 };
 
-// How hard a single card swung the run: stat points + fame, with money
-// mapped to a comparable scale. ≥20 counts as a "spike moment" (RUSH §5b).
-function swingPoints(result) {
-  let pts = 0;
+// A "spike moment" (RUSH §5b): one card that visibly bends the run —
+// a single ±18 stat/fame delta, ±$180, or a ≥30-point total swing.
+function isSpike(result) {
+  let total = 0;
   for (const d of result.deltas) {
-    if (d.key === 'money') pts += Math.abs(d.amount) / 10;
-    else pts += Math.abs(d.amount);
+    if (d.key === 'money') {
+      if (Math.abs(d.amount) >= 180) return true;
+      total += Math.abs(d.amount) / 10;
+    } else {
+      if (Math.abs(d.amount) >= 18) return true;
+      total += Math.abs(d.amount);
+    }
   }
-  return pts;
+  return total >= 30;
 }
 
 for (let i = 0; i < RUNS; i++) {
@@ -147,7 +153,8 @@ for (let i = 0; i < RUNS; i++) {
       tally.tierCounts[result.tier]++;
       tally.tiersByAct[act][result.tier]++;
       if (result.tier === 'bad') badCards++;
-      if (swingPoints(result) >= 20) spikes++;
+      if (isSpike(result)) spikes++;
+      if (ev.flashpoint) tally.flashpoints++;
       const pend = result.deltas.pendingGear ||
         (result.deltas.pendingGearChoices ? result.deltas.pendingGearChoices[0] : null);
       if (pend) {
@@ -245,8 +252,9 @@ if (tally.finaleStats.count) {
   const avgSpikes = tally.spikeSum / RUNS;
   const mean = tally.lpTotal / RUNS;
   const sd = Math.sqrt(tally.lpValues.reduce((s, v) => s + (v - mean) ** 2, 0) / RUNS);
-  console.log(`\nvariance index: ${avgSpikes.toFixed(2)} spike moments/run (≥20-pt swings; target ≥2)` +
-    ` · ${pct(tally.spikeRuns0)} of runs flatlined (zero spikes) · LP stddev ${sd.toFixed(1)}`);
+  console.log(`\nvariance index: ${avgSpikes.toFixed(2)} spike moments/run (target ≥2)` +
+    ` · ${pct(tally.spikeRuns0)} of runs flatlined (zero spikes) · LP stddev ${sd.toFixed(1)}` +
+    ` · flashpoints in ${pct(tally.flashpoints)} of runs (target ~25%)`);
 }
 
 {
@@ -255,12 +263,13 @@ if (tally.finaleStats.count) {
   const rows = EVENTS.map((e) => ({
     id: e.id,
     gated: !!(e.requires || e.pack || e.chainOnly || e.finaleCard || (e.pathAffinity || []).length),
+    flash: !!e.flashpoint, // windowed by design: ~25% of runs share the pool
     runs: tally.reach[e.id] || 0,
   }));
   const never = rows.filter((r) => !r.runs);
-  const neverOpen = never.filter((r) => !r.gated);
-  const under1 = rows.filter((r) => r.runs > 0 && r.runs / RUNS < 0.01);
-  const under5 = rows.filter((r) => r.runs / RUNS < 0.05);
+  const neverOpen = never.filter((r) => !r.gated && !r.flash);
+  const under1 = rows.filter((r) => r.runs > 0 && r.runs / RUNS < 0.01 && !r.flash);
+  const under5 = rows.filter((r) => r.runs / RUNS < 0.05 && !r.flash);
   console.log(`\ncard reach: ${rows.length - never.length}/${rows.length} cards appeared` +
     ` · never: ${never.length} (${neverOpen.length} ungated) · <1%: ${under1.length} · <5%: ${under5.length}`);
   console.log(`  gate — never-drawn ungated = 0: ${neverOpen.length === 0 ? '✓' : '✗ FAIL'}` +

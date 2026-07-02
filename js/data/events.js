@@ -6069,4 +6069,289 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ FLASHPOINTS (Rush U2): one per run, if fate allows ═══════════
+  // Max one fires per run (~25% of runs). Huge swings both ways — these are
+  // the stories players retell. Never drawn from the normal deck; the
+  // engine deals them through their own window (state.flashpointAt).
+  {
+    id: 'fp_seance', act: [1, 2, 3], pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_seance', context: 'A velvet envelope, hand-delivered by a man who does not blink',
+    prompt: 'A private booking: one set, tonight, for “an intimate gathering of the bereaved and their intended recipients.” The address is a parlor with the curtains nailed shut. The medium requests you play “whatever the room asks for.” The pay is outrageous. The room is very cold.',
+    tags: ['live', 'risky'],
+    choices: {
+      left: {
+        label: 'Play the séance. Take the money.',
+        governingStats: { creativity: 0.7, skill: 0.5 },
+        tags: ['live', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Mid-song, the planchette drags itself across the board and spells S T O P P L A Y I N G. You finish the set out of professionalism, at triple tempo, sweating through your coat. The money is real. So, you are fairly sure now, is everything else.', effects: { money: 320, burnout: 16, creativity: 6, cred: -4 } },
+          good: { text: 'You play the room and the room answers — knocks on the good beats, curtains breathing on the ballad. The bereaved leave lighter. The medium tips you and says “they liked the bridge.” You do not ask who.', effects: { money: 420, creativity: 10, cred: 8, fame: 5 } },
+          incredible: { text: 'The widow stands up mid-set: “He wants the one about the harbor.” You have never written one about the harbor. You write it NOW, live, in front of the departed, and the whole parlor weeps — both sides of the veil, per the medium. It is the strangest and best commission of your life.', effects: { money: 500, creativity: 14, fame: 10, cred: 8, writeSong: true } },
+        },
+      },
+      right: {
+        label: 'Decline. Some rooms stay shut.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'rest'],
+        outcomes: {
+          bad: { text: 'You say no in the doorway and the door closes by itself, gently, like it understands. All week your instrument plays a fraction of a second behind your hands. It stops eventually. Mostly.', effects: { burnout: 8, creativity: 4 } },
+          good: { text: 'You decline, politely, into the cold air of the porch. The medium nods: “Wise. He didn’t like your genre anyway.” You dine out on the story for a month — cheaper than therapy and twice as effective.', effects: { cred: 6, creativity: 5, burnout: -4 } },
+          incredible: { text: 'As you leave, the medium catches your sleeve: “One message, no charge.” She names your unfinished song — the real one, the one nobody knows about — and says “finish it. He says the third verse is already done, you just haven’t noticed.” You check at home. It is.', effects: { creativity: 16, cred: 6, burnout: -6, polishDemo: 12 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'fp_prince', act: [2, 3], pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_prince', context: 'A verified account. Blue check. Palace emoji.',
+    prompt: '“Greetings esteemed artist. I am Crown Prince Adetokunbo, patron of the arts. Your sound has reached the palace. I wish to fund your next era: $50,000, no conditions. There is only a small matter of a processing fee ($350) required by international law.” The account has 2.1M followers. The grammar is immaculate. Your rent is due.',
+    tags: ['deal', 'social'],
+    choices: {
+      left: {
+        label: 'Pay the fee. Fortune favors the reckless.',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'The account evaporates the instant the transfer clears, along with a second, unauthorized transfer you did not make. The bank’s fraud team calls you “a textbook case” in a tone that suggests they will literally put you in a textbook.', effects: { money: -450, cred: -8, burnout: 14 } },
+          good: { text: 'The fee vanishes. The account vanishes. BUT the screenshots of your correspondence — annotated, increasingly unhinged — become your most-shared post ever. The scene adopts “esteemed artist” as your honorific. Net loss, moral victory.', effects: { money: -350, fame: 14, cred: 4 } },
+          incredible: { text: 'It is REAL. It is ACTUALLY REAL. A cultural attaché confirms by video call from a room with a chandelier the size of your apartment. The patronage lands in tranches; the first one alone rewrites your year. The palace requests one (1) private performance and absolute discretion. You tell everyone immediately.', effects: { money: 600, fame: 20, network: 12, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Expose the scam. Loudly. With screenshots.',
+        governingStats: { cred: 0.6, creativity: 0.5 },
+        tags: ['social', 'safe'],
+        outcomes: {
+          bad: { text: 'Your exposé thread misidentifies a REAL cultural foundation two typos away from the scam account. Their lawyer’s letter is politely devastating. The apology post does a fraction of the accusation’s numbers, as apologies do.', effects: { fame: 4, cred: -10, burnout: 10 } },
+          good: { text: 'The thread saves, by the replies, at least nine other broke musicians from the same scam. A cybersecurity firm reposts it with the caption “this artist gets it.” You are briefly the most trusted person in music.', effects: { fame: 15, cred: 10, network: 6 } },
+          incredible: { text: 'The ACTUAL prince — there is an actual prince — sees the thread exposing his impersonator and is so grateful he funds you FOR REAL, publicly, with a statement about artistic integrity. The scammer, somewhere, watches the money go to you. The internet calls it the greatest plot twist of the year.', effects: { money: 500, fame: 22, cred: 12, network: 10 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'fp_blackout', act: 3, pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_blackout', context: 'The biggest room of your life, mid-song, when the grid dies',
+    prompt: 'Total blackout. Not the venue — the CITY. Eleven thousand phones come up like a galaxy turning on. The PA is dead, the board is dead, the exits are calm but the room is deciding, right now, what kind of night this becomes. The fire marshal gives you ten minutes. Your instrument still works. Acoustically. Barely.',
+    tags: ['live', 'risky'],
+    choices: {
+      left: {
+        label: 'Climb the barricade. Play into the dark.',
+        governingStats: { skill: 0.6, cred: 0.6 },
+        tags: ['live', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Eleven thousand people cannot hear an unamplified anything. The front three rows get a legend; rows four through the mezzanine get a rumor of a legend and start a competing singalong of a song that is not yours. It wins. You lose a shoe in the retreat. The clips are chaos.', effects: { fame: -8, cred: 6, burnout: 14 } },
+          good: { text: 'You play into the dark and the crowd does the amplification themselves — row by row, passing the melody backwards like a bucket brigade. It should not work. It works. The fire marshal lets it run four extra minutes, which from a fire marshal is a standing ovation.', effects: { fame: 22, cred: 12, creativity: 6 } },
+          incredible: { text: 'Eleven thousand phone torches, one unamplified song, total silence between lines. The bootleg — shot vertical, half out of focus, audio clipping on the choruses — becomes the most-viewed live clip of the year. “The Blackout Set” enters the language. Power returns during the last chord and the room BEGS them to turn it back off.', effects: { fame: 30, cred: 14, pathProgress: 2, chartTitle: 'The Blackout Set (Live)' } },
+        },
+      },
+      right: {
+        label: 'Hold. Let the venue handle it.',
+        governingStats: { network: 0.7 },
+        tags: ['safe', 'network'],
+        outcomes: {
+          bad: { text: 'You wait backstage in the dark, professionally. The crowd, unsupervised, invents its own entertainment: a chant, a wave, and eventually a folk hero — a man named Gary who did a backflip. The night belongs to Gary now. Your set, when power returns, opens for Gary’s memory.', effects: { fame: -6, burnout: 8, cred: -4 } },
+          good: { text: 'You work the dark like a green room: the promoter, the marshal, the headliner’s manager, all suddenly very available. By the time the lights blink back you’ve traded three numbers and a festival rumor. The set resumes; the networking already peaked.', effects: { network: 12, fame: 6, money: 120 } },
+          incredible: { text: 'In the black backstage, someone hands you a lantern and asks you to keep the TALENT calm. The talent is a legend. You do forty minutes of unplugged requests for an audience of one legend, who at the end says “you go on before me from now on” — and, city grid willing, means it.', effects: { network: 16, cred: 10, fame: 12, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'fp_capsule', act: [1, 2, 3], pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_capsule', context: 'An unknown number. A video file. A timestamp from another life.',
+    prompt: 'Your elementary school opened its 20-year time capsule, and inside — labeled in handwriting you’d know anywhere, because it is yours — is a cassette: YOUR FIRST ALBUM, recorded at age nine on a boombox. Eleven songs. One is about a dog you were not allowed to have. The school has already digitized it. A local news van is IDLING outside the gym.',
+    tags: ['social', 'home'],
+    choices: {
+      left: {
+        label: 'Own it. Premiere the cassette yourself.',
+        governingStats: { creativity: 0.6, network: 0.5 },
+        tags: ['social', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You post it with a heartfelt caption and the internet decides, with one voice, that nine-year-old you was better. “Raw. Unspoiled. Pre-industry.” Your actual new single gets review-bombed by people demanding more dog content. The dog song charts on a blog. You cannot compete with yourself at nine.', effects: { fame: 8, cred: -6, burnout: 10 } },
+          good: { text: 'The premiere is a delight: you, on camera, listening to your nine-year-old self explain the album’s “concept” between songs. Your genuine, helpless laughter at the key change in track seven becomes a reaction GIF. The warmth carries for weeks.', effects: { fame: 14, cred: 8, creativity: 5 } },
+          incredible: { text: 'You re-record the dog song — full production, same lyrics, dead serious — and release it as a duet with the boombox original. Nine-year-old you takes the first verse. The song about a dog you never got becomes the song everyone plays for dogs they did. It is, against all planning, the biggest thing you have ever released.', effects: { fame: 18, creativity: 12, cred: 8, chartTitle: 'Good Boy (feat. Me, Age 9)' } },
+        },
+      },
+      right: {
+        label: 'Suppress the tape. By any means.',
+        governingStats: { network: 0.8 },
+        tags: ['risky', 'deal'],
+        outcomes: {
+          bad: { text: 'Your cease-and-desist letter to an elementary school leaks, obviously, and reads exactly as it sounds. The tape goes from local news to national delight specifically because you tried to stop it. The Streisand effect now has a musical number. Track seven.', effects: { fame: 6, cred: -12, burnout: 12 } },
+          good: { text: 'A quiet arrangement: the school keeps the cassette in a display case, the file stays offline, and you fund the music program “anonymously,” which the plaque announces in 40-point type. The mystique of the unheard album grows better than the album ever could.', effects: { money: -150, cred: 10, network: 6, fame: 4 } },
+          incredible: { text: 'You buy the cassette back at the school fundraiser auction — against a shockingly motivated collector — for real money, live on local news. “Artist reclaims childhood” plays everywhere. The unheard album becomes myth; the myth becomes leverage; the collector becomes a superfan. The dog song remains yours alone, which is somehow the most valuable outcome available.', effects: { money: -250, fame: 16, cred: 14, network: 8 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'fp_slot', act: [2, 3], pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_slot', context: 'A festival production office in full cardiac arrest',
+    prompt: 'The headliner is in a hotel bathroom losing a fight with a gas-station oyster. The slot is in FORTY MINUTES. The production manager looks at the runner, the runner looks at the lineup, the lineup looks at you — the only act on site with a working rig and no set conflict. “Main stage. Forty minutes. Full fee. Yes or no.”',
+    tags: ['live', 'fame'],
+    choices: {
+      left: {
+        label: 'Yes. Obviously yes. YES.',
+        governingStats: { skill: 0.7, network: 0.4 },
+        tags: ['live', 'risky', 'mainstream'],
+        outcomes: {
+          bad: { text: 'Main stage is a different sport and everyone can tell. Your club-sized set evaporates into the fairground air; the crowd, expecting their headliner, treats you like weather. You play the whole hour to the sound of ten thousand people deciding to get food. The fee clears. The footage circulates. Character-building, the fee whispers.', effects: { money: 300, fame: -6, cred: -6, burnout: 16 } },
+          good: { text: 'You play like someone auditioning for their own future, because you are. By song four the crowd has forgiven the oyster; by the closer they’re chanting a name they learned twenty minutes ago. The production manager hugs you with clipboard still in hand — the industry’s highest honor.', effects: { money: 350, fame: 20, network: 10, burnout: 8 } },
+          incredible: { text: 'A star is born in real time and everyone films the birth. The festival’s official account posts your closer with the caption “remember where you were.” The headliner, recovered, posts it too: “couldn’t have lost my lunch for a better act.” Next year’s poster has your name on it — in the font you used to squint at.', effects: { money: 400, fame: 32, network: 12, cred: 8, pathProgress: 2 } },
+        },
+      },
+      right: {
+        label: 'Point them to the local openers instead.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'safe', 'network'],
+        outcomes: {
+          bad: { text: 'The locals you championed decline out of sheer terror, the slot goes to a DJ who was already walking past with a USB stick, and you spend the headline hour explaining to your own band why you gave away a main stage. There is no good answer. The USB DJ kills, which does not help.', effects: { cred: 4, burnout: 10, fame: -4 } },
+          good: { text: 'The local heroes take the slot, play the set of their lives, and thank you from the stage by name — twice. The scene files it away: you had the shot and you passed it sideways. That story compounds interest for years.', effects: { cred: 16, network: 10, fame: 4 } },
+          incredible: { text: 'The locals detonate the main stage, dedicate the encore to you, and bring you out for the last song in front of a crowd that now knows exactly what you did. The festival director shakes your hand: “Nobody does that. NOBODY does that.” You made a legend happen and got cut in anyway. Sainthood, with stage time.', effects: { cred: 22, network: 14, fame: 12, burnout: -6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'fp_masked', act: [2, 3], pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_masked', context: 'A studio with no name on the door. 2:11 a.m.',
+    prompt: 'The text is from a producer whose name has shaped a decade of hits and whose face has never been photographed. One session. Tonight. Two rules: no phones, and you tell NO ONE — not now, not ever, not even if it works. A car is already outside. The driver is wearing gloves. It’s July.',
+    tags: ['studio', 'risky'],
+    choices: {
+      left: {
+        label: 'Get in the car.',
+        governingStats: { creativity: 0.7, skill: 0.5 },
+        tags: ['studio', 'risky', 'tone'],
+        outcomes: {
+          bad: { text: 'The masked producer is — the mask comes off at hour three, for coffee — someone you owe an apology from years ago. The session curdles into the world’s most expensive therapy: eight hours, one unusable track, and a masterclass in how small this industry actually is. The NDA, at least, covers your embarrassment.', effects: { creativity: 6, burnout: 14, network: -4 } },
+          good: { text: 'Six hours of the strangest, freest work of your life — no names, no credits, no audience, just the track. At dawn the driver hands you an envelope of cash and a USB you are instructed to lose. The song comes out months later under someone else’s name and you feel it in your teeth every time it plays. It plays EVERYWHERE.', effects: { money: 400, creativity: 12, skill: 6, cred: 4 } },
+          incredible: { text: 'At 4 a.m. the producer stops the take, sits back, and says the sentence that reorganizes your decade: “You’ve been someone’s session hands long enough.” The track ships as a mysterious one-off single, artist listed as ??? — and the internet spends a full fiscal quarter proving it’s you. You confirm nothing. The mystery outperforms your entire catalog.', effects: { creativity: 14, cred: 10, fame: 16, hits: 1, chartTitle: 'UNTITLED (???)' } },
+        },
+      },
+      right: {
+        label: 'Counter: daylight, names, credits. Or nothing.',
+        governingStats: { cred: 0.8 },
+        tags: ['deal', 'safe'],
+        outcomes: {
+          bad: { text: 'The reply is a single period. The car leaves. For months afterward, every great mysterious release makes your stomach drop a little — was that the one? You’ll never know, which is of course the point of the gloves.', effects: { cred: 4, burnout: 6 } },
+          good: { text: '“Terms noted. Rare. Respected. Not tonight.” — and then, a month later, a DIFFERENT session, daylight, your name spelled right in the credits of something enormous. The counter-offer WAS the audition. You passed by refusing.', effects: { cred: 10, network: 8, money: 250 } },
+          incredible: { text: 'Your reply — “my name goes on my work” — leaks somehow (gloves, no phones, and yet), and becomes a rallying cry in the ghost-credit debates. Three major artists repost it. A union quotes it on a poster. The masked producer sends one final text: “Good answer. Watch the charts Friday.” Friday, a song credits ELEVEN previously anonymous session players. You did that.', effects: { cred: 18, fame: 12, network: 10, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'fp_suit', act: [2, 3], pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_suit', context: 'Headphones on. A superstar’s new single. A cold feeling.',
+    prompt: 'The biggest single of the summer came out today and the chorus is — note for note, rest for rest — the demo you posted to forty followers three years ago. Even the weird bar. ESPECIALLY the weird bar. A music-law account has already made the side-by-side. Your phone is doing something it has never done before: ringing continuously.',
+    tags: ['deal', 'social'],
+    choices: {
+      left: {
+        label: 'Lawyer. The scary one. Now.',
+        governingStats: { network: 0.7, cred: 0.4 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'Their legal team responds with a 60-page filing arguing your demo itself resembles a 1971 B-side, a Gregorian chant, and “the concept of melody.” The case dies in discovery; the fees do not. You settle for a sum that rounds to an apology and sign something promising to never describe the weird bar as weird again.', effects: { money: -400, burnout: 16, cred: 4 } },
+          good: { text: 'The side-by-side is undeniable and their team knows it. The settlement is quiet, quick, and life-adjacent: a number with a comma, a writing credit in six-point font, and an NDA with your name spelled wrong. You frame the font. The comma pays rent for a year.', effects: { money: 500, cred: 8, fame: 6 } },
+          incredible: { text: 'It never reaches court because the SUPERSTAR breaks ranks with their own label — posts your original demo with the caption “this is where it came from, pay the artist.” Credit, backpay, points on the single. The industry watches an interpolation dispute end in a HUG. Your forty-follower demo now has a platinum plaque en route.', effects: { money: 650, fame: 20, cred: 12, network: 10 } },
+        },
+      },
+      right: {
+        label: 'No lawyers. Post the demo. Shrug emoji.',
+        governingStats: { cred: 0.7, creativity: 0.4 },
+        tags: ['social', 'indie'],
+        outcomes: {
+          bad: { text: 'The internet’s attention, that faithless engine, moves on in 36 hours to a raccoon who can skateboard. Your shrug reads as surrender. The superstar’s team sends a fruit basket with no card, which their lawyers presumably billed six hours for. The weird bar is theirs now, common-law.', effects: { cred: 4, fame: 2, burnout: 8 } },
+          good: { text: 'The shrug detonates. “The most dignified response in music history” does numbers the lawsuit never could; your back catalog triples overnight as the internet goes looking for what ELSE they missed. The superstar follows you. Their producer follows you. Their LAWYER follows you, from a personal account, at 2 a.m.', effects: { fame: 18, cred: 14, money: 200 } },
+          incredible: { text: 'The superstar DMs within the hour: “the shrug broke me. studio. saturday.” The co-write that comes out of it — built on the weird bar, credited in NORMAL-SIZE font — outperforms the single that started it. Late-night hosts retell the saga as a parable. It is. You’re the moral.', effects: { fame: 24, creativity: 10, cred: 10, hits: 1, chartTitle: 'The Weird Bar (with You, Finally)' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'fp_cruise', act: 2, pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_cruise', context: 'A dockside contract, flapping in the harbor wind',
+    prompt: 'Three weeks. The M.S. Endless Horizon. Two sets a night in the Neptune Lounge, obscene money, all the shrimp your body can process — and zero signal, zero shows ashore, zero contact with the scene while it keeps moving without you. The ship leaves in two hours. The agent is holding a pen like it’s a knife.',
+    tags: ['live', 'deal'],
+    choices: {
+      left: {
+        label: 'Sign. Board. Vanish.',
+        governingStats: { skill: 0.6, network: 0.4 },
+        tags: ['live', 'mainstream', 'work'],
+        outcomes: {
+          bad: { text: 'Week one: novelty. Week two: norovirus. Week three: you perform “Sweet Caroline” for the eleventh consecutive night while the horizon refuses to end and a man named Gerald requests it again DURING it. You disembark with a tan, a thousand-yard stare, and money that feels earned in the deepest possible sense.', effects: { money: 350, burnout: 20, cred: -8, skill: 4 } },
+          good: { text: 'Two sets a night, every night, no stakes, no press — the purest reps of your life. You come back playing like a session veteran with a shrimp allergy and a savings account. The scene barely noticed you left. Your hands definitely noticed you practiced.', effects: { money: 500, skill: 12, burnout: 10 } },
+          incredible: { text: 'The Neptune Lounge, week two: a quiet older passenger requests something YOU wrote. They heard it in a harbor bar years ago and never forgot it. They turn out to own festivals — plural. The last week of the cruise is a floating negotiation with the best room service of your life. You disembark with a fortune and a main-stage handshake.', effects: { money: 650, network: 15, fame: 8, skill: 6 } },
+        },
+      },
+      right: {
+        label: 'Refuse — but play the dock as the ship leaves.',
+        governingStats: { creativity: 0.7, cred: 0.4 },
+        tags: ['indie', 'busk', 'live'],
+        outcomes: {
+          bad: { text: 'You play the departing ship a farewell set, which the harbor authority classifies as “unlicensed dockside performance” and prices accordingly. The fine costs more than the busking hat collected. The seagulls were into it. One seagull, anyway. Probably.', effects: { money: -120, creativity: 5, cred: 3 } },
+          good: { text: 'You serenade three thousand departing tourists from the dock and the whole rail waves back like the end of a movie. Someone aboard films it: “the one that got away — the ARTIST version.” The clip outlives the cruise. The agent emails: “ok that was better marketing than the gig.”', effects: { fame: 12, creativity: 8, cred: 8 } },
+          incredible: { text: 'The dock set becomes a song by sundown — the harbor, the horn, Gerald’s ghost of a request drifting back on the wind — and the song is so aggressively good that the CRUISE LINE licenses it for their next campaign without knowing it’s about refusing them. You get paid the residency money anyway, in sync fees, for staying ashore. The sea keeps the shrimp.', effects: { money: 300, creativity: 14, fame: 10, cred: 8, writeSong: true } },
+        },
+      },
+    },
+  },
+  {
+    id: 'fp_glitch', act: [2, 3], pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_glitch', context: 'Your royalty dashboard, at an hour when nothing good happens',
+    prompt: 'A decimal point somewhere in a server farm has had a stroke: your streaming dashboard says you earned $61,214 today. You did not. That is — you check — the daily take of the platform’s #1 artist, routed to you by what a future postmortem will call “a mapping error.” The money is IN the account. The error will be noticed. Eventually. Probably.',
+    tags: ['deal', 'social'],
+    choices: {
+      left: {
+        label: 'Report it before they notice.',
+        governingStats: { cred: 0.9 },
+        tags: ['safe', 'deal'],
+        outcomes: {
+          bad: { text: 'You report the error and the platform’s support system — built to deflect, not to receive — takes eleven days, four escalations, and one phone call where you explain to a manager why you are trying to give money BACK. The clawback, when it comes, takes fees out of YOUR real earnings by mistake. Honesty: reviewed poorly.', effects: { money: -80, burnout: 12, cred: 6 } },
+          good: { text: 'You report it, they claw it back cleanly, and a person with an impressive title sends a thank-you and a “creator spotlight” that puts your face on the platform’s front page for a weekend. The exposure — for once, EXPOSURE — actually converts. The #1 artist’s team sends champagne.', effects: { fame: 14, cred: 12, network: 8, money: 100 } },
+          incredible: { text: 'The postmortem goes public and you’re the hero of it: “the artist who called us.” The platform makes it a case study, pays you a finder’s bounty, and — the real prize — fixes the royalty mapping for EVERYONE, which surfaces years of misrouted micro-payments across the industry. Your name is in the changelog. Musicians buy you drinks about it.', effects: { money: 350, fame: 16, cred: 16, network: 10 } },
+        },
+      },
+      right: {
+        label: 'Say nothing. Touch nothing. Watch.',
+        governingStats: { creativity: 0.6, network: 0.4 },
+        tags: ['risky'],
+        outcomes: {
+          bad: { text: 'The clawback arrives at the worst hour of the worst week, WITH penalty fees, WITH a account flag that takes your real catalog offline for six days of appeals. The support chat calls you “valued creator” fourteen times. You have never felt less valued or more created. The dashboard, healed, mocks you with normal numbers.', effects: { money: -450, cred: -8, burnout: 16 } },
+          good: { text: 'Three days of watching the number like a wild animal in your kitchen. On day four they claw it back silently — no email, no fees, no acknowledgment it ever happened. You spent none of it and aged four years. That weekend you write feverishly about a decimal point; the demo is unnervingly good.', effects: { burnout: 8, creativity: 10, writeSong: true } },
+          incredible: { text: 'The clawback comes with a shock: a “data handling inconvenience” settlement — the platform, terrified of the story leaking, pays you a five-figure hush that dwarfs what you almost kept, attached to an NDA you sign with a smirk. You cannot tell anyone. You are telling the entire scene by Thursday, as a “hypothetical.”', effects: { money: 550, fame: 6, burnout: 6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'fp_billboard', act: [2, 3], pathAffinity: [], weight: 10, flashpoint: true,
+    art: 'ev_fp_billboard', context: 'A friend’s text: a photo, a downtown intersection, the word LOOK',
+    prompt: 'A billboard the size of a tennis court has your face on it. Forty feet of your face. It is advertising a luxury watch you have never heard of, over a slogan — “TIME RESPECTS AMBITION” — you would never say. Someone in an agency somewhere has confused you with someone considerably more famous, and the error is currently lit at one of the busiest corners in the city.',
+    tags: ['fame', 'social'],
+    choices: {
+      left: {
+        label: 'Stand under it. Livestream everything.',
+        governingStats: { creativity: 0.6, network: 0.5 },
+        tags: ['social', 'mainstream'],
+        outcomes: {
+          bad: { text: 'Mid-stream, the agency’s crew arrives with a cherry picker and papers over your face WHILE YOU WATCH, live, to nine thousand viewers. The metaphor is so brutal the clip trends under #erasure. The watch brand’s statement misspells your name. Twice. Differently.', effects: { fame: 8, cred: -4, burnout: 10 } },
+          good: { text: 'The stream — you, under forty feet of you, repeatedly asking “WHO APPROVED THIS” — is the funniest thing the internet sees all week. The watch brand leans in, sends you the watch, and quietly buys ad time on your next release to complete the bit. The bit pays better than most gigs.', effects: { fame: 18, money: 200, network: 8 } },
+          incredible: { text: 'The person you were mistaken FOR shows up at the intersection — their team saw the stream — and the two of you take a photo pointing at the billboard, captioned “time respects ambition.” It becomes the year’s defining crossover post. The watch brand, cornered by fortune, signs you BOTH. The slogan enters your rider as a joke and your bank account as a fact.', effects: { fame: 28, money: 400, network: 14, cred: 6 } },
+        },
+      },
+      right: {
+        label: 'Invoice the agency for the likeness.',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'The agency responds that, per their records, you licensed the image via a talent aggregator you’ve never heard of, for $19, in an agreement “you” signed with a cursive font. Untangling it costs more than the nineteen dollars. The billboard comes down before the dispute resolves. The watch keeps ticking. Somewhere.', effects: { money: -150, burnout: 12, cred: 2 } },
+          good: { text: 'Your invoice — line items: “face (large),” “ambition (implied)” — makes it to someone at the agency with a sense of humor and signing authority. They pay it in full to make you go away, plus a kill fee. You frame the remittance advice. The frame cost is a business expense now.', effects: { money: 450, cred: 8, fame: 6 } },
+          incredible: { text: 'The invoice leaks internally, becomes agency legend, and lands on the desk of a creative director who was ALREADY pitching a music campaign. They fly you in: the campaign becomes YOUR campaign, the billboard goes back up with your name spelled correctly and your actual single at the bottom. You are paid for the error, the correction, AND the music. Time, it turns out, does respect ambition.', effects: { money: 550, fame: 20, network: 12, pathProgress: 1 } },
+        },
+      },
+    },
+  },
 ];
