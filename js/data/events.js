@@ -5975,4 +5975,34 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ COPING: THE SONG YOU CAN'T HEAR (burnout × your own hit) ═══════════
+  {
+    id: 'coping_song', act: [1, 2, 3], pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_coping_song', context: 'A grocery store. The ceiling speakers.',
+    prompt: 'It happens in a grocery store: “{song}” comes on the ceiling speakers, and you feel NOTHING. Your own song — the one that used to make your chest lift on the first chord — and it might as well be an ad for the yogurt aisle. You stand there holding a basket, listening to your life’s work the way strangers do. Something has gone quiet in you, and it isn’t the store.',
+    tags: ['rest'],
+    choices: {
+      left: {
+        label: 'Go home. Play it the OLD way — badly, on the first instrument.',
+        governingStats: { creativity: 0.7 },
+        tags: ['rest', 'home', 'safe'],
+        outcomes: {
+          bad: { text: 'You fumble through it and it sounds wrong in a new way — smaller, but not warmer. You put the instrument down gently, which is the important part. Some nights the door is just closed. It’s a door, though. Not a wall.', effects: { burnout: -8, creativity: 2 } },
+          good: { text: 'Verse two, wrong key, kitchen acoustics — and somewhere in the third bad chorus your chest does the OLD THING, the lift, small but unmistakable, like a pilot light catching. You play it four more times. Badly. Yours again.', effects: { burnout: -16, creativity: 4 } },
+          incredible: { text: 'You play it wrong until you find a slower, sadder version hiding inside it — the version it maybe always wanted to be, before the chart got hold of it. You record thirty seconds on your phone at 1 a.m. and sleep like a stone. Some songs need to be broken back in, like boots.', effects: { burnout: -22, creativity: 7, cred: 2 } },
+        },
+      },
+      right: {
+        label: 'Keep the basket moving. Feelings are for the off-season.',
+        governingStats: { skill: 0.6, network: 0.4 },
+        tags: ['work', 'risky'],
+        outcomes: {
+          bad: { text: 'You finish the shopping, book two more sessions, and don’t mention the grocery store to anyone. The numbness politely spreads — first the song, then the encore, then the sound of your own name. The machine runs. You are somewhere inside it.', effects: { burnout: 6, money: 60, fame: 2 } },
+          good: { text: 'You shelve it like a professional — and then, three days later, a fan at a signing says the song got them through a hospital stay, and the feeling comes back THROUGH them, borrowed, secondhand, real. Sometimes the audience holds it for you until you can hold it again.', effects: { burnout: -8, fame: 3, network: 3 } },
+          incredible: { text: 'You work through it — but you also start a quiet rule: every soundcheck ends with sixty seconds of playing something that will never be released, for nobody. The crew learns not to ask. The numbness never fully leaves, but it never gets the last sixty seconds. That turns out to be enough.', effects: { burnout: -14, skill: 3, cred: 3, creativity: 3 } },
+        },
+      },
+    },
+  },
 ];

@@ -674,12 +674,17 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
 
   // Burnout coping interstitials: crossing a threshold interrupts the deck
   // once per run with a forced coping card (unless a chain is already queued)
-  if (!state.pendingChainId && !state.tutorial && !ev.finaleCard && ev.id !== 'coping_50' && ev.id !== 'coping_75') {
+  if (!state.pendingChainId && !state.tutorial && !ev.finaleCard && ev.id !== 'coping_50' && ev.id !== 'coping_75' && ev.id !== 'coping_song') {
     state.copingSeen = state.copingSeen || [];
     const b = state.stats.burnout;
+    const hasHit = (state.songs || []).some((x) => x.crowned || (x.status === 'charting' && x.pos && x.pos <= 5));
     if (b >= 75 && !state.copingSeen.includes('coping_75') && b < CONFIG.burnoutFail) {
       state.copingSeen.push('coping_75');
       state.pendingChainId = 'coping_75';
+    } else if (b >= 62 && hasHit && !state.copingSeen.includes('coping_song')) {
+      // the songs-era coping moment: your own hit has become noise
+      state.copingSeen.push('coping_song');
+      state.pendingChainId = 'coping_song';
     } else if (b >= 50 && !state.copingSeen.includes('coping_50')) {
       state.copingSeen.push('coping_50');
       state.pendingChainId = 'coping_50';
