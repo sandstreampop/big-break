@@ -5822,4 +5822,65 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ RIVAL TEXTURE (the middle of the rivalry, and its ghost) ═══════════
+  {
+    id: 'a2_rival_opener', act: 2, pathAffinity: [], weight: 11,
+    requires: { rivalryMin: 3, rivalryMax: 6 },
+    art: 'ev_opening_slot', context: 'A text from {rival}, read four times',
+    prompt: '“My opener dropped out. Friday. You’d be perfect.” It sits there, radiating strategy. Opening for {rival} is either a hand extended or a flex disguised as one — and the worst part is the room WILL be full, and the room WILL be theirs.',
+    tags: ['rival', 'live'],
+    choices: {
+      left: {
+        label: 'Take the slot. Rooms are rooms.',
+        minigame: 'crowd',
+        governingStats: { skill: 0.6, network: 0.5 },
+        tags: ['live', 'network', 'risky'],
+        outcomes: {
+          bad: { text: 'Their crowd files in mid-set, talking. You play the whole thing to the backs of heads and one (1) nodding bartender. {rival} says “great set” with the sincerity of a receipt. You bank the fee and the lesson.', effects: { money: 90, fame: 2, burnout: 4, rivalry: 1 } },
+          good: { text: 'You win the room the honest way: one song at a time, front row first. By the closer, {rival}’s own fans are asking for your name. {rival} watches from the wings doing rival math.', effects: { money: 120, fame: 6, network: 4, rivalry: 1 } },
+          incredible: { text: 'You detonate the room so thoroughly that {rival} opens THEIR set with “so, that happened.” The clip of the crowd chanting your name — at their show — becomes both of your press cycles. The text next morning: “never again. same time next tour?”', effects: { money: 150, fame: 10, cred: 4, rivalry: 2 } },
+        },
+      },
+      right: {
+        label: '“Can’t. Washing my hair.” (Principle.)',
+        governingStats: { cred: 0.8 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'The opener they find instead is BRILLIANT and now touring with them. You wash your hair. It looks fine. It looks absolutely fine.', effects: { cred: 3, rivalry: 1, burnout: -2 } },
+          good: { text: 'The declined text becomes scene lore — “washing my hair” enters the local vocabulary as a verb meaning: I know what this is. {rival} respects it more than attendance. Nobody says so.', effects: { cred: 6, rivalry: 1 } },
+          incredible: { text: 'You play a house show the same Friday, forty people, no stage. Someone posts both venues side by side: stadium lights vs. string lights, captioned “choose your fighter.” The string lights WIN the comments. {rival} likes the post at 2 a.m. and unlikes it at 2:01. You saw it.', effects: { cred: 9, fame: 4, network: 2, rivalry: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_nemesis_soundcheck', act: 3, pathAffinity: [], weight: 15,
+    requires: { nemesis: true },
+    art: 'ev_nemesis_check', context: 'An empty venue, four hours before doors',
+    prompt: 'Festival soundcheck. You walk in as {rival} finishes theirs — the rival who has already beaten you once, in another life, before the comeback. They see you across two hundred empty seats. Nobody else in the building knows the whole history. Both of you are the whole history.',
+    tags: ['rival', 'live'],
+    choices: {
+      left: {
+        label: 'Walk over. Say the thing.',
+        governingStats: { network: 0.6, cred: 0.5 },
+        tags: ['rival', 'network', 'risky'],
+        outcomes: {
+          bad: { text: 'The thing comes out wrong — “you look well” to a person you once vowed to destroy. They laugh so hard the sound guy mutes the room out of respect. It breaks something. The useful something. You’re just two musicians now, which is terrifying.', effects: { rivalry: -2, cred: 3, burnout: -3 } },
+          good: { text: '“You were better than me back then,” you say, because it’s true and because carrying it was heavy. They look at the empty seats. “Yeah. And?” — and that AND is the kindest thing they’ve ever said to you. The war is over. The tour rumor starts an hour later.', effects: { rivalry: -3, cred: 5, network: 4 } },
+          incredible: { text: 'You don’t say anything. You plug in and play THEIR old song — the one that beat you — note for note, alone, to empty seats. They listen to the whole thing. Then, quietly: “you added a seventh.” “It wanted one.” Some wars end in duets. Tonight’s finale will be discussed for years.', effects: { rivalry: -4, cred: 7, fame: 6, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Nod. Keep the war. It’s load-bearing.',
+        governingStats: { creativity: 0.7 },
+        tags: ['rival', 'indie'],
+        outcomes: {
+          bad: { text: 'The nod misfires into a half-wave, which they screenshot from memory and describe on a podcast. The war survives on new fuel. Honestly? Relief. Peace was going to require a personality change.', effects: { rivalry: 1, creativity: 3, fame: 2 } },
+          good: { text: 'One nod, correctly calibrated: acknowledged, unresolved, continued. You both play better tonight than you have all tour. The sound guy, who HAS seen everything, calls it “the good poison.”', effects: { rivalry: 1, creativity: 5, cred: 3 } },
+          incredible: { text: 'The nod becomes the festival’s whole story — two headliners, one history, zero words. Your sets that night are a conversation everyone hears and nobody can transcribe. The best song you write this year starts in the van after. About the seats. The empty ones.', effects: { rivalry: 1, creativity: 8, fame: 5, writeSong: true } },
+        },
+      },
+    },
+  },
 ];
