@@ -217,7 +217,7 @@ export function drawNextCard(state, rng = Math.random) {
       return ev;
     }
   }
-  let pool = eligibleEvents(state);
+  let pool = eligibleEvents(state).filter((e) => !e.finaleCard); // climax is queued by advance()
   if (!pool.length) return null; // act runs dry -> caller advances act
   // Guarantee an opportunity/shop card once per act (spec §8.4.4)
   const shopDue = state.cardsPlayedInAct >= CONFIG.shopSlot[state.act] && !state.shopPlayedInAct;
@@ -415,7 +415,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
 
   // Burnout coping interstitials: crossing a threshold interrupts the deck
   // once per run with a forced coping card (unless a chain is already queued)
-  if (!state.pendingChainId && ev.id !== 'coping_50' && ev.id !== 'coping_75') {
+  if (!state.pendingChainId && !ev.finaleCard && ev.id !== 'coping_50' && ev.id !== 'coping_75') {
     state.copingSeen = state.copingSeen || [];
     const b = state.stats.burnout;
     if (b >= 75 && !state.copingSeen.includes('coping_75') && b < CONFIG.burnoutFail) {
@@ -638,6 +638,17 @@ export function advance(state) {
   }
   if (state.pendingChainId) return { kind: 'card' };
   if (state.cardsPlayedInAct >= actLength(state, state.act)) {
+    // The Last Door: every run's final card is its path's climax event —
+    // queued here so chains/coping can never displace it.
+    if (state.act === 3 && state.path) {
+      const climax = EVENTS.find(
+        (e) => e.finaleCard && e.pathAffinity?.includes(state.path) && !state.usedEvents.includes(e.id)
+      );
+      if (climax) {
+        state.pendingChainId = climax.id;
+        return { kind: 'card' };
+      }
+    }
     if (state.act === 1) {
       state.phase = 'crossroads';
       return { kind: 'crossroads' };
