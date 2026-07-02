@@ -14,7 +14,7 @@ packs, contracts, and perks on the Career Wall.
 
 It's a PWA: add it to your home screen and it works offline.
 
-## The systems (v2.0)
+## The systems (v4)
 
 - **Resolution engine** — every swipe rolls stats + gear + quirks − burnout
   ± luck into Bad / Good / Incredible. Colored risk dots telegraph danger
@@ -46,7 +46,7 @@ It's a PWA: add it to your home screen and it works offline.
 - **Contracts** — opt-in run modifiers (kazoo-only, hidden risk dots,
   6/9/6 acts...) for LP multipliers.
 - **Career Wall & Trophy Room** — unlocks (instruments/gear/packs/
-  contracts/perks), 25+ satirical trophies, and your last 10 careers.
+  contracts/perks), 50+ satirical trophies, and your last 10 careers.
 - **Genres** — claim a sound (Doom Jazz, Yacht Metal...) that tilts
   tag-matched odds; the scene politics cards react to it.
 - **The world talks back** — trade headlines AND text messages from
@@ -57,9 +57,12 @@ It's a PWA: add it to your home screen and it works offline.
 - **The Final Set** — pick your closer before the career is judged.
 - **Poster share cards** — runs export as a 1080×1080 PNG via the share
   sheet; saves export/import as backup codes.
-- **Venues & the band** — adopt a home venue and level it 0–3 for show
-  bonuses; recruit up to three bandmates, each with tag bonuses, a
-  per-act quirk, and their own spotlight episodes.
+- **Venues & the band** — adopt one of seven home venues (the diner,
+  the laundromat, the decommissioned planetarium...) and level it 0–3
+  for show bonuses — level 2+ rooms can face the SOLD PENDING notice
+  and be saved by a benefit; recruit up to three bandmates (including
+  Nadia, who tapes you a demo every act break), each with tag bonuses,
+  a per-act quirk, and spotlight episodes.
 - **The Last Door** — every path ends on a bespoke climax card (the label
   meeting, the call, the credits) before the Final Set.
 - **The Brammies & Exit Interviews** — an awards-night interstitial before
@@ -90,8 +93,14 @@ It's a PWA: add it to your home screen and it works offline.
   Skippable, with a relaxed mode in Settings.
 - **Deep arcs & constellations** — multi-beat storylines (the
   Documentary, the Shed, Static Bloom's amp debt, the Dirt Circuit,
-  late-night TV) that branch on how you played — and rare
-  "constellation" events that only exist when two arcs collide.
+  late-night TV, the First Fan, the Album, Save The Room) that branch
+  on how you played — and rare "constellation" events that only exist
+  when two arcs collide (the Fan Wars, the Deep Cut, the Dedication).
+- **The songwriter meta-build** — every meta system has a songs-first
+  path: the Loop Station instrument, the four-track and the
+  publicist's rolodex, Nadia, The Deadline contract (ship a song
+  every act or the silence bills you), and the Old Notebook /
+  Promoter perks.
 
 ## Running locally
 
@@ -105,7 +114,7 @@ python3 -m http.server 8000   # → http://localhost:8000
 
 - `js/config.js` — **every tuning knob** (roll shape, tier thresholds, wear,
   win gates, LP formula, pity/encore numbers)
-- `js/data/` — all content: `events.js` (130+ cards), `instruments.js`,
+- `js/data/` — all content: `events.js` (200+ cards), `instruments.js`,
   `accessories.js`, `rivals.js`, `contracts.js`, `hustles.js`, `genres.js`,
   `venues.js`, `band.js`, `meta.js` (endings/wall/trophies), `assets.js`
   (art-slot manifest)
