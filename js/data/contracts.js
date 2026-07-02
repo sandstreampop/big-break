@@ -47,6 +47,12 @@ export const CONTRACTS = [
     mods: { actLengths: { 1: 6, 2: 9, 3: 6 } },
   },
   {
+    id: 'deadline', name: 'The Deadline', icon: '📠', lpMult: 1.6,
+    unlockedByDefault: false,
+    desc: 'A label single deal: ship a song to the chart EVERY act, or the silence costs you (−8 Fame, −4 Cred at the act break). Write fast. Release faster.',
+    mods: { releaseDeadline: true },
+  },
+  {
     id: 'kazoo_clause', name: 'The Kazoo Clause', icon: '🎺', lpMult: 2.0,
     unlockedByDefault: false,
     desc: 'The only instrument offered is the kazoo. Sign here. SIGN HERE.',

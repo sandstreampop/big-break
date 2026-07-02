@@ -168,6 +168,8 @@ export const WALL_ITEMS = [
     name: 'Your Own Voice', desc: 'Instrument: free, portable, and everyone has an opinion about it. Vocal +10.' },
   { id: 'inst_modular', tier: 3, cost: 60, kind: 'instrument', target: 'modular_synth',
     name: 'Modular Synth', desc: 'Instrument: +Creativity +Skill, Studio/Tone +8, Live −4. It crashes. Live. Always.' },
+  { id: 'ct_deadline', tier: 3, cost: 50, kind: 'contract', target: 'deadline',
+    name: 'The Deadline', desc: 'Contract: ship a song every act or the label notes the silence. ×1.6 LP. Write fast.' },
   { id: 'ct_overnight', tier: 3, cost: 55, kind: 'contract', target: 'overnight',
     name: 'Contract: Overnight Success', desc: 'Acts run 6/9/6 cards. ×1.6 LP. Same gates, fewer chances.' },
   { id: 'ct_kazoo', tier: 3, cost: 65, kind: 'contract', target: 'kazoo_clause',
