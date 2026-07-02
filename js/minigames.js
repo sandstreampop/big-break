@@ -362,3 +362,67 @@ register('room', {
     }, 120);
   },
 });
+
+// ═══════════ TIGHTEN UP — band rehearsal (echo the pattern) ═══════════
+register('tighten', {
+  name: 'Tighten Up', icon: '🥁',
+  how: 'The band plays a pattern — watch the pads. Then play it back, in order. Three rounds, each one longer. Tight is a decision.',
+  run(stage, ctx, done) {
+    const PADS = ['🎸', '🥁', '🎹', '🎺'];
+    const rounds = [3, 4, 5];
+    let round = 0, earned = 0;
+    const total = rounds.reduce((a, b) => a + b, 0);
+
+    const label = el('div', 'mg-take-label', 'WATCH');
+    const grid = el('div', 'mg-room mg-pads');
+    stage.append(label, grid, el('div', 'mg-hint', 'repeat what the band plays'));
+    const pads = PADS.map((icon, i) => {
+      const b = el('button', 'mg-pad', icon);
+      b.dataset.i = i;
+      grid.append(b);
+      return b;
+    });
+
+    let seq = [], pos = 0, accepting = false;
+
+    function flash(i, ms = 320) {
+      pads[i].classList.add('mg-pad-on');
+      setTimeout(() => pads[i].classList.remove('mg-pad-on'), ms);
+    }
+
+    function playRound() {
+      seq = Array.from({ length: rounds[round] }, () => Math.floor(Math.random() * 4));
+      pos = 0; accepting = false;
+      label.textContent = `WATCH — round ${round + 1}`;
+      seq.forEach((i, k) => setTimeout(() => flash(i), 420 + k * 480));
+      setTimeout(() => { accepting = true; label.textContent = 'YOUR TURN'; }, 420 + seq.length * 480);
+    }
+
+    function endRound(clean) {
+      accepting = false;
+      round++;
+      if (round >= rounds.length) {
+        setTimeout(() => done(earned / total), 420);
+      } else {
+        label.textContent = clean ? 'TIGHT. NEXT.' : 'AGAIN — from the top';
+        setTimeout(playRound, 800);
+      }
+    }
+
+    pads.forEach((b, i) => b.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      if (!accepting) return;
+      if (i === seq[pos]) {
+        flash(i, 180);
+        earned++; pos++;
+        if (pos >= seq.length) endRound(true);
+      } else {
+        b.classList.add('mg-pad-bad');
+        setTimeout(() => b.classList.remove('mg-pad-bad'), 300);
+        endRound(false); // botched round: keep what you earned, move on
+      }
+    }));
+
+    playRound();
+  },
+});

@@ -1141,6 +1141,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Start the band',
+        minigame: 'tighten',
         governingStats: { network: 1.0 },
         tags: ['band', 'network'],
         outcomes: {
@@ -1226,6 +1227,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Become a real band',
+        minigame: 'tighten',
         governingStats: { network: 0.7, cred: 0.6 },
         tags: ['band', 'safe'],
         outcomes: {
@@ -1448,6 +1450,36 @@ export const EVENTS = [
           bad: { text: 'Forty personalized emails. Three bounce. One reply: “unsubscribe.” You weren’t a newsletter.', effects: { network: 2, burnout: 6 } },
           good: { text: 'A human curator writes back like a human. Placement, plus an actual conversation.', effects: { network: 5, fame: 5, cred: 3, burnout: 3 } },
           incredible: { text: 'One curator becomes a genuine fan and quietly seeds you everywhere. A patron saint with a laptop.', effects: { network: 8, fame: 10, cred: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_woodshed', act: 2, pathAffinity: [], weight: 10,
+    requires: { bandMin: 1 },
+    art: 'ev_woodshed', context: 'A borrowed barn, a weekend, a padlock',
+    prompt: 'Two days, no phones, one rule: the set gets tight or nobody leaves. Somebody brought a whiteboard. Somebody else brought forty eggs. Both will matter.',
+    tags: ['band', 'practice'],
+    choices: {
+      left: {
+        label: 'Drill the set until it locks',
+        minigame: 'tighten',
+        governingStats: { skill: 0.8, network: 0.4 },
+        tags: ['band', 'practice', 'safe'],
+        outcomes: {
+          bad: { text: 'Hour six: the bridge still fights back. Hour nine: the drummer discovers the eggs were not for eating. The set is tighter. The barn is not cleaner.', effects: { skill: 4, network: 2, burnout: 6 } },
+          good: { text: 'Sunday night the set runs start to finish without a single trainwreck — twice. You celebrate the way tight bands do: playing it a third time.', effects: { skill: 6, network: 4, cred: 2, burnout: 4 } },
+          incredible: { text: 'Somewhere past midnight the band stops playing songs and starts playing MUSIC — the arrangement breathing, everyone early to every hit. The whiteboard just says YES by Sunday. Nobody remembers writing it.', effects: { skill: 8, network: 5, cred: 4, creativity: 3, burnout: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Jam instead. See what the barn wants.',
+        governingStats: { creativity: 1.0 },
+        tags: ['band', 'write', 'risky'],
+        outcomes: {
+          bad: { text: 'Eleven hours of jams yield one riff, four arguments, and a 22-minute recording labeled BARN THING that nobody will ever explain. The set, notably, remains loose.', effects: { creativity: 4, burnout: 5 } },
+          good: { text: 'The jams cough up two new songs and a version of your closer nobody planned — slower, meaner, better. The barn had opinions. The barn was right.', effects: { creativity: 7, skill: 2, burnout: 4 } },
+          incredible: { text: 'Sunday, 2 a.m., the jam finds a groove so deep the eggs guy puts down the eggs. You record it on one phone in a hat. It becomes the intro tape for every show you play from now on.', effects: { creativity: 9, cred: 4, fame: 2, burnout: 4 } },
         },
       },
     },
