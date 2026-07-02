@@ -834,6 +834,123 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════ THE COLLAB (a Hot 10 artist steps out of the chart) ═══════════
+  {
+    id: 'cl_dm', act: 2, pathAffinity: [], weight: 11,
+    requires: { fameMin: 25, flagsNone: ['collab', 'collab_declined'] },
+    art: 'ev_cl_dm', context: 'A verified account has entered your DMs',
+    prompt: '{collabArtist} — currently ON the Hot 10, you have checked twice — wants you on a track. The demo attached is 40 seconds long and one of those seconds is unmistakably a gap labeled YOU.',
+    tags: ['deal', 'network'],
+    choices: {
+      left: {
+        label: 'Politely decline. Do your own thing.',
+        governingStats: { cred: 0.8 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You type four drafts of “no thanks” and send the worst one. They reply “all good 🙏” which will haunt you at 3 a.m. for the rest of the act.', effects: { cred: 3, fame: -2, addFlag: 'collab_declined' } },
+          good: { text: 'You pass, cleanly and kindly. Your group chat calls it integrity. Your bank account calls it something else.', effects: { cred: 5, creativity: 2, addFlag: 'collab_declined' } },
+          incredible: { text: 'Your polite no becomes a screenshot, and the screenshot becomes a personality. “The one who said no to {collabArtist}” is, somehow, a brand.', effects: { cred: 7, fame: 3, addFlag: 'collab_declined' } },
+        },
+      },
+      right: {
+        label: 'Take the session. Fill the gap.',
+        governingStats: { network: 0.7, creativity: 0.5 },
+        tags: ['deal', 'mainstream'],
+        outcomes: {
+          bad: { text: 'The label sends a rider, an NDA, and a mood board that is just the word WET in nine fonts. You sign everything. The session is Thursday.', effects: { network: 3, burnout: 3, chainEventId: 'cl_session' } },
+          good: { text: 'Their manager calls your manager. You do not have a manager, so they call you, and you lower your voice an octave and say “circle back.” The session is Thursday.', effects: { network: 5, fame: 2, chainEventId: 'cl_session' } },
+          incredible: { text: 'They post a photo of the empty vocal booth captioned “waiting on somebody 👀” and your name trends regionally before you have sung a note.', effects: { network: 6, fame: 5, chainEventId: 'cl_session' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'cl_session', act: 2, pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_cl_session', context: 'THE SESSION — a studio with a snack wall',
+    prompt: 'The studio has a snack wall and an engineer who says “vibes” as a complete sentence. {collabArtist} plays the gap again and looks at you. The gap is eight bars wide and shaped exactly like your whole career.',
+    tags: ['studio', 'record'],
+    choices: {
+      left: {
+        label: 'Sneak your weird into their hit',
+        governingStats: { creativity: 0.8, cred: 0.4 },
+        tags: ['studio', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Your weird take dies in the label listen-back — “love it, scary, no” — but {collabArtist} keeps a voice memo of it. “For the deluxe,” they say, and weirdly, they mean it.', effects: { creativity: 4, cred: 3, burnout: 3, addFlag: 'collab' } },
+          good: { text: 'You do the strange harmony. The engineer says “vibes” twice, which is apparently a rave. It stays in the song. Your fingerprint, at chart scale.', effects: { creativity: 5, cred: 5, fame: 4, addFlag: 'collab', chartTitle: 'The Gap (feat. {collabArtist})' } },
+          incredible: { text: 'Your eight bars bend the whole song sideways and everyone in the control room goes quiet the good way. {collabArtist} scraps the old hook to chase yours. It is your song now. Legally it is not. Spiritually it is.', effects: { creativity: 7, cred: 6, fame: 7, hits: 1, addFlag: 'collab', chartTitle: 'The Gap (feat. {collabArtist})' } },
+        },
+      },
+      right: {
+        label: 'Deliver exactly what they ordered',
+        governingStats: { skill: 0.8, network: 0.4 },
+        tags: ['studio', 'safe', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You nail the part in two takes, which turns out to be a problem — the day was booked for six hours and now everyone has to hang out. You learn a lot about {collabArtist}’s juicer.', effects: { skill: 3, network: 3, money: 100, addFlag: 'collab' } },
+          good: { text: 'Clean, professional, on the beat, off the clock. The check clears the same week, which you did not know checks could do.', effects: { skill: 4, network: 4, money: 200, fame: 3, addFlag: 'collab', chartTitle: 'Circle Back (feat. {collabArtist})' } },
+          incredible: { text: 'You give them radio-perfect and then one extra take “for fun” — the fun take makes the single. The credits say featuring. The group chat says CARRIED.', effects: { skill: 5, network: 5, money: 300, fame: 6, hits: 1, addFlag: 'collab', chartTitle: 'Circle Back (feat. {collabArtist})' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'cl_reprise', act: 3, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['collab'] },
+    art: 'ev_cl_reprise', context: 'A familiar verified account, again',
+    prompt: '{collabArtist} is in town the night of your show and their DM is just “👀🎤?”. Surprise guests are either the best 90 seconds of a set or a soundcheck horror story. There is no third outcome.',
+    tags: ['live', 'network'],
+    choices: {
+      left: {
+        label: 'Bring them out. No rehearsal. Chaos.',
+        governingStats: { network: 0.6, creativity: 0.6 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'They come out to a wall of phones, forget which verse is theirs, and sing yours WITH you, in a different key. The clip is a disaster. The clip is also everywhere.', effects: { fame: 6, cred: -2, burnout: 4 } },
+          good: { text: 'The room figures out who it is one gasp at a time. You do the song, trade the bridge, and hug like it’s rehearsed. It is not rehearsed. That’s the whole magic.', effects: { fame: 9, network: 4, burnout: 3 } },
+          incredible: { text: 'Ninety perfect seconds. The crowd sings the featured part louder than either of you, and {collabArtist} points at you on the way off like a wrestler passing a title. The venue posts it before you reach the greenroom.', effects: { fame: 13, network: 6, cred: 3, burnout: 3 } },
+        },
+      },
+      right: {
+        label: 'Keep the set yours. Dinner instead.',
+        governingStats: { cred: 0.7 },
+        tags: ['safe', 'network'],
+        outcomes: {
+          bad: { text: 'Dinner is nice until their entourage arrives and the table becomes a content shoot. You are background in four stories, tagged in none.', effects: { network: 2, burnout: -2 } },
+          good: { text: 'You skip the stunt and eat noodles with someone who is on the chart you are climbing. They tell you which numbers are fake. Most of them. It is the most useful meal of your career.', effects: { network: 5, cred: 3, burnout: -4 } },
+          incredible: { text: 'Over dinner they slide you a producer’s number and say “tell them I sent you — that sentence is worth more than the feature was.” They are correct.', effects: { network: 7, cred: 4, burnout: -4, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'cl_regret', act: 3, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['collab_declined'] },
+    art: 'ev_cl_regret', context: 'Every speaker in every store, apparently',
+    prompt: 'The track you turned down is out. The gap you were supposed to fill? {rival} filled it. It is inescapable, it is fine — objectively it is just fine — and it is currently outcharting you from inside a pharmacy sound system.',
+    tags: ['fame', 'rival'],
+    choices: {
+      left: {
+        label: 'Say nothing. Let the work talk.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'indie'],
+        outcomes: {
+          bad: { text: 'You say nothing so hard that an interviewer asks about it, and your face does the talking. The freeze-frame becomes a reaction meme. The meme outcharts you too.', effects: { cred: 2, fame: 2, rivalry: 1 } },
+          good: { text: 'You keep quiet and keep working. Weeks later {collabArtist} likes an old post of yours at 2 a.m. — the industry equivalent of a formal apology.', effects: { cred: 5, creativity: 3 } },
+          incredible: { text: 'Your silence reads as mystique. A profile calls you “the feature that got away,” and suddenly your no is worth more than {rival}’s yes. Scarcity: it works.', effects: { cred: 7, fame: 5, network: 3 } },
+        },
+      },
+      right: {
+        label: 'Post the original demo. Receipts.',
+        governingStats: { network: 0.6, creativity: 0.5 },
+        tags: ['social', 'risky', 'rival'],
+        outcomes: {
+          bad: { text: 'You post the demo with the caption “v1 🙂” and the internet does not find it as devastating as you did. {rival} replies with one (1) trophy emoji. You have been out-petied.', effects: { fame: 3, cred: -3, rivalry: 2, burnout: 3 } },
+          good: { text: 'The demo splits the comments into civil war — team Original versus team Radio. Both teams stream both versions to argue better. Everybody wins, especially the label.', effects: { fame: 7, network: 3, rivalry: 1 } },
+          incredible: { text: 'Your 40-second demo goes viral as “the version they were scared of.” {collabArtist} reposts it. {rival} posts a lengthy statement, which is how you know you won.', effects: { fame: 11, cred: 4, rivalry: 2, chartTitle: 'V1 (Demo)' } },
+        },
+      },
+    },
+  },
+
   // ═══════════ BANDMATE SPOTLIGHTS (require specific members) ═══════════
   {
     id: 'bs_fish_van', act: [2, 3], pathAffinity: [], weight: 9,

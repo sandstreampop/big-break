@@ -28,6 +28,13 @@ const ARTISTS = ['The Algorithm', 'Brayden', 'Yacht Arithmetic', 'DJ Mattress Em
   'The Other Bands', 'Juniper (Film Student)', 'Approachable Lightning', 'The 11 Writers'];
 
 function pick(rng, arr) { return arr[Math.floor(rng() * arr.length)]; }
+
+// The chart artist who slides into your DMs about a feature — fixed per run
+// (derived from chartSeed) so the offer, the song title, and the act-3
+// callback all name the same person.
+export function collabArtistFor(state) {
+  return ARTISTS[(state.chartSeed || 1) % ARTISTS.length];
+}
 function songName(rng) { return pick(rng, ADJ) + ' ' + pick(rng, NOUN) + pick(rng, SUFFIX); }
 
 // Your chart footprint: how many songs you have on, and your peak position

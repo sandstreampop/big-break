@@ -9,7 +9,7 @@ import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
 import * as save from './save.js';
 import { artFor, sceneFor } from './art.js';
-import { buildChart, buildChartWithMovement, playerChartInfo } from './charts.js';
+import { buildChart, buildChartWithMovement, playerChartInfo, collabArtistFor } from './charts.js';
 import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
 import { generateHeadlines } from './headlines.js';
@@ -33,13 +33,14 @@ const el = (tag, cls, html) => {
   return n;
 };
 
-// Fill {rival}/{rivalVibe}/{genre} placeholders with this run's identities
+// Fill {rival}/{rivalVibe}/{genre}/{collabArtist} placeholders with this run's identities
 function fillText(s) {
   if (!s || !run) return s;
   const r = rivalById(run.rival);
   const g = genreById(run.genre);
   return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe)
-    .replaceAll('{genre}', g ? g.name : 'your genre');
+    .replaceAll('{genre}', g ? g.name : 'your genre')
+    .replaceAll('{collabArtist}', collabArtistFor(run));
 }
 
 function reducedMotion() {
