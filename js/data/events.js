@@ -767,8 +767,8 @@ export const EVENTS = [
         tags: ['live', 'indie'],
         outcomes: {
           bad: { text: 'You half-remember the bridge — it’s been years — and the sign-holder sings the half you drop. The room decides this was the best possible version. Rooms are kind here.', effects: { fame: 5, cred: 3, burnout: 6, chainEventId: 'wt_berlin' } },
-          good: { text: 'The deep cut lands like a single. The sign-holder cries. You cry slightly, professionally, into the stage lights. Night one: perfect.', effects: { fame: 8, cred: 5, burnout: 5, chainEventId: 'wt_berlin' } },
-          incredible: { text: 'The whole room knows the almost-cut song. ALL the words. A song you nearly deleted has a second life on the other side of the planet. You board the next flight changed.', effects: { fame: 12, cred: 6, creativity: 3, burnout: 5, chainEventId: 'wt_berlin' } },
+          good: { text: 'The deep cut lands like a single. The sign-holder cries. You cry slightly, professionally, into the stage lights. Night one: perfect.', effects: { fame: 8, cred: 5, burnout: 5, chainEventId: 'wt_berlin', hypeSong: 10 } },
+          incredible: { text: 'The whole room knows the almost-cut song. ALL the words. A song you nearly deleted has a second life on the other side of the planet. You board the next flight changed.', effects: { fame: 12, cred: 6, creativity: 3, burnout: 5, chainEventId: 'wt_berlin', hypeSong: 16 } },
         },
       },
       right: {
@@ -777,8 +777,8 @@ export const EVENTS = [
         tags: ['live', 'safe'],
         outcomes: {
           bad: { text: 'Tight set, jet-lagged hands. You play well and remember little. The sign goes home unplayed, which follows you onto the flight.', effects: { skill: 3, fame: 5, burnout: 7, chainEventId: 'wt_berlin' } },
-          good: { text: 'The set is a machine and Tokyo loves machines with feelings. After the show you sign the sign. Compromise: elegant.', effects: { skill: 4, fame: 8, burnout: 5, chainEventId: 'wt_berlin' } },
-          incredible: { text: 'Flawless night one — the kind that makes the crew walk taller at load-out. The promoter texts Berlin: “tape every night.”', effects: { skill: 5, fame: 10, cred: 3, burnout: 5, chainEventId: 'wt_berlin' } },
+          good: { text: 'The set is a machine and Tokyo loves machines with feelings. After the show you sign the sign. Compromise: elegant.', effects: { skill: 4, fame: 8, burnout: 5, chainEventId: 'wt_berlin', hypeSong: 10 } },
+          incredible: { text: 'Flawless night one — the kind that makes the crew walk taller at load-out. The promoter texts Berlin: “tape every night.”', effects: { skill: 5, fame: 10, cred: 3, burnout: 5, chainEventId: 'wt_berlin', hypeSong: 16 } },
         },
       },
     },
@@ -796,8 +796,8 @@ export const EVENTS = [
         tags: ['live', 'electronic', 'risky'],
         outcomes: {
           bad: { text: 'You stretch the songs into the fog until one of them stops being a song. The nodding continues, unreadable. Later you learn the nodding meant it was the best night of the run. Berlin.', effects: { fame: 6, cred: 5, burnout: 9, chainEventId: 'wt_saopaulo' } },
-          good: { text: 'The ten-minute version finds a groove the three-minute version never knew it had. The fog machine operator — a legend, apparently — salutes you.', effects: { fame: 8, creativity: 5, cred: 4, burnout: 8, chainEventId: 'wt_saopaulo' } },
-          incredible: { text: 'At 3:40 a.m. the room stops nodding and starts MOVING, which the promoter says happens twice a year. A techno label asks about remix stems before you’re offstage.', effects: { fame: 12, creativity: 6, cred: 5, money: 150, burnout: 8, chainEventId: 'wt_saopaulo' } },
+          good: { text: 'The ten-minute version finds a groove the three-minute version never knew it had. The fog machine operator — a legend, apparently — salutes you.', effects: { fame: 8, creativity: 5, cred: 4, burnout: 8, chainEventId: 'wt_saopaulo', hypeSong: 10 } },
+          incredible: { text: 'At 3:40 a.m. the room stops nodding and starts MOVING, which the promoter says happens twice a year. A techno label asks about remix stems before you’re offstage.', effects: { fame: 12, creativity: 6, cred: 5, money: 150, burnout: 8, chainEventId: 'wt_saopaulo', hypeSong: 16 } },
         },
       },
       right: {
@@ -806,8 +806,8 @@ export const EVENTS = [
         tags: ['live', 'safe', 'rest'],
         outcomes: {
           bad: { text: 'You play the hour and leave. The hotel pillow is a miracle of German engineering. You dream in soundcheck tones. It counts as rest. Barely.', effects: { fame: 5, burnout: 2, chainEventId: 'wt_saopaulo' } },
-          good: { text: 'The discipline holds: great hour, real sleep, and dawn over the Spree from the right side of a window for once. São Paulo will get a functioning human.', effects: { fame: 7, cred: 3, burnout: -2, chainEventId: 'wt_saopaulo' } },
-          incredible: { text: 'The short set reads as confidence and Berlin respects nothing more. “No encore,” writes the city’s hardest critic, “because none was needed.” You sleep nine hours. NINE.', effects: { fame: 9, cred: 5, burnout: -4, chainEventId: 'wt_saopaulo' } },
+          good: { text: 'The discipline holds: great hour, real sleep, and dawn over the Spree from the right side of a window for once. São Paulo will get a functioning human.', effects: { fame: 7, cred: 3, burnout: -2, chainEventId: 'wt_saopaulo', hypeSong: 10 } },
+          incredible: { text: 'The short set reads as confidence and Berlin respects nothing more. “No encore,” writes the city’s hardest critic, “because none was needed.” You sleep nine hours. NINE.', effects: { fame: 9, cred: 5, burnout: -4, chainEventId: 'wt_saopaulo', hypeSong: 16 } },
         },
       },
     },
@@ -824,8 +824,8 @@ export const EVENTS = [
         tags: ['live', 'risky'],
         outcomes: {
           bad: { text: 'The rain wins the sound war by the last song, so the crowd sings the finale FOR you, five thousand voices to your dead monitors. You conduct it, soaked, laughing. A failure indistinguishable from triumph.', effects: { fame: 10, cred: 6, burnout: 8, pathProgress: 1 } },
-          good: { text: 'Soaked strings, slipping picks, and the best show of the year. The photo — you, arms out, rain lit gold by the rig — is everywhere by morning.', effects: { fame: 15, cred: 7, burnout: 7, pathProgress: 1, chartTitle: 'Night Three (Rain Version)' } },
-          incredible: { text: 'The storm peaks at the bridge and the entire crowd sings INTO it, and for one minute the weather is your backing choir. People will lie about having been here. Thousands will be telling the truth.', effects: { fame: 22, cred: 8, creativity: 4, burnout: 7, pathProgress: 2, chartTitle: 'Night Three (Rain Version)' } },
+          good: { text: 'Soaked strings, slipping picks, and the best show of the year. The photo — you, arms out, rain lit gold by the rig — is everywhere by morning.', effects: { fame: 15, cred: 7, burnout: 7, pathProgress: 1, chartTitle: 'Night Three (Rain Version)', hypeSong: 10 } },
+          incredible: { text: 'The storm peaks at the bridge and the entire crowd sings INTO it, and for one minute the weather is your backing choir. People will lie about having been here. Thousands will be telling the truth.', effects: { fame: 22, cred: 8, creativity: 4, burnout: 7, pathProgress: 2, chartTitle: 'Night Three (Rain Version)', hypeSong: 16 } },
         },
       },
       right: {
@@ -834,8 +834,8 @@ export const EVENTS = [
         tags: ['deal', 'safe'],
         outcomes: {
           bad: { text: 'The crowd boos the rain, not you — but the difference is academic from the stage. The promise of a return show is met with the skepticism of a city that has heard promises.', effects: { fame: 5, network: 2, burnout: 4 } },
-          good: { text: 'You call it at the right moment, protect the crew, and announce the return date FROM the stage — already booked, already real. Professional weather management. The city forgives.', effects: { fame: 8, network: 5, money: 100, burnout: 3 } },
-          incredible: { text: 'The shortened set becomes a legend of restraint — and the announced return show sells out in an hour, in the rain, from phones held under jackets. You owe São Paulo a night. São Paulo intends to collect.', effects: { fame: 12, network: 7, money: 200, burnout: 3, pathProgress: 1 } },
+          good: { text: 'You call it at the right moment, protect the crew, and announce the return date FROM the stage — already booked, already real. Professional weather management. The city forgives.', effects: { fame: 8, network: 5, money: 100, burnout: 3, hypeSong: 10 } },
+          incredible: { text: 'The shortened set becomes a legend of restraint — and the announced return show sells out in an hour, in the rain, from phones held under jackets. You owe São Paulo a night. São Paulo intends to collect.', effects: { fame: 12, network: 7, money: 200, burnout: 3, pathProgress: 1, hypeSong: 16 } },
         },
       },
     },
@@ -3222,7 +3222,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'You’re so nervous you tune for six minutes. Your hero watches. Time is a flat circle of tuning.', effects: { skill: 3, burnout: 6, money: 50 } },
           good: { text: 'Solid set, and the load-in conversation happens. They call you “the kid with the sound.”', effects: { skill: 4, cred: 6, network: 4, money: 50 } },
-          incredible: { text: 'Your hero watches your whole set from the wings, then covers YOUR song at soundcheck the next night. It gets filmed.', effects: { cred: 10, fame: 9, network: 5, money: 50, pathProgress: 1 } },
+          incredible: { text: 'Your hero watches your whole set from the wings, then covers YOUR song at soundcheck the next night. It gets filmed.', effects: { cred: 10, fame: 9, network: 5, money: 50, pathProgress: 1, hypeSong: 16 } },
         },
       },
       right: {
@@ -4174,8 +4174,8 @@ export const EVENTS = [
         tags: ['live', 'mainstream'],
         outcomes: {
           bad: { text: 'The mandated vibe is “approachable lightning.” You perform it nightly, dying slightly.', effects: { fame: 10, cred: -5, burnout: 9, creativity: -3 } },
-          good: { text: 'Arenas every night. The vibe committee wins, but 15,000 people learn your name each show.', effects: { fame: 18, network: 5, burnout: 8, cred: -2 } },
-          incredible: { text: 'You smuggle yourself into the approved vibe. Crowds notice the real thing underneath. Stars are made of this.', effects: { fame: 28, network: 7, burnout: 7, pathProgress: 1 } },
+          good: { text: 'Arenas every night. The vibe committee wins, but 15,000 people learn your name each show.', effects: { fame: 18, network: 5, burnout: 8, cred: -2, hypeSong: 10 } },
+          incredible: { text: 'You smuggle yourself into the approved vibe. Crowds notice the real thing underneath. Stars are made of this.', effects: { fame: 28, network: 7, burnout: 7, pathProgress: 1, hypeSong: 16 } },
         },
       },
       right: {
@@ -4184,8 +4184,8 @@ export const EVENTS = [
         tags: ['deal', 'risky', 'indie'],
         outcomes: {
           bad: { text: 'The label passes. The arena slot goes to a duo called Vibe Committee. The irony sustains you, barely.', effects: { cred: 4, fame: -3, burnout: 4 } },
-          good: { text: 'A theater tour, your rules. Smaller rooms, bigger devotion. The right trade this year.', effects: { cred: 7, fame: 8, network: 3 } },
-          incredible: { text: 'Your counter-tour sells out and the LABEL calls YOU about doing arenas “your way.” Leverage: acquired.', effects: { cred: 9, fame: 16, network: 6, pathProgress: 1 } },
+          good: { text: 'A theater tour, your rules. Smaller rooms, bigger devotion. The right trade this year.', effects: { cred: 7, fame: 8, network: 3, hypeSong: 10 } },
+          incredible: { text: 'Your counter-tour sells out and the LABEL calls YOU about doing arenas “your way.” Leverage: acquired.', effects: { cred: 9, fame: 16, network: 6, pathProgress: 1, hypeSong: 16 } },
         },
       },
     },
@@ -4203,8 +4203,8 @@ export const EVENTS = [
         tags: ['live', 'mainstream', 'safe'],
         outcomes: {
           bad: { text: 'Flawless and forgettable. The broadcast cuts to a celebrity yawning. The GIF outlives your set.', effects: { fame: 5, skill: 2 } },
-          good: { text: 'Clean, tight, professional. America nods. America’s nod is worth millions of streams.', effects: { fame: 12, skill: 3, network: 3 } },
-          incredible: { text: 'Ninety perfect seconds. The internet clips it into eternity. “Who IS this” trends. It’s you. You’re this.', effects: { fame: 22, network: 5, cred: 3, pathProgress: 1 } },
+          good: { text: 'Clean, tight, professional. America nods. America’s nod is worth millions of streams.', effects: { fame: 12, skill: 3, network: 3, hypeSong: 10 } },
+          incredible: { text: 'Ninety perfect seconds. The internet clips it into eternity. “Who IS this” trends. It’s you. You’re this.', effects: { fame: 22, network: 5, cred: 3, pathProgress: 1, hypeSong: 16 } },
         },
       },
       right: {
@@ -4213,8 +4213,8 @@ export const EVENTS = [
         tags: ['live', 'risky'],
         outcomes: {
           bad: { text: 'The stunt malfunctions on live TV. You’re a meme by the commercial break. The bad kind. Mostly.', effects: { fame: 4, cred: -7, burnout: 9 } },
-          good: { text: 'The stunt half-works, which reads as charmingly unhinged. Morning shows debate you. Debate = fame.', effects: { fame: 15, cred: 2, burnout: 5 } },
-          incredible: { text: 'The stunt LANDS. Producers scream, censors sweat, culture shifts one degree. Iconic in 90 seconds.', effects: { fame: 30, cred: 4, burnout: 6, pathProgress: 1 } },
+          good: { text: 'The stunt half-works, which reads as charmingly unhinged. Morning shows debate you. Debate = fame.', effects: { fame: 15, cred: 2, burnout: 5, hypeSong: 10 } },
+          incredible: { text: 'The stunt LANDS. Producers scream, censors sweat, culture shifts one degree. Iconic in 90 seconds.', effects: { fame: 30, cred: 4, burnout: 6, pathProgress: 1, hypeSong: 16 } },
         },
       },
     },
@@ -4260,8 +4260,8 @@ export const EVENTS = [
         tags: ['live', 'risky', 'mainstream'],
         outcomes: {
           bad: { text: 'You’re not ready and the venue is honest about it: 60,000 people politely checking their phones.', effects: { fame: 10, cred: -4, burnout: 12 } },
-          good: { text: 'You hold the room. Sixty thousand people. Held. Your legs stop shaking by song six.', effects: { fame: 20, network: 5, burnout: 9, cred: 3 } },
-          incredible: { text: 'A career happens in one night. The aerial drone shot of the crowd singing YOUR bridge becomes the poster.', effects: { fame: 32, network: 8, cred: 5, burnout: 8, pathProgress: 2 } },
+          good: { text: 'You hold the room. Sixty thousand people. Held. Your legs stop shaking by song six.', effects: { fame: 20, network: 5, burnout: 9, cred: 3, hypeSong: 10 } },
+          incredible: { text: 'A career happens in one night. The aerial drone shot of the crowd singing YOUR bridge becomes the poster.', effects: { fame: 32, network: 8, cred: 5, burnout: 8, pathProgress: 2, hypeSong: 16 } },
         },
       },
       right: {
@@ -4271,7 +4271,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'They book someone hungrier. The someone is very good. You watch the drone shot from your couch.', effects: { cred: 2, fame: -2, burnout: -4 } },
           good: { text: 'Your restraint reads as professionalism. “Next one’s yours,” says the promoter, meaning it.', effects: { cred: 6, network: 5, burnout: -4 } },
-          incredible: { text: 'The delay lets you build the show YOU wanted. When it lands next quarter, it’s not a fluke — it’s a debut.', effects: { cred: 8, network: 6, fame: 10, pathProgress: 1 } },
+          incredible: { text: 'The delay lets you build the show YOU wanted. When it lands next quarter, it’s not a fluke — it’s a debut.', effects: { cred: 8, network: 6, fame: 10, pathProgress: 1, hypeSong: 16 } },
         },
       },
     },
@@ -4288,8 +4288,8 @@ export const EVENTS = [
         tags: ['tour', 'live', 'mainstream', 'risky'],
         outcomes: {
           bad: { text: 'City 23 breaks you. You call the crowd by the wrong city’s name and the wrong city never forgets.', effects: { fame: 12, money: 300, burnout: 16, cred: -2 } },
-          good: { text: 'Forty cities, one blur, your name in fonts you’ve never licensed. The jet photo alone is a career.', effects: { fame: 20, money: 450, network: 5, burnout: 13 } },
-          incredible: { text: 'EVEREST sells out. All of it. The tour documentary practically films itself. You are, verifiably, everywhere.', effects: { fame: 30, money: 600, network: 7, burnout: 12, pathProgress: 2 } },
+          good: { text: 'Forty cities, one blur, your name in fonts you’ve never licensed. The jet photo alone is a career.', effects: { fame: 20, money: 450, network: 5, burnout: 13, hypeSong: 10 } },
+          incredible: { text: 'EVEREST sells out. All of it. The tour documentary practically films itself. You are, verifiably, everywhere.', effects: { fame: 30, money: 600, network: 7, burnout: 12, pathProgress: 2, hypeSong: 16 } },
         },
       },
       right: {
@@ -4298,8 +4298,8 @@ export const EVENTS = [
         tags: ['tour', 'live', 'indie'],
         outcomes: {
           bad: { text: 'The intimate tour is SO intimate a fan hands you soup mid-song. The soup is good. The boundary is gone.', effects: { cred: 4, fame: 4, burnout: 5 } },
-          good: { text: 'Twelve nights people will describe to their grandchildren, inaccurately, with tears. The recordings become a live album.', effects: { cred: 8, fame: 8, creativity: 3, money: 150, burnout: 4 } },
-          incredible: { text: 'Scarcity detonates demand. Scalpers weep at the door of a 200-cap room. The mythology is worth ten Everests.', effects: { cred: 10, fame: 14, creativity: 4, burnout: 3, pathProgress: 1 } },
+          good: { text: 'Twelve nights people will describe to their grandchildren, inaccurately, with tears. The recordings become a live album.', effects: { cred: 8, fame: 8, creativity: 3, money: 150, burnout: 4, hypeSong: 10 } },
+          incredible: { text: 'Scarcity detonates demand. Scalpers weep at the door of a 200-cap room. The mythology is worth ten Everests.', effects: { cred: 10, fame: 14, creativity: 4, burnout: 3, pathProgress: 1, hypeSong: 16 } },
         },
       },
     },
@@ -4373,8 +4373,8 @@ export const EVENTS = [
         tags: ['live', 'risky', 'mainstream'],
         outcomes: {
           bad: { text: 'You crack ONE note in the sight-reading. The bandleader says “thank you” — the two worst words in music.', effects: { skill: 4, burnout: 6, cred: 1 } },
-          good: { text: 'You make the shortlist of two. The other one’s uncle is the drummer, but you made the SHORTLIST.', effects: { skill: 6, cred: 6, network: 5, fame: 4 } },
-          incredible: { text: 'The chair is yours. Five nights a week, your face is furniture in a million living rooms. Prestige furniture.', effects: { skill: 8, cred: 8, fame: 10, money: 300, pathProgress: 2 } },
+          good: { text: 'You make the shortlist of two. The other one’s uncle is the drummer, but you made the SHORTLIST.', effects: { skill: 6, cred: 6, network: 5, fame: 4, hypeSong: 10 } },
+          incredible: { text: 'The chair is yours. Five nights a week, your face is furniture in a million living rooms. Prestige furniture.', effects: { skill: 8, cred: 8, fame: 10, money: 300, pathProgress: 2, hypeSong: 16 } },
         },
       },
       right: {
@@ -5029,8 +5029,8 @@ export const EVENTS = [
         tags: ['live', 'risky'],
         outcomes: {
           bad: { text: 'The PA shorts out. You finish acoustic, unheard, soaked, weirdly at peace.', effects: { cred: 3, burnout: 9, fame: 2 } },
-          good: { text: 'The diehards stay. Forty mud people, bonded to you for life. Mud people never forget.', effects: { cred: 5, fame: 7, network: 4, burnout: 7 } },
-          incredible: { text: 'Lightning frames your finale. The photo wins awards. “The storm set” enters festival folklore.', effects: { cred: 7, fame: 16, network: 5, burnout: 7, pathProgress: 1 } },
+          good: { text: 'The diehards stay. Forty mud people, bonded to you for life. Mud people never forget.', effects: { cred: 5, fame: 7, network: 4, burnout: 7, hypeSong: 10 } },
+          incredible: { text: 'Lightning frames your finale. The photo wins awards. “The storm set” enters festival folklore.', effects: { cred: 7, fame: 16, network: 5, burnout: 7, pathProgress: 1, hypeSong: 16 } },
         },
       },
       right: {
@@ -5039,8 +5039,8 @@ export const EVENTS = [
         tags: ['deal', 'safe'],
         outcomes: {
           bad: { text: 'Tomorrow’s slot is 11 a.m., opposite the silent disco. You play to the disco’s overflow. They can’t hear you. They wave.', effects: { network: 2, fame: 2 } },
-          good: { text: 'Dry stage, decent crowd, zero electrocution. Professional outcomes all around.', effects: { network: 5, fame: 6, cred: 2 } },
-          incredible: { text: 'You land the sunset slot after a dropout. Golden hour, golden set, golden year.', effects: { network: 7, fame: 12, cred: 4, pathProgress: 1 } },
+          good: { text: 'Dry stage, decent crowd, zero electrocution. Professional outcomes all around.', effects: { network: 5, fame: 6, cred: 2, hypeSong: 10 } },
+          incredible: { text: 'You land the sunset slot after a dropout. Golden hour, golden set, golden year.', effects: { network: 7, fame: 12, cred: 4, pathProgress: 1, hypeSong: 16 } },
         },
       },
     },
@@ -5085,8 +5085,8 @@ export const EVENTS = [
         tags: ['live', 'indie', 'risky'],
         outcomes: {
           bad: { text: 'The secret holds TOO well. Nine attendees, of whom two are lost and one is asleep.', effects: { cred: 3, burnout: 5 } },
-          good: { text: 'The tent fills by word of mouth alone. Sweat, mystery, converts.', effects: { cred: 6, fame: 8, network: 4 } },
-          incredible: { text: 'The line wraps the campground. The set becomes myth by sunrise. “Were you there” is the new currency.', effects: { cred: 9, fame: 15, network: 6, pathProgress: 1 } },
+          good: { text: 'The tent fills by word of mouth alone. Sweat, mystery, converts.', effects: { cred: 6, fame: 8, network: 4, hypeSong: 10 } },
+          incredible: { text: 'The line wraps the campground. The set becomes myth by sunrise. “Were you there” is the new currency.', effects: { cred: 9, fame: 15, network: 6, pathProgress: 1, hypeSong: 16 } },
         },
       },
       right: {
@@ -5095,8 +5095,8 @@ export const EVENTS = [
         tags: ['deal', 'risky'],
         outcomes: {
           bad: { text: '“Nothing it is,” says the unknown number, going dark forever. The tent becomes myth without you.', effects: { cred: -2, burnout: 3 } },
-          good: { text: 'They laugh, then offer a real slot next season. Boldness, occasionally, is a strategy.', effects: { network: 5, cred: 3, fame: 4 } },
-          incredible: { text: 'The mystery texter was the festival director. “Finally, someone who negotiates.” Main stage. Next year. Contract real.', effects: { network: 8, cred: 5, fame: 10, pathProgress: 1 } },
+          good: { text: 'They laugh, then offer a real slot next season. Boldness, occasionally, is a strategy.', effects: { network: 5, cred: 3, fame: 4, hypeSong: 10 } },
+          incredible: { text: 'The mystery texter was the festival director. “Finally, someone who negotiates.” Main stage. Next year. Contract real.', effects: { network: 8, cred: 5, fame: 10, pathProgress: 1, hypeSong: 16 } },
         },
       },
     },
