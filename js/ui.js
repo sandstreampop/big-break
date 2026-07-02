@@ -44,6 +44,7 @@ function fillText(s) {
     .replaceAll('{genre}', g ? g.name : 'your genre')
     .replaceAll('{collabArtist}', collabArtistFor(run))
     .replaceAll('{song}', engine.flagshipSong(run)?.title || 'the song')
+    .replaceAll('{hitSong}', (run.songs || []).find((x) => x.crowned)?.title || 'the hit')
     .replaceAll('{fadedSong}', (run.songs || []).find((x) => x.status === 'faded' && x.peak)?.title || 'your old single')
     .replaceAll('{venue}', venueById(run.venue)?.name || 'the venue');
 }

@@ -64,6 +64,10 @@ export function buildEpilogue(state) {
     'The plaque by the door of the room says “saved by the scene,” and under it, smaller, the sound guy added: “and one benefit that ran long.” It still runs long. That’s the point of rooms.');
   add(flags.includes('room_lost'),
     'The climbing gym kept the stage as a “feature wall.” Climbers touch it for luck without knowing why. The room got out. The room is everywhere now.');
+  add(flags.includes('dedication_public'),
+    'The clip of you saying the name still resurfaces every anniversary. You’ve never once explained it further. Neither has the name.');
+  add(flags.includes('dedication_private'),
+    'Thursday has a fan wiki now, sixty theories deep, all wrong. Every week contains a Thursday. You still spend them the same way.');
   add(flags.includes('mg_steady'),
     'People who were in the room that night still describe your hands: steady, when nothing else was.');
   add(state.money >= 800,

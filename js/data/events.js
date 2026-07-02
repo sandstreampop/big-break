@@ -5791,4 +5791,35 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══ CONSTELLATION: THE DEDICATION (Someone × your certified hit) ═══
+  {
+    id: 'a3_dedication', act: 3, pathAffinity: [], weight: 16,
+    requires: { flagsAll: ['someone'], stats: { hitsMin: 1 } },
+    art: 'ev_dedication', context: 'Live TV. A host leaning in.',
+    prompt: 'The host waits for the applause to die, then leans in with the practiced softness of a professional surgeon: “So. ‘{hitSong}.’ Everyone’s asking — who is it about?” The studio goes quiet. Somewhere across town, someone is watching this from the kitchen, and you both already know the answer.',
+    tags: ['social', 'home'],
+    choices: {
+      left: {
+        label: 'Say their name.',
+        governingStats: { network: 0.5, creativity: 0.5 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'You say it, and the internet does what the internet does: finds their high-school yearbook by morning. The apology takes place in the kitchen and lasts a week. The song plays through the whole thing, from someone’s phone, because it’s everywhere now. Including here. Especially here.', effects: { fame: 6, burnout: 5, creativity: 2, hypeSong: 10, addFlag: 'dedication_public' } },
+          good: { text: 'You say it plainly — first name only, no story, no setup. The host waits for more. There is no more. The clip travels because of what you DIDN’T say. At home, they text you one word: “heard.”', effects: { fame: 8, cred: 3, hypeSong: 18, addFlag: 'dedication_public' } },
+          incredible: { text: 'You look into the camera — the wrong camera, the crew notes — and say the name like a fact of nature. The host, a professional, lets the silence do the segment. It becomes the year’s most-replayed twelve seconds of someone saying almost nothing. The kitchen watches it live. The kitchen already knew.', effects: { fame: 12, cred: 4, hypeSong: 28, addFlag: 'dedication_public' } },
+        },
+      },
+      right: {
+        label: '“It’s about Thursday.”',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'home', 'safe'],
+        outcomes: {
+          bad: { text: 'The non-answer plays as coy and the panel spends four minutes theorizing about celebrities you have never met. One theory trends. At home: “apparently it’s about a yacht heiress?? do I know her??” — followed, mercifully, by “(the bit is fine. the bit is ours.)”', effects: { cred: 4, fame: 3, addFlag: 'dedication_private' } },
+          good: { text: '“It’s about Thursday.” You say it like a complete answer, because it is one. The host blinks. The fans mint it instantly — THURSDAY becomes shorthand, a hashtag, a tattoo you will someday sign. The one person who knows which Thursday says nothing, forever, perfectly.', effects: { cred: 7, fame: 4, hypeSong: 12, addFlag: 'dedication_private' } },
+          incredible: { text: 'Years from now, biographers will devote chapters to Thursday. Documentaries will end on it. And every week, one unremarkable evening at a time, you and the answer make dinner while the question stays famous. The song got the world. The kitchen got the truth. Correct split.', effects: { cred: 10, fame: 5, hypeSong: 16, addFlag: 'dedication_private' } },
+        },
+      },
+    },
+  },
 ];
