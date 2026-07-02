@@ -3290,6 +3290,119 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a1_cover_band', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_coverband', context: 'A man in a Hawaiian shirt with a binder',
+    prompt: '“FleetwoodMacaroni needs a fourth, weekends only, $150 a night, strictly covers.” He taps the binder. The binder has TABS. Rent, meanwhile, has opinions.',
+    tags: ['deal', 'live'],
+    choices: {
+      left: {
+        label: 'Join FleetwoodMacaroni',
+        governingStats: { skill: 0.8 },
+        tags: ['live', 'safe'],
+        outcomes: {
+          bad: { text: 'Weekend three: a bachelorette party requests “Dreams” four times. You play it four times. Something inside you files for hazard pay. The money, though, is real and green.', effects: { money: 150, skill: 2, cred: -2, burnout: 4 } },
+          good: { text: 'Turns out playing other people’s songs perfectly is a masterclass with a paycheck. Your ears sharpen, your pocket steadies, and the Hawaiian shirt guy — Terry — knows every soundman in the county.', effects: { money: 150, skill: 4, network: 3, cred: -1 } },
+          incredible: { text: 'You sneak one original into the third set, introduced as “a deep cut.” The dance floor doesn’t notice it isn’t Fleetwood Mac. Terry notices. “That yours? It should be somebody’s.” He starts telling bookers about you — the ORIGINAL you.', effects: { money: 150, skill: 4, network: 5, creativity: 2 } },
+        },
+      },
+      right: {
+        label: 'Starve with integrity',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You decline the binder. The week you eat rice you think about the binder. The binder haunts you tastefully, in tabs.', effects: { cred: 3, money: -40 } },
+          good: { text: '“Covers are a costume,” you tell Terry, who nods like he’s heard it before (he has, from everyone he’s ever hired). Your originals-only stance costs money and buys identity at the going rate.', effects: { cred: 5, creativity: 2, money: -20 } },
+          incredible: { text: 'Terry, impressed by the refusal, books your ORIGINAL act as FleetwoodMacaroni’s “special guest” — a covers crowd, a captive audience, your songs. Two of them go home humming something that didn’t exist last year.', effects: { cred: 6, fame: 4, network: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_flyer_war', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_flyerwar', context: 'The sacred telephone pole on Main',
+    prompt: 'Someone is stapling their flyers OVER yours. Same pole, same week, dead center. The scene has laws about this. The laws are unwritten, which makes them absolute.',
+    tags: ['fame'],
+    choices: {
+      left: {
+        label: 'Escalate. Beautifully.',
+        governingStats: { creativity: 0.9 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Your revenge flyer — hand-illustrated, gorgeous, twice the size — is stapled over within the hour by a flyer that just says “NO.” You’ve been out-minimalismed. The pole remains contested territory.', effects: { creativity: 3, fame: 1, burnout: 2 } },
+          good: { text: 'You design a flyer so beautiful people steal it to frame — which is a distribution strategy, it turns out. The over-stapler surrenders the pole. Their drummer asks who did your art. You did. Everyone knows now.', effects: { creativity: 5, fame: 3, cred: 2 } },
+          incredible: { text: 'Your flyer series becomes a collectible — numbered, hidden around town, hunted. The local paper does a piece on “the poster war on Main.” Both bands sell out the same weekend. The pole gets a plaque. Unofficial. You made it official.', effects: { creativity: 7, fame: 6, network: 3 } },
+        },
+      },
+      right: {
+        label: 'Find them. Talk it out.',
+        governingStats: { network: 0.9 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'The over-stapler turns out to be sixteen and terrifyingly sincere. You can’t even be mad. You end up giving them stapler advice. You may have created a monster with better technique.', effects: { network: 2, cred: 1 } },
+          good: { text: 'Over coffee, the flyer treaty is signed: alternating weeks, top half/bottom half, mutual show attendance. Their crowd meets your crowd. Both get bigger. Diplomacy: cheaper than staples.', effects: { network: 4, fame: 2, cred: 2 } },
+          incredible: { text: 'The talk becomes a co-bill, the co-bill becomes a monthly, the monthly becomes THE night in town for new bands — and you two run it, door split, from a shoebox. The pole now advertises your joint empire. In staples.', effects: { network: 6, fame: 3, money: 80, cred: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_opendeck', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_opendeck', context: 'Open decks night. Bring your own everything.',
+    prompt: 'The DJ bar’s “open decks” night has a 15-minute slot and a strict rule: keep the floor moving or the resident cuts you off, live, with a airhorn. The current selector is losing the room to the pool table.',
+    tags: ['live', 'electronic'],
+    choices: {
+      left: {
+        label: 'Take the slot. Read the floor.',
+        minigame: 'crowd',
+        governingStats: { creativity: 0.6, network: 0.5 },
+        tags: ['live', 'electronic', 'risky'],
+        outcomes: {
+          bad: { text: 'You lose the floor to the pool table twice, win it back once, and eat the airhorn at minute thirteen — a respectable run by open decks standards. The resident nods: “decent instincts. bad transitions.”', effects: { creativity: 3, network: 2, burnout: 3 } },
+          good: { text: 'Fifteen clean minutes — the floor holds, the pool game pauses, one person does the point-at-the-DJ thing. The resident extends you to twenty. In this room, that’s a knighthood.', effects: { creativity: 4, network: 4, fame: 3 } },
+          incredible: { text: 'You read the room like sheet music — the floor SURGES, the resident kills the airhorn ceremonially by removing its batteries, and the bar offers you a monthly slot on the spot. Selector status: earned.', effects: { creativity: 6, network: 5, fame: 5, money: 60 } },
+        },
+      },
+      right: {
+        label: 'Study the resident instead',
+        governingStats: { skill: 0.8 },
+        tags: ['safe', 'practice'],
+        outcomes: {
+          bad: { text: 'You watch the resident’s hands all night and learn mostly that watching isn’t doing. Still: three transitions you’ll steal forever. Tuition: two overpriced sodas.', effects: { skill: 3 } },
+          good: { text: 'You post up by the booth and the resident, flattered, starts narrating — “watch the crowd’s FEET, not their faces.” A free masterclass in floorcraft. The feet thing changes everything.', effects: { skill: 4, creativity: 2, network: 2 } },
+          incredible: { text: 'At close, the resident hands you a USB with their unreleased edits. “You watch like someone who’ll do something with it.” The edits are a syllabus. The trust is a debt you’ll repay in kind, years from now, to somebody else.', effects: { skill: 5, creativity: 3, network: 3, cred: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_practice_wall', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_practicewall', context: 'The rehearsal space hallway, 1 a.m.',
+    prompt: 'Through the wall of practice room B: someone working the SAME four bars you’ve been fighting for a week — and failing at exactly your spot. You’ve never met. You know their struggle intimately.',
+    tags: ['practice', 'home'],
+    choices: {
+      left: {
+        label: 'Knock. Compare failures.',
+        governingStats: { network: 0.7, skill: 0.4 },
+        tags: ['network', 'practice'],
+        outcomes: {
+          bad: { text: 'The knock startles them into knocking over a cymbal stand, which wakes the space’s cat, which triggers a chain of events ending with both of you banned from after-midnight sessions for a month. Worth it: their fingering fix works.', effects: { skill: 3, network: 2, burnout: 2 } },
+          good: { text: 'Two strangers, one whiteboard, ninety minutes of trading failures. Their fix for your bar, your fix for theirs. You never exchange names — just the nod, forever after, in the hallway. The scene’s realest friendship format.', effects: { skill: 4, network: 3, creativity: 2 } },
+          incredible: { text: 'The 1 a.m. session becomes a standing thing: Room B Wednesdays, no talking about anything but the work. Word spreads; other players start “happening to practice” Wednesdays. You’ve accidentally founded an institution with no name, no dues, and perfect attendance.', effects: { skill: 6, network: 5, creativity: 2, cred: 2 } },
+        },
+      },
+      right: {
+        label: 'Race them to it. Through the wall.',
+        governingStats: { skill: 0.9 },
+        tags: ['practice', 'risky'],
+        outcomes: {
+          bad: { text: 'The wall-race lasts two hours. They land it first — you HEAR the landing, then the silence of them knowing you heard. You finish yours at 3:40 a.m. out of pure spite. Spite, it turns out, is a practice method.', effects: { skill: 4, burnout: 4 } },
+          good: { text: 'You get it first and play it a third time, slowly, like a lesson through the drywall. A pause. Then they play it BACK, corrected. The wall has become a teacher. Neither of you will ever admit this happened.', effects: { skill: 5, creativity: 2, burnout: 2 } },
+          incredible: { text: 'The race ends in a dead heat — both rooms landing the passage at once, a stereo victory neither planned. Applause erupts from practice room C, which you didn’t know was occupied. All three rooms play together till dawn, through two walls, in time. Nobody meets. It’s perfect.', effects: { skill: 7, creativity: 3, cred: 2, burnout: 3 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a1_bloom_amp', act: 1, pathAffinity: [], weight: 10,
     art: 'ev_bloom_amp', context: 'Twenty minutes before doors',
     prompt: 'The opener — a nervous duo called Static Bloom — just watched their amp die with a smell like burnt toast and futures. They look at your amp. They look at you. Their whole set is on that look.',
