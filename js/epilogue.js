@@ -56,6 +56,10 @@ export function buildEpilogue(state) {
     'The last-page song still opens the reissues. Nadia’s notebook is on volume nine. She lets you read exactly one page per year.');
   add(flags.includes('nadia_solo'),
     'Nadia’s solo record went where records go when they’re that good. She still plays your stuff live. “Warm-up,” she says. It’s love. You both know.');
+  add(flags.includes('fan_family'),
+    'Row zero is at every hometown show, same spot, plus their mom. The tattoo has aged into the skin like liner notes. Neither of you has ever once said the word “parasocial.” Why would you. It was social the whole time.');
+  add(flags.includes('superfan') && !flags.includes('fan_family'),
+    'You never learned the fan account admin’s last name. They never needed you to. The archive is still up — complete, accurate, and kinder than the press ever was.');
   add(flags.includes('mg_steady'),
     'People who were in the room that night still describe your hands: steady, when nothing else was.');
   add(state.money >= 800,
