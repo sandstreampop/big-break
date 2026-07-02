@@ -1429,6 +1429,14 @@ function actInterstitial(step) {
         const row = el('div', 'chart-week-row dropoff');
         row.innerHTML = `<span class="cw-move">OFF</span><b>“${m.title}”</b><span class="cw-note">gone after ${m.weeks} wk${m.weeks === 1 ? '' : 's'}</span>`;
         cw.append(row);
+      } else if (m.kind === 'rivalPassed') {
+        const row = el('div', 'chart-week-row rivalwar');
+        row.innerHTML = `<span class="cw-move">⚔️ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">passes ${rivalById(run.rival)?.name || 'your rival'} (#${m.from}). First blood.</span>`;
+        cw.append(row);
+      } else if (m.kind === 'rivalNeck') {
+        const row = el('div', 'chart-week-row rivalwar');
+        row.innerHTML = `<span class="cw-move">⚔️ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">one slot from ${rivalById(run.rival)?.name || 'your rival'} (#${m.from}). It knows.</span>`;
+        cw.append(row);
       }
     }
     box.append(cw);

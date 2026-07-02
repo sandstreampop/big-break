@@ -592,6 +592,13 @@ body.big-text #app { zoom: 1.18; }
 .chart-week-row.hold .cw-move { color: var(--dim); }
 .chart-week-row.dropoff { opacity: .65; }
 .chart-week-row.dropoff .cw-move { color: #d46a6a; }
+.chart-week-row.rivalwar {
+  background: rgba(224, 90, 90, .08);
+  border: 1px solid rgba(224, 90, 90, .35);
+  border-radius: 9px; padding: 6px 8px;
+}
+.chart-week-row.rivalwar .cw-move { color: #e05a5a; }
+.chart-week-row.rivalwar .cw-note { color: #e08a8a; font-style: normal; }
 .chart-week-row.crown {
   background: linear-gradient(90deg, rgba(240,195,60,.18), rgba(240,195,60,.04));
   border: 1px solid rgba(240,195,60,.45);

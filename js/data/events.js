@@ -5302,4 +5302,36 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ THE CHART WAR (you, the rival, ten slots) ═══════════
+  {
+    id: 'a3_chart_war', act: 3, pathAffinity: [], weight: 13,
+    requires: { chartingMin: 1, rivalryMin: 4 },
+    art: 'ev_chart_war', context: 'Two songs. Ten slots. One Tuesday.',
+    prompt: 'This week’s Hot 10 has “{song}” and {rival}’s single trading places nightly. Their fans have made it a holy war. Your fans have made it worse. A chart blogger is calling it “the pettiest thing to happen to music since music.”',
+    tags: ['rival', 'social'],
+    choices: {
+      left: {
+        label: 'Go to war. Feed the feud.',
+        minigame: 'duel',
+        governingStats: { network: 0.5, creativity: 0.5 },
+        tags: ['rival', 'risky', 'social'],
+        outcomes: {
+          bad: { text: 'You post something at 1 a.m. that scans as desperate by 8. {rival}’s fans clip it, score it, choreograph it. The feud feeds THEIR song this week.', effects: { hypeSong: -8, rivalry: 2, fame: 2, burnout: 4 } },
+          good: { text: 'You keep it exactly one degree above the belt — vicious, quotable, deniable. Both songs surge. Yours surges HARDER. The blogger declares you “the winner, morally, whatever that means here.”', effects: { hypeSong: 26, rivalry: 1, fame: 5 } },
+          incredible: { text: 'You drop a live one-take cover OF THEIR SONG, played better than they play it, captioned only “good tune.” It is the most devastating act of kindness the chart has ever seen.', effects: { hypeSong: 42, rivalry: 2, fame: 8, cred: 4 } },
+        },
+      },
+      right: {
+        label: 'Call them. Kill the war.',
+        governingStats: { network: 0.8 },
+        tags: ['rival', 'network', 'safe'],
+        outcomes: {
+          bad: { text: 'They let it ring out and post a screenshot of your name on their lock screen, no caption. The war continues without your consent. Wars do that.', effects: { rivalry: 2, cred: 2, hypeSong: 4 } },
+          good: { text: 'Forty minutes on the phone. You agree the war is stupid and agree to keep it going for TWO more weeks, professionally, because it is moving BOTH your numbers. Show business.', effects: { hypeSong: 22, rivalry: -1, network: 4 } },
+          incredible: { text: 'The call ends with a joint statement, a shared playlist, and a photo of two coffees. The shippers take it from there. Both songs go UP — peace, it turns out, is also content.', effects: { hypeSong: 34, rivalry: -3, network: 6, fame: 5 } },
+        },
+      },
+    },
+  },
 ];
