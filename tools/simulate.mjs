@@ -87,7 +87,8 @@ for (let i = 0; i < RUNS; i++) {
       tally.tierCounts[result.tier]++;
       tally.tiersByAct[act][result.tier]++;
       if (result.tier === 'bad') badCards++;
-      const pend = result.deltas.pendingGear;
+      const pend = result.deltas.pendingGear ||
+        (result.deltas.pendingGearChoices ? result.deltas.pendingGearChoices[0] : null);
       if (pend) {
         if (state.accessories.length >= CONFIG.accessorySlots) {
           state.accessories.splice(Math.floor(Math.random() * state.accessories.length), 1);

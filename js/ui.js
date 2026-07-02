@@ -765,6 +765,29 @@ function showResult(result) {
   if (hustle?.blurb) box.append(el('p', 'gear-blurb', `${hustle.icon} ${hustle.blurb}`));
   if (newInst) box.append(el('p', 'gear-blurb', `🎸 <b>${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`));
 
+  // Shop shelf: choose which item you actually bought (Pass 33)
+  const shelf = result.deltas.pendingGearChoices;
+  if (shelf?.length) {
+    box.append(el('p', 'gear-blurb', '🧰 The shelf — pick one:'));
+    const list = el('div', 'gear-choices');
+    for (const acc of shelf) {
+      list.append(btn(`${acc.name} — ${acc.blurb}`, '', () => {
+        ov.classList.remove('active');
+        if (run.accessories.length < CONFIG.accessorySlots) {
+          engine.equipAccessory(run, acc.id);
+          save.saveRun(run);
+          routeAdvance(engine.advance(run));
+        } else {
+          gearChooser(acc, result);
+        }
+      }));
+    }
+    box.append(list);
+    ov.append(box);
+    if (result.deltas.some((d) => d.key === 'money' && d.amount > 0)) sfx.cash();
+    return; // wait for the shelf pick
+  }
+
   // Gear gained?
   const pending = result.deltas.pendingGear;
   if (pending) {
