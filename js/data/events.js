@@ -3139,6 +3139,147 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════ THE DIVE BAR CIRCUIT (Career Wall pack #2) ═══════════
+  {
+    id: 'db_chicken_wire', act: [1, 2], pathAffinity: [], weight: 9, pack: 'pack_divebar',
+    art: 'ev_db_wire', context: 'The Rusty Spur (est. long ago, cleaned never)',
+    prompt: 'There is chicken wire in front of the stage. You ask what it’s for. The booker says “Thursdays.” Today is Thursday. “You’ll be fine. They like both kinds of music.”',
+    tags: ['live', 'roots'],
+    choices: {
+      left: {
+        label: 'Play YOUR set behind the wire',
+        governingStats: { cred: 0.7, skill: 0.6 },
+        tags: ['live', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'The first bottle arrives during song two. The wire earns its keep. You finish the set out of pure spite, which the crowd — to your horror — respects deeply.', effects: { cred: 5, burnout: 7, money: 40 } },
+          good: { text: 'By the third song the bottles stop and the boots start tapping. You have converted a room that has never once been converted. The wire stands down.', effects: { cred: 7, skill: 3, money: 60, fame: 3 } },
+          incredible: { text: 'The Spur goes QUIET for the slow one. The booker says nobody’s done that since ’09. There’s a photo of the ’09 guy over the bar. There’s room for a second photo.', effects: { cred: 10, skill: 3, fame: 6, money: 80, network: 3 } },
+        },
+      },
+      right: {
+        label: 'Learn “both kinds” on the spot',
+        governingStats: { skill: 0.9 },
+        tags: ['live', 'mainstream', 'safe'],
+        outcomes: {
+          bad: { text: 'Your country is 40% wrong and your western is worse, but the effort reads. A man named Hoss buys you a consolation beer and one (1) fact about trucks.', effects: { skill: 3, network: 2, money: 30 } },
+          good: { text: 'You fake the genre convincingly enough that requests start coming. You honor three of them. The tip jar develops a paper layer.', effects: { skill: 5, money: 90, network: 3 } },
+          incredible: { text: 'Turns out the twang was IN you. The Spur offers you a standing slot and Hoss names a pool cue after you. Highest honor available in this building.', effects: { skill: 6, money: 120, cred: 4, network: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'db_tuesday_residency', act: 2, pathAffinity: [], weight: 8, pack: 'pack_divebar',
+    art: 'ev_db_tuesday', context: 'The Anchor (worst bar, best regulars)',
+    prompt: 'The Anchor offers you Tuesdays. Forever. Pay is the door, the door is $5, and the regulars — nine of them, immortal — have watched every band in this town be born or die.',
+    tags: ['live', 'deal'],
+    choices: {
+      left: {
+        label: 'Take the Tuesdays',
+        governingStats: { cred: 0.8 },
+        tags: ['live', 'roots', 'safe'],
+        outcomes: {
+          bad: { text: 'Week one: four people. Week two: six. The regulars grade you silently from the corner like a panel of tenured owls. You are, apparently, “coming along.”', effects: { cred: 4, money: 25, skill: 2, grantHustle: 'residency' } },
+          good: { text: 'By week five the nine regulars have become forty, and the forty know the words. The Anchor’s Tuesday becomes a thing people say with a capital T.', effects: { cred: 6, network: 4, money: 40, grantHustle: 'residency' } },
+          incredible: { text: 'The owls approve. One of them, it emerges, produced two records you own. “Been waiting to see if you’d keep showing up,” he says. “Most don’t.” His card has no name, just an address.', effects: { cred: 8, network: 7, skill: 3, grantHustle: 'residency', pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Too small. Aim bigger.',
+        governingStats: { network: 0.8 },
+        tags: ['risky', 'mainstream'],
+        outcomes: {
+          bad: { text: 'The bigger room you chase falls through twice. Tuesdays at the Anchor go to someone hungrier. Their capital-T Thing is very annoying to watch happen.', effects: { network: 2, burnout: 4, rivalry: 1 } },
+          good: { text: 'You book the mid-size room instead and fill half of it, which beats all of the Anchor. The math works. The owls send no regards. Owls never do.', effects: { network: 4, fame: 5, money: 60 } },
+          incredible: { text: 'The gamble lands: a support-slot tour takes the Anchor’s Tuesday out of your calendar. On your last free Tuesday you play the Anchor once, unannounced, for nine people. Perfect show.', effects: { network: 6, fame: 8, cred: 4, burnout: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'db_jukebox', act: 2, pathAffinity: [], weight: 8, pack: 'pack_divebar',
+    art: 'ev_db_jukebox', context: 'The jukebox at Sal’s (slot D7)',
+    prompt: 'Your single is on Sal’s jukebox now — D7, between two eternal classics. A regular named Marguerite plays D6 and D8 pointedly, skipping you, every single night. It’s become a bit. The whole bar watches.',
+    tags: ['social', 'roots'],
+    choices: {
+      left: {
+        label: 'Win Marguerite over',
+        governingStats: { network: 0.8 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'You buy her a drink. She accepts the drink and plays D6. “Nothing personal, sugar. You’re just not Patsy.” Nobody is Patsy. You accept the ruling.', effects: { network: 3, cred: 2 } },
+          good: { text: 'You ask what D7 is missing. “A bridge that means it.” You play her the new bridge, acoustic, at the bar. She plays D7 the next night. Once. It counts.', effects: { network: 4, creativity: 4, cred: 3 } },
+          incredible: { text: 'Marguerite, won, becomes your fiercest evangelist. She now plays D7 twice nightly and glares at anyone who talks over it. You cannot buy security like this.', effects: { network: 6, cred: 5, fame: 5 } },
+        },
+      },
+      right: {
+        label: 'Earn D7. Write something worthy of Sal’s.',
+        governingStats: { creativity: 1.0 },
+        tags: ['write', 'roots', 'risky'],
+        outcomes: {
+          bad: { text: 'You write “Marguerite” and it’s TOO on the nose. She skips it with extra ceremony. The bar loves the drama more than either song. Sal adds a D9 just to expand the feud.', effects: { creativity: 4, fame: 3, burnout: 3 } },
+          good: { text: 'You write the kind of song that belongs between D6 and D8 — no tricks, no drop, just a story that lands. It earns its slot. Even the skeptics let it finish.', effects: { creativity: 7, cred: 5, hits: 1 } },
+          incredible: { text: 'The new one becomes the closing-time song at Sal’s — the one the whole bar sings at 1:55 a.m., arms around strangers. There is no chart for this. It’s better than the charts.', effects: { creativity: 9, cred: 7, fame: 5, hits: 1, chartTitle: 'Last Call At Sal’s' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'db_inspector', act: [2, 3], pathAffinity: [], weight: 8, pack: 'pack_divebar',
+    art: 'ev_db_inspector', context: 'Mid-set. A clipboard that is not Curtis.',
+    prompt: 'Four songs in, the health inspector shuts the venue down — something about the ice machine “having opinions.” The crowd spills into the parking lot, unwilling to go home. Your amp is inside. The moon is out.',
+    tags: ['live'],
+    choices: {
+      left: {
+        label: 'Finish the set acoustic, on the curb',
+        governingStats: { cred: 0.7, creativity: 0.6 },
+        tags: ['live', 'busk', 'indie'],
+        outcomes: {
+          bad: { text: 'Cars keep pulling out mid-song with apologetic waves. You finish for eleven diehards and one confused valet. The eleven will retell this forever, embellished.', effects: { cred: 4, burnout: 4, fame: 2 } },
+          good: { text: 'The parking lot show becomes the better show — unamplified, huddled, hymn-like. The inspector stays for two songs. Off the record.', effects: { cred: 6, fame: 5, creativity: 3 } },
+          incredible: { text: 'Someone films the curb set under the one working streetlight. “The Parking Lot Tapes” outperform your actual releases. The venue reopens and hangs a plaque on the curb. THE CURB.', effects: { cred: 8, fame: 10, creativity: 4, network: 3, chartTitle: 'The Parking Lot Tapes' } },
+        },
+      },
+      right: {
+        label: 'Reschedule. Protect the production.',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'safe'],
+        outcomes: {
+          bad: { text: 'The make-up date lands on the night of the big game. Attendance: relatives. The ice machine, repaired, hums smugly.', effects: { network: 2, money: 20 } },
+          good: { text: 'The rescheduled show sells better — shutdown drama is, it turns out, marketing. You open with a song dedicated to the ice machine. It kills.', effects: { network: 4, fame: 5, money: 60 } },
+          incredible: { text: 'You negotiate damages INTO the new deal: better cut, better slot, and the venue’s eternal gratitude for not posting about the ice. Professionalism: weaponized.', effects: { network: 6, money: 150, cred: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'db_last_call', act: 3, pathAffinity: [], weight: 9, pack: 'pack_divebar',
+    art: 'ev_db_lastcall', context: 'After close. Chairs on tables. One light on.',
+    prompt: 'The bartender — twenty years behind this bar, seen every band you’ve ever feared or loved — slides a cassette across the wood. “My stuff. From before.” He doesn’t look at you while you take it. “Just tell me if I was right to stop.”',
+    tags: ['roots', 'home'],
+    choices: {
+      left: {
+        label: 'Listen. Tell him the truth.',
+        governingStats: { cred: 0.9 },
+        tags: ['safe', 'roots'],
+        outcomes: {
+          bad: { text: 'The tape is… fine. You say so, gently, with specifics. He nods for a long time. “Fine’s what I thought.” He pours two. Some verdicts are a relief on both sides of the bar.', effects: { cred: 5, burnout: -4 } },
+          good: { text: 'Track four is genuinely good and you tell him exactly why — the turnaround, the second verse. He writes it down. Sixty years old and he writes it down. You both pretend his eyes are fine.', effects: { cred: 7, creativity: 3, burnout: -5 } },
+          incredible: { text: 'Track four is better than good, and you prove it: you record it — his song, your take, his blessing, both names. It doesn’t chart. It does something better: it exists. He keeps a copy behind the register.', effects: { cred: 10, creativity: 5, network: 3, burnout: -5, chartTitle: 'Track Four (After Close)' } },
+        },
+      },
+      right: {
+        label: '“Play it for me instead. Right now.”',
+        governingStats: { network: 0.6, creativity: 0.6 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'His hands remember about 60% of it. The missing 40% is where the night gets quiet. “Well,” he says, putting the guitar down, “now you know why I pour.” You stay till three anyway.', effects: { cred: 4, burnout: -3 } },
+          good: { text: 'He plays it through once, rusty and true, and for three minutes the empty bar is the biggest room either of you has ever been in. Nobody applauds. It would’ve broken it.', effects: { cred: 6, creativity: 4, burnout: -6 } },
+          incredible: { text: 'Halfway through, you pick up the harmony without being asked. He doesn’t stop. When it ends he flips two chairs down off a table. “Encore’s for sitting,” he says. You play till the light comes up.', effects: { cred: 8, creativity: 6, burnout: -8, network: 2 } },
+        },
+      },
+    },
+  },
   // ═══════════════ BURNOUT COPING (forced interstitials) ═══════════════
   {
     id: 'coping_50', act: [1, 2, 3], pathAffinity: [], weight: 0, chainOnly: true,

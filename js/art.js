@@ -37,6 +37,7 @@ const EMOJI = {
   ev_last_meeting: '🖊️', ev_last_call: '📞', ev_last_credits: '🪑',
   ev_cb_remembered: '🛒', ev_cb_fest: '⏪', ev_cb_exec: '🎫',
   ev_sm_meet: '☕', ev_sm_birthday: '🎂', ev_sm_question: '🫖',
+  ev_db_wire: '🐔', ev_db_tuesday: '⚓', ev_db_jukebox: '🎶', ev_db_inspector: '🧊', ev_db_lastcall: '📼',
   instrument_modular: '🎛️',
   instrument_kazoo: '🎺', instrument_melodica: '🎹', instrument_buckets: '🥁',
   instrument_cigarbox: '🎸', instrument_glock: '🔔', instrument_theremin: '👋',
@@ -72,6 +73,7 @@ const SCENE = {
   ev_last_meeting: 'office', ev_last_call: 'studio', ev_last_credits: 'office',
   ev_cb_remembered: 'street', ev_cb_fest: 'festival', ev_cb_exec: 'office',
   ev_sm_meet: 'stage', ev_sm_birthday: 'home', ev_sm_question: 'home',
+  ev_db_wire: 'stage', ev_db_tuesday: 'stage', ev_db_jukebox: 'shop', ev_db_inspector: 'street', ev_db_lastcall: 'home',
   ev_credits: 'office', ev_loyalty: 'studio', ev_diane: 'arena', ev_prodigy: 'studio',
   // studios
   ev_phone_demo: 'studio', ev_session: 'studio', ev_jingle: 'studio', ev_click: 'studio',

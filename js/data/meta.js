@@ -126,6 +126,8 @@ export const WALL_ITEMS = [
     name: 'Tour Van (Runs)', desc: 'Accessory: Tour/Live +6, less tour burnout. The check-engine light is load-bearing.' },
   { id: 'pack_festival', tier: 1, cost: 35, kind: 'pack', target: 'pack_festival',
     name: 'Festival Circuit', desc: 'Event pack: 4 new festival cards enter the deck. Bring boots.' },
+  { id: 'pack_divebar', tier: 2, cost: 40, kind: 'pack', target: 'pack_divebar',
+    name: 'The Dive Bar Circuit', desc: 'Event pack: 5 cards of chicken wire, jukebox feuds, and the bartender’s cassette.' },
   // Tier 2
   { id: 'inst_electric', tier: 2, cost: 45, kind: 'instrument', target: 'electric_guitar',
     name: 'Electric Guitar', desc: 'Instrument: an actual instrument. +Skill +Cred, Live +8. Feels like cheating.' },
