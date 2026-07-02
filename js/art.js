@@ -45,7 +45,7 @@ const EMOJI = {
   ev_tut_loadin: '🚪', ev_tut_sound: '🎚️', ev_tut_setlist: '📝', ev_tut_heckler: '🗣️',
   ev_tut_green: '🛋️', ev_tut_opener: '🎤', ev_tut_encore: '🎇', ev_tut_tipjar: '🫙', ev_tut_set: '🌟',
   ev_afterparty: '🥂', ev_gala: '🍾', ev_woodshed: '🚜',
-  ev_docu_pitch: '🎬', ev_docu_moment: '🎥', ev_docu_premiere: '🍿', ev_checkhell: '🔊', ev_merchline: '🧾', ev_goldhands: '🫳', ev_blooper: '📯', ev_shed: '🛖', ev_shed_night: '🌙', ev_shed_album: '📀',
+  ev_docu_pitch: '🎬', ev_docu_moment: '🎥', ev_docu_premiere: '🍿', ev_checkhell: '🔊', ev_merchline: '🧾', ev_goldhands: '🫳', ev_blooper: '📯', ev_shed: '🛖', ev_shed_night: '🌙', ev_shed_album: '📀', ev_bloom_amp: '🔌', ev_bloom_big: '🌸',
   instrument_modular: '🎛️', instrument_triangle: '🔺', instrument_hurdy: '⚙️', gear_cowbell: '🔔',
   instrument_kazoo: '🎺', instrument_melodica: '🎹', instrument_buckets: '🥁',
   instrument_cigarbox: '🎸', instrument_glock: '🔔', instrument_theremin: '👋',
@@ -90,7 +90,7 @@ const SCENE = {
   ev_tut_loadin: 'street', ev_tut_sound: 'stage', ev_tut_setlist: 'home', ev_tut_heckler: 'stage',
   ev_tut_green: 'home', ev_tut_opener: 'stage', ev_tut_encore: 'stage', ev_tut_tipjar: 'shop', ev_tut_set: 'stage',
   ev_afterparty: 'home', ev_gala: 'office', ev_woodshed: 'home',
-  ev_docu_pitch: 'street', ev_docu_moment: 'stage', ev_docu_premiere: 'arena', ev_checkhell: 'stage', ev_merchline: 'shop', ev_goldhands: 'street', ev_blooper: 'phone', ev_shed: 'home', ev_shed_night: 'studio', ev_shed_album: 'studio',
+  ev_docu_pitch: 'street', ev_docu_moment: 'stage', ev_docu_premiere: 'arena', ev_checkhell: 'stage', ev_merchline: 'shop', ev_goldhands: 'street', ev_blooper: 'phone', ev_shed: 'home', ev_shed_night: 'studio', ev_shed_album: 'studio', ev_bloom_amp: 'stage', ev_bloom_big: 'arena',
   ev_credits: 'office', ev_loyalty: 'studio', ev_diane: 'arena', ev_prodigy: 'studio',
   // studios
   ev_phone_demo: 'studio', ev_session: 'studio', ev_jingle: 'studio', ev_click: 'studio',
