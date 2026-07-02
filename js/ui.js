@@ -54,7 +54,15 @@ export function boot() {
   setSoundEnabled(meta.settings.sound);
   setMusicEnabled(meta.settings.music !== false);
   music.setMood('title');
+  document.body.classList.toggle('big-text', !!meta.settings.bigText);
   document.addEventListener('pointerdown', initAudio, { once: true });
+  // Keyboard support: arrow keys swipe, when a card is up and no overlay
+  document.addEventListener('keydown', (e) => {
+    if (!$('#screen-game').classList.contains('active')) return;
+    if ($('#overlay').classList.contains('active')) return;
+    if (e.key === 'ArrowLeft') commitSwipe('left');
+    else if (e.key === 'ArrowRight') commitSwipe('right');
+  });
   renderTitle();
   show('#screen-title');
 }
@@ -278,6 +286,7 @@ let encoreArmed = false;
 let prevStats = null; // for stat-rail delta floaters
 
 function vibrate(pattern) {
+  if (meta.settings.haptics === false) return;
   try { navigator.vibrate?.(pattern); } catch (e) {}
 }
 
@@ -355,7 +364,7 @@ function dealCard() {
   // Risk dots recompute when an Encore is armed/disarmed.
   // The Imposter Syndrome contract hides them entirely.
   const hideRisk = !!contractById(run.contract)?.mods?.hideRisk;
-  const dot = (o) => hideRisk ? '<span class="risk risk-hidden">?</span>' : `<span class="risk ${riskClass(o)}"></span>`;
+  const dot = (o) => hideRisk ? '<span class="risk risk-hidden">?</span>' : riskDot(riskClass(o));
   const paintOdds = () => {
     const opts = { encore: encoreArmed };
     const oL = engine.choiceOdds(run, ev.choices.left, opts);
@@ -402,12 +411,16 @@ function dealCard() {
   }
 }
 
-// Vague risk tell (spec §10): dot color from odds of a Bad outcome
+// Vague risk tell (spec §10): color + shape (colorblind-safe) from odds
+const RISK_GLYPH = { 'risk-low': '●', 'risk-mid': '▲', 'risk-high': '■', 'risk-hot': '✦' };
 function riskClass(odds) {
   if (odds.bad > 0.5) return 'risk-high';
   if (odds.bad > 0.18) return 'risk-mid';
   if (odds.incredible > 0.35) return 'risk-hot'; // spicy: big upside
   return 'risk-low';
+}
+function riskDot(cls) {
+  return `<span class="risk ${cls}" aria-label="risk: ${cls.slice(5)}">${RISK_GLYPH[cls] || ''}</span>`;
 }
 
 function attachDrag(card, bL, bR) {
@@ -492,10 +505,10 @@ function showHelp() {
     'Outcomes come in three tiers: <b style="color:var(--bad)">BAD</b>, <b style="color:var(--good)">GOOD</b>, and <b style="color:var(--hot)">INCREDIBLE</b>.'));
   const legend = el('div', 'help-legend');
   legend.innerHTML = `
-    <div><span class="risk risk-low"></span> safe bet</div>
-    <div><span class="risk risk-mid"></span> could go either way</div>
-    <div><span class="risk risk-high"></span> likely to go badly</div>
-    <div><span class="risk risk-hot"></span> big upside in reach</div>`;
+    <div><span class="risk risk-low">●</span> safe bet</div>
+    <div><span class="risk risk-mid">▲</span> could go either way</div>
+    <div><span class="risk risk-high">■</span> likely to go badly</div>
+    <div><span class="risk risk-hot">✦</span> big upside in reach</div>`;
   box.append(el('p', 'help-block', 'The dot next to each choice is your <b>risk tell</b>:'));
   box.append(legend);
   box.append(el('p', 'help-block',
@@ -1081,6 +1094,17 @@ function renderSettings() {
     meta.settings.reducedMotion =
       meta.settings.reducedMotion === null ? true
         : meta.settings.reducedMotion === true ? false : null;
+    save.saveMeta(meta);
+    renderSettings();
+  }));
+  menu.append(btn(`Large text: ${meta.settings.bigText ? 'ON' : 'OFF'}`, '', () => {
+    meta.settings.bigText = !meta.settings.bigText;
+    document.body.classList.toggle('big-text', meta.settings.bigText);
+    save.saveMeta(meta);
+    renderSettings();
+  }));
+  menu.append(btn(`Haptics: ${meta.settings.haptics !== false ? 'ON' : 'OFF'}`, '', () => {
+    meta.settings.haptics = meta.settings.haptics === false;
     save.saveMeta(meta);
     renderSettings();
   }));
