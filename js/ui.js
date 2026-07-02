@@ -24,9 +24,18 @@ import { buildDiscography } from './discography.js';
 import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from './analytics.js';
 import { playMinigame, minigameById } from './minigames.js';
+import { songPlayer, catalogDJ, catalogRadio, songKey } from './composer.js';
 
 let meta = save.loadMeta();
 let run = null;
+
+// Audible songs: every ▶ in the DOM tracks the one playing slot
+songPlayer.onchange = () => {
+  document.querySelectorAll('.sb-play').forEach((b) => {
+    b.textContent = songPlayer.playingKey === b.dataset.songkey ? '⏸' : '▶';
+    b.classList.toggle('playing', songPlayer.playingKey === b.dataset.songkey);
+  });
+};
 
 const $ = (sel) => document.querySelector(sel);
 const el = (tag, cls, html) => {
@@ -601,6 +610,7 @@ function dealCard() {
   // a lesson about the LAST card shouldn't float over the next one
   document.querySelector('.coach')?.remove();
   renderHud();
+  catalogRadio.tick(run); // Stage C: a rich catalog starts scoring its own run
   spawnStatFloaters();
   const ev = engine.drawNextCard(run, engine.stateRng(run));
   if (!ev) { // deck ran dry — act ends early
@@ -988,13 +998,23 @@ function showChart() {
     const book = el('div', 'songbook');
     for (const s of songs) {
       const row = el('div', 'songbook-row sb-' + s.status + (s.crowned ? ' sb-crowned' : ''));
+      // ♪ hear it: every song is renderable from its fingerprint
+      const play = el('button', 'sb-play', songPlayer.playingKey === songKey(s) ? '⏸' : '▶');
+      play.dataset.songkey = songKey(s);
+      play.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sfx.ui();
+        songPlayer.play(s);
+      });
+      row.append(play);
       let state;
       if (s.crowned) state = `👑 HIT — peaked #${s.peak}`;
       else if (s.status === 'charting' && s.pos) state = `charting #${s.pos} · wk ${s.weeks}${s.peak && s.peak < s.pos ? ` · peak #${s.peak}` : ''}`;
       else if (s.status === 'charting') state = 'shipped — off the chart';
       else if (s.status === 'faded') state = s.peak ? `faded — peaked #${s.peak}, ${s.weeks} wk${s.weeks === 1 ? '' : 's'}` : 'faded — never charted';
       else state = s.quality >= 68 ? 'demo — might be undeniable' : s.quality >= 52 ? 'demo — something’s there' : s.quality >= 38 ? 'demo — rough but honest' : 'demo — it exists';
-      row.innerHTML = `<b>“${s.title}”</b><span class="sb-state">${state}</span>`;
+      row.append(el('b', '', `“${s.title}”`));
+      row.append(el('span', 'sb-state', state));
       // tap a song to unfold its biography
       row.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1427,7 +1447,7 @@ function renderFinalSet() {
     title: hit ? `“${hit.title}”` : (run.chartTitles?.[0] ? `“${run.chartTitles[0]}”` : '“The Crowd-Pleaser”'),
     blurb: hit && hit.pos ? `Charting at #${hit.pos} right now. The room knows the first chord.` : 'The one they scream for. Give the people what they want.',
     stat: 'fame', amount: 5, label: hit ? '+5 Fame · feeds the final chart week' : '+5 Fame',
-    apply: () => { run.fame += 5; if (hit) hit.hype = Math.min(100, hit.hype + 25); },
+    apply: () => { run.fame += 5; if (hit) { hit.hype = Math.min(100, hit.hype + 25); run.finalCloser = hit.id; } },
   });
   // a great unreleased demo can debut LIVE as your closer — it enters the
   // chart in the finale's last tick, and might even crown
@@ -1437,7 +1457,7 @@ function renderFinalSet() {
       title: `“${vault.title}” (unreleased)`,
       blurb: 'Debut the vault song. Right now. Live. Careers should end on a first.',
       stat: 'cred', amount: 3, label: '+3 Cred · releases it tonight',
-      apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 3); engine.releaseSong(run, vault.id, 58); },
+      apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 3); engine.releaseSong(run, vault.id, 58); run.finalCloser = vault.id; },
     });
   }
   options.push({ title: '“The Deep Cut”', blurb: 'Track 9. The heads nod. The heads matter.', stat: 'cred', amount: 4, label: '+4 Cred', apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 4); } });
@@ -1588,6 +1608,9 @@ function actInterstitial(step) {
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
   if (crowns.length) { spawnConfetti(ov); sfx.win(); vibrate([30, 40, 30, 40, 80]); }
+  // Stage C: the act break plays YOUR song under the reveal (if the
+  // catalog has earned it — otherwise the lo-fi score carries on)
+  if (week && week.moves.length) catalogDJ.actBreak(run);
   const done = () => {
     ov.classList.remove('active');
     ov.removeEventListener('click', done);
@@ -1703,6 +1726,13 @@ function finishMeta(summary, lp) {
     endingKey: summary.endingKey,
     fame: summary.fame,
     daily: !!summary.daily,
+    // Audible songs §5.4: store the fingerprints, not the audio — every
+    // past career stays re-renderable forever from a handful of strings
+    songs: (summary.songs || []).slice(0, 12).map((s) => ({
+      id: s.id, title: s.title, genre: s.genre ?? null, instrument: s.instrument ?? null,
+      hook: s.hook ?? null, verdict: s.verdict ?? null,
+      status: s.status, crowned: !!s.crowned, peak: s.peak ?? null,
+    })),
   });
   meta.runHistory = meta.runHistory.slice(0, 10);
 
@@ -1847,6 +1877,12 @@ function shareTextFor(summary, lp) {
 
 function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   music.setMood('ending');
+  // Stage C: the credits roll over your Final Set closer (or best song)
+  {
+    const closer = (run.songs || []).find((x) => x.id === run.finalCloser);
+    if (closer) songPlayer.play(closer);
+    else catalogDJ.ending(run);
+  }
   const s = $('#screen-ending');
   s.innerHTML = '';
   const wrap = el('div', 'ending-wrap');
@@ -2100,9 +2136,31 @@ function renderTrophies() {
       const res = h.result ? h.result.toUpperCase()
         : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[h.endingKey] || 'DNF';
       const pathName = h.path ? PATHS[h.path].name : '—';
-      hist.append(el('div', 'history-row res-' + (h.result || 'fail'),
+      const row = el('div', 'history-row res-' + (h.result || 'fail'),
         `<span>${h.daily ? '📅 ' : ''}${inst ? inst.name : '?'} → ${pathName}</span>` +
-        `<b>${res}</b><span class="hist-fame">★${h.fame}</span>`));
+        `<b>${res}</b><span class="hist-fame">★${h.fame}${h.songs?.length ? ' ♪' : ''}</span>`);
+      // the ♪: past careers are still listenable — tap to unfold the record
+      if (h.songs?.length) {
+        row.addEventListener('click', () => {
+          sfx.ui();
+          const open = row.nextElementSibling?.classList?.contains('hist-songs');
+          hist.querySelectorAll('.hist-songs').forEach((d) => d.remove());
+          if (open) return;
+          const book = el('div', 'hist-songs');
+          for (const s of h.songs) {
+            const srow = el('div', 'songbook-row sb-' + (s.status || 'demo') + (s.crowned ? ' sb-crowned' : ''));
+            const play = el('button', 'sb-play', songPlayer.playingKey === songKey(s) ? '⏸' : '▶');
+            play.dataset.songkey = songKey(s);
+            play.addEventListener('click', (e) => { e.stopPropagation(); sfx.ui(); songPlayer.play(s); });
+            srow.append(play);
+            srow.append(el('b', '', `“${s.title}”`));
+            srow.append(el('span', 'sb-state', s.crowned ? `👑 HIT — peaked #${s.peak}` : s.peak ? `peaked #${s.peak}` : s.status));
+            book.append(srow);
+          }
+          row.after(book);
+        });
+      }
+      hist.append(row);
     }
     s.append(hist);
   }

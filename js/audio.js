@@ -21,6 +21,15 @@ export function initAudio() {
   if (ctx && musicEnabled) music.start(music.mood || 'title');
 }
 
+// The composer (audible songs) shares this context and honors the toggles
+export function audioCtx() {
+  initAudio();
+  return ctx;
+}
+export function audioState() {
+  return { sound: enabled, music: musicEnabled };
+}
+
 function blip(freq, dur, type = 'triangle', gainPeak = 0.08, when = 0) {
   if (!ctx || !enabled) return;
   if (ctx.state === 'suspended') ctx.resume();
@@ -128,12 +137,21 @@ export const music = {
   _nextTime: 0,
   _step: 0,
   _gain: null,
+  _suppressed: false, // a real song from the catalog has the room
 
   setStress(v) { this.stress = Math.max(0, Math.min(1, v)); },
 
+  // While one of the player's own songs plays, the lo-fi score yields the
+  // stage and refuses to restart until the song is done (composer.js).
+  suppress(v) {
+    this._suppressed = !!v;
+    if (v) this.stop();
+    else if (ctx && musicEnabled) this.start(this.mood || 'title');
+  },
+
   start(mood) {
     this.mood = mood;
-    if (!ctx || !musicEnabled) return;
+    if (!ctx || !musicEnabled || this._suppressed) return;
     if (!this._gain) {
       this._gain = ctx.createGain();
       this._gain.gain.value = 1;

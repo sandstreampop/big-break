@@ -1,0 +1,140 @@
+<!doctype html>
+<!-- BIG BREAK audio lab (moonshot §7 C) — DEV ONLY, not linked from the
+     game, not in the SW precache. Audition the whole composer space:
+     genre × tier × instrument × verdict, with any hook. Batch-verify
+     renders are non-silent (the one invariant Node can't check). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>BIG BREAK — audio lab</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: ui-monospace, monospace; background: #12101a; color: #f2eefb; margin: 0; padding: 18px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .sub { color: #a89fc0; font-size: 12px; margin: 0 0 14px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; align-items: center; }
+  label { font-size: 12px; color: #a89fc0; }
+  input, select, button { font: inherit; background: #241e33; color: #f2eefb; border: 1px solid #3b3352; border-radius: 8px; padding: 6px 10px; }
+  button { cursor: pointer; }
+  button:hover { border-color: #ffb347; }
+  table { border-collapse: collapse; width: 100%; font-size: 12px; }
+  th, td { border: 1px solid #2a2440; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #1b1726; }
+  .play { background: #2a2240; border-radius: 999px; padding: 4px 12px; }
+  .play.on { background: linear-gradient(90deg, #ffb347, #ff5b7f); color: #171222; border-color: transparent; }
+  .fp { color: #a89fc0; font-size: 10.5px; display: block; margin-top: 3px; }
+  .rms { font-size: 10.5px; }
+  .rms.ok { color: #5fd68a; } .rms.bad { color: #ff6b6b; }
+  #batch-out { white-space: pre-wrap; font-size: 12px; color: #a89fc0; margin-top: 12px; }
+</style>
+</head>
+<body>
+<h1>♪ BIG BREAK — composer audition lab</h1>
+<p class="sub">dev-only. every cell is a deterministic render of (genre × tier) for the chosen instrument / hook / verdict. same inputs → same song, forever.</p>
+
+<div class="controls">
+  <label>hook <input id="hook" value="parking lot halo" size="22"></label>
+  <label>instrument <select id="instrument"></select></label>
+  <label>verdict <select id="verdict">
+    <option>BOTCHED</option><option>SCRAPPY</option><option selected>SOLID</option><option>GOLDEN</option>
+  </select></label>
+  <label>title/seed salt <input id="salt" value="lab" size="8"></label>
+  <button id="stop">⏹ stop</button>
+  <button id="batch">🔬 render all &amp; check RMS (non-silence invariant)</button>
+</div>
+
+<table id="grid"></table>
+<div id="batch-out"></div>
+
+<script type="module">
+  import { composeSong, renderSong, songPlayer, hashComposition } from '../js/composer.js';
+  import { GENRES } from '../js/data/genres.js';
+  import { INSTRUMENTS } from '../js/data/instruments.js';
+
+  const TIERS = [
+    { label: 'demo', song: { status: 'demo' } },
+    { label: 'charting', song: { status: 'charting' } },
+    { label: 'crowned HIT', song: { status: 'charting', crowned: true } },
+  ];
+
+  const instSel = document.getElementById('instrument');
+  for (const i of INSTRUMENTS) {
+    const o = document.createElement('option');
+    o.value = i.id; o.textContent = i.name;
+    if (i.id === 'kazoo') o.selected = true;
+    instSel.append(o);
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const song = (genre, tier) => ({
+    id: 'lab_' + $('salt').value,
+    title: 'Lab ' + $('salt').value,
+    genre, instrument: $('instrument').value,
+    hook: $('hook').value || null,
+    verdict: $('verdict').value,
+    ...tier.song,
+  });
+
+  function build() {
+    const grid = $('grid');
+    grid.innerHTML = '<tr><th>genre</th>' + TIERS.map((t) => `<th>${t.label}</th>`).join('') + '</tr>';
+    for (const g of GENRES) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><b>${g.icon} ${g.name}</b><span class="fp">${g.sound.scale} · ${g.sound.bpmRange.join('–')}bpm · ${g.sound.drum} · parody ${g.sound.parody}</span></td>`;
+      for (const tier of TIERS) {
+        const td = document.createElement('td');
+        const s = song(g.id, tier);
+        const c = composeSong(s);
+        const b = document.createElement('button');
+        b.className = 'play';
+        b.textContent = `▶ ${c.bpm}bpm · ${c.duration.toFixed(0)}s`;
+        b.onclick = async () => {
+          document.querySelectorAll('.play.on').forEach((x) => x.classList.remove('on'));
+          b.classList.add('on');
+          const played = await songPlayer.play(s, { onended: () => b.classList.remove('on') });
+          if (!played) b.classList.remove('on');
+        };
+        td.append(b);
+        const fp = document.createElement('span');
+        fp.className = 'fp';
+        fp.textContent = `seed ${c.seed} · hash ${hashComposition(c)} · ${c.timbre} · ${c.layers.join('+')}`;
+        td.append(fp);
+        tr.append(td);
+      }
+      grid.append(tr);
+    }
+  }
+
+  $('stop').onclick = () => songPlayer.stop();
+  for (const id of ['hook', 'instrument', 'verdict', 'salt']) $(id).onchange = build;
+
+  // §7 A non-silent invariant, browser-side: every render's RMS above floor
+  $('batch').onclick = async () => {
+    const out = $('batch-out');
+    out.textContent = 'rendering ' + GENRES.length * TIERS.length + ' songs…\n';
+    let pass = 0, fail = 0;
+    for (const g of GENRES) {
+      for (const tier of TIERS) {
+        const s = song(g.id, tier);
+        const buf = await renderSong(composeSong(s));
+        let rms = 0;
+        if (buf) {
+          const d = buf.getChannelData(0);
+          let sum = 0;
+          for (let i = 0; i < d.length; i += 16) sum += d[i] * d[i];
+          rms = Math.sqrt(sum / (d.length / 16));
+        }
+        const ok = rms > 0.005;
+        ok ? pass++ : fail++;
+        out.textContent += `${ok ? '✓' : '✗ SILENT'}  ${g.id} / ${tier.label} — rms ${rms.toFixed(4)}\n`;
+      }
+    }
+    out.textContent += `\n${pass} passed, ${fail} failed (floor: rms > 0.005)`;
+  };
+
+  build();
+</script>
+</body>
+</html>
