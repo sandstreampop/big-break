@@ -122,6 +122,7 @@ Change knobs in `js/config.js`, then:
 
 ```
 node tools/simulate.mjs 4000 narrative
+node tools/lint-content.mjs   # template/style/gating audit of all content
 ```
 
 The `narrative` policy models a human following the story — judge feel by
