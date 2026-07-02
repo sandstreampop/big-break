@@ -1,7 +1,7 @@
 // BIG BREAK — UI: screens, card swipe physics, result presentation.
 
 import { CONFIG, PATHS, STAT_META } from './config.js';
-import { ENDINGS, WALL_ITEMS, TROPHIES } from './data/meta.js';
+import { ENDINGS, WALL_ITEMS, TROPHIES, EXIT_INTERVIEWS } from './data/meta.js';
 import { instrumentById, INSTRUMENTS } from './data/instruments.js';
 import { rivalById } from './data/rivals.js';
 import { accessoryById } from './data/accessories.js';
@@ -1297,6 +1297,7 @@ function finishMeta(summary, lp) {
     wall_5: () => meta.unlockedWall.length >= 5,
     mastery_3: () => Object.values(meta.lifetime?.byInstrument || {})
       .some((st) => Math.min(3, Math.floor(st.runs / 2) + st.wins) >= 3),
+    exits_3: () => (meta.exitSeen || []).length >= 3,
   };
   for (const t of TROPHIES) {
     if (meta.trophies.includes(t.id)) continue;
@@ -1332,11 +1333,44 @@ function renderFinale() {
 }
 
 function renderGameOver(endingKey) {
+  const interview = EXIT_INTERVIEWS[endingKey];
+  if (interview && !run.exitChoice) {
+    showExitInterview(endingKey, interview);
+    return;
+  }
   const summary = engine.runSummary(run);
-  const lp = engine.legacyPoints(run);
+  summary.exitChoice = run.exitChoice || null;
+  let lp = engine.legacyPoints(run) + (run.exitLpBonus || 0);
   const earned = finishMeta(summary, lp);
   sfx.gameover();
   renderEndingScreen(ENDINGS[endingKey], lp, earned, null, summary);
+}
+
+// The Exit Interview (Pass 45): one final choice inside a fail state
+function showExitInterview(endingKey, interview) {
+  const ov = $('#overlay');
+  ov.innerHTML = '';
+  ov.classList.add('active');
+  const box = el('div', 'result-card');
+  box.append(el('div', 'tier-badge', 'ONE LAST QUESTION'));
+  box.append(el('p', 'card-context', interview.context));
+  box.append(el('p', 'result-text', interview.prompt));
+  const list = el('div', 'gear-choices');
+  for (const side of ['left', 'right']) {
+    const opt = interview[side];
+    list.append(btn(opt.label, side === 'left' ? 'primary' : '', () => {
+      run.exitChoice = opt.exit;
+      run.exitLpBonus = opt.lp;
+      run.exitText = opt.text;
+      meta.exitSeen = meta.exitSeen || [];
+      if (!meta.exitSeen.includes(endingKey)) meta.exitSeen.push(endingKey);
+      save.saveMeta(meta);
+      ov.classList.remove('active');
+      renderGameOver(endingKey);
+    }));
+  }
+  box.append(list);
+  ov.append(box);
 }
 
 const TIER_EMOJI = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
@@ -1369,9 +1403,10 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   }
   wrap.append(el('p', 'ending-text', ending.text));
   const epilogue = buildEpilogue(run);
-  if (epilogue) {
+  if (run.exitText || epilogue) {
     wrap.append(el('h3', 'wall-tier', 'Epilogue'));
-    wrap.append(el('p', 'epilogue-text', epilogue));
+    if (run.exitText) wrap.append(el('p', 'epilogue-text exit-text', run.exitText));
+    if (epilogue) wrap.append(el('p', 'epilogue-text', epilogue));
   }
 
   if (evalr) {

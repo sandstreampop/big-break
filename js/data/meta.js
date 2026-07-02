@@ -70,6 +70,47 @@ export const ENDINGS = {
   },
 };
 
+// The Exit Interview: one final choice inside each fail state. No rolls —
+// pure narrative agency, an epilogue color, and a small LP dignity bonus.
+export const EXIT_INTERVIEWS = {
+  burnout: {
+    context: 'Fintech onboarding, day one',
+    prompt: 'The HR person reaches the last box on the form. “Aaand… any hobbies? We put them in the birthday slideshow.” The cursor blinks. Somewhere in a box in your trunk, a tuner pedal still holds a charge.',
+    left: {
+      label: '“Music. Once.”', exit: 'admitted', lp: 8,
+      text: 'You say it plainly, and the HR person’s whole face changes. “No way. What do you play?” For ten minutes, the onboarding stops and two people talk about the thing that matters. The slideshow, months later, includes a photo you didn’t know existed: you, mid-set, lit like a saint.',
+    },
+    right: {
+      label: '“No hobbies.”', exit: 'buried', lp: 4,
+      text: 'You leave the box empty. Clean break. Professional. On Fridays the office does “wind-down playlists” and one week your song comes on — the algorithm doesn’t know what you did. You let it play to the end. Nobody sees your hands move.',
+    },
+  },
+  cancelled: {
+    context: 'The drafts folder, 2:14 a.m.',
+    prompt: 'The apology video is written, lit, and rehearsed. Thumb over the post button. The scene has already decided who you are — this is either the first sentence of the comeback or the last word of the exit.',
+    left: {
+      label: 'Post it. Begin the crawl back.', exit: 'apologized', lp: 8,
+      text: 'You post the honest version — no ring light, no soft piano. It gets ratioed for a week, then quietly, unglamorously, it starts to work. Rehabilitation is a residency with no door money. You play it anyway. The industry loves a redemption arc almost as much as it loved the fall.',
+    },
+    right: {
+      label: 'Delete it. Vanish clean.', exit: 'vanished', lp: 4,
+      text: 'You delete the draft and the accounts in one long exhale. The discourse rages another week over your empty chair, then finds new food. Years later, “whatever happened to—” threads surface monthly. You read them sometimes, in a town where nobody asks you to explain yourself.',
+    },
+  },
+  debt: {
+    context: 'Curtis, at the door, clipboard closed',
+    prompt: 'The gear is in the truck. The paperwork is done. Curtis pauses on the step. “Off the record — the little practice amp. Nobody itemized it. I could lose it off the manifest.” He waits. Politely. He does everything politely.',
+    left: {
+      label: 'Take the amp.', exit: 'kept_amp', lp: 8,
+      text: '“Appreciate you, Curtis.” He nods like a man settling an old account of his own. The amp sits in the kitchen now. Some nights you play it at whisper volume, and it sounds like a promise the repossession couldn’t reach. Everyone starts over at one amp. You’ve done it before.',
+    },
+    right: {
+      label: 'Let it all go.', exit: 'clean_slate', lp: 4,
+      text: '“Take it all, Curtis. Manifest’s a manifest.” He looks at you a long second, then writes it down. The truck pulls away with every watt you owned. The silence that follows is enormous, and — you notice, surprised — not empty. Whatever you build next will be built from zero, on purpose.',
+    },
+  },
+};
+
 // ---- Career Wall (spec §9) ----
 // kinds: instrument | accessory | pack | contract | perk
 // Perks are always-on run-start bonuses (see engine.newRun).
@@ -187,6 +228,9 @@ export const TROPHIES = [
   { id: 'all_paths', name: 'EGOT-Adjacent', icon: '👑',
     desc: 'Achieve all three Success endings across your career. Touch grass, superstar.',
     special: 'all_paths' },
+  { id: 'every_door', name: 'Every Door Out', icon: '🚪',
+    desc: 'Answer all three exit interviews across your career. You know every way this ends. You keep starting anyway.',
+    special: 'exits_3' },
   { id: 'brammy', name: 'Brammy Winner', icon: '🏆',
     desc: 'Win a Brammy. The speech (or the beautiful lack of one) is history now.',
     check: (s) => s.brammy === 'won' },
