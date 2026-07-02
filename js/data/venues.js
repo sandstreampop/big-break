@@ -23,6 +23,16 @@ export const VENUES = [
     flavor: 'The sound of the basement. Nine listeners who would die for you.',
     tags: ['record', 'indie'],
   },
+  {
+    id: 'allnight', name: 'The All-Nite Diner', icon: '🍳',
+    flavor: 'Corner booth, permanent reservation. The 3 a.m. crowd is the most honest audience alive.',
+    tags: ['live', 'home'],
+  },
+  {
+    id: 'laundro', name: 'Spin Cycle Laundromat', icon: '🌀',
+    flavor: 'Acoustic sets between rinse and spin. The dryers keep better time than most drummers.',
+    tags: ['busk', 'indie'],
+  },
 ];
 
 // Level tiers: index = level (0..3)

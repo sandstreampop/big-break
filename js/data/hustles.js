@@ -17,6 +17,10 @@ export const HUSTLES = [
     blurb: 'The vault appreciates in mystery. Publishers bid on rumors.' },
   { id: 'masterclass_income', name: 'Masterclass Passive Income', icon: '🧑‍🏫', moneyPerAct: 90,
     blurb: '“Unlock your flow-state.” You said it once. Ironically.' },
+  { id: 'shed_rental', name: 'Shed Hours', icon: '🛖', moneyPerAct: 65,
+    blurb: 'The scene’s favorite cheap room. “Recorded at The Shed” is a badge now.' },
+  { id: 'wedding_circuit', name: 'The Wedding Circuit', icon: '💒', moneyPerAct: 75,
+    blurb: 'One grandmother’s booking became a referral network. You know every venue’s power situation by heart.' },
 ];
 
 export function hustleById(id) {
