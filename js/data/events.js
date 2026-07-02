@@ -2320,6 +2320,92 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a2_hf_camp48', act: 2, pathAffinity: ['hitfactory'], weight: 11,
+    art: 'ev_camp48', context: 'A rented mansion. Fourteen writers. One weekend.',
+    prompt: 'The writing camp brief, taped to every door: “48 HOURS. THE ARTIST NEEDS A SUMMER SONG. THE ARTIST HAS NOT BEEN TOLD WHICH SUMMER.” Every room has a keyboard, a candle, and someone more famous than you.',
+    tags: ['write', 'studio'],
+    choices: {
+      left: {
+        label: 'Chase the brief. Win the camp.',
+        minigame: 'ideas',
+        governingStats: { creativity: 0.8, network: 0.4 },
+        tags: ['write', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'Your summer song comes out autumnal — great bones, wrong season. It loses the camp but a producer pockets the bridge “for later.” In this economy, bridges are currency.', effects: { creativity: 4, network: 3, burnout: 5 } },
+          good: { text: 'Hour 46: your hook survives the writers’ room gauntlet — the highest honor fourteen sharks can bestow. The demo goes “to the artist,” which is camp-speak for purgatory, but YOUR name is on it twice.', effects: { creativity: 6, network: 4, money: 200, burnout: 4 } },
+          incredible: { text: 'Your song WINS the camp — cut live on the last night with the artist singing YOUR melody line unchanged, which the room informs you has happened three times in camp history. The splits meeting has eleven writers. The hook is undilutably yours.', effects: { creativity: 8, network: 5, money: 350, hits: 1, burnout: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Ignore the brief. Write the weird one.',
+        governingStats: { creativity: 1.0 },
+        tags: ['write', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'Your off-brief song clears the room in the bad way — “interesting” (death), “brave” (double death). You drive home with a b-side and your dignity, split evenly.', effects: { creativity: 5, cred: 2, burnout: 4 } },
+          good: { text: 'The weird one doesn’t win the camp; it wins the CAMPERS. Three writers ask for sessions. The artist’s A&R quietly requests “whatever that was” for a different, stranger project.', effects: { creativity: 7, network: 4, cred: 3, burnout: 3 } },
+          incredible: { text: 'The brief song wins the weekend; your weird one wins the year. It leaks from the camp, gets passed producer-to-producer like contraband, and lands on a critical darling’s album AS IS. The camp invites you back “to ignore the brief again.”', effects: { creativity: 9, cred: 5, hits: 1, money: 250, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_hf_placement', act: 3, pathAffinity: ['hitfactory'], weight: 11,
+    art: 'ev_placement', context: 'A music supervisor with 90 seconds and a salad',
+    prompt: '“Prestige streaming drama. Season finale. The scene: a wedding AND a funeral. Same scene. Don’t ask. I need the song by Friday and I need it to hurt.” She has heard 200 pitches this week. Yours is number 201.',
+    tags: ['write', 'deal'],
+    choices: {
+      left: {
+        label: 'Pitch the vault’s saddest banger',
+        governingStats: { creativity: 0.7, network: 0.5 },
+        tags: ['deal', 'mainstream'],
+        outcomes: {
+          bad: { text: 'She listens to eleven seconds. “Too sad.” Eleven more. “Now too banger.” The salad ends; the meeting ends with it. But she keeps the file, and supervisors NEVER keep files.', effects: { network: 3, cred: 2 } },
+          good: { text: 'She stops chewing at the pre-chorus — the supervisor tell. “This could work for the vows-into-eulogy pivot.” A sentence that will pay your rent for a year. Friday delivery, confirmed.', effects: { money: 400, network: 4, fame: 3 } },
+          incredible: { text: 'The song scores the scene, the scene breaks the internet, and for one week your pre-chorus IS television. Licensing calls arrive from three continents. The vault is now a bank.', effects: { money: 650, network: 6, fame: 7, hits: 1, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Write it fresh, to picture, by Friday',
+        minigame: 'take',
+        governingStats: { skill: 0.6, creativity: 0.6 },
+        tags: ['write', 'studio', 'risky'],
+        outcomes: {
+          bad: { text: 'Writing to a scene you’ve only heard described is composing a portrait over the phone. Friday’s song fits a DIFFERENT scene — which she buys for episode four, at episode-four money. Lesson logged.', effects: { creativity: 4, money: 150, burnout: 5 } },
+          good: { text: 'You score the wedding-funeral like you’ve attended both simultaneously. “It hurts correctly,” she says — the five-star review of her species. The check clears before the episode airs.', effects: { creativity: 6, money: 450, network: 4, burnout: 4 } },
+          incredible: { text: 'The custom cue becomes the show’s musical identity — they re-license it for the title sequence, the trailer, and a car ad that makes everyone involved slightly rich and slightly embarrassed. “Number 201,” she toasts at the wrap party. “Two hundred people pitched me songs. One person asked what the scene needed.”', effects: { creativity: 8, money: 700, network: 6, fame: 5, hits: 1, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_hf_heir', act: 3, pathAffinity: ['hitfactory'], weight: 10,
+    art: 'ev_heir', context: 'A 19-year-old with your exact old haircut',
+    prompt: 'The kid corners you at a session: they’ve studied your writing credits like scripture, can name your uncredited hooks BY EAR, and just got signed to write for the same machine that’s grinding you. “Teach me the vault trick,” they say. You never told anyone about the vault trick.',
+    tags: ['write', 'network'],
+    choices: {
+      left: {
+        label: 'Teach them everything. Build an heir.',
+        governingStats: { cred: 0.7, network: 0.5 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'You teach; they learn TOO fast. Within a month the kid out-pitches you for a placement using your own trick, then credits you in the trades, which softens exactly none of it. Mentorship: a beautiful way to fund your competition.', effects: { cred: 4, network: 3, money: -50 } },
+          good: { text: 'You split a session a week with the kid. Their hunger sharpens your craft; your scars save them years. The first co-write sells immediately — the machine loves a lineage story almost as much as a hook.', effects: { cred: 6, network: 5, creativity: 3, money: 200 } },
+          incredible: { text: 'The kid becomes your co-writer, then your secret weapon, then — in the trades, without warning — “the protégé of the best uncredited writer alive.” The industry finally looks up your credits, ALL of them. The heir crowned the parent. Neither of you writes uncredited again.', effects: { cred: 9, network: 6, fame: 6, money: 300, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: '“The vault trick dies with me.”',
+        governingStats: { creativity: 0.8 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You decline, kindly. The kid reverse-engineers the trick in six weeks anyway — talent is rude like that — and does it slightly BETTER. You sleep fine. Mostly fine.', effects: { creativity: 3, cred: 1, burnout: 3 } },
+          good: { text: '“Some tricks you have to find yourself, or they don’t work.” The kid glares, goes away, and comes back a year later having found a DIFFERENT trick. You trade, one for one, like spies. Fair.', effects: { creativity: 5, cred: 4, network: 2 } },
+          incredible: { text: 'Your refusal becomes the kid’s villain origin story — they build a whole style AGAINST yours, and the machine feeds on the tension for years. Two schools of hooks now duel across the charts, and interviewers ask you both about it. You never confirm. The mystery compounds like interest.', effects: { creativity: 7, cred: 6, fame: 5 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_afterparty', act: 2, pathAffinity: [], weight: 11,
     art: 'ev_afterparty', context: 'Somebody’s loft. Everybody’s business cards.',
     prompt: 'The showcase afterparty. Dario is here. Grub is here. A blogger who spells your name three ways is here. A&R Kim — the actual reason anyone came — is here. Everyone is one drifting conversation away from forgetting you exist.',
