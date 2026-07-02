@@ -1457,29 +1457,23 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   wrap.append(artFor(ending.art, 'ending-art', {
     fame: run.fame, network: run.stats.network, burnout: run.stats.burnout,
   }));
+  // Verdict ribbon: outcome legible before a single line of prose
+  const resKey = summary?.result || null;
+  const resLabel = resKey
+    ? { success: 'SUCCESS', partial: 'PARTIAL CREDIT', failure: 'FAILURE' }[resKey]
+    : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[summary?.endingKey] || 'THE END';
+  const pathLabel = summary?.path ? PATHS[summary.path].name.toUpperCase() + ' · ' : '';
+  wrap.append(el('div', `verdict verdict-${resKey || 'over'}`, `${pathLabel}${resLabel}`));
   wrap.append(el('h2', 'ending-title', ending.title));
   const finalPress = generateHeadlines(run, 1)[0];
   if (finalPress) {
     wrap.append(el('p', 'trades-row ending-press', `<b>${finalPress.text}</b><span>— ${finalPress.src}</span>`));
   }
   wrap.append(el('p', 'ending-text', ending.text));
-  const disc = buildDiscography(run);
-  if (disc.length) {
-    wrap.append(el('h3', 'wall-tier', 'The Discography'));
-    const list = el('div', 'disc-list');
-    for (const d of disc) {
-      list.append(el('div', 'disc-row', `<b>“${d.title}”</b><span>— ${d.review}</span>`));
-    }
-    wrap.append(list);
-  }
-  const epilogue = buildEpilogue(run);
-  if (run.exitText || epilogue) {
-    wrap.append(el('h3', 'wall-tier', 'Epilogue'));
-    if (run.exitText) wrap.append(el('p', 'epilogue-text exit-text', run.exitText));
-    if (epilogue) wrap.append(el('p', 'epilogue-text', epilogue));
-  }
 
+  // Scoreboard first (how you were judged), memorabilia after
   if (evalr) {
+    wrap.append(el('h3', 'wall-tier', 'The Judgment'));
     const gates = el('div', 'gate-readout');
     for (const r of evalr.readings) {
       const row = el('div', 'gate-row' + (r.met ? ' met' : ''));
@@ -1498,14 +1492,30 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     }
     wrap.append(gates);
   }
-
-  if (summary?.tierLog?.length) {
-    wrap.append(el('p', 'tier-strip', summary.tierLog.map((t) => TIER_EMOJI[t] || '⬜').join('')));
-  }
   const endContract = summary?.contract ? contractById(summary.contract) : null;
   wrap.append(el('p', 'lp-award', `+${lp} Legacy Points${endContract ? ` <span class="lp-mult">(${endContract.icon} ${endContract.name} ×${endContract.lpMult})</span>` : ''}`));
   for (const t of trophies) {
     wrap.append(el('p', 'trophy-toast', `${t.icon} Trophy: <b>${t.name}</b> — ${t.desc}`));
+  }
+
+  const disc = buildDiscography(run);
+  if (disc.length) {
+    wrap.append(el('h3', 'wall-tier', 'The Discography'));
+    const list = el('div', 'disc-list');
+    for (const d of disc) {
+      list.append(el('div', 'disc-row', `<b>“${d.title}”</b><span>— ${d.review}</span>`));
+    }
+    wrap.append(list);
+  }
+  const epilogue = buildEpilogue(run);
+  if (run.exitText || epilogue) {
+    wrap.append(el('h3', 'wall-tier', 'Epilogue'));
+    if (run.exitText) wrap.append(el('p', 'epilogue-text exit-text', run.exitText));
+    if (epilogue) wrap.append(el('p', 'epilogue-text', epilogue));
+  }
+
+  if (summary?.tierLog?.length) {
+    wrap.append(el('p', 'tier-strip', summary.tierLog.map((t) => TIER_EMOJI[t] || '⬜').join('')));
   }
 
   const menu = el('div', 'menu');

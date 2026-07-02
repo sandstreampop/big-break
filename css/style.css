@@ -677,6 +677,20 @@ body.big-text #app { zoom: 1.18; }
 .ending-wrap { display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px; }
 .ending-art { width: 100%; aspect-ratio: 16/9; border-radius: 16px; object-fit: cover; }
 .ending-title { font-size: 30px; font-weight: 900; line-height: 1.05; }
+/* verdict ribbon: the outcome, before any prose */
+.verdict {
+  align-self: flex-start;
+  font-size: 12px; font-weight: 900; letter-spacing: .14em;
+  padding: 5px 12px; border-radius: 999px;
+  margin-bottom: -4px;
+}
+.verdict-success {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #1c1010;
+  animation: shimmer 1.4s infinite;
+}
+.verdict-partial { background: #3b2b1c; color: var(--accent); }
+.verdict-failure, .verdict-over { background: #4a2030; color: var(--bad); }
 .ending-text { font-size: 15.5px; line-height: 1.55; color: var(--ink); }
 .exit-text { border-left-color: var(--accent2); }
 .epilogue-text {
@@ -690,7 +704,13 @@ body.big-text #app { zoom: 1.18; }
   font-size: 22px; font-weight: 900; color: var(--accent);
   text-align: center; padding: 8px;
 }
-.trophy-toast { background: #1c1729; border: 1px solid #3b3352; border-radius: 12px; padding: 10px 12px; font-size: 13.5px; line-height: 1.4; }
+.trophy-toast {
+  background: #1c1729; border: 1px solid #3b3352;
+  border-left: 3px solid var(--accent);
+  border-radius: 4px 12px 12px 4px; padding: 10px 12px;
+  font-size: 13.5px; line-height: 1.4;
+  animation: chipIn .3s backwards;
+}
 
 .gate-readout { display: flex; flex-direction: column; gap: 8px; background: #1c1729; padding: 12px; border-radius: 14px; }
 .gate-row { display: grid; grid-template-columns: 92px 1fr 56px; align-items: center; gap: 10px; font-size: 13px; }
