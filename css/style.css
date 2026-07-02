@@ -1051,3 +1051,4 @@ body.big-text #app { zoom: 1.18; }
 .mg-omrow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .mg-say { background: #1e3c2b; color: var(--good); border-color: #2a5a3d; text-align: center; }
 .mg-zip { background: #322a47; color: var(--ink); text-align: center; }
+.mg-noskip { text-align: center; font-size: 12px; color: var(--accent); }
