@@ -458,6 +458,10 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     push('rivalry', state.rivalry - before);
   }
 
+  if (effects.chartTitle) {
+    state.chartTitles = state.chartTitles || [];
+    state.chartTitles.unshift(effects.chartTitle);
+  }
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
 
@@ -660,5 +664,6 @@ export function runSummary(state) {
     contract: state.contract || null,
     hustles: (state.hustles || []).length,
     swapped: !!state.swappedInstrument,
+    flags: [...(state.flags || [])],
   };
 }

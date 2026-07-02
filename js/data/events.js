@@ -405,6 +405,122 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════ THE UNFINISHED SONG (run-spanning arc) ═══════════
+  {
+    id: 'a1_fragment', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_fragment', context: '3:12 a.m., unable to sleep',
+    prompt: 'Four chords arrive out of nowhere and land like a door opening. You don’t know what’s on the other side yet. You know it’s a real door.',
+    tags: ['write', 'home'],
+    choices: {
+      left: {
+        label: 'Chase it all night',
+        governingStats: { creativity: 1.0 },
+        tags: ['write', 'risky'],
+        outcomes: {
+          bad: { text: 'By dawn you have forty voice memos and no song. But the door is still there. You marked where it stands.', effects: { creativity: 4, burnout: 6, addFlag: 'song_fragment' } },
+          good: { text: 'By sunrise there’s a verse and half a chorus that scares you a little. It goes in the vault. It glows in there.', effects: { creativity: 6, burnout: 5, addFlag: 'song_fragment' } },
+          incredible: { text: 'The whole shape arrives at 5 a.m. — everything but the ending. Some songs you write. This one you FOUND.', effects: { creativity: 9, burnout: 5, skill: 2, addFlag: 'song_fragment' } },
+        },
+      },
+      right: {
+        label: 'Sleep. If it’s real, it stays.',
+        governingStats: { cred: 0.6, skill: 0.6 },
+        tags: ['rest', 'safe'],
+        outcomes: {
+          bad: { text: 'Morning: three of the four chords are gone. You spend a week knocking on walls, looking for the door.', effects: { creativity: 2, burnout: -4 } },
+          good: { text: 'It survives the night — smaller, but real. You hum it into your phone over breakfast.', effects: { creativity: 4, burnout: -6, addFlag: 'song_fragment' } },
+          incredible: { text: 'It’s STILL THERE at noon, fully formed, patient. The real ones wait for you. Rested AND haunted: ideal.', effects: { creativity: 6, burnout: -6, addFlag: 'song_fragment' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_song_grows', act: 2, pathAffinity: [], weight: 13,
+    requires: { flagsAll: ['song_fragment'] },
+    art: 'ev_song_grows', context: 'Soundcheck. You thought no one was listening.',
+    prompt: 'You play the unfinished song to an empty room, except the room isn’t empty: a producer stands in the doorway. “What IS that? I have an artist who needs exactly that.”',
+    tags: ['write', 'deal'],
+    choices: {
+      left: {
+        label: 'Sell the unfinished song',
+        governingStats: { network: 0.9 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'The check is real. The hollow feeling is also real. Someone else walks through your door now.', effects: { money: 350, hits: 1, creativity: -3, removeFlag: 'song_fragment', addFlag: 'song_sold' } },
+          good: { text: 'Good money, proper credit, and the door… well. Doors can be rebuilt. Probably.', effects: { money: 500, hits: 1, cred: 2, removeFlag: 'song_fragment', addFlag: 'song_sold' } },
+          incredible: { text: 'A bidding war erupts over four chords and a feeling. You keep “writer” in bold. The door is theirs now — at a doorman’s price.', effects: { money: 700, hits: 1, network: 5, removeFlag: 'song_fragment', addFlag: 'song_sold' } },
+        },
+      },
+      right: {
+        label: '“It’s not for sale. It’s not done.”',
+        governingStats: { creativity: 0.8, cred: 0.5 },
+        tags: ['write', 'indie'],
+        outcomes: {
+          bad: { text: 'The producer shrugs: “songs rot in vaults.” The sentence follows you home and sits on your chest at night. You keep writing.', effects: { creativity: 4, burnout: 4, removeFlag: 'song_fragment', addFlag: 'song_growing' } },
+          good: { text: 'You work on it in every green room, every van, every night off. The bridge arrives in a parking lot in the rain. Of course it does.', effects: { creativity: 7, skill: 2, removeFlag: 'song_fragment', addFlag: 'song_growing' } },
+          incredible: { text: 'The producer nods slowly: “good answer.” He leaves his card “for when it’s done.” The song grows teeth.', effects: { creativity: 9, cred: 4, network: 3, removeFlag: 'song_fragment', addFlag: 'song_growing' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_song_finale', act: 3, pathAffinity: [], weight: 16,
+    requires: { flagsAll: ['song_growing'] },
+    art: 'ev_song_finale', context: 'The song is finished. It’s time.',
+    prompt: 'Last night, alone, you played the ending for the first time. The unfinished song is finished. Now there’s only the question every finished song asks: where does the door open?',
+    tags: ['write', 'live'],
+    choices: {
+      left: {
+        label: 'Debut it at the biggest show',
+        governingStats: { skill: 0.6, creativity: 0.7 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'You debut it and your voice cracks on the ending — the ending you waited a year for. The bootleg circulates anyway. People love it, crack and all. You don’t. Yet.', effects: { fame: 6, cred: 3, creativity: 3, burnout: 5, addFlag: 'song_finished', chartTitle: 'The Door (Live, Cracked)' } },
+          good: { text: 'The room goes quiet in the middle — the good quiet, the church quiet. When it ends, one full second of silence before the noise. That second is why you started.', effects: { fame: 12, cred: 6, creativity: 4, pathProgress: 1, addFlag: 'song_finished', chartTitle: 'The Door' } },
+          incredible: { text: 'You play the door open. Phones drop. A stranger sobs into a bucket hat. Every setlist you write for the rest of your life ends the same way — with this.', effects: { fame: 20, cred: 8, creativity: 5, pathProgress: 2, addFlag: 'song_finished', chartTitle: 'The Door' } },
+        },
+      },
+      right: {
+        label: 'Release it alone, at midnight, no promo',
+        governingStats: { creativity: 0.7, cred: 0.6 },
+        tags: ['record', 'indie'],
+        outcomes: {
+          bad: { text: 'It drops into the void at 12:00 and the void takes a while to notice. Slow burn, they call it later. VERY slow, you call it now.', effects: { cred: 4, creativity: 3, fame: 3, addFlag: 'song_finished', chartTitle: 'The Door' } },
+          good: { text: 'No promo, no premiere, just the song. It travels the old way: one person telling another person “sit down for this.”', effects: { cred: 7, fame: 8, creativity: 4, pathProgress: 1, addFlag: 'song_finished', chartTitle: 'The Door' } },
+          incredible: { text: 'By morning it’s everywhere with zero marketing, which drives the marketing industry quietly insane. The mystery IS the promo. The song IS the door.', effects: { cred: 9, fame: 16, creativity: 5, pathProgress: 1, addFlag: 'song_finished', chartTitle: 'The Door' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_song_regret', act: 3, pathAffinity: [], weight: 13,
+    requires: { flagsAll: ['song_sold'] },
+    art: 'ev_song_regret', context: 'Live television, someone else’s stage',
+    prompt: 'The artist who bought your unfinished song performs it on TV. They finished it. Differently. Wrongly? Beautifully? The crowd sings along to the door you found at 3 a.m.',
+    tags: ['write', 'fame'],
+    choices: {
+      left: {
+        label: 'Watch. Then write something better.',
+        governingStats: { creativity: 1.0 },
+        tags: ['write'],
+        outcomes: {
+          bad: { text: 'You write six spite-songs. All six are about the same door. Therapy would be cheaper than this studio time. You book more studio time.', effects: { creativity: 5, burnout: 6 } },
+          good: { text: 'The anger composts into something honest: a song about selling songs. It’s better than the one you sold. It had to be.', effects: { creativity: 8, cred: 4, hits: 1 } },
+          incredible: { text: 'You write THE answer song. Everyone knows what it’s about; nobody can prove it; both songs chart at once. The feud nobody can confirm becomes the story of the year.', effects: { creativity: 10, cred: 6, fame: 10, hits: 1, chartTitle: 'The Other Side (Of Your Door)' } },
+        },
+      },
+      right: {
+        label: 'Tell the internet the truth',
+        governingStats: { cred: 0.7, network: 0.5 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'The receipts are real but the timeline is messy. Half the internet calls you brave; the other half calls you bitter. Both halves stream the song. Their version.', effects: { cred: 2, fame: 4, burnout: 5 } },
+          good: { text: 'You post the 3 a.m. voice memo. The timestamp does all the talking. Quietly, the credit gets corrected everywhere it matters.', effects: { cred: 7, fame: 6, network: 2 } },
+          incredible: { text: 'The original memo — hiss, chair creak, four chords, your sleepy hum — outstreams the polished version. People wanted the door, not the doorway staging. They wanted YOU.', effects: { cred: 9, fame: 14, creativity: 4, chartTitle: 'voicememo_312am.m4a' } },
+        },
+      },
+    },
+  },
   // ═══════════════════════ ACT 2 — THE GRIND ═══════════════════════
   // ---- Path-agnostic ----
   {
