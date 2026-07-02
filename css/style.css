@@ -1017,8 +1017,18 @@ body.big-text #app { zoom: 1.18; }
   animation-name: mgFloatUp; animation-timing-function: linear; animation-fill-mode: forwards;
 }
 @keyframes mgFloatUp { to { transform: translateY(-300px); } }
-.mg-word-hit { background: #1e3c2b; color: var(--good); border-color: var(--good); animation-play-state: paused; }
-.mg-word-sting { background: #4a2030; color: var(--bad); border-color: var(--bad); animation-play-state: paused; }
+/* the tell: fresh ink glows, clichés arrive pre-faded */
+.mg-word-fresh {
+  color: #ffe9c2; border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(255, 179, 71, .35), inset 0 0 6px rgba(255, 179, 71, .12);
+  font-style: italic;
+}
+.mg-word-stale {
+  color: #6f6787; border-color: #362e4c; background: #1d1828;
+  opacity: .78;
+}
+.mg-word-hit { background: #1e3c2b; color: var(--good); border-color: var(--good); box-shadow: none; animation-play-state: paused; }
+.mg-word-sting { background: #4a2030; color: var(--bad); border-color: var(--bad); animation-play-state: paused; font-style: normal; }
 
 /* Work the Room */
 .mg-room { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
