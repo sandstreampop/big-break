@@ -1058,6 +1058,27 @@ body.big-text #app { zoom: 1.18; }
 .mg-item-no { background: #4a2030; border-color: var(--bad); }
 
 /* Hat Trick */
+/* The Mixdown — three faders, hidden sweet spots */
+.mg-mixer { display: flex; justify-content: center; gap: 26px; height: 190px; padding: 8px 0; }
+.mg-fader {
+  position: relative; width: 58px; height: 100%;
+  background: #1c1729; border: 1px solid #3b3352; border-radius: 12px;
+  touch-action: none;
+}
+.mg-fader-rail { position: absolute; left: 50%; top: 8%; bottom: 8%; width: 4px; margin-left: -2px; background: #322a47; border-radius: 2px; }
+.mg-fader-knob {
+  position: absolute; left: 50%; transform: translate(-50%, 50%);
+  width: 40px; height: 18px; border-radius: 6px;
+  background: linear-gradient(180deg, #6a5f8a, #4a4066);
+  border: 1px solid #8a7fae; box-shadow: 0 2px 6px rgba(0,0,0,.5);
+  pointer-events: none;
+}
+.mg-fader-vu { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; border-radius: 50%; pointer-events: none; }
+.mg-fader-vu.vu-cold { background: #4a4066; }
+.mg-fader-vu.vu-warm { background: #e0a34e; box-shadow: 0 0 8px rgba(224,163,78,.6); }
+.mg-fader-vu.vu-hot { background: #7dde8a; box-shadow: 0 0 10px rgba(125,222,138,.8); }
+.mg-fader-name { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 10px; font-weight: 900; letter-spacing: .12em; color: var(--dim); }
+
 .mg-hatfield { touch-action: none; }
 .mg-hat {
   position: absolute; bottom: 4px; font-size: 34px;

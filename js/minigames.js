@@ -16,6 +16,7 @@
 //   .65–.88     → SOLID    (+14)  ≥ .88   → GOLDEN  (+24)
 
 import { sfx } from './audio.js';
+import { flagshipSong } from './engine.js';
 
 // tiny shared feedback: sound + a haptic tick (games call these freely)
 export const fx = {
@@ -72,9 +73,10 @@ export function playMinigame(id, ctx = {}) {
       setTimeout(() => { layer.remove(); resolve({ score, verdict, detail }); }, 950);
     };
 
-    // intro card
+    // intro card — {song} names your actual flagship song when you have one
+    const songTitle = ctx.run ? (flagshipSong(ctx.run)?.title || null) : null;
     box.append(el('div', 'mg-title', `${def.icon} ${def.name}`));
-    box.append(el('div', 'mg-how', def.how));
+    box.append(el('div', 'mg-how', def.how.replaceAll('{song}', songTitle ? `“${songTitle}”` : 'the song')));
     const play = el('button', 'btn primary mg-btn', '▶ Play');
     play.addEventListener('click', () => {
       box.innerHTML = '';
@@ -109,7 +111,7 @@ export function playMinigame(id, ctx = {}) {
 // ═══════════ THE TAKE — studio timing (tap the sweet spot, 3 takes) ═══════════
 register('take', {
   name: 'The Take', icon: '🎚️',
-  how: 'The needle sweeps. Tap when it’s in the golden zone. Three takes — the zone shrinks each time. Tape is rolling.',
+  how: 'The needle sweeps. Tap when it’s in the golden zone. Three takes of {song} — the zone shrinks each time. Tape is rolling.',
   run(stage, ctx, done) {
     const takes = [0.30, 0.20, 0.12]; // zone width per take (fraction of bar)
     const scores = [];
@@ -183,7 +185,7 @@ register('take', {
 // ═══════════ CROWD WAVE — live rhythm (tap when the note hits the ring) ═══════════
 register('crowd', {
   name: 'Crowd Wave', icon: '🎤',
-  how: 'Notes fly toward the ring. Tap ON the beat — each hit lifts the crowd, each miss drops it. Eight notes. Own the room.',
+  how: 'The crowd wants {song}. Notes fly toward the ring — tap ON the beat: each hit lifts the room, each miss drops it. Eight notes. Own it.',
   run(stage, ctx, done) {
     const NOTES = 8;
     const TRAVEL = 1500;   // ms from spawn to ring
@@ -399,7 +401,7 @@ register('room', {
 // ═══════════ TIGHTEN UP — band rehearsal (echo the pattern) ═══════════
 register('tighten', {
   name: 'Tighten Up', icon: '🥁',
-  how: 'The band plays a pattern — watch the pads. Then play it back, in order. Three rounds, each one longer. Tight is a decision.',
+  how: 'Rehearsing {song}: the band plays a pattern — watch the pads, play it back in order. Three rounds, each one longer. Tight is a decision.',
   run(stage, ctx, done) {
     const PADS = ['🎸', '🥁', '🎹', '🎺'];
     const rounds = [3, 4, 5];
@@ -783,7 +785,7 @@ register('interview', {
 // ═══════════ HOLD THE NOTE — sustain (hold to rise, release to fall) ═══════════
 register('note', {
   name: 'Hold the Note', icon: '🎵',
-  how: 'PRESS to push your note up, RELEASE to let it fall — keep it inside the drifting band. Fifteen seconds. The big note doesn’t sing itself.',
+  how: 'The big note in {song}: PRESS to push it up, RELEASE to let it fall — keep it inside the drifting band. Fifteen seconds. It doesn’t sing itself.',
   run(stage, ctx, done) {
     const DURATION = 15000;
     const gauge = el('div', 'mg-gauge');
@@ -959,5 +961,78 @@ register('duel', {
     }));
 
     playRound();
+  },
+});
+
+// ═══════════ THE MIXDOWN — find the sweet spot on three faders ═══════════
+register('mixdown', {
+  name: 'The Mixdown', icon: '🎛️',
+  how: 'Three faders, three hidden sweet spots. DRAG each until its meter runs hot — the mix of {song} is due in 18 seconds. Trust your ears. They’re lying, but trust them.',
+  run(stage, ctx, done) {
+    const DURATION = 18000;
+    const CHANNELS = [
+      { name: 'LOW', target: 0.15 + Math.random() * 0.7 },
+      { name: 'MID', target: 0.15 + Math.random() * 0.7 },
+      { name: 'HIGH', target: 0.15 + Math.random() * 0.7 },
+    ];
+    const clock = el('div', 'mg-take-label', '18');
+    const mixer = el('div', 'mg-mixer');
+    stage.append(clock, mixer, el('div', 'mg-hint', 'drag the faders — green means close'));
+
+    const closeness = (ch) => Math.max(0, 1 - Math.abs(ch.level - ch.target) / 0.45);
+    const chans = CHANNELS.map((c) => {
+      const ch = { ...c, level: 0.5 };
+      const track = el('div', 'mg-fader');
+      const rail = el('div', 'mg-fader-rail');
+      const knob = el('div', 'mg-fader-knob');
+      const vu = el('div', 'mg-fader-vu');
+      const label = el('div', 'mg-fader-name', c.name);
+      track.append(rail, knob, vu, label);
+      mixer.append(track);
+      const paint = () => {
+        knob.style.bottom = `${8 + ch.level * 76}%`;
+        const cl = closeness(ch);
+        vu.className = 'mg-fader-vu ' + (cl > 0.82 ? 'vu-hot' : cl > 0.5 ? 'vu-warm' : 'vu-cold');
+      };
+      paint();
+      const drag = (e) => {
+        const r = track.getBoundingClientRect();
+        const prev = closeness(ch);
+        ch.level = Math.max(0, Math.min(1, 1 - (e.clientY - r.top) / r.height));
+        const now = closeness(ch);
+        if (now > 0.82 && prev <= 0.82) fx.hit();
+        paint();
+      };
+      track.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        track.setPointerCapture(e.pointerId);
+        drag(e);
+      });
+      track.addEventListener('pointermove', (e) => { if (e.buttons || e.pressure > 0) drag(e); });
+      ch.score = () => closeness(ch);
+      return ch;
+    });
+
+    let over = false;
+    const t0 = performance.now();
+    const lock = el('button', 'btn primary mg-btn', 'PRINT IT');
+    lock.addEventListener('click', () => end());
+    stage.append(lock);
+
+    const ticker = setInterval(() => {
+      const left = Math.max(0, Math.ceil((DURATION - (performance.now() - t0)) / 1000));
+      clock.textContent = String(left);
+      if (left <= 0) end();
+    }, 200);
+
+    function end() {
+      if (over) return;
+      over = true;
+      clearInterval(ticker);
+      // avg closeness; a tiny early-print sweetener rewards confidence
+      const base = chans.reduce((a, c) => a + c.score(), 0) / chans.length;
+      const early = Math.max(0, (DURATION - (performance.now() - t0)) / DURATION) * 0.06;
+      done(Math.min(1, base + (base > 0.5 ? early : 0)));
+    }
   },
 });
