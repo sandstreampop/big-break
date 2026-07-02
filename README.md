@@ -15,7 +15,7 @@ packs, contracts, and perks on the Career Wall.
 
 It's a PWA: add it to your home screen and it works offline.
 
-## The systems (v1.0)
+## The systems (v3.0)
 
 - **Resolution engine** — every swipe rolls stats + gear + quirks − burnout
   ± luck into Bad / Good / Incredible. Colored risk dots telegraph danger
@@ -51,6 +51,26 @@ It's a PWA: add it to your home screen and it works offline.
 - **The Final Set** — pick your closer before the career is judged.
 - **Poster share cards** — runs export as a 1080×1080 PNG via the share
   sheet; saves export/import as backup codes.
+- **Venues & the band** — adopt a home venue and level it 0–3 for show
+  bonuses; recruit up to three bandmates, each with tag bonuses, a
+  per-act quirk, and their own spotlight episodes.
+- **The Last Door** — every path ends on a bespoke climax card (the label
+  meeting, the call, the credits) before the Final Set.
+- **The Brammies & Exit Interviews** — an awards-night interstitial before
+  Act 3, and a final question on every burnout/cancelled/debt game over
+  whose answer changes your exit (and your LP).
+- **Comeback Mode & the Nemesis** — lose badly enough, often enough, and
+  new run types remember: washed-up comeback starts, and a rival who has
+  beaten you before returning meaner.
+- **Someone** — a quiet three-card relationship arc that has nothing to do
+  with your career, which is the point.
+- **Promises & contracts** — deadline objectives you swipe into existence
+  and must keep, on top of opt-in LP-multiplier contracts.
+- **The Montage & The Collab** — a three-city world-tour chain (Tokyo →
+  Berlin → São Paulo), and a Hot 10 chart artist who steps out of the
+  chart to DM you about a feature — both branches echo in Act 3.
+- **Discography** — every run leaves a record: an album-by-album career
+  writeup generated from what actually happened.
 
 ## Running locally
 
@@ -64,9 +84,10 @@ python3 -m http.server 8000   # → http://localhost:8000
 
 - `js/config.js` — **every tuning knob** (roll shape, tier thresholds, wear,
   win gates, LP formula, pity/encore numbers)
-- `js/data/` — all content: `events.js` (90+ cards), `instruments.js`,
-  `accessories.js`, `rivals.js`, `contracts.js`, `hustles.js`, `meta.js`
-  (endings/wall/trophies), `assets.js` (art-slot manifest)
+- `js/data/` — all content: `events.js` (130+ cards), `instruments.js`,
+  `accessories.js`, `rivals.js`, `contracts.js`, `hustles.js`, `genres.js`,
+  `venues.js`, `band.js`, `meta.js` (endings/wall/trophies), `assets.js`
+  (art-slot manifest)
 - `js/engine.js` — DOM-free rules: rolls, deck assembly, fail states,
   finale, seeded RNG (`tools/simulate.mjs` drives it in Node)
 - `js/ui.js` — screens + swipe physics; `js/art.js` — generative SVG scenes;
@@ -85,7 +106,8 @@ node tools/simulate.mjs 4000 narrative
 The `narrative` policy models a human following the story — judge feel by
 it (target: ~20% Bad, a scrappy Act 1, Incredibles blooming in Act 3, and
 burnout worth respecting). `smart`/`random` bound the extremes; focused
-play should win roughly 20–40% by path.
+play should win roughly 20–55% by path (Hit Factory is deliberately the
+friendliest when you commit to it — it is a factory).
 
 ## Art pipeline
 
