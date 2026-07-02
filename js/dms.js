@@ -47,6 +47,10 @@ export function generateDMs(state, count = 2) {
     'hey it’s the A&R from the thing. loved the thing. do you have more things? call me. don’t text. calls only. it’s a whole thing.');
   add(state.stats.burnout >= 60, 'Your calendar',
     'This is a wellness notification. You have 0 (zero) days off scheduled. This notification counts as your day off.');
+  add(flags.includes('someone'), 'Them ❤️',
+    'saw a poster with your face downtown and told the bus stop “I know the kitchen version.” anyway. eat something green. proud of you.');
+  add(flags.includes('someone_lost'), 'Them',
+    'heard the new one. the bridge. yeah. anyway — glad you’re okay. (I’m glad you’re okay.)');
   add((state.flags || []).includes('comeback'), 'Your old tour manager',
     'saw the announcement. knew you weren’t done. nobody with your soundcheck habits is ever done. van’s gone but I still have the trailer. call me.');
   add(state.brammy === 'won', 'The Brammys (official)',

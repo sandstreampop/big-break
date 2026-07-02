@@ -545,6 +545,93 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════════ SOMEONE (the person at home — 3-card arc) ═══════════════
+  {
+    id: 'sm_meet', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_sm_meet', context: 'After the show, by the door',
+    prompt: 'You meet someone at the merch table who didn’t see the set — they were in the kitchen the whole time, and they’re asking about you, not the music. It’s disorienting. It’s wonderful. It’s a Tuesday.',
+    tags: ['home'],
+    choices: {
+      left: {
+        label: 'Let them in',
+        governingStats: { cred: 0.5, creativity: 0.5 },
+        tags: ['home', 'safe'],
+        outcomes: {
+          bad: { text: 'The first date is the night of a last-minute gig. You reschedule. So do they. The calendar becomes a duet neither of you can quite play — but neither of you stops trying.', effects: { addFlag: 'someone', burnout: -4, network: -2 } },
+          good: { text: 'They never ask when you’ll be famous. They ask what the bridge is doing, and whether you’ve eaten. Nobody has asked either question in a year.', effects: { addFlag: 'someone', burnout: -8, creativity: 2 } },
+          incredible: { text: 'Weeks in, you realize you’ve been writing in a different key. Warmer. They still haven’t heard the songs. The songs are increasingly about that.', effects: { addFlag: 'someone', burnout: -10, creativity: 4 } },
+        },
+      },
+      right: {
+        label: 'Career first. Clean and honest.',
+        governingStats: { cred: 0.8 },
+        tags: ['risky', 'work'],
+        outcomes: {
+          bad: { text: '“That’s fair,” they say, meaning it, leaving. The song you write that night is your best in months. You’d trade it back. You keep it anyway.', effects: { creativity: 5, burnout: 3 } },
+          good: { text: 'You’re honest about the shape of the next two years. They shake your hand — actually shake it — and wish you the summit. Clean exits are also love, technically.', effects: { cred: 4, creativity: 2 } },
+          incredible: { text: 'They laugh: “Call me from the top, then.” You keep the napkin with the number. It moves apartments with you. Some doors you leave propped, quietly, for years.', effects: { cred: 4, creativity: 4, addFlag: 'propped_door' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'sm_birthday', act: 2, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['someone'] },
+    art: 'ev_sm_birthday', context: 'Two calendar notifications, same night',
+    prompt: 'Their birthday dinner is Thursday. The make-up date for the canceled radio session is also Thursday. Both were promises. Your phone shows them stacked, one pixel apart, like a chord it refuses to play.',
+    tags: ['home', 'work'],
+    choices: {
+      left: {
+        label: 'The dinner. Obviously. Somehow.',
+        governingStats: { cred: 0.6, network: 0.5 },
+        tags: ['home', 'safe'],
+        outcomes: {
+          bad: { text: 'You make the dinner. The station quietly stops calling. Under the table, they squeeze your hand at the exact moment you decide not to check your phone. Worth it. Expensive, and worth it.', effects: { burnout: -8, network: -4, cred: 2 } },
+          good: { text: 'You make the dinner AND the station reschedules — turns out honesty (“family thing”) is a professional strategy nobody tries. The cake has a kazoo on it. You are dating a comedian.', effects: { burnout: -10, cred: 3 } },
+          incredible: { text: 'At dinner they hand you a gift: studio hours, booked in your name, “for the album you keep almost making.” You do the radio thing the next week. You do everything the next week. Rested.', effects: { burnout: -12, creativity: 4, addFlag: 'studio_gift' } },
+        },
+      },
+      right: {
+        label: 'The session. You’ll make it up.',
+        governingStats: { network: 0.8 },
+        tags: ['work', 'risky'],
+        outcomes: {
+          bad: { text: 'The session goes fine. The texts get shorter for a while — then stop being about anything. Some songs cost more than studio time. You learn the exchange rate slowly.', effects: { fame: 5, network: 3, removeFlag: 'someone', addFlag: 'someone_lost', burnout: 4 } },
+          good: { text: 'The session lands and you show up at the tail of the dinner with the rough mix and an apology shaped like dessert. “You’re lucky it’s good,” they say, about both.', effects: { fame: 6, network: 3, burnout: 3 } },
+          incredible: { text: 'You dedicate the on-air performance to them, by name, on their birthday, live. The clip outlives the argument. The argument was already small. You still bring dessert.', effects: { fame: 9, network: 4, cred: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'sm_question', act: 3, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['someone'] },
+    art: 'ev_sm_question', context: 'The kitchen, late. The good silence.',
+    prompt: 'They ask it the way they ask everything — plainly, hands around a mug: “The first verse was the garage. This act you’re in now, whatever it is — is there room for me in the second verse of it?”',
+    tags: ['home'],
+    choices: {
+      left: {
+        label: '“You’re the second verse.”',
+        governingStats: { cred: 0.6, creativity: 0.6 },
+        tags: ['home', 'safe'],
+        outcomes: {
+          bad: { text: 'You mean it, and then a tour offer tests it within the week. You take the shorter routing. The agent is baffled. The kitchen is not.', effects: { burnout: -8, fame: -2, cred: 3, addFlag: 'second_verse' } },
+          good: { text: 'Something in your chest unclenches that had been holding a note since Act 1. The next song writes itself in an evening. It’s the one people will slow-dance to.', effects: { burnout: -12, creativity: 5, cred: 3, addFlag: 'second_verse' } },
+          incredible: { text: 'You play them everything, that night, unreleased, in the kitchen — the audience of one you were always writing for. Whatever the industry decides now, the verse is already sung.', effects: { burnout: -14, creativity: 7, cred: 4, addFlag: 'second_verse', pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: '“Ask me after the finale.”',
+        governingStats: { network: 0.7 },
+        tags: ['risky', 'work'],
+        outcomes: {
+          bad: { text: 'They nod slowly, translating it correctly. The mug goes in the sink. Some questions expire when deferred — that’s what makes them questions and not lyrics.', effects: { fame: 3, removeFlag: 'someone', addFlag: 'someone_lost', burnout: 5 } },
+          good: { text: '“Okay,” they say. “But I’m asking with a different tone next time.” They stay. The clock starts. You play the next weeks like someone who can hear it.', effects: { fame: 4, burnout: 2, creativity: 2 } },
+          incredible: { text: 'They laugh — the real one, the one from the merch table. “Fine. But I want it in writing.” You write it that night. Four chords. You know the ones.', effects: { fame: 4, creativity: 5, cred: 3 } },
+        },
+      },
+    },
+  },
   // ═══════════════ COMEBACK MODE (requires 'comeback') ═══════════════
   {
     id: 'cb_remembered', act: 1, pathAffinity: [], weight: 14,
