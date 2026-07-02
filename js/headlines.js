@@ -59,6 +59,16 @@ export function generateHeadlines(state, count = 3) {
   add(state.venueLevel >= 3, `THE ROOM THAT ${you} BUILT: A VENUE STORY`, 'Four Walls Monthly');
   add(flags.includes('band_named'), `LOCAL ACT NOW “A REAL BAND,” VOTES ON EVERYTHING, REGRETS DEMOCRACY WEEKLY`, 'Group Chat Gazette');
   add(state.hits >= 2, `EVERY SONG YOU HATE-LOVE THIS QUARTER TRACES BACK TO ONE PEN`, 'Publishing Weekly');
+  // the press knows your actual songs
+  const songs = state.songs || [];
+  const topSong = songs.filter((s) => s.status === 'charting' && s.pos).sort((a, b) => a.pos - b.pos)[0];
+  const fadedSong = songs.find((s) => s.status === 'faded' && s.peak);
+  const demoCount = songs.filter((s) => s.status === 'demo').length;
+  add(!!topSong && topSong.pos <= 3, topSong ? `“${topSong.title.toUpperCase()}” REFUSES TO LEAVE THE TOP ${topSong.pos}; NEIGHBORS CHECK ITS LEASE` : '', 'Chart Chatter');
+  add(!!topSong && topSong.pos > 3, topSong ? `“${topSong.title.toUpperCase()}” CLIMBS QUIETLY WHILE EVERYONE ARGUES ABOUT KAZOOS` : '', 'Chart Chatter');
+  add(!!topSong && topSong.weeks >= 3, topSong ? `WEEK ${topSong.weeks}: “${topSong.title.toUpperCase()}” NOW LEGALLY A TENANT OF THE HOT 10` : '', 'Chart Chatter');
+  add(!!fadedSong, fadedSong ? `WHATEVER HAPPENED TO “${fadedSong.title.toUpperCase()}”? A RETROSPECTIVE (IT CAME OUT THIS YEAR)` : '', 'The Discourse, weekly');
+  add(demoCount >= 2, `${you} REPORTEDLY SITTING ON ${demoCount} UNRELEASED SONGS; SOURCES “CAN HEAR THEM THROUGH THE WALL”`, 'Vault Watch');
   add((state.hustles || []).length >= 2, `${you} NOW TECHNICALLY A SMALL BUSINESS`, 'Hustle & Flow (Trade Ed.)');
   add(state.stats.cred >= 70, `SCENE ELDERS APPROVE OF ${you}; SCENE ELDERS APPROVE OF NOTHING`, 'Cred Report');
   add(state.stats.skill >= 70, `“JUST WATCH THEIR HANDS”: ENGINEERS ON ${you}`, 'Control Room Monthly');
