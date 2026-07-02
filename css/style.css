@@ -176,6 +176,24 @@ body {
 }
 .hud-momentum { color: var(--hot); }
 
+/* Final Set: gate readout + closer impact */
+.finalset-gates { margin-bottom: 14px; }
+.finalset-gates .trades-head { margin-bottom: 8px; }
+.closer-impact {
+  grid-column: 1 / -1;
+  font-size: 12.5px; line-height: 1.4;
+  color: var(--dim);
+  background: #1c1729; border-radius: 10px;
+  padding: 8px 10px; margin-top: 8px;
+}
+.closer-impact.clutch { color: var(--good); background: #1e3c2b; font-weight: 600; }
+.pick-card.clutch { border-color: var(--good); box-shadow: 0 0 20px rgba(95, 214, 138, .25); }
+.clutch-badge {
+  font-size: 10px; font-weight: 800; letter-spacing: .06em;
+  color: #10231a; background: var(--good);
+  border-radius: 999px; padding: 2px 8px; vertical-align: middle;
+}
+
 /* ---------- Game HUD ---------- */
 #screen-game { padding: calc(var(--safe-top) + 10px) 12px calc(var(--safe-bottom) + 10px); overflow: hidden; }
 
