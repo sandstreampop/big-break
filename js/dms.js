@@ -31,6 +31,8 @@ export function generateDMs(state, count = 2) {
     'big things cooking. HUGE. can’t say more. also did my 10% land weird last month? ignore that. HUGE things.');
   add(state.accessories?.includes('energy_drink'), 'GRIND™ Brand Team',
     'Reminder: per section 4.2, the hat must appear in all photos. We noticed a hatless photo. We are not angry. We are GRIND™.');
+  add(!!state.nemesis, rival.name,
+    'you again. of course it’s you again. the universe has one (1) bit and we’re it. see you at the top, or wherever.');
   add((state.rivalry ?? 3) >= 7, rival.name,
     'heard your new stuff. it’s fine. anyway I booked the room you wanted. the big one. see you around, champ.');
   add((state.rivalry ?? 3) <= 1, rival.name,
