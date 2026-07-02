@@ -16,11 +16,12 @@ permissions:
   pages: write
   id-token: write
 
-# One deployment at a time; queue rather than cancel so a run is never
-# killed mid-deploy (mid-deploy cancellation is what wedged the old setup).
+# Latest push to main wins: a newer deploy cancels an older in-flight one.
+# Safe now that this is the ONLY deployer (Pages source = GitHub Actions);
+# the old wedge was two deployers colliding, not cancellation itself.
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
