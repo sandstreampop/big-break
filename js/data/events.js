@@ -2060,6 +2060,35 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a2_genre_summit', act: 2, pathAffinity: [], weight: 9,
+    requires: { genreAny: true },
+    art: 'ev_summit', context: 'The back room of the record store. Neutral ground.',
+    prompt: 'Every micro-scene in town sends a delegate to divide the calendar: who gets First Fridays, who gets the good Saturday slot at the Sweatbox, who has to stop calling themselves “the city’s sound.” You’re here representing {genre}. There are pastries. It’s tense.',
+    tags: ['network'],
+    choices: {
+      left: {
+        label: 'Broker the grand alliance',
+        governingStats: { network: 0.9 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'Your proposed calendar dies over a dispute about whether 9 p.m. means 9 p.m. (it has never meant 9 p.m.). But you took notes, learned names, and the doom jazz delegate respects your pen.', effects: { network: 3, cred: 1, burnout: 3 } },
+          good: { text: 'You draft the Treaty of First Fridays: rotating slots, shared backline, one unified complaint letter to the city about parking. Every scene leaves mildly dissatisfied — the definition of a fair deal.', effects: { network: 6, cred: 3 } },
+          incredible: { text: 'The summit ends with a co-billed festival: every genre, one night, YOUR name on the poster as “convener.” The city’s scene stops being a knife fight and starts being a buffet. History will call it the Pastry Accords.', effects: { network: 8, cred: 5, fame: 4 } },
+        },
+      },
+      right: {
+        label: 'Declare {genre} supremacy. Walk out.',
+        governingStats: { cred: 0.7, creativity: 0.5 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Your walkout speech lands flat because you trip on a chair mid-exit. The scenes unite — against you, briefly, which technically makes you the alliance’s founder.', effects: { cred: 2, fame: 2, rivalry: 1, burnout: 3 } },
+          good: { text: '“We didn’t come to share a calendar. We came to own it.” The walkout is theater and everyone knows it — but {genre} bookings spike, because nothing sells like conviction with pastries still in hand.', effects: { cred: 5, fame: 4, network: -1 } },
+          incredible: { text: 'The walkout clip goes scene-viral. {genre} becomes the city’s villain sound — leather-jacket popular, us-against-them popular. Your shows sell out on spite alone. The other delegates quietly ask to defect.', effects: { cred: 7, fame: 6, network: 2 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_afterparty', act: 2, pathAffinity: [], weight: 11,
     art: 'ev_afterparty', context: 'Somebody’s loft. Everybody’s business cards.',
     prompt: 'The showcase afterparty. Dario is here. Grub is here. A blogger who spells your name three ways is here. A&R Kim — the actual reason anyone came — is here. Everyone is one drifting conversation away from forgetting you exist.',
