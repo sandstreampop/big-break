@@ -565,7 +565,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
     }
   }
 
-  const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories);
+  const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories, opts.mgDetail || null);
   const result = {
     tier, roll: Math.round(roll), text: outcome.text, deltas, event: ev, side,
     encoreEarned, encoreSpent: useEncore,
@@ -650,7 +650,7 @@ function finishCard(state, ev) {
 }
 
 // Applies an effects payload; returns display deltas [{key, amount}].
-function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories = []) {
+function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories = [], mg = null) {
   const deltas = [];
   const inst = instrumentById(state.instrument);
   const hooks = inst?.quirk?.hooks || {};
@@ -754,6 +754,24 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
       quality: tierQ, origin: ev?.id || null, status: 'charting', hype: 62,
     });
     (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: s.crowned });
+  }
+  if (effects.writeSong) {
+    // Songwriting writes a REAL song: a demo lands in the notebook. Quality
+    // reads the outcome tier, how the writing minigame went, and who you are
+    // (creativity). A hook you grabbed in Idea Grab becomes the title.
+    const base = tier === 'incredible' ? 64 : tier === 'good' ? 50 : 36;
+    const verdictAdj = { BOTCHED: -10, SCRAPPY: 0, SOLID: 8, GOLDEN: 16 }[mg?.label] || 0;
+    const creaAdj = Math.round(((state.stats.creativity || 0) - 40) * 0.2);
+    const jit = Math.round((rng ? rng() : 0.5) * 10 - 5);
+    const hooks = mg?.hooks || [];
+    const title = hooks.length
+      ? hooks[Math.floor((rng ? rng() : 0.5) * hooks.length)].replace(/(^|\s)[a-z]/g, (c) => c.toUpperCase())
+      : songName(rng);
+    const s = addSong(state, {
+      title, quality: base + verdictAdj + creaAdj + jit,
+      origin: ev?.id || null, status: 'demo',
+    });
+    deltas.songWritten = { title: s.title, quality: s.quality, fromHook: hooks.length > 0 };
   }
   state._chartTitleHandled = false;
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);

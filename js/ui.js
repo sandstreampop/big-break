@@ -765,7 +765,7 @@ function commitSwipe(side, dx = 0, dy = 0) {
     currentCard = null; // freeze the card while the minigame runs
     card.style.transform = ''; // snap back from any drag offset
     const mgMods = contractById(run.contract)?.mods || {};
-    playMinigame(mgId, { run, rivalName: rivalById(run.rival)?.name, noSkip: !!mgMods.forceMinigames, relaxed: meta.settings.relaxedMinigames === true }).then(({ score, verdict }) => {
+    playMinigame(mgId, { run, rivalName: rivalById(run.rival)?.name, noSkip: !!mgMods.forceMinigames, relaxed: meta.settings.relaxedMinigames === true }).then(({ score, verdict, detail }) => {
       // instrument hook: some gear makes performance moments play easier
       const mgHook = score == null ? 0 : (instrumentById(run.instrument)?.quirk?.hooks?.mgBonus || 0);
       let bonus = verdict.bonus + mgHook;
@@ -779,7 +779,7 @@ function commitSwipe(side, dx = 0, dy = 0) {
         save.saveMeta(meta);
       }
       currentCard = card; // hand back for the normal path
-      finishSwipe(side, dx, dy, bonus ? { id: mgId, ...verdict, bonus } : null);
+      finishSwipe(side, dx, dy, score != null ? { id: mgId, ...verdict, bonus, detail } : null);
     });
     return;
   }
@@ -793,7 +793,10 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
   sfx.swipe();
 
   const armed = encoreArmed;
-  const result = engine.resolveSwipe(run, side, engine.stateRng(run), { encore: encoreArmed, bonus: perf?.bonus || 0 });
+  const result = engine.resolveSwipe(run, side, engine.stateRng(run), {
+    encore: encoreArmed, bonus: perf?.bonus || 0,
+    mgDetail: perf ? { label: perf.label, hooks: perf.detail?.hooks } : null,
+  });
   if (perf) {
     result.minigameInfo = perf;
     const logEntry = run.cardLog?.[run.cardLog.length - 1];
@@ -997,6 +1000,12 @@ function showResult(result) {
   if (hustle) notice('notice-gear', `${hustle.icon} <b>Side hustle: ${hustle.name}</b> (+$${hustle.moneyPerAct}/act)${hustle.blurb ? ' — ' + hustle.blurb : ''}`);
   const newInst = result.deltas.instrumentSet;
   if (newInst) notice('notice-gear', `🎸 <b>Now playing: ${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`);
+  const sw = result.deltas.songWritten;
+  if (sw) {
+    const feel = sw.quality >= 68 ? 'it might be undeniable' : sw.quality >= 52 ? 'something’s there'
+      : sw.quality >= 38 ? 'rough, but honest' : 'well… it exists';
+    notice('notice-good', `🎙 <b>Demo taped: “${sw.title}”</b>${sw.fromHook ? ' <i>(that hook you grabbed)</i>' : ''} — ${feel}`);
+  }
   for (const sd of result.deltas.songDebuts || []) {
     if (sd.hit) notice('notice-encore', `👑 <b>“${sd.title}”</b> enters the Hot 10 at <b>#${sd.pos}</b> — instant HIT`);
     else if (sd.pos) notice('notice-good', `♪ <b>“${sd.title}”</b> debuts at <b>#${sd.pos}</b> on the Hot 10`);

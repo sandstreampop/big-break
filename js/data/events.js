@@ -144,8 +144,8 @@ export const EVENTS = [
         tags: ['studio', 'safe'],
         outcomes: {
           bad: { text: 'You demo it to death. Version 14 has lost whatever version 1 had.', effects: { skill: 3, creativity: -2, burnout: 4 } },
-          good: { text: 'You chart it properly. Future-you will thank present-you in the liner notes.', effects: { skill: 5, creativity: 2, addFlag: 'demo_in_pocket', addPromise: { label: 'Book real studio time', tags: ['studio', 'record'], cards: 4, reward: { skill: 3, cred: 2 }, penalty: { cred: -2 } } } },
-          incredible: { text: 'The arrangement blooms. This isn’t a demo anymore. It’s a plan.', effects: { skill: 7, creativity: 4, cred: 2, addFlag: 'demo_in_pocket' } },
+          good: { text: 'You chart it properly. Future-you will thank present-you in the liner notes.', effects: { skill: 5, creativity: 2, writeSong: true, addFlag: 'demo_in_pocket', addPromise: { label: 'Book real studio time', tags: ['studio', 'record'], cards: 4, reward: { skill: 3, cred: 2 }, penalty: { cred: -2 } } } },
+          incredible: { text: 'The arrangement blooms. This isn’t a demo anymore. It’s a plan.', effects: { skill: 7, creativity: 4, cred: 2, writeSong: true, addFlag: 'demo_in_pocket' } },
         },
       },
     },
@@ -533,8 +533,8 @@ export const EVENTS = [
         tags: ['write'],
         outcomes: {
           bad: { text: 'The minor fourth is wrong. Deeply. But being wrong THAT way shows you what was right. You owe the officer an apology and half a credit.', effects: { creativity: 4, burnout: 2 } },
-          good: { text: 'It works. It absolutely works. You play it loud enough for the retreating patrol car to hear. The lights flash once. Approval? Approval.', effects: { creativity: 6, skill: 2 } },
-          incredible: { text: 'The bridge clicks like a lock opening. Officer Reyes, it turns out, gigged for a decade before the academy. You have a standing invitation to Sunday jazz brunch. You will attend.', effects: { creativity: 8, network: 4, cred: 2 } },
+          good: { text: 'It works. It absolutely works. You play it loud enough for the retreating patrol car to hear. The lights flash once. Approval? Approval.', effects: { creativity: 6, skill: 2, writeSong: true } },
+          incredible: { text: 'The bridge clicks like a lock opening. Officer Reyes, it turns out, gigged for a decade before the academy. You have a standing invitation to Sunday jazz brunch. You will attend.', effects: { creativity: 8, network: 4, cred: 2, writeSong: true } },
         },
       },
       right: {
@@ -1567,8 +1567,8 @@ export const EVENTS = [
         tags: ['band', 'write', 'risky'],
         outcomes: {
           bad: { text: 'Eleven hours of jams yield one riff, four arguments, and a 22-minute recording labeled BARN THING that nobody will ever explain. The set, notably, remains loose.', effects: { creativity: 4, burnout: 5 } },
-          good: { text: 'The jams cough up two new songs and a version of your closer nobody planned — slower, meaner, better. The barn had opinions. The barn was right.', effects: { creativity: 7, skill: 2, burnout: 4 } },
-          incredible: { text: 'Sunday, 2 a.m., the jam finds a groove so deep the eggs guy puts down the eggs. You record it on one phone in a hat. It becomes the intro tape for every show you play from now on.', effects: { creativity: 9, cred: 4, fame: 2, burnout: 4 } },
+          good: { text: 'The jams cough up two new songs and a version of your closer nobody planned — slower, meaner, better. The barn had opinions. The barn was right.', effects: { creativity: 7, skill: 2, burnout: 4, writeSong: true } },
+          incredible: { text: 'Sunday, 2 a.m., the jam finds a groove so deep the eggs guy puts down the eggs. You record it on one phone in a hat. It becomes the intro tape for every show you play from now on.', effects: { creativity: 9, cred: 4, fame: 2, burnout: 4, writeSong: true } },
         },
       },
     },
@@ -2043,8 +2043,8 @@ export const EVENTS = [
         governingStats: { creativity: 0.7, skill: 0.5 },
         tags: ['record', 'write', 'indie'],
         outcomes: {
-          bad: { text: 'The takes fight you till dawn, and at 6 a.m. the neighbor’s rooster joins uninvited — on beat, somehow. You keep the rooster take. Shed rules: everything is an instrument.', effects: { creativity: 4, skill: 2, burnout: 4 } },
-          good: { text: 'Three demos by sunrise, raw in the way money can’t buy. The shed’s weird midnight warmth is all over them — a sound that’s now officially yours.', effects: { creativity: 6, skill: 3, cred: 2, burnout: 3 } },
+          bad: { text: 'The takes fight you till dawn, and at 6 a.m. the neighbor’s rooster joins uninvited — on beat, somehow. You keep the rooster take. Shed rules: everything is an instrument.', effects: { creativity: 4, skill: 2, burnout: 4, writeSong: true } },
+          good: { text: 'Three demos by sunrise, raw in the way money can’t buy. The shed’s weird midnight warmth is all over them — a sound that’s now officially yours.', effects: { creativity: 6, skill: 3, cred: 2, burnout: 3, writeSong: true } },
           incredible: { text: 'One of the demos refuses to be a demo. By 5 a.m. it’s DONE — mixed, sequenced, undeniable, born entirely eleven steps from your bed. The shed has paid for itself in one night.', effects: { creativity: 8, skill: 3, cred: 3, hits: 1, burnout: 3 } },
         },
       },
@@ -2458,8 +2458,8 @@ export const EVENTS = [
         governingStats: { creativity: 1.0 },
         tags: ['write', 'indie', 'risky'],
         outcomes: {
-          bad: { text: 'Your off-brief song clears the room in the bad way — “interesting” (death), “brave” (double death). You drive home with a b-side and your dignity, split evenly.', effects: { creativity: 5, cred: 2, burnout: 4 } },
-          good: { text: 'The weird one doesn’t win the camp; it wins the CAMPERS. Three writers ask for sessions. The artist’s A&R quietly requests “whatever that was” for a different, stranger project.', effects: { creativity: 7, network: 4, cred: 3, burnout: 3 } },
+          bad: { text: 'Your off-brief song clears the room in the bad way — “interesting” (death), “brave” (double death). You drive home with a b-side and your dignity, split evenly.', effects: { creativity: 5, cred: 2, burnout: 4, writeSong: true } },
+          good: { text: 'The weird one doesn’t win the camp; it wins the CAMPERS. Three writers ask for sessions. The artist’s A&R quietly requests “whatever that was” for a different, stranger project.', effects: { creativity: 7, network: 4, cred: 3, burnout: 3, writeSong: true } },
           incredible: { text: 'The brief song wins the weekend; your weird one wins the year. It leaks from the camp, gets passed producer-to-producer like contraband, and lands on a critical darling’s album AS IS. The camp invites you back “to ignore the brief again.”', effects: { creativity: 9, cred: 5, hits: 1, money: 250, pathProgress: 1 } },
         },
       },
@@ -3115,7 +3115,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'The muse, protected, produces nothing this week. The muse is on her phone.', effects: { creativity: 2, burnout: 2 } },
           good: { text: 'You write for yourself instead. Slower, truer, yours.', effects: { creativity: 6, cred: 3 } },
-          incredible: { text: 'The song you wrote instead is the best thing you’ve ever made. The muse was cooking.', effects: { creativity: 9, cred: 5, addFlag: 'demo_in_pocket' } },
+          incredible: { text: 'The song you wrote instead is the best thing you’ve ever made. The muse was cooking.', effects: { creativity: 9, cred: 5, writeSong: true, addFlag: 'demo_in_pocket' } },
         },
       },
     },
