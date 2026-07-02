@@ -1098,3 +1098,4 @@ body.big-text #app { zoom: 1.18; }
 }
 @media (prefers-reduced-motion: reduce) { .mg-shaky { animation: none; } }
 .mg-shaky-note { text-align: center; font-size: 12px; font-weight: 800; color: var(--bad); }
+.mg-pad-you { background: #1e3c2b; border-color: var(--good); box-shadow: 0 0 16px rgba(95,214,138,.4); }

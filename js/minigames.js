@@ -890,3 +890,69 @@ register('pack', {
     }
   },
 });
+
+// ═══════════ TRADING BARS — the duel (answer the phrase BACKWARDS) ═══════════
+register('duel', {
+  name: 'Trading Bars', icon: '🥊',
+  how: 'The duel rule: they play a phrase, you answer it MIRRORED — same pads, reverse order. Three exchanges. The crowd keeps score.',
+  run(stage, ctx, done) {
+    const PADS = ['🎸', '🥁', '🎹', '🎺'];
+    const rounds = [3, 4, 5];
+    let round = 0, earned = 0;
+    const total = rounds.reduce((a, b) => a + b, 0);
+
+    const label = el('div', 'mg-take-label', 'THEY PLAY');
+    const grid = el('div', 'mg-room mg-pads');
+    stage.append(label, grid, el('div', 'mg-hint', 'answer in REVERSE order'));
+    const pads = PADS.map((icon, i) => {
+      const b = el('button', 'mg-pad', icon);
+      b.dataset.i = i;
+      grid.append(b);
+      return b;
+    });
+
+    let seq = [], answer = [], pos = 0, accepting = false;
+
+    function flash(i, ms = 300, cls = 'mg-pad-on') {
+      pads[i].classList.add(cls);
+      setTimeout(() => pads[i].classList.remove(cls), ms);
+    }
+
+    function playRound() {
+      seq = Array.from({ length: rounds[round] }, () => Math.floor(Math.random() * 4));
+      answer = [...seq].reverse();
+      pos = 0; accepting = false;
+      label.textContent = `${(ctx.rivalName || 'THEY').toUpperCase()} PLAYS`;
+      seq.forEach((i, k) => setTimeout(() => flash(i), 420 + k * 460));
+      setTimeout(() => { accepting = true; label.textContent = 'ANSWER — MIRRORED'; }, 420 + seq.length * 460);
+    }
+
+    function endRound(clean) {
+      accepting = false;
+      round++;
+      if (round >= rounds.length) {
+        setTimeout(() => done(earned / total), 420);
+      } else {
+        label.textContent = clean ? 'THE CROWD ROARS' : 'THEY SMIRK. AGAIN.';
+        setTimeout(playRound, 850);
+      }
+    }
+
+    pads.forEach((b, i) => b.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      if (!accepting) return;
+      if (i === answer[pos]) {
+        fx.hit();
+        flash(i, 170, 'mg-pad-you');
+        earned++; pos++;
+        if (pos >= answer.length) endRound(true);
+      } else {
+        fx.miss();
+        flash(i, 280, 'mg-pad-bad');
+        endRound(false);
+      }
+    }));
+
+    playRound();
+  },
+});
