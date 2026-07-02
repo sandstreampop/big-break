@@ -385,6 +385,14 @@ body {
 .act-name { font-size: 26px; font-weight: 900; letter-spacing: .04em; }
 .upkeep-note { color: var(--dim); font-size: 13px; }
 
+/* The Trades — procedural press */
+.trades { display: flex; flex-direction: column; gap: 7px; background: #17131f; border: 1px solid #2c2540; border-radius: 12px; padding: 12px; }
+.trades-head { font-size: 10px; font-weight: 900; letter-spacing: .16em; color: var(--dim); }
+.trades-row { font-size: 13px; line-height: 1.35; }
+.trades-row b { font-weight: 800; }
+.trades-row span { display: block; color: var(--dim); font-size: 11px; margin-top: 1px; font-style: italic; }
+.ending-press { background: #17131f; border: 1px solid #2c2540; border-radius: 12px; padding: 10px 12px; }
+
 .delta-chips { display: flex; flex-wrap: wrap; gap: 7px; }
 .chip {
   font-size: 12.5px; font-weight: 700;
