@@ -5731,4 +5731,64 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ SAVE THE ROOM (venue side quest: the home room is for sale) ═══════════
+  {
+    id: 'a3_venue_sale', act: 3, pathAffinity: [], weight: 15,
+    requires: { venueLevelMin: 2 },
+    art: 'ev_venue_sale', context: 'A laminated notice on the door of {venue}',
+    prompt: 'The notice on the door of {venue} is laminated, which means it’s serious: SOLD PENDING — future site of a climbing gym. Thirty days. The sound guy is standing under it with the face of a man reading his own obituary. Your name is on this room in ways no deed records.',
+    tags: ['home', 'network'],
+    choices: {
+      left: {
+        label: 'Throw the benefit. Save the room.',
+        governingStats: { network: 0.7, cred: 0.4 },
+        tags: ['live', 'network', 'risky'],
+        outcomes: {
+          bad: { text: 'You announce the benefit before asking anyone. The scene says yes anyway — badly, chaotically, in seventeen conflicting group chats. There is a show now. There has to be.', effects: { network: 3, burnout: 4, chainEventId: 'a3c_venue_benefit' } },
+          good: { text: 'Every band that ever loaded in through the kitchen says yes in an hour. The poster is just the room’s floor plan with the word NO. It’s perfect.', effects: { network: 5, cred: 3, chainEventId: 'a3c_venue_benefit' } },
+          incredible: { text: 'The lineup fills so fast there’s a WAITLIST to play a benefit. The climbing gym’s investors reportedly ask what a “Ricochet” is and why it has better presale than their whole chain.', effects: { network: 7, cred: 4, fame: 3, chainEventId: 'a3c_venue_benefit' } },
+        },
+      },
+      right: {
+        label: 'Rooms end. Let it end loved.',
+        governingStats: { cred: 0.8 },
+        tags: ['home', 'safe'],
+        outcomes: {
+          bad: { text: 'The last night sells out in minutes and you can’t get everyone in. People listen from the sidewalk with the doors propped. The room ends at capacity, which is how it lived.', effects: { cred: 4, addFlag: 'room_lost', venueLove: 1 } },
+          good: { text: 'You play the final set and unscrew the stage’s center floorboard afterward, with permission and a multitool. It hangs above your desk now. The room ends on YOUR amp’s hum.', effects: { cred: 6, creativity: 3, addFlag: 'room_lost' } },
+          incredible: { text: 'The last night becomes a wake, a reunion, and a recording — every band plays one song, the sound guy mixes it perfectly through actual tears, and the tape becomes a beloved compilation titled the room’s street address. Nothing this loved is ever really gone.', effects: { cred: 8, creativity: 4, fame: 4, addFlag: 'room_lost' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3c_venue_benefit', act: 3, pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_venue_benefit', context: 'The benefit. {venue}, at capacity, holding its breath.',
+    prompt: 'Benefit night. The room is packed past the fire code it’s trying to save itself from. The landlord is in the back with the buyer, arms crossed, “just watching.” The sound guy gives you the nod. Whatever this room is worth, you have one set to prove it.',
+    tags: ['live', 'home'],
+    choices: {
+      left: {
+        label: 'Play the set of your life',
+        minigame: 'crowd',
+        governingStats: { skill: 0.6, cred: 0.5 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'The set is ragged and the room doesn’t care — they sing the guitar parts, they pass the bucket, they buy the wall clock off the wall. The total lands $400 short. The sound guy covers it from a coffee can labeled RAINY. It was always going to be him.', effects: { money: -50, cred: 5, fame: 3, addFlag: 'room_saved', venueLove: 1 } },
+          good: { text: 'The set lands, the bucket fills, and mid-encore the landlord — arms still crossed — mouths the chorus. The buyer leaves early. The lease gets signed at the merch table on a cymbal case.', effects: { cred: 7, fame: 5, network: 3, addFlag: 'room_saved', venueLove: 1 } },
+          incredible: { text: 'The night goes so hard the story arrives before the news does: the buyer OUTBIDS themselves to fund the room instead, on the condition the plaque says “saved by the scene.” The sound guy finally cries at work. Everyone pretends not to see. Everyone sees.', effects: { cred: 9, fame: 7, network: 4, pathProgress: 1, addFlag: 'room_saved', venueLove: 1 } },
+        },
+      },
+      right: {
+        label: 'Give the mic to the room',
+        governingStats: { network: 0.8 },
+        tags: ['home', 'network', 'safe'],
+        outcomes: {
+          bad: { text: 'The open-mic format produces forty-one acts, two feuds, and a bagpipe cameo by Craig that violates several noise ordinances IN DEFENSE of a venue. The money comes in crumpled. All of it counts.', effects: { network: 4, cred: 3, addFlag: 'room_saved', venueLove: 1 } },
+          good: { text: 'You emcee instead of headline, and the room saves itself — every act tells one story about the place before playing. By hour three the buyer has heard the room’s entire biography, out loud, in front of witnesses. Some purchases become impossible.', effects: { network: 6, cred: 5, addFlag: 'room_saved', venueLove: 1 } },
+          incredible: { text: 'The night ends with the deed’s history read aloud like liner notes and a community land trust formed at the bar, on napkins, notarized by a regular who — of course — is a notary. The room now legally belongs to everyone it ever deafened.', effects: { network: 8, cred: 7, fame: 4, pathProgress: 1, addFlag: 'room_saved', venueLove: 1 } },
+        },
+      },
+    },
+  },
 ];
