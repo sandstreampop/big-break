@@ -16,6 +16,7 @@ import { generateHeadlines } from './headlines.js';
 import { offerGenres, genreById } from './data/genres.js';
 import { generateDMs } from './dms.js';
 import { buildEpilogue } from './epilogue.js';
+import { renderShareImage } from './sharecard.js';
 import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
@@ -1215,8 +1216,24 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     const shareBtn = btn('📣 Share this run', '', async () => {
       const text = shareTextFor(summary, lp);
       try {
-        if (navigator.share) await navigator.share({ text });
-        else {
+        // Prefer a poster image via the native sheet (Pass 38)
+        const inst = instrumentById(summary.instrument);
+        const genre = summary.genre ? genreById(summary.genre) : null;
+        const res = summary.result ? summary.result.toUpperCase()
+          : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[summary.endingKey] || 'GAME OVER';
+        const blob = await renderShareImage({
+          headline: `${ending.title}`,
+          subline: `${inst ? inst.name : '?'} → ${genre ? genre.name + ' ' : ''}${summary.path ? PATHS[summary.path].name : 'the void'} → ${res}`,
+          tierLog: summary.tierLog,
+          statLine: `★${summary.fame} fame · ${summary.hits} hits · +${lp} LP${summary.chartPeak ? ` · Hot 10 #${summary.chartPeak}` : ''}`,
+          footer: 'play: sandstreampop.github.io/big-break',
+        });
+        const file = blob ? new File([blob], 'big-break-run.png', { type: 'image/png' }) : null;
+        if (file && navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file], text });
+        } else if (navigator.share) {
+          await navigator.share({ text });
+        } else {
           await navigator.clipboard.writeText(text);
           shareBtn.textContent = '📋 Copied!';
         }
