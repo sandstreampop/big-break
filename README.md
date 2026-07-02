@@ -30,8 +30,15 @@ It's a PWA: add it to your home screen and it works offline.
 - **Burnout** — the danger stat: passive grind wear per card, coping
   interstitials at 50/75, a screen that literally runs hot, and a fintech
   UX job waiting at 100.
-- **The world reacts** — a procedural Hot 10 chart your songs can enter,
-  and act-break trade headlines generated from your actual run.
+- **Songs are real (v4)** — writing events tape actual demos (Idea Grab
+  hooks become titles, minigame verdicts set quality), release cards
+  decide when they ship, hype fights the weekly chart decay, and a
+  top-3 week crowns a certified HIT. The act-break chart moment, the
+  Songbook (tap 📈), the rival chart war, the trades, the epilogue,
+  the discography, and the share poster all read the same catalog.
+- **The world reacts** — a procedural Hot 10 chart your songs enter at
+  simulated positions, and act-break trade headlines generated from
+  your actual run — including your actual song titles.
 - **Side hustles** — some outcomes grant income that pays out every act.
 - **Instrument arcs** — mid-run swap events (the gift guitar, the pawn-shop
   sampler, the vocal coach).

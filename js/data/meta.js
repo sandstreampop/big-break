@@ -311,4 +311,13 @@ export const TROPHIES = [
   { id: 'wall_5', cat: 'career', name: 'Patron Of The Arts (You)', icon: '🧱',
     desc: 'Buy five Career Wall unlocks. Investing in yourself, with yourself.',
     special: 'wall_5' },
+  { id: 'number_one', cat: 'feats', name: 'Top Of The Pops', icon: '🥇',
+    desc: 'Take a song to #1 on the Hot 10. The chart is yours for one impossible week.',
+    check: (s) => (s.songs || []).some((x) => x.peak === 1) },
+  { id: 'one_week_wonder', cat: 'feats', name: 'One-Week Wonder', icon: '🫠',
+    desc: 'Chart for exactly one week, then vanish. The people who caught it never forgot.',
+    check: (s) => (s.songs || []).some((x) => x.status === 'faded' && x.peak && x.weeks === 1) },
+  { id: 'the_vault', cat: 'feats', name: 'The Vault', icon: '🔐',
+    desc: 'End a career with three unreleased demos. Some songs are for the estate.',
+    check: (s) => (s.songs || []).filter((x) => x.status === 'demo').length >= 3 },
 ];

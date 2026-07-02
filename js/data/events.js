@@ -5336,4 +5336,92 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ WRITING HAPPENS EVERYWHERE (generic song supply) ═══════════
+  {
+    id: 'a1_shower_hook', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_shower_hook', context: 'Shampoo in your eyes, a melody in your head',
+    prompt: 'It arrives in the shower, fully formed, the way the good ones do — a hook so obvious you assume someone already wrote it. Nobody wrote it. It’s yours, if you can get to a recorder before the towel.',
+    tags: ['home', 'write'],
+    choices: {
+      left: {
+        label: 'Run. Dripping. Record it.',
+        minigame: 'ideas',
+        governingStats: { creativity: 0.9 },
+        tags: ['write', 'risky'],
+        outcomes: {
+          bad: { text: 'By the time the phone unlocks, the hook has become a different, worse hook. You record that one out of spite. Even the spite take has SOMETHING.', effects: { creativity: 3, writeSong: true } },
+          good: { text: 'You catch it — soaking, shivering, triumphant. The voice memo has drips in it. The drips are, honestly, part of it now.', effects: { creativity: 6, writeSong: true } },
+          incredible: { text: 'You catch the hook AND the second verse follows it out like it was waiting in the pipes. Best shower of your career. You will chase this high through every bathroom you ever rent.', effects: { creativity: 8, skill: 2, writeSong: true } },
+        },
+      },
+      right: {
+        label: 'If it’s real, it’ll survive the conditioner',
+        governingStats: { cred: 0.5, skill: 0.5 },
+        tags: ['rest', 'safe'],
+        outcomes: {
+          bad: { text: 'It did not survive the conditioner. You spend the evening humming adjacent melodies like a search party that lost the dog.', effects: { creativity: 2, burnout: -2 } },
+          good: { text: 'Most of it survives. The part that didn’t gets replaced by something more honest at the kitchen table. Fair trade.', effects: { creativity: 5, burnout: -3, writeSong: true } },
+          incredible: { text: 'It survives WHOLE — and arrives with a bridge you didn’t write in the shower. The subconscious bills nothing. The subconscious is the best collaborator you have.', effects: { creativity: 7, burnout: -3, writeSong: true } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_soundcheck_song', act: 2, pathAffinity: [], weight: 12,
+    art: 'ev_soundcheck', context: 'Soundcheck. “Play anything,” says the desk.',
+    prompt: '“Play anything,” says the sound engineer, and your hands — bored, unsupervised — play something that has never existed before. The engineer looks up. “What’s that one called?” It isn’t. Yet.',
+    tags: ['live', 'write'],
+    choices: {
+      left: {
+        label: 'Chase it right now, mid-soundcheck',
+        minigame: 'ideas',
+        governingStats: { creativity: 0.8, skill: 0.4 },
+        tags: ['write', 'risky'],
+        outcomes: {
+          bad: { text: 'You chase it for forty minutes while the opener waits, arms folded. What you catch is half a song and a reputation for being “a lot” at soundcheck. Both are keepers.', effects: { creativity: 4, network: -2, writeSong: true } },
+          good: { text: 'The engineer rolls tape without being asked — desk mix, room sound, born live. Some songs choose their own studio.', effects: { creativity: 6, skill: 2, writeSong: true } },
+          incredible: { text: 'The venue staff stop stacking chairs to listen, which has never happened in the history of venue staff. The engineer hands you the tape: “That’s the single.” The engineer is never wrong.', effects: { creativity: 8, cred: 3, skill: 2, writeSong: true } },
+        },
+      },
+      right: {
+        label: 'Note the chords. Tonight is for the SET.',
+        governingStats: { skill: 0.8 },
+        tags: ['live', 'safe'],
+        outcomes: {
+          bad: { text: 'You write “Em - C - ??? - the weird one” on a napkin. Post-show, the napkin has absorbed a beverage. The weird one is gone. The legend of the weird one begins.', effects: { skill: 3, burnout: 2 } },
+          good: { text: 'Professional restraint: chords noted, set played, and the idea is still warm when you get to it after load-out. Discipline is a studio too.', effects: { skill: 5, writeSong: true } },
+          incredible: { text: 'The set is tight AND the idea survives — improved, somehow, by waiting through ninety minutes of you being good at your job. Confidence is a co-writer.', effects: { skill: 7, cred: 2, writeSong: true } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_hotel_ballad', act: 3, pathAffinity: [], weight: 10,
+    art: 'ev_hotel_ballad', context: 'A hotel piano, 4 a.m., a lobby with no witnesses',
+    prompt: 'The tour hotel has a piano in the lobby and a night clerk who doesn’t care. At 4 a.m., careers this deep in, the only songs left to write are the true ones. Your hands find the first chord uninvited.',
+    tags: ['write', 'home'],
+    choices: {
+      left: {
+        label: 'Write the true one',
+        governingStats: { creativity: 1.0 },
+        tags: ['write', 'risky'],
+        outcomes: {
+          bad: { text: 'It comes out TOO true — unperformable, unreleasable, the kind of song you write to find out what you think. You fold it into your pocket. Some songs are letters.', effects: { creativity: 5, burnout: -3, writeSong: true } },
+          good: { text: 'The night clerk stops filing. “That about somebody?” Yes. “Thought so.” The clerk is the first audience and the best review you will ever get.', effects: { creativity: 7, cred: 3, burnout: -3, writeSong: true } },
+          incredible: { text: 'At the last chord, the elevator opens and a stranger in a robe applauds alone. The truest song of your life has an audience of two and a witness protection program. Perfect.', effects: { creativity: 9, cred: 4, burnout: -4, writeSong: true } },
+        },
+      },
+      right: {
+        label: 'Go to bed. You have a career to run.',
+        governingStats: { skill: 0.5, network: 0.5 },
+        tags: ['rest', 'safe'],
+        outcomes: {
+          bad: { text: 'You lie awake hearing the chord anyway. At 5:30 you give up and sleep through the alarm. The career runs fine without you for one morning. Rude.', effects: { burnout: -4 } },
+          good: { text: 'Sleep. Actual sleep. The chord waits politely in your head and is still there at soundcheck, matured overnight like it knew.', effects: { burnout: -7, creativity: 3, writeSong: true } },
+          incredible: { text: 'Best sleep of the tour, and the chord kept working the night shift: it wakes you at 9 with the whole chorus attached. Delegation. That’s what the piano was for.', effects: { burnout: -8, creativity: 5, writeSong: true } },
+        },
+      },
+    },
+  },
 ];
