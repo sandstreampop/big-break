@@ -555,7 +555,7 @@ export function advance(state) {
       const notes = startAct(state, 3);
       return { kind: 'actStart', act: 3, notes };
     }
-    state.phase = 'ended';
+    state.phase = 'finale'; // UI runs the Final Set, then evaluateFinale ends it
     return { kind: 'finale' };
   }
   return { kind: 'card' };
@@ -611,6 +611,7 @@ export function checkFailStates(state) {
 // ---------- Finale (spec §7.1) ----------
 
 export function evaluateFinale(state) {
+  state.phase = 'ended';
   finalePayout(state);
   const gates = CONFIG.winGates[state.path];
   const readings = Object.entries(gates).map(([key, target]) => {
