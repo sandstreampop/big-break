@@ -183,6 +183,7 @@ body {
 }
 .inst-chip { background: #3b2b1c; color: var(--accent); border-color: #5a4020; font-weight: 700; }
 .gear-chip.inert { opacity: .45; }
+.hustle-chip { background: #1e3c2b; color: var(--good); border-color: #2a5a3d; }
 
 /* Burnout vignette — the UI runs hot as you do */
 #screen-game::after {
