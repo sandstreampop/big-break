@@ -100,6 +100,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     seed: null,     // play RNG seed (set by caller; null = legacy Math.random)
     rngUses: 0,
     daily: null,    // 'YYYY-MM-DD' when this is a Daily Grind run
+    gauntlet: null, // 'YYYY-Www' when this is a weekly Gauntlet run
     tierLog: [],
     cardLog: [],    // [{e: eventId, t: tier, a: act, s: side}] — scrapbook
     contract: null, // signed contract id (see data/contracts.js)
@@ -667,6 +668,7 @@ export function runSummary(state) {
     tierLog: state.tierLog || [],
     cardLog: state.cardLog || [],
     daily: state.daily || null,
+    gauntlet: state.gauntlet || null,
     contract: state.contract || null,
     hustles: (state.hustles || []).length,
     swapped: !!state.swappedInstrument,
