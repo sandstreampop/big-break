@@ -273,7 +273,14 @@ function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre, get
       if (contract) engine.signContract(run, contract);
       run.genre = getGenre ? getGenre() : null;
       run.venue = getVenue ? getVenue() : null;
+      if (!daily) {
+        // The nemesis returns: bias normal runs toward your most-faced rival
+        const counts = meta.rivalCounts || {};
+        const [topRival, topCount] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0] || [null, 0];
+        if (topRival && topCount >= 2 && Math.random() < 0.45) run.rival = topRival;
+      }
       if (comeback) engine.applyComeback(run);
+      run.nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 2; // 3rd+ meeting
       save.saveRun(run);
       dealCard();
     });
@@ -905,8 +912,9 @@ function deltaChip(key, amount) {
   const sign = amount > 0 ? '+' : '';
   if (key === 'rivalry') {
     const r = rivalById(run.rival);
+    const nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 3;
     return el('span', 'chip chip-rival',
-      `⚔ ${amount > 0 ? 'Feud with' : 'Peace with'} ${r.name} ${sign}${amount}`);
+      `⚔ ${amount > 0 ? 'Feud with' : 'Peace with'} ${nemesis ? 'your nemesis ' : ''}${r.name} ${sign}${amount}`);
   }
   const label = key === 'fame' ? 'Fame' : key === 'money' ? '$' : key === 'hits' ? 'Hit!'
     : key === 'pathProgress' ? 'Momentum' : (STAT_META[key]?.name || key);
@@ -1284,6 +1292,11 @@ function finishMeta(summary, lp) {
     if (summary.result === 'success') bp.wins += 1;
   }
 
+  // Nemesis bookkeeping (Pass 47): count rival encounters across runs
+  if (summary.rival) {
+    meta.rivalCounts = meta.rivalCounts || {};
+    meta.rivalCounts[summary.rival] = (meta.rivalCounts[summary.rival] || 0) + 1;
+  }
   meta.runHistory = meta.runHistory || [];
   meta.runHistory.unshift({
     date: todayStr(),
@@ -1304,6 +1317,7 @@ function finishMeta(summary, lp) {
     mastery_3: () => Object.values(meta.lifetime?.byInstrument || {})
       .some((st) => Math.min(3, Math.floor(st.runs / 2) + st.wins) >= 3),
     exits_3: () => (meta.exitSeen || []).length >= 3,
+    nemesis_3: () => Object.values(meta.rivalCounts || {}).some((n) => n >= 3),
   };
   for (const t of TROPHIES) {
     if (meta.trophies.includes(t.id)) continue;
