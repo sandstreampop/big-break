@@ -395,12 +395,14 @@ function renderHud() {
     if (key === 'burnout' && v >= 70) item.classList.add('danger');
     else if (key === 'burnout' && v >= 45) item.classList.add('warn');
     item.title = STAT_META[key].name;
-    item.append(el('span', 'stat-icon', STAT_META[key].icon));
+    const head = el('span', 'stat-head');
+    head.append(el('span', 'stat-icon', STAT_META[key].icon));
+    head.append(el('span', 'stat-val', String(v)));
+    item.append(head);
     const bar = el('div', 'stat-bar');
     bar.append(el('div', 'stat-fill', ''));
     bar.querySelector('.stat-fill').style.width = `${v}%`;
     item.append(bar);
-    item.append(el('span', 'stat-val', String(v)));
     rail.append(item);
   }
   hud.append(rail);

@@ -198,21 +198,25 @@ body {
 #screen-game { padding: calc(var(--safe-top) + 10px) 12px calc(var(--safe-bottom) + 10px); overflow: hidden; }
 
 .hud-top {
-  display: flex; justify-content: space-between; align-items: baseline;
-  font-size: 13px; color: var(--dim); margin-bottom: 8px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: var(--dim); margin-bottom: 8px; min-height: 28px;
 }
 .hud-act { font-weight: 700; letter-spacing: .06em; font-size: 11px; text-transform: uppercase; }
-.hud-counters { display: flex; gap: 12px; font-size: 15px; font-weight: 700; color: var(--ink); }
+.hud-counters { display: flex; align-items: center; gap: 10px; font-size: 14.5px; font-weight: 700; color: var(--ink); }
 .hud-fame { color: var(--accent); }
 .hud-money.neg { color: var(--bad); }
 .hud-hits { color: var(--hot); }
 
-.stat-rail { display: flex; gap: 6px; margin-bottom: 8px; }
-.stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.stat-icon { font-size: 15px; }
+/* one legible line per stat (icon + value), bar underneath */
+.stat-rail { display: flex; gap: 7px; margin-bottom: 8px; }
+.stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.stat-head { display: inline-flex; align-items: center; gap: 4px; }
+.stat-icon { font-size: 13px; }
 .stat-bar { width: 100%; height: 5px; background: #322a47; border-radius: 3px; overflow: hidden; }
 .stat-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .5s; }
-.stat-val { font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.stat-val { font-size: 12.5px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.stat-burnout.warn .stat-val { color: var(--accent); }
+.stat-burnout.danger .stat-val { color: var(--bad); }
 .stat { position: relative; }
 .stat-floater {
   position: absolute; top: -4px; left: 50%;
@@ -235,7 +239,18 @@ body {
 .stat-burnout.danger .stat-icon { animation: pulse 1s infinite; }
 @keyframes pulse { 50% { transform: scale(1.25); } }
 
-.gear-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+/* single-line scroller: a busy mid-run loadout (10+ chips) must not
+   shove the card around — extra chips scroll sideways instead */
+.gear-row {
+  display: flex; gap: 6px; margin-bottom: 6px;
+  flex-wrap: nowrap; overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(90deg, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent);
+  padding-bottom: 2px;
+}
+.gear-row::-webkit-scrollbar { display: none; }
 .gear-chip {
   font-size: 11px; padding: 3px 9px; border-radius: 999px;
   background: #2a2340; color: var(--dim); border: 1px solid #3b3352;
@@ -274,8 +289,8 @@ body {
   touch-action: none;
 }
 .card {
-  position: absolute;
-  width: min(88%, 360px);
+  position: relative; /* participates in grid centering — true vertical center */
+  width: min(92%, 372px);
   max-height: 100%;
   background: var(--card);
   border: 1px solid #3b3352;
@@ -301,6 +316,8 @@ body {
   object-fit: cover;
   flex: none;
 }
+/* tall phones: the art grows so the card fills the stage */
+@media (min-height: 780px) { .card-art { aspect-ratio: 16 / 12; } }
 .art-scene { overflow: hidden; position: relative; }
 .art-scene svg { width: 100%; height: 100%; display: block; }
 
@@ -575,8 +592,10 @@ body.big-text #app { zoom: 1.18; }
 .hud-act-wrap { display: flex; align-items: center; gap: 8px; }
 .chart-btn {
   appearance: none; border: 1px solid #3b3352; background: var(--bg2);
-  color: var(--ink); border-radius: 8px; font-size: 13px;
-  padding: 2px 8px; min-height: 26px; cursor: pointer;
+  color: var(--ink); border-radius: 999px; font-size: 12px;
+  width: 28px; height: 28px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
 }
 .chart-btn:active { transform: scale(.94); }
 .chart-sub { color: var(--dim); font-size: 13px; }
