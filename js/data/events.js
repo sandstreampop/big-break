@@ -5638,4 +5638,66 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══ CONSTELLATION: THE FAN WARS (First Fan × the chart war) ═══
+  {
+    id: 'a3_fan_wars', act: 3, pathAffinity: [], weight: 16,
+    requires: { flagsAll: ['superfan', 'chart_passed_rival'] },
+    art: 'ev_fan_wars', context: 'Two fan armies. One chart. Row zero in the middle.',
+    prompt: 'Since your song passed {rival}’s on the Hot 10, their stan army has declared war — and your entire defense force is one fan account run by row zero, posting citations against a battalion of memes. They are LOSING. They are not backing down. This is somehow the most loyal thing anyone has ever done for you.',
+    tags: ['rival', 'social'],
+    choices: {
+      left: {
+        label: 'Enter the war for one single post',
+        governingStats: { creativity: 0.6, network: 0.6 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'Your one post is screenshotted, misread, reposted by {rival} with a single eyebrow emoji, and becomes the war’s new front. Row zero DMs you: “I’ll handle it. Log off.” You log off. They handle it. The chart wobbles but holds.', effects: { fame: 3, rivalry: 2, hypeSong: 8, addFlag: 'constellation' } },
+          good: { text: 'You post one photo: you and {rival}, years ago, small, sharing a bill nobody came to — captioned “we were fans first.” Both armies stand down in confusion. Both songs climb. Row zero pins it forever.', effects: { fame: 6, rivalry: -1, hypeSong: 20, cred: 3, addFlag: 'constellation' } },
+          incredible: { text: 'You comment ONCE, on row zero’s most-ratioed post: “this account was right about me before anyone.” The war ends instantly — there is no meme against loyalty. {rival}’s stans defect by the hundreds. The archive gains a wing.', effects: { fame: 9, hypeSong: 30, network: 4, cred: 4, addFlag: 'constellation' } },
+        },
+      },
+      right: {
+        label: 'Send row zero backstage passes and stay out of it',
+        governingStats: { cred: 0.8 },
+        tags: ['home', 'safe'],
+        outcomes: {
+          bad: { text: 'Row zero, mid-war, posts a photo of the passes with “can’t talk. working.” and goes back to citing chart positions at strangers. The war rages on. The loyalty, though — the loyalty is archival now.', effects: { cred: 3, hypeSong: 6, addFlag: 'constellation' } },
+          good: { text: 'They take one night off the front lines to stand in the wings, and you play the passed-the-rival song looking at exactly one person. The fan account posts nothing that night. Some victories are private.', effects: { cred: 6, network: 3, hypeSong: 12, addFlag: 'constellation' } },
+          incredible: { text: 'From the wings, row zero watches {rival}’s own first fan — there’s always one — typing furiously in the front row. After the show, the two of them get pancakes. The accounts announce a ceasefire co-written at 2 a.m. The war ends the way wars should: over syrup, between the only two people who were ever really in it.', effects: { cred: 8, rivalry: -2, fame: 5, hypeSong: 16, addFlag: 'constellation' } },
+        },
+      },
+    },
+  },
+
+  // ═══ CONSTELLATION: THE DEEP CUT (Nadia × the album) ═══
+  {
+    id: 'a3_nadia_deepcut', act: 3, pathAffinity: [], weight: 16,
+    requires: { flagsAll: ['album_out'], bandHas: 'nadia' },
+    art: 'ev_nadia_deepcut', context: 'The album, track 7. The internet, detective mode.',
+    prompt: 'A listener with perfect ears posts a thread: track 7 of the album isn’t written like your other songs — the melody moves like a NOTEBOOK song. The thread is right. It’s one of Nadia’s act-break demos, and the internet is one reply away from figuring out whose handwriting is all over your record.',
+    tags: ['band', 'social'],
+    choices: {
+      left: {
+        label: 'Confirm it. Credit her loudly.',
+        governingStats: { cred: 0.7, network: 0.4 },
+        tags: ['band', 'safe'],
+        outcomes: {
+          bad: { text: 'Your credit post reads as damage control because it arrives four minutes after the thread peaks. Nadia reposts it anyway with “took him long enough” and a heart. The scene decides the heart settles it. The heart settles it.', effects: { cred: 4, network: 2, addFlag: 'constellation' } },
+          good: { text: 'You post the actual notebook page — her handwriting, your chord scribbles in the margin, coffee ring included. The thread author frames the screenshot. Track 7 streams triple. The band feels like a band.', effects: { cred: 6, network: 3, fame: 4, hypeSong: 14, addFlag: 'constellation' } },
+          incredible: { text: 'You bring Nadia out at the next show to play track 7 ALONE — one voice, one notebook, four thousand phones. The clip becomes how strangers find your album forever. In the credits of everything she does after, you are “the one who said it was mine.”', effects: { cred: 9, fame: 6, network: 4, hypeSong: 22, addFlag: 'constellation' } },
+        },
+      },
+      right: {
+        label: 'Let the mystery ride. Bands are one organism.',
+        governingStats: { creativity: 0.5, cred: 0.5 },
+        tags: ['band', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The thread gets its final reply from Nadia herself: just a photo of the notebook, no caption. The internet detonates politely. She wasn’t hiding — YOU were, and now everyone can tell the difference. Lunch is quiet this week.', effects: { cred: -2, creativity: 2, burnout: 3, addFlag: 'constellation' } },
+          good: { text: 'Nadia loves the mystery — “songs don’t have parents, they have witnesses” — and starts leaving fake clues in interviews. The thread hits 400 replies of beautiful wrongness. The album gains a lore layer money can’t buy.', effects: { creativity: 5, cred: 4, hypeSong: 12, addFlag: 'constellation' } },
+          incredible: { text: 'The two of you write track 7’s ANSWER SONG in secret and slip it into the next pressing, unannounced, in the same handwriting. The detective thread finds it in six hours and simply posts “oh, it’s like that.” It is exactly like that.', effects: { creativity: 8, cred: 6, fame: 4, hypeSong: 18, addFlag: 'constellation' } },
+        },
+      },
+    },
+  },
 ];
