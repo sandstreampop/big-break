@@ -287,6 +287,72 @@ const QUERIES = {
     FROM events WHERE event = 'minigame'
     GROUP BY game ORDER BY plays DESC, game`,
   },
+
+  // --- coverage feeds (diffed against the content catalogs below) ---
+  card_seen: {
+    title: 'Every card ever swiped (coverage feed)',
+    sql: `
+    SELECT properties.card AS card, count() AS swipes
+    FROM events WHERE event = 'swipe' AND properties.tutorial = false
+    GROUP BY card ORDER BY card`,
+  },
+  finale_endings: {
+    title: 'Finale endings reached (path × outcome)',
+    sql: `
+    SELECT properties.path AS path, properties.outcome AS outcome, count() AS runs
+    FROM events
+    WHERE event = 'run_end' AND properties.outcome IN ('success','partial','failure')
+    GROUP BY path, outcome ORDER BY path, outcome`,
+  },
+  by_venue: {
+    title: 'Run starts by home venue',
+    sql: `
+    SELECT properties.venue AS venue, count() AS runs
+    FROM events WHERE event = 'run_start'
+    GROUP BY venue ORDER BY runs DESC, venue`,
+  },
+  rival_seen: {
+    title: 'Rivals faced (tracked since app 2.2)',
+    sql: `
+    SELECT properties.rival AS rival, count() AS runs
+    FROM events WHERE event = 'run_end' AND properties.rival != 'none'
+    GROUP BY rival ORDER BY runs DESC, rival`,
+  },
+  exit_seen: {
+    title: 'Exit-interview choices taken (tracked since app 2.2)',
+    sql: `
+    SELECT properties.exit AS exit, count() AS n
+    FROM events WHERE event = 'run_end' AND properties.exit != 'none'
+    GROUP BY exit ORDER BY n DESC, exit`,
+  },
+  trophy_seen: {
+    title: 'Trophies earned (tracked since app 2.2)',
+    sql: `
+    SELECT properties.id AS trophy, count() AS n
+    FROM events WHERE event = 'trophy'
+    GROUP BY trophy ORDER BY n DESC, trophy`,
+  },
+  band_seen: {
+    title: 'Bandmates recruited (tracked since app 2.2)',
+    sql: `
+    SELECT arrayJoin(splitByChar(',', coalesce(properties.band, ''))) AS id, count() AS n
+    FROM events WHERE event = 'run_end' AND coalesce(properties.band, '') != ''
+    GROUP BY id ORDER BY n DESC, id`,
+  },
+  gear_seen: {
+    title: 'Gear owned at run end (tracked since app 2.2)',
+    sql: `
+    SELECT arrayJoin(splitByChar(',', coalesce(properties.gear, ''))) AS id, count() AS n
+    FROM events WHERE event = 'run_end' AND coalesce(properties.gear, '') != ''
+    GROUP BY id ORDER BY n DESC, id`,
+  },
+  hustle_seen: {
+    title: 'Hustles held at run end (tracked since app 2.2)',
+    sql: `
+    SELECT arrayJoin(splitByChar(',', coalesce(properties.hustles, ''))) AS id, count() AS n
+    FROM events WHERE event = 'run_end' AND coalesce(properties.hustles, '') != ''
+    GROUP BY id ORDER BY n DESC, id`,
+  },
 };
 
 const out = {};
@@ -331,6 +397,126 @@ for (const [name, { title }] of Object.entries(QUERIES)) {
   md += '\n';
 }
 fs.writeFileSync(path.join(OUT_DIR, 'summary.md'), md);
+
+// ---- telemetry/coverage.md — content the players never/rarely reach ----
+// Diffs the game's content catalogs (js/data/*, js/minigames.js) against
+// the coverage-feed queries above. This is what the queries can't say on
+// their own: PostHog only knows what happened, the repo knows what exists.
+async function buildCoverage() {
+  const imp = (p) => import(new URL('../' + p, import.meta.url));
+  const [ev, meta, contracts, genres, instruments, venues, rivals, band, accessories, hustles] =
+    await Promise.all([
+      imp('js/data/events.js'), imp('js/data/meta.js'), imp('js/data/contracts.js'),
+      imp('js/data/genres.js'), imp('js/data/instruments.js'), imp('js/data/venues.js'),
+      imp('js/data/rivals.js'), imp('js/data/band.js'), imp('js/data/accessories.js'),
+      imp('js/data/hustles.js'),
+    ]);
+  const mgSrc = fs.readFileSync(new URL('../js/minigames.js', import.meta.url), 'utf8');
+  const minigameIds = [...mgSrc.matchAll(/register\('([\w-]+)'/g)].map((m) => m[1]);
+
+  const cardNote = (e) => ['act ' + e.act, e.requires && 'gated', e.chainOnly && 'chain-only',
+    e.finaleCard && 'finale', e.pack && 'pack:' + e.pack].filter(Boolean).join(' · ');
+  const ids = (arr, note) => arr.map((x) => ({ id: x.id, note: note ? note(x) : '' }));
+
+  // seen-count extractor: default is [id, count] from a query's first two
+  // columns; finale endings key on path/outcome instead.
+  const seenMap = (queryName, keyFn) => {
+    const rows = out[queryName]?.results;
+    const map = new Map();
+    for (const r of rows || []) {
+      const [k, n] = keyFn ? keyFn(r) : [r[0], r[1]];
+      if (k !== null && k !== '') map.set(String(k), (map.get(String(k)) || 0) + Number(n));
+    }
+    return { map, failed: !rows };
+  };
+
+  const SINCE = 'tracked since app 2.2 — "never" means "not since tracking began"';
+  const CATALOGS = [
+    { title: 'Cards', unit: 'swipes', rareBelow: 5, from: 'card_seen',
+      items: ids(ev.EVENTS, cardNote) },
+    { title: 'Minigames', unit: 'plays', rareBelow: 3, from: 'minigame_stats',
+      items: minigameIds.map((id) => ({ id, note: '' })) },
+    { title: 'Finale endings (path × outcome)', unit: 'runs', rareBelow: 2, from: 'finale_endings',
+      keyFn: (r) => [r[0] + '/' + r[1], r[2]],
+      items: ['megastar', 'studio', 'hitfactory'].flatMap((p) =>
+        ['success', 'partial', 'failure'].map((o) => ({ id: p + '/' + o, note: '' }))) },
+    { title: 'Game-over endings', unit: 'deaths', rareBelow: 2, from: 'death_causes',
+      items: Object.keys(meta.ENDINGS).filter((k) => meta.ENDINGS[k].title)
+        .map((id) => ({ id, note: '' })) },
+    { title: 'Exit interviews', unit: 'picks', rareBelow: 2, from: 'exit_seen', since: SINCE,
+      items: Object.entries(meta.EXIT_INTERVIEWS).flatMap(([k, v]) =>
+        ['left', 'right'].map((s) => ({ id: v[s].exit, note: k + ' / ' + s }))) },
+    { title: 'Trophies', unit: 'earns', rareBelow: 2, from: 'trophy_seen', since: SINCE,
+      items: ids(meta.TROPHIES) },
+    { title: 'Contracts', unit: 'runs', rareBelow: 3, from: 'by_contract',
+      items: ids(contracts.CONTRACTS) },
+    { title: 'Instruments', unit: 'runs', rareBelow: 3, from: 'by_instrument',
+      items: ids(instruments.INSTRUMENTS) },
+    { title: 'Genres', unit: 'runs', rareBelow: 3, from: 'by_genre',
+      items: [...ids(genres.GENRES), ...ids(genres.GENRES_WAVE2, () => 'wave 2')] },
+    { title: 'Home venues', unit: 'runs', rareBelow: 3, from: 'by_venue',
+      items: ids(venues.VENUES) },
+    { title: 'Rivals', unit: 'runs', rareBelow: 2, from: 'rival_seen', since: SINCE,
+      items: ids(rivals.RIVALS) },
+    { title: 'Bandmates', unit: 'runs', rareBelow: 2, from: 'band_seen', since: SINCE,
+      items: [...ids(band.BANDMATES), ...ids(band.BANDMATES_WAVE2, () => 'wave 2')] },
+    { title: 'Gear', unit: 'runs', rareBelow: 2, from: 'gear_seen', since: SINCE,
+      items: ids(accessories.ACCESSORIES) },
+    { title: 'Hustles', unit: 'runs', rareBelow: 2, from: 'hustle_seen', since: SINCE,
+      items: ids(hustles.HUSTLES) },
+  ];
+
+  const coverage = {};
+  let cmd = '# BIG BREAK — content coverage\n\n';
+  cmd += 'Which content players actually reach, diffed against everything the\n';
+  cmd += 'game ships. Auto-generated by `tools/posthog-pull.mjs`; the observed\n';
+  cmd += 'side comes from `telemetry/latest.json`, the catalog side from\n';
+  cmd += '`js/data/*` and `js/minigames.js`. "Never" sections are the cut/fix\n';
+  cmd += 'candidates — or the content that needs better signposting.\n\n';
+  if (range) cmd += `**Data through:** ${range[1]} · ${range[2]} events · ${range[3]} players\n\n`;
+
+  const summaryRows = [];
+  let body = '';
+  for (const c of CATALOGS) {
+    const { map, failed } = seenMap(c.from, c.keyFn);
+    const rows = c.items.map((it) => ({ ...it, n: map.get(it.id) || 0 }));
+    const never = rows.filter((r) => r.n === 0);
+    const rare = rows.filter((r) => r.n > 0 && r.n < c.rareBelow)
+      .sort((a, b) => a.n - b.n || (a.id < b.id ? -1 : 1));
+    coverage[c.title] = {
+      total: rows.length, seen: rows.length - never.length,
+      never: never.map((r) => r.id), rare: rare.map((r) => ({ id: r.id, n: r.n })),
+    };
+    summaryRows.push(`| ${c.title} | ${rows.length - never.length}/${rows.length} | ${never.length} | ${rare.length} |`);
+
+    body += `## ${c.title} — ${rows.length - never.length}/${rows.length} seen\n\n`;
+    if (c.since) body += `_${c.since}._\n\n`;
+    if (failed) body += `⚠️ feed query \`${c.from}\` failed — treating everything as unseen.\n\n`;
+    if (never.length) {
+      body += `### Never reached (${never.length})\n\n| id | notes |\n|---|---|\n`;
+      body += never.map((r) => `| ${r.id} | ${r.note} |`).join('\n') + '\n\n';
+    }
+    if (rare.length) {
+      body += `### Rarely reached (< ${c.rareBelow} ${c.unit})\n\n| id | ${c.unit} | notes |\n|---|---|---|\n`;
+      body += rare.map((r) => `| ${r.id} | ${r.n} | ${r.note} |`).join('\n') + '\n\n';
+    }
+    if (!never.length && !rare.length) body += 'Full coverage. 🎉\n\n';
+  }
+
+  cmd += '| catalog | seen | never | rare |\n|---|---|---|---|\n';
+  cmd += summaryRows.join('\n') + '\n\n' + body;
+  fs.writeFileSync(path.join(OUT_DIR, 'coverage.md'), cmd);
+  return coverage;
+}
+
+try {
+  out.coverage = await buildCoverage();
+  console.log('# coverage: written');
+} catch (e) {
+  console.log(`# coverage: ERROR ${e.message}`);
+}
+// rewrite latest.json now that it also carries the coverage block
+fs.writeFileSync(path.join(OUT_DIR, 'latest.json'), JSON.stringify(out, null, 2) + '\n');
 
 console.log('===POSTHOG_RESULTS_BEGIN===');
 console.log(JSON.stringify(out));

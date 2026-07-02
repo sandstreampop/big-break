@@ -1678,6 +1678,7 @@ function finishMeta(summary, lp) {
     else if (t.check) ok = t.check(summary);
     if (ok) { meta.trophies.push(t.id); earned.push(t); }
   }
+  for (const t of earned) track('trophy', { id: t.id });
   save.saveMeta(meta);
   save.clearRun();
   return earned;
@@ -1690,6 +1691,19 @@ function runMode(r) {
     : r.daily ? 'daily'
     : (r.flags || []).includes('comeback') ? 'comeback'
     : 'normal';
+}
+
+// Content touched during a run, for coverage analysis (which rivals, band
+// members, gear, and hustles players actually meet). Lists are sorted,
+// comma-joined strings so HogQL can splitByChar+arrayJoin them.
+function runContentProps(r, summary) {
+  const join = (a) => (a || []).slice().sort().join(',');
+  return {
+    rival: r.rival || 'none',
+    band: join(summary.band),
+    gear: join(r.accessories),
+    hustles: join(r.hustles),
+  };
 }
 
 function renderFinale() {
@@ -1714,6 +1728,7 @@ function renderFinale() {
     cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
     burnout: run.stats.burnout, lp, instrument: summary.instrument,
     contract: summary.contract || 'none', chart_peak: summary.chartPeak || null,
+    ...runContentProps(run, summary),
   });
   if (evalr.result === 'success') sfx.winPath(run.path); else if (evalr.result === 'failure') sfx.gameover(); else sfx.good();
   renderEndingScreen(ending, lp, earned, evalr, summary);
@@ -1734,6 +1749,8 @@ function renderGameOver(endingKey) {
     cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
     burnout: run.stats.burnout, lp, instrument: summary.instrument,
     contract: summary.contract || 'none', chart_peak: summary.chartPeak || null,
+    exit: run.exitChoice || 'none',
+    ...runContentProps(run, summary),
   });
   sfx.gameover();
   renderEndingScreen(ENDINGS[endingKey], lp, earned, null, summary);
