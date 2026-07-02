@@ -765,9 +765,12 @@ function commitSwipe(side, dx = 0, dy = 0) {
     currentCard = null; // freeze the card while the minigame runs
     card.style.transform = ''; // snap back from any drag offset
     playMinigame(mgId, { run }).then(({ score, verdict }) => {
-      track('minigame', { id: mgId, card: currentEvent?.id, score, bonus: verdict.bonus, skipped: score == null });
+      // instrument hook: some gear makes performance moments play easier
+      const mgHook = score == null ? 0 : (instrumentById(run.instrument)?.quirk?.hooks?.mgBonus || 0);
+      const bonus = verdict.bonus + mgHook;
+      track('minigame', { id: mgId, card: currentEvent?.id, score, bonus, skipped: score == null });
       currentCard = card; // hand back for the normal path
-      finishSwipe(side, dx, dy, verdict.bonus ? { id: mgId, ...verdict } : null);
+      finishSwipe(side, dx, dy, bonus ? { id: mgId, ...verdict, bonus } : null);
     });
     return;
   }
