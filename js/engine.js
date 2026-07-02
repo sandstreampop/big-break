@@ -186,6 +186,7 @@ function meetsRequires(ev, state) {
   if (r.genreAny && !state.genre) return false;
   if (r.hustleMin !== undefined && (state.hustles || []).length < r.hustleMin) return false;
   if (r.bandMin !== undefined && (state.band || []).length < r.bandMin) return false;
+  if (r.bandHas && !(state.band || []).includes(r.bandHas)) return false;
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');
