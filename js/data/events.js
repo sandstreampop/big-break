@@ -545,6 +545,94 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════════ COMEBACK MODE (requires 'comeback') ═══════════════
+  {
+    id: 'cb_remembered', act: 1, pathAffinity: [], weight: 14,
+    requires: { flagsAll: ['comeback'] },
+    art: 'ev_cb_remembered', context: 'The grocery store, aisle 6',
+    prompt: '“Oh my god. You’re— you WERE— hold on, don’t tell me—” The stranger snaps their fingers at you like you’re a song title on the tip of their tongue. You were their whole 11th grade. You are currently holding discount pasta.',
+    tags: ['fame', 'social'],
+    choices: {
+      left: {
+        label: 'Help them remember. Warmly.',
+        governingStats: { network: 0.8, cred: 0.5 },
+        tags: ['social', 'safe'],
+        outcomes: {
+          bad: { text: 'You say your own name into the fluorescent hum. “No, that’s not it,” they decide, walking off. You buy the pasta. You buy two.', effects: { cred: 2, burnout: 3 } },
+          good: { text: 'Recognition floods their face and they play you their favorite deep cut RIGHT THERE, phone speaker, aisle 6. It holds up. You both know it holds up.', effects: { fame: 4, cred: 4, creativity: 2 } },
+          incredible: { text: 'They post the encounter — “found my hero buying pasta, still radiates it” — and the internet remembers you all at once, fondly, at scale.', effects: { fame: 10, cred: 5, network: 4 } },
+        },
+      },
+      right: {
+        label: '“People say I look like them.”',
+        governingStats: { creativity: 0.8 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'They squint. “No. It’s you. Why would you—” The denial becomes the story their group chat gets. Faded AND weird now. Great.', effects: { cred: -2, burnout: 3 } },
+          good: { text: 'The bit works. You leave as a mystery instead of a memory, which is a better costume for what you’re about to do.', effects: { creativity: 4, cred: 3 } },
+          incredible: { text: '“Huh. The resemblance is unreal.” They walk away. You stand in aisle 6, gloriously unwitnessed, already writing the first song of the second act in your head.', effects: { creativity: 7, cred: 4, burnout: -4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'cb_nostalgia_fest', act: 2, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['comeback'] },
+    art: 'ev_cb_fest', context: 'REWIND FEST (they used the old logo)',
+    prompt: 'The nostalgia festival wants you — 4:30 p.m. slot, “Legends Stage,” between a band that had one summer and a band that had one song. The check is genuinely good. The font on the poster is genuinely cruel.',
+    tags: ['live', 'deal'],
+    choices: {
+      left: {
+        label: 'Take the legends slot',
+        governingStats: { network: 0.7, skill: 0.6 },
+        tags: ['live', 'mainstream'],
+        outcomes: {
+          bad: { text: 'The crowd sings the old hit and checks their phones through the new material. You cash the check in a parking lot that smells like 2014.', effects: { money: 350, fame: 6, cred: -3, burnout: 6 } },
+          good: { text: 'You play the old hit LAST instead of first — and the new stuff earns its place in the set on merit. A few thousand people update their memory of you in real time.', effects: { money: 400, fame: 10, cred: 3, burnout: 5 } },
+          incredible: { text: 'Your 4:30 slot outdraws the headliner. The festival trends with your name attached to the word “still.” STILL. The most underrated word in music.', effects: { money: 450, fame: 18, cred: 5, network: 4, burnout: 5, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Decline. No museums.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You skip the check and play a new-material set to forty people the same night. Six of them get it. Six is a start. Six is also six.', effects: { cred: 5, creativity: 3, money: -40 } },
+          good: { text: '“Not a nostalgia act” becomes your whole positioning, and positioning is half of a comeback. The other half is the songs, which — conveniently — you’re writing.', effects: { cred: 7, creativity: 4, fame: 3 } },
+          incredible: { text: 'The refusal quote gets picked up: “I’m not done, so I can’t look back yet.” REWIND FEST offers double next year. You’ll be too busy. You can feel it.', effects: { cred: 9, creativity: 4, fame: 7, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'cb_fan_exec', act: 2, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['comeback'] },
+    art: 'ev_cb_exec', context: 'A label office. The gold record on the wall is YOURS.',
+    prompt: 'The exec across the desk was front row at your third-ever show — they can prove it, they have the ticket stub laminated. Now they run A&R. “I signed this job because of you. So. What do you want to do with the second act?”',
+    tags: ['deal', 'network'],
+    choices: {
+      left: {
+        label: 'Everything. Full relaunch.',
+        governingStats: { network: 0.9 },
+        tags: ['deal', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'The relaunch plan has fourteen slides and your old font. Committees form. The stub stays laminated; the momentum doesn’t.', effects: { network: 4, fame: 4, burnout: 6 } },
+          good: { text: 'They build you a real runway — budget, band, patience. “I’ve waited years to do this right,” they say, and mean it.', effects: { network: 7, fame: 8, money: 250, pathProgress: 1 } },
+          incredible: { text: 'The relaunch works because it isn’t one — it’s a debut with better scars. The exec cries at the release show, holding the stub. You sign it.', effects: { network: 9, fame: 14, money: 350, cred: 4, pathProgress: 2 } },
+        },
+      },
+      right: {
+        label: '“Just studio time. No announcements.”',
+        governingStats: { creativity: 0.8, cred: 0.5 },
+        tags: ['studio', 'indie'],
+        outcomes: {
+          bad: { text: 'Quiet studio time produces quiet demos. Good ones. But the exec’s boss asks what the line item is FOR, monthly, in bold.', effects: { creativity: 5, cred: 2, burnout: 3 } },
+          good: { text: 'Six weeks of unannounced work. No expectations, no font, no slides. Just the sound of you finding out what you’re like now. Turns out: better.', effects: { creativity: 7, skill: 3, cred: 4 } },
+          incredible: { text: 'What comes out of the quiet room needs no relaunch — it leaks itself into the world on quality alone. The exec frames a NEW stub. Release show, front row.', effects: { creativity: 10, cred: 6, fame: 8, pathProgress: 1 } },
+        },
+      },
+    },
+  },
   // ═══════════ THE LAST DOOR (guaranteed path climaxes) ═══════════
   {
     id: 'finale_label_meeting', act: 3, pathAffinity: ['megastar'], weight: 10, finaleCard: true,

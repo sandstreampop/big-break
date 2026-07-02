@@ -125,6 +125,9 @@ function renderTitle() {
       ? `📅 Daily Grind ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
       : `📅 Daily Grind — ${today}`,
     '', () => { save.clearRun(); startNewRun(true); }));
+  if (meta.successPaths?.length > 0) {
+    menu.append(btn('🦅 Comeback Run (×1.2 LP)', '', () => { save.clearRun(); startNewRun(false, true); }));
+  }
   if (meta.runs > 0) {
     const week = weekStr();
     const gDone = meta.gauntletResults?.[week];
@@ -177,7 +180,7 @@ function hashStr(s) {
   return Math.abs(h | 0) + 1;
 }
 
-function startNewRun(daily = false) {
+function startNewRun(daily = false, comeback = false) {
   const seed = daily ? hashStr('bigbreak-daily-' + todayStr()) : Math.floor(Math.random() * 1e9) + 1;
   let chosenContract = null;
   let chosenGenre = null;
@@ -191,11 +194,13 @@ function startNewRun(daily = false) {
       : save.unlockedInstrumentIds(meta);
     const offered = engine.offerInstruments(pool, engine.mulberry32(seed));
     s.innerHTML = '';
-    s.append(el('h2', 'screen-head', daily ? `Daily Grind — ${todayStr()}` : 'Choose your weapon'));
-    s.append(el('p', 'screen-sub', daily
+    s.append(el('h2', 'screen-head', comeback ? 'The Second Act' : daily ? `Daily Grind — ${todayStr()}` : 'Choose your weapon'));
+    s.append(el('p', 'screen-sub', comeback
+      ? 'You were somebody. Start famous, bruised, and 25% burned out already — the industry remembers you, which cuts both ways.'
+      : daily
       ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
       : 'Each one is almost useless. That’s the point.'));
-    renderInstrumentRow(s, offered, seed, daily, () => chosenContract, () => chosenGenre, () => chosenVenue);
+    renderInstrumentRow(s, offered, seed, daily, () => chosenContract, () => chosenGenre, () => chosenVenue, comeback);
     // Home venue picker (Pass 41): adopt a room to build across the run
     const venues = offerVenues(engine.mulberry32(seed + 13));
     s.append(el('h3', 'contract-head', 'Optional: adopt a home venue'));
@@ -248,7 +253,7 @@ function startNewRun(daily = false) {
   show('#screen-instruments');
 }
 
-function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre, getVenue) {
+function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre, getVenue, comeback = false) {
   const row = el('div', 'pick-row');
   for (const inst of offered) {
     const card = el('div', 'pick-card');
@@ -268,6 +273,7 @@ function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre, get
       if (contract) engine.signContract(run, contract);
       run.genre = getGenre ? getGenre() : null;
       run.venue = getVenue ? getVenue() : null;
+      if (comeback) engine.applyComeback(run);
       save.saveRun(run);
       dealCard();
     });

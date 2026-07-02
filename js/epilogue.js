@@ -52,6 +52,8 @@ export function buildEpilogue(state) {
     'The Brammy lives on the amp, slightly crooked, holding down a stack of unpaid parking tickets. Correct use of an award.');
   add(state.brammy === 'lost',
     `You never got the Brammy. The gracious-loss face, however, became load-bearing at every industry function since. Some trophies are muscles.`);
+  add(flags.includes('comeback'),
+    'The second act outgrew the first, which never happens, which is why they’ll teach it. The grocery store in aisle 6 has a plaque now. Unofficial. Laminated.');
   add(state.daily != null,
     'The whole thing happened in one impossible day, which is how everyone tells it anyway.');
   const band = (state.band || []).map(bandmateById).filter(Boolean);
