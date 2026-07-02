@@ -14,6 +14,7 @@ import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
 import { generateHeadlines } from './headlines.js';
 import { offerGenres, genreById } from './data/genres.js';
+import { offerVenues, venueById, VENUE_TIERS } from './data/venues.js';
 import { generateDMs } from './dms.js';
 import { buildEpilogue } from './epilogue.js';
 import { renderShareImage } from './sharecard.js';
@@ -179,6 +180,7 @@ function startNewRun(daily = false) {
   const seed = daily ? hashStr('bigbreak-daily-' + todayStr()) : Math.floor(Math.random() * 1e9) + 1;
   let chosenContract = null;
   let chosenGenre = null;
+  let chosenVenue = null;
   const s = $('#screen-instruments');
 
   const buildScreen = () => {
@@ -192,7 +194,22 @@ function startNewRun(daily = false) {
     s.append(el('p', 'screen-sub', daily
       ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
       : 'Each one is almost useless. That’s the point.'));
-    renderInstrumentRow(s, offered, seed, daily, () => chosenContract, () => chosenGenre);
+    renderInstrumentRow(s, offered, seed, daily, () => chosenContract, () => chosenGenre, () => chosenVenue);
+    // Home venue picker (Pass 41): adopt a room to build across the run
+    const venues = offerVenues(engine.mulberry32(seed + 13));
+    s.append(el('h3', 'contract-head', 'Optional: adopt a home venue'));
+    const vRow = el('div', 'genre-row');
+    for (const v of venues) {
+      const chip = el('button', 'contract-chip venue-pick-chip' + (chosenVenue === v.id ? ' signed' : ''),
+        `${v.icon} <b>${v.name}</b><br><span>${v.flavor} Build it by playing ${v.tags.join('/')} shows.</span>`);
+      chip.addEventListener('click', () => {
+        sfx.ui();
+        chosenVenue = chosenVenue === v.id ? null : v.id;
+        buildScreen();
+      });
+      vRow.append(chip);
+    }
+    s.append(vRow);
     // Genre picker (Pass 21): optional sound identity
     const genres = offerGenres(engine.mulberry32(seed + 7));
     s.append(el('h3', 'contract-head', 'Optional: claim a sound'));
@@ -230,7 +247,7 @@ function startNewRun(daily = false) {
   show('#screen-instruments');
 }
 
-function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre) {
+function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre, getVenue) {
   const row = el('div', 'pick-row');
   for (const inst of offered) {
     const card = el('div', 'pick-card');
@@ -249,6 +266,7 @@ function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre) {
       const contract = getContract();
       if (contract) engine.signContract(run, contract);
       run.genre = getGenre ? getGenre() : null;
+      run.venue = getVenue ? getVenue() : null;
       save.saveRun(run);
       dealCard();
     });
@@ -390,6 +408,16 @@ function renderHud() {
   if (genre) chip('gear-chip genre-chip-mini', `${genre.icon} ${genre.name}`, {
     emoji: genre.icon, title: `${genre.name} (your sound)`, lines: [genre.flavor, `<b>Effect:</b> ${genre.blurb}`],
   });
+  const venue = venueById(run.venue);
+  if (venue) {
+    const tier = VENUE_TIERS[run.venueLevel] || VENUE_TIERS[0];
+    chip('gear-chip venue-chip-mini', `${venue.icon} ${'★'.repeat(run.venueLevel)}${'☆'.repeat(3 - run.venueLevel)}`, {
+      emoji: venue.icon, title: `${venue.name} — ${tier.name}`,
+      lines: [venue.flavor,
+        `<b>Home crowd:</b> ${venue.tags.join('/')} shows here add +${tier.showBonus} Fame (and half that Cred). ${run.venueShows || 0} shows played.`,
+        run.venueLevel < 3 ? 'Play more shows here to build it toward a local institution.' : 'This room is a local institution. It’s yours.'],
+    });
+  }
   for (const id of run.accessories) {
     const acc = accessoryById(id);
     const active = accActive(acc);
@@ -781,6 +809,8 @@ function showResult(result) {
     chips.append(deltaChip(d.key, d.amount));
   }
   if (result.gearLost) chips.append(el('span', 'chip chip-bad', `− ${result.gearLost.name} (lost!)`));
+  if (result.venueLeveled) chips.append(el('span', 'chip chip-gear', `${result.venueLeveled.venue.icon} ${result.venueLeveled.venue.name} → ${result.venueLeveled.tier.name}!`));
+  else if (result.venueHosted) chips.append(el('span', 'chip chip-good', `${result.venueHosted.venue.icon} home crowd +${result.venueHosted.tier.showBonus}`));
   const hustle = result.deltas.hustleGained;
   if (hustle) {
     chips.append(el('span', 'chip chip-gear', `${hustle.icon} Side hustle: ${hustle.name} (+$${hustle.moneyPerAct}/act)`));
