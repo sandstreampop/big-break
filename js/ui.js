@@ -997,6 +997,11 @@ function showResult(result) {
   if (hustle) notice('notice-gear', `${hustle.icon} <b>Side hustle: ${hustle.name}</b> (+$${hustle.moneyPerAct}/act)${hustle.blurb ? ' — ' + hustle.blurb : ''}`);
   const newInst = result.deltas.instrumentSet;
   if (newInst) notice('notice-gear', `🎸 <b>Now playing: ${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`);
+  for (const sd of result.deltas.songDebuts || []) {
+    if (sd.hit) notice('notice-encore', `👑 <b>“${sd.title}”</b> enters the Hot 10 at <b>#${sd.pos}</b> — instant HIT`);
+    else if (sd.pos) notice('notice-good', `♪ <b>“${sd.title}”</b> debuts at <b>#${sd.pos}</b> on the Hot 10`);
+    else notice('notice-bad', `♪ <b>“${sd.title}”</b> ships… and misses the Hot 10. For now, hype can bring it back.`);
+  }
   box.append(notices);
 
   // Shop shelf: choose which item you actually bought (Pass 33)
@@ -1374,7 +1379,46 @@ function actInterstitial(step) {
   box.append(el('p', 'result-text', step.act === 2
     ? 'The garage is behind you. Everything now costs something.'
     : 'Higher stakes, fewer excuses. The summit is visible. So is the drop.'));
-  for (const n of step.notes || []) box.append(el('p', 'upkeep-note', `💸 ${n}`));
+  for (const n of step.notes || []) {
+    if (n.startsWith('♪')) continue; // chart news gets its own stage below
+    box.append(el('p', 'upkeep-note', `💸 ${n}`));
+  }
+
+  // This week on the Hot 10: your songs move while you weren't looking
+  const week = run.lastChartWeek;
+  const crowns = (week?.moves || []).filter((m) => m.kind === 'crown');
+  if (week && week.moves.length) {
+    const cw = el('div', 'chart-week');
+    cw.append(el('div', 'trades-head', '📈 THIS WEEK ON THE HOT 10'));
+    for (const m of week.moves) {
+      if (m.kind === 'crown') {
+        const row = el('div', 'chart-week-row crown');
+        row.innerHTML = `<span class="cw-move">👑 #${m.to}</span><b>“${m.title}”</b><span class="cw-note">top 3 — that’s a HIT</span>`;
+        cw.append(row);
+      } else if (m.kind === 'debut') {
+        const row = el('div', 'chart-week-row debut');
+        row.innerHTML = `<span class="cw-move">NEW #${m.to}</span><b>“${m.title}”</b><span class="cw-note">debuts</span>`;
+        cw.append(row);
+      } else if (m.kind === 'climb') {
+        const row = el('div', 'chart-week-row climb');
+        row.innerHTML = `<span class="cw-move">▲ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">up from #${m.from}</span>`;
+        cw.append(row);
+      } else if (m.kind === 'slip') {
+        const row = el('div', 'chart-week-row slip');
+        row.innerHTML = `<span class="cw-move">▼ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">was #${m.from}</span>`;
+        cw.append(row);
+      } else if (m.kind === 'hold') {
+        const row = el('div', 'chart-week-row hold');
+        row.innerHTML = `<span class="cw-move">= #${m.to}</span><b>“${m.title}”</b><span class="cw-note">${m.weeks} wks on chart</span>`;
+        cw.append(row);
+      } else if (m.kind === 'drop') {
+        const row = el('div', 'chart-week-row dropoff');
+        row.innerHTML = `<span class="cw-move">OFF</span><b>“${m.title}”</b><span class="cw-note">gone after ${m.weeks} wk${m.weeks === 1 ? '' : 's'}</span>`;
+        cw.append(row);
+      }
+    }
+    box.append(cw);
+  }
 
   // The Trades: procedural press about YOUR run (Pass 14)
   const headlines = generateHeadlines(run, 2);
@@ -1401,6 +1445,7 @@ function actInterstitial(step) {
   }
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
+  if (crowns.length) { spawnConfetti(ov); sfx.win(); vibrate([30, 40, 30, 40, 80]); }
   const done = () => {
     ov.classList.remove('active');
     ov.removeEventListener('click', done);
