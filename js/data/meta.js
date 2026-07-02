@@ -324,4 +324,7 @@ export const TROPHIES = [
   { id: 'the_vault', cat: 'feats', name: 'The Vault', icon: '🔐',
     desc: 'End a career with three unreleased demos. Some songs are for the estate.',
     check: (s) => (s.songs || []).filter((x) => x.status === 'demo').length >= 3 },
+  { id: 'room_benefit', cat: 'feats', name: 'Saved By The Scene', icon: '🪧',
+    desc: 'Save your home venue with a benefit show. The plaque is real.',
+    check: (s) => (s.flags || []).includes('room_saved') },
 ];

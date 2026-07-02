@@ -44,7 +44,8 @@ function fillText(s) {
     .replaceAll('{genre}', g ? g.name : 'your genre')
     .replaceAll('{collabArtist}', collabArtistFor(run))
     .replaceAll('{song}', engine.flagshipSong(run)?.title || 'the song')
-    .replaceAll('{fadedSong}', (run.songs || []).find((x) => x.status === 'faded' && x.peak)?.title || 'your old single');
+    .replaceAll('{fadedSong}', (run.songs || []).find((x) => x.status === 'faded' && x.peak)?.title || 'your old single')
+    .replaceAll('{venue}', venueById(run.venue)?.name || 'the venue');
 }
 
 function reducedMotion() {

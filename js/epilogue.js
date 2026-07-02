@@ -60,6 +60,10 @@ export function buildEpilogue(state) {
     'Row zero is at every hometown show, same spot, plus their mom. The tattoo has aged into the skin like liner notes. Neither of you has ever once said the word “parasocial.” Why would you. It was social the whole time.');
   add(flags.includes('superfan') && !flags.includes('fan_family'),
     'You never learned the fan account admin’s last name. They never needed you to. The archive is still up — complete, accurate, and kinder than the press ever was.');
+  add(flags.includes('room_saved'),
+    'The plaque by the door of the room says “saved by the scene,” and under it, smaller, the sound guy added: “and one benefit that ran long.” It still runs long. That’s the point of rooms.');
+  add(flags.includes('room_lost'),
+    'The climbing gym kept the stage as a “feature wall.” Climbers touch it for luck without knowing why. The room got out. The room is everywhere now.');
   add(flags.includes('mg_steady'),
     'People who were in the room that night still describe your hands: steady, when nothing else was.');
   add(state.money >= 800,
