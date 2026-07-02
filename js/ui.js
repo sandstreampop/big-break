@@ -42,7 +42,8 @@ function fillText(s) {
   const g = genreById(run.genre);
   return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe)
     .replaceAll('{genre}', g ? g.name : 'your genre')
-    .replaceAll('{collabArtist}', collabArtistFor(run));
+    .replaceAll('{collabArtist}', collabArtistFor(run))
+    .replaceAll('{song}', engine.flagshipSong(run)?.title || 'the song');
 }
 
 function reducedMotion() {
@@ -1000,6 +1001,8 @@ function showResult(result) {
   if (hustle) notice('notice-gear', `${hustle.icon} <b>Side hustle: ${hustle.name}</b> (+$${hustle.moneyPerAct}/act)${hustle.blurb ? ' — ' + hustle.blurb : ''}`);
   const newInst = result.deltas.instrumentSet;
   if (newInst) notice('notice-gear', `🎸 <b>Now playing: ${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`);
+  const sh = result.deltas.songHyped;
+  if (sh) notice('notice-good', `📣 <b>“${sh.title}”</b> is everywhere this week — hype ${sh.gain >= 0 ? '+' + sh.gain : sh.gain} (next chart week will show it)`);
   const sp = result.deltas.songPolished;
   if (sp) notice('notice-good', `🎛 <b>“${sp.title}”</b> gets better in the vault — the mix tightens (quality ${sp.quality})`);
   const sw = result.deltas.songWritten;

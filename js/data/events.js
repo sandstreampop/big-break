@@ -5212,4 +5212,94 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ THE PROMO CYCLE (a charting song must be fed) ═══════════
+  {
+    id: 'a2_morning_zoo', act: 2, pathAffinity: [], weight: 11,
+    requires: { chartingMin: 1 },
+    art: 'ev_morning_zoo', context: 'Drive-time radio, 6:40 a.m.',
+    prompt: 'The Morning Zoo wants you at 6 a.m. to talk about “{song}” between a traffic sponsor and a man who eats things for money. Radio still moves numbers. Nobody knows why. It just does.',
+    tags: ['social', 'work'],
+    choices: {
+      left: {
+        label: 'Do the Zoo. Sell the song.',
+        minigame: 'interview',
+        governingStats: { network: 0.7, cred: 0.3 },
+        tags: ['mainstream', 'work'],
+        outcomes: {
+          bad: { text: 'You say the album title wrong. YOUR album title. The hosts replay it with a slide whistle. The clip travels further than the interview — which, horribly, still helps.', effects: { hypeSong: 14, fame: 3, burnout: 5, cred: -2 } },
+          good: { text: 'You survive the sound-effect gauntlet, plug the song twice, and laugh at the airhorn like it’s new. The phones, as they say in radio, LIGHT UP.', effects: { hypeSong: 26, fame: 5, burnout: 3 } },
+          incredible: { text: 'You get the man who eats things to eat a CD of the single, live. Morning radio LEGEND. The clip does a week of promo on its own.', effects: { hypeSong: 40, fame: 9, network: 3, burnout: 3 } },
+        },
+      },
+      right: {
+        label: '6 a.m. is not a musician’s hour. Decline.',
+        governingStats: { cred: 0.8 },
+        tags: ['indie', 'rest'],
+        outcomes: {
+          bad: { text: 'The Zoo roasts your absence on air, affectionately, for eleven minutes. The song wobbles. Your sleep was excellent.', effects: { hypeSong: -6, cred: 3, burnout: -4 } },
+          good: { text: 'You sleep. The song holds its own without you shouting over an airhorn. Some numbers are worth less than a morning.', effects: { cred: 4, burnout: -6 } },
+          incredible: { text: '“The artist declined” becomes its own little mystique. The Zoo plays the song anyway — twice, out of spite. Spite is airplay.', effects: { hypeSong: 12, cred: 6, burnout: -6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_dance_challenge', act: [2, 3], pathAffinity: [], weight: 11,
+    requires: { chartingMin: 1 },
+    art: 'ev_dance_challenge', context: 'Your notifications, exploding',
+    prompt: 'A teenager you will never meet invented a dance to the bridge of “{song}.” Four hundred thousand people are doing it. The dance has nothing to do with the song’s meaning. The dance is now the song’s meaning.',
+    tags: ['social'],
+    choices: {
+      left: {
+        label: 'Learn the dance. Post yours.',
+        governingStats: { network: 0.6, creativity: 0.4 },
+        tags: ['mainstream', 'social', 'risky'],
+        outcomes: {
+          bad: { text: 'Your attempt is stiff in a way the internet finds ELDERLY. The quote-posts are merciless. The song, cruelly, keeps growing anyway.', effects: { hypeSong: 16, fame: 3, cred: -3 } },
+          good: { text: 'You do it badly ON PURPOSE, captioned “I wrote this in a shed.” Self-awareness is currency. The teens approve. The number climbs.', effects: { hypeSong: 28, fame: 6 } },
+          incredible: { text: 'You post yours WITH the teenager who invented it, in the shed where the song was born. The wholesome arc completes. Morning shows call. The bridge charts on its own somehow.', effects: { hypeSong: 42, fame: 10, network: 4 } },
+        },
+      },
+      right: {
+        label: 'Say nothing. Let the internet cook.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'A brand does the dance before you acknowledge it. The moment curdles instantly. The song survives; your silence reads as asleep, not aloof.', effects: { hypeSong: 6, cred: 2 } },
+          good: { text: 'You never acknowledge it. The mystery becomes part of the lore: “the one artist who didn’t do their own dance.” The song spreads regardless.', effects: { hypeSong: 18, cred: 5 } },
+          incredible: { text: 'Your silence becomes a bit: fans do the dance AT you in public and you maintain perfect eye contact. A late-night host tries to break you. The song goes everywhere. You never moved.', effects: { hypeSong: 30, cred: 8, fame: 5 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_playlist_guy', act: 3, pathAffinity: [], weight: 11,
+    requires: { chartingMin: 1 },
+    art: 'ev_playlist_guy', context: 'A hotel bar. A man with two phones.',
+    prompt: '“I don’t do payola,” says the man with two phones, doing payola. “I do PLACEMENT.” For a fee, “{song}” lands on playlists with names like Main Character Energy and Gym Rage. He shows you a chart. The chart only goes up.',
+    tags: ['deal'],
+    choices: {
+      left: {
+        label: 'Pay the man', cost: 150,
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'The playlists turn out to be bot farms with mood lighting. The streams evaporate on audit. The man’s two phones are both off. Both of them.', effects: { hypeSong: 4, money: -60, cred: -3 } },
+          good: { text: 'Gross, but functional: the song lands on nine mid-size playlists and metabolizes into real listeners. You shower twice. The number is the number.', effects: { hypeSong: 30, fame: 5 } },
+          incredible: { text: 'One of the placements hits an algorithm artery and the machine takes over — playlist to playlist to radio. Even the man with two phones is impressed, and he has seen the inside of the machine.', effects: { hypeSong: 45, fame: 9, network: 3 } },
+        },
+      },
+      right: {
+        label: 'The song finds its own rooms',
+        governingStats: { cred: 0.7, creativity: 0.4 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'Organic reach, it turns out, is a hill. The song climbs it slowly, respectably, in sensible shoes. The man with two phones waves from a passing car.', effects: { hypeSong: 8, cred: 3 } },
+          good: { text: 'A real DJ with one phone and taste picks it up because they LIKE it. Slower burn, cleaner flame — the listeners it finds actually stay.', effects: { hypeSong: 20, cred: 5, fame: 3 } },
+          incredible: { text: 'The song walks into rooms money can’t book: a film scene, a stadium PA between innings, someone’s wedding. Placement bought that reach for others. Yours was EARNED, and everyone can tell.', effects: { hypeSong: 34, cred: 8, fame: 6 } },
+        },
+      },
+    },
+  },
 ];

@@ -757,6 +757,17 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     });
     (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: s.crowned });
   }
+  if (effects.hypeSong) {
+    // Promo: pour hype into your best charting song. Hype decays hard every
+    // chart week (×0.55), so this is how a song SURVIVES — the next act
+    // break will show what the push bought.
+    const charting = (state.songs || []).filter((s) => s.status === 'charting' && s.pos);
+    if (charting.length) {
+      const top = charting.slice().sort((a, b) => a.pos - b.pos)[0];
+      top.hype = clamp(top.hype + effects.hypeSong, 0, 100);
+      deltas.songHyped = { title: top.title, hype: top.hype, gain: effects.hypeSong };
+    }
+  }
   if (effects.releaseDemo) {
     // Release day: your best demo goes to the chart. The number is the hype
     // it ships with — the fiction (tier) decides how loud the drop lands.
