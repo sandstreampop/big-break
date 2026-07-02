@@ -204,6 +204,7 @@ function renderHud() {
   top.append(actWrap);
   const counters = el('span', 'hud-counters');
   if (run.encore > 0) counters.append(el('span', 'hud-encore', `🎇${run.encore > 1 ? '×' + run.encore : ''}`));
+  if (run.pathProgress > 0 && run.path) counters.append(el('span', 'hud-momentum', `▲${run.pathProgress}`));
   counters.append(el('span', 'hud-fame', `★ ${run.fame}`));
   counters.append(el('span', 'hud-money' + (run.money < 0 ? ' neg' : ''), `$${run.money}`));
   if (run.path === 'hitfactory' || run.hits > 0) counters.append(el('span', 'hud-hits', `♪ ${run.hits} hit${run.hits === 1 ? '' : 's'}`));
@@ -697,20 +698,48 @@ function actInterstitial(step) {
 
 // ---------- Crossroads (spec §7.2) ----------
 
+function pathFit(pathId) {
+  const gates = CONFIG.winGates[pathId];
+  const readings = Object.entries(gates).map(([key, target]) => {
+    const value = key === 'fame' ? run.fame : key === 'hits' ? run.hits : run.stats[key];
+    return { key, target, value, ratio: Math.min(1, value / target) };
+  });
+  const fit = readings.reduce((s, r) => s + r.ratio, 0) / readings.length;
+  return { readings, fit };
+}
+
 function renderCrossroads() {
   run.phase = 'crossroads';
   save.saveRun(run);
   const s = $('#screen-crossroads');
   s.innerHTML = '';
   s.append(el('h2', 'screen-head', 'The Crossroads'));
-  s.append(el('p', 'screen-sub', 'Act 1 is over. Pick a summit — the deck follows your choice. No refunds.'));
+  s.append(el('p', 'screen-sub', 'Act 1 is over. Pick a summit — the deck follows your choice. No refunds. The bars show how your build lines up with each gate <i>right now</i>.'));
+  const fits = Object.keys(PATHS).map((id) => ({ id, ...pathFit(id) }));
+  const bestFit = fits.reduce((a, b) => (b.fit > a.fit ? b : a));
   const row = el('div', 'pick-row');
   for (const p of Object.values(PATHS)) {
     const card = el('div', 'pick-card path-card path-' + p.id);
     card.append(el('div', 'path-icon', p.icon));
-    card.append(el('h3', '', p.name));
+    const head = el('h3', '', p.name);
+    if (bestFit.id === p.id && bestFit.fit > 0.2) head.innerHTML += ' <span class="fit-badge">closest fit</span>';
+    card.append(head);
     card.append(el('p', 'pick-flavor', p.blurb));
-    card.append(el('p', 'pick-quirk', `<b>Finale gate:</b> ${p.gateLabel}`));
+    const { readings } = fits.find((f) => f.id === p.id);
+    const gates = el('div', 'gate-readout compass');
+    for (const r of readings) {
+      const grow = el('div', 'gate-row' + (r.value >= r.target ? ' met' : ''));
+      const name = r.key === 'fame' ? 'Fame' : r.key === 'hits' ? 'Hits' : STAT_META[r.key].name;
+      grow.append(el('span', 'gate-name', name));
+      const bar = el('div', 'gate-bar');
+      const fill = el('div', 'gate-fill');
+      fill.style.width = `${Math.round(r.ratio * 100)}%`;
+      bar.append(fill);
+      grow.append(bar);
+      grow.append(el('span', 'gate-nums', `${r.value}/${r.target}`));
+      gates.append(grow);
+    }
+    card.append(gates);
     card.addEventListener('click', () => {
       sfx.commit();
       const notes = engine.commitPath(run, p.id);
