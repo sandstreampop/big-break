@@ -78,3 +78,23 @@ export function buildChart(state) {
   }
   return rows.map((r, i) => ({ ...r, pos: i + 1 }));
 }
+
+// Chart with movement vs the previous act's chart (▲ risers, ▼ fallers, NEW)
+export function buildChartWithMovement(state) {
+  const now = buildChart(state);
+  if ((state.act || 1) <= 1) return { rows: now.map((r) => ({ ...r, move: null, isNew: false })), dethroned: null };
+  const prev = buildChart({ ...state, act: state.act - 1, chartTitles: [...(state.chartTitles || [])] });
+  const prevPos = new Map(prev.map((r) => [r.artist + '|' + r.song, r.pos]));
+  const prevByArtist = new Map(prev.map((r) => [r.artist, r.pos]));
+  const rows = now.map((r) => {
+    const exact = prevPos.get(r.artist + '|' + r.song);
+    const byArtist = prevByArtist.get(r.artist);
+    const was = exact ?? byArtist;
+    if (was === undefined) return { ...r, move: null, isNew: true };
+    return { ...r, move: was - r.pos, isNew: false };
+  });
+  const prevTop = prev[0];
+  const dethroned = prevTop && now[0] && (prevTop.artist !== now[0].artist)
+    ? prevTop.artist : null;
+  return { rows, dethroned };
+}

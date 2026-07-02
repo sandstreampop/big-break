@@ -9,7 +9,7 @@ import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
 import * as save from './save.js';
 import { artFor, sceneFor } from './art.js';
-import { buildChart, playerChartInfo } from './charts.js';
+import { buildChart, buildChartWithMovement, playerChartInfo } from './charts.js';
 import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
 import { generateHeadlines } from './headlines.js';
@@ -799,12 +799,19 @@ function showChart() {
   box.append(el('p', 'chart-sub', info.entries
     ? `You have ${info.entries} song${info.entries > 1 ? 's' : ''} charting. Peak: #${info.peak}.`
     : 'You are not on it. The chart does not know you exist. Yet.'));
+  const { rows, dethroned } = buildChartWithMovement(run);
+  if (dethroned) box.append(el('p', 'chart-sub', `📉 ${dethroned} lost the top spot this act. The group chats are merciless.`));
   const list = el('div', 'chart-list');
-  for (const row of buildChart(run)) {
+  for (const row of rows) {
     const r = el('div', 'chart-row' + (row.you ? ' you' : '') + (row.rival ? ' rival' : ''));
+    const moveHtml = row.isNew
+      ? '<span class="chart-move new">NEW</span>'
+      : row.move > 0 ? `<span class="chart-move up">▲${row.move}</span>`
+      : row.move < 0 ? `<span class="chart-move down">▼${-row.move}</span>`
+      : '<span class="chart-move flat">—</span>';
     r.append(el('span', 'chart-pos', `${row.pos}`));
     r.append(el('span', 'chart-song', `<b>${row.song}</b><br><span>${row.artist}</span>`));
-    r.append(el('span', 'chart-weeks', `${row.weeks}w`));
+    r.append(el('span', 'chart-weeks', `${moveHtml} ${row.weeks}w`));
     list.append(r);
   }
   box.append(list);

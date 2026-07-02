@@ -547,7 +547,12 @@ body.big-text #app { zoom: 1.18; }
 }
 .chart-row span > span { color: var(--dim); font-size: 11px; }
 .chart-pos { font-weight: 900; font-size: 15px; color: var(--dim); text-align: center; }
-.chart-weeks { color: var(--dim); text-align: right; font-size: 11px; }
+.chart-weeks { color: var(--dim); text-align: right; font-size: 11px; white-space: nowrap; }
+.chart-move { font-weight: 800; font-size: 10px; }
+.chart-move.up { color: var(--good); }
+.chart-move.down { color: var(--bad); }
+.chart-move.flat { color: var(--dim); opacity: .6; }
+.chart-move.new { color: var(--accent); letter-spacing: .05em; }
 .chart-row.you { background: #3b2b1c; border: 1px solid #5a4020; }
 .chart-row.you .chart-pos { color: var(--accent); }
 .chart-row.rival { background: #33203f; border: 1px solid #4b2f5e; }
