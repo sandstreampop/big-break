@@ -6,6 +6,7 @@ import { rivalById } from './data/rivals.js';
 import { instrumentById } from './data/instruments.js';
 import { genreById } from './data/genres.js';
 import { contractById } from './data/contracts.js';
+import { venueById, VENUE_TIERS } from './data/venues.js';
 
 export function buildEpilogue(state) {
   const rival = rivalById(state.rival);
@@ -48,6 +49,15 @@ export function buildEpilogue(state) {
     'The person who drove out that night still gets thanked from every stage, by a nickname nobody in the crowd understands.');
   add(state.daily != null,
     'The whole thing happened in one impossible day, which is how everyone tells it anyway.');
+  const venue = venueById(state.venue);
+  if (venue) {
+    add(state.venueLevel >= 3,
+      `${venue.name} is a local institution now — there’s a plaque, a house cocktail named after you, and a permanent spot on the wall. You still play it every time you’re home.`);
+    add(state.venueLevel === 2,
+      `They keep a booth for you at ${venue.name}. Not reserved, exactly. Just understood.`);
+    add(state.venueLevel <= 1,
+      `You still mean to go back to ${venue.name} more often. The sound guy still asks about you. You should call the sound guy.`);
+  }
   add(true,
     'The sound guy at the Ricochet Room claims he always knew. For once, nobody argues with the sound guy.');
 

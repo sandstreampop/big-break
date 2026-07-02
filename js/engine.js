@@ -9,6 +9,7 @@ import { randomRival } from './data/rivals.js';
 import { contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
 import { genreById } from './data/genres.js';
+import { venueById, VENUE_TIERS } from './data/venues.js';
 
 function contractMods(state) {
   return contractById(state.contract)?.mods || {};
@@ -105,6 +106,9 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     cardLog: [],    // [{e: eventId, t: tier, a: act, s: side}] — scrapbook
     contract: null, // signed contract id (see data/contracts.js)
     genre: null,    // sound identity (see data/genres.js)
+    venue: null,    // adopted home venue (see data/venues.js)
+    venueLevel: 0,
+    venueShows: 0,
     hustles: [],    // persistent income sources (see data/hustles.js)
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
@@ -358,11 +362,37 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
     }
   }
 
+  // Home venue: a show in your adopted room. The home crowd lifts a Good/
+  // Incredible night (flat fame+cred by venue level), and every show there
+  // builds the room toward a local institution.
+  const venue = venueById(state.venue);
+  let venueHosted = false;
+  if (venue && tier !== 'bad' && tier !== 'declined' && tagsIntersect(venue.tags, choice.tags)) {
+    venueHosted = true;
+    const bonus = VENUE_TIERS[state.venueLevel]?.showBonus || 0;
+    if (bonus) {
+      effects.fame = (effects.fame || 0) + bonus;
+      effects.cred = (effects.cred || 0) + Math.ceil(bonus / 2);
+    }
+  }
+
   const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories);
   const result = {
     tier, roll: Math.round(roll), text: outcome.text, deltas, event: ev, side,
     encoreEarned, encoreSpent: useEncore,
   };
+
+  // Build the room: venue-tagged shows (any tier — you showed up) level it up
+  if (venue && tagsIntersect(venue.tags, choice.tags)) {
+    state.venueShows = (state.venueShows || 0) + 1;
+    const newLevel = Math.min(VENUE_TIERS.length - 1, Math.floor(state.venueShows / 2));
+    if (newLevel > state.venueLevel) {
+      state.venueLevel = newLevel;
+      result.venueLeveled = { venue, level: newLevel, tier: VENUE_TIERS[newLevel] };
+    } else if (venueHosted && (VENUE_TIERS[state.venueLevel]?.showBonus || 0) > 0) {
+      result.venueHosted = { venue, tier: VENUE_TIERS[state.venueLevel] };
+    }
+  }
 
   // Lucky Pick-style gear: lost when it applied and things went Bad
   if (tier === 'bad') {
@@ -709,5 +739,7 @@ export function runSummary(state) {
     swapped: !!state.swappedInstrument,
     flags: [...(state.flags || [])],
     genre: state.genre || null,
+    venue: state.venue || null,
+    venueLevel: state.venueLevel || 0,
   };
 }

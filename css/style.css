@@ -381,6 +381,7 @@ body.big-text #app { zoom: 1.18; }
 .contract-chip-mini { background: #3b1c2b; color: var(--accent2); border-color: #5a2040; }
 .genre-row { display: flex; flex-direction: column; gap: 8px; padding-bottom: 4px; }
 .genre-chip-mini { background: #1c2b3b; color: #7fc4ff; border-color: #204a5a; }
+.venue-chip-mini { background: #2b2410; color: #e8c86a; border-color: #5a4a20; letter-spacing: 1px; }
 .lp-mult { font-size: 13px; color: var(--dim); font-weight: 600; }
 
 /* ---------- Choice buttons ---------- */
