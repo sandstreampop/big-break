@@ -39,3 +39,7 @@ jobs:
           path: .
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Pages' deploy queue sometimes stalls for minutes platform-side;
+          # wait out slow patches instead of aborting at the 10-min default.
+          timeout: 1200000
