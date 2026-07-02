@@ -232,3 +232,69 @@ register('crowd', {
     stage.addEventListener('pointerdown', tap);
   },
 });
+
+// ═══════════ IDEA GRAB — songwriting (grab hooks, leave clichés) ═══════════
+const IG_HOOKS = [
+  'parking lot halo', 'rent-controlled heart', 'voicemail from July',
+  'glitter in the drain', 'borrowed summer', 'basement cathedral',
+  'landlord of my dreams', 'soft launch goodbye', 'group chat ghost',
+  'terminal romantic', 'discount miracle', 'midnight layover',
+  'apology tour', 'unskippable you', 'feral honeymoon',
+];
+const IG_CLICHES = [
+  'baby baby yeah', 'hands up tonight', 'party never ends',
+  'oh girl oh girl', 'live laugh love', 'turn it up loud',
+  'dance the night away', 'you and me forever', 'burning like fire',
+  'higher and higher', 'rock this town', 'feel the beat',
+];
+register('ideas', {
+  name: 'Idea Grab', icon: '✍️',
+  how: 'Lines float up from the notebook. GRAB the hooks. Let the clichés drift by — touching one costs you. 15 seconds of inspiration.',
+  run(stage, ctx, done) {
+    const DURATION = 15000;
+    const hooks = [...IG_HOOKS].sort(() => Math.random() - 0.5).slice(0, 7);
+    const cliches = [...IG_CLICHES].sort(() => Math.random() - 0.5).slice(0, 5);
+    const queue = [...hooks.map((t) => ({ t, good: true })), ...cliches.map((t) => ({ t, good: false }))]
+      .sort(() => Math.random() - 0.5);
+
+    const field = el('div', 'mg-field');
+    const tally = el('div', 'mg-dots', '');
+    const clock = el('div', 'mg-take-label', '15');
+    stage.append(clock, field, tally, el('div', 'mg-hint', 'tap the lines worth keeping'));
+
+    let grabbed = 0, stung = 0, over = false;
+    const t0 = performance.now();
+
+    const ticker = setInterval(() => {
+      const left = Math.max(0, Math.ceil((DURATION - (performance.now() - t0)) / 1000));
+      clock.textContent = String(left);
+      if (left <= 0) end();
+    }, 250);
+
+    const spawner = setInterval(() => {
+      const item = queue.shift();
+      if (!item) { clearInterval(spawner); return; }
+      const w = el('button', 'mg-word', item.t);
+      w.style.left = `${6 + Math.random() * 55}%`;
+      w.style.animationDuration = `${5200 + Math.random() * 1600}ms`;
+      w.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        if (over || w.dataset.donePick) return;
+        w.dataset.donePick = '1';
+        if (item.good) { grabbed++; w.classList.add('mg-word-hit'); }
+        else { stung++; w.classList.add('mg-word-sting'); }
+        tally.textContent = `💡 ${grabbed}${stung ? `  💩 ${stung}` : ''}`;
+        setTimeout(() => w.remove(), 300);
+      });
+      w.addEventListener('animationend', () => w.remove());
+      field.append(w);
+    }, 1050);
+
+    function end() {
+      if (over) return;
+      over = true;
+      clearInterval(ticker); clearInterval(spawner);
+      done(Math.max(0, (grabbed - stung * 1.5) / 7));
+    }
+  },
+});

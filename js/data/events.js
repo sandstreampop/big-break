@@ -526,6 +526,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Try the minor fourth',
+        minigame: 'ideas',
         governingStats: { creativity: 1.0 },
         tags: ['write'],
         outcomes: {
@@ -1254,6 +1255,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Chase it all night',
+        minigame: 'ideas',
         governingStats: { creativity: 1.0 },
         tags: ['write', 'risky'],
         outcomes: {
@@ -1293,6 +1295,7 @@ export const EVENTS = [
       },
       right: {
         label: '“It’s not for sale. It’s not done.”',
+        minigame: 'ideas',
         governingStats: { creativity: 0.8, cred: 0.5 },
         tags: ['write', 'indie'],
         outcomes: {

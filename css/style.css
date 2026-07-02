@@ -935,3 +935,21 @@ body.big-text #app { zoom: 1.18; }
 }
 .mg-note-hit { color: var(--good); text-shadow: 0 0 12px var(--good); animation-play-state: paused; }
 .mg-note-miss { color: var(--bad); opacity: .5; animation-play-state: paused; }
+
+/* Idea Grab */
+.mg-field {
+  position: relative; height: 240px;
+  background: #1c1729; border: 1px solid #3b3352; border-radius: 12px;
+  overflow: hidden;
+}
+.mg-word {
+  position: absolute; bottom: -34px;
+  appearance: none; border: 1px solid #4b4066; cursor: pointer;
+  background: #241e33; color: var(--ink);
+  font-size: 13.5px; font-weight: 650; font-family: inherit;
+  padding: 7px 12px; border-radius: 999px; white-space: nowrap;
+  animation-name: mgFloatUp; animation-timing-function: linear; animation-fill-mode: forwards;
+}
+@keyframes mgFloatUp { to { transform: translateY(-300px); } }
+.mg-word-hit { background: #1e3c2b; color: var(--good); border-color: var(--good); animation-play-state: paused; }
+.mg-word-sting { background: #4a2030; color: var(--bad); border-color: var(--bad); animation-play-state: paused; }
