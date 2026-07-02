@@ -282,7 +282,7 @@ const IG_CLICHES = [
 ];
 register('ideas', {
   name: 'Idea Grab', icon: '✍️',
-  how: 'Lines float up from the notebook. GRAB the hooks. Let the clichés drift by — touching one costs you. 15 seconds of inspiration.',
+  how: 'Lines float up from the notebook. GRAB the fresh ink — the vivid, specific ones (“feral honeymoon”). DODGE the faded clichés you’ve heard a thousand times (“baby baby yeah”). Fresh glows. Stale fades. 15 seconds.',
   run(stage, ctx, done) {
     const DURATION = 15000;
     const hooks = [...IG_HOOKS].sort(() => Math.random() - 0.5).slice(0, 7);
@@ -293,7 +293,7 @@ register('ideas', {
     const field = el('div', 'mg-field');
     const tally = el('div', 'mg-dots', '');
     const clock = el('div', 'mg-take-label', '15');
-    stage.append(clock, field, tally, el('div', 'mg-hint', 'tap the lines worth keeping'));
+    stage.append(clock, field, tally, el('div', 'mg-hint', 'grab the glowing ink · dodge the faded clichés'));
 
     let grabbed = 0, stung = 0, over = false;
     const kept = []; // the hooks you actually caught — one may become a song title
@@ -308,7 +308,9 @@ register('ideas', {
     const spawner = setInterval(() => {
       const item = queue.shift();
       if (!item) { clearInterval(spawner); return; }
-      const w = el('button', 'mg-word', item.t);
+      // the tell: fresh hooks glow like wet ink, clichés float up faded —
+      // you've heard them a thousand times and they LOOK like it
+      const w = el('button', 'mg-word' + (item.good ? ' mg-word-fresh' : ' mg-word-stale'), item.t);
       w.style.left = `${6 + Math.random() * 55}%`;
       w.style.animationDuration = `${5200 + Math.random() * 1600}ms`;
       w.addEventListener('pointerdown', (e) => {
@@ -316,9 +318,12 @@ register('ideas', {
         if (over || w.dataset.donePick) return;
         w.dataset.donePick = '1';
         if (item.good) { grabbed++; kept.push(item.t); fx.hit(); w.classList.add('mg-word-hit'); }
-        else { stung++; fx.miss(); w.classList.add('mg-word-sting'); }
+        else {
+          stung++; fx.miss(); w.classList.add('mg-word-sting');
+          w.textContent = 'cliché.'; // the sting teaches the rule
+        }
         tally.textContent = `💡 ${grabbed}${stung ? `  💩 ${stung}` : ''}`;
-        setTimeout(() => w.remove(), 300);
+        setTimeout(() => w.remove(), 340);
       });
       w.addEventListener('animationend', () => w.remove());
       field.append(w);
