@@ -187,7 +187,34 @@ function startNewRun(daily = false, comeback = false) {
   let chosenContract = null;
   let chosenGenre = null;
   let chosenVenue = null;
+  let chosenInst = null;
   const s = $('#screen-instruments');
+
+  // Committing is a separate, explicit act — tapping an instrument only
+  // selects it, so the optional pickers below can't be silently skipped.
+  const beginRun = () => {
+    const inst = instrumentById(chosenInst);
+    if (!inst) return;
+    sfx.commit();
+    const lv = masteryLevel(inst.id);
+    run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+    engine.applyMastery(run, lv);
+    run.seed = seed + 2;
+    run.daily = daily ? todayStr() : null;
+    if (chosenContract) engine.signContract(run, chosenContract);
+    run.genre = chosenGenre;
+    run.venue = chosenVenue;
+    if (!daily) {
+      // The nemesis returns: bias normal runs toward your most-faced rival
+      const counts = meta.rivalCounts || {};
+      const [topRival, topCount] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0] || [null, 0];
+      if (topRival && topCount >= 2 && Math.random() < 0.45) run.rival = topRival;
+    }
+    if (comeback) engine.applyComeback(run);
+    run.nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 2; // 3rd+ meeting
+    save.saveRun(run);
+    dealCard();
+  };
 
   const buildScreen = () => {
     const cMods = contractById(chosenContract)?.mods || {};
@@ -195,6 +222,8 @@ function startNewRun(daily = false, comeback = false) {
       ? [cMods.forceInstrument]
       : save.unlockedInstrumentIds(meta);
     const offered = engine.offerInstruments(pool, engine.mulberry32(seed));
+    if (chosenInst && !offered.some((i) => i.id === chosenInst)) chosenInst = null;
+    const keepScroll = s.scrollTop;
     s.innerHTML = '';
     s.append(el('h2', 'screen-head', comeback ? 'The Second Act' : daily ? `Daily Grind — ${todayStr()}` : 'Choose your weapon'));
     s.append(el('p', 'screen-sub', comeback
@@ -202,7 +231,7 @@ function startNewRun(daily = false, comeback = false) {
       : daily
       ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
       : 'Each one is almost useless. That’s the point.'));
-    renderInstrumentRow(s, offered, seed, daily, () => chosenContract, () => chosenGenre, () => chosenVenue, comeback);
+    renderInstrumentRow(s, offered, chosenInst, (id) => { chosenInst = id; buildScreen(); });
     // Home venue picker (Pass 41): adopt a room to build across the run
     const venues = offerVenues(engine.mulberry32(seed + 13));
     s.append(el('h3', 'contract-head', 'Optional: adopt a home venue'));
@@ -250,42 +279,37 @@ function startNewRun(daily = false, comeback = false) {
       }
       s.append(row);
     }
+
+    // Sticky commit bar: always visible, states the full loadout
+    const inst = chosenInst ? instrumentById(chosenInst) : null;
+    const bar = el('div', 'start-bar');
+    const extras = [
+      chosenVenue ? venueById(chosenVenue)?.icon : null,
+      chosenGenre ? genreById(chosenGenre)?.icon : null,
+      chosenContract ? contractById(chosenContract)?.icon : null,
+    ].filter(Boolean).join(' ');
+    const sb = btn(inst ? `▶ Start the run — ${inst.name}${extras ? ' · ' + extras : ''}` : 'Pick an instrument to start', inst ? 'primary' : '', beginRun);
+    sb.id = 'start-run-btn';
+    if (!inst) sb.disabled = true;
+    bar.append(sb);
+    s.append(bar);
+    s.scrollTop = keepScroll;
   };
   buildScreen();
   show('#screen-instruments');
 }
 
-function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre, getVenue, comeback = false) {
+function renderInstrumentRow(s, offered, chosenId, onPick) {
   const row = el('div', 'pick-row');
   for (const inst of offered) {
-    const card = el('div', 'pick-card');
+    const card = el('div', 'pick-card' + (inst.id === chosenId ? ' selected' : ''));
     card.append(artFor(inst.art, 'pick-art'));
     const lv = masteryLevel(inst.id);
     card.append(el('h3', '', inst.name + (lv ? ` <span class="mastery">${'★'.repeat(lv)}</span>` : '')));
     card.append(el('p', 'pick-flavor', inst.flavor));
     card.append(el('p', 'pick-mods', modsText(inst.modifiers) + (lv ? ` · Mastery +${lv} to all stats` : '')));
     card.append(el('p', 'pick-quirk', `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`));
-    card.addEventListener('click', () => {
-      sfx.commit();
-      run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
-      engine.applyMastery(run, lv);
-      run.seed = seed + 2;
-      run.daily = daily ? todayStr() : null;
-      const contract = getContract();
-      if (contract) engine.signContract(run, contract);
-      run.genre = getGenre ? getGenre() : null;
-      run.venue = getVenue ? getVenue() : null;
-      if (!daily) {
-        // The nemesis returns: bias normal runs toward your most-faced rival
-        const counts = meta.rivalCounts || {};
-        const [topRival, topCount] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0] || [null, 0];
-        if (topRival && topCount >= 2 && Math.random() < 0.45) run.rival = topRival;
-      }
-      if (comeback) engine.applyComeback(run);
-      run.nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 2; // 3rd+ meeting
-      save.saveRun(run);
-      dealCard();
-    });
+    card.addEventListener('click', () => { sfx.ui(); onPick(inst.id); });
     row.append(card);
   }
   s.append(row);
