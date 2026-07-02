@@ -491,10 +491,34 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   }
   if (effects.removeGear) state.accessories = state.accessories.filter((a) => a !== effects.removeGear);
   if (effects.grantGear) {
-    const acc = resolveGearGrant(state, effects.grantGear, rng);
-    if (acc) deltas.pendingGear = acc; // UI equips (or swaps) it; sim auto-equips
+    if (effects.grantGear === 'random_basic' || effects.grantGear === 'random_good') {
+      // Shops have shelves: offer up to 3 candidates, the player chooses
+      const opts = gearShelf(state, effects.grantGear, rng);
+      if (opts.length > 1) deltas.pendingGearChoices = opts;
+      else if (opts.length === 1) deltas.pendingGear = opts[0];
+    } else {
+      const acc = resolveGearGrant(state, effects.grantGear, rng);
+      if (acc) deltas.pendingGear = acc; // UI equips (or swaps) it; sim auto-equips
+    }
   }
   return deltas;
+}
+
+function gearShelf(state, grant, rng = Math.random) {
+  const owned = new Set(state.accessories);
+  const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp'];
+  const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears'];
+  const ids = grant === 'random_basic' ? basics : goods;
+  let pool = ids.filter((id) => !owned.has(id)).map(accessoryById).filter(Boolean);
+  if (!pool.length) {
+    pool = ACCESSORIES.filter((a) => a.unlockedByDefault && !owned.has(a.id));
+  }
+  const shelf = [];
+  const bag = [...pool];
+  while (shelf.length < 3 && bag.length) {
+    shelf.push(bag.splice(Math.floor(rng() * bag.length), 1)[0]);
+  }
+  return shelf;
 }
 
 // Resolves 'random_basic'/'random_good' or a concrete accessory id to an
