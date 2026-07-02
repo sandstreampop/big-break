@@ -958,6 +958,93 @@ export const EVENTS = [
 
   // ═══════════ BANDMATE SPOTLIGHTS (require specific members) ═══════════
   {
+    id: 'bs_ludo_parade', act: [2, 3], pathAffinity: [], weight: 9,
+    requires: { bandHas: 'ludo' },
+    art: 'ev_bs_parade', context: 'Ludo, holding a flyer he clearly designed',
+    prompt: '“Great news. We’re in the harvest parade Saturday. I told them we have a float. We do not have a float. We have a van and BELIEF.” Ludo has already ordered streamers. Non-refundable streamers.',
+    tags: ['live', 'band'],
+    choices: {
+      left: {
+        label: 'Build the float. March.',
+        governingStats: { network: 0.6, creativity: 0.6 },
+        tags: ['live', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'The “float” is the van with streamers and Ludo on the roof, which is illegal in this county. The band plays a moving set while you negotiate with a parade marshal at walking speed. The kids love it. The marshal does not.', effects: { fame: 5, network: 2, money: -40, burnout: 4 } },
+          good: { text: 'Somewhere between the marching band and the tractor club, your van-float finds its audience: everyone. Ludo’s horn bounces off Main Street brick like the town was built for it. Three hundred people hear you by accident and stay on purpose.', effects: { fame: 9, network: 4, cred: 2, burnout: 3 } },
+          incredible: { text: 'The local news leads with your float. LEADS with it. Ludo, shirtless in a harvest crown, becomes a regional meme, and the clip drags your streaming numbers up with it. The parade committee sends a thank-you card and next year’s contract.', effects: { fame: 15, network: 5, money: 100, burnout: 3 } },
+        },
+      },
+      right: {
+        label: 'No float. Ludo goes alone.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'band'],
+        outcomes: {
+          bad: { text: 'Ludo marches alone with three horns and plays your whole set solo, introducing every song with “this one’s by my band, who are RESTING.” The town now believes you are gravely ill. Flowers arrive.', effects: { fame: 3, cred: -1, burnout: -3 } },
+          good: { text: 'Ludo solos the parade and returns at dusk, hoarse and triumphant, with forty new mailing-list signups written on a pizza box. You rested. The brand marched on.', effects: { fame: 5, network: 3, burnout: -5 } },
+          incredible: { text: 'Ludo, alone, wins “Best Float.” There was no float. The judges cite “irrepressible spirit.” The trophy lives in the van now, buckled into its own seat, and morale is up 40% indefinitely.', effects: { fame: 7, network: 4, cred: 3, burnout: -5 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'bs_greta_archive', act: [2, 3], pathAffinity: [], weight: 9,
+    requires: { bandHas: 'greta' },
+    art: 'ev_bs_archive', context: 'Greta, reverent, holding a labeled reel',
+    prompt: '“Night 14. The power cut out, you all kept playing in the dark, and I had the ribbon mic open.” Greta presses play. It’s the best your band has ever sounded, and nobody was trying. “So. What do we do with it?”',
+    tags: ['record', 'band'],
+    choices: {
+      left: {
+        label: 'Release the blackout tape, raw',
+        governingStats: { cred: 0.8, creativity: 0.4 },
+        tags: ['record', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The internet’s verdict: “sounds like it was recorded in the dark.” Correct. Sixty people understand it completely, and they are now your sixty favorite people.', effects: { cred: 4, fame: 1, hits: 0 } },
+          good: { text: '“The Blackout Tape” becomes the thing fans hand each other like contraband. No single, no video, no daylight — just a room breathing in the dark. Cred compounds nightly.', effects: { cred: 7, fame: 3, creativity: 2 } },
+          incredible: { text: 'A taste-making radio host plays the whole tape uninterrupted and says nothing after — dead air as review. It charts on word of mouth alone. Greta labels the next reel “Night 15?” with a smile you can hear.', effects: { cred: 9, fame: 6, creativity: 3, chartTitle: 'The Blackout Tape' } },
+        },
+      },
+      right: {
+        label: 'Keep it. Some tapes are for the band.',
+        governingStats: { cred: 0.6, network: 0.5 },
+        tags: ['band', 'safe'],
+        outcomes: {
+          bad: { text: 'You listen once, together, in the van. Moss cries into a burrito. It never leaves the archive, and some Tuesdays that feels like a mistake. Most Tuesdays it feels like a vow.', effects: { cred: 3, burnout: -3 } },
+          good: { text: 'The tape becomes band-only canon — played once a tour, lights off, engine ticking. Whatever glues bands together, you just bottled some. It shows up onstage as trust.', effects: { cred: 4, network: 4, burnout: -4 } },
+          incredible: { text: 'Years of bands break up over less than what’s on that reel. Keeping it private becomes the band’s founding myth — the show you’ll never sell. Every future negotiation is easier, because everyone knows there’s a thing you won’t.', effects: { cred: 6, network: 5, burnout: -4, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'bs_saul_clause', act: [2, 3], pathAffinity: [], weight: 9,
+    requires: { bandHas: 'saul' },
+    art: 'ev_bs_clause', context: 'Saul, at the merch table, wearing reading glasses like a weapon',
+    prompt: '“Fun fact.” Saul slides over the venue contract you signed months ago. “Clause 9(c): they owe you a percentage of BAR SALES on sellouts. You’ve sold out twice. They’re hoping nobody reads.” Saul read.',
+    tags: ['deal', 'band'],
+    choices: {
+      left: {
+        label: 'Enforce it. Every cent.',
+        governingStats: { network: 0.7, cred: 0.4 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'The venue pays — in singles, out of spite, delivered in a bucket. You are now “the bucket band” to every promoter in a forty-mile radius. The money spends fine. The nickname sticks worse.', effects: { money: 220, network: -2, cred: 1 } },
+          good: { text: 'Saul sends one email with the phrase “per our agreement” and the money appears like magic. The venue treats you with the wary respect owed to a band with representation. You do not correct them.', effects: { money: 300, cred: 3, network: 2 } },
+          incredible: { text: 'Saul negotiates back-pay PLUS a rider upgrade PLUS the clause staying in future contracts, all while eating a complimentary sandwich the venue suddenly provides. Other bands start asking who “your guy” is. Your guy plays keys.', effects: { money: 450, cred: 4, network: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Trade it for future favors',
+        governingStats: { network: 1.0 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'You waive the money for “a good relationship.” The venue’s definition of a good relationship turns out to be remembering your name at load-in. Saul writes “LESSON” on a napkin and files it.', effects: { network: 2, cred: 1 } },
+          good: { text: 'You trade the back-pay for first pick of weekend dates and the good greenroom — the one with a door. Saul calls it “consideration.” The calendar calls it three prime Saturdays.', effects: { network: 5, fame: 3, burnout: -3 } },
+          incredible: { text: 'The venue owner, disarmed by mercy with paperwork attached, becomes your loudest advocate — booking you forward a full season and telling every promoter friend “these people are PROFESSIONALS.” Saul frames the waived invoice as art.', effects: { network: 8, fame: 4, cred: 3, burnout: -3 } },
+        },
+      },
+    },
+  },
+  {
     id: 'bs_fish_van', act: [2, 3], pathAffinity: [], weight: 9,
     requires: { bandHas: 'fish' },
     art: 'ev_bs_van', context: 'Mile 40,012. A new sound from the engine.',
