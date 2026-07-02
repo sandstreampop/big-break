@@ -567,8 +567,8 @@ function dealCard() {
     const oR = engine.choiceOdds(run, ev.choices.right, opts);
     hintL.innerHTML = `${dot(oL)}${ev.choices.left.label}`;
     hintR.innerHTML = `${ev.choices.right.label}${dot(oR)}`;
-    bL.innerHTML = `<span class="dir">◀</span>${dot(oL)} ${ev.choices.left.label}`;
-    bR.innerHTML = `${ev.choices.right.label} ${dot(oR)}<span class="dir">▶</span>`;
+    bL.innerHTML = `<span class="dir">◀</span>${dot(oL)} <span class="btn-label">${ev.choices.left.label}</span><span class="gov-row">${govIcons(ev.choices.left)}</span>`;
+    bR.innerHTML = `<span class="gov-row">${govIcons(ev.choices.right)}</span><span class="btn-label">${ev.choices.right.label}</span> ${dot(oR)}<span class="dir">▶</span>`;
   };
   paintOdds();
 
@@ -605,6 +605,14 @@ function dealCard() {
     save.saveMeta(meta);
     coachMark('Drag the card left/right — or tap a button below. The colored dot is your <b>risk tell</b>. Tap ❓ up top anytime.');
   }
+}
+
+// Which stats a choice rolls against, as icons (primary bright, secondary dim)
+function govIcons(choice) {
+  const entries = Object.entries(choice.governingStats || {}).sort((a, b) => b[1] - a[1]);
+  return entries.map(([k, w]) =>
+    `<span class="gov${w >= 0.8 ? '' : ' gov-dim'}" title="${STAT_META[k]?.name || k}">${STAT_META[k]?.icon || ''}</span>`
+  ).join('');
 }
 
 // Vague risk tell (spec §10): color + shape (colorblind-safe) from odds
@@ -753,6 +761,8 @@ function showHelp() {
     <div><span class="risk risk-mid">▲</span> could go either way</div>
     <div><span class="risk risk-high">■</span> likely to go badly</div>
     <div><span class="risk risk-hot">✦</span> big upside in reach</div>`;
+  box.append(el('p', 'help-block',
+    'The small stat icons on each button show <b>what the choice rolls against</b> — bright is the main stat, faded is secondary. Build the stats your path needs, then pick fights you can win.'));
   box.append(el('p', 'help-block', 'The dot next to each choice is your <b>risk tell</b>:'));
   box.append(legend);
   box.append(el('p', 'help-block',
