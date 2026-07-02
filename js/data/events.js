@@ -947,7 +947,7 @@ export const EVENTS = [
       },
       right: {
         label: 'Post the original demo. Receipts.',
-        governingStats: { network: 0.6, creativity: 0.5 },
+        governingStats: { network: 0.7, creativity: 0.6 },
         tags: ['social', 'risky', 'rival'],
         outcomes: {
           bad: { text: 'You post the demo with the caption “v1 🙂” and the internet does not find it as devastating as you did. {rival} replies with one (1) trophy emoji. You have been out-petied.', effects: { fame: 3, cred: -3, rivalry: 2, burnout: 3 } },
@@ -2050,11 +2050,11 @@ export const EVENTS = [
       },
       right: {
         label: 'Rent the night hours to other broke musicians',
-        governingStats: { network: 0.9 },
+        governingStats: { network: 1.0 },
         tags: ['deal', 'network'],
         outcomes: {
           bad: { text: 'Your first client is a noise duo whose whole thing is feedback. The neighbors write a letter. The letter has SIGNATURES. Shed diplomacy begins.', effects: { money: 90, network: 2, burnout: 3 } },
-          good: { text: 'Word spreads through the scene: cheap hours, weird warmth, no clock-watching. The shed calendar fills, the jar fills with it, and every renter owes you one.', effects: { money: 160, network: 5, cred: 2 } },
+          good: { text: 'Word spreads through the scene: cheap hours, weird warmth, no clock-watching. The shed calendar fills, the jar fills with it, and every renter owes you one.', effects: { money: 190, network: 5, cred: 2 } },
           incredible: { text: 'A renter cuts something great in your shed and tells EVERYONE where. “Recorded at The Shed” starts appearing in liner notes like a badge. You now run the scene’s favorite room and its cheapest favor economy.', effects: { money: 240, network: 7, cred: 4, grantHustle: 'shed_rental' } },
         },
       },
@@ -4206,7 +4206,7 @@ export const EVENTS = [
         governingStats: { creativity: 0.8, network: 0.5 },
         tags: ['live', 'risky'],
         outcomes: {
-          bad: { text: 'The stunt malfunctions on live TV. You’re a meme by the commercial break. The bad kind. Mostly.', effects: { fame: 8, cred: -5, burnout: 8 } },
+          bad: { text: 'The stunt malfunctions on live TV. You’re a meme by the commercial break. The bad kind. Mostly.', effects: { fame: 4, cred: -7, burnout: 9 } },
           good: { text: 'The stunt half-works, which reads as charmingly unhinged. Morning shows debate you. Debate = fame.', effects: { fame: 15, cred: 2, burnout: 5 } },
           incredible: { text: 'The stunt LANDS. Producers scream, censors sweat, culture shifts one degree. Iconic in 90 seconds.', effects: { fame: 30, cred: 4, burnout: 6, pathProgress: 1 } },
         },
@@ -4250,7 +4250,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Take the stadium',
-        governingStats: { network: 0.6, skill: 0.8 },
+        governingStats: { network: 0.8, skill: 0.8 },
         tags: ['live', 'risky', 'mainstream'],
         outcomes: {
           bad: { text: 'You’re not ready and the venue is honest about it: 60,000 people politely checking their phones.', effects: { fame: 10, cred: -4, burnout: 12 } },
