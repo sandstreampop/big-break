@@ -2,6 +2,7 @@
 // iOS Safari unloads tabs aggressively, so the run is saved on every swipe.
 
 import { INSTRUMENTS } from './data/instruments.js';
+import { WALL_ITEMS } from './data/meta.js';
 
 const META_KEY = 'bigbreak_meta_v1';
 const RUN_KEY = 'bigbreak_run_v1';
@@ -60,18 +61,14 @@ export function resetAll() {
   } catch (e) {}
 }
 
-export function unlockedInstrumentIds(meta) {
-  const fromWall = new Set(meta.unlockedWall);
-  return INSTRUMENTS.filter(
-    (i) => i.unlockedByDefault ||
-      ['inst_electric', 'inst_sampler', 'inst_voice'].some(
-        (w) => fromWall.has(w) && wallTarget(w) === i.id
-      )
-  ).map((i) => i.id);
+function wallUnlocks(meta, kind) {
+  const owned = new Set(meta.unlockedWall);
+  return WALL_ITEMS.filter((w) => w.kind === kind && owned.has(w.id)).map((w) => w.target);
 }
 
-function wallTarget(wallId) {
-  return { inst_electric: 'electric_guitar', inst_sampler: 'sampler', inst_voice: 'own_voice' }[wallId];
+export function unlockedInstrumentIds(meta) {
+  const fromWall = new Set(wallUnlocks(meta, 'instrument'));
+  return INSTRUMENTS.filter((i) => i.unlockedByDefault || fromWall.has(i.id)).map((i) => i.id);
 }
 
 export function unlockedPackIds(meta) {
@@ -80,14 +77,5 @@ export function unlockedPackIds(meta) {
 
 export function unlockedContractIds(meta) {
   if (meta.runs < 1) return []; // contracts appear after your first finished run
-  const wall = new Set(meta.unlockedWall);
-  const wallTargets = {
-    ct_one_take: 'one_take', ct_imposter: 'imposter',
-    ct_overnight: 'overnight', ct_kazoo: 'kazoo_clause',
-  };
-  const ids = ['nepo_baby', 'straight_edge'];
-  for (const [wallId, cid] of Object.entries(wallTargets)) {
-    if (wall.has(wallId)) ids.push(cid);
-  }
-  return ids;
+  return ['nepo_baby', 'straight_edge', ...wallUnlocks(meta, 'contract')];
 }

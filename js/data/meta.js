@@ -93,6 +93,8 @@ export const WALL_ITEMS = [
   // Tier 3
   { id: 'inst_voice', tier: 3, cost: 70, kind: 'instrument', target: 'own_voice',
     name: 'Your Own Voice', desc: 'Instrument: free, portable, and everyone has an opinion about it. Vocal +10.' },
+  { id: 'inst_modular', tier: 3, cost: 60, kind: 'instrument', target: 'modular_synth',
+    name: 'Modular Synth', desc: 'Instrument: +Creativity +Skill, Studio/Tone +8, Live −4. It crashes. Live. Always.' },
   { id: 'ct_overnight', tier: 3, cost: 55, kind: 'contract', target: 'overnight',
     name: 'Contract: Overnight Success', desc: 'Acts run 6/9/6 cards. ×1.6 LP. Same gates, fewer chances.' },
   { id: 'ct_kazoo', tier: 3, cost: 65, kind: 'contract', target: 'kazoo_clause',
@@ -132,6 +134,9 @@ export const TROPHIES = [
   { id: 'hits_5', name: 'The Machine', icon: '⚙️',
     desc: 'Write 5+ Hits in one run. Nobody asks if the machine sleeps.',
     check: (s) => s.hits >= 5 },
+  { id: 'glow_up', name: 'The Glow-Up', icon: '🦋',
+    desc: 'Win any path after swapping instruments mid-run. The kazoo walked so you could fly.',
+    check: (s) => s.swapped && s.result === 'success' },
   { id: 'diversified', name: 'Diversified Portfolio', icon: '💰',
     desc: 'Hold 3+ side hustles in one run. The music is now your side hustle.',
     check: (s) => s.hustles >= 3 },

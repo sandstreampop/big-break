@@ -453,6 +453,14 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
 
+  if (effects.setInstrument) {
+    const newInst = instrumentById(effects.setInstrument);
+    if (newInst && state.instrument !== newInst.id) {
+      state.instrument = newInst.id;
+      state.swappedInstrument = true;
+      deltas.instrumentSet = newInst;
+    }
+  }
   if (effects.grantHustle) {
     state.hustles = state.hustles || [];
     if (!state.hustles.includes(effects.grantHustle)) {
@@ -643,5 +651,6 @@ export function runSummary(state) {
     daily: state.daily || null,
     contract: state.contract || null,
     hustles: (state.hustles || []).length,
+    swapped: !!state.swappedInstrument,
   };
 }

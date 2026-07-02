@@ -101,6 +101,17 @@ export const INSTRUMENTS = [
     },
   },
   {
+    id: 'modular_synth', name: 'Modular Synth', family: 'electronic',
+    art: 'instrument_modular', unlockedByDefault: false,
+    flavor: 'A wall of blinking cables. It has never made the same sound twice. Neither have you.',
+    modifiers: { creativity: 8, skill: 4 },
+    quirk: {
+      id: 'patch_bay', name: 'Patch Bay',
+      desc: 'Studio/Tone choices roll +8; Live choices roll −4 (it crashes. live. always).',
+      hooks: { rollTagBonus: [{ tags: ['studio', 'tone'], bonus: 8 }, { tags: ['live'], bonus: -4 }] },
+    },
+  },
+  {
     id: 'own_voice', name: 'Your Own Voice', family: 'voice',
     art: 'instrument_voice', unlockedByDefault: false,
     flavor: 'Free, portable, and everyone has an opinion about it.',

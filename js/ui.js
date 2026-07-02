@@ -564,8 +564,11 @@ function showResult(result) {
   if (hustle) {
     chips.append(el('span', 'chip chip-gear', `${hustle.icon} Side hustle: ${hustle.name} (+$${hustle.moneyPerAct}/act)`));
   }
+  const newInst = result.deltas.instrumentSet;
+  if (newInst) chips.append(el('span', 'chip chip-gear', `🎸 Now playing: ${newInst.name}`));
   box.append(chips);
   if (hustle?.blurb) box.append(el('p', 'gear-blurb', `${hustle.icon} ${hustle.blurb}`));
+  if (newInst) box.append(el('p', 'gear-blurb', `🎸 <b>${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`));
 
   // Gear gained?
   const pending = result.deltas.pendingGear;

@@ -747,6 +747,64 @@ export const EVENTS = [
       },
     },
   },
+  {
+    id: 'a2_fan_gift', act: 2, pathAffinity: [], weight: 7,
+    art: 'ev_fan_gift', context: 'A superfan, holding a guitar case',
+    prompt: 'After the show, a fan opens a case: a real electric guitar. “My dad’s. He’d want someone GOING somewhere to have it.” The fan is not asking. The fan is giving.',
+    tags: ['live', 'network'],
+    choices: {
+      left: {
+        label: 'Accept the guitar',
+        governingStats: { cred: 0.7, network: 0.5 },
+        tags: ['roots'],
+        outcomes: {
+          bad: { text: 'You accept — and spend a week terrified it’s stolen. It’s not. It’s just heavy with expectations. You learn to carry both.', effects: { setInstrument: 'electric_guitar', cred: 2, burnout: 3 } },
+          good: { text: 'It hums like it missed being played. You retire the old junk with honors — framed, not forgotten.', effects: { setInstrument: 'electric_guitar', cred: 4, skill: 3 } },
+          incredible: { text: 'First show with it, the fan is front row, crying. You dedicate the set to their dad. The room learns the story. The story never leaves your shows.', effects: { setInstrument: 'electric_guitar', cred: 7, skill: 3, fame: 8, network: 3 } },
+        },
+      },
+      right: {
+        label: 'Decline. The junk IS the sound.',
+        governingStats: { creativity: 1.0 },
+        tags: ['indie'],
+        outcomes: {
+          bad: { text: 'You explain your “artistic commitment” to the janky instrument for slightly too long. The fan nods slowly, case closing.', effects: { creativity: 3, network: -2 } },
+          good: { text: 'You play the fan one song on the old junk to show why. They get it. Everyone eventually gets it.', effects: { creativity: 5, cred: 4 } },
+          incredible: { text: '“Keep it,” you say, “but bring it to every show — you’re my guitar tech now.” The fan becomes crew. The legend grows sideways.', effects: { creativity: 6, cred: 5, network: 6, fame: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_pawn_upgrade', act: 2, pathAffinity: [], weight: 6,
+    requires: { moneyMin: 150 },
+    art: 'ev_pawn_upgrade', context: 'Second Chances Pawn & Loan, again',
+    prompt: 'The owner slides a sampler across the counter. “Trade-in deal: your instrument plus $150. It’s got somebody’s whole career in its pads. Could be yours.”',
+    tags: ['shop', 'deal'],
+    choices: {
+      left: {
+        label: 'Trade up ($150)',
+        governingStats: { creativity: 0.7 },
+        tags: ['deal', 'electronic'],
+        cost: 150,
+        outcomes: {
+          bad: { text: 'The pads stick and pad 7 triggers a stranger’s voicemail. You keep the voicemail in a song. Obviously.', effects: { money: -150, setInstrument: 'sampler', creativity: 3 } },
+          good: { text: 'The sampler reroutes your whole brain. You stop writing songs and start building them.', effects: { money: -150, setInstrument: 'sampler', creativity: 5, skill: 2 } },
+          incredible: { text: 'Inside: a flash card of unreleased loops signed “for whoever’s next.” The previous owner, it turns out, made three hits you know. You inherit a lineage.', effects: { money: -150, setInstrument: 'sampler', creativity: 8, cred: 4, addFlag: 'demo_in_pocket' } },
+        },
+      },
+      right: {
+        label: 'Loyalty. Walk out together.',
+        governingStats: { cred: 1.0 },
+        tags: ['roots', 'safe'],
+        outcomes: {
+          bad: { text: 'You pat your instrument protectively. The owner shrugs: “the offer dies at close.” It dies. You think about it weekly.', effects: { cred: 3 } },
+          good: { text: '“Couldn’t do it.” The owner nods like you passed a test. Maybe you did.', effects: { cred: 5, creativity: 2 } },
+          incredible: { text: 'The owner leans in: “good. the sampler’s cursed. here—” and hands you a discount on something actually useful.', effects: { cred: 6, money: -60, grantGear: 'random_good' } },
+        },
+      },
+    },
+  },
   // ---- Act 2: MEGASTAR ----
   {
     id: 'a2_label_showcase', act: 2, pathAffinity: ['megastar'], weight: 10,
@@ -1764,6 +1822,34 @@ export const EVENTS = [
           bad: { text: 'Legal fees mount. The producers rename it “UNBREAKABLE: A Musician’s Story” and make it anyway, worse.', effects: { money: -120, cred: 3, burnout: 6 } },
           good: { text: 'Cease and desist lands. Your story stays yours, which is the entire point of having one.', effects: { money: -60, cred: 6 } },
           incredible: { text: 'The suit settles in your favor AND you keep the script. It’s so bad it becomes beloved at parties. Priceless.', effects: { money: 200, cred: 7, fame: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_voice_coach', act: 3, pathAffinity: [], weight: 6,
+    art: 'ev_voice_coach', context: 'A vocal coach with unsettling eye contact',
+    prompt: '“You’ve been hiding behind that thing.” She points at your instrument. “Your real instrument has been inside you the whole time. Sing.” The room waits.',
+    tags: ['vocal', 'practice'],
+    choices: {
+      left: {
+        label: 'Sing. Actually sing.',
+        governingStats: { creativity: 0.7, cred: 0.5 },
+        tags: ['vocal', 'risky'],
+        outcomes: {
+          bad: { text: 'What comes out is a sound previously heard only in nature documentaries. “Interesting,” she says, taking notes. So many notes.', effects: { creativity: 3, burnout: 4, skill: 2 } },
+          good: { text: 'Rough, cracked, undeniably yours. She nods once. You leave carrying an instrument you can never put down.', effects: { setInstrument: 'own_voice', creativity: 4, cred: 3 } },
+          incredible: { text: 'The note lands and the room goes quiet in the way rooms only go quiet for the real thing. Everything before this was the opening act.', effects: { setInstrument: 'own_voice', creativity: 6, cred: 5, fame: 6, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Double down on your instrument',
+        governingStats: { skill: 1.0 },
+        tags: ['practice', 'safe'],
+        outcomes: {
+          bad: { text: '“Suit yourself,” she shrugs, and charges you for the full hour of not singing.', effects: { money: -40, skill: 3 } },
+          good: { text: 'You play her your answer instead of singing it. She listens all the way through. “Fine. THAT’S your voice.”', effects: { skill: 6, cred: 3, creativity: 2 } },
+          incredible: { text: 'You play the thing you could never sing. She stands up. “Never sing. Do THAT forever.” Best lesson you never took.', effects: { skill: 9, creativity: 4, cred: 4 } },
         },
       },
     },
