@@ -54,6 +54,26 @@ export function clearRun() {
   try { localStorage.removeItem(RUN_KEY); } catch (e) {}
 }
 
+// Save portability: the whole career as a compact code
+export function exportSave() {
+  const payload = { v: 1, meta: read(META_KEY), run: read(RUN_KEY) };
+  return 'BB1.' + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+}
+
+export function importSave(code) {
+  try {
+    const raw = code.trim().replace(/^BB1\./, '');
+    const payload = JSON.parse(decodeURIComponent(escape(atob(raw))));
+    if (!payload || payload.v !== 1 || typeof payload.meta !== 'object') return false;
+    if (payload.meta) write(META_KEY, payload.meta);
+    if (payload.run) write(RUN_KEY, payload.run);
+    else localStorage.removeItem(RUN_KEY);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 export function resetAll() {
   try {
     localStorage.removeItem(META_KEY);

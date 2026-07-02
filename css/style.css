@@ -51,7 +51,9 @@ body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-.screen.active { display: flex; }
+.screen.active { display: flex; animation: screenIn .22s ease-out; }
+@keyframes screenIn { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .screen.active { animation: none; } }
 
 /* ---------- Title ---------- */
 .title-logo {
