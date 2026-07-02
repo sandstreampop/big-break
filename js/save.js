@@ -75,6 +75,10 @@ export function unlockedPackIds(meta) {
   return meta.unlockedWall.filter((id) => id.startsWith('pack_'));
 }
 
+export function unlockedPerkIds(meta) {
+  return wallUnlocks(meta, 'perk');
+}
+
 export function unlockedContractIds(meta) {
   if (meta.runs < 1) return []; // contracts appear after your first finished run
   return ['nepo_baby', 'straight_edge', ...wallUnlocks(meta, 'contract')];
