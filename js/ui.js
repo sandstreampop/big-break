@@ -566,10 +566,13 @@ function dealCard() {
     const opts = { encore: encoreArmed };
     const oL = engine.choiceOdds(run, ev.choices.left, opts);
     const oR = engine.choiceOdds(run, ev.choices.right, opts);
-    hintL.innerHTML = `${dot(oL)}${ev.choices.left.label}`;
-    hintR.innerHTML = `${ev.choices.right.label}${dot(oR)}`;
-    bL.innerHTML = `<span class="dir">◀</span>${dot(oL)} <span class="btn-label">${ev.choices.left.label}</span><span class="gov-row">${govIcons(ev.choices.left)}</span>`;
-    bR.innerHTML = `<span class="gov-row">${govIcons(ev.choices.right)}</span><span class="btn-label">${ev.choices.right.label}</span> ${dot(oR)}<span class="dir">▶</span>`;
+    hintL.innerHTML = `${dot(oL)}${fillText(ev.choices.left.label)}`;
+    hintR.innerHTML = `${fillText(ev.choices.right.label)}${dot(oR)}`;
+    // Structured two-tier layout: a compact meta strip (direction, risk
+    // tell, governing stats), then the label — long labels wrap cleanly
+    // instead of scattering icons across lines.
+    bL.innerHTML = `<span class="choice-meta"><span class="dir">◀</span>${dot(oL)}<span class="gov-row">${govIcons(ev.choices.left)}</span></span><span class="btn-label">${fillText(ev.choices.left.label)}</span>`;
+    bR.innerHTML = `<span class="choice-meta"><span class="dir">▶</span>${dot(oR)}<span class="gov-row">${govIcons(ev.choices.right)}</span></span><span class="btn-label">${fillText(ev.choices.right.label)}</span>`;
   };
   paintOdds();
 
