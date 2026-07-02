@@ -1,0 +1,145 @@
+# BIG BREAK — telemetry
+
+Playtest-driven balance: turn swipes into signal. Events flow to PostHog
+(EU) and to a local ring buffer. This doc is the event schema + copy-paste
+queries for the insights that matter.
+
+Two ways to read the data:
+
+- **PostHog** — paste a query below into a new SQL insight
+  (Product Analytics → New insight → SQL), run it, hit **Save**. That saved
+  insight *is* the dashboard tile. Best for retention/funnels and live data.
+- **Local, no login** — a playtester taps **Settings → Send session data**
+  and sends you the blob; run `node tools/analyze-events.mjs blob.json` for
+  degenerate choices, win rate per path, death causes, run length, and the
+  tutorial funnel instantly. Best during hands-on sessions.
+
+## Event schema
+
+All properties are game state — no PII. `properties.` prefix in HogQL.
+
+| event | properties |
+|---|---|
+| `run_start` | `instrument, contract, genre, venue, mode(normal\|daily\|comeback), mastery, career_runs` |
+| `swipe` | `card, side(left\|right), tier(bad\|good\|incredible\|declined), act, path, tutorial, encore_armed, burnout` |
+| `run_end` | `outcome(success\|partial\|failure\|gameover), path, cause(finale\|burnout\|cancelled\|debt), cards, fame, hits, lp, instrument, contract, chart_peak` |
+| `tutorial_start` | `replay` |
+| `tutorial_complete` | `first_time` |
+| `tutorial_skip` | — |
+
+Every event also carries `app_version`.
+
+## Insight 1 — Degenerate choices (fake-choice detector)
+
+The single highest-value balance query. A card almost everyone swipes the
+same way isn't a decision — it's a formality. Cut it or fix the losing side.
+
+```sql
+SELECT
+  properties.card AS card,
+  count() AS swipes,
+  round(100 * countIf(properties.side = 'left')  / count()) AS left_pct,
+  round(100 * countIf(properties.side = 'right') / count()) AS right_pct,
+  greatest(
+    round(100 * countIf(properties.side = 'left')  / count()),
+    round(100 * countIf(properties.side = 'right') / count())
+  ) AS skew,
+  round(100 * countIf(properties.tier = 'bad') / count()) AS bad_pct
+FROM events
+WHERE event = 'swipe' AND properties.tutorial = false
+GROUP BY card
+HAVING swipes >= 20
+ORDER BY skew DESC
+```
+
+Read the top rows: `skew ≥ 85` is suspect, `≥ 95` is almost always a fake
+choice. `bad_pct` tells you whether the dominant side is the *safe* one
+(players fleeing risk) or the *only sensible* one (the other side is a trap).
+
+## Insight 2 — Win rate per path
+
+Tune to a deliberate band (roguelikes usually 25–40% success). Anything
+outside is a balance bug, not taste.
+
+```sql
+SELECT
+  properties.path AS path,
+  count() AS runs,
+  round(100 * countIf(properties.outcome = 'success') / count()) AS win_pct,
+  round(100 * countIf(properties.outcome = 'partial') / count()) AS partial_pct,
+  round(100 * countIf(properties.outcome IN ('failure','gameover')) / count()) AS loss_pct
+FROM events
+WHERE event = 'run_end' AND properties.path != ''
+GROUP BY path
+ORDER BY runs DESC
+```
+
+## Insight 3 — Death causes
+
+Where careers actually end. A cause dominating means that fail state is
+over-tuned (or under-telegraphed).
+
+```sql
+SELECT properties.cause AS cause, count() AS deaths
+FROM events
+WHERE event = 'run_end' AND properties.outcome = 'gameover'
+GROUP BY cause
+ORDER BY deaths DESC
+```
+
+## Insight 4 — Run-length distribution
+
+Confirms the 5–10 minute loop. A fat left tail = players dying early
+(onboarding/difficulty); a spike at the cap = the intended full run.
+
+```sql
+SELECT properties.cards AS cards, count() AS runs
+FROM events
+WHERE event = 'run_end'
+GROUP BY cards
+ORDER BY cards
+```
+
+## Insight 5 — Tutorial funnel + "did they start a second run"
+
+Build as a **Funnel** insight (not SQL) for true per-player conversion and
+drop-off: New insight → Funnel, steps in order:
+
+1. `tutorial_start`
+2. `tutorial_complete`
+3. `run_start`  (first real run)
+4. `run_end`
+5. `run_start` again  ← **the retention question that matters**
+
+Set the conversion window to 1 day. Step 2→3 is "did the lesson land"; the
+final 4→5 is "did one run pull them into a second."
+
+## Insight 6 — D1 / D7 retention
+
+Built-in **Retention** insight (no SQL): performed event `run_start`,
+returning event `run_start`, granularity Day. D1 and D7 columns are your
+north-star retention numbers.
+
+## Insight 7 — First-choice skew by instrument (optional)
+
+Which starting instrument correlates with finishing vs. bailing early —
+early read on whether any instrument is a trap pick.
+
+```sql
+SELECT
+  properties.instrument AS instrument,
+  count() AS runs,
+  round(avg(properties.cards)) AS avg_cards,
+  round(100 * countIf(properties.outcome = 'success') / count()) AS win_pct
+FROM events
+WHERE event = 'run_end'
+GROUP BY instrument
+ORDER BY runs DESC
+```
+
+## Suggested dashboard
+
+Put 1, 2, 3 on one dashboard ("Balance") and 5, 6 on another ("Retention").
+Balance is the loop you run after every playtest batch: read insight 1,
+fix or cut the flagged cards in `js/data/events.js`, re-check insight 2
+against the target band, ship, repeat.
