@@ -10,6 +10,7 @@ import { contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
 import { genreById } from './data/genres.js';
 import { venueById, VENUE_TIERS } from './data/venues.js';
+import { bandmateById, recruitCandidate } from './data/band.js';
 
 function contractMods(state) {
   return contractById(state.contract)?.mods || {};
@@ -109,6 +110,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     venue: null,    // adopted home venue (see data/venues.js)
     venueLevel: 0,
     venueShows: 0,
+    band: [],       // recruited bandmates (see data/band.js), max 3
     hustles: [],    // persistent income sources (see data/hustles.js)
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
@@ -171,6 +173,7 @@ function meetsRequires(ev, state) {
   if (r.rivalryMax !== undefined && (state.rivalry ?? 0) > r.rivalryMax) return false;
   if (r.genreAny && !state.genre) return false;
   if (r.hustleMin !== undefined && (state.hustles || []).length < r.hustleMin) return false;
+  if (r.bandMin !== undefined && (state.band || []).length < r.bandMin) return false;
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');
@@ -286,6 +289,10 @@ export function rollComponents(state, choice, opts = {}) {
   }
   for (const gb of genreById(state.genre)?.bonuses || []) {
     if (tagsIntersect(gb.tags, choice.tags)) quirkBonus += gb.bonus;
+  }
+  for (const bid of state.band || []) {
+    const bm = bandmateById(bid);
+    if (bm && tagsIntersect(bm.bonus.tags, choice.tags)) quirkBonus += bm.bonus.bonus;
   }
 
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
@@ -520,6 +527,28 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
       deltas.instrumentSet = newInst;
     }
   }
+  if (effects.grantBandmate) {
+    state.band = state.band || [];
+    if (state.band.length < 3) {
+      const bm = effects.grantBandmate === 'random'
+        ? recruitCandidate(state, rng)
+        : (!state.band.includes(effects.grantBandmate) ? bandmateById(effects.grantBandmate) : null);
+      if (bm) {
+        state.band.push(bm.id);
+        deltas.bandmateJoined = bm;
+      }
+    }
+  }
+  if (effects.removeBandmate) {
+    state.band = state.band || [];
+    if (effects.removeBandmate === 'first') {
+      const gone = bandmateById(state.band[0]);
+      state.band = state.band.slice(1);
+      if (gone) deltas.bandmateLeft = gone;
+    } else {
+      state.band = state.band.filter((b) => b !== effects.removeBandmate);
+    }
+  }
   if (effects.grantHustle) {
     state.hustles = state.hustles || [];
     if (!state.hustles.includes(effects.grantHustle)) {
@@ -647,6 +676,18 @@ function startAct(state, act) {
       notes.push(`${h.icon} ${h.name}: +$${h.moneyPerAct}`);
     }
   }
+  for (const bid of state.band || []) {
+    const bm = bandmateById(bid);
+    if (bm?.actQuirk?.money) {
+      state.money += bm.actQuirk.money;
+      notes.push(`${bm.icon} ${bm.name}: +$${bm.actQuirk.money} merch`);
+    }
+    if (bm?.actQuirk?.burnout) {
+      const before = state.stats.burnout;
+      state.stats.burnout = Math.max(0, before + bm.actQuirk.burnout);
+      if (state.stats.burnout !== before) notes.push(`${bm.icon} ${bm.name}: ${bm.actQuirk.burnout} Burnout`);
+    }
+  }
   return notes;
 }
 
@@ -741,5 +782,6 @@ export function runSummary(state) {
     genre: state.genre || null,
     venue: state.venue || null,
     venueLevel: state.venueLevel || 0,
+    band: [...(state.band || [])],
   };
 }

@@ -7,6 +7,7 @@ import { instrumentById } from './data/instruments.js';
 import { genreById } from './data/genres.js';
 import { contractById } from './data/contracts.js';
 import { venueById, VENUE_TIERS } from './data/venues.js';
+import { bandmateById } from './data/band.js';
 
 export function buildEpilogue(state) {
   const rival = rivalById(state.rival);
@@ -49,6 +50,13 @@ export function buildEpilogue(state) {
     'The person who drove out that night still gets thanked from every stage, by a nickname nobody in the crowd understands.');
   add(state.daily != null,
     'The whole thing happened in one impossible day, which is how everyone tells it anyway.');
+  const band = (state.band || []).map(bandmateById).filter(Boolean);
+  add(band.length >= 3,
+    `The band stayed the band — ${band.map((b) => b.name).join(', ')} — through every reunion rumor they started themselves, for fun.`);
+  add(band.length === 1,
+    `${band[0] ? band[0].name : 'Your bandmate'} still plays every show with you. Some hires are family with a start date.`);
+  add((state.flags || []).includes('band_named'),
+    'Nobody remembers whose name was on the first flyer. That’s the whole point. That was always the whole point.');
   const venue = venueById(state.venue);
   if (venue) {
     add(state.venueLevel >= 3,

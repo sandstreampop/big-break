@@ -545,6 +545,120 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════════════ THE BAND (recruit & drama) ═══════════════════
+  {
+    id: 'a1_first_bandmate', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_first_bandmate', context: 'After your set, by the amps',
+    prompt: 'A musician you half-know waits by your gear. “I’ve seen you play four times. I know how to fix what’s missing. Let me in.” They are, annoyingly, right about what’s missing.',
+    tags: ['network', 'band'],
+    choices: {
+      left: {
+        label: 'Start the band',
+        governingStats: { network: 1.0 },
+        tags: ['band', 'network'],
+        outcomes: {
+          bad: { text: 'Your first rehearsal is 10% music, 90% negotiating whose songs count. Still — the 10% has something.', effects: { grantBandmate: 'random', network: 2, burnout: 3 } },
+          good: { text: 'The first full run-through locks in halfway through song two. You catch each other grinning. Oh no. It’s a band now.', effects: { grantBandmate: 'random', network: 4, creativity: 2 } },
+          incredible: { text: 'By the end of the night you have a shared setlist, a rehearsal schedule, and an inside joke. The sound is twice its old size.', effects: { grantBandmate: 'random', network: 6, creativity: 3, cred: 2 } },
+        },
+      },
+      right: {
+        label: 'Stay a solo act',
+        governingStats: { creativity: 0.9 },
+        tags: ['solo', 'indie'],
+        outcomes: {
+          bad: { text: 'They join someone else’s band by Friday. That band is suddenly, measurably better. You practice alone, loudly.', effects: { creativity: 3, rivalry: 1 } },
+          good: { text: '“It’s a solo project,” you explain. The vision stays whole. The amp stays heavy. Both facts are true.', effects: { creativity: 5, cred: 2 } },
+          incredible: { text: 'You channel the almost-band into an arrangement that sounds like four people. The one-person wall of sound gets its own mythology.', effects: { creativity: 7, skill: 3, cred: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_auditions', act: 2, pathAffinity: [], weight: 8,
+    art: 'ev_auditions', context: 'Open auditions (you made a flyer)',
+    prompt: 'You hold auditions. Eleven people show up: nine are wrong in fascinating ways, one brought a theremin “as a joke,” and one — one is the real thing.',
+    tags: ['band', 'network'],
+    choices: {
+      left: {
+        label: 'Hire the real thing',
+        governingStats: { network: 0.8, cred: 0.5 },
+        tags: ['band'],
+        outcomes: {
+          bad: { text: 'The real thing has real opinions. Your arrangements are now “conversations.” Growth is loud.', effects: { grantBandmate: 'random', burnout: 4, skill: 2 } },
+          good: { text: 'They learn the whole set in two days and improve a third of it. You pretend the changes were your idea. They allow this.', effects: { grantBandmate: 'random', skill: 3, creativity: 2 } },
+          incredible: { text: 'First gig together, three people ask if you’ve “always been this good.” You have not. That’s the point.', effects: { grantBandmate: 'random', skill: 3, fame: 5, cred: 3 } },
+        },
+      },
+      right: {
+        label: 'Hire the theremin joke person',
+        governingStats: { creativity: 1.0 },
+        tags: ['band', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'The joke stops being funny at rehearsal three and starts being ART at rehearsal four. In between: chaos.', effects: { grantBandmate: 'random', creativity: 4, cred: -2, burnout: 3 } },
+          good: { text: 'The “joke” hands wave and the sound gets 30% stranger and 60% more yours. Correct hire.', effects: { grantBandmate: 'random', creativity: 6, cred: 2 } },
+          incredible: { text: 'The theremin bit becomes your live show’s signature moment. Critics call it “committed.” The joke was a door.', effects: { grantBandmate: 'random', creativity: 8, fame: 5, cred: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_stranded_player', act: [2, 3], pathAffinity: [], weight: 7,
+    art: 'ev_stranded', context: 'A gas station, 2 a.m.',
+    prompt: 'A touring act imploded three exits back. Their best player sits on a flight case with a thousand-yard stare and nowhere to be. Your van has one seat left.',
+    tags: ['band', 'tour'],
+    choices: {
+      left: {
+        label: 'Take them in',
+        governingStats: { cred: 0.7, network: 0.6 },
+        tags: ['band', 'network'],
+        outcomes: {
+          bad: { text: 'They’re grateful, brilliant, and processing a breakup with an entire band. Rehearsals double as therapy. You’re bad at therapy.', effects: { grantBandmate: 'random', cred: 3, burnout: 4 } },
+          good: { text: 'They repay the seat with a decade of road wisdom and the tightest playing you’ve shared a stage with.', effects: { grantBandmate: 'random', cred: 4, skill: 3 } },
+          incredible: { text: 'Turns out you rescued a low-key legend. Their old fans follow them to you. The gas station becomes lore.', effects: { grantBandmate: 'random', cred: 6, fame: 6, network: 4 } },
+        },
+      },
+      right: {
+        label: 'Buy their band’s gear instead',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'shop'],
+        outcomes: {
+          bad: { text: 'You lowball a heartbroken stranger at 2 a.m. The gear works. Your reflection in the van window doesn’t.', effects: { money: -60, grantGear: 'random_good', cred: -3 } },
+          good: { text: 'Fair price, quick deal, everyone eats. The flight case sticker collection alone is worth it.', effects: { money: -80, grantGear: 'random_good' } },
+          incredible: { text: 'In the case: the gear, plus a notebook of unused riffs signed “whoever needs them.” You need them.', effects: { money: -80, grantGear: 'random_good', creativity: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_band_ultimatum', act: 3, pathAffinity: [], weight: 11,
+    requires: { bandMin: 2 },
+    art: 'ev_ultimatum', context: 'A band meeting you didn’t call',
+    prompt: 'The band sits you down. “We’re not your backing act anymore. Equal billing, band name, band votes. Or —” They don’t finish the sentence. The drummer finishes it with a cymbal tap.',
+    tags: ['band'],
+    choices: {
+      left: {
+        label: 'Become a real band',
+        governingStats: { network: 0.7, cred: 0.6 },
+        tags: ['band', 'safe'],
+        outcomes: {
+          bad: { text: 'Democracy arrives. The first vote is about the name. The vote takes nine days. The name is somehow worse.', effects: { cred: 3, network: 3, burnout: 4, addFlag: 'band_named' } },
+          good: { text: 'Equal billing, shared load, better shows. The van rides lighter with nobody keeping score.', effects: { cred: 5, network: 5, burnout: -4, addFlag: 'band_named' } },
+          incredible: { text: 'The renamed band plays like a fist. Nobody’s hired help; everybody’s all in. The next contract has four signatures and better terms.', effects: { cred: 7, network: 6, fame: 5, burnout: -4, addFlag: 'band_named', pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'It stays YOUR name on the poster',
+        governingStats: { cred: 0.9 },
+        tags: ['risky'],
+        outcomes: {
+          bad: { text: 'The cymbal tap was, in fact, a resignation letter. The room is quieter now. In every sense.', effects: { removeBandmate: 'first', cred: 2, burnout: 5 } },
+          good: { text: 'You explain the vision with enough honesty that most of them stay. The one who leaves, leaves kindly.', effects: { removeBandmate: 'first', cred: 5, creativity: 2 } },
+          incredible: { text: 'You raise everyone’s cut instead of their billing. Capitalism, deployed for once with precision. Everybody stays. Nobody forgets.', effects: { money: -150, cred: 6, network: 4, fame: 3 } },
+        },
+      },
+    },
+  },
   // ═══════════ THE UNFINISHED SONG (run-spanning arc) ═══════════
   {
     id: 'a1_fragment', act: 1, pathAffinity: [], weight: 10,
