@@ -2069,6 +2069,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Release it exactly as the shed made it',
+        minigame: 'mixdown',
         governingStats: { cred: 0.9, creativity: 0.4 },
         tags: ['indie', 'risky'],
         outcomes: {
@@ -5144,6 +5145,7 @@ export const EVENTS = [
       },
       right: {
         label: 'Not yet. It can be better.',
+        minigame: 'mixdown',
         governingStats: { skill: 0.8 },
         tags: ['studio', 'safe'],
         outcomes: {
