@@ -13,6 +13,7 @@ import { buildChart, playerChartInfo } from './charts.js';
 import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
 import { generateHeadlines } from './headlines.js';
+import { offerGenres, genreById } from './data/genres.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
@@ -111,6 +112,7 @@ function hashStr(s) {
 function startNewRun(daily = false) {
   const seed = daily ? hashStr('bigbreak-daily-' + todayStr()) : Math.floor(Math.random() * 1e9) + 1;
   let chosenContract = null;
+  let chosenGenre = null;
   const s = $('#screen-instruments');
 
   const buildScreen = () => {
@@ -124,7 +126,22 @@ function startNewRun(daily = false) {
     s.append(el('p', 'screen-sub', daily
       ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
       : 'Each one is almost useless. That’s the point.'));
-    renderInstrumentRow(s, offered, seed, daily, () => chosenContract);
+    renderInstrumentRow(s, offered, seed, daily, () => chosenContract, () => chosenGenre);
+    // Genre picker (Pass 21): optional sound identity
+    const genres = offerGenres(engine.mulberry32(seed + 7));
+    s.append(el('h3', 'contract-head', 'Optional: claim a sound'));
+    const gRow = el('div', 'genre-row');
+    for (const g of genres) {
+      const chip = el('button', 'contract-chip genre-chip' + (chosenGenre === g.id ? ' signed' : ''),
+        `${g.icon} <b>${g.name}</b> · ${g.blurb}<br><span>${g.flavor}</span>`);
+      chip.addEventListener('click', () => {
+        sfx.ui();
+        chosenGenre = chosenGenre === g.id ? null : g.id;
+        buildScreen();
+      });
+      gRow.append(chip);
+    }
+    s.append(gRow);
     // Contract picker (Pass 9): optional clause, at most one
     const contracts = save.unlockedContractIds(meta).map((id) => contractById(id)).filter(Boolean);
     if (contracts.length && !daily) {
@@ -147,7 +164,7 @@ function startNewRun(daily = false) {
   show('#screen-instruments');
 }
 
-function renderInstrumentRow(s, offered, seed, daily, getContract) {
+function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre) {
   const row = el('div', 'pick-row');
   for (const inst of offered) {
     const card = el('div', 'pick-card');
@@ -163,6 +180,7 @@ function renderInstrumentRow(s, offered, seed, daily, getContract) {
       run.daily = daily ? todayStr() : null;
       const contract = getContract();
       if (contract) engine.signContract(run, contract);
+      run.genre = getGenre ? getGenre() : null;
       save.saveRun(run);
       dealCard();
     });
@@ -234,6 +252,8 @@ function renderHud() {
   gearRow.append(el('span', 'gear-chip inst-chip', `${inst.name}`));
   const contract = contractById(run.contract);
   if (contract) gearRow.append(el('span', 'gear-chip contract-chip-mini', `${contract.icon} ${contract.name}`));
+  const genre = genreById(run.genre);
+  if (genre) gearRow.append(el('span', 'gear-chip genre-chip-mini', `${genre.icon} ${genre.name}`));
   for (const id of run.accessories) {
     const acc = accessoryById(id);
     const active = accActive(acc);
@@ -831,7 +851,8 @@ const TIER_EMOJI = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '�
 function shareTextFor(summary, lp) {
   const inst = instrumentById(summary.instrument);
   const head = summary.daily ? `BIG BREAK Daily ${summary.daily}` : 'BIG BREAK';
-  const pathName = summary.path ? PATHS[summary.path].name : 'the void';
+  const genre = summary.genre ? genreById(summary.genre) : null;
+  const pathName = (genre ? genre.name + ' ' : '') + (summary.path ? PATHS[summary.path].name : 'the void');
   const res = summary.result ? summary.result.toUpperCase()
     : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[summary.endingKey] || 'GAME OVER';
   const line = (summary.tierLog || []).map((t) => TIER_EMOJI[t] || '⬜').join('');
