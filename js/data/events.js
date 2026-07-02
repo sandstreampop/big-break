@@ -405,6 +405,146 @@ export const EVENTS = [
       },
     },
   },
+  {
+    id: 'a1_karaoke', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_karaoke', context: 'Karaoke night (you came to observe)',
+    prompt: 'Someone signs you up without asking. The book is open to a power ballad. In the corner booth, a woman in a blazer watches everything and writes things down.',
+    tags: ['live', 'vocal'],
+    choices: {
+      left: {
+        label: 'Commit to the ballad',
+        governingStats: { creativity: 0.6, network: 0.6 },
+        tags: ['live', 'vocal', 'risky'],
+        outcomes: {
+          bad: { text: 'You take the key change like a speed bump. The blazer woman writes one (1) word and underlines it.', effects: { creativity: 2, burnout: 4, fame: 1 } },
+          good: { text: 'You perform it like it’s yours. The bar sings the last chorus for you. The blazer woman circles something.', effects: { creativity: 4, network: 4, fame: 4 } },
+          incredible: { text: 'Standing ovation at KARAOKE. The blazer woman hands you a card: she books three venues and one festival.', effects: { creativity: 5, network: 8, fame: 6, cred: 2 } },
+        },
+      },
+      right: {
+        label: 'Trade slots, play your own song',
+        governingStats: { cred: 0.8, skill: 0.5 },
+        tags: ['live', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The karaoke crowd wanted the ballad. Your original lands like a tax seminar. The host “can’t find” your next slot.', effects: { cred: 2, burnout: 4 } },
+          good: { text: 'An original at karaoke is illegal in spirit, but it WORKS. Two people ask where to stream it. It isn’t streamable. It will be by Friday.', effects: { cred: 5, creativity: 3, fame: 3 } },
+          incredible: { text: 'The bar goes quiet in the good way. The host breaks the rules and gives you a second song. The blazer woman stays past her babysitter’s deadline.', effects: { cred: 7, creativity: 4, network: 5, fame: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_music_store', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_music_store', context: 'Strings & Things (help wanted)',
+    prompt: 'The music store needs weekend help. Pay is bad. But you’d touch every instrument in the building, and gearheads gossip like nobody else alive.',
+    tags: ['work'],
+    choices: {
+      left: {
+        label: 'Take the weekend job',
+        governingStats: { skill: 0.7, network: 0.5 },
+        tags: ['work', 'safe'],
+        outcomes: {
+          bad: { text: 'You spend both days restringing ukuleles for a school order. Your fingertips file a formal complaint.', effects: { money: 60, skill: 2, burnout: 4 } },
+          good: { text: 'Between customers you play everything on the wall. The good wall. Your hands learn six new arguments.', effects: { money: 80, skill: 5, network: 2 } },
+          incredible: { text: 'A touring bassist shreds the floor model, buys nothing, and offers you a warm-up slot because you “handed him the right amp without asking.”', effects: { money: 80, skill: 5, network: 6, cred: 3 } },
+        },
+      },
+      right: {
+        label: 'Busk outside it instead',
+        governingStats: { creativity: 0.7, cred: 0.5 },
+        tags: ['busk', 'risky'],
+        outcomes: {
+          bad: { text: 'The owner turns the store speakers outward. You cannot compete with a Marshall stack playing Steely Dan. Nobody can.', effects: { creativity: 2, money: 8, burnout: 3 } },
+          good: { text: 'Customers walking out with new gear are feeling generous. Your case fills with sympathy and fives.', effects: { creativity: 3, money: 45, cred: 2 } },
+          incredible: { text: 'The owner comes out furious, listens for one song, and hires you to play IN the store on Saturdays. Salary: actual money.', effects: { creativity: 4, money: 70, network: 4, grantHustle: 'residency' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_college_radio', act: 1, pathAffinity: [], weight: 8,
+    art: 'ev_radio', context: 'WKRZ 89.1, “the sound of the basement”',
+    prompt: 'College radio wants you for the 2 a.m. slot. The host, Bea, has nine listeners and treats the show like it’s the BBC. Honestly? Respect.',
+    tags: ['record', 'network'],
+    choices: {
+      left: {
+        label: 'Do the interview + live session',
+        governingStats: { network: 0.7, skill: 0.5 },
+        tags: ['record', 'live'],
+        outcomes: {
+          bad: { text: 'The board shorts mid-song and Bea conducts the rest of the interview through a megaphone. All nine listeners stay. Legends, all of them.', effects: { network: 3, skill: 2, burnout: 3 } },
+          good: { text: 'The 2 a.m. session is loose and honest, and Bea’s archive clip travels further than the broadcast ever did.', effects: { network: 4, fame: 4, cred: 3 } },
+          incredible: { text: 'Bea’s rip of your session becomes a scene bootleg. “WKRZ version” becomes the version. Bea gets promoted to 11 p.m. You did that.', effects: { network: 6, fame: 8, cred: 4, addFlag: 'demo_in_pocket' } },
+        },
+      },
+      right: {
+        label: 'Counter-offer: you’ll guest-host',
+        governingStats: { creativity: 0.8 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'You play deep cuts nobody requested for two hours. The phone rings once. Wrong number. You take the request anyway.', effects: { creativity: 3, network: 1 } },
+          good: { text: 'Your guest slot becomes a bit — “the musician who won’t play their own music.” Word spreads. Mystique accrues.', effects: { creativity: 5, cred: 3, fame: 3 } },
+          incredible: { text: 'Your radio voice is, apparently, a gift. Bea offers you a monthly slot. The nine listeners become ninety. The scene listens at 2 a.m. now.', effects: { creativity: 6, network: 5, fame: 5, cred: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_subway_clip', act: 1, pathAffinity: [], weight: 8,
+    art: 'ev_subway', context: 'A stranger’s phone, unbeknownst to you',
+    prompt: 'You practiced on the empty late-night platform because the reverb is perfect. It wasn’t empty. A stranger filmed the whole thing. It’s already posted: “who IS this??”',
+    tags: ['social', 'busk'],
+    choices: {
+      left: {
+        label: 'Claim it — “that’s me”',
+        governingStats: { network: 1.0 },
+        tags: ['social'],
+        outcomes: {
+          bad: { text: 'You comment “that’s me” from an account with 40 followers and a kazoo avatar. The internet demands proof. You provide it. Poorly. From a bathroom.', effects: { network: 2, fame: 3 } },
+          good: { text: 'You duet the clip with the same song, same tiles, same reverb. The internet does the math. New followers arrive by the hundred.', effects: { network: 4, fame: 8 } },
+          incredible: { text: 'The original poster becomes your biggest advocate — “I FOUND them, I have taste” — and their whole following adopts you as a group project.', effects: { network: 7, fame: 12, cred: 2 } },
+        },
+      },
+      right: {
+        label: 'Stay anonymous. Feed the mystery.',
+        governingStats: { creativity: 0.8, cred: 0.5 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The mystery dies in a day when your cousin comments “that’s my cousin lol.” The wedding gig haunts you again.', effects: { cred: 2, fame: 2 } },
+          good: { text: 'You post another platform clip from a different station, unlabeled. The hunt becomes a scene pastime. Mystique compounds nightly.', effects: { creativity: 5, cred: 4, fame: 5 } },
+          incredible: { text: '“The Platform Phantom” gets a fan account, a subreddit, and a theory board. You confirm nothing. Attendance at your (unrelated, wink) shows doubles.', effects: { creativity: 6, cred: 6, fame: 9 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_noise_cop', act: 1, pathAffinity: [], weight: 8,
+    art: 'ev_noise_cop', context: 'A knock at the garage door, 10:47 p.m.',
+    prompt: 'Noise complaint. The responding officer stands in the doorway, listens to the unfinished bridge you were looping, and says: “...it wants a minor fourth there. Anyway. Keep it down.”',
+    tags: ['home'],
+    choices: {
+      left: {
+        label: 'Try the minor fourth',
+        governingStats: { creativity: 1.0 },
+        tags: ['write'],
+        outcomes: {
+          bad: { text: 'The minor fourth is wrong. Deeply. But being wrong THAT way shows you what was right. You owe the officer an apology and half a credit.', effects: { creativity: 4, burnout: 2 } },
+          good: { text: 'It works. It absolutely works. You play it loud enough for the retreating patrol car to hear. The lights flash once. Approval? Approval.', effects: { creativity: 6, skill: 2 } },
+          incredible: { text: 'The bridge clicks like a lock opening. Officer Reyes, it turns out, gigged for a decade before the academy. You have a standing invitation to Sunday jazz brunch. You will attend.', effects: { creativity: 8, network: 4, cred: 2 } },
+        },
+      },
+      right: {
+        label: 'Defend your bridge as written',
+        governingStats: { cred: 0.9 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'You explain your artistic choices to a noise-complaint cop at 11 p.m. The citation includes the word “hubris,” hand-written.', effects: { money: -40, cred: 3 } },
+          good: { text: '“Respect,” says the officer, leaving. The neighbor calls again at midnight. The officer, reportedly, drives slowly.', effects: { cred: 5, creativity: 2 } },
+          incredible: { text: 'You play both versions through the doorway. A crowd of neighbors gathers IN PAJAMAS to vote. Yours wins. Democracy. The complaint is withdrawn by referendum.', effects: { cred: 7, network: 4, fame: 3 } },
+        },
+      },
+    },
+  },
   // ═══════════ THE UNFINISHED SONG (run-spanning arc) ═══════════
   {
     id: 'a1_fragment', act: 1, pathAffinity: [], weight: 10,
