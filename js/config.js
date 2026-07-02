@@ -57,7 +57,7 @@ export const CONFIG = {
 
   winGates: {
     megastar:   { fame: 100, network: 76, cred: 35 },
-    studio:     { skill: 73, cred: 62, network: 48 },
+    studio:     { skill: 69, cred: 62, network: 48 },
     hitfactory: { creativity: 92, cred: 64, hits: 4 },
   },
 
