@@ -54,11 +54,11 @@ export function playMinigame(id, ctx = {}) {
     document.querySelector('#app').append(layer);
 
     let finished = false;
-    const finish = (score) => {
+    const finish = (score, detail = null) => {
       if (finished) return;
       finished = true;
       const verdict = verdictFor(score);
-      if (score == null) { layer.remove(); resolve({ score, verdict }); return; }
+      if (score == null) { layer.remove(); resolve({ score, verdict, detail: null }); return; }
       // verdict beat: one readable moment before the card resolves
       try {
         if (verdict.label === 'GOLDEN') { sfx.mgGolden(); navigator.vibrate?.([20, 30, 20, 30, 40]); }
@@ -69,7 +69,7 @@ export function playMinigame(id, ctx = {}) {
       box.append(el('div', `mg-verdict ${verdict.cls}`, verdict.label));
       box.append(el('div', 'mg-verdict-sub',
         `${verdict.bonus >= 0 ? '+' : ''}${verdict.bonus} on this roll`));
-      setTimeout(() => { layer.remove(); resolve({ score, verdict }); }, 950);
+      setTimeout(() => { layer.remove(); resolve({ score, verdict, detail }); }, 950);
     };
 
     // intro card
@@ -91,7 +91,8 @@ export function playMinigame(id, ctx = {}) {
       // relaxed mode: a gentler curve (score lifted toward the middle) —
       // GOLDEN still requires real play; BOTCHED requires really missing
       const soften = (s) => (ctx.relaxed ? Math.min(1, s * 0.85 + 0.18) : s);
-      def.run(stage, ctx, (score) => { clearTimeout(cap); finish(soften(Math.max(0, Math.min(1, score)))); });
+      // games may pass a payload with their score (e.g. the hooks you grabbed)
+      def.run(stage, ctx, (score, detail) => { clearTimeout(cap); finish(soften(Math.max(0, Math.min(1, score))), detail); });
     });
     box.append(play);
     if (ctx.noSkip) {
@@ -293,6 +294,7 @@ register('ideas', {
     stage.append(clock, field, tally, el('div', 'mg-hint', 'tap the lines worth keeping'));
 
     let grabbed = 0, stung = 0, over = false;
+    const kept = []; // the hooks you actually caught — one may become a song title
     const t0 = performance.now();
 
     const ticker = setInterval(() => {
@@ -311,7 +313,7 @@ register('ideas', {
         e.stopPropagation();
         if (over || w.dataset.donePick) return;
         w.dataset.donePick = '1';
-        if (item.good) { grabbed++; fx.hit(); w.classList.add('mg-word-hit'); }
+        if (item.good) { grabbed++; kept.push(item.t); fx.hit(); w.classList.add('mg-word-hit'); }
         else { stung++; fx.miss(); w.classList.add('mg-word-sting'); }
         tally.textContent = `💡 ${grabbed}${stung ? `  💩 ${stung}` : ''}`;
         setTimeout(() => w.remove(), 300);
@@ -324,7 +326,7 @@ register('ideas', {
       if (over) return;
       over = true;
       clearInterval(ticker); clearInterval(spawner);
-      done(Math.max(0, (grabbed - stung * 1.5) / 7));
+      done(Math.max(0, (grabbed - stung * 1.5) / 7), { hooks: kept });
     }
   },
 });
