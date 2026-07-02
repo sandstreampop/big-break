@@ -209,8 +209,10 @@ function meetsRequires(ev, state) {
   if (r.rivalryMax !== undefined && (state.rivalry ?? 0) > r.rivalryMax) return false;
   if (r.genreAny && !state.genre) return false;
   if (r.venueAny && !state.venue) return false;
+  if (r.venueNone && state.venue) return false;
   if (r.hustleMin !== undefined && (state.hustles || []).length < r.hustleMin) return false;
   if (r.bandMin !== undefined && (state.band || []).length < r.bandMin) return false;
+  if (r.bandMax !== undefined && (state.band || []).length > r.bandMax) return false;
   if (r.bandHas && !(state.band || []).includes(r.bandHas)) return false;
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
@@ -588,6 +590,10 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     push('rivalry', state.rivalry - before);
   }
 
+  if (effects.adoptVenue && !state.venue) {
+    state.venue = effects.adoptVenue;
+    state.venueLevel = Math.min(3, effects.venueLoveStart || 0);
+  }
   if (effects.venueLove && state.venue) {
     state.venueLevel = Math.min(3, (state.venueLevel || 0) + effects.venueLove);
   }

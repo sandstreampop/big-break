@@ -2090,6 +2090,64 @@ export const EVENTS = [
     },
   },
   {
+    id: 'cb_poster_wall', act: 2, pathAffinity: [], weight: 13,
+    requires: { flagsAll: ['comeback'], venueNone: true },
+    art: 'ev_cb_poster', context: 'A bar you used to own (spiritually)',
+    prompt: 'You walk in for a quiet drink and stop dead: your poster. Still up. Laminated, at some point, against time itself. The owner follows your eyes: “Took it down for a week in the lean years. Regulars revolted. You playing again, or just visiting the shrine?”',
+    tags: ['home', 'live'],
+    choices: {
+      left: {
+        label: '“Again. Starting here. Tonight.”',
+        governingStats: { cred: 0.7, network: 0.4 },
+        tags: ['live', 'roots', 'risky'],
+        outcomes: {
+          bad: { text: 'Word-of-mouth on four hours’ notice draws nineteen people — but they’re the RIGHT nineteen, the laminators, the ones who revolted. You play the old songs to the people who kept them alive. Even rusty, it counts double here.', effects: { cred: 5, fame: 2, burnout: 3, adoptVenue: 'ricochet', venueLoveStart: 2 } },
+          good: { text: 'The owner makes one call and the room fills the old way — by phone tree. You play under your own laminated face and the years fold shut like a map. This room never stopped being yours. Now it’s official again.', effects: { cred: 7, fame: 4, network: 3, adoptVenue: 'ricochet', venueLoveStart: 2 } },
+          incredible: { text: 'Someone films the return show on a phone held with BOTH hands, reverently. The clip’s caption — “they came BACK” — does what press releases can’t. The comeback has a home now, and the home has a story, and the story has receipts: one poster, laminated, never down for more than a week.', effects: { cred: 9, fame: 7, network: 4, adoptVenue: 'ricochet', venueLoveStart: 3 } },
+        },
+      },
+      right: {
+        label: 'Just visiting. Buy the wall a drink.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'rest'],
+        outcomes: {
+          bad: { text: 'You drink quietly under your own younger face. The owner doesn’t push. On the way out you leave enough for a round for the house “when I earn the poster back.” The owner writes it on the mirror. Debts like that are fuel.', effects: { cred: 3, money: -40, burnout: -4 } },
+          good: { text: 'One drink becomes a slow evening of the old stories, told back to you better than you remember living them. No set, no pressure — just proof the roots survived the drought. You leave lighter than you came.', effects: { cred: 5, network: 2, burnout: -6 } },
+          incredible: { text: 'At close, the owner unlocks the back room: every flyer, setlist, and broken string from the old days, archived in shoeboxes labeled by year. “Figured you’d want it someday. Someday looks like today.” You leave with your own history in a box and a fire you forgot you had.', effects: { cred: 7, creativity: 4, burnout: -6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'cb_old_flame_band', act: 2, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['comeback'], bandMax: 0 },
+    art: 'ev_cb_band', context: 'A voice from the old lineup, in a grocery store',
+    prompt: 'Aisle five: your old rhythm section, holding oat milk, staring at you. The last time you spoke was a stage, an argument, and eleven years. “Heard you’re back,” they say, in a tone that is somehow both accusation and application.',
+    tags: ['band', 'network'],
+    choices: {
+      left: {
+        label: '“I need a rhythm section.”',
+        governingStats: { network: 0.7, cred: 0.5 },
+        tags: ['band', 'risky'],
+        outcomes: {
+          bad: { text: 'The first rehearsal reopens the old argument mid-song — same bar, same disagreement, eleven years of interest. But you finish the song this time. That’s the whole difference, it turns out.', effects: { grantBandmate: 'random', network: 3, burnout: 4 } },
+          good: { text: 'The chemistry survived the years better than either of you did. Two rehearsals in, you’re finishing each other’s fills. The oat milk, forgotten in the practice space, becomes the reunion’s official monument.', effects: { grantBandmate: 'random', network: 4, cred: 3 } },
+          incredible: { text: 'It’s better now — the old telepathy plus grown-up ears. The reunion becomes the comeback’s spine: not a solo return, a RESURRECTION, witnesses included. The old argument comes up once, at dinner, and you both laugh until it’s finally, permanently small.', effects: { grantBandmate: 'random', network: 5, cred: 5, fame: 3, burnout: -3 } },
+        },
+      },
+      right: {
+        label: '“I owe you an apology first.”',
+        governingStats: { cred: 0.9 },
+        tags: ['safe', 'network'],
+        outcomes: {
+          bad: { text: 'The apology comes out in the wrong order in a grocery store, which is where the big ones apparently happen. They accept it the way people accept weather. It’s not a band. It is, finally, not a wound.', effects: { cred: 4, burnout: -3 } },
+          good: { text: 'You say the thing, eleven years late, next to the oat milk. They nod for a long time. “Okay,” they say. “Okay.” No band reunion — but next week they send you their kid, who plays BETTER, with a note: “teach them the good parts only.”', effects: { cred: 6, network: 4, burnout: -4 } },
+          incredible: { text: 'The apology unlocks the whole frozen decade — you close the grocery store talking, then the diner, then the parking lot. No reunion; something better: a friend restored to the timeline. At your next show they stand at the back, arms crossed, nodding. The nod carries eleven years of weight, set down.', effects: { cred: 8, network: 5, burnout: -6 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_tv_scout', act: 2, pathAffinity: [], weight: 10,
     requires: { fameMin: 30, flagsNone: ['tv_booked'] },
     art: 'ev_tv_scout', context: 'After the show. A card that just says a network logo.',
