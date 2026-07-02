@@ -74,6 +74,27 @@ export function generateDMs(state, count = 2) {
   add(state.fame >= 60, 'Mom',
     'A lady at the store had your face on her shirt?? I told her I made you. She did not believe me. Call your mother.');
 
+  // the songs text too — every message quotes the real catalog
+  const songs = state.songs || [];
+  const charting = songs.filter((s) => s.status === 'charting' && s.pos).sort((a, b) => a.pos - b.pos)[0];
+  const crowned = songs.find((s) => s.crowned);
+  const bestDemo = songs.filter((s) => s.status === 'demo').sort((a, b) => b.quality - a.quality)[0];
+  const faded = songs.find((s) => s.status === 'faded' && s.peak);
+  add(!!charting && charting.pos <= 3, 'Unknown number',
+    `it’s the A&R. “${charting?.title}” is top 3 and my boss thinks it was MY idea. it can keep being my idea for the right split. calls only.`);
+  add(!!charting && charting.pos > 3, 'The sound guy',
+    `heard “${charting?.title}” on the radio during load-in. didn’t tell anyone it was you. wanted the room to find out on its own. they did.`);
+  add(!!crowned && flags.includes('superfan'), 'Row zero',
+    `“${crowned?.title}” hit and I have RECEIPTS — I posted about it ${3 + ((state.chartSeed || 1) % 9)} months ago. pinned it. no caption. the caption is the timestamp.`);
+  add(!!bestDemo && bestDemo.quality >= 60, 'Nadia ✒️',
+    `played “${bestDemo?.title}” for exactly one person in the writing room. they went quiet. that’s the good quiet. ship it or I steal it (legally I cannot steal it) (ship it)`);
+  add(!!faded, 'Spotify Wrapped (unofficial)',
+    `fun fact: someone in Ohio has played “${faded?.title}” every day since it fell off the chart. one person. every day. songs don’t die, they relocate.`);
+  add(!!crowned && (state.rivalry ?? 3) >= 6, rival.name,
+    `my producer played me “${crowned?.title}” as a REFERENCE today. didn’t tell him. won’t tell him. this text self-destructs.`);
+  add(flags.includes('album_out'), 'The engineer who eats standing up',
+    'still think about the album sessions. track 7 hits different at 2am on the bus. that’s all. that’s the text.');
+
   const rng = mulberry32((state.chartSeed || 1) * 53 + state.act * 613);
   const picks = [];
   const bag = [...pool];
