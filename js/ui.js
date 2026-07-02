@@ -196,6 +196,9 @@ function renderHud() {
   const chartBtn = el('button', 'chart-btn', '📈');
   chartBtn.addEventListener('click', () => { sfx.ui(); showChart(); });
   actWrap.append(chartBtn);
+  const helpBtn = el('button', 'chart-btn', '❓');
+  helpBtn.addEventListener('click', () => { sfx.ui(); showHelp(); });
+  actWrap.append(helpBtn);
   top.append(actWrap);
   const counters = el('span', 'hud-counters');
   if (run.encore > 0) counters.append(el('span', 'hud-encore', `🎇${run.encore > 1 ? '×' + run.encore : ''}`));
@@ -360,6 +363,14 @@ function dealCard() {
   } else {
     attachDrag(card, bL, bR); // drag still works, snap without spring
   }
+
+  // First-run coaching (once per install)
+  meta.coach = meta.coach || {};
+  if (!meta.coach.card) {
+    meta.coach.card = true;
+    save.saveMeta(meta);
+    coachMark('Drag the card left/right — or tap a button below. The colored dot is your <b>risk tell</b>. Tap ❓ up top anytime.');
+  }
 }
 
 // Vague risk tell (spec §10): dot color from odds of a Bad outcome
@@ -436,6 +447,48 @@ function commitSwipe(side, dx = 0, dy = 0) {
     card.style.opacity = '0';
     setTimeout(fly, 240);
   }
+}
+
+// ---------- Help sheet + first-run coach marks (Pass 12) ----------
+
+function showHelp() {
+  const ov = $('#overlay');
+  ov.innerHTML = '';
+  ov.classList.add('active');
+  const box = el('div', 'result-card help-sheet');
+  box.append(el('div', 'tier-badge', 'HOW THIS WORKS'));
+  box.append(el('p', 'help-block',
+    '<b>Swipe</b> left or right (or tap the buttons). Every choice rolls against your stats — the stats named by the choice tilt the odds.'));
+  box.append(el('p', 'help-block',
+    'Outcomes come in three tiers: <b style="color:var(--bad)">BAD</b>, <b style="color:var(--good)">GOOD</b>, and <b style="color:var(--hot)">INCREDIBLE</b>.'));
+  const legend = el('div', 'help-legend');
+  legend.innerHTML = `
+    <div><span class="risk risk-low"></span> safe bet</div>
+    <div><span class="risk risk-mid"></span> could go either way</div>
+    <div><span class="risk risk-high"></span> likely to go badly</div>
+    <div><span class="risk risk-hot"></span> big upside in reach</div>`;
+  box.append(el('p', 'help-block', 'The dot next to each choice is your <b>risk tell</b>:'));
+  box.append(legend);
+  box.append(el('p', 'help-block',
+    '🔥 <b>Burnout</b> is the danger stat: it drags every roll down and ends your career at 100. Rest is a real decision.'));
+  box.append(el('p', 'help-block',
+    '🎇 Rolling an INCREDIBLE banks an <b>Encore</b> — arm it later to boost the swipe that matters.'));
+  box.append(el('p', 'help-block',
+    '▲ <b>Momentum</b> from big wins can push a near-miss finale over the line. ★ Fame and $ money are score and fuel, not stats.'));
+  box.append(el('p', 'tap-hint', 'tap to close'));
+  ov.append(box);
+  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
+  setTimeout(() => ov.addEventListener('click', done), 200);
+}
+
+function coachMark(text) {
+  if (!$('#screen-game').classList.contains('active')) return;
+  const old = document.querySelector('.coach');
+  if (old) old.remove();
+  const c = el('div', 'coach', text + '<span class="coach-x">tap to dismiss</span>');
+  c.addEventListener('click', () => c.remove());
+  $('#screen-game').append(c);
+  setTimeout(() => c.remove(), 9000);
 }
 
 // ---------- The Hot 10 chart overlay (Pass 6) ----------
@@ -532,6 +585,12 @@ function showResult(result) {
     ov.classList.remove('active');
     ov.removeEventListener('click', done);
     routeAdvance(engine.advance(run));
+    meta.coach = meta.coach || {};
+    if (!meta.coach.result) {
+      meta.coach.result = true;
+      save.saveMeta(meta);
+      coachMark('Outcomes have three tiers — your stats and gear tilt the roll. Build what your path needs; watch 🔥 Burnout.');
+    }
   };
   setTimeout(() => ov.addEventListener('click', done), 250);
 }
@@ -922,6 +981,7 @@ function renderSettings() {
     save.saveMeta(meta);
     renderSettings();
   }));
+  menu.append(btn('❓ How to play', '', showHelp));
   menu.append(btn('⚠ Reset all progress', 'danger', () => {
     if (confirm('Wipe every unlock, trophy, and Legacy Point? The industry forgets fast.')) {
       save.resetAll();
