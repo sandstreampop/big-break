@@ -127,6 +127,31 @@ export const ACCESSORIES = [
     sideEffect: { burnoutPerMatch: 1 },
     blurb: 'Live +6 · +1 Burnout per use (you cannot stop)',
   },
+  {
+    id: 'van_bunk', name: 'Van Bunk Conversion', art: 'gear_bunk', unlockedByDefault: true,
+    flavor: 'A plywood shelf and a dream of lumbar support.',
+    compatibility: { universal: true },
+    appliesTo: ['tour'], modifier: 6,
+    burnoutTagMult: { tags: ['tour'], mult: 0.7 },
+    blurb: 'Tour +6 · less Tour burnout (sleep is gear)',
+  },
+  {
+    id: 'fog_machine', name: 'Fog Machine (Craigslist)', art: 'gear_fog', unlockedByDefault: true,
+    flavor: 'Previous owner: a haunted house. It remembers October.',
+    compatibility: { universal: true },
+    appliesTo: ['live', 'fame'], modifier: 9,
+    counterTags: [{ tags: ['studio'], modifier: -3 }],
+    sideEffect: { burnoutPerMatch: 1 },
+    blurb: 'Live/Fame +9 · Studio −3 · +1 Burnout per use (the fumes)',
+  },
+  {
+    id: 'lucky_cable', name: 'The One Good Cable', art: 'gear_cable', unlockedByDefault: true,
+    flavor: 'Every musician owns exactly one. Guard it with your life.',
+    compatibility: { universal: true },
+    appliesTo: ['studio', 'live'], modifier: 5,
+    loseOnBad: true,
+    blurb: 'Studio/Live +5 · lost on a Bad outcome (someone “borrows” it)',
+  },
   // ---- Career Wall unlocks ----
   {
     id: 'tour_van', name: 'Tour Van (Runs)', art: 'gear_van', unlockedByDefault: false,

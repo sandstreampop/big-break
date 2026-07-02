@@ -1071,3 +1071,18 @@ body.big-text #app { zoom: 1.18; }
   box-shadow: 0 0 10px rgba(242,238,251,.6);
 }
 .mg-pitch-in { background: var(--good); box-shadow: 0 0 14px var(--good); }
+
+/* Pack the Van */
+.mg-packgrid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  background: #1c1729; border: 1px solid #3b3352; border-radius: 12px;
+  padding: 12px; min-height: 170px;
+}
+.mg-gear {
+  appearance: none; cursor: pointer; font-family: inherit;
+  background: #241e33; border: 1px solid #3b3352; border-radius: 12px;
+  display: grid; place-items: center; padding: 8px 0;
+  transition: transform .12s, opacity .2s;
+}
+.mg-gear-in { opacity: .18; transform: scale(.7); }
+.mg-gear-no { border-color: var(--bad); background: #4a2030; }

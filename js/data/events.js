@@ -1915,6 +1915,35 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a2_loadout_race', act: [1, 2], pathAffinity: [], weight: 9,
+    art: 'ev_loadout', context: '11:47 p.m. The venue “closes” at midnight.',
+    prompt: 'The house lights snap on mid-goodbye. A man with keys materializes: “Thirteen minutes. Then the alarm sets itself and your gear lives here till Monday.” The stage is a yard sale. The van is a geometry problem.',
+    tags: ['live', 'tour'],
+    choices: {
+      left: {
+        label: 'Pack it yourself. Perfectly.',
+        minigame: 'pack',
+        governingStats: { skill: 0.8 },
+        tags: ['tour', 'risky'],
+        outcomes: {
+          bad: { text: 'The Tetris gods reject your offering — the last amp requires re-doing everything, twice, while Keys Man narrates the time remaining. You clear the door at 11:59:40 with a cymbal in your lap.', effects: { skill: 2, burnout: 5 } },
+          good: { text: 'Drums, cabs, keys, strings — the sacred order holds and everything slots like it was measured. Keys Man, watching, says “you’ve done this,” which is the bouncer version of a five-star review.', effects: { skill: 4, cred: 2, burnout: 2 } },
+          incredible: { text: 'You pack the van so fast and so RIGHT that Keys Man walks over with his phone out: his brother-in-law runs backline for the amphitheater and “they lose gear WEEKLY.” A number is exchanged. Load-out becomes a job offer.', effects: { skill: 5, cred: 3, network: 4, money: 60, burnout: 2 } },
+        },
+      },
+      right: {
+        label: 'Deputize the drunk volunteers',
+        governingStats: { network: 0.9 },
+        tags: ['network', 'risky'],
+        outcomes: {
+          bad: { text: 'Five enthusiastic fans carry one item each in five directions. A tom goes missing, recovered Tuesday from someone’s roommate’s “drum corner.” The thought counted. The tom barely survived.', effects: { network: 2, burnout: 4, money: -30 } },
+          good: { text: 'You run it like a fire brigade — point, pass, repeat — and the crowd load-out becomes a closing ceremony. Everyone touches the amp. The amp is blessed now.', effects: { network: 4, fame: 2, burnout: 1 } },
+          incredible: { text: 'The volunteer chain moves the whole stage in nine minutes flat, chanting. Keys Man holds the door like an usher at a coronation. Three volunteers ask when the next show is SO THEY CAN DO THIS AGAIN. Your load-out has fans.', effects: { network: 6, fame: 3, cred: 2 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_merch_line', act: [1, 2], pathAffinity: [], weight: 9,
     art: 'ev_merchline', context: 'Post-show. The line reaches the door.',
     prompt: 'Best set in weeks, and now forty people want a piece of it — shirts, tapes, the pin somebody’s girlfriend designed. The card reader has 12% battery. You ARE the point of sale.',

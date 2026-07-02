@@ -797,3 +797,63 @@ register('note', {
     requestAnimationFrame(frame);
   },
 });
+
+// ═══════════ PACK THE VAN — load-out (tap biggest-first) ═══════════
+register('pack', {
+  name: 'Pack the Van', icon: '🚐',
+  how: 'Physics is law: BIGGEST first. Tap the gear in size order before the venue locks up. Wrong order wastes precious seconds.',
+  run(stage, ctx, done) {
+    const GEAR = ['🥁', '🔊', '🎹', '🎸', '🎺', '🎻', '🎤', '🪇'];
+    // sizes descend with index — shuffle display, demand size order
+    const items = GEAR.map((icon, i) => ({ icon, size: GEAR.length - i }))
+      .sort(() => Math.random() - 0.5);
+
+    const clock = el('div', 'mg-take-label', '20');
+    const field = el('div', 'mg-packgrid');
+    const tally = el('div', 'mg-dots', 'van: empty');
+    stage.append(clock, field, tally, el('div', 'mg-hint', 'biggest first — the drums are always first'));
+
+    let next = GEAR.length; // size we need next (8, then 7, ...)
+    let packed = 0, fumbles = 0, over = false;
+    const t0 = performance.now();
+    const DURATION = 20000;
+
+    items.forEach((it) => {
+      const b = el('button', 'mg-gear', it.icon);
+      // visual size cue: font scales with size
+      b.style.fontSize = `${18 + it.size * 3.2}px`;
+      b.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        if (over || b.dataset.gone) return;
+        if (it.size === next) {
+          b.dataset.gone = '1';
+          b.classList.add('mg-gear-in');
+          packed++; next--;
+          tally.textContent = `van: ${packed}/${GEAR.length}`;
+          if (packed >= GEAR.length) end();
+        } else {
+          fumbles++;
+          b.classList.add('mg-gear-no');
+          setTimeout(() => b.classList.remove('mg-gear-no'), 220);
+        }
+      });
+      field.append(b);
+    });
+
+    const ticker = setInterval(() => {
+      const left = Math.max(0, Math.ceil((DURATION - (performance.now() - t0)) / 1000));
+      clock.textContent = String(left);
+      if (left <= 0) end();
+    }, 250);
+
+    function end() {
+      if (over) return;
+      over = true;
+      clearInterval(ticker);
+      // full pack fast & clean = golden; fumbles and leftovers cost
+      const t = (performance.now() - t0) / 1000;
+      const speed = packed >= GEAR.length ? Math.max(0, 1 - Math.max(0, t - 9) / 16) : 0;
+      done(Math.max(0, (packed / GEAR.length) * 0.7 + speed * 0.3 - fumbles * 0.05));
+    }
+  },
+});
