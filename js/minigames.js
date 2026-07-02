@@ -648,3 +648,92 @@ register('hat', {
     }, 820);
   },
 });
+
+// ═══════════ ON MESSAGE — the interview (say it or deflect, 2s each) ═══════════
+const OM_GOLD = [
+  '“We recorded it in a shed. I’d do it again.”',
+  '“The new songs scare me a little. Good sign.”',
+  '“Craig? Craig is a genius. Print that.”',
+  '“I practice more now than when I was broke.”',
+  '“The fans finish the chorus better than I do.”',
+  '“Every band is four arguments in a trench coat.”',
+  '“I still get nervous. You should always be nervous.”',
+];
+const OM_TRAPS = [
+  '“Honestly, THIS city’s fans are smarter than the last one’s—”',
+  '“The label? Ha. Don’t get me started on the label—”',
+  '“It’s about my ex. Their name? Sure, it’s—”',
+  '“Streaming is theft and my fans who use it are—”',
+  '“I could write {rival}’s songs in my sleep—”',
+  '“Off the record? The festival books whoever pays—”',
+];
+register('interview', {
+  name: 'On Message', icon: '🎙️',
+  how: 'Quotes surface mid-interview — you have two seconds each: SAY the gold, DEFLECT the career-enders. Ten quotes. The mic is always on.',
+  run(stage, ctx, done) {
+    const gold = [...OM_GOLD].sort(() => Math.random() - 0.5).slice(0, 5);
+    const traps = [...OM_TRAPS].sort(() => Math.random() - 0.5).slice(0, 5);
+    const queue = [...gold.map((t) => ({ t, good: true })), ...traps.map((t) => ({ t, good: false }))]
+      .sort(() => Math.random() - 0.5);
+
+    const quote = el('div', 'mg-quote', '');
+    const timerBar = el('div', 'mg-crowdmeter');
+    const timerFill = el('div', 'mg-crowdfill');
+    timerBar.append(timerFill);
+    const row = el('div', 'mg-omrow');
+    const sayBtn = el('button', 'btn mg-say', '💬 Say it');
+    const zipBtn = el('button', 'btn mg-zip', '🤐 Deflect');
+    row.append(zipBtn, sayBtn);
+    const tally = el('div', 'mg-dots', '');
+    stage.append(quote, timerBar, row, tally);
+
+    const WINDOW = 2000;
+    let idx = -1, right = 0, over = false, deadline = null, tick = null, current = null;
+
+    function judge(saidIt) {
+      if (over || !current) return;
+      clearTimeout(deadline); clearInterval(tick);
+      const correct = saidIt === current.good;
+      if (correct) right++;
+      quote.classList.add(correct ? 'mg-quote-good' : 'mg-quote-bad');
+      tally.textContent = `on message: ${right}/${idx + 1}`;
+      current = null;
+      setTimeout(next, 420);
+    }
+
+    function next() {
+      quote.classList.remove('mg-quote-good', 'mg-quote-bad');
+      idx++;
+      if (idx >= queue.length) {
+        over = true;
+        setTimeout(() => done(right / queue.length), 300);
+        return;
+      }
+      current = queue[idx];
+      quote.textContent = current.t.replace('{rival}', ctx.rivalName || 'your rival');
+      const t0 = performance.now();
+      timerFill.style.width = '100%';
+      timerFill.className = 'mg-crowdfill';
+      tick = setInterval(() => {
+        const left = 1 - (performance.now() - t0) / WINDOW;
+        timerFill.style.width = `${Math.max(0, left * 100)}%`;
+        if (left < 0.35) timerFill.classList.add('mg-crowd-cold');
+      }, 60);
+      // silence on a gold quote wastes it; silence on a trap is SAFE
+      deadline = setTimeout(() => {
+        if (over || !current) return;
+        clearInterval(tick);
+        const wasTrap = !current.good;
+        if (wasTrap) right++; // saying nothing dodges the trap
+        quote.classList.add(wasTrap ? 'mg-quote-good' : 'mg-quote-bad');
+        tally.textContent = `on message: ${right}/${idx + 1}`;
+        current = null;
+        setTimeout(next, 420);
+      }, WINDOW);
+    }
+
+    sayBtn.addEventListener('pointerdown', (e) => { e.stopPropagation(); judge(true); });
+    zipBtn.addEventListener('pointerdown', (e) => { e.stopPropagation(); judge(false); });
+    next();
+  },
+});

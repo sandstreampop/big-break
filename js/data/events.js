@@ -2324,6 +2324,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Stay on message',
+        minigame: 'interview',
         governingStats: { network: 1.0 },
         tags: ['safe', 'mainstream'],
         outcomes: {

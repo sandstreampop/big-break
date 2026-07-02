@@ -1037,3 +1037,17 @@ body.big-text #app { zoom: 1.18; }
 @keyframes mgCoinFall { to { top: 208px; } }
 .mg-coin-caught { animation-play-state: paused; opacity: 0; transition: opacity .25s; }
 .mg-coin-lost { animation-play-state: paused; filter: grayscale(1); opacity: .4; }
+
+/* On Message */
+.mg-quote {
+  min-height: 92px; display: grid; place-items: center;
+  background: #1c1729; border: 1px solid #3b3352; border-radius: 12px;
+  padding: 12px 14px; text-align: center;
+  font-size: 15.5px; line-height: 1.45; font-weight: 650;
+  transition: border-color .15s, background .15s;
+}
+.mg-quote-good { border-color: var(--good); background: #14251c; }
+.mg-quote-bad { border-color: var(--bad); background: #2a141c; }
+.mg-omrow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mg-say { background: #1e3c2b; color: var(--good); border-color: #2a5a3d; text-align: center; }
+.mg-zip { background: #322a47; color: var(--ink); text-align: center; }

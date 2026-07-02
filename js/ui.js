@@ -764,7 +764,7 @@ function commitSwipe(side, dx = 0, dy = 0) {
     const card = currentCard;
     currentCard = null; // freeze the card while the minigame runs
     card.style.transform = ''; // snap back from any drag offset
-    playMinigame(mgId, { run }).then(({ score, verdict }) => {
+    playMinigame(mgId, { run, rivalName: rivalById(run.rival)?.name }).then(({ score, verdict }) => {
       // instrument hook: some gear makes performance moments play easier
       const mgHook = score == null ? 0 : (instrumentById(run.instrument)?.quirk?.hooks?.mgBonus || 0);
       const bonus = verdict.bonus + mgHook;
