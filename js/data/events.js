@@ -3840,6 +3840,64 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a3_music_video', act: 3, pathAffinity: [], weight: 10,
+    requires: { moneyMin: 400 },
+    art: 'ev_musicvideo', context: 'A director with a treatment and a dream',
+    prompt: 'The treatment is nine pages. Page one: “WE OPEN ON: THE OCEAN, BUT WRONG.” The budget is $400 of your actual money, one rented cherry-picker, and a fog machine you may already own. It could be a masterpiece. It could be a cherry-picker invoice.',
+    tags: ['fame', 'deal'],
+    choices: {
+      left: {
+        label: 'Fund the wrong ocean',
+        governingStats: { creativity: 0.8 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Day one: the cherry-picker sinks into the beach. Day two: the fog machine unionizes with the weather. The video that emerges is 40% apology, 60% seagull — and becomes a cult object for exactly those reasons. Art finds a way. The invoice finds you.', effects: { money: -400, fame: 4, cred: 3, creativity: 2 } },
+          good: { text: 'The wrong ocean turns out to be RIGHT — the director’s eye was real, the cherry-picker shot is the thumbnail, and the video gives the song a second life it earns twice over. Money became a moving image became momentum.', effects: { money: -400, fame: 9, cred: 4, creativity: 3 } },
+          incredible: { text: 'The video is better than the song, then MAKES the song better — inseparable now, quoted, parodied, homaged. Film schools request the treatment. The director thanks you at a festival “for believing in the wrong ocean.” Best $400 the career ever spent.', effects: { money: -400, fame: 16, cred: 6, creativity: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'One take, one phone, golden hour',
+        governingStats: { cred: 0.7, creativity: 0.5 },
+        tags: ['safe', 'indie'],
+        outcomes: {
+          bad: { text: 'Golden hour lasts nine minutes and your battery lasts seven. The video is honest, vertical, and slightly cursed. It does fine. The director sends the nine pages to someone else, wistfully.', effects: { fame: 3, cred: 2 } },
+          good: { text: 'One take, no cuts, you and the song and a parking structure at sunset. The restraint reads as confidence because it is. Costs nothing, says everything.', effects: { fame: 6, cred: 5, creativity: 2 } },
+          incredible: { text: 'The one-take video becomes the format’s reference point — “the golden hour one” — imitated into cliché within a year. Yours stays first. Simplicity, correctly timed, is unbeatable and free.', effects: { fame: 11, cred: 7, creativity: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_masters_buyback', act: 3, pathAffinity: [], weight: 11,
+    requires: { moneyMin: 600 },
+    art: 'ev_masters', context: 'A conference room. A folder. Your name on tapes you don’t own.',
+    prompt: 'Somewhere along the way, a deal you barely read took your early masters. The label’s new owner will sell them back: $600, today, no negotiation, mild contempt included free. The songs are worth less than that. The OWNERSHIP is worth everything. Allegedly.',
+    tags: ['deal'],
+    choices: {
+      left: {
+        label: 'Buy your ghosts back',
+        governingStats: { cred: 0.8 },
+        tags: ['deal', 'indie'],
+        outcomes: {
+          bad: { text: 'You pay. The tapes arrive in a box that smells like a storage unit. The early songs are ROUGHER than memory allowed — but they’re YOURS rough now. You reissue nothing. Owning them quietly turns out to be the entire point.', effects: { money: -600, cred: 6, burnout: -3 } },
+          good: { text: 'The buy-back becomes a small legend when word gets out — artists DM asking how. The reissued early EP, remastered in the shed of your soul, sells modestly to people who want the receipt: proof that catching your past is possible.', effects: { money: -600, cred: 9, fame: 4, creativity: 2 } },
+          incredible: { text: 'Two years of quiet licensing later, the masters have paid for themselves twice — a sync here, an anniversary pressing there, every check clearing into YOUR account with no asterisks. The mild contempt in that conference room converts, at maturity, into the sweetest interest rate of the career.', effects: { money: -600, cred: 11, fame: 5, network: 3, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: '“Keep them. I’ll out-write them.”',
+        governingStats: { creativity: 0.9 },
+        tags: ['write', 'risky'],
+        outcomes: {
+          bad: { text: 'The vow is cinematic; the followthrough is Tuesday-shaped. The new songs come slow, haunted by the old ones you don’t own. Some ghosts you buy back. Some you race. This one’s winning, for now.', effects: { creativity: 4, burnout: 4, cred: 2 } },
+          good: { text: 'You walk out with the $600 and a grudge that writes like a co-author. The next batch of songs arrives ANGRY and better for it. The label owns your past; the fury owns your present; you own the fury.', effects: { creativity: 7, cred: 4, burnout: 3 } },
+          incredible: { text: 'The out-writing works so thoroughly that the old masters become a curiosity — “the demos before the good stuff.” Their value collapses; the label calls, offering them back at HALF. You let it go to voicemail. Twice. Then buy them for a dollar-adjacent sum, as a trophy.', effects: { creativity: 9, cred: 7, fame: 4, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a3_golden_hands', act: 3, pathAffinity: [], weight: 12,
     requires: { flagsAll: ['mg_golden'] },
     art: 'ev_goldhands', context: 'A stranger at load-in, holding coffee like an offering',
