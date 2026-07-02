@@ -346,7 +346,9 @@ function dealCard() {
 
   const card = el('div', 'card');
   ambient(sceneFor(ev.art));
-  card.append(artFor(ev.art, 'card-art'));
+  card.append(artFor(ev.art, 'card-art', {
+    fame: run.fame, network: run.stats.network, burnout: run.stats.burnout,
+  }));
   card.append(el('div', 'card-context', fillText(ev.context)));
   card.append(el('div', 'card-prompt', fillText(ev.prompt)));
   const hintL = el('div', 'swipe-hint hint-left', '');
@@ -912,7 +914,9 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   const s = $('#screen-ending');
   s.innerHTML = '';
   const wrap = el('div', 'ending-wrap');
-  wrap.append(artFor(ending.art, 'ending-art'));
+  wrap.append(artFor(ending.art, 'ending-art', {
+    fame: run.fame, network: run.stats.network, burnout: run.stats.burnout,
+  }));
   wrap.append(el('h2', 'ending-title', ending.title));
   const finalPress = generateHeadlines(run, 1)[0];
   if (finalPress) {
