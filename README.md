@@ -15,7 +15,7 @@ packs, contracts, and perks on the Career Wall.
 
 It's a PWA: add it to your home screen and it works offline.
 
-## The systems (v3.0)
+## The systems (v2.0)
 
 - **Resolution engine** — every swipe rolls stats + gear + quirks − burnout
   ± luck into Bad / Good / Incredible. Colored risk dots telegraph danger
