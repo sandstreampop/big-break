@@ -6354,4 +6354,1184 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════ ACT 1 EXPANSION (M1): the early days deserve more days ═══════
+  {
+    id: 'a1_laundromat', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_laundromat', context: 'The Sudz Depot, 11 p.m., quarters only',
+    prompt: 'The big dryer runs a perfect 6/8 shuffle with a kick on the door-thunk. You noticed four minutes ago. You have been conducting it with a sock since. There is a melody forming over the rinse cycle and your notebook is at home.',
+    tags: ['home', 'write'],
+    choices: {
+      left: {
+        label: 'Chase it. Hum it into your phone.',
+        governingStats: { creativity: 1.0 },
+        tags: ['write', 'indie'],
+        outcomes: {
+          bad: { text: 'The voice memo is 90% dryer, 10% you apologizing to a stranger for conducting. The melody escapes. The sock is never fully dry. But something rhythmic stays lodged in you, waiting.', effects: { creativity: 3, burnout: 3, addFlag: 'song_fragment' } },
+          good: { text: 'You get it down — hum, thunk, the whole weather of it. A woman folding towels says “that’s nice” without looking up, which is the most sincere review you will ever receive.', effects: { creativity: 6, cred: 2, addFlag: 'song_fragment' } },
+          incredible: { text: 'The dryer buys you eight more minutes with someone’s comforter and you write the whole verse against it. Years from now an interviewer will ask about the odd time signature and you will say, honestly, “laundry.”', effects: { creativity: 9, skill: 2, burnout: -2, addFlag: 'song_fragment' } },
+        },
+      },
+      right: {
+        label: 'It’s laundry night. Fold. Rest.',
+        governingStats: { network: 0.5 },
+        tags: ['rest', 'safe'],
+        outcomes: {
+          bad: { text: 'You fold everything wrong at great length while the melody dies politely in the fluorescent light. Clean clothes, quiet mind, one small ghost.', effects: { burnout: -4 } },
+          good: { text: 'Warm laundry, empty head. The melody will come back if it matters — the real ones always do. Tonight you are a person with folded shirts, which is its own kind of album.', effects: { burnout: -8, cred: 1 } },
+          incredible: { text: 'You rest SO thoroughly that tomorrow’s rehearsal is the best in a month. The dryer shuffle shows up in it anyway, uninvited, through your hands. Some songs refuse to be skipped.', effects: { burnout: -10, skill: 3, creativity: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_camcorder', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_camcorder', context: 'A film student with a camcorder older than both of you',
+    prompt: '“My thesis is about beginnings.” The film student has been in the back of your last three shows with a Hi8 camcorder and an expression of total conviction. “Nobody films the BEFORE. I want the before. Can I follow you?” The tape whirs like a small appliance.',
+    tags: ['social', 'network'],
+    choices: {
+      left: {
+        label: 'Let them film the before.',
+        governingStats: { cred: 0.7, network: 0.4 },
+        tags: ['social', 'indie'],
+        outcomes: {
+          bad: { text: 'Day two of filming captures you eating cereal from a mug and losing an argument with a parking app. “This is GOLD,” whispers the film student. You have concerns about the thesis. The tape keeps whirring.', effects: { cred: 2, fame: 1, addFlag: 'docu_crew' } },
+          good: { text: 'The camcorder becomes furniture — you forget it, which is when the footage gets good. The film student cuts a 90-second sizzle that makes your garage look like the beginning of something. It is, technically.', effects: { cred: 3, fame: 2, creativity: 2, addFlag: 'docu_crew' } },
+          incredible: { text: 'The film student shoots your load-in like a heist and your soundcheck like a séance. Their professor asks who the subject is. “Nobody yet,” says the student, with terrifying certainty, “that’s the POINT.”', effects: { cred: 4, fame: 3, network: 2, addFlag: 'docu_crew' } },
+        },
+      },
+      right: {
+        label: 'The before is private. Decline.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'indie'],
+        outcomes: {
+          bad: { text: 'They nod, wounded but professional, and start filming a sourdough baker instead. The bakery documentary later wins a small award. You think about the before sometimes, unrecorded, evaporating as it happens.', effects: { cred: 2 } },
+          good: { text: '“Respect,” says the film student, lowering the camcorder for the first time in weeks. Some chapters are for living, not filming. You play better that night with no lens on you.', effects: { cred: 4, burnout: -3 } },
+          incredible: { text: 'Your no comes out so clean the film student quotes it as the epigraph of their thesis: “some doors are load-bearing.” You are cited in a bibliography. Mystique, footnoted.', effects: { cred: 6, creativity: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_prodigy_kid', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_prodigy', context: 'Open mic, slot before yours. A kid. Maybe sixteen.',
+    prompt: 'The kid before you plays four minutes that rearrange the room’s furniture without touching it. Sixteen, maybe. Borrowed guitar, church-shy, has clearly never told anyone about the songs. It is the best thing you’ve heard live all year and you have to follow it, and — worse — you have to DECIDE something about it.',
+    tags: ['live', 'network'],
+    choices: {
+      left: {
+        label: 'Find them after. Tell them the truth.',
+        governingStats: { cred: 0.8 },
+        tags: ['network', 'indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You say “that was special” and the kid short-circuits, thanks the FLOOR, and flees into the night with the borrowed guitar. You suspect none of it landed. You’re wrong — every word landed. You’ll find out later how hard.', effects: { cred: 3, addFlag: 'prodigy_boost' } },
+          good: { text: '“The third song. The weird chord. Never let anyone fix that chord.” The kid looks at you like you handed them citizenship papers. You know exactly which sentence you needed at sixteen. You just said it.', effects: { cred: 5, network: 2, burnout: -3, addFlag: 'prodigy_boost' } },
+          incredible: { text: 'You skip the compliment and give them the practical things — the sound guy’s name, which promoters pay, why the weird chord is the whole song. The kid takes notes on their ARM. Somewhere a torch changes hands, quietly, in a hallway that smells like nachos.', effects: { cred: 7, network: 3, creativity: 2, addFlag: 'prodigy_boost' } },
+        },
+      },
+      right: {
+        label: 'Say nothing. You have a set to play.',
+        governingStats: { skill: 0.9 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'You play a technically fine set to a room still living in the kid’s last chord. On the way out the kid holds the door for you and says “you were great” with devastating sincerity. The word you didn’t say sits in your pocket for years.', effects: { skill: 3, burnout: 4, addFlag: 'prodigy_snub' } },
+          good: { text: 'You channel the threat into the set — playing scared turns out to be playing awake. Best you’ve sounded in weeks. The kid watches from the back, studying you the way you should have studied them.', effects: { skill: 6, cred: 2, addFlag: 'prodigy_snub' } },
+          incredible: { text: 'You play like someone defending a title nobody was contesting, and it WORKS — the room comes back to you, barely. The kid leaves before your closer. You notice. You keep the notice somewhere it can rot.', effects: { skill: 8, fame: 3, burnout: 3, addFlag: 'prodigy_snub' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_heirloom', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_heirloom', context: 'The hall closet. A case with a ribbon on the handle.',
+    prompt: 'Rent is due and the pawn shop pays cash. In the closet: your grandmother’s mandolin — the one she played at every family thing until she couldn’t, the one nobody else wanted, the one with her initials scratched inside the sound hole. It is worth exactly one month of runway. It is worth exactly everything else, too.',
+    tags: ['home', 'family'],
+    choices: {
+      left: {
+        label: 'Pawn it. She’d understand. Right?',
+        governingStats: { network: 0.6 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'The pawnbroker gives you $120 and a ticket stub that weighs nine thousand pounds. Walking out, you hear a customer plink at it, wrong. Every song you write this month is secretly about a closet.', effects: { money: 120, burnout: 8, creativity: 3, addFlag: 'pawned_heirloom' } },
+          good: { text: '$140, and the pawnbroker — who has seen every version of this transaction — puts it in the back, off the floor. “Ninety days,” he says, not unkindly. “Buy it back. They usually don’t. Be the usually-don’t exception.” Rent clears. The clock starts.', effects: { money: 140, burnout: 4, addFlag: 'pawned_heirloom' } },
+          incredible: { text: 'The pawnbroker turns it over twice and looks at you differently: “This is a 1958. You knew that?” You did not. $220, a firm handshake, and a promise to hold it off the floor as long as he can. Grandma, characteristically, is bailing you out from beyond.', effects: { money: 220, cred: 2, addFlag: 'pawned_heirloom' } },
+        },
+      },
+      right: {
+        label: 'Keep it. Be broke with both hands.',
+        governingStats: { cred: 0.8 },
+        tags: ['home', 'safe', 'roots'],
+        outcomes: {
+          bad: { text: 'You keep the mandolin and eat rice for eleven days. It sits in the corner judging your fourths like she used to. Broke, stubborn, and — you check the sound hole initials nightly — right.', effects: { money: -40, cred: 4, burnout: 4, addFlag: 'kept_heirloom' } },
+          good: { text: 'You keep it, and worse, you OPEN it. It’s still in tune, which feels like a message. You learn three chords on it by midnight. They don’t sound like your other chords. They sound older.', effects: { cred: 5, creativity: 4, skill: 2, addFlag: 'kept_heirloom' } },
+          incredible: { text: 'You keep it and it keeps you: the first thing you write on it is the most honest minute of music you’ve made, hiss and fret-buzz and all. Some instruments come pre-loaded. Hers came loaded with HER.', effects: { cred: 6, creativity: 7, burnout: -3, addFlag: 'kept_heirloom', writeSong: true } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_bandcamp_friday', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_bandcamp', context: 'The first Friday of the month. The platform waives its cut.',
+    prompt: 'You put the demo up at midnight. By lunch: three sales. THREE. $21 total, minus nothing because it’s fee-free Friday. One buyer is your aunt, one is a stranger in Finland, and one is listed only as “longtime listener, first time payer.” This is technically revenue. You are technically recouping.',
+    tags: ['home', 'social'],
+    choices: {
+      left: {
+        label: 'Thank all three. Personally. At length.',
+        governingStats: { network: 0.9 },
+        tags: ['social', 'network', 'safe'],
+        outcomes: {
+          bad: { text: 'Your thank-you paragraph to the Finnish stranger is so long they reply “ok :)” and you spiral briefly about the tone of the smiley. Your aunt calls. It was a good call. The third buyer remains beautifully anonymous.', effects: { network: 3, money: 21, burnout: 2 } },
+          good: { text: 'The Finnish stranger turns out to run a tiny tape label “for songs exactly like this.” Your aunt shares the album to a family group chat that is 40% musicians somehow. Three sales become eleven. Eleven!', effects: { network: 5, money: 40, fame: 2 } },
+          incredible: { text: '“Longtime listener, first time payer” replies with a paragraph about track two that reads you so precisely it feels like an X-ray. You will never learn who they are. You will write with them in mind for the rest of your life. $21, priceless.', effects: { network: 5, creativity: 5, money: 21, cred: 3 } },
+        },
+      },
+      right: {
+        label: 'Screenshot the dashboard. Frame it.',
+        governingStats: { creativity: 0.6, cred: 0.4 },
+        tags: ['social', 'indie'],
+        outcomes: {
+          bad: { text: 'You post the $21 dashboard as a bit and a bigger act quote-posts it with “we’ve all been there” to their half-million followers, which reads as either solidarity or taxidermy. Your notifications are a weather event containing four sales.', effects: { fame: 3, money: 30, burnout: 3 } },
+          good: { text: '“FIRST $21” becomes your most-liked post ever — the scene loves an honest number. A venue books you off the vulnerability alone. The framed screenshot goes on the wall where a gold record would.', effects: { fame: 4, cred: 4, money: 21 } },
+          incredible: { text: 'Years of artists start posting their own first-dashboard screenshots with your caption format. You accidentally invented a genre of post. The Finnish label guy prints you an actual small plaque: “CERTIFIED $21.” It hangs. It stays.', effects: { fame: 6, cred: 5, network: 3, money: 21 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_ringtone', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_ringtone', context: 'A man in a suit, after the show, holding his phone like a wallet',
+    prompt: '“The riff. The dun-da-DUN one. I want it as my ringtone.” He is, he explains, a regional logistics executive, and his current ringtone is “the default, like a coward’s.” He is offering $30 cash for a custom recording of eleven seconds of your song. This is either beneath you or the purest licensing deal you will ever be offered.',
+    tags: ['deal', 'live'],
+    choices: {
+      left: {
+        label: 'Record it on his phone. Right now. $30.',
+        governingStats: { skill: 0.7 },
+        tags: ['deal', 'work', 'safe'],
+        outcomes: {
+          bad: { text: 'Four takes in a parking lot because “the dun needs more da.” You get the $30 and a profound understanding of why session musicians drink. His phone rings on the drive home. It’s you. Forever.', effects: { money: 30, skill: 2, burnout: 3 } },
+          good: { text: 'One take, clean, eleven seconds. He listens back like a man auditing a shipment, nods once — “that’s the stuff” — and pays in exact bills. Somewhere in a regional office, your riff now interrupts meetings.', effects: { money: 30, skill: 3, cred: 2 } },
+          incredible: { text: 'His phone rings in a QUARTERLY REVIEW and three other executives ask where he got the ringtone. He becomes your most unlikely street team. Two more suits appear at your next show, phones out, cash ready. You are, technically, in sync licensing now.', effects: { money: 90, network: 4, fame: 3 } },
+        },
+      },
+      right: {
+        label: '“The riff isn’t for sale. The album is.”',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'He buys nothing and leaves with the default ringtone, like a coward. You stand in the parking lot having defended the integrity of eleven seconds. The eleven seconds do not thank you. Rent does not care.', effects: { cred: 3 } },
+          good: { text: 'He blinks, recalibrates, and buys the whole demo for $15 “to extract it himself, legally.” A logistics executive now owns your album on principle. Principle, it turns out, pays slightly less than ringtones but compounds better.', effects: { cred: 5, money: 15, fame: 1 } },
+          incredible: { text: '“The ALBUM,” he repeats slowly, like a man discovering albums. He buys it, plays track three in his car for a month, and books you — unfathomably — for the regional logistics holiday party. It pays like logistics, not like music.', effects: { cred: 5, money: 150, network: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_bistro_covers', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_bistro', context: 'Chez Marguerite (formerly Tony’s, formerly a Blockbuster)',
+    prompt: 'Three hours of “tasteful background covers” at a bistro, Thursdays, $60 plus a meal. The catch: the owner has a LIST. Forty approved songs, none newer than a certain war, and a laminated warning: “NOTHING ORIGINAL — guests are chewing.”',
+    tags: ['live', 'work'],
+    choices: {
+      left: {
+        label: 'Take the residency. Learn the list.',
+        governingStats: { skill: 1.0 },
+        tags: ['work', 'safe', 'mainstream'],
+        outcomes: {
+          bad: { text: 'Forty songs in five days flattens your brain into sheet music. On Thursday a diner requests one that is ON the list and you blank on it anyway, mid-bite of your comped risotto. The owner circles something on a clipboard.', effects: { money: 60, skill: 4, burnout: 6 } },
+          good: { text: 'The list turns out to be a masterclass with a meal attached — forty songs is forty little machines, and you learn what makes each one run. Your left hand comes out of the month smarter than it went in.', effects: { money: 60, skill: 7, burnout: 3 } },
+          incredible: { text: 'Week three, you slip one original in at low volume between two standards, disguised as a standard. Nobody stops chewing. Then a woman at table six asks the waiter for “the name of that third song.” The owner, cornered by a GUEST, adds it to the list. Laminated. Yours.', effects: { money: 60, skill: 7, cred: 5, fame: 3 } },
+        },
+      },
+      right: {
+        label: 'Counter-offer: one original per set.',
+        governingStats: { network: 0.7, cred: 0.4 },
+        tags: ['deal', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'The owner listens to your pitch with the face of a man being sold a timeshare, then hires a harpist. The harpist, you learn later, plays TWO originals a set. There is a lesson here about negotiating leverage. The meal was never comped.', effects: { cred: 2, burnout: 3 } },
+          good: { text: '“One. AFTER the dessert rush. If anyone stops chewing, it’s covers forever.” Deal. Your one song a week gets the strange, holy attention of people who didn’t choose it. Two of them start choosing it.', effects: { money: 60, cred: 5, fame: 2 } },
+          incredible: { text: 'The owner — a former bassist, it explosively turns out, everyone in food service is a former something — respects the ask so much he flips the ratio: originals with a cover “palate cleanser” between. Chez Marguerite becomes, accidentally, a listening room. With risotto.', effects: { money: 60, cred: 7, network: 4, fame: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_neighbor_kid', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_neighbor_kid', context: 'Your doorstep. A ten-year-old. A guitar with five strings.',
+    prompt: 'The kid from 4B has been listening through the wall for months and has assembled, from context, a mostly wrong idea of how power chords work. Their mom offers $15 a lesson. The kid offers total, unnerving faith: “You’re the best musician in the building.” You are the ONLY musician in the building.',
+    tags: ['home', 'network'],
+    choices: {
+      left: {
+        label: 'Teach the kid. $15. Tuesdays.',
+        governingStats: { network: 0.6, skill: 0.4 },
+        tags: ['work', 'home', 'safe'],
+        outcomes: {
+          bad: { text: 'The kid’s attention span is four minutes and their guitar is somehow MORE out of tune after tuning. But at minute nineteen of lesson two they play a G5 that rings true and look up at you like the ceiling opened. Fine. FINE. Tuesdays.', effects: { money: 15, burnout: 3, cred: 2 } },
+          good: { text: 'Teaching wrong-but-fearless turns out to be teaching yourself: explaining WHY the chord works makes you understand what you’ve been doing on autopilot for years. The kid progresses. Weirdly, so do you.', effects: { money: 30, skill: 4, network: 2, burnout: -2 } },
+          incredible: { text: 'Lesson five, the kid shows you “a song I made up” and it is — no. Yes. It’s GOOD. Wrong everywhere and good anyway, like early you, like early everyone. You steal nothing. You borrow one (1) idea, with credit: “from a student.”', effects: { money: 30, creativity: 6, network: 3, burnout: -3 } },
+        },
+      },
+      right: {
+        label: 'No lessons — but fix the guitar.',
+        governingStats: { skill: 0.7 },
+        tags: ['home', 'safe'],
+        outcomes: {
+          bad: { text: 'You restring and set up the guitar for free, hand it back, and the kid plays the same wrong power chord, now in tune, at double volume, through the wall, forever. You have created a monster with good intonation.', effects: { cred: 2, burnout: 3 } },
+          good: { text: 'New strings, action lowered, one secret pick hidden in the case pocket like the ones you used to find. The kid’s mom sends a casserole. The wall-muffled practicing gets… less wrong. Weekly. Measurably.', effects: { cred: 4, network: 3, burnout: -3 } },
+          incredible: { text: 'You fix it, and on a whim scratch a tiny note inside the sound hole where they’ll find it in ten years: KEEP GOING. Somewhere in the future a professional musician tells this story on a podcast. Tonight, 4B is just loud and happy.', effects: { cred: 6, network: 3, creativity: 2, burnout: -4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_band_photo', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_band_photo', context: 'A parking garage, golden hour, one borrowed camera',
+    prompt: 'You need press photos and the budget is a favor. Your options, per your photographer friend: “moody wall” (brick, arms crossed, the classic) or “concept” — their word for an idea involving a shopping cart, road flares, and the phrase “trust me completely.”',
+    tags: ['social', 'home'],
+    choices: {
+      left: {
+        label: 'Moody wall. The classic. It works.',
+        governingStats: { network: 0.6 },
+        tags: ['safe', 'social'],
+        outcomes: {
+          bad: { text: 'The wall does its job; your face refuses to pick an emotion. Every frame reads “musician experiencing mild turbulence.” You use the least bad one for a year. It follows you like a passport photo.', effects: { fame: 1, burnout: 2 } },
+          good: { text: 'Brick, shadow, arms crossed — sixty frames in, one is IT: you look like someone whose album has a track nine worth arguing about. Venues stop asking if you have photos. The wall abides.', effects: { fame: 3, cred: 2 } },
+          incredible: { text: 'Golden hour hits the brick exactly as a pigeon lifts off behind you and the frame is — there is no other word — iconic. Local blogs run it uncredited within a month, which your photographer friend calls, through tears of rage, “making it.”', effects: { fame: 5, cred: 3, network: 2 } },
+        },
+      },
+      right: {
+        label: 'Concept. Trust them completely.',
+        governingStats: { creativity: 0.9 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'The road flares trigger a small but formal conversation with garage security. The shopping cart is confiscated on principle. The three surviving frames look like a documentary about a mistake — arty, unusable, cherished privately forever.', effects: { creativity: 3, money: -20, burnout: 4 } },
+          good: { text: 'The flare-lit cart shot is ridiculous and UNDENIABLE — pink smoke, motion blur, you mid-laugh because the laugh was real. It looks like your music sounds. Strangers start recognizing the photo before the songs. Acceptable order of operations, for now.', effects: { creativity: 5, fame: 4, cred: 2 } },
+          incredible: { text: 'The concept works so hard that a design blog features the shoot, then a CAMERA blog, then the flare brand reposts it with a safety disclaimer. Your photographer friend books three paid gigs off it and gives you a print, signed: “trust me completely.” You did. Frame it.', effects: { creativity: 7, fame: 6, network: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_rehearsal_share', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_rehearsal_share', context: 'Unit 14, an industrial park. A handshake with a drummer named Krug.',
+    prompt: 'Half a rehearsal space has opened up: $45 a month, split with a doom metal band called GRIEVANCE ENGINE. They rehearse Mondays, Wednesdays, and “whenever the feeling descends.” The room smells like fog machine and commitment. Krug, their drummer, is already writing your name on the whiteboard in a friendly, terrifying font.',
+    tags: ['home', 'network'],
+    choices: {
+      left: {
+        label: 'Split the room with the doom band.',
+        governingStats: { network: 0.7 },
+        tags: ['network', 'practice', 'risky'],
+        outcomes: {
+          bad: { text: 'The feeling descends on YOUR Tuesdays, twice. You rehearse over residual sub-bass like a mouse performing inside a cathedral organ. Your gear absorbs fog fluid. Your songs absorb, faintly, doom. It’s not entirely bad for them.', effects: { money: -45, creativity: 3, burnout: 4, network: 2 } },
+          good: { text: 'The share works: they get nights, you get days, and the whiteboard becomes a correspondence — setlist notes, encouragement, one ongoing argument about tunings conducted entirely in marker. Krug fixes your kick pedal without being asked. GRIEVANCE ENGINE, it turns out, is mostly hugs.', effects: { money: -45, skill: 4, network: 4, cred: 2 } },
+          incredible: { text: 'Month two, Krug hears your quietest song through the wall and asks — bashfully, a mountain asking a flower — if GRIEVANCE ENGINE can cover it “but slower and enormous.” Their version is eleven minutes long and completely sincere. Both fanbases are confused into becoming one fanbase.', effects: { money: -45, cred: 6, fame: 4, network: 5 } },
+        },
+      },
+      right: {
+        label: 'Keep rehearsing in the kitchen. Free.',
+        governingStats: { creativity: 0.6 },
+        tags: ['home', 'safe'],
+        outcomes: {
+          bad: { text: 'The kitchen stays free and stays a kitchen. Your upstairs neighbor develops a signature knock. You develop a signature flinch. The $45 stays in your pocket and the songs stay slightly too quiet, like they’re apologizing.', effects: { skill: 2, burnout: 3 } },
+          good: { text: 'Constraint breeds style: rehearsing at kitchen volume teaches you dynamics no loud room ever would. The songs learn to whisper before they shout. Cheaper than the industrial park and, honestly, better for the bridge sections.', effects: { skill: 4, creativity: 4 } },
+          incredible: { text: 'The quiet rehearsals mutate into a quiet SOUND — close, breathy, kitchen-sized — and the first time you play it on a real PA the room leans in instead of back. The neighbor’s knock, you realize later, was keeping better time than your last drummer.', effects: { skill: 5, creativity: 6, cred: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_family_show', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_family_show', context: 'A hometown bar. Your entire extended family, seated by 7 p.m.',
+    prompt: 'The hometown show. Somebody told somebody, and now the front two rows are your family: aunts with phones held vertically, your dad wearing the shirt you outgrew making fun of, and your grandmother, front and center, who has brought — and is quietly distributing — snacks.',
+    tags: ['live', 'family'],
+    choices: {
+      left: {
+        label: 'Play the real set. The new stuff.',
+        governingStats: { creativity: 0.7, skill: 0.4 },
+        tags: ['live', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The new songs sail over the front rows like weather balloons. Your dad claps at two wrong moments with total commitment. Afterward your aunt says “you can really tell you practice!” — a review you will unpack in therapy, someday, when you can afford therapy.', effects: { creativity: 3, cred: 2, burnout: 4 } },
+          good: { text: 'You play the new stuff and watch your family meet the version of you that exists on stage. Your dad goes very still during the quiet one. In the car, apparently, he played it again from your page and said nothing, twice. That’s the good review.', effects: { creativity: 5, cred: 4, fame: 2, burnout: -2 } },
+          incredible: { text: 'Mid-set, your grandmother stops distributing snacks. She watches the whole quiet one with her hands folded, and at the end she doesn’t clap — she nods, once, like a colleague. Whatever you were trying to prove to this town, that nod closes the file.', effects: { creativity: 6, cred: 6, fame: 3, burnout: -5 } },
+        },
+      },
+      right: {
+        label: 'Play the crowd-pleasers. Feed the room.',
+        governingStats: { network: 0.6, skill: 0.4 },
+        tags: ['live', 'mainstream', 'safe'],
+        outcomes: {
+          bad: { text: 'You give them the singalongs and it works TOO well: the show becomes a family reunion with a soundtrack, and you become the DJ of your own gig. Your uncle requests “that one from the wedding.” You play it. You hate that you know it. The tip jar does numbers.', effects: { money: 45, fame: 2, burnout: 3 } },
+          good: { text: 'The room sings, the phones sway vertically, the snacks circulate at industrial scale. It is not the show you would design and it is a genuinely great night — the town gets its version of you, and its version buys merch like it’s a bake sale.', effects: { money: 60, fame: 3, network: 3 } },
+          incredible: { text: 'You lean all the way in — dedications, the wedding one, a verse improvised about the bar itself — and the night crosses over from gig to town event. The bar owner books you for the holiday show ON THE SPOT, over the PA, to a cheer. Hometown: officially held.', effects: { money: 80, fame: 5, network: 5, cred: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_string_break', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_string_break', context: 'Mid-song. A sound like a tiny whip. Silence where a note should be.',
+    prompt: 'The string goes in the second chorus — the important string — and you have no spare because the spare is at home being a spare. Eleven people are watching. The song has ninety seconds left. The broken end glints under the stage light like a tiny, judgmental antenna.',
+    tags: ['live'],
+    choices: {
+      left: {
+        label: 'Finish the song without it. Reroute everything.',
+        governingStats: { skill: 1.0 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'You reroute the melody in real time and land it about 70% right, which the room hears as a new arrangement performed with strange intensity. A guy up front mouths “interesting.” The song limps home. You bow to conceal a shudder.', effects: { skill: 4, burnout: 4, cred: 1 } },
+          good: { text: 'Your hands solve it before your brain does — the line bends around the missing string like water around a stone. Nobody notices except the sound guy, who gives you the nod they reserve for actual problems actually solved.', effects: { skill: 7, cred: 3 } },
+          incredible: { text: 'The rerouted voicing is BETTER — thinner, stranger, sadder — and you know it by the second bar. The crowd hears the song you meant to write all along, delivered by an accident. You break that string on purpose in every future performance, in secret.', effects: { skill: 8, creativity: 5, cred: 4, fame: 2 } },
+        },
+      },
+      right: {
+        label: 'Stop. Own it. Make it the show.',
+        governingStats: { network: 0.7, creativity: 0.4 },
+        tags: ['live', 'social', 'safe'],
+        outcomes: {
+          bad: { text: 'You hold up the broken string and the crowd waits for a bit that doesn’t arrive — your mind is a whiteboard someone just wiped. “So… strings, huh” lands like a pigeon in soup. A kind woman claps anyway. The restring takes four years.', effects: { network: 2, burnout: 4 } },
+          good: { text: '“This is the most expensive sound I make,” you announce, restringing at the mic, narrating like a golf commentator. The room warms up — everyone loves competence with the panel off. You finish the set closer to them than the song alone would’ve gotten you.', effects: { network: 5, fame: 3, cred: 2 } },
+          incredible: { text: 'You auction the broken string mid-restring as “tour memorabilia (local).” A man pays $11 and holds it up like a trophy fish. The bit becomes the venue’s favorite story, then your signature move. Merch idea, filed: BROKEN STRING, AUTHENTIC, $11.', effects: { network: 6, fame: 4, money: 11, creativity: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_merch_box', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_merch_box', context: 'Your hallway. A box from the printer. Twenty-five shirts.',
+    prompt: 'The first merch run arrives: twenty-five shirts, one design, and — you check the packing slip twice — one SIZE. Medium. The printer’s email says “as per your order,” attaching your order, which does, damningly, say Medium 25. The design is great. The demographic is now “mediums.”',
+    tags: ['home', 'deal'],
+    choices: {
+      left: {
+        label: 'Sell them anyway. Confidence is a size.',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'social', 'risky'],
+        outcomes: {
+          bad: { text: 'At the merch table you develop a sommelier’s patter for why Medium suits every body: “oversized fit,” “fitted fit,” “a statement.” You sell six. Two come back. Your closet is a monument to the other nineteen.', effects: { money: 45, burnout: 3, fame: 1 } },
+          good: { text: '“ONE SIZE ONLY, LIKE THE VELVET UNDERGROUND” goes on a cardboard sign, and scarcity does the rest. Mediums buy them because they fit; everyone else buys them because the sign is funny. Eighteen sold. The bit was the marketing budget.', effects: { money: 120, fame: 3, network: 2 } },
+          incredible: { text: 'A vintage reseller buys FOUR — “single-size first-run merch is a collector category, you didn’t know?” You did not. The remaining shirts acquire a mythology and a markup. The printer’s error is now “an edition.” You send the printer a thank-you they will never understand.', effects: { money: 180, fame: 4, cred: 3 } },
+        },
+      },
+      right: {
+        label: 'Overdye them by hand. Make each one weird.',
+        governingStats: { creativity: 0.9 },
+        tags: ['indie', 'home'],
+        outcomes: {
+          bad: { text: 'The bathtub dye bath goes ambitiously wrong: twenty-five shirts in twenty-five accidental colors, several best described as “bruise.” Your hands are teal for a week. At the show, confusingly, the bruise ones sell first. There is no accounting for scenes.', effects: { money: 60, creativity: 4, burnout: 3 } },
+          good: { text: 'One weekend, one bathtub, twenty-five one-of-ones. “No two alike” turns a printing error into a product philosophy, and the merch table becomes a little gallery. People hold them up to the light. People PAY to hold them up to the light.', effects: { money: 140, creativity: 6, cred: 3 } },
+          incredible: { text: 'The hand-dyed run sells out in two shows and the LAST one causes a small, polite bidding war between two strangers who then follow each other online. The printer calls about reordering “the custom line.” There is no custom line. There is a bathtub. You quote them triple.', effects: { money: 200, creativity: 7, fame: 4, cred: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_setlist_panic', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_setlist_panic', context: 'A green room the size of a closet. Doors in ten minutes.',
+    prompt: 'Tonight’s crowd, the promoter mentions casually, is “mostly the knitting collective — they book the room monthly, lovely people, VERY attentive.” Your set was built for a rowdy bar. In ten minutes you play forty minutes for thirty seated knitters who will hear every word and miss nothing. Rewrite the setlist, or trust the one taped to the floor?',
+    tags: ['live'],
+    choices: {
+      left: {
+        label: 'Rewrite it. Quiet openers, words first.',
+        governingStats: { creativity: 0.8 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You rebuild the set in nine panicked minutes and open with the ballad you haven’t played since it was written. Verse two is a rumor you chase in real time. The knitters watch you search for your own lyric with the patience of people who fix dropped stitches. One mouths “take your time.” You do. Barely.', effects: { creativity: 3, burnout: 5, cred: 2 } },
+          good: { text: 'The rewritten set fits the room like a gauge swatch: quiet songs first, the words doing the work, needles keeping soft time in the dark. They hear EVERYTHING — the internal rhyme in verse three gets an actual murmur. Rowdy bars never murmur.', effects: { creativity: 6, cred: 5, fame: 2 } },
+          incredible: { text: 'Attentive turns out to be the drug you didn’t know you needed: thirty people catching every choice makes you play like every choice matters, which — tonight — it does. The collective’s newsletter (circulation: 340, open rate: terrifying) reviews the show as “the best thing we’ve booked since the hammered dulcimer.” High praise. HIGHEST, you’re told.', effects: { creativity: 8, cred: 6, fame: 4, network: 3 } },
+        },
+      },
+      right: {
+        label: 'Trust the loud set. Convert the knitters.',
+        governingStats: { skill: 0.8 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'The bar set hits the seated room like weather hitting a window. They are not displeased — worse, they are POLITE. Applause arrives in unison, like a stitch counted. Between songs the silence has upholstery. You sweat through the closer and thank “everyone for being here” in a voice you don’t recognize.', effects: { skill: 3, burnout: 6 } },
+          good: { text: 'You commit to the loud set at full sincerity, and by song four the needles are down. It turns out attentive people can also be converted people — they wanted somewhere to put their evening, and you built it. A woman buys a shirt “for my nephew, but really for me.”', effects: { skill: 6, fame: 3, network: 2, money: 30 } },
+          incredible: { text: 'The knitting collective, confronted with your loudest forty minutes, elects as one body to have a NIGHT: needles down, chairs pushed, one cardigan removed with intent. The promoter films the back third in disbelief. “You made the knitters stand,” he keeps saying, like a man describing a sea parting. Monthly booking: yours if you want it.', effects: { skill: 7, fame: 5, network: 4, cred: 3 } },
+        },
+      },
+    },
+  },
+
+  // ═══════ THE PRODIGY (new arc: the torch, offered or gripped) ═══════
+  {
+    id: 'a2_prodigy_blowup', act: 2, pathAffinity: [], weight: 11,
+    requires: { flagsAll: ['prodigy_boost'] },
+    art: 'ev_prodigy_viral', context: 'Your feed, all at once',
+    prompt: 'The kid from the open mic went up. WAY up — a bedroom clip, eleven million views, the weird chord intact. And in their first big interview, asked how they started, they say your name. On camera. “They told me never to let anyone fix the chord.” Your phone starts doing arithmetic.',
+    tags: ['social', 'network'],
+    choices: {
+      left: {
+        label: 'Repost it. Claim the assist, gently.',
+        governingStats: { network: 0.8 },
+        tags: ['social', 'network'],
+        outcomes: {
+          bad: { text: 'Your repost reads, despite three drafts, faintly like an invoice. The kid’s fans investigate you with the intensity of a customs search and rule you “probably fine.” Some new listeners stay. The word “probably” stings longer than it should.', effects: { fame: 5, network: 3, burnout: 3 } },
+          good: { text: 'You repost with the only true caption — “the chord was always perfect” — and the kid replies with three crying emojis and a duet request. The wave lifts you a respectful amount. Assists count in this league.', effects: { fame: 9, network: 6, cred: 4 } },
+          incredible: { text: 'The interview clip and your repost fuse into one story: THE HALLWAY. Strangers start telling it back to you wrong in beautiful ways. The kid’s label calls about “the mentor angle.” You decline the angle, keep the kid. The kid keeps the chord.', effects: { fame: 13, network: 8, cred: 6, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Say nothing. Let them have it clean.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You stay silent and the internet does your bragging for you, badly — a fan account posts your open-mic flyer with the caption “the origin???” and gets the year wrong. Correcting it would be engagement. You let history stay 12% inaccurate.', effects: { cred: 4, fame: 2 } },
+          good: { text: 'You let the moment be entirely theirs. The kid notices — of course they notice, they notice everything, that’s the whole gift — and sends a private message you will never screenshot. It says the thing. You know the thing.', effects: { cred: 7, burnout: -4, creativity: 3 } },
+          incredible: { text: 'Months later, on a bigger stage than you’ve played, the kid tells the hallway story unprompted and adds: “they never once posted about it. That’s the lesson, actually.” The clip of THAT does eleven million. Restraint, it turns out, compounds.', effects: { cred: 10, fame: 8, network: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_prodigy_ghost', act: 2, pathAffinity: [], weight: 11,
+    requires: { flagsAll: ['prodigy_snub'] },
+    art: 'ev_prodigy_viral', context: 'Your feed, all at once',
+    prompt: 'The kid from the open mic — the one you out-played and out-silenced — went up. Eleven million views on a bedroom clip, the weird chord intact, a sound the blogs are calling “fully formed from nowhere.” Nowhere. You were STANDING in nowhere. You said nothing in nowhere. The interview asks how they started. They say: “nobody helped. That was the help.”',
+    tags: ['social', 'rival'],
+    choices: {
+      left: {
+        label: 'Reach out now. Late is a speed.',
+        governingStats: { network: 0.7, cred: 0.4 },
+        tags: ['network', 'risky'],
+        outcomes: {
+          bad: { text: 'Your message — warm, two years late — lands in an inbox with forty thousand others. The reply is from a management company: a fruit basket emoji and a press kit. The door you didn’t open in the hallway has a doorman now.', effects: { network: 2, burnout: 6, creativity: 3 } },
+          good: { text: 'You write the honest version: “I watched your set and said nothing because it scared me. It should have. You’re the real thing.” The kid replies personally, eventually: “I knew. It’s ok. The fear was a review too.” You both leave it there, complete.', effects: { cred: 6, network: 4, burnout: -3 } },
+          incredible: { text: 'The kid answers in four minutes like no time passed: “the set you played after me made me practice for a YEAR. we’re even.” You had it backwards the whole time — the fear went both directions in that hallway. They send an unreleased demo “for notes.” The weird chord is still in everything.', effects: { cred: 8, network: 7, creativity: 5, fame: 4 } },
+        },
+      },
+      right: {
+        label: 'Let the ghost be a ghost. Outwork it.',
+        governingStats: { skill: 0.9 },
+        tags: ['practice', 'indie'],
+        outcomes: {
+          bad: { text: 'You practice with the clip open on mute, which is either motivation or self-harm depending on the hour. The chord haunts your voicings. Twice you almost play it. Twice your hands refuse, on principle. The principle is unclear.', effects: { skill: 4, burnout: 7, creativity: 2 } },
+          good: { text: 'The ghost makes an excellent metronome. Every session for a month ends with “would the kid respect this,” and the answer improves weekly. You never contact them. You just get better in their general direction.', effects: { skill: 8, creativity: 4, burnout: 3 } },
+          incredible: { text: 'The haunting resolves into a song — about hallways, about doors held and not held, about the specific silence of watching someone better and younger walk past you into the weather. It is the truest thing you’ve written. The kid will hear it someday and know instantly. That’s fine. That’s the POINT.', effects: { skill: 6, creativity: 9, cred: 5, writeSong: true } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_prodigy_stage', act: 3, pathAffinity: [], weight: 15,
+    requires: { flagsAll: ['prodigy_boost'] },
+    art: 'ev_prodigy_stage', context: 'A festival main stage. A headliner younger than your gear.',
+    prompt: 'The kid headlines now — actual name on the actual poster in the font you’ve been chasing your whole career. Second song, they stop the show: “The person who told me to keep the weird chord is HERE tonight.” Twenty thousand heads turn approximately toward you. The kid holds out a hand toward the wings. The monitor engineer is already waving you over.',
+    tags: ['live', 'fame'],
+    choices: {
+      left: {
+        label: 'Walk out. Play the weird chord together.',
+        governingStats: { skill: 0.6, network: 0.5 },
+        tags: ['live', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You walk out to twenty thousand people who love the kid and have never heard of you, a math the front rows perform on their faces in real time. The duet is fine. The clip crops you at the shoulder. The kid hugs you like none of that happened, because for them it didn’t.', effects: { fame: 8, network: 4, burnout: 5 } },
+          good: { text: 'The chord, doubled, at festival volume, is a WEAPON. You take the low harmony and let the kid fly, which was always the assignment. The crowd doesn’t know who you are and roars anyway — some things read from any distance. Backstage, the kid’s manager takes your number “for real this time.”', effects: { fame: 16, network: 8, cred: 6 } },
+          incredible: { text: 'Halfway through the chord the kid steps BACK from the mic and gives you the verse — your verse, from your set, the night in the hallway, learned from a phone bootleg years ago and kept. Twenty thousand people hear your song because one sixteen-year-old never forgot it. The torch, it turns out, travels round trip.', effects: { fame: 24, cred: 10, network: 8, pathProgress: 2 } },
+        },
+      },
+      right: {
+        label: 'Wave from the crowd. Their night. Keep it theirs.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You wave; the spotlight sweeps the wrong section; a confused man named Doug receives your ovation and, to his eternal credit, bows. The kid finds you after and laughs until they need the rail. Doug follows you both online now. Doug is having a great year.', effects: { cred: 4, fame: 3, burnout: -3 } },
+          good: { text: 'You point back at the kid — universal sign language for “all yours” — and the crowd’s roar folds you into the story without taking any of it. Watching from the dirt, older, unlit: it’s the best seat you’ve ever had. You came up on hallways. This is what they’re FOR.', effects: { cred: 9, burnout: -6, network: 3, fame: 4 } },
+          incredible: { text: 'The kid, denied a duet, does something worse: dedicates the closer to “everyone still playing the Tuesday rooms — this is what Tuesday sounds like eventually,” and the whole field lights up phones for the Tuesday people. You drive home with the windows down. Somewhere, a knitting collective, a bistro, a laundromat. Every room you ever played hums once, softly, like a struck string.', effects: { cred: 12, creativity: 6, burnout: -8, fame: 5 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_prodigy_mirror', act: 3, pathAffinity: [], weight: 15,
+    requires: { flagsAll: ['prodigy_snub'] },
+    art: 'ev_prodigy_stage', context: 'A festival green room. The headliner asks for five minutes.',
+    prompt: 'You’re on the same festival now — them on the poster, you in the font that requires squinting. A runner finds you: the headliner wants five minutes. In the green room the kid — grown, certain, still holding a guitar like a life raft — says: “You played after me once, at the Ricochet Room. You played like you were mad at me. I’ve wanted to ask for years: were you?”',
+    tags: ['network', 'rival'],
+    choices: {
+      left: {
+        label: '“Yes. You were better. It scared me.”',
+        governingStats: { cred: 1.0 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The truth lands harder than you meant — the kid goes quiet, recalibrating a memory they’d filed under “inspiring.” The five minutes end politely. But that night their set includes a long, strange improvisation the reviews call “a conversation with somebody.” It was. You were somebody.', effects: { cred: 6, burnout: 5, creativity: 3 } },
+          good: { text: 'The kid EXHALES — years of it. “I knew it. I KNEW it. That set changed how I practice. Fear is a masterclass if the person’s good enough.” You spend the five minutes and then forty more trading the hallway back and forth until it belongs to both of you.', effects: { cred: 10, network: 6, burnout: -5 } },
+          incredible: { text: '“Good,” says the kid, and picks up the guitar. “Be mad at me again — I stole your bridge trick years ago and never paid for it.” The green-room jam that follows gets filmed by a runner through the door crack, leaks, and becomes the festival’s defining clip: the headliner and the small-font act, tied at the roots. Bookers suddenly know how to spell your name.', effects: { cred: 12, fame: 14, network: 8, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: '“No. I just play like that.” Keep the armor.',
+        governingStats: { skill: 0.7 },
+        tags: ['safe'],
+        outcomes: {
+          bad: { text: 'The kid studies you the way they studied the room at sixteen — missing nothing — and nods at the lie like a chord slightly out of tune. The five minutes end at four. Their set that night is flawless and doesn’t mention Tuesdays. You did that. Both times.', effects: { skill: 3, burnout: 6 } },
+          good: { text: 'The armor holds; the conversation pivots to gear, which is where musicians keep their feelings anyway. It’s a good talk. Two craftsmen. On the walk back a truth follows you like weather: they didn’t need the confession. They needed the five minutes. You gave those, at least.', effects: { skill: 5, cred: 4, network: 3 } },
+          incredible: { text: '“Huh,” says the kid — and grins, suddenly sixteen again. “Then TEACH me to play like that.” The five minutes become an hour, the armor becomes irrelevant, and the thing you couldn’t say in words you say the only way you ever could: hands, strings, the weird chord, at last, together. Some apologies are instrumentals.', effects: { skill: 8, cred: 8, creativity: 6, burnout: -4 } },
+        },
+      },
+    },
+  },
+  // ═══════ THE HEIRLOOM (new arc: what the closet was holding) ═══════
+  {
+    id: 'a2_heirloom_call', act: 2, pathAffinity: [], weight: 11,
+    requires: { flagsAll: ['pawned_heirloom'] },
+    art: 'ev_heirloom_call', context: 'The pawn shop’s number. He never calls.',
+    prompt: '“You said be the exception,” the pawnbroker says, skipping hello. “So: a collector was in. Knows what a ’58 is. He’s coming back Friday with cash for the mandolin. I can’t hold it past then — but it’s yours till Friday for the ticket price. That’s the whole call.” He hangs up like a starter pistol. It’s Tuesday. The buyback is $200 you half-have.',
+    tags: ['deal', 'family'],
+    choices: {
+      left: {
+        label: 'Find the $200. Whatever it takes.',
+        governingStats: { network: 0.7 },
+        tags: ['deal', 'work', 'risky'],
+        outcomes: {
+          bad: { text: 'You get there Friday with $200 assembled from three gigs, a sold pedal, and a jar — and the collector is ALREADY AT THE COUNTER. The pawnbroker looks between you, sighs at the ceiling, and honors the ticket like the law it technically is. The collector leaves a card “in case you ever.” You will never.', effects: { money: -200, burnout: 8, cred: 4, addFlag: 'heirloom_back', removeFlag: 'pawned_heirloom' } },
+          good: { text: 'Wednesday and Thursday are a blur of extra shifts and undignified hustle, and Friday morning the mandolin comes off the back shelf into your hands like it never doubted you. The pawnbroker waves off the interest: “Exceptions round down.”', effects: { money: -200, cred: 5, burnout: 5, addFlag: 'heirloom_back', removeFlag: 'pawned_heirloom' } },
+          incredible: { text: 'You show up with the $200 and the pawnbroker slides the case over with something extra in it: a photo that was tucked inside the lining — your grandmother, younger than you are now, mid-song, laughing at someone off-frame. “Found it doing the appraisal. Figured it goes with the unit.” The collector never had a chance. Some items aren’t inventory.', effects: { money: -200, cred: 6, creativity: 6, burnout: -4, addFlag: 'heirloom_back', removeFlag: 'pawned_heirloom' } },
+        },
+      },
+      right: {
+        label: 'Let it go. It’s wood and wire. (It isn’t.)',
+        governingStats: { creativity: 0.7 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'Friday comes and goes. You don’t call; the shop doesn’t either. That’s how objects leave your life — not with a scene, just a Friday. You dream about the closet twice. The songs that month come out minor-key and you pretend not to know the reason.', effects: { burnout: 8, creativity: 5, addFlag: 'heirloom_gone', removeFlag: 'pawned_heirloom' } },
+          good: { text: 'You let it go on purpose, which is different from losing it. She’d have understood — she pawned her wedding ring twice in the fifties, a fact the family tells as comedy because it’s too heavy any other way. You write that story down. It scans. It SINGS, actually.', effects: { creativity: 7, cred: 3, burnout: 4, addFlag: 'heirloom_gone', removeFlag: 'pawned_heirloom', writeSong: true } },
+          incredible: { text: 'You call the shop Friday — not to buy it back, but to leave a message for the collector: the initials inside, what they meant, the porch it was played on, which songs it knows. Two weeks later an envelope arrives: a photo of the mandolin ON A STAND, displayed, cared for, with a typed card that says GRANDMOTHER’S, 1958. And a check. “Provenance,” the note says, “is worth more than the instrument. Thank you for the provenance.”', effects: { money: 300, creativity: 6, cred: 5, burnout: 4, addFlag: 'heirloom_gone', removeFlag: 'pawned_heirloom' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_heirloom_home', act: 3, pathAffinity: [], weight: 14,
+    requires: { anyOf: [{ flagsAll: ['kept_heirloom'] }, { flagsAll: ['heirloom_back'] }] },
+    art: 'ev_heirloom_stage', context: 'The biggest room of the run. Load-in. One extra case in the van.',
+    prompt: 'You packed it without deciding anything — grandmother’s mandolin, riding in the van like a stowaway ancestor. Tonight is the biggest crowd of your career. It would mean cutting a banger for a quiet one, trading certainty for eight tremolo-picked bars of family history. The setlist is taped down. Load-in ends in an hour.',
+    tags: ['live', 'family'],
+    choices: {
+      left: {
+        label: 'Play it. Middle of the set. No preamble.',
+        governingStats: { creativity: 0.6, skill: 0.5 },
+        tags: ['live', 'roots', 'risky'],
+        outcomes: {
+          bad: { text: 'The mandolin, betrayed by a festival DI box, feeds back like a kettle and the quiet song becomes a technical incident with a melody. You finish it anyway, jaw set, eight bars of family history delivered through a sound like weather sirens. Later you’ll learn the crowd thought it was intentional. Later still, you’ll let them keep thinking it.', effects: { skill: 4, burnout: 6, cred: 4 } },
+          good: { text: 'No preamble, like you promised yourself — just the size of the room dropping away as the first tremolo bar lands. Phones go down. PHONES GO DOWN. Eight bars of porch, 1958, delivered to three thousand people who suddenly remember their own closets. You say “that was my grandmother’s” after, four words, and the room does the rest.', effects: { creativity: 8, cred: 9, fame: 6, burnout: -4 } },
+          incredible: { text: 'Mid-song, unplanned, you play HER part — the little turnaround she did at every family thing, the one you absorbed before you knew what learning was — and your hands shake and hold. The bootleg of it, audio clipping, someone whispering “what IS this,” becomes the thing new fans send each other first. The setlist gets retaped permanently: mandolin, middle, always. Some collaborations take fifty years to schedule.', effects: { creativity: 10, cred: 10, fame: 10, burnout: -6, chartTitle: 'The Turnaround (1958)' } },
+        },
+      },
+      right: {
+        label: 'Leave it cased. Tonight needs the bangers.',
+        governingStats: { skill: 0.8 },
+        tags: ['live', 'safe', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You play the certain set with an uncertain heart, one ear on the case in the wings the whole night like a parent at a school play. The show is fine. FINE. The drive home is quiet except for the case sliding once in the back, a soft knock, like patience.', effects: { skill: 4, fame: 3, burnout: 5 } },
+          good: { text: 'The bangers bang; the room gets the show it bought. And at the hotel, 2 a.m., you take the mandolin out and play the quiet one to nobody — to her — with the amp of a career night still ringing in your ears. Both things happened tonight. Only one of them needed witnesses.', effects: { skill: 6, fame: 5, burnout: -3, creativity: 3 } },
+          incredible: { text: 'You leave it cased and the case leaves a hole the crowd somehow senses the shape of — because at the encore, with the night already won, you crack. “Give me one minute,” you say, and come back with the mandolin, and the biggest room of your career learns what a porch sounds like. The plan was right. Breaking it was righter.', effects: { skill: 5, creativity: 8, cred: 8, fame: 8, burnout: -4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_heirloom_glass', act: 3, pathAffinity: [], weight: 14,
+    requires: { flagsAll: ['heirloom_gone'] },
+    art: 'ev_heirloom_glass', context: 'A vintage shop window, in a city you’re only in for one night',
+    prompt: 'It’s in the WINDOW. Two tours and eight hundred miles from the pawn shop, behind glass, under a little brass lamp: grandmother’s mandolin. The tag says 1958 — COLLECTOR PROVENANCE, and a price with a comma in it. You have a show in three hours. You have, after this tour, almost exactly a comma’s worth of savings. The shop closes at six.',
+    tags: ['home', 'family'],
+    choices: {
+      left: {
+        label: 'Buy it back. The whole comma.',
+        governingStats: { network: 0.6 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'The dealer won’t budge on the price and the card machine, sensing weakness, declines twice before it takes. You walk out holding the case with both arms like a rescued child, financially concussed, spiritually solvent. The show that night is ragged and strange and afterwards you sleep like the dead. Like the happy dead.', effects: { money: -600, cred: 5, burnout: 6, addFlag: 'heirloom_back', removeFlag: 'heirloom_gone' } },
+          good: { text: 'You tell the dealer the initials inside before he opens the case. He checks. He looks at you for a long moment, then at the tag, then crosses out the comma’s worth and writes something with fewer digits: “Family price. I mark up strangers.” The mandolin rides shotgun to soundcheck. You play it that night, three hours after the glass.', effects: { money: -350, cred: 7, burnout: -3, addFlag: 'heirloom_back', removeFlag: 'heirloom_gone' } },
+          incredible: { text: 'The dealer listens to the whole story — the closet, the ticket, the Friday you let pass — and then tells you HIS: the collector died last spring; the estate sold everything; the mandolin came with a photo of a laughing woman and a typed card he couldn’t bring himself to separate from it. He sells you the lot for what he paid. On stage that night, photo taped to the monitor, you play her turnaround to a room of strangers who all, briefly, become family.', effects: { money: -250, cred: 9, creativity: 8, burnout: -6, addFlag: 'heirloom_back', removeFlag: 'heirloom_gone' } },
+        },
+      },
+      right: {
+        label: 'Press your hand to the glass. Walk away.',
+        governingStats: { creativity: 0.9 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You stand at the window long enough that the dealer starts watching you back. Then you walk to soundcheck the long way, through weather that matches. The show is heavy that night. Good-heavy. Heavy like the case used to be. You don’t tell anyone why.', effects: { creativity: 5, burnout: 6, cred: 3 } },
+          good: { text: 'It’s safe. It’s lit. It’s LABELED — someone paid a comma because her porch songs made it valuable, even if they don’t know that’s what they paid for. You take one photo through the glass, for the family chat. Your mother replies with a heart and then, an hour later: “she would think that was hilarious.” She would. That’s the eulogy. You finally laugh.', effects: { creativity: 7, cred: 5, burnout: -4 } },
+          incredible: { text: 'You walk away and it follows — not the object, the WEIGHT of it, transmuting on the walk to the venue into verses at a rate you can barely transcribe. The song is called “Behind Glass” and it is about everything: closets, tickets, Fridays, windows, the going rate for provenance. You debut it that night, raw, three hours old. A woman in the front row covers her mouth. The mandolin stays in the window. The song goes everywhere.', effects: { creativity: 11, cred: 7, fame: 6, writeSong: true } },
+        },
+      },
+    },
+  },
+
+  // ═══════ SCENE WEATHER CARDS (M2): one signature moment per era ═══════
+  {
+    id: 'w_emerging_tent', act: 2, pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'festival_season' },
+    art: 'ev_w_tent', context: 'Festival Season. A field. A tent labeled EMERGING.',
+    prompt: 'Every festival needs an “emerging artists” tent and this one is a literal tent, flapping at the edge of the grounds between the water refill station and a man selling swords. Your slot is 2 p.m. — against the main stage’s surprise guest. The tent holds sixty. The sword man says he’ll come.',
+    tags: ['live', 'tour'],
+    choices: {
+      left: {
+        label: 'Play the tent like it’s the main stage.',
+        governingStats: { skill: 0.7, cred: 0.4 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'You give arena energy to nine humans and a box fan while the main stage’s surprise guest — audible through the canvas — turns out to be someone you opened for last year. The sword man leaves early, though he does buy a sticker. “For the case,” he says. The sword case.', effects: { fame: 2, skill: 4, burnout: 6 } },
+          good: { text: 'Sixty capacity, seventy inside, canvas walls doing nothing to contain the sound. Festival crowds wander toward commitment like moths — by song five the tent is breathing in and out. A programmer from a better festival watches the last three songs from the flap.', effects: { fame: 9, cred: 6, network: 5 } },
+          incredible: { text: 'The main stage guest cancels MID-SET — technical meltdown — and four thousand unmoored festivalgoers hear something raw coming from a tent. What happens next enters festival folklore as “the tent thing.” The tent is not rated for what occurs. The sword man is crowd-surfed, sheathed. Next year the poster calls it THE TENT, capitalized, and you’re headlining it.', effects: { fame: 18, cred: 10, network: 8, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Ditch the slot. Work the grounds instead.',
+        governingStats: { network: 0.9 },
+        tags: ['network', 'social'],
+        outcomes: {
+          bad: { text: 'You skip your own set to network and immediately meet the one person who came specifically to see you. The look on their face files itself somewhere permanent. The rest of the afternoon yields three damp handshakes and a free energy drink you drink out of spite.', effects: { network: 3, cred: -4, burnout: 4 } },
+          good: { text: 'The grounds ARE the festival: you talk gear with a tech who does sound for someone huge, split fries with a booker, and end up in an artist-area singalong that does more for your year than the tent ever could. The 2 p.m. slot goes to the sword man. He kills.', effects: { network: 9, fame: 3, money: -10 } },
+          incredible: { text: 'Golden hour, artist area, someone passes a guitar around the fire and it reaches you. You play the quiet one. The circle includes — you find out afterwards, one by one, like a prank — two headliners, a legendary manager, and the festival director. “Why weren’t you on a stage?” she asks. You were scheduled against the surprise guest, you explain. She writes something down. It’s your name.', effects: { network: 14, cred: 8, fame: 6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_lathe_cut', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'vinyl_revival' },
+    art: 'ev_w_lathe', context: 'The Vinyl Revival. A garage. A machine older than stereo.',
+    prompt: 'A lathe-cut guy — every scene has exactly one — offers to cut fifty copies of your single on square transparent vinyl, hand-numbered, while-you-watch. “Sounds like the ocean eating a radio,” he says, as a selling point. In the Revival, fifty square records are not merch. They’re ARTIFACTS.',
+    tags: ['record', 'deal'],
+    choices: {
+      left: {
+        label: 'Cut the fifty. Number them yourself.',
+        governingStats: { cred: 0.7, network: 0.4 },
+        tags: ['record', 'indie'],
+        outcomes: {
+          bad: { text: 'The lathe eats copies 1 through 9 in a way the lathe guy calls “the machine’s tithe.” The surviving 41 sound like your song performed inside a seashell. Collectors buy 30 of them anyway, sound unheard, because the number is written in your handwriting. The Revival is not about ears.', effects: { money: 90, cred: 4, burnout: 3 } },
+          good: { text: 'Fifty square slabs, numbered at the kitchen table like signing tiny diplomas. They sell out in two shows at a price that embarrasses you to say aloud. A record store asks for a consignment run. The ocean-eating-a-radio sound is now “your early pressing warmth.”', effects: { money: 200, cred: 7, fame: 4 } },
+          incredible: { text: 'Number 1/50 gets bought by a vinyl influencer who films the unboxing, the SQUARENESS, the handwriting, the hiss — and declares it “the most Revival object of the year.” The remaining 49 become a waitlist. The lathe guy raises his rates and gives you the old rate for life, “for putting the machine on the map.” The machine has a name now. The name is Doris.', effects: { money: 320, cred: 10, fame: 8, network: 5 } },
+        },
+      },
+      right: {
+        label: 'Pass. Put the money into the songs.',
+        governingStats: { creativity: 0.8 },
+        tags: ['write', 'safe'],
+        outcomes: {
+          bad: { text: 'You skip the artifact economy on principle and watch a worse band’s square record become the scene’s must-own object that same month. Principle: intact. Fear of missing out: load-bearing. The studio time you bought instead yields one good bridge. A GOOD bridge. You repeat this to yourself.', effects: { creativity: 4, cred: 2, burnout: 4 } },
+          good: { text: 'The lathe money goes into two days of proper studio time instead, and the single comes out the better for it — tight where it was loose, deep where it was thin. Artifacts fade. Bridges are forever. You are 60% sure of this.', effects: { creativity: 7, skill: 4, cred: 3 } },
+          incredible: { text: 'In the studio you find the song’s final form and — the engineer’s idea — press ONE single lathe cut of it. Number 1/1. You bring it to shows in a briefcase and let people look at it. Just look. The Revival loses its mind: the unpressed record becomes a bigger story than fifty pressed ones ever would. Doris cuts it eventually. The waitlist has a waitlist.', effects: { creativity: 9, cred: 8, fame: 7, hypeSong: 14 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_payout_check', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'streaming_crash' },
+    art: 'ev_w_check', context: 'The Streaming Crash. Your quarterly royalty statement.',
+    prompt: 'The platform’s quarterly payout arrives by paper check now — cost-saving measure — and yours is for $1.04. One dollar and four cents, for eleven thousand streams, printed on cheque stock that cost more than the cheque. The scene has started framing them. The bank teller has started recognizing musicians by their faces.',
+    tags: ['deal', 'social'],
+    choices: {
+      left: {
+        label: 'Frame it. Post it. Join the movement.',
+        governingStats: { network: 0.7, cred: 0.4 },
+        tags: ['social', 'indie'],
+        outcomes: {
+          bad: { text: 'Your $1.04 post lands in a feed already saturated with $0.87s and $1.12s — the crash made poverty content, and content saturates. Forty likes, one reply from a crypto account offering “a better way.” The frame cost $9. Net position: art.', effects: { fame: 2, cred: 3, money: -9 } },
+          good: { text: 'Your framed check joins the venue’s new WALL OF SHAME — a gallery of quarterly insults curated by the sound guy. Yours hangs between a $0.44 and a $2.19 like a middle child. The wall gets written up. The scene’s solidarity is worth more than the platform ever paid.', effects: { cred: 7, network: 5, fame: 4 } },
+          incredible: { text: 'You cash the check ON CAMERA — full bank ceremony, teller deadpanning “large bills?” — and split the $1.04 evenly with your band ($0.26 each, mailed, with invoices). The video becomes the crash’s defining artifact. A senator’s staffer DMs for permission to use it in a hearing. The platform’s PR team has a meeting ABOUT YOU. The meeting costs them more than every artist they paid that quarter.', effects: { fame: 14, cred: 12, network: 7 } },
+        },
+      },
+      right: {
+        label: 'Quit the platform. Direct-to-fan only.',
+        governingStats: { cred: 0.8 },
+        tags: ['deal', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'You pull the catalog in protest and discover what eleven thousand streams were quietly doing: being the way strangers found you. The mailing list grows by six. The void grows by eleven thousand. You return in a season, softer, citing “strategy.”', effects: { cred: 4, fame: -6, burnout: 6 } },
+          good: { text: 'You go direct: pay-what-you-want, mailing list, a monthly demo for subscribers. Two hundred people turn out to be worth more than eleven thousand streams — mathematically, dramatically, insultingly more. The crash took the middlemen. It left the fans.', effects: { cred: 8, money: 140, network: 4 } },
+          incredible: { text: 'Your exit letter — polite, itemized, ending “the check is framed, the songs are leaving” — gets screenshotted into the crash’s manifesto. Forty artists follow in a week citing you by name. The direct-to-fan tier you launch funds the next recording IN ADVANCE. The platform offers you a “featured artist partnership” to come back. You frame that too.', effects: { cred: 14, money: 220, fame: 8, network: 6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_orphan_ar', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'label_merger' },
+    art: 'ev_w_merger', context: 'The Label Merger. A hotel bar. A man with two lanyards.',
+    prompt: 'The merger left him with a title nobody can parse — “VP, Catalyst Verticals (Interim)” — a signing budget that expires Friday, and a roster that was “consolidated” out from under him. He needs to sign THREE ACTS by end of quarter to justify his org line. He is drinking something brown. “I’ll be honest,” he says, being honest, “you’d be number two.”',
+    tags: ['deal', 'network'],
+    choices: {
+      left: {
+        label: 'Be number two. Take the panic deal.',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'You sign Thursday; the org line dies Monday; the VP is “transitioned” by Wednesday. Your contract survives him, technically — it now belongs to a division called ADJACENCY whose entire staff is an autoreply. The advance clears, at least. The autoreply wishes you well on your journey.', effects: { money: 250, cred: -6, burnout: 8 } },
+          good: { text: 'The panic deal has panic TERMS — favorable ones, because desperate men don’t nickel-and-dime on Thursday. Advance, marketing line, a release commitment with actual teeth. The VP survives the quarter by one act: yours. He sends a fruit basket annually, on the anniversary, forever.', effects: { money: 400, fame: 6, network: 6 } },
+          incredible: { text: 'You’re number two of three — and numbers one and three FLOP, which makes you the entire justification for Catalyst Verticals’ continued existence. The megacorp, unable to parse why you work, does the unthinkable: leaves you alone WITH funding. You are the org chart’s beloved mystery. Budget approval takes one email. Nobody has ever had it this good in the history of consolidation.', effects: { money: 500, fame: 12, network: 10, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Pass — but ask about the consolidated roster.',
+        governingStats: { cred: 0.6, creativity: 0.5 },
+        tags: ['indie', 'network'],
+        outcomes: {
+          bad: { text: 'The VP, wounded by the pass, gets vague about the orphaned roster “for legal reasons,” and the second brown drink arrives with finality. You leave with a lanyard (he insisted) and a feeling that a door closed somewhere in a building you’ve never seen.', effects: { network: 2, cred: 3 } },
+          good: { text: 'The consolidated roster, it emerges, includes a songwriter you’ve worshipped for a decade — suddenly label-less, gear in a storage unit, answering their own email for the first time since the nineties. You send one. They answer. The merger’s wreckage becomes your co-write.', effects: { cred: 7, creativity: 8, network: 6 } },
+          incredible: { text: 'You spend the evening extracting the entire orphan list from the VP’s third drink, then spend a week connecting them — producers to singers, writers to rooms, a whole shadow label assembled from the merger’s exhaust. The scene starts calling it The Island of Misfit Signings. You didn’t sign a deal. You built a NETWORK from what a spreadsheet threw away. It remembers.', effects: { cred: 10, network: 14, creativity: 6, fame: 5 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_flooded_venue', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'monsoon_tour' },
+    art: 'ev_w_flood', context: 'Monsoon Season. The venue, viewed from the doorway, has a current.',
+    prompt: 'The venue has four inches of water and a sound guy standing on the bar “to assess.” The promoter, bailing with a merch bin, offers the alternative: the parking structure next door, level three, concrete everywhere, natural reverb “like a cathedral, acoustically, if you squint your ears.” The crowd is already there, damp and game, honking encouragement.',
+    tags: ['live', 'tour'],
+    choices: {
+      left: {
+        label: 'Level three. The concrete cathedral.',
+        governingStats: { creativity: 0.6, skill: 0.5 },
+        tags: ['live', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'The cathedral reverb is real and so is the eleven-second decay — every song arrives accompanied by its own recent past. A car alarm joins in the key of F, mostly. The crowd stays because leaving means the rain. You finish, soaked in sound. The recording is unusable and you keep it forever.', effects: { creativity: 5, fame: 3, burnout: 7 } },
+          good: { text: 'Level three turns out to be the best room the tour will get: concrete for days, headlights for stage wash, and a crowd whose cars are the seating. Between songs, forty people honk in appreciation — a standing ovation with turn signals. The rain drums the roof like a hired percussionist.', effects: { creativity: 8, fame: 9, cred: 6 } },
+          incredible: { text: 'The monsoon, the concrete, the headlights, the honks — someone films the quiet song from a stairwell and the echo makes it sound like the building itself is harmonizing. “PARKING GARAGE LEVEL 3” becomes shorthand the scene uses for shows that shouldn’t work and do. The city, allegedly, is now considering “acoustic signage.” You have influenced municipal policy. With a flood.', effects: { creativity: 10, fame: 14, cred: 9, chartTitle: 'Level Three (Monsoon Bootleg)' } },
+        },
+      },
+      right: {
+        label: 'Cancel. Help bail the venue instead.',
+        governingStats: { network: 0.8 },
+        tags: ['safe', 'network', 'home'],
+        outcomes: {
+          bad: { text: 'You bail water for four hours with the crowd that stayed to help, which is community, which is beautiful, which is also how you learn the venue wasn’t insured and might not reopen. The night ends with wet socks and a group photo everyone smiles in and nobody posts.', effects: { network: 4, burnout: 8, cred: 4 } },
+          good: { text: 'Buckets, brooms, the sound guy directing salvage from the bar like a damp admiral. By 2 a.m. the stage is saveable and the owner is crying into a towel that says ANOTHER FINE ESTABLISHMENT. You didn’t play a note tonight and somehow the room owes you more than a show could earn.', effects: { network: 8, cred: 8, burnout: 5 } },
+          incredible: { text: 'Mid-bail, somebody starts singing to keep the rhythm — bucket, pass, pour — and it becomes a two-hour work-song session, thirty people, verses about the flood invented on the spot. You lead it because someone had to. The venue reopens a month later with a new name: THE HIGH WATER. There’s a line on the wall where the flood peaked, and above it, painted: the chorus you made up. You’re played in that room forever, even when you’re not.', effects: { network: 10, cred: 12, creativity: 7, burnout: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_paper_zine', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'algorithm_flu' },
+    art: 'ev_w_zine', context: 'The Algorithm Flu. A photocopied zine. Staples like it means it.',
+    prompt: 'With the feeds down bad, print is suddenly, hilariously, load-bearing again. CHORUS & VERSE (circulation 800, stapled by hand, distributed via record shops and one aggressive bicycle) wants a cover interview. The editor conducts interviews on a TAPE RECORDER, “for the integrity.” Questions will include, she warns, “what music is for.”',
+    tags: ['social', 'fame'],
+    choices: {
+      left: {
+        label: 'Do the interview. Answer the big one.',
+        governingStats: { creativity: 0.7, cred: 0.4 },
+        tags: ['indie', 'social'],
+        outcomes: {
+          bad: { text: 'Asked what music is for, you produce a nine-minute answer that the tape recorder, mercifully, garbles at minute six. The printed version reconstructs it as “[inaudible, but sincere].” The scene adopts “inaudible but sincere” as a genre descriptor. For your genre. Specifically.', effects: { cred: 4, fame: 3, burnout: 3 } },
+          good: { text: 'The interview runs four pages with your worst photo and best sentences. With the feeds down, people READ it — at merch tables strangers quote your own answers back to you, folded zine in pocket, like scripture from a very small church. Circulation: 800. Impact: disproportionate.', effects: { cred: 8, fame: 6, creativity: 4 } },
+          incredible: { text: 'Your answer to “what music is for” — three sentences, unplanned, the truest thing you’ve said aloud — gets pull-quoted on the cover, then photocopied OUT of the zine and taped up in practice spaces across the scene. When the feeds come back, someone types it up and it does the numbers print never could. But it was born on paper. The editor sends you the original tape. You keep it with the passport.', effects: { cred: 12, fame: 10, creativity: 7 } },
+        },
+      },
+      right: {
+        label: 'Counter-pitch: you’ll write a column instead.',
+        governingStats: { creativity: 0.9 },
+        tags: ['write', 'risky'],
+        outcomes: {
+          bad: { text: 'Your first column, “Notes from the Van,” is due Tuesday and arrives Friday, 400 words over, mostly about a sandwich. The editor runs it with the note “edited for length, not for sandwich.” There is no second column. The sandwich, you maintain, was structural.', effects: { creativity: 4, cred: 2, burnout: 4 } },
+          good: { text: '“Notes from the Van” becomes a monthly fixture: tour logistics, small humiliations, one recipe. People buy the zine for it. At shows they ask about the column before the songs, which should sting and instead feels like having two instruments.', effects: { creativity: 7, cred: 6, fame: 5 } },
+          incredible: { text: 'The column outgrows the container: a publisher (small, real, ink-stained) asks to collect them. THE VAN YEARS, ninety pages, sells at your merch table next to the shirts and outsells them on quiet nights. You are a musician with a BACKLIST. The algorithm, recovering, cannot categorize you at all now. Perfect.', effects: { creativity: 10, cred: 9, fame: 7, money: 180 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_moonlit_set', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'full_moon' },
+    art: 'ev_w_moon', context: 'Full Moon Fever. An outdoor set. The moon is not subtle tonight.',
+    prompt: 'The outdoor show falls on the full moon and the crowd arrived pre-weird: someone brought a theremin “just in case,” the bartender is doing tarot between orders, and the sound guy — the SOUND GUY — is wearing a cape he refuses to acknowledge. The moon sits over the stage like a follow spot. Your setlist suddenly looks very... indoor.',
+    tags: ['live'],
+    choices: {
+      left: {
+        label: 'Surrender to it. Play the weird set.',
+        governingStats: { creativity: 1.0 },
+        tags: ['live', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You open with the experimental one and the moon immediately goes behind a cloud, which the crowd reads as a review. The theremin joins uninvited on song three. The tarot bartender pulls The Tower and shows everyone. You finish the set in a light rain that feels personally curated.', effects: { creativity: 5, burnout: 6, cred: 3 } },
+          good: { text: 'You unspool the songs into longer, stranger shapes and the crowd — moonstruck, game — follows you all the way out. The theremin, formally invited for one song, behaves beautifully. At the peak of the closer the clouds part on cue and the whole field says “ohhh” at the sky like it was staged. Let them think it was staged.', effects: { creativity: 9, fame: 7, cred: 6 } },
+          incredible: { text: 'Something gets INTO the set — the long version of the quiet one crosses eleven minutes and nobody, including you, wants it to land. The cape sound guy mixes it like a man possessed by a very competent spirit. The bootleg is titled “moon set (full)” and trades around the scene like contraband. The tarot bartender pulls The Star, taps it twice, and points at you. You don’t believe in any of this. You save the card.', effects: { creativity: 13, fame: 9, cred: 8, writeSong: true } },
+        },
+      },
+      right: {
+        label: 'Anchor the chaos. Tightest set of the tour.',
+        governingStats: { skill: 1.0 },
+        tags: ['live', 'safe'],
+        outcomes: {
+          bad: { text: 'You play the tight set INTO the werewolf energy and the mismatch shows: the crowd wants howling and you’re giving them carpentry. Beautiful carpentry. To howls. The theremin man leaves early “to be with the moon.” You get paid in full by a promoter wearing a second, smaller cape.', effects: { skill: 5, burnout: 4, money: 80 } },
+          good: { text: 'It turns out a full-moon crowd doesn’t need you weird — it needs you SOLID, a fixed point to orbit. The tight set becomes the night’s gravity: the weirdness happens AROUND it, gorgeously, and everyone gets to be their favorite thing. The cape guy calls it the best mix of his career. The cape is never explained.', effects: { skill: 8, cred: 6, fame: 6 } },
+          incredible: { text: 'Precision under a full moon reads as SORCERY: every hit lands so exactly that the crowd starts gasping at drum fills. The tarot bartender stops mid-reading to watch. In the morning, three separate people describe the show with the same wrong, right word: “inevitable.” The moon, outdone, sets first.', effects: { skill: 10, fame: 9, cred: 8, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_grant_form', act: 2, pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'grant_year' },
+    art: 'ev_w_grant', context: 'The Grant Year. Form 7-C: Project Narrative (max 500 words).',
+    prompt: 'The arts council’s Emerging Voices grant is REAL MONEY and the deadline is Friday. Between you and it: Form 7-C, a project narrative that must describe your music in the language of outcomes, deliverables, and “community impact metrics.” The last section is titled “In what ways will your practice activate underserved sonic spaces?” You have read it nine times.',
+    tags: ['deal', 'home'],
+    choices: {
+      left: {
+        label: 'Learn bureaucratese. Fill it out straight.',
+        governingStats: { network: 0.6, skill: 0.4 },
+        tags: ['work', 'safe'],
+        outcomes: {
+          bad: { text: 'You describe your album as “a scalable intervention in the local sonic ecology” and the council writes back requesting “further clarity on scalability.” The revision cycle outlasts your patience by one round. The grant goes to a man who does drum circles for corporations. The FORM defeated you. The form.', effects: { burnout: 8, network: 2 } },
+          good: { text: 'You translate yourself into outcomes — shows become “activations,” the van becomes “mobile infrastructure” — and it WORKS: approved, funded, disbursed. The money is real even if the language wasn’t. First purchase: studio time. Second: a thesaurus, ceremonially burned.', effects: { money: 350, cred: 3, burnout: 4 } },
+          incredible: { text: 'Your Form 7-C is so fluent the council asks you to help them REWRITE THE FORM for actual musicians. You do — plain language, one page, a box that says “what do you make and what do you need.” Every musician in the region owes you a drink they don’t know about. The grant funds the album. The rewritten form funds the scene, forever.', effects: { money: 400, cred: 8, network: 10 } },
+        },
+      },
+      right: {
+        label: 'Answer honestly. In your own words. All caps where needed.',
+        governingStats: { creativity: 0.9 },
+        tags: ['indie', 'risky', 'write'],
+        outcomes: {
+          bad: { text: 'To “what ways will your practice activate underserved sonic spaces,” you answer “I WILL PLAY LOUD SONGS IN ROOMS THAT ARE SAD.” The rejection is swift, though one panelist — per the leaked minutes — fought for you “on vigor alone.” Vigor: noted. Rent: unmoved.', effects: { creativity: 4, cred: 3, burnout: 4 } },
+          good: { text: 'You answer every question like a person instead of a proposal, and it lands on the one panel in bureaucratic history that was starving for a human sentence. Funded — with a note: “the committee wishes to cite the applicant’s narrative as exemplary in its refusal to be exemplary.” You frame that instead of the check.', effects: { money: 350, creativity: 6, cred: 6 } },
+          incredible: { text: 'Your narrative — honest, funny, one paragraph about the laundromat — makes a panelist cry in session, per the leaked minutes, which LEAK because a council intern loved it too much to let it stay internal. Full funding, plus an invitation to perform AT the council’s annual gala, where you play for the very bureaucrats whose form you refused, who give you the standing ovation of people briefly remembering why the council exists.', effects: { money: 450, creativity: 8, cred: 9, fame: 6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_basement_show', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'venue_crackdown' },
+    art: 'ev_w_basement', context: 'The Venue Crackdown. An address, passed by hand, at a record shop.',
+    prompt: 'With the fire marshal working through the venue list alphabetically, the scene has gone subterranean: tonight’s show is in a basement with one exit, a ceiling exactly your height, and a strict no-posting policy — the flyer is a rumor, the address is a handshake. Fifty capacity, eighty expected. If it goes wrong it’s a fine. If it goes right it’s the kind of night scenes are FOR.',
+    tags: ['live', 'indie'],
+    choices: {
+      left: {
+        label: 'Play the basement. Scenes need churches.',
+        governingStats: { cred: 0.8 },
+        tags: ['live', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'Song six, the room’s one lightbulb dies and someone’s phone flash becomes the lighting rig — and then the marshal’s knock arrives like a kick drum from God. The fine is real and has your name on it, as “performer (unlicensed).” The scene passes a bucket on the spot and covers half. The other half buys you the best story of the crackdown.', effects: { money: -180, cred: 10, fame: 5, burnout: 5 } },
+          good: { text: 'Eighty people, one ceiling, zero posts — the show exists only in the room, which is exactly what makes the room levitate. Sweat drips from pipes. Strangers hold each other’s drinks like family. It’s the show every arena tries to simulate with pyrotechnics and fails. The marshal never comes. The legend does.', effects: { cred: 12, fame: 6, network: 6, burnout: 5 } },
+          incredible: { text: 'The no-posting rule holds — and so the show becomes ORAL TRADITION: retold, embellished, disputed. Within a month, three hundred people claim to have been in a fifty-cap basement. Within a year, a thousand. “Were you at the basement show” becomes the scene’s handshake. You were. You can prove it: you still have the ceiling’s texture memorized on the back of your head.', effects: { cred: 16, fame: 9, network: 8, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Too hot. Book the legal matinee instead.',
+        governingStats: { network: 0.7 },
+        tags: ['safe', 'network', 'home'],
+        outcomes: {
+          bad: { text: 'The all-ages matinee at the community center is permitted, inspected, and attended by eleven people and a table of confused seniors from the pottery class next door. The seniors stay, out of politeness, then out of interest, then — two of them — out of genuine enthusiasm. Your new demographic is Ruth. Ruth has opinions about your bridge. Ruth is right.', effects: { fame: 2, network: 3, cred: 2 } },
+          good: { text: 'The legal matinee becomes the crackdown’s loophole: 3 p.m., permitted, all-ages, BYO-cushion. The kids who can’t do basements come out in force — the fifteen-year-olds who’ll BE the scene in five years, seeing their first show in daylight. You’re their first band now. That’s a permanent job.', effects: { fame: 6, network: 8, cred: 6 } },
+          incredible: { text: 'Your matinee model — legal, early, all-ages, cheap — gets copied by every band dodging the marshal, and Sunday afternoons quietly become the scene’s beating heart. The fire marshal himself attends one, off-duty, with a niece. Nods at you. “THIS,” he says, gesturing at the exits, plural, “is what I’ve been ASKING for.” The crackdown ends six weeks later. The matinees don’t.', effects: { fame: 8, network: 12, cred: 8 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_reunion_offer', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'nostalgia_wave' },
+    art: 'ev_w_reunion', context: 'The Nostalgia Wave. A promoter. A word you haven’t heard in years: SPILLWAY.',
+    prompt: '“SPILLWAY,” says the promoter, reverently. Your high school band. Three weeks, one battle of the bands, one song about a girl named Meredith who moved. “The Wave is EATING this stuff up. Original lineup, one night, ‘20 Years of Spillway.’” It was three weeks. He knows it was three weeks. The check he slides over does not know it was three weeks.',
+    tags: ['deal', 'family'],
+    choices: {
+      left: {
+        label: 'Reunite Spillway. Honor the three weeks.',
+        governingStats: { network: 0.7 },
+        tags: ['mainstream', 'live', 'safe'],
+        outcomes: {
+          bad: { text: 'The original lineup reassembles: a dentist, a project manager, and Kev. Rehearsals reveal the catalog is one (1) song and the song is two (2) chords. You pad the set with covers “Spillway would have liked,” a curatorial concept the dentist fights you on. The show sells out. It is fine. Meredith does not attend. Kev cries anyway.', effects: { money: 220, fame: 4, burnout: 6, cred: -4 } },
+          good: { text: 'The reunion is ridiculous and the room knows it and that’s the CONTRACT: 400 people scream the Meredith song like it charted, twice, because the set is short. The dentist shreds — turns out he’s been practicing for twenty years in a way none of you have. Nostalgia isn’t a lie. It’s a costume everyone agrees to wear at once.', effects: { money: 300, fame: 8, network: 5, burnout: -3 } },
+          incredible: { text: 'MEREDITH ATTENDS. Someone found her; she flew in; she stands at the back until the song, then comes up ON STAGE for the bridge — a woman gamely surviving the strangest tribute of her life. The crowd detonates. The clip goes wave-wide: “the girl from the song showed up.” Spillway trends for a day, twenty years and three weeks late. The dentist frames the setlist in his waiting room.', effects: { money: 350, fame: 16, network: 8, cred: 5 } },
+        },
+      },
+      right: {
+        label: 'Decline — but play the Meredith song solo, once.',
+        governingStats: { creativity: 0.8 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You fold the Meredith song into your set unannounced and it lands as a pleasant, confusing deep cut nobody recognizes — because, you realize onstage, there is nobody left who could. The Wave wanted the COSTUME, not the song. The promoter books a Spillway reunion anyway. Without you. With Kev. It sells out. Kev sends a supportive text that ruins your morning.', effects: { creativity: 3, cred: 3, burnout: 4 } },
+          good: { text: 'You rework the Meredith song as it would sound now — slower, sadder, twenty years of weather on it — and play it once, mid-set, with one sentence of context. It hits like a time capsule opened correctly. The original two chords are still in there, load-bearing, like initials in concrete.', effects: { creativity: 8, cred: 7, fame: 5 } },
+          incredible: { text: 'The reworked Meredith song stops the room dead — and afterward a woman waits by the merch table with a look you can’t place until she says “I moved in tenth grade.” IT’S HER. She’d been following your career for years without connecting you to Spillway. You talk for an hour. The song gets a second verse it waited twenty years for. The Wave got everything it wanted and never found out.', effects: { creativity: 12, cred: 8, fame: 6, writeSong: true } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_human_badge', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'ai_flood' },
+    art: 'ev_w_badge', context: 'The Slop Flood. An email: “Verify your humanity (Artist Tier).”',
+    prompt: 'The platform, drowning in forty thousand daily uploads of generated content, now offers a VERIFIED HUMAN ARTIST badge. The verification: a live video call in which you must “demonstrate spontaneous musicality” to a review panel. There is a fee. There is a rubric. Item four is “makes a mistake and recovers (organically).” You will be scored on your mistake.',
+    tags: ['social', 'deal'],
+    choices: {
+      left: {
+        label: 'Do the call. Perform your humanity.',
+        governingStats: { skill: 0.6, network: 0.4 },
+        tags: ['social', 'safe'],
+        outcomes: {
+          bad: { text: 'Your scheduled spontaneity goes badly: you’re so nervous about the organic mistake that you don’t make one, which reads as suspicious. “Too clean,” notes the panel. YOUR HUMANITY IS DEFERRED, PENDING APPEAL. You appeal by playing hungover, which sails through. The badge arrives. You feel nothing, organically.', effects: { money: -40, burnout: 8, fame: 2 } },
+          good: { text: 'You pass verification with a strong mistake in the bridge (recovered organically, 9.2 from the panel) and the badge does its dumb job: streams tick up as listeners filter for certified humans. Being provably alive is now a genre. You chart in it.', effects: { money: -40, fame: 8, cred: 4 } },
+          incredible: { text: 'Your verification call goes so sideways — string breaks, you laugh, you retune WHILE finishing the phrase, the panel audibly gasps — that the platform asks to use the recording as their example of “exemplary humanity.” You license it to them. For money. The clip runs before every verification for a year: your worst live moment, now the global standard for being real.', effects: { money: 250, fame: 12, cred: 8 } },
+        },
+      },
+      right: {
+        label: 'Refuse. Humanity doesn’t do panels.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You refuse the badge on principle and the algorithm, unable to verify you, quietly files your catalog under “status unknown” — a purgatory shared with the slop you refused to be distinguished from. Streams sag. Principles: expensive this quarter. You busk more. The street does not require verification.', effects: { fame: -5, cred: 6, money: -30 } },
+          good: { text: 'Your refusal post — “I will not audition for personhood; come to a show, my sweat is the badge” — becomes the anti-verification movement’s banner. Unverified becomes a scene identity: UNBADGED nights spring up at three venues, humans only, no proof required except the obvious kind. You headline the first one.', effects: { cred: 12, fame: 7, network: 6 } },
+          incredible: { text: 'The refusal escalates beautifully: a journalist covers UNBADGED, the platform’s verification fee becomes a scandal, and the badge program dies in a quarter, memorialized by your quote in the postmortem coverage. At shows, fans hold up hand-drawn badges that say VERIFIED BY EARS. The flood recedes where you stand. Turns out the proof of humanity was the crowd all along.', effects: { cred: 16, fame: 12, network: 8 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'w_mic_judge', act: [2, 3], pathAffinity: [], weight: 10,
+    requires: { weatherIs: 'open_mic_boom' },
+    art: 'ev_w_judge', context: 'The Open Mic Renaissance. A café. A clipboard with your name pre-printed.',
+    prompt: 'Every café grew a stage this year, and the biggest one wants YOU to judge its monthly open mic: twelve acts, one winner, a $100 prize, and — the owner is very proud of this — a sash. You started on this exact stage, back when the sign-up sheet smelled like nachos. Now you’re the clipboard. The first act is already tuning wrong.',
+    tags: ['network', 'home'],
+    choices: {
+      left: {
+        label: 'Judge it straight. Someone has to.',
+        governingStats: { cred: 0.6, skill: 0.5 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'You score honestly, which means the crowd favorite — a charismatic man whose act is one chord and enormous confidence — loses to a quiet girl with actual songs, and the room turns on you like soup. The sash ceremony happens under boos. The quiet girl doesn’t care. Neither, you decide on the drive home, do you.', effects: { cred: 5, network: 2, burnout: 5 } },
+          good: { text: 'You judge like the judge you needed: specific notes for all twelve, scores in pencil, and one sentence each that’s true and usable. The winner cries. The losers come back next month BETTER, clutching your notes like setlists. The owner reports the mic’s standard has “measurably risen.” There’s a wait list now. For an open mic.', effects: { cred: 8, network: 7, burnout: -3 } },
+          incredible: { text: 'Act nine is sixteen, church-shy, borrowed guitar — and four minutes later you’re gripping the clipboard like a railing, because it’s HAPPENING AGAIN, the furniture rearranging, the room forgetting to drink. You give the score the rubric demands (maximum) and then do the real judging afterward, in the hallway, with the sound guy’s name and which promoters pay. The renaissance isn’t the cafés. It’s this. It was always this.', effects: { cred: 10, network: 9, creativity: 5, burnout: -5 } },
+        },
+      },
+      right: {
+        label: 'Refuse to rank art. Play the closer instead.',
+        governingStats: { creativity: 0.7 },
+        tags: ['indie', 'live'],
+        outcomes: {
+          bad: { text: 'You declare everyone a winner, which the twelve acts receive as what it is: a judge dodging the job. The $100 gets split twelve ways ($8.33, indivisible, one fistfight about the remainder). Your unannounced closing set plays to a room still doing math. The sash goes unworn. The owner is “rethinking the format.”', effects: { creativity: 3, cred: -3, burnout: 3 } },
+          good: { text: 'You turn the competition into a showcase — no scores, no sash, everyone gets one written note and the crowd votes with a tip jar per act. Then you close the night unannounced, playing the song you wrote the year you were act seven. The room gets it. The jar system stays. The sash retires to the wall, framed, like a warning.', effects: { creativity: 6, cred: 7, network: 5 } },
+          incredible: { text: 'Your no-ranking format spreads through the boom like a firmware update — cafés everywhere adopt “the showcase rules,” tip jars and written notes, no sashes anywhere. Twelve acts a month across forty rooms get their first honest sentence about their work, some of them yours. Years from now, musicians will argue about who started it. The correct answer is: a judge who refused to. The nachos, wherever they are, smell the same.', effects: { creativity: 8, cred: 12, network: 10, fame: 4 } },
+        },
+      },
+    },
+  },
+
+  // ═══════ ACT 2–3 EXTRAS (M4): filling the grind with grind ═══════
+  {
+    id: 'a2_soundcheck_feud', act: 2, pathAffinity: [], weight: 9,
+    art: 'ev_soundcheck_feud', context: 'Soundcheck. A shared bill. A monitor engineer aging in real time.',
+    prompt: 'The co-headliner’s soundcheck has entered its second hour. Their singer needs “more me, but warmer, but less” in the monitor, a specification the engineer has now attempted eleven times. Your check window is evaporating. The engineer catches your eye with the thousand-yard stare of a man who once had dreams.',
+    tags: ['live', 'network'],
+    choices: {
+      left: {
+        label: 'Waive your check. Trust the room.',
+        governingStats: { skill: 0.8 },
+        tags: ['live', 'risky', 'safe'],
+        outcomes: {
+          bad: { text: 'No check means the first two songs are an archaeology dig for your own vocal. You find it around song three, buried under a kick drum tuned like a door slam. The co-headliner’s singer, beautifully monitored, has the night of their life. The engineer buys your drinks in silent apology. All of them.', effects: { skill: 3, burnout: 6, network: 2 } },
+          good: { text: 'You line-check in ninety seconds flat — “vocals, two strums, we’re good” — and the engineer looks at you like you returned a hostage. The mix he builds you out of gratitude is BETTER than a soundcheck would’ve bought. There is a lesson here about the people who hold the faders.', effects: { skill: 6, cred: 4, network: 4 } },
+          incredible: { text: 'Your no-check set is so locked the co-headliner’s singer corners you after: “who does your monitors?” The same man, you explain, who did yours — for an hour, warmly, lessly. The engineer hears about the exchange. From then on, in that venue, your mixes have the specific shine of a professional showing someone a receipt.', effects: { skill: 8, cred: 6, network: 6, fame: 3 } },
+        },
+      },
+      right: {
+        label: 'Invoke the rider. Claim your window.',
+        governingStats: { network: 0.7, cred: 0.3 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'You produce the day sheet with the check times highlighted and the co-headliner’s camp receives it like a declaration of war conducted via stationery. You get your window — nineteen glacial minutes of it — and a backstage atmosphere you could cut into blocks and sell as tension.', effects: { cred: 2, burnout: 6, network: -3 } },
+          good: { text: '“We’re scheduled for 5:40,” you say, pleasantly, at 5:40, and something in the pleasant does what an hour of the engineer’s suffering couldn’t: the singer yields the stage. Your check is efficient. Your set is dialed. The engineer mouths THANK YOU across the board like a man rescued from a well.', effects: { cred: 5, skill: 4, network: 3 } },
+          incredible: { text: 'You claim the window, then spend it fixing the ACTUAL problem — walking to the monitor board and finding the singer’s “more me but warmer” in two moves, because you mixed your own shows for years. Both acts check. Both sets soar. The singer tells the story for months: “and then the opener just... FIXED it.” The word opener does some healing of its own.', effects: { cred: 7, skill: 6, network: 7, fame: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_green_room_legend', act: 2, pathAffinity: [], weight: 9,
+    art: 'ev_green_legend', context: 'A shared green room. A face from record sleeves.',
+    prompt: 'The festival green room contains a LEGEND — three decades of records you own, now holding court from the best couch with a plate of rider cheese and no entourage. Musicians orbit at a respectful distance. There’s an open seat next to the legend. Your set is in ninety minutes. The legend is mid-story about a studio that no longer exists.',
+    tags: ['network', 'studio'],
+    choices: {
+      left: {
+        label: 'Take the seat. Miss your warm-up.',
+        governingStats: { network: 0.6, cred: 0.5 },
+        tags: ['network', 'risky'],
+        outcomes: {
+          bad: { text: 'Ninety minutes evaporate into stories — the studio, the label wars, a feud with a man named Ricky resolved at a funeral — and you sprint to the stage cold, voice unstretched, hands stiff. The set pays the toll. But you know how the Ricky thing ended now, which fewer than forty living people do. The math is unclear. The cheese was excellent.', effects: { network: 4, burnout: 5, skill: -2, creativity: 4 } },
+          good: { text: 'The legend talks; you listen with the quality of listening you usually save for mixes — and at minute sixty the legend stops mid-story: “you actually listen. What do you play?” The last thirty minutes are about YOU: your bridge problem, diagnosed from description alone. You warm up in the hallway with their fix in your hands. It works.', effects: { network: 7, creativity: 6, cred: 5 } },
+          incredible: { text: 'At minute eighty the legend stands, stretches, and says the sentence you will retell at every green room for the rest of your life: “I’ll watch your set from the wings. Play the one you’re scared of.” You do. They watch. Afterward, one nod and four words: “Right to be scared.” It goes in the memoir. Theirs.', effects: { network: 9, cred: 9, creativity: 6, fame: 5 } },
+        },
+      },
+      right: {
+        label: 'Warm up properly. Legends respect craft.',
+        governingStats: { skill: 0.9 },
+        tags: ['practice', 'safe'],
+        outcomes: {
+          bad: { text: 'You do the full warm-up in a stairwell that doubles as a fridge and play a technically excellent set to a crowd still drifting over from the legend’s stage. Back in the green room: couch empty, cheese gone, legend departed. The orbiting musicians have new stories. You have scales. Scales are also a story, you tell yourself, in the van.', effects: { skill: 5, burnout: 3 } },
+          good: { text: 'The stairwell warm-up pays: your set is the tightest of the day, and word travels the way festival word does. In the artist lot, later, the legend — loading their own gear, no entourage — nods at you: “Heard you were the one who could play.” Seven words. You will be running on them for a season.', effects: { skill: 8, cred: 6, fame: 4 } },
+          incredible: { text: 'Mid-warm-up, the stairwell door opens: the legend, escaping their own court, guitar in hand. “Mind if I—?” For thirty minutes it’s just craft — two musicians trading warm-up figures in a concrete echo, no audience, no names needed. They teach you a voicing their dead bandmate invented. “Keep it moving,” they say, and leave before your set. You play the voicing that night. You keep it moving.', effects: { skill: 10, creativity: 8, cred: 6, burnout: -4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_radio_zoo', act: 2, pathAffinity: [], weight: 9,
+    requires: { fameMin: 15 },
+    art: 'ev_radio_zoo', context: '5:45 a.m. The Morning Stampede with Chip & Dez. A sound-effect board.',
+    prompt: 'Local radio wants you on the morning zoo — 5:45 a.m., between the traffic sponsor and a segment called GUESS THAT HONK. Chip communicates entirely in catchphrases; Dez has done nine minutes of homework and it shows. You’ll get four minutes and one song, played live, into microphones that have never heard dynamics.',
+    tags: ['fame', 'social'],
+    choices: {
+      left: {
+        label: 'Play the zoo’s game. Honk included.',
+        governingStats: { network: 0.8 },
+        tags: ['mainstream', 'social', 'safe'],
+        outcomes: {
+          bad: { text: 'You guess the honk (wrong), endure the airhorn (twice), and perform your saddest song immediately after a fart sound effect that Chip calls “the segue.” The drive-time audience hears none of the irony and all of the song. Three people at the next show say they “heard you on the Stampede.” They say it supportively. Like condolences.', effects: { fame: 5, cred: -4, burnout: 5 } },
+          good: { text: 'You lean in — honk guessed correctly (it was a ferry), catchphrases returned with interest, and the song lands because morning audiences are secretly the most loyal audience alive. The phones light up. Dez’s homework pays off with one real question you give a real answer to, at 5:52 a.m., to forty thousand commuters.', effects: { fame: 10, network: 5, money: 40 } },
+          incredible: { text: 'Something alchemical happens between the airhorn and the second chorus: Chip goes QUIET — producers later confirm this has happened twice in nineteen years — and lets the song finish clean into forty thousand cars. The phones melt. The station adds you to rotation out of sheer surprise. GUESS THAT HONK is delayed four minutes, the longest ceasefire in Stampede history. Dez frames the moment. Chip, eventually, forgives you.', effects: { fame: 16, network: 7, cred: 5, hypeSong: 12 } },
+        },
+      },
+      right: {
+        label: 'Negotiate: the song first, jokes after.',
+        governingStats: { cred: 0.7, network: 0.4 },
+        tags: ['deal', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'Your “song first” request hits the zoo’s format like a bird hitting glass. The compromise — song at 5:47, comedy at 5:51 — collapses when the traffic sponsor runs long, bumping you to a promise of “next week, GUARANTEED.” Next week is GUESS THAT HONK: CELEBRITY EDITION. There is no slot. There was never going to be a slot.', effects: { burnout: 4, cred: 3 } },
+          good: { text: 'Dez — the one with the homework — fights for it internally and wins: song first, clean, THEN the zoo. The structure holds. The song gets its four minutes of dignity, and your good-sport turn on the honk board afterward plays twice as charming for being earned. “Best guest since the weather drone incident,” says Chip, which Dez assures you is the highest tier.', effects: { fame: 8, cred: 6, network: 4 } },
+          incredible: { text: 'Your polite stand becomes the segment: Chip mock-outrages — “the ARTIST has DEMANDS” — and builds an entire bit around honoring them with absurd ceremony: a paper crown, a decree, the airhorn RETIRED to a velvet box for your four minutes. The theater makes the song land HARDER. “The Crowned Session” becomes a recurring segment for artists who ask nicely. You are its patron saint, by decree, at 5:49 a.m.', effects: { fame: 13, cred: 9, network: 6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_support_pick', act: 2, pathAffinity: [], weight: 9,
+    requires: { fameMin: 20 },
+    art: 'ev_support_pick', context: 'The promoter, on the phone, sorting mail with his other hand',
+    prompt: 'Your show is selling well enough that the promoter offers a small crown: “Pick your own opener. Anyone local. I don’t care. Don’t make it weird.” The obvious pick is your friend’s solid, safe band. The interesting pick is the unclassifiable duo you saw play a laundromat — accordion, drum machine, zero stagecraft, something REAL underneath.',
+    tags: ['network', 'live'],
+    choices: {
+      left: {
+        label: 'The laundromat duo. Make it weird.',
+        governingStats: { creativity: 0.7, cred: 0.4 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The duo’s set is exactly as unclassifiable in a venue as in a laundromat, minus the dryers, which — it turns out — were load-bearing. The crowd checks phones. The accordionist thanks you three times, shaking. Your friend’s band hears about the snub through the scene’s fiber-optic gossip network before load-out ends. Two relationships require maintenance now.', effects: { cred: 3, network: -3, burnout: 4 } },
+          good: { text: 'Fifteen minutes in, the room stops being confused and starts being CONVERTED — the drum machine and the accordion lock into something nobody can name and everybody films. The duo levels up in real time on your stage. The scene notes who put them there. Curation, it turns out, is also an instrument.', effects: { cred: 7, network: 5, creativity: 4, fame: 3 } },
+          incredible: { text: 'The duo detonates. Within a season they’re the city’s breakout act, and every interview includes the sentence “nobody would book us until one person did.” You’re the one person. Openers start sending you demos like you’re a label. Accidentally, functionally, you ARE one: the show becomes known as a launchpad, which fills YOUR room with the exact crowd that wants to hear tomorrow first.', effects: { cred: 10, network: 9, fame: 6, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Your friend’s band. Loyalty is a genre.',
+        governingStats: { network: 0.8 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'Your friend’s band plays their solid set solidly, as they have for nine years, to a room that receives it as furniture. Afterward your friend is happy and you are happy and everything is fine and completely still, like a pond. Somewhere across town, an accordion plays to dryers.', effects: { network: 3, cred: 2 } },
+          good: { text: 'The safe pick turns out to be the right one: your friend’s band, handed their biggest room ever, plays OVER their ceiling — nine years of Tuesdays cashed in at once. Your friend hugs you at load-out with genuine violence. Some bookings are investments. Some are repayments. This was both.', effects: { network: 6, cred: 5, burnout: -3 } },
+          incredible: { text: 'Handed the room, your friend’s band finally plays the weird songs they’ve been sitting on for years — “we figured, your crowd, maybe” — and the safe band turns out to have been an unclassifiable band wearing a cardigan the whole time. The scene is FLOORED. The friendship survives its own repayment and becomes a co-headline tour. The accordion duo opens. You insisted.', effects: { network: 9, cred: 7, fame: 4, burnout: -3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_setlist_leak', act: 3, pathAffinity: [], weight: 12,
+    requires: { fameMin: 35 },
+    art: 'ev_setlist_leak', context: 'A fan forum thread, three hours old: TONIGHT’S SETLIST (CONFIRMED)',
+    prompt: 'Someone photographed the setlist during load-in and the forum has it — every song, every segue, the surprise cover, the acoustic pivot, all of it, annotated with emoji by 400 people who now know exactly what tonight holds. The surprise cover thread alone has three pages of speculation that is no longer speculation.',
+    tags: ['live', 'social'],
+    choices: {
+      left: {
+        label: 'Rewrite the whole set. Surprise them back.',
+        governingStats: { creativity: 0.8 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'The rewritten set, assembled in ninety minutes of spite, has the structural integrity of a rope bridge: two keys clash at the pivot, the new cover is under-rehearsed, and the encore lands on the wrong emotional floor. The forum’s live thread notes, respectfully, that “the leaked set was better sequenced.” They’re right. That’s the worst part. They’re RIGHT.', effects: { creativity: 4, burnout: 8, fame: 2 } },
+          good: { text: 'You invert the set — closer first, opener last, the leaked cover swapped for a deeper cut — and the forum loses its mind in real time: “HE KNOWS. THE SET KNOWS WE KNOW.” The show becomes a conversation with four hundred people holding an outdated map. Best crowd energy of the tour, powered entirely by dramatic irony.', effects: { creativity: 8, fame: 8, cred: 6 } },
+          incredible: { text: 'You open by READING THE LEAKED SETLIST ALOUD, folding it into a paper airplane, and throwing it into the crowd. “Let’s see what happens instead.” What happens is the loosest, most alive show of the run — requests honored, segues invented, the surprise cover replaced by a surprise ORIGINAL, debuted raw. The forum thread hits 40 pages. The airplane sells at auction for charity. The photographer who leaked it donates the winning bid, in shame, in public.', effects: { creativity: 11, fame: 12, cred: 8, writeSong: true } },
+        },
+      },
+      right: {
+        label: 'Play it as leaked. A promise is a promise.',
+        governingStats: { skill: 0.8 },
+        tags: ['live', 'safe', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You honor the leak and the show plays like a scheduled eclipse: accurate, admired, unsurprising. The crowd sings the surprise cover’s first line BEFORE you do, which the recording captures with brutal clarity. Fine show. Great documentation. The forum rates it “as expected: 8/10.” As expected. On your biggest stage. Words to chew on in the van.', effects: { skill: 4, fame: 4, burnout: 4 } },
+          good: { text: 'Knowing turns out to sharpen the crowd rather than dull it: four hundred people who did their homework scream every transition like sports fans watching a play they called. The leaked pivot lands harder WITH anticipation. You learn something about surprise: it’s optional. Delivery isn’t.', effects: { skill: 7, fame: 8, cred: 4 } },
+          incredible: { text: 'You play the leaked set note for note — except you stop before the surprise cover and say “you’ve known for nine hours; sing it with me from the top.” The venue becomes a 2,000-voice choir doing the whole cover unaccompanied while you conduct. The leak becomes the reason for the tour’s defining moment. The forum pins the video with the title WE WERE THE SURPRISE. You let them keep it. It’s true.', effects: { skill: 8, fame: 14, cred: 8, network: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_encore_debt', act: 3, pathAffinity: [], weight: 12,
+    art: 'ev_encore_debt', context: 'Post-closer. House lights hesitating. The noise NOT stopping.',
+    prompt: 'The set is done, the closer closed, and the room refuses to end the show. Five minutes of sustained noise. The problem: you played EVERYTHING. The setlist is spent, the covers are spent, the deep cuts are spent. The stage manager holds up both hands: your call. The crowd starts stomping in rhythm. The building joins in structurally.',
+    tags: ['live'],
+    choices: {
+      left: {
+        label: 'Go back out with nothing. Figure it out live.',
+        governingStats: { creativity: 0.7, skill: 0.4 },
+        tags: ['live', 'risky', 'indie'],
+        outcomes: {
+          bad: { text: 'You walk out empty-handed and try to build an encore from fumes: a half-remembered B-side that collapses at the bridge, restarted once, abandoned honestly. “I got nothing,” you admit, and play the closer AGAIN, worse. The crowd forgives what the recording won’t. Someone’s review calls it “humanizing,” which is what reviews call a crash landing everyone walked away from.', effects: { creativity: 3, burnout: 7, fame: 3 } },
+          good: { text: 'You come out alone and ask the room what IT wants — and build the encore from the shouted answers: a first-album cut you haven’t played in years, relearned in real time with the crowd singing the parts you drop. It’s ragged and it’s theirs and that’s the entire point of encores, you realize, out there with nothing.', effects: { creativity: 7, fame: 8, cred: 6 } },
+          incredible: { text: 'Out of songs, you play the one that doesn’t exist yet — the fragment you’ve been carrying, verse and a half, unfinished, never performed. “This one isn’t done,” you tell them. “Neither am I.” The room holds its breath for three minutes and then detonates. The bootleg becomes legend: the night the encore was a SKETCH. When the finished version ships, the crowd from that night claims co-writing credit. Emotionally, they have it.', effects: { creativity: 10, fame: 11, cred: 9, writeSong: true } },
+        },
+      },
+      right: {
+        label: 'Let it end. Leave them wanting.',
+        governingStats: { cred: 0.9 },
+        tags: ['safe', 'indie'],
+        outcomes: {
+          bad: { text: 'The house lights come up on five minutes of noise with nowhere to go, and the energy curdles into the specific disappointment of a room that offered you something and watched you decline it. The exit music — a playlist, someone’s phone — plays over boos that aren’t angry, just sad. “Leave them wanting” requires leaving at the right time. This wasn’t it. You know it in your teeth.', effects: { cred: 3, fame: -4, burnout: 5 } },
+          good: { text: 'The lights come up, the noise crests, breaks, and resolves into applause with a shrug in it — the crowd files out arguing about the set’s best moment instead of its missing one. The no-encore becomes part of your thing: the show is the show, whole, unpadded. Promoters note that your nights end ON TIME and book accordingly. The mystique compounds quietly, like interest.', effects: { cred: 7, network: 4, burnout: -4 } },
+          incredible: { text: 'You send the stage manager out with a single sheet of paper, which she tapes to the mic stand and spotlights: a hand-written note. “THAT WAS EVERYTHING. I MEAN THAT. — [your initials]” The room reads it in waves, laughs, and gives the NOTE a standing ovation. The photo of it becomes the tour’s most-shared image. Nights later, other crowds chant “TAPE THE NOTE” after closers. You never explain. The shows keep ending complete.', effects: { cred: 11, fame: 8, creativity: 5, burnout: -5 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_tribute_band', act: 3, pathAffinity: [], weight: 12,
+    requires: { fameMin: 40 },
+    art: 'ev_tribute', context: 'A flyer, photographed by a friend, three towns over',
+    prompt: 'It exists. A tribute band. To YOU. They’re called almost your name but legally distinct, they play almost your songs but slightly wrong, and the flyer says they’re doing “the early stuff” — a phrase which, applied to your discography by strangers in wigs, does something complicated to your chest. They play Thursday. Three towns over. You could GO.',
+    tags: ['fame', 'social'],
+    choices: {
+      left: {
+        label: 'Go. In disguise. Witness yourself.',
+        governingStats: { creativity: 0.6, network: 0.4 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'The disguise (hat, borrowed glasses) survives four songs before the bassist — YOUR bassist, in the tribute taxonomy — spots you and stops playing mid-verse. The band unravels in real time under the weight of being perceived. The crowd, understanding at last, gives YOU the encore chant. You do not encore. The tribute band’s group chat, you learn later, needed two weeks of processing.', effects: { fame: 5, burnout: 5, cred: 3 } },
+          good: { text: 'They’re GOOD. That’s the shock — sloppy where you’re sloppy, on purpose, faithful to mistakes you thought were private failures and turn out to be beloved features. The wrong chord in your oldest song? Played wrong, lovingly. You leave before the encore, undetected, rearranged. The mistakes were part of the songs the whole time. All of it was.', effects: { creativity: 7, cred: 6, burnout: -5 } },
+          incredible: { text: 'They spot you at the merch table — buying THEIR shirt, of you, sort of — and after the mutual cardiac event, you do the only correct thing: get on stage and play bass on your own song, slightly wrong, in their style. The photo (you, them, everyone pointing at everyone) breaks the scene internet. The tribute band’s bookings triple. So, mysteriously, do yours. The wigs were load-bearing for EVERYONE.', effects: { fame: 15, cred: 9, network: 7, burnout: -4 } },
+        },
+      },
+      right: {
+        label: 'Send them the actual charts. And a rider tip.',
+        governingStats: { cred: 0.8 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'Your care package — real charts, the correct tuning, a note about the venue’s haunted DI box — lands in their inbox like a health inspection. Corrected, they get WORSE: the charm was the wrongness, and accuracy flattens them into a cover band with homework. The scene’s verdict is swift: “the early stuff hit different before it was right.” You have ruined your own tribute. A new low, or high. Unclear.', effects: { cred: 3, burnout: 3 } },
+          good: { text: 'You send the charts with one condition, underlined: KEEP YOUR VERSIONS. Use mine for reference, play yours for real. They frame the note, charts unused, exactly as intended. Thursday’s show sells out on the story alone. The wrongness is canon now. Officially licensed wrongness.', effects: { cred: 8, fame: 6, network: 4 } },
+          incredible: { text: 'The package starts a correspondence, the correspondence becomes a bit, and the bit becomes an EVENT: one night, one stage, you opening for your own tribute band, billed underneath them, playing “the early stuff” back to back — their versions, then yours, crowd voting. THEY WIN TWO SONGS. You concede on stage, laughing, and the recording becomes the strangest and warmest live document of your career. The wigs get their own merch line. You get a royalty. On wigs.', effects: { cred: 12, fame: 12, network: 6, money: 150 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_van_dies', act: 3, pathAffinity: [], weight: 12,
+    art: 'ev_van_dies', context: 'Mile marker 148. A sound from the engine like a dropped drum kit.',
+    prompt: 'The van — the FIRST van, the one that’s been held together by bungee cords and belief since act one — dies definitively at mile 148, four hours before the biggest show of the run. The tow guy’s diagnosis is one word: “Yeah.” The show is 212 miles away. The van contains everything you own that makes noise.',
+    tags: ['tour', 'home'],
+    choices: {
+      left: {
+        label: 'Get the gear there. Any way that moves.',
+        governingStats: { network: 0.9 },
+        tags: ['network', 'risky', 'tour'],
+        outcomes: {
+          bad: { text: 'The relay you improvise — a rideshare with a trailer hitch, a fan named Denny with a pickup, a bus with a generous driver — delivers you at doors, gear at song three. You open with the acoustic thing you do while the amps arrive down the aisle held overhead like crowd-surfing luggage. The show is memorable for reasons the setlist didn’t plan. Denny gets a shoutout. Denny weeps.', effects: { burnout: 9, network: 5, fame: 5, money: -120 } },
+          good: { text: 'You post one photo — the van, the smoke, the caption “biggest show of our lives in 4 hours, who’s got a truck” — and the scene ANSWERS: a metal band two exits back detours, loads your rig next to theirs, and drives you the 212 miles arguing warmly about tunings. You make doors with an hour to spare and put them on the guest list forever. GRIEVANCE ENGINE, it turns out, tows.', effects: { network: 9, fame: 6, cred: 6, burnout: 5 } },
+          incredible: { text: 'The van’s death goes scene-viral WHILE you solve it, and by the time you take the stage — gear delivered by a fan convoy that self-organized in a comment thread — the crowd knows the whole saga. You open by reading the tow guy’s one-word diagnosis. The roar is tectonic. Mid-set, the promoter walks out and hands you keys: the venue’s old sprinter, “on loan until it isn’t.” The van is dead. Long live the van. The encore is dedicated to mile marker 148.', effects: { network: 12, fame: 12, cred: 8, burnout: 6 } },
+        },
+      },
+      right: {
+        label: 'Sell the van for scrap. Rent. Arrive clean.',
+        governingStats: { cred: 0.5, network: 0.5 },
+        tags: ['deal', 'safe'],
+        outcomes: {
+          bad: { text: 'The scrap yard pays $200 for eight years of history, and the rental — spotless, characterless, smelling of nothing — gets you there early and hollow. The show is fine. Professional. On the drive home the silence has the wrong texture: no rattle, no bungee creak, no van. You didn’t lose a vehicle. You lost a rhythm section.', effects: { money: 80, burnout: 6, cred: 2 } },
+          good: { text: 'You strip the van first — the gearshift knob, the sun-bleached dashboard saint, the door panel where every tour got signed — then take the scrap money and rent something that actually merges. The show goes clean and big. The door panel gets framed backstage at your home venue, where vans go to be remembered. Practical AND sentimental: the adult version of both.', effects: { money: 150, cred: 5, fame: 4 } },
+          incredible: { text: 'At the scrap yard, the owner — flipping through the van’s interior of setlists, stickers, and sharpie — stops. “My kid has your record.” Long pause. “I’m not scrapping this.” He buys it WHOLE, restores it over a year as a project, and parks it outside your hometown venue on anniversaries, doors open, dome light on, a museum of the early days that starts more conversations than any press ever did. You play the big show in a rental. The van plays the long game.', effects: { money: 250, cred: 9, fame: 7, burnout: -4 } },
+        },
+      },
+    },
+  },
 ];

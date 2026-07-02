@@ -13,12 +13,14 @@ import * as engine from '../js/engine.js';
 import { generateDMs } from '../js/dms.js';
 import { generateHeadlines } from '../js/headlines.js';
 import { buildEpilogue } from '../js/epilogue.js';
+import { ARCS } from '../js/data/arcs.js';
+import { WEATHER } from '../js/data/weather.js';
 
 const KNOWN_TOKENS = new Set(['song', 'hitSong', 'fadedSong', 'venue', 'rival', 'rivalVibe', 'genre', 'collabArtist']);
 const KNOWN_REQ = new Set(['flagsAll', 'flagsNone', 'moneyMax', 'moneyMin', 'burnoutMin', 'fameMin', 'fameMax',
   'gear', 'rivalryMin', 'rivalryMax', 'genreAny', 'venueAny', 'venueNone', 'venueLevelMin', 'venueIs', 'rivalIs',
   'hustleMin', 'bandMin', 'bandMax', 'bandHas', 'demoMin', 'chartingMin', 'songsMin', 'fadedMin', 'nemesis', 'stats',
-  'anyOf']);
+  'anyOf', 'weatherIs']);
 
 function checkRequires(evId, r) {
   for (const k of Object.keys(r || {})) {
@@ -48,6 +50,71 @@ for (const ev of EVENTS) {
   checkRequires(ev.id, ev.requires);
   if (ev.weight === 0 && !ev.chainOnly && !ev.finaleCard && !ev.shop) {
     issues.push(`${ev.id}: weight 0 but not chainOnly`);
+  }
+}
+
+// ── M3 authoring rules (Reach & Rush §3) ──
+
+// 1. Every flag a card requires must be set somewhere (or by the engine/UI)
+{
+  const ENGINE_FLAGS = new Set(['comeback', 'chart_passed_rival', 'mg_golden', 'mg_botched', 'mg_steady',
+    'has_loop_pedal', 'demo_in_pocket', 'notebook_demo', 'debt', 'song_finished']);
+  const setFlags = new Set(ENGINE_FLAGS);
+  const addFrom = (effects) => { if (effects?.addFlag) setFlags.add(effects.addFlag); };
+  for (const ev of EVENTS) {
+    for (const side of ['left', 'right']) {
+      const c = ev.choices?.[side];
+      if (!c) continue;
+      for (const t of ['bad', 'good', 'incredible']) addFrom(c.outcomes?.[t]?.effects);
+    }
+  }
+  const requiredFlags = (r) => !r ? [] : [
+    ...(r.flagsAll || []), ...(r.flagsNone || []),
+    ...(r.anyOf || []).flatMap(requiredFlags),
+  ];
+  for (const ev of EVENTS) {
+    for (const f of requiredFlags(ev.requires)) {
+      if (!setFlags.has(f)) issues.push(`${ev.id}: requires flag '${f}' that nothing sets`);
+    }
+  }
+}
+
+// 2. Dark-gated share of any act's deck ≤45%. "Dark" = gated by requires
+//    with no scheduler rooting for it: arc-registered cards get Story
+//    Seeds boosts, pack cards are player-purchased, chain/finale/flash
+//    cards have their own delivery. Everything else must stay majority-open
+//    or the dark pile grows back.
+{
+  const arcIds = new Set(ARCS.flatMap((a) => [...a.setup, ...a.payoffs]));
+  for (const act of [1, 2, 3]) {
+    const inAct = EVENTS.filter((e) =>
+      !e.chainOnly && !e.finaleCard && !e.flashpoint && !e.pack &&
+      (Array.isArray(e.act) ? e.act.includes(act) : e.act === act));
+    const dark = inAct.filter((e) => e.requires && !arcIds.has(e.id));
+    const share = dark.length / inAct.length;
+    if (share > 0.45) issues.push(`act ${act}: dark-gated share ${(100 * share).toFixed(0)}% > 45% (${dark.length}/${inAct.length}) — register arcs in ARCS or open the gates`);
+  }
+}
+
+// 3. The Story Seeds registry must point at real cards
+{
+  const ids = new Set(EVENTS.map((e) => e.id));
+  for (const arc of ARCS) {
+    for (const id of [...arc.setup, ...arc.payoffs]) {
+      if (!ids.has(id)) issues.push(`arc ${arc.id}: references unknown card '${id}'`);
+    }
+  }
+}
+
+// 4. weatherIs gates must reference real weather; flashpoints must be drawable
+{
+  const wids = new Set(WEATHER.map((w) => w.id));
+  const weatherRefs = (r) => !r ? [] : [r.weatherIs, ...(r.anyOf || []).flatMap(weatherRefs)].filter(Boolean);
+  for (const ev of EVENTS) {
+    for (const w of weatherRefs(ev.requires)) {
+      if (!wids.has(w)) issues.push(`${ev.id}: unknown weather '${w}'`);
+    }
+    if (ev.flashpoint && !(ev.weight > 0)) issues.push(`${ev.id}: flashpoint needs weight > 0`);
   }
 }
 

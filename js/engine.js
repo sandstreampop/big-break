@@ -14,6 +14,7 @@ import { bandmateById, recruitCandidate } from './data/band.js';
 import { collabArtistFor, songName } from './charts.js';
 import { TUTORIAL_EVENTS } from './data/tutorial.js';
 import { ARCS, arcById, rollSeeds } from './data/arcs.js';
+import { weatherHooks, rollWeather } from './data/weather.js';
 
 // Tutorial cards live outside EVENTS so they can never enter normal decks;
 // chains and resume still need to find them by id.
@@ -141,6 +142,8 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     actTwist: rng() < CONFIG.actTwistChance
       ? { act: randInt(rng, 2, 3), delta: rng() < 0.5 ? -CONFIG.actTwistDelta : CONFIG.actTwistDelta }
       : null,
+    // Scene Weather (M2): one visible modifier recolors the whole run
+    weather: rollWeather(rng),
     path: null,
     instrument: instrumentId,
     firstInstrument: instrumentId,
@@ -164,6 +167,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
   if (perks.includes('calluses')) state.stats.skill = clamp(state.stats.skill + 6, 1, 100);
   if (perks.includes('couch')) state.stats.network = clamp(state.stats.network + 6, 1, 100);
   if (perks.includes('warmup')) state.encore = 1; // walk in with one banked
+  state.money += weatherHooks(state).startMoney || 0; // Scene Weather walk-in
   if (perks.includes('notebook')) {
     // The Old Notebook: every career starts with one demo already taped
     addSong(state, {
@@ -233,7 +237,8 @@ export function releaseSong(state, songId, hype = 55) {
   const s = state.songs.find((x) => x.id === songId);
   if (!s || s.status === 'charting') return null;
   s.status = 'charting';
-  s.hype = clamp(Math.round(hype), 0, 100);
+  // Scene Weather: some eras are kind to release day (Vinyl Revival…)
+  s.hype = clamp(Math.round(hype + (weatherHooks(state).releaseHype || 0)), 0, 100);
   debutSong(state, s);
   return s;
 }
@@ -404,6 +409,7 @@ function requiresOk(r, state) {
   // (e.g. nemesis_soundcheck accepts a cross-run nemesis OR an in-run feud)
   if (r.anyOf && !r.anyOf.some((alt) => requiresOk(alt, state))) return false;
   if (r.nemesis && !state.nemesis) return false;
+  if (r.weatherIs && state.weather !== r.weatherIs) return false;
   if (r.flagsAll && !r.flagsAll.every((f) => state.flags.includes(f))) return false;
   if (r.flagsNone && r.flagsNone.some((f) => state.flags.includes(f))) return false;
   if (r.moneyMax !== undefined && state.money > r.moneyMax) return false;
@@ -535,14 +541,19 @@ export function drawNextCard(state, rng = Math.random) {
   // Personal novelty (R2): cards THIS player has never seen draw heavier.
   // On a first install everything is unseen, so nothing shifts.
   const seen = state.seenCards ? new Set(state.seenCards) : null;
+  // Scene Weather (M2): the mutator recolors the deck itself
+  const wMults = weatherHooks(state).weightTagMult || [];
   let total = 0;
   const weights = pool.map((ev) => {
     const affine = ev.pathAffinity && ev.pathAffinity.includes(state.path);
-    const w = (ev.weight || 1) *
+    let w = (ev.weight || 1) *
       (affine ? CONFIG.pathWeightMult : 1) *
       (litPayoffs.has(ev.id) ? CONFIG.seedPayoffMult : 1) *
       (warmSetups.has(ev.id) ? CONFIG.seedSetupMult : 1) *
       (seen && !seen.has(ev.id) ? CONFIG.noveltyWeightMult : 1);
+    for (const wm of wMults) {
+      if (tagsIntersect(wm.tags, ev.tags || [])) w *= wm.mult;
+    }
     total += w;
     return w;
   });
@@ -609,6 +620,11 @@ export function rollComponents(state, choice, opts = {}) {
     if (bm && tagsIntersect(bm.bonus.tags, choice.tags)) quirkBonus += bm.bonus.bonus;
   }
 
+  const wHooks = weatherHooks(state);
+  for (const tb of wHooks.rollTagBonus || []) {
+    if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
+  }
+
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
   const pityPer = CONFIG.pityPerBad + ((state.perks || []).includes('thick_skin') ? 3 : 0);
   const pityBonus = Math.min((state.badStreak || 0) * pityPer, CONFIG.pityCap + ((state.perks || []).includes('thick_skin') ? 6 : 0));
@@ -616,8 +632,9 @@ export function rollComponents(state, choice, opts = {}) {
   const encoreBonus = opts.encore && !cMods.disableEncore ? CONFIG.encoreBonus : 0;
   // Performance bonus: a minigame result (UI-side skill) folded into the roll
   const perfBonus = opts.bonus || 0;
-  const jitter = cMods.jitter || inst?.quirk?.hooks?.jitter ||
+  let jitter = cMods.jitter || inst?.quirk?.hooks?.jitter ||
     CONFIG.jitterByAct?.[state.act] || [CONFIG.jitterMin, CONFIG.jitterMax];
+  if (wHooks.jitterWiden) jitter = [jitter[0] - wHooks.jitterWiden, jitter[1] + wHooks.jitterWiden];
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
     gearBonus + quirkBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
   return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
@@ -834,11 +851,13 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   const push = (key, amount) => { if (amount) deltas.push({ key, amount }); };
 
   const cMods = contractMods(state);
+  const wHooks = weatherHooks(state);
   for (const stat of STATS) {
     let v = effects[stat] || 0;
     if (!v) continue;
     if (stat === 'cred' && v > 0 && hooks.credGainMult) v = Math.round(v * hooks.credGainMult);
     if (stat === 'cred' && v > 0 && cMods.credGainMult) v = Math.round(v * cMods.credGainMult);
+    if (v > 0 && wHooks.statGainMult?.[stat]) v = Math.round(v * wHooks.statGainMult[stat]);
     const before = state.stats[stat];
     state.stats[stat] = clamp(before + v, 0, 100);
     push(stat, state.stats[stat] - before);
@@ -859,6 +878,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     }
     if (hooks.liveBurnout && tags.includes('live')) v += hooks.liveBurnout;
     if (v > 0 && cMods.burnoutGainMult) v *= cMods.burnoutGainMult;
+    if (v > 0 && wHooks.burnoutGainMult) v *= wHooks.burnoutGainMult;
     if (v < 0 && cMods.burnoutHealMult) v *= cMods.burnoutHealMult;
     if (v < 0 && (state.perks || []).includes('therapist')) v *= 1.25;
     v = Math.round(v);
@@ -873,6 +893,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     let v = effects.fame || 0;
     if (v && hooks.fameSwingMult) v = Math.round(v * hooks.fameSwingMult);
     if (v > 0 && cMods.fameGainMult) v = Math.round(v * cMods.fameGainMult);
+    if (v > 0 && wHooks.fameGainMult) v = Math.round(v * wHooks.fameGainMult);
     if (v) {
       const before = state.fame;
       state.fame = Math.max(0, state.fame + v);
@@ -884,6 +905,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     let v = effects.money || 0;
     if (v > 0) {
       if (hooks.moneyGainMult) v = Math.round(v * hooks.moneyGainMult);
+      if (wHooks.moneyGainMult) v = Math.round(v * wHooks.moneyGainMult);
       for (const acc of accs) {
         if (acc.moneySiphon) v = Math.round(v * (1 - acc.moneySiphon));
       }
@@ -1192,8 +1214,9 @@ function startAct(state, act) {
   for (const id of state.hustles || []) {
     const h = hustleById(id);
     if (h) {
-      state.money += h.moneyPerAct;
-      notes.push(`${h.icon} ${h.name}: +$${h.moneyPerAct}`);
+      const pay = Math.round(h.moneyPerAct * (weatherHooks(state).hustleMult || 1));
+      state.money += pay;
+      notes.push(`${h.icon} ${h.name}: +$${pay}`);
     }
   }
   for (const bid of state.band || []) {
@@ -1239,8 +1262,9 @@ export function finalePayout(state) {
   for (const id of state.hustles || []) {
     const h = hustleById(id);
     if (h) {
-      state.money += h.moneyPerAct;
-      notes.push(`${h.icon} ${h.name}: +$${h.moneyPerAct}`);
+      const pay = Math.round(h.moneyPerAct * (weatherHooks(state).hustleMult || 1));
+      state.money += pay;
+      notes.push(`${h.icon} ${h.name}: +$${pay}`);
     }
   }
   return notes;
@@ -1292,6 +1316,7 @@ export function legacyPoints(state) {
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
   let mult = contractById(state.contract)?.lpMult || 1;
+  mult *= weatherHooks(state).lpMult || 1;
   if ((state.flags || []).includes('comeback')) mult *= 1.2;
   return Math.max(1, Math.round((base + bonus) * mult));
 }

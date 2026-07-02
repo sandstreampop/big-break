@@ -7,6 +7,19 @@
 import { ASSET_MANIFEST } from './data/assets.js';
 
 const EMOJI = {
+  // act-1 expansion + new arcs + weather + extras (More P5)
+  ev_laundromat: '🧺', ev_camcorder: '📹', ev_prodigy: '🌟', ev_heirloom: '🪕',
+  ev_bandcamp: '💳', ev_ringtone: '📞', ev_bistro: '🥘', ev_neighbor_kid: '🎸',
+  ev_band_photo: '📸', ev_rehearsal_share: '🤘', ev_family_show: '👩‍👩‍👧',
+  ev_string_break: '🪗', ev_merch_box: '👕', ev_setlist_panic: '🧶',
+  ev_prodigy_viral: '📈', ev_prodigy_stage: '🎤',
+  ev_heirloom_call: '☎️', ev_heirloom_stage: '✨', ev_heirloom_glass: '🪟',
+  ev_w_tent: '⛺', ev_w_lathe: '💿', ev_w_check: '🧾', ev_w_merger: '🏷️',
+  ev_w_flood: '🌊', ev_w_zine: '📰', ev_w_moon: '🌕', ev_w_grant: '🏛️',
+  ev_w_basement: '🕯️', ev_w_reunion: '📼', ev_w_badge: '🤖', ev_w_judge: '☕',
+  ev_soundcheck_feud: '🎚️', ev_green_legend: '🧀', ev_radio_zoo: '📢',
+  ev_support_pick: '🎫', ev_setlist_leak: '🕵️', ev_encore_debt: '👏',
+  ev_tribute: '🎭', ev_van_dies: '🛕',
   // flashpoints (Rush U2)
   ev_fp_seance: '🕯️', ev_fp_prince: '👑', ev_fp_blackout: '🔦', ev_fp_capsule: '📼',
   ev_fp_slot: '🌩️', ev_fp_masked: '🎭', ev_fp_suit: '⚖️', ev_fp_cruise: '🛳️',
@@ -68,6 +81,19 @@ const EMOJI = {
 
 // Which composed scene each event/ending slot uses
 const SCENE = {
+  // act-1 expansion + new arcs + weather + extras (More P5)
+  ev_laundromat: 'home', ev_camcorder: 'street', ev_prodigy: 'stage', ev_heirloom: 'home',
+  ev_bandcamp: 'phone', ev_ringtone: 'street', ev_bistro: 'stage', ev_neighbor_kid: 'home',
+  ev_band_photo: 'street', ev_rehearsal_share: 'home', ev_family_show: 'stage',
+  ev_string_break: 'stage', ev_merch_box: 'home', ev_setlist_panic: 'home',
+  ev_prodigy_viral: 'phone', ev_prodigy_stage: 'festival',
+  ev_heirloom_call: 'phone', ev_heirloom_stage: 'arena', ev_heirloom_glass: 'street',
+  ev_w_tent: 'festival', ev_w_lathe: 'studio', ev_w_check: 'office', ev_w_merger: 'office',
+  ev_w_flood: 'crisis', ev_w_zine: 'shop', ev_w_moon: 'festival', ev_w_grant: 'office',
+  ev_w_basement: 'stage', ev_w_reunion: 'stage', ev_w_badge: 'phone', ev_w_judge: 'shop',
+  ev_soundcheck_feud: 'stage', ev_green_legend: 'home', ev_radio_zoo: 'studio',
+  ev_support_pick: 'phone', ev_setlist_leak: 'phone', ev_encore_debt: 'arena',
+  ev_tribute: 'stage', ev_van_dies: 'street',
   // flashpoints (Rush U2)
   ev_fp_seance: 'home', ev_fp_prince: 'phone', ev_fp_blackout: 'arena',
   ev_fp_capsule: 'phone', ev_fp_slot: 'festival', ev_fp_masked: 'studio',

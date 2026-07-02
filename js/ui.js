@@ -14,6 +14,7 @@ import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
 import { generateHeadlines } from './headlines.js';
 import { offerGenres, genreById } from './data/genres.js';
+import { weatherById } from './data/weather.js';
 import { offerVenues, venueById, VENUE_TIERS } from './data/venues.js';
 import { bandmateById } from './data/band.js';
 import { generateDMs } from './dms.js';
@@ -483,6 +484,13 @@ function renderHud() {
       inst.flavor, `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`,
       `Family: ${inst.family} — gear with a family requirement only works when it matches.`,
     ],
+  });
+  // Scene Weather (M2): the era this career happens inside
+  const weather = weatherById(run.weather);
+  if (weather && !run.tutorial) chip('gear-chip weather-chip', `${weather.icon} ${weather.name}`, {
+    emoji: weather.icon, title: `${weather.name} (scene weather)`,
+    lines: [weather.flavor, `<b>This run:</b> ${weather.blurb}`,
+      'Rolled once per career. Dailies and Gauntlets share theirs with everyone.'],
   });
   const contract = contractById(run.contract);
   if (contract) chip('gear-chip contract-chip-mini', `${contract.icon} ${contract.name}`, {

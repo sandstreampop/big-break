@@ -19,7 +19,7 @@ export const ARCS = [
   },
   {
     id: 'docu', name: 'The Documentary',
-    setup: ['a1_docu_pitch'],
+    setup: ['a1_docu_pitch', 'a1_camcorder'],
     lit: { flagsAll: ['docu_crew'] },
     payoffs: ['a2_docu_moment', 'a3_docu_gold', 'a3_docu_dirt'],
   },
@@ -55,9 +55,21 @@ export const ARCS = [
   },
   {
     id: 'door', name: 'The Unfinished Song',
-    setup: ['a1_fragment'],
+    setup: ['a1_fragment', 'a1_laundromat'],
     lit: { flagsAll: ['song_fragment'] },
     payoffs: ['a2_song_grows', 'a3_song_finale', 'a3_song_regret'],
+  },
+  {
+    id: 'prodigy', name: 'The Prodigy',
+    setup: ['a1_prodigy_kid'],
+    lit: { anyOf: [{ flagsAll: ['prodigy_boost'] }, { flagsAll: ['prodigy_snub'] }] },
+    payoffs: ['a2_prodigy_blowup', 'a2_prodigy_ghost', 'a3_prodigy_stage', 'a3_prodigy_mirror'],
+  },
+  {
+    id: 'heirloom', name: 'The Heirloom',
+    setup: ['a1_heirloom'],
+    lit: { anyOf: [{ flagsAll: ['pawned_heirloom'] }, { flagsAll: ['kept_heirloom'] }, { flagsAll: ['heirloom_back'] }, { flagsAll: ['heirloom_gone'] }] },
+    payoffs: ['a2_heirloom_call', 'a3_heirloom_home', 'a3_heirloom_glass'],
   },
   {
     id: 'hustle', name: 'The Portfolio',
