@@ -9,4 +9,12 @@ document.addEventListener('touchend', (e) => {
   lastTouch = now;
 }, { passive: false });
 
+// Offline support (PWA): network-first SW, registered post-load so it never
+// competes with first paint
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
 boot();
