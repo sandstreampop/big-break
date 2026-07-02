@@ -14,7 +14,59 @@ packs, contracts, and perks on the Career Wall.
 
 It's a PWA: add it to your home screen and it works offline.
 
-## The systems (v4)
+## The systems (v5)
+
+### New in v5 — Reach & Rush + the Audible Career
+
+- **Your songs are AUDIBLE** — every song the game tracks gets a
+  deterministic, synthesized sound, composed live in the browser from
+  its fingerprint: the genre picks the recipe (Doom Jazz is a dirge,
+  Hyperpop is a sugar rush at 176 bpm), your instrument is the topline
+  voice (a kazoo *sounds like a kazoo*), the hook you grabbed at 3 a.m.
+  in Idea Grab **is the melody**, the quality tier grows the arrangement
+  (a demo is a sketch; a crowned HIT gets the full arc, key change and
+  all), and the minigame verdict sets the timing (BOTCHED drifts,
+  GOLDEN locks). Tap ▶ in the Songbook (📈). Act-break chart reveals and
+  the finale score themselves with your actual songs; once the catalog
+  is real, a catalog radio rotates your releases into the mid-act
+  soundtrack. Past careers in the Trophy Room stay playable forever —
+  the fingerprints persist, the audio re-renders. No audio files, no
+  network, fully offline, byte-deterministic composition
+  (`tools/test-composer.mjs`, `lab/audio-lab.html`).
+- **Story Seeds** — every run secretly roots for two of twelve story
+  arcs: their setups get a guaranteed window, their payoffs draw hot,
+  and dud seeds re-roll at the Crossroads. The arcs that used to fire in
+  2% of runs (the Shed, the Documentary, Static Bloom, Row Zero, the
+  Couch, Someone…) now complete in most careers — different ones each
+  time.
+- **Personal novelty** — the deck remembers what *you* have seen
+  (across runs) and steers toward what you haven't; band recruits favor
+  members whose episodes you've never met.
+- **Flashpoints** — once-per-run spectacle cards in ~25% of careers,
+  dealt through their own scheduler with a foil frame and a sting: the
+  séance gig, the wire-transfer prince, the stadium blackout, the
+  royalty glitch, the emergency main-stage slot… ±30-point swings,
+  windfalls, wipeouts, instant hits.
+- **Hot streaks** — three clean cards light **ON A ROLL**: the deck
+  deals what you've never seen, streaks can summon the flashpoint
+  early, and an armed Encore that lands INCREDIBLE while hot refunds
+  its token.
+- **Overnight viral** — 1-in-20 releases detonate: +4 chart slots,
+  eruption, confetti, no explanation. **Act twists** — ~20% of runs, a
+  leg runs short or long, telegraphed like a headline.
+- **Scene Weather** — one of twelve visible era-mutators recolors every
+  run (Festival Season, the Streaming Crash, Full Moon Fever, the Slop
+  Flood…), each with a signature card that only exists in that era.
+  Dailies and Gauntlets share theirs with everyone.
+- **Two new arcs** — THE PRODIGY (the torch, offered or gripped) and
+  THE HEIRLOOM (your grandmother's 1958 mandolin: the closet, the
+  ticket, the Friday, the glass).
+- **A meaner summit** — win gates are up, the momentum clutch is
+  kinder, money starts tighter, and Curtis has a real job again:
+  careers can be *lost*, which means the gameover endings, exit
+  interviews, and debt chain are content you'll actually meet.
+
+### The foundation (v4 and earlier)
 
 - **Resolution engine** — every swipe rolls stats + gear + quirks − burnout
   ± luck into Bad / Good / Incredible. Colored risk dots telegraph danger
@@ -114,14 +166,17 @@ python3 -m http.server 8000   # → http://localhost:8000
 
 - `js/config.js` — **every tuning knob** (roll shape, tier thresholds, wear,
   win gates, LP formula, pity/encore numbers)
-- `js/data/` — all content: `events.js` (200+ cards), `instruments.js`,
-  `accessories.js`, `rivals.js`, `contracts.js`, `hustles.js`, `genres.js`,
-  `venues.js`, `band.js`, `meta.js` (endings/wall/trophies), `assets.js`
-  (art-slot manifest)
+- `js/data/` — all content: `events.js` (260 cards), `instruments.js`,
+  `accessories.js`, `rivals.js`, `contracts.js`, `hustles.js`, `genres.js`
+  (incl. per-genre sound recipes), `venues.js`, `band.js`, `arcs.js` (the
+  Story Seeds registry), `weather.js` (Scene Weather), `meta.js`
+  (endings/wall/trophies), `assets.js` (art-slot manifest)
 - `js/engine.js` — DOM-free rules: rolls, deck assembly, fail states,
   finale, seeded RNG (`tools/simulate.mjs` drives it in Node)
 - `js/ui.js` — screens + swipe physics; `js/art.js` — generative SVG scenes;
   `js/audio.js` — synthesized SFX + per-act lo-fi soundtrack;
+  `js/composer.js` — the audible-songs engine (deterministic composition
+  + offline render + the catalog player/radio);
   `js/charts.js` / `js/headlines.js` — the world's reactions
 - `sw.js`, `manifest.webmanifest` — offline/PWA layer
 
@@ -130,9 +185,18 @@ python3 -m http.server 8000   # → http://localhost:8000
 Change knobs in `js/config.js`, then:
 
 ```
-node tools/simulate.mjs 4000 narrative
+node tools/simulate.mjs 4000 narrative   # reach report, variance index,
+                                         # seeds funnel, success band
 node tools/lint-content.mjs   # template/style/gating audit of all content
+node tools/test-composer.mjs  # audible-songs invariants (determinism,
+                              # hook fidelity, growth, purity)
 ```
+
+The sim's gates (from docs/design-reach-and-rush.md §5): 0 never-drawn
+ungated cards, ≤10 cards under 1% of runs, success 25–40%, act-3
+INCREDIBLE 10–18%, ≥2 spike moments/run, flashpoints in ~25% of runs.
+For audio work, `lab/audio-lab.html` (dev-only) auditions the whole
+genre × tier × instrument space and batch-checks renders for silence.
 
 The `narrative` policy models a human following the story — judge feel by
 it (target: ~20% Bad, a scrappy Act 1, Incredibles blooming in Act 3, and

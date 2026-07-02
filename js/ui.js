@@ -2314,6 +2314,6 @@ function renderSettings() {
   }));
   menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
   s.append(menu);
-  s.append(el('p', 'title-foot', 'BIG BREAK v2.0 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.'));
+  s.append(el('p', 'title-foot', 'BIG BREAK v5 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.'));
   show('#screen-settings');
 }
