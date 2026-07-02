@@ -772,6 +772,11 @@ function commitSwipe(side, dx = 0, dy = 0) {
       // The Showman's Pact: botching on stage, under contract, hurts double
       if (verdict.label === 'BOTCHED' && mgMods.mgBotchDouble) bonus = verdict.bonus * 2;
       track('minigame', { id: mgId, card: currentEvent?.id, score, bonus, skipped: score == null });
+      if (score != null) {
+        meta.minigamesPlayed = meta.minigamesPlayed || {};
+        meta.minigamesPlayed[mgId] = (meta.minigamesPlayed[mgId] || 0) + 1;
+        save.saveMeta(meta);
+      }
       currentCard = card; // hand back for the normal path
       finishSwipe(side, dx, dy, bonus ? { id: mgId, ...verdict, bonus } : null);
     });
@@ -1520,6 +1525,8 @@ function finishMeta(summary, lp) {
       .some((st) => Math.min(3, Math.floor(st.runs / 2) + st.wins) >= 3),
     exits_3: () => (meta.exitSeen || []).length >= 3,
     nemesis_3: () => Object.values(meta.rivalCounts || {}).some((n) => n >= 3),
+    mg_6: () => Object.keys(meta.minigamesPlayed || {}).length >= 6,
+    mg_12: () => Object.keys(meta.minigamesPlayed || {}).length >= 12,
   };
   for (const t of TROPHIES) {
     if (meta.trophies.includes(t.id)) continue;

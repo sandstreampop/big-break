@@ -1,7 +1,7 @@
 // BIG BREAK service worker: network-first (updates always win when online),
 // cache fallback (full game works offline once visited).
 
-const CACHE = 'bigbreak-v12';
+const CACHE = 'bigbreak-v13';
 const CORE = [
   './', 'index.html', 'css/style.css', 'manifest.webmanifest',
   'js/main.js', 'js/ui.js', 'js/engine.js', 'js/save.js', 'js/audio.js',
