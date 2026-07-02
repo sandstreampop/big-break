@@ -69,12 +69,37 @@ export function boot() {
   show('#screen-title');
 }
 
+const TAGLINES = [
+  'Swipe your way from a damp garage to the top of the music industry — before the industry breaks you first.',
+  'The kingdom is your career. The courtiers are A&R reps, algorithms, and your own burnout.',
+  'Exposure is not legal tender. Swipe accordingly.',
+  'Somewhere between the open mic and the stadium, there is a man named Curtis.',
+  'Every swipe is a career decision. Most careers are twelve bad ones in a row.',
+  'The nachos are load-bearing. The dream is real. The pay is exposure.',
+  'Craig has the corner. Todd has the shifts. You have four chords and a feeling.',
+];
+
 function renderTitle() {
   music.setMood('title');
   const s = $('#screen-title');
   s.innerHTML = '';
+  // floating notes (attract mode)
+  if (!reducedMotion()) {
+    const notes = el('div', 'title-notes');
+    const glyphs = ['♪', '♫', '♩', '♬'];
+    for (let i = 0; i < 9; i++) {
+      const n = el('span', 'title-note', glyphs[i % glyphs.length]);
+      n.style.left = (5 + (i * 37) % 90) + '%';
+      n.style.animationDelay = (i * 1.7) + 's';
+      n.style.animationDuration = (9 + (i * 13) % 7) + 's';
+      n.style.fontSize = (14 + (i * 7) % 14) + 'px';
+      notes.append(n);
+    }
+    s.append(notes);
+  }
   s.append(el('div', 'title-logo', 'BIG<br>BREAK'));
-  s.append(el('p', 'title-tag', 'Swipe your way from a damp garage to the top of the music industry — before the industry breaks you first.'));
+  const dayNum = hashStr(todayStr());
+  s.append(el('p', 'title-tag', TAGLINES[dayNum % TAGLINES.length]));
 
   const saved = save.loadRun();
   const menu = el('div', 'menu');
@@ -111,6 +136,14 @@ function renderTitle() {
   if (meta.runs > 0) menu.append(btn('📊 The Résumé', '', renderResume));
   menu.append(btn('⚙ Settings', '', renderSettings));
   s.append(menu);
+  // Today in the industry — flavor headline from the evergreen pool
+  const fakeState = {
+    chartSeed: dayNum, act: 1, cardLog: [], fame: 0, money: 50, hits: 0,
+    stats: { burnout: 0, cred: 50, skill: 0 }, rival: 'vanta', instrument: 'kazoo',
+    hustles: [], rivalry: 3,
+  };
+  const news = generateHeadlines(fakeState, 1)[0];
+  if (news) s.append(el('p', 'title-news', `📰 ${news.text} <span>— ${news.src}</span>`));
   s.append(el('p', 'title-foot', `Runs: ${meta.runs} · Best fame: ${meta.best.fame} · Legacy: ${meta.lpEarnedTotal} LP`));
 }
 
