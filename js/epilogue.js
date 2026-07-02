@@ -48,6 +48,10 @@ export function buildEpilogue(state) {
     'The bathroom floor is someone else’s problem now. Your new place has carpet, houseplants, and a rule about phones after midnight.');
   add(flags.includes('grounded'),
     'The person who drove out that night still gets thanked from every stage, by a nickname nobody in the crowd understands.');
+  add(state.brammy === 'won',
+    'The Brammy lives on the amp, slightly crooked, holding down a stack of unpaid parking tickets. Correct use of an award.');
+  add(state.brammy === 'lost',
+    `You never got the Brammy. The gracious-loss face, however, became load-bearing at every industry function since. Some trophies are muscles.`);
   add(state.daily != null,
     'The whole thing happened in one impossible day, which is how everyone tells it anyway.');
   const band = (state.band || []).map(bandmateById).filter(Boolean);
