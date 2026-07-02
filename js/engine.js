@@ -216,19 +216,13 @@ function positionAll(state) {
   }
 }
 
-export function addSong(state, { title, quality, origin = null, status = 'demo', hype = 0,
-  genre, instrument, hook = null, verdict = null }) {
+export function addSong(state, { title, quality, origin = null, status = 'demo', hype = 0 }) {
   ensureSongs(state);
   const s = {
     id: 'song_' + (state.songs.length + 1) + '_' + (state.rngUses || 0),
     title, quality: clamp(Math.round(quality), 1, 100), hype: clamp(Math.round(hype), 0, 100),
     status, origin, act: state.act,
     pos: null, prevPos: null, peak: null, weeks: 0, crowned: false,
-    // Audible-songs fingerprint (moonshot §5): what this song is MADE of.
-    // The composer derives sound purely from these — store facts, not audio.
-    genre: genre ?? state.genre ?? null,
-    instrument: instrument ?? state.instrument ?? null,
-    hook, verdict,
   };
   state.songs.push(s);
   // keep the legacy list in sync (discography, older UI paths)
@@ -1013,17 +1007,12 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     const instAdj = (hooks.demoQuality || 0) + gearAdj; // Loop Station / four-track: layers stick
     const jit = Math.round((rng ? rng() : 0.5) * 10 - 5);
     const grabbedHooks = mg?.hooks || [];
-    const hook = grabbedHooks.length
-      ? grabbedHooks[Math.floor((rng ? rng() : 0.5) * grabbedHooks.length)]
-      : null;
-    const title = hook
-      ? hook.replace(/(^|\s)[a-z]/g, (c) => c.toUpperCase())
+    const title = grabbedHooks.length
+      ? grabbedHooks[Math.floor((rng ? rng() : 0.5) * grabbedHooks.length)].replace(/(^|\s)[a-z]/g, (c) => c.toUpperCase())
       : songName(rng, genreById(state.genre));
     const s = addSong(state, {
       title, quality: base + verdictAdj + creaAdj + instAdj + jit,
       origin: ev?.id || null, status: 'demo',
-      // the 3 a.m. hook and the night's performance become the song's DNA
-      hook, verdict: mg?.label || null,
     });
     deltas.songWritten = { title: s.title, quality: s.quality, fromHook: grabbedHooks.length > 0 };
   }

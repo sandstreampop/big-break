@@ -16,23 +16,8 @@ It's a PWA: add it to your home screen and it works offline.
 
 ## The systems (v5)
 
-### New in v5 — Reach & Rush + the Audible Career
+### New in v5 — Reach & Rush
 
-- **Your songs are AUDIBLE** — every song the game tracks gets a
-  deterministic, synthesized sound, composed live in the browser from
-  its fingerprint: the genre picks the recipe (Doom Jazz is a dirge,
-  Hyperpop is a sugar rush at 176 bpm), your instrument is the topline
-  voice (a kazoo *sounds like a kazoo*), the hook you grabbed at 3 a.m.
-  in Idea Grab **is the melody**, the quality tier grows the arrangement
-  (a demo is a sketch; a crowned HIT gets the full arc, key change and
-  all), and the minigame verdict sets the timing (BOTCHED drifts,
-  GOLDEN locks). Tap ▶ in the Songbook (📈). Act-break chart reveals and
-  the finale score themselves with your actual songs; once the catalog
-  is real, a catalog radio rotates your releases into the mid-act
-  soundtrack. Past careers in the Trophy Room stay playable forever —
-  the fingerprints persist, the audio re-renders. No audio files, no
-  network, fully offline, byte-deterministic composition
-  (`tools/test-composer.mjs`, `lab/audio-lab.html`).
 - **Story Seeds** — every run secretly roots for two of twelve story
   arcs: their setups get a guaranteed window, their payoffs draw hot,
   and dud seeds re-roll at the Crossroads. The arcs that used to fire in
@@ -175,8 +160,6 @@ python3 -m http.server 8000   # → http://localhost:8000
   finale, seeded RNG (`tools/simulate.mjs` drives it in Node)
 - `js/ui.js` — screens + swipe physics; `js/art.js` — generative SVG scenes;
   `js/audio.js` — synthesized SFX + per-act lo-fi soundtrack;
-  `js/composer.js` — the audible-songs engine (deterministic composition
-  + offline render + the catalog player/radio);
   `js/charts.js` / `js/headlines.js` — the world's reactions
 - `sw.js`, `manifest.webmanifest` — offline/PWA layer
 
@@ -188,15 +171,11 @@ Change knobs in `js/config.js`, then:
 node tools/simulate.mjs 4000 narrative   # reach report, variance index,
                                          # seeds funnel, success band
 node tools/lint-content.mjs   # template/style/gating audit of all content
-node tools/test-composer.mjs  # audible-songs invariants (determinism,
-                              # hook fidelity, growth, purity)
 ```
 
 The sim's gates (from docs/design-reach-and-rush.md §5): 0 never-drawn
 ungated cards, ≤10 cards under 1% of runs, success 25–40%, act-3
 INCREDIBLE 10–18%, ≥2 spike moments/run, flashpoints in ~25% of runs.
-For audio work, `lab/audio-lab.html` (dev-only) auditions the whole
-genre × tier × instrument space and batch-checks renders for silence.
 
 The `narrative` policy models a human following the story — judge feel by
 it (target: ~20% Bad, a scrappy Act 1, Incredibles blooming in Act 3, and

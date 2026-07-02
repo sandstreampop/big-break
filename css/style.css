@@ -1313,33 +1313,3 @@ body.big-text #app { zoom: 1.18; }
   background: #2a2138;
   border: 1px dashed #ffb34766;
 }
-
-/* ═══════════ AUDIBLE SONGS (moonshot): the catalog player ═══════════ */
-.sb-play {
-  flex: 0 0 auto;
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  border: 1px solid #4a4066;
-  background: #2a2240;
-  color: var(--ink);
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  display: grid; place-items: center;
-  align-self: center;
-  transition: transform .12s, background .12s;
-}
-.sb-play:active { transform: scale(.9); }
-.sb-play.playing {
-  background: linear-gradient(135deg, #ffb347, #ff5b7f);
-  border-color: transparent;
-  color: #171222;
-  animation: rollGlow 1.4s ease-in-out infinite alternate;
-}
-.songbook-row { align-items: center; }
-.songbook-row b { flex: 1; }
-.hist-songs {
-  display: flex; flex-direction: column; gap: 4px;
-  padding: 6px 4px 10px;
-  animation: chipIn .25s backwards;
-}
