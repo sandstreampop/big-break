@@ -22,6 +22,7 @@ import { renderShareImage } from './sharecard.js';
 import { buildDiscography } from './discography.js';
 import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from './analytics.js';
+import { playMinigame, minigameById } from './minigames.js';
 
 let meta = save.loadMeta();
 let run = null;
@@ -523,6 +524,7 @@ function accActive(acc) {
 }
 
 let currentCard = null;
+let currentEvent = null; // the event behind currentCard (minigame lookup)
 let encoreArmed = false;
 let prevStats = null; // for stat-rail delta floaters
 
@@ -597,6 +599,7 @@ function dealCard() {
   card.append(hintL, hintR);
   area.append(card);
   currentCard = card;
+  currentEvent = ev;
 
   // Tap-friendly fallback buttons (spec §10/§12)
   const controls = $('#choice-buttons');
@@ -620,8 +623,9 @@ function dealCard() {
     // Structured two-tier layout: a compact meta strip (direction, risk
     // tell, governing stats), then the label — long labels wrap cleanly
     // instead of scattering icons across lines.
-    bL.innerHTML = `<span class="choice-meta"><span class="dir">◀</span>${dot(oL)}<span class="gov-row">${govIcons(ev.choices.left)}</span></span><span class="btn-label">${fillText(ev.choices.left.label)}</span>`;
-    bR.innerHTML = `<span class="choice-meta"><span class="dir">▶</span>${dot(oR)}<span class="gov-row">${govIcons(ev.choices.right)}</span></span><span class="btn-label">${fillText(ev.choices.right.label)}</span>`;
+    const mg = (c) => (c.minigame && meta.settings.minigames !== false && !run.tutorial ? '<span class="mg-flag">🎮</span>' : '');
+    bL.innerHTML = `<span class="choice-meta"><span class="dir">◀</span>${dot(oL)}<span class="gov-row">${govIcons(ev.choices.left)}</span>${mg(ev.choices.left)}</span><span class="btn-label">${fillText(ev.choices.left.label)}</span>`;
+    bR.innerHTML = `<span class="choice-meta"><span class="dir">▶</span>${dot(oR)}<span class="gov-row">${govIcons(ev.choices.right)}</span>${mg(ev.choices.right)}</span><span class="btn-label">${fillText(ev.choices.right.label)}</span>`;
   };
   paintOdds();
 
@@ -754,12 +758,31 @@ function attachDrag(card, bL, bR) {
 
 function commitSwipe(side, dx = 0, dy = 0) {
   if (!currentCard) return;
+  // Flagship choices carry a minigame: your performance becomes the bonus.
+  const mgId = currentEvent?.choices?.[side]?.minigame;
+  if (mgId && minigameById(mgId) && meta.settings.minigames !== false && !run.tutorial) {
+    const card = currentCard;
+    currentCard = null; // freeze the card while the minigame runs
+    card.style.transform = ''; // snap back from any drag offset
+    playMinigame(mgId, { run }).then(({ score, verdict }) => {
+      track('minigame', { id: mgId, card: currentEvent?.id, score, bonus: verdict.bonus, skipped: score == null });
+      currentCard = card; // hand back for the normal path
+      finishSwipe(side, dx, dy, verdict.bonus ? { id: mgId, ...verdict } : null);
+    });
+    return;
+  }
+  finishSwipe(side, dx, dy, null);
+}
+
+function finishSwipe(side, dx = 0, dy = 0, perf = null) {
+  if (!currentCard) return;
   const card = currentCard;
   currentCard = null;
   sfx.swipe();
 
   const armed = encoreArmed;
-  const result = engine.resolveSwipe(run, side, engine.stateRng(run), { encore: encoreArmed });
+  const result = engine.resolveSwipe(run, side, engine.stateRng(run), { encore: encoreArmed, bonus: perf?.bonus || 0 });
+  if (perf) result.minigameInfo = perf;
   track('swipe', {
     card: result.event?.id, side, tier: result.tier,
     act: run.act, path: run.path || null, tutorial: !!run.tutorial,
@@ -934,6 +957,11 @@ function showResult(result) {
   // long text wraps inside its own row instead of a distorted pill.
   const notices = el('div', 'result-notices');
   const notice = (cls, html) => notices.append(el('div', `notice ${cls}`, html));
+  if (result.minigameInfo) {
+    const m = result.minigameInfo;
+    notice(m.bonus >= 0 ? 'notice-good' : 'notice-bad',
+      `🎮 Performance: <b>${m.label}</b> — ${m.bonus >= 0 ? '+' : ''}${m.bonus} on that roll`);
+  }
   if (result.encoreSpent) notice('notice-encore', '🎇 Encore spent — that roll was boosted');
   if (result.encoreEarned) notice('notice-encore', '🎇 <b>Encore earned</b> — bank it for the right card');
   if (result.gearLost) notice('notice-bad', `🧰 <b>${result.gearLost.name}</b> — lost!`);
@@ -1914,6 +1942,9 @@ function renderSettings() {
   toggleRow('Large text', !!meta.settings.bigText, () => {
     meta.settings.bigText = !meta.settings.bigText;
     document.body.classList.toggle('big-text', meta.settings.bigText);
+  });
+  toggleRow('Minigames', meta.settings.minigames !== false, () => {
+    meta.settings.minigames = meta.settings.minigames === false;
   });
   toggleRow('Anonymous analytics', analyticsEnabled(), () => {
     meta.settings.analytics = !analyticsEnabled();

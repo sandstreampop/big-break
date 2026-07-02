@@ -872,6 +872,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Sneak your weird into their hit',
+        minigame: 'take',
         governingStats: { creativity: 0.8, cred: 0.4 },
         tags: ['studio', 'risky', 'indie'],
         outcomes: {
@@ -882,6 +883,7 @@ export const EVENTS = [
       },
       right: {
         label: 'Deliver exactly what they ordered',
+        minigame: 'take',
         governingStats: { skill: 0.8, network: 0.4 },
         tags: ['studio', 'safe', 'mainstream'],
         outcomes: {
@@ -1078,6 +1080,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Go. Be the call.',
+        minigame: 'take',
         governingStats: { skill: 1.0 },
         tags: ['studio', 'risky'],
         outcomes: {
@@ -2047,6 +2050,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Take the session',
+        minigame: 'take',
         governingStats: { skill: 1.0 },
         tags: ['studio', 'risky'],
         outcomes: {
