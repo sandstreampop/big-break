@@ -416,7 +416,8 @@ function renderHud() {
     ? 'FIRST GIG · The Rubber Room'
     : `ACT ${run.act} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][run.act]}`));
   if (!run.tutorial) {
-    const chartBtn = el('button', 'chart-btn', '📈');
+    const chartingN = (run.songs || []).filter((s) => s.status === 'charting' && s.pos).length;
+    const chartBtn = el('button', 'chart-btn', chartingN ? `📈<span class="chart-badge">${chartingN}</span>` : '📈');
     chartBtn.addEventListener('click', () => { sfx.ui(); showChart(); });
     actWrap.append(chartBtn);
   }
@@ -935,6 +936,28 @@ function showChart() {
     list.append(r);
   }
   box.append(list);
+
+  // The Songbook: every song you've written, in whatever state it's in
+  const songs = (engine.ensureSongs(run) || []).slice().reverse();
+  if (songs.length) {
+    box.append(el('div', 'trades-head songbook-head', '♪ YOUR SONGBOOK'));
+    const book = el('div', 'songbook');
+    for (const s of songs) {
+      const row = el('div', 'songbook-row sb-' + s.status + (s.crowned ? ' sb-crowned' : ''));
+      let state;
+      if (s.crowned) state = `👑 HIT — peaked #${s.peak}`;
+      else if (s.status === 'charting' && s.pos) state = `charting #${s.pos} · wk ${s.weeks}${s.peak && s.peak < s.pos ? ` · peak #${s.peak}` : ''}`;
+      else if (s.status === 'charting') state = 'shipped — off the chart';
+      else if (s.status === 'faded') state = s.peak ? `faded — peaked #${s.peak}, ${s.weeks} wk${s.weeks === 1 ? '' : 's'}` : 'faded — never charted';
+      else state = s.quality >= 68 ? 'demo — might be undeniable' : s.quality >= 52 ? 'demo — something’s there' : s.quality >= 38 ? 'demo — rough but honest' : 'demo — it exists';
+      row.innerHTML = `<b>“${s.title}”</b><span class="sb-state">${state}</span>`;
+      book.append(row);
+    }
+    box.append(book);
+    const demos = songs.filter((s) => s.status === 'demo').length;
+    if (demos) box.append(el('p', 'chart-sub sb-hint', `${demos} demo${demos > 1 ? 's' : ''} in the vault — release cards decide when they ship.`));
+  }
+
   box.append(el('p', 'tap-hint', 'tap to close'));
   ov.append(box);
   const done = () => {
