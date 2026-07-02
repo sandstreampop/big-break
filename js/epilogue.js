@@ -58,6 +58,20 @@ export function buildEpilogue(state) {
     'Airports are complicated now. You wear the disguise. The disguise has its own fan account.');
   add(state.hits >= 4,
     'Four songs of the summer. Four different summers. The almanacs will need a footnote.');
+  // the songs themselves get last words
+  const songs = state.songs || [];
+  const numberOne = songs.find((s) => s.peak === 1);
+  const bigHit = !numberOne && songs.find((s) => s.crowned);
+  const vaultDemo = songs.filter((s) => s.status === 'demo').sort((a, b) => b.quality - a.quality)[0];
+  const oneWeek = songs.find((s) => s.status === 'faded' && s.weeks <= 2 && s.peak);
+  add(!!numberOne,
+    `“${numberOne?.title}” still gets played at closing time in bars that don’t know you wrote it. #1 is forever, even when nobody remembers the year.`);
+  add(!!bigHit,
+    `Covers of “${bigHit?.title}” keep arriving — wedding bands, film students, one unforgivable EDM remix. The song left home and did fine.`);
+  add(!!vaultDemo && vaultDemo.quality >= 60,
+    `“${vaultDemo?.title}” never came out. Collectors claim they’ve heard it. They haven’t. Some nights you play it once, alone, and put it back.`);
+  add(!!oneWeek,
+    `“${oneWeek?.title}” charted for a moment and vanished — a one-week wonder. The people who caught it that week bring it up like a secret handshake.`);
   add((state.copingSeen || []).includes('coping_75'),
     'The bathroom floor is someone else’s problem now. Your new place has carpet, houseplants, and a rule about phones after midnight.');
   add(flags.includes('grounded'),

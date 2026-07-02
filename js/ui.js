@@ -1744,6 +1744,19 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   }
   wrap.append(el('p', 'ending-text', ending.text));
 
+  // Chart legacy: what the Hot 10 will remember
+  {
+    const songs = summary?.songs || run.songs || [];
+    const charted = songs.filter((x) => x.peak).length;
+    const crowned = songs.filter((x) => x.crowned).length;
+    const peak = summary?.chartPeak;
+    if (charted) {
+      const bits = [`peak <b>#${peak}</b>`, `${charted} song${charted > 1 ? 's' : ''} charted`];
+      if (crowned) bits.push(`${crowned} certified hit${crowned > 1 ? 's' : ''} 👑`);
+      wrap.append(el('p', 'chart-legacy', `📈 Chart legacy: ${bits.join(' · ')}`));
+    }
+  }
+
   // Scoreboard first (how you were judged), memorabilia after
   if (evalr) {
     wrap.append(el('h3', 'wall-tier', 'The Judgment'));
@@ -1776,7 +1789,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     wrap.append(el('h3', 'wall-tier', 'The Discography'));
     const list = el('div', 'disc-list');
     for (const d of disc) {
-      list.append(el('div', 'disc-row', `<b>“${d.title}”</b><span>— ${d.review}</span>`));
+      list.append(el('div', 'disc-row', `<b>“${d.title}”</b>${d.fact ? `<i class="disc-fact">${d.fact}</i>` : ''}<span>— ${d.review}</span>`));
     }
     wrap.append(list);
   }
@@ -1808,6 +1821,11 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
           headline: `${ending.title}`,
           subline: `${inst ? inst.name : '?'} → ${genre ? genre.name + ' ' : ''}${summary.path ? PATHS[summary.path].name : 'the void'} → ${res}`,
           tierLog: summary.tierLog,
+          songLine: (() => {
+            const best = (summary.songs || []).filter((x) => x.peak)
+              .sort((a, b) => (b.crowned - a.crowned) || (a.peak - b.peak))[0];
+            return best ? `${best.crowned ? '👑 ' : '♪ '}“${best.title}” — peaked #${best.peak}` : null;
+          })(),
           statLine: `★${summary.fame} fame · ${summary.hits} hits · +${lp} LP${summary.chartPeak ? ` · Hot 10 #${summary.chartPeak}` : ''}`,
           footer: 'play: sandstreampop.github.io/big-break',
         });
