@@ -230,8 +230,8 @@ function startNewRun(daily = false, comeback = false) {
     run.nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 2; // 3rd+ meeting
     save.saveRun(run);
     track('run_start', {
-      instrument: inst.id, contract: chosenContract || null,
-      genre: chosenGenre || null, venue: chosenVenue || null,
+      instrument: inst.id, contract: chosenContract || 'none',
+      genre: chosenGenre || 'none', venue: chosenVenue || 'none',
       mode: daily ? 'daily' : comeback ? 'comeback' : 'normal',
       mastery: lv, career_runs: meta.runs || 0,
     });
@@ -390,6 +390,11 @@ function startGauntlet() {
     run.genre = genre.id;
     engine.signContract(run, contract.id);
     save.saveRun(run);
+    track('run_start', {
+      instrument: inst.id, contract: contract.id,
+      genre: genre.id, venue: 'none',
+      mode: 'gauntlet', mastery: masteryLevel(inst.id), career_runs: meta.runs || 0,
+    });
     dealCard();
   });
   sheet.append(card);
@@ -1678,6 +1683,15 @@ function finishMeta(summary, lp) {
   return earned;
 }
 
+// Telemetry mode of a run, derived from run state so run_end can always
+// report it — including runs started before mode was tracked at start.
+function runMode(r) {
+  return r.gauntlet ? 'gauntlet'
+    : r.daily ? 'daily'
+    : (r.flags || []).includes('comeback') ? 'comeback'
+    : 'normal';
+}
+
 function renderFinale() {
   const evalr = engine.evaluateFinale(run);
   const summary = engine.runSummary(run);
@@ -1696,10 +1710,10 @@ function renderFinale() {
 
   const ending = ENDINGS[run.path][evalr.result];
   track('run_end', {
-    outcome: evalr.result, path: run.path, cause: 'finale',
+    outcome: evalr.result, path: run.path, cause: 'finale', mode: runMode(run),
     cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
     burnout: run.stats.burnout, lp, instrument: summary.instrument,
-    contract: summary.contract || null, chart_peak: summary.chartPeak || null,
+    contract: summary.contract || 'none', chart_peak: summary.chartPeak || null,
   });
   if (evalr.result === 'success') sfx.winPath(run.path); else if (evalr.result === 'failure') sfx.gameover(); else sfx.good();
   renderEndingScreen(ending, lp, earned, evalr, summary);
@@ -1716,10 +1730,10 @@ function renderGameOver(endingKey) {
   let lp = engine.legacyPoints(run) + (run.exitLpBonus || 0);
   const earned = finishMeta(summary, lp);
   track('run_end', {
-    outcome: 'gameover', path: run.path || null, cause: endingKey,
+    outcome: 'gameover', path: run.path || null, cause: endingKey, mode: runMode(run),
     cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
     burnout: run.stats.burnout, lp, instrument: summary.instrument,
-    contract: summary.contract || null,
+    contract: summary.contract || 'none', chart_peak: summary.chartPeak || null,
   });
   sfx.gameover();
   renderEndingScreen(ENDINGS[endingKey], lp, earned, null, summary);

@@ -4,8 +4,16 @@ Playtest-driven balance: turn swipes into signal. Events flow to PostHog
 (EU) and to a local ring buffer. This doc is the event schema + copy-paste
 queries for the insights that matter.
 
-Two ways to read the data:
+Three ways to read the data:
 
+- **`telemetry/` in the repo — start here.** A scheduled workflow
+  (`.github/workflows/posthog-pull.yml`, daily at 05:17 UTC, also
+  runnable by hand from the Actions tab) pulls every insight below from
+  PostHog and commits `telemetry/latest.json` (machine-readable) and
+  `telemetry/summary.md` (tables) to `main` — but only when the data
+  changed. It authenticates with the read-only `POSTHOGREADALLTOKEN`
+  secret in the `github-pages` environment and runs
+  `tools/posthog-pull.mjs`, which is also where new queries get added.
 - **PostHog** — paste a query below into a new SQL insight
   (Product Analytics → New insight → SQL), run it, hit **Save**. That saved
   insight *is* the dashboard tile. Best for retention/funnels and live data.
@@ -20,14 +28,18 @@ All properties are game state — no PII. `properties.` prefix in HogQL.
 
 | event | properties |
 |---|---|
-| `run_start` | `instrument, contract, genre, venue, mode(normal\|daily\|comeback), mastery, career_runs` |
+| `run_start` | `instrument, contract, genre, venue, mode(normal\|daily\|comeback\|gauntlet), mastery, career_runs` |
 | `swipe` | `card, side(left\|right), tier(bad\|good\|incredible\|declined), act, path, tutorial, encore_armed, burnout` |
-| `run_end` | `outcome(success\|partial\|failure\|gameover), path, cause(finale\|burnout\|cancelled\|debt), cards, fame, hits, lp, instrument, contract, chart_peak` |
+| `run_end` | `outcome(success\|partial\|failure\|gameover), path, cause(finale\|burnout\|cancelled\|debt), mode, cards, fame, hits, lp, instrument, contract, chart_peak` |
+| `minigame` | `id, card, score(null when skipped), bonus, skipped` |
 | `tutorial_start` | `replay` |
 | `tutorial_complete` | `first_time` |
 | `tutorial_skip` | — |
 
-Every event also carries `app_version`.
+Every event also carries `app_version`. Optional picks (`contract`,
+`genre`, `venue`) report `'none'` rather than null so they group cleanly;
+events captured before the v2.1 telemetry pass may still carry nulls, a
+missing `run_end.mode`, or gauntlet runs with no `run_start` at all.
 
 ## Insight 1 — Degenerate choices (fake-choice detector)
 

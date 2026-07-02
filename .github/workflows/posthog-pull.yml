@@ -1,11 +1,16 @@
-name: PostHog telemetry pull
+name: Telemetry pull
 
-# Manual pull of playtest telemetry from PostHog (EU). Runs the HogQL
+# Scheduled pull of playtest telemetry from PostHog (EU). Runs the HogQL
 # insights from docs/telemetry.md via tools/posthog-pull.mjs using the
-# read-only POSTHOGREADALLTOKEN from the Pages environment. Results
-# land in the job log and as a workflow artifact — never the token.
+# read-only POSTHOGREADALLTOKEN from the Pages environment, then commits
+# telemetry/latest.json + telemetry/summary.md back to main — but only
+# when the data actually changed (the script's output is deterministic).
+# Pushes made with GITHUB_TOKEN don't trigger other workflows, so this
+# never causes a Pages deploy loop.
 
 on:
+  schedule:
+    - cron: '17 5 * * *' # daily, 05:17 UTC — after a European evening of playtests
   workflow_dispatch:
     inputs:
       env_name:
@@ -14,7 +19,10 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: telemetry-pull
 
 jobs:
   pull:
@@ -26,9 +34,15 @@ jobs:
         env:
           POSTHOG_TOKEN: ${{ secrets.POSTHOGREADALLTOKEN || vars.POSTHOGREADALLTOKEN }}
         run: node tools/posthog-pull.mjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: posthog-results
-          path: posthog-results.json
-          if-no-files-found: ignore
+      - name: Commit refreshed telemetry
+        run: |
+          git add telemetry
+          if git diff --cached --quiet; then
+            echo "Telemetry unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "telemetry: refresh PostHog pull ($(date -u +%F))"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

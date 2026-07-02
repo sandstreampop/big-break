@@ -16,7 +16,7 @@ const PH_KEY = 'phc_C8Ch39GjAbPHvP6GE7boSFEuzqCDeMMc5oy4UJLnao6q';
 const PH_HOST = 'https://eu.i.posthog.com';
 const RING_KEY = 'bigbreak_events_v1';
 const RING_MAX = 600;
-const APP_VERSION = '2.0';
+const APP_VERSION = '2.1';
 
 let enabled = true;
 let loaded = false;
