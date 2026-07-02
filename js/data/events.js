@@ -1972,6 +1972,94 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a2_shed_offer', act: 2, pathAffinity: [], weight: 10,
+    requires: { moneyMin: 250, flagsNone: ['home_studio'] },
+    art: 'ev_shed', context: 'Your landlord, holding a padlock key like a dare',
+    prompt: '“The garden shed. Wiring’s new-ish, neighbors are deaf-ish, and it’s yours for $250 if you stop asking questions about the wiring.” It smells like potting soil and possibility. Mostly soil.',
+    tags: ['deal', 'home'],
+    choices: {
+      left: {
+        label: 'Take the shed. Build the lab.',
+        governingStats: { creativity: 0.7, network: 0.4 },
+        tags: ['home', 'risky'],
+        outcomes: {
+          bad: { text: 'Week one: you learn which outlet is “the spicy one.” Week two: egg cartons on every wall. It’s not a studio yet. It’s a promise with a padlock — and it’s YOURS.', effects: { money: -250, creativity: 4, addFlag: 'home_studio' } },
+          good: { text: 'Two weekends of foam, borrowed cables, and one heroic extension cord later: a room where ideas can be loud at 3 a.m. The commute is eleven steps. The rent is paid in songs.', effects: { money: -250, creativity: 6, skill: 2, addFlag: 'home_studio' } },
+          incredible: { text: 'The shed, treated and wired, turns out to have THE sound — dead in the middle, alive in the corners, a room that flatters everything. Engineers will someday ask what plugin this is. It’s a shed.', effects: { money: -250, creativity: 8, skill: 3, cred: 2, addFlag: 'home_studio' } },
+        },
+      },
+      right: {
+        label: 'Keep the cash. Rent rooms like a normal person.',
+        governingStats: { network: 0.8 },
+        tags: ['safe', 'deal'],
+        outcomes: {
+          bad: { text: 'Sensible. Liquid. The landlord rents the shed to a man who restores pinball machines, and every clank through the fence sounds like a song you didn’t write.', effects: { cred: 1 } },
+          good: { text: 'You stay flexible and book real rooms when it matters. Discipline over romance — the accountant’s path to art, walked with dignity.', effects: { network: 3, cred: 2 } },
+          incredible: { text: 'The money you didn’t bury in drywall buys a session at the good studio across town — where the engineer likes your stuff and starts cutting you the friend rate. Access beats ownership. This week, anyway.', effects: { network: 5, cred: 3, skill: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_shed_nights', act: 2, pathAffinity: [], weight: 13,
+    requires: { flagsAll: ['home_studio'] },
+    art: 'ev_shed_night', context: 'The shed. 2:58 a.m. The good hours.',
+    prompt: 'The lab is open all night and nobody can tell you no. The question every night asks: make something in it, or make something OF it?',
+    tags: ['record', 'home'],
+    choices: {
+      left: {
+        label: 'Record the 3 a.m. demos',
+        minigame: 'take',
+        governingStats: { creativity: 0.7, skill: 0.5 },
+        tags: ['record', 'write', 'indie'],
+        outcomes: {
+          bad: { text: 'The takes fight you till dawn, and at 6 a.m. the neighbor’s rooster joins uninvited — on beat, somehow. You keep the rooster take. Shed rules: everything is an instrument.', effects: { creativity: 4, skill: 2, burnout: 4 } },
+          good: { text: 'Three demos by sunrise, raw in the way money can’t buy. The shed’s weird midnight warmth is all over them — a sound that’s now officially yours.', effects: { creativity: 6, skill: 3, cred: 2, burnout: 3 } },
+          incredible: { text: 'One of the demos refuses to be a demo. By 5 a.m. it’s DONE — mixed, sequenced, undeniable, born entirely eleven steps from your bed. The shed has paid for itself in one night.', effects: { creativity: 8, skill: 3, cred: 3, hits: 1, burnout: 3 } },
+        },
+      },
+      right: {
+        label: 'Rent the night hours to other broke musicians',
+        governingStats: { network: 0.9 },
+        tags: ['deal', 'network'],
+        outcomes: {
+          bad: { text: 'Your first client is a noise duo whose whole thing is feedback. The neighbors write a letter. The letter has SIGNATURES. Shed diplomacy begins.', effects: { money: 90, network: 2, burnout: 3 } },
+          good: { text: 'Word spreads through the scene: cheap hours, weird warmth, no clock-watching. The shed calendar fills, the jar fills with it, and every renter owes you one.', effects: { money: 160, network: 5, cred: 2 } },
+          incredible: { text: 'A renter cuts something great in your shed and tells EVERYONE where. “Recorded at The Shed” starts appearing in liner notes like a badge. You now run the scene’s favorite room and its cheapest favor economy.', effects: { money: 240, network: 7, cred: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_shed_album', act: 3, pathAffinity: [], weight: 13,
+    requires: { flagsAll: ['home_studio'] },
+    art: 'ev_shed_album', context: 'The shed, holding a finished thing',
+    prompt: 'It exists: a whole record, made start-to-finish in a garden shed, rooster cameo and all. A label hears it and offers to “give it a real mix, real mastering, a real release.” The word “real” is doing crimes in that sentence.',
+    tags: ['record', 'deal'],
+    choices: {
+      left: {
+        label: 'Release it exactly as the shed made it',
+        governingStats: { cred: 0.9, creativity: 0.4 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The shed album comes out sounding like a shed, which reviewers note with varying kindness. But the people who get it GET it — and they show up at shows knowing every word of the rooster song.', effects: { cred: 5, fame: 3, creativity: 2 } },
+          good: { text: 'Unpolished, unashamed, and somehow warmer than everything else out this month. “Recorded in a garden shed” stops being an apology and becomes the press angle.', effects: { cred: 8, fame: 5, creativity: 3 } },
+          incredible: { text: 'The shed album becomes the reference other artists bring to expensive studios: “make it sound like THIS.” They can’t. It’s a shed. You know which outlet is the spicy one. Legacy: secured.', effects: { cred: 11, fame: 7, creativity: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Take the deal. Let them polish it.',
+        governingStats: { network: 0.9 },
+        tags: ['deal', 'mainstream'],
+        outcomes: {
+          bad: { text: 'The remaster sands off every splinter that made it yours. It sounds expensive and anonymous, like a hotel lobby with your name on it. It sells… fine. The shed files a silent protest.', effects: { money: 300, fame: 4, cred: -3 } },
+          good: { text: 'The label polish keeps most of the weird and adds reach you couldn’t buy. The shed original circulates among fans as “the real one” — you get both audiences and one uneasy conscience.', effects: { money: 450, fame: 7, cred: 1 } },
+          incredible: { text: 'You negotiate the polish YOUR way: their mastering, your mixes, the rooster stays. It ships wide without losing the shed. The credits read “Recorded at The Shed” above the label’s logo, in that order, forever.', effects: { money: 600, fame: 9, cred: 4, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_afterparty', act: 2, pathAffinity: [], weight: 11,
     art: 'ev_afterparty', context: 'Somebody’s loft. Everybody’s business cards.',
     prompt: 'The showcase afterparty. Dario is here. Grub is here. A blogger who spells your name three ways is here. A&R Kim — the actual reason anyone came — is here. Everyone is one drifting conversation away from forgetting you exist.',
