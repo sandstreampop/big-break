@@ -1894,6 +1894,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Do it for exposure',
+        minigame: 'setlist',
         governingStats: { network: 1.0, creativity: 0.5 },
         tags: ['live', 'risky'],
         outcomes: {
@@ -3214,6 +3215,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Take the slot',
+        minigame: 'setlist',
         governingStats: { skill: 0.7, cred: 0.6 },
         tags: ['live', 'roots'],
         outcomes: {
@@ -4166,6 +4168,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Take the deal, eat the vibe',
+        minigame: 'setlist',
         governingStats: { network: 1.0 },
         tags: ['live', 'mainstream'],
         outcomes: {

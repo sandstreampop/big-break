@@ -1041,3 +1041,64 @@ register('mixdown', {
     }
   },
 });
+
+// ═══════════ THE SETLIST — build the arc (calm → loud, 5 songs) ═══════════
+register('setlist', {
+  name: 'The Setlist', icon: '📜',
+  how: 'Five songs, one arc. Tap them CALMEST → LOUDEST before the house lights drop. The bars are the energy. Openers whisper, closers detonate.',
+  run(stage, ctx, done) {
+    const DURATION = 14000;
+    // your actual catalog headlines the set; house standards fill the gaps
+    const FILLER = ['The Fast One', 'The Sad One', 'Soundcheck Jam', 'Deep Cut', 'The Old Opener', 'New One (Untitled)'];
+    const titles = [...new Set((ctx.run?.songs || []).map((s) => s.title))].slice(0, 5);
+    for (const f of FILLER) { if (titles.length >= 5) break; titles.push(f); }
+    const energies = [1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+    const songs = titles.map((t, i) => ({ t, e: energies[i] }));
+
+    const clock = el('div', 'mg-take-label', '14');
+    const list = el('div', 'mg-setlist');
+    const progress = el('div', 'mg-dots', '○ ○ ○ ○ ○');
+    stage.append(clock, list, progress, el('div', 'mg-hint', 'tap the calmest song still standing'));
+
+    let expected = 1, correct = 0, wrong = 0, over = false;
+    const t0 = performance.now();
+
+    for (const s of [...songs].sort(() => Math.random() - 0.5)) {
+      const chip = el('button', 'mg-set-chip');
+      chip.innerHTML = `<b>${s.t}</b><span class="mg-set-bars">${'▮'.repeat(s.e)}${'▯'.repeat(5 - s.e)}</span>`;
+      chip.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        if (over || chip.dataset.locked) return;
+        if (s.e === expected) {
+          chip.dataset.locked = '1';
+          chip.classList.add('mg-set-locked');
+          chip.querySelector('b').textContent = `${expected}. ${s.t}`;
+          fx.hit();
+          correct++; expected++;
+          progress.textContent = Array.from({ length: 5 }, (_, i) => (i < correct ? '●' : '○')).join(' ');
+          if (expected > 5) end();
+        } else {
+          wrong++;
+          fx.miss();
+          chip.classList.add('mg-set-wrong');
+          setTimeout(() => chip.classList.remove('mg-set-wrong'), 260);
+        }
+      });
+      list.append(chip);
+    }
+
+    const ticker = setInterval(() => {
+      const left = Math.max(0, Math.ceil((DURATION - (performance.now() - t0)) / 1000));
+      clock.textContent = String(left);
+      if (left <= 0) end();
+    }, 200);
+
+    function end() {
+      if (over) return;
+      over = true;
+      clearInterval(ticker);
+      const early = expected > 5 ? Math.max(0, (DURATION - (performance.now() - t0)) / DURATION) * 0.12 : 0;
+      done(Math.max(0, correct / 5 - wrong * 0.1 + early));
+    }
+  },
+});
