@@ -2,11 +2,16 @@ name: PostHog telemetry pull
 
 # Manual pull of playtest telemetry from PostHog (EU). Runs the HogQL
 # insights from docs/telemetry.md via tools/posthog-pull.mjs using the
-# read-only POSTHOGREADALLTOKEN from the gh-pages environment. Results
+# read-only POSTHOGREADALLTOKEN from the Pages environment. Results
 # land in the job log and as a workflow artifact — never the token.
 
 on:
   workflow_dispatch:
+    inputs:
+      env_name:
+        description: Environment holding POSTHOGREADALLTOKEN
+        default: github-pages
+        type: string
 
 permissions:
   contents: read
@@ -14,7 +19,7 @@ permissions:
 jobs:
   pull:
     runs-on: ubuntu-latest
-    environment: gh-pages
+    environment: ${{ inputs.env_name || 'github-pages' }}
     steps:
       - uses: actions/checkout@v4
       - name: Query PostHog EU
