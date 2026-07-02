@@ -2090,6 +2090,119 @@ export const EVENTS = [
     },
   },
   {
+    id: 'dc_offer', act: 2, pathAffinity: [], weight: 10,
+    requires: { fameMax: 25 },
+    art: 'ev_dc_offer', context: 'A promoter named Gary. Just Gary.',
+    prompt: '“Three nights, three towns you’ve never heard of, gas money guaranteed*.” The asterisk is load-bearing. It’s not a good tour. It is, however, A tour, and the calendar is very empty.',
+    tags: ['tour'],
+    choices: {
+      left: {
+        label: 'Take the Dirt Circuit',
+        governingStats: { cred: 0.6, network: 0.5 },
+        tags: ['tour', 'risky'],
+        outcomes: {
+          bad: { text: 'Gary’s “advance” is a gas station gift card with $11 on it. You leave anyway. Musicians have gone to war with less.', effects: { money: -20, cred: 1, chainEventId: 'dc_blizzard' } },
+          good: { text: 'You shake Gary’s hand, which feels like signing something. The van points toward towns that don’t appear on weather maps. Especially, it will turn out, weather maps.', effects: { cred: 2, chainEventId: 'dc_blizzard' } },
+          incredible: { text: 'Gary, moved by your immediate yes, throws in “merch table priority” — a phrase that means nothing but sounds professional. You roll out at dawn feeling, incorrectly, prepared.', effects: { cred: 3, network: 1, chainEventId: 'dc_blizzard' } },
+        },
+      },
+      right: {
+        label: 'Pass. Even the desperate have standards.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe'],
+        outcomes: {
+          bad: { text: 'You pass, and the empty week eats at you exactly as much as the tour would have. Gary books Sad Lasagna instead. They get a Wikipedia paragraph out of it.', effects: { burnout: -3, cred: 1 } },
+          good: { text: 'You spend the week woodshedding instead. Gary calls twice more, asterisk intact. Your standards hold. Your calluses improve.', effects: { skill: 3, burnout: -4 } },
+          incredible: { text: 'You use the free week to book your OWN weekend run — two towns, no Gary, no asterisks. It pays honestly and the van thanks you. Sometimes the best tour is the one you route yourself.', effects: { skill: 2, money: 120, network: 3, burnout: -3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'dc_blizzard', act: 2, pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_dc_blizzard', context: 'NIGHT ONE — a town called Flint Hollow, allegedly',
+    prompt: 'The blizzard arrives with you. The venue is a bar attached to a bait shop, the crowd is nine snowplow drivers on break, and the heating is a wood stove named (per the plaque) “Big Susan.”',
+    tags: ['tour', 'live'],
+    choices: {
+      left: {
+        label: 'Play the storm set of your life',
+        governingStats: { cred: 0.7, creativity: 0.5 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'The power flickers out mid-set, so you finish acoustic by stove-light while the wind auditions for backup vocals. The plow drivers nod slowly, which here constitutes an ovation.', effects: { cred: 4, burnout: 4, chainEventId: 'dc_birthday' } },
+          good: { text: 'Something about Big Susan’s crackle and nine exhausted plow drivers makes the sad songs land like scripture. One driver requests “that one again.” You play it again. Nobody has ever meant applause more.', effects: { cred: 6, creativity: 2, burnout: 3, chainEventId: 'dc_birthday' } },
+          incredible: { text: 'The blizzard strands everyone till 3 a.m., so you play EVERYTHING — the set, the b-sides, the covers, the song you’ve never played anyone. The bait shop owner comps your room and calls you “the storm band” with visible reverence. Legends start in places like this.', effects: { cred: 8, creativity: 3, network: 2, burnout: 3, chainEventId: 'dc_birthday' } },
+        },
+      },
+      right: {
+        label: 'Cut it short, hug the stove',
+        governingStats: { network: 0.7 },
+        tags: ['safe', 'rest'],
+        outcomes: {
+          bad: { text: 'Four songs and done. The plow drivers understand — they too are hourly. You spend the night learning bait-shop economics, which are shockingly robust.', effects: { burnout: -2, network: 2, chainEventId: 'dc_birthday' } },
+          good: { text: 'Short set, long hang. By midnight you know every driver’s route, kid, and opinion on rock salt. When your van won’t start at dawn, three plows arrive before you finish the distress call.', effects: { network: 4, burnout: -3, chainEventId: 'dc_birthday' } },
+          incredible: { text: 'The stove-side hang turns into the plow drivers teaching you a work song their granddads sang — modal, mournful, PERFECT. You record it on your phone with permission and a promise. Night one’s real payment was a song.', effects: { creativity: 6, network: 3, burnout: -3, chainEventId: 'dc_birthday' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'dc_birthday', act: 2, pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_dc_birthday', context: 'NIGHT TWO — the double booking',
+    prompt: 'The “venue” is a community hall booked for both your show AND Braydenn’s 7th birthday party (the extra N is silent). The parents look at you. The children look at you. Braydenn, birthday-drunk on juice, points at your instrument and yells “DO IT.”',
+    tags: ['tour', 'live'],
+    choices: {
+      left: {
+        label: 'Play the birthday. Full show. No irony.',
+        governingStats: { creativity: 0.6, network: 0.6 },
+        tags: ['live', 'mainstream'],
+        outcomes: {
+          bad: { text: 'Your catalog is not seven-year-old compatible. You improvise a song about dinosaurs that collapses under scrutiny — Braydenn has QUESTIONS about the fossil record. You escape during cake.', effects: { fame: 2, burnout: 4, chainEventId: 'dc_lastnight' } },
+          good: { text: 'You turn the set into a rock show FOR children — call and response, drum solos on cake tins, Braydenn on tambourine. Twenty kids scream like it’s a stadium. Because to them it is.', effects: { fame: 4, network: 3, cred: 2, chainEventId: 'dc_lastnight' } },
+          incredible: { text: 'The birthday set transcends. Parents film everything; one mom’s post — “hired a real band?? for BRAYDENN??” — does numbers regionally. Braydenn, interviewed for the local paper, calls you “the best band of my life.” He is seven. It still counts.', effects: { fame: 8, network: 4, cred: 3, money: 80, chainEventId: 'dc_lastnight' } },
+        },
+      },
+      right: {
+        label: 'Split the hall. Two shows, one wall of chairs.',
+        governingStats: { network: 0.9 },
+        tags: ['safe'],
+        outcomes: {
+          bad: { text: 'The chair wall fails immediately — children treat it as siege equipment. Your set gains a seven-year-old heckler with a juice mustache and unlimited confidence. You lose the exchange.', effects: { fame: 2, burnout: 5, chainEventId: 'dc_lastnight' } },
+          good: { text: 'Diplomatic triumph: you negotiate set times with a room mom like it’s Yalta. Your half of the hall gets eleven real listeners. The birthday side gets your bass player for “Happy Birthday.” Everyone wins.', effects: { network: 4, cred: 2, burnout: 2, chainEventId: 'dc_lastnight' } },
+          incredible: { text: 'The two events merge organically at cake time — your encore is “Happy Birthday” in three keys with twenty kids and eleven adults singing. A grandmother books you for a wedding ON THE SPOT. Cash deposit. The Dirt Circuit provides.', effects: { network: 5, money: 150, fame: 3, chainEventId: 'dc_lastnight' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'dc_lastnight', act: 2, pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_dc_last', context: 'NIGHT THREE — the room Gary was weirdly sincere about',
+    prompt: 'Last stop: a hundred-year-old opera house in a town of six hundred, kept alive by one furious volunteer committee. It seats 300. It is FULL. Nobody told you towns like this save it up all year for whoever survives the circuit to reach them.',
+    tags: ['tour', 'live'],
+    choices: {
+      left: {
+        label: 'Give them everything left',
+        governingStats: { skill: 0.6, cred: 0.6 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'You’re running on fumes and gas-station coffee, and the set is held together with tape — but rooms like this forgive everything except not trying. You try. They stand anyway. You cry a little in the van.', effects: { fame: 5, cred: 4, burnout: 6 } },
+          good: { text: 'The opera house acoustics turn your road-worn set into something bigger than you brought. Three hundred people who chose you over television give you everything back doubled. THIS is why the asterisk was worth it.', effects: { fame: 8, cred: 6, creativity: 2, burnout: 4 } },
+          incredible: { text: 'Whatever the blizzard, the birthday, and Big Susan built in you comes out tonight — the best show of your life, witnessed by a town that will now claim you forever. The committee inducts you into a hall of fame that is, physically, a hallway. You have never been prouder of anything.', effects: { fame: 12, cred: 8, creativity: 3, network: 3, burnout: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Pace it. End the tour standing.',
+        governingStats: { skill: 0.8 },
+        tags: ['live', 'safe'],
+        outcomes: {
+          bad: { text: 'You play it smart and safe, and the room deserved slightly more madness. Still: three nights, three towns, zero deaths. Gary calls it “a flawless run,” asterisk finally silent.', effects: { fame: 4, cred: 3, burnout: 2 } },
+          good: { text: 'A measured, professional set — and the discipline reads as class in a room this old. The committee approves. The tour ends with your voice intact and the van pointed home.', effects: { fame: 6, cred: 4, skill: 2, burnout: 1 } },
+          incredible: { text: 'You pace the set like a veteran and land the finale with fuel to spare — then play two encores BECAUSE you saved something. The committee’s president shakes your hand slowly. “Most acts arrive empty. You arrived smart.” Booked for next year before load-out.', effects: { fame: 8, cred: 5, skill: 3, network: 3 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_truce_tour', act: 2, pathAffinity: [], weight: 10,
     requires: { rivalryMax: 1 },
     art: 'ev_truce', context: '{rival}, holding two coffees, one for you',

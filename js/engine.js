@@ -203,6 +203,7 @@ function meetsRequires(ev, state) {
   if (r.moneyMin !== undefined && state.money < r.moneyMin) return false;
   if (r.burnoutMin !== undefined && state.stats.burnout < r.burnoutMin) return false;
   if (r.fameMin !== undefined && state.fame < r.fameMin) return false;
+  if (r.fameMax !== undefined && state.fame > r.fameMax) return false;
   if (r.gear && !r.gear.every((g) => state.accessories.includes(g))) return false;
   if (r.rivalryMin !== undefined && (state.rivalry ?? 0) < r.rivalryMin) return false;
   if (r.rivalryMax !== undefined && (state.rivalry ?? 0) > r.rivalryMax) return false;
