@@ -21,6 +21,8 @@ export const HUSTLES = [
     blurb: 'The scene’s favorite cheap room. “Recorded at The Shed” is a badge now.' },
   { id: 'wedding_circuit', name: 'The Wedding Circuit', icon: '💒', moneyPerAct: 75,
     blurb: 'One grandmother’s booking became a referral network. You know every venue’s power situation by heart.' },
+  { id: 'sync_royalties', name: 'Sync Royalties', icon: '📺', moneyPerAct: 85,
+    blurb: 'Your faded single sells yogurt now. The song died on the chart and got a better job.' },
 ];
 
 export function hustleById(id) {

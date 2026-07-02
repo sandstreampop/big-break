@@ -373,6 +373,7 @@ function meetsRequires(ev, state) {
   if (r.demoMin !== undefined && (state.songs || []).filter((s) => s.status === 'demo').length < r.demoMin) return false;
   if (r.chartingMin !== undefined && (state.songs || []).filter((s) => s.status === 'charting' && s.pos).length < r.chartingMin) return false;
   if (r.songsMin !== undefined && (state.songs || []).length < r.songsMin) return false;
+  if (r.fadedMin !== undefined && (state.songs || []).filter((s) => s.status === 'faded' && s.peak).length < r.fadedMin) return false;
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');

@@ -5700,4 +5700,35 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ THE SYNC (a faded song gets a second job) ═══════════
+  {
+    id: 'a2_the_sync', act: [2, 3], pathAffinity: [], weight: 12,
+    requires: { fadedMin: 1 },
+    art: 'ev_the_sync', context: 'An email with the subject line “OPPORTUNITY (yogurt)”',
+    prompt: 'A music supervisor wants “{fadedSong}” — yes, the one that fell off the chart — for a national yogurt campaign. “It tested incredibly with the 25–40 probiotic demographic.” The song you mourned is worth more dead than it ever was alive.',
+    tags: ['deal'],
+    choices: {
+      left: {
+        label: 'License it. Songs need jobs.',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'mainstream'],
+        outcomes: {
+          bad: { text: 'The edit they use cuts your favorite line for a spoon sound. The check clears anyway. Every time the ad plays, someone somewhere Shazams your dead song. It twitches.', effects: { money: 220, fame: 3, grantHustle: 'sync_royalties' } },
+          good: { text: 'The campaign runs everywhere. Strangers hum your faded single in supermarket dairy aisles, on purpose, nationally. The corpse does numbers.', effects: { money: 320, fame: 6, grantHustle: 'sync_royalties' } },
+          incredible: { text: 'The ad becomes bigger than the yogurt — people post “what IS this song” until the full version re-enters conversation, then playlists, then bars. Resurrection by dairy. The supervisor sends a fruit basket labeled “to the catalog.”', effects: { money: 420, fame: 9, cred: 2, grantHustle: 'sync_royalties' } },
+        },
+      },
+      right: {
+        label: '“That song meant something.” Decline.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You decline with a speech about artistic integrity that the supervisor reads while eating the exact yogurt. They license your rival’s b-side instead. It follows you through every grocery store for a year.', effects: { cred: 4, rivalry: 1 } },
+          good: { text: 'You say no, kindly. The supervisor, unexpectedly, gets it: “most people don’t even ask what the song’s about.” The refusal circulates in publishing circles as a curiosity. Curiosity is cred.', effects: { cred: 6, network: 2 } },
+          incredible: { text: 'Your “no” email — three sentences about what the song meant — leaks and becomes the rare viral post about INTEGRITY. The song re-enters the conversation anyway, unsold, entirely yours. The yogurt people frame the email. Marketing is broken. You broke it.', effects: { cred: 9, fame: 5, creativity: 3 } },
+        },
+      },
+    },
+  },
 ];

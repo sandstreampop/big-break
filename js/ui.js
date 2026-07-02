@@ -43,7 +43,8 @@ function fillText(s) {
   return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe)
     .replaceAll('{genre}', g ? g.name : 'your genre')
     .replaceAll('{collabArtist}', collabArtistFor(run))
-    .replaceAll('{song}', engine.flagshipSong(run)?.title || 'the song');
+    .replaceAll('{song}', engine.flagshipSong(run)?.title || 'the song')
+    .replaceAll('{fadedSong}', (run.songs || []).find((x) => x.status === 'faded' && x.peak)?.title || 'your old single');
 }
 
 function reducedMotion() {
