@@ -624,6 +624,14 @@ body.big-text #app { zoom: 1.18; }
 .wall-item .btn { min-height: 40px; padding: 8px 14px; font-size: 14px; white-space: nowrap; }
 .resume-val { font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
+/* Discography */
+.disc-list { display: flex; flex-direction: column; gap: 7px; }
+.disc-row {
+  background: #1c1729; border-radius: 10px; padding: 8px 12px;
+  font-size: 13.5px; line-height: 1.4;
+}
+.disc-row span { display: block; color: var(--dim); font-size: 12px; font-style: italic; }
+
 /* Scrapbook + run history */
 .scrap-act { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; margin-top: 6px; }
 .scrap-row {
