@@ -139,6 +139,17 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
   return state;
 }
 
+// Comeback Mode (unlocked by any Success): start as a faded name.
+// Fame and contacts arrive pre-loaded; cred and burnout arrive bruised.
+export function applyComeback(state) {
+  state.fame = 45;
+  state.money = 300;
+  state.stats.cred = Math.max(8, state.stats.cred - 8);
+  state.stats.network = clamp(state.stats.network + 15, 1, 100);
+  state.stats.burnout = 25;
+  if (!state.flags.includes('comeback')) state.flags.push('comeback');
+}
+
 // Instrument mastery (earned across runs): +level to every core stat
 export function applyMastery(state, level) {
   const lv = Math.max(0, Math.min(3, level | 0));
@@ -758,7 +769,8 @@ export function legacyPoints(state) {
   const base = Math.round((state.fame + s.skill + s.cred + s.creativity + s.network) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
-  const mult = contractById(state.contract)?.lpMult || 1;
+  let mult = contractById(state.contract)?.lpMult || 1;
+  if ((state.flags || []).includes('comeback')) mult *= 1.2;
   return Math.max(1, Math.round((base + bonus) * mult));
 }
 
