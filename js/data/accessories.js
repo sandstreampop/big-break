@@ -75,6 +75,50 @@ export const ACCESSORIES = [
     blurb: 'Deal/Network +10 · Dario takes 10% of your money gains',
   },
 
+  {
+    id: 'cursed_8track', name: 'Cursed 8-Track', art: 'gear_8track', unlockedByDefault: true,
+    flavor: 'Recorded over something in 1974. It remembers.',
+    compatibility: { universal: true },
+    appliesTo: ['studio', 'tone'], modifier: 9,
+    counterTags: [{ tags: ['live'], modifier: -3 }],
+    blurb: 'Studio/Tone +9 · Live −3 (it whispers on stage)',
+  },
+  {
+    id: 'merch_cannon', name: 'T-Shirt Cannon', art: 'gear_cannon', unlockedByDefault: true,
+    flavor: 'Air-powered generosity. Aim above the waist.',
+    compatibility: { universal: true },
+    appliesTo: ['live', 'fame'], modifier: 8,
+    sideEffect: { burnoutPerMatch: 1 },
+    blurb: 'Live/Fame +8 · +1 Burnout per use (cardio)',
+  },
+  {
+    id: 'field_recorder', name: 'Field Recorder', art: 'gear_recorder', unlockedByDefault: true,
+    flavor: 'Everything is a sample if you believe in yourself.',
+    compatibility: { universal: true },
+    appliesTo: ['record', 'write'], modifier: 8,
+    blurb: 'Record/Write +8',
+  },
+  {
+    id: 'stage_fan', name: 'Clip-On Stage Fan', art: 'gear_fan', unlockedByDefault: true,
+    flavor: 'The wind machine of the people.',
+    compatibility: { universal: true },
+    appliesTo: ['fame', 'mainstream'], modifier: 7,
+    blurb: 'Fame/Mainstream +7 · hair: cinematic',
+  },
+  {
+    id: 'humidifier', name: 'Tour Humidifier', art: 'gear_humidifier', unlockedByDefault: true,
+    flavor: 'For the voice. Also, honestly, for the vibes.',
+    compatibility: { families: ['voice', 'wind'] },
+    appliesTo: ['vocal', 'live'], modifier: 9,
+    blurb: 'Vocal/Live +9 (voice & wind only)',
+  },
+  {
+    id: 'setlist_binder', name: 'Setlist Binder', art: 'gear_binder', unlockedByDefault: true,
+    flavor: 'Laminated. Tabbed. Feared by chaos.',
+    compatibility: { universal: true },
+    appliesTo: ['safe'], modifier: 7,
+    blurb: 'Safe choices +7 · preparation is a genre',
+  },
   // ---- Career Wall unlocks ----
   {
     id: 'tour_van', name: 'Tour Van (Runs)', art: 'gear_van', unlockedByDefault: false,
