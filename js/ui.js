@@ -908,32 +908,100 @@ function routeAdvance(step) {
 }
 
 // The Final Set (Pass 32): pick your closer before the career is judged.
-// One last nudge at a gate — and a beat of ceremony before the verdict.
+// The player MUST be able to see their gates and each closer's impact on
+// them — otherwise this is a blind choice. So we render the committed
+// path's gate readout up top and annotate every closer against it.
+
+// What one closer does to the win gates, in plain language.
+function closerImpact(opt) {
+  const gates = CONFIG.winGates[run.path] || {};
+  const pathName = run.path ? PATHS[run.path].name : 'your path';
+
+  if (opt.stat === 'pathProgress') {
+    const cur = run.pathProgress || 0;
+    const after = cur + opt.amount;
+    const allNear = pathFit(run.path).readings.every((r) => r.ratio >= CONFIG.nearMissRatio);
+    if (after >= CONFIG.momentumForUpgrade && allNear) {
+      return { text: `Momentum ${cur}→${after}. Every gate is near-met — this can upgrade a Partial to a SUCCESS.`, clutch: true };
+    }
+    if (allNear) {
+      return { text: `Momentum ${cur}→${after}. Gates are close, but you need ${CONFIG.momentumForUpgrade}+ Momentum to force the upgrade.`, clutch: false };
+    }
+    return { text: `Momentum ${cur}→${after}. Only clutches a win when EVERY gate is ≥85% — some aren't yet.`, clutch: false };
+  }
+
+  if (opt.stat === 'money') {
+    return { text: `Money isn't a win gate — but it clears debt (no Curtis ending) and pads your Legacy Points.`, clutch: false };
+  }
+
+  const statName = opt.stat === 'fame' ? 'Fame' : STAT_META[opt.stat].name;
+  const cur = opt.stat === 'fame' ? run.fame : run.stats[opt.stat];
+  const after = opt.stat === 'fame' ? cur + opt.amount : Math.min(100, cur + opt.amount);
+  const target = gates[opt.stat];
+  if (target === undefined) {
+    return { text: `${statName} ${cur}→${after}. Not part of the ${pathName} gate — helps your Legacy, not your ending.`, clutch: false };
+  }
+  if (cur >= target) {
+    return { text: `${statName} gate already cleared (${cur}/${target}). Pure bonus.`, clutch: false };
+  }
+  if (after >= target) {
+    return { text: `${statName} ${cur}→${after} — CLEARS the ${target} gate. ✓`, clutch: true };
+  }
+  return { text: `${statName} ${cur}→${after}, gate wants ${target} (still ${target - after} short).`, clutch: false };
+}
+
 function renderFinalSet() {
   const flags = run.flags || [];
   const options = [];
   if (flags.includes('song_finished')) {
-    options.push({ title: '“The Door”', blurb: 'The one you found at 3 a.m. and finished anyway.', key: 'momentum', label: '+1 Momentum', apply: () => { run.pathProgress += 1; } });
+    options.push({ title: '“The Door”', blurb: 'The one you found at 3 a.m. and finished anyway.', stat: 'pathProgress', amount: 1, label: '+1 Momentum', apply: () => { run.pathProgress += 1; } });
   }
-  options.push({ title: run.chartTitles?.[0] ? `“${run.chartTitles[0]}”` : '“The Crowd-Pleaser”', blurb: 'The one they scream for. Give the people what they want.', key: 'fame', label: '+5 Fame', apply: () => { run.fame += 5; } });
-  options.push({ title: '“The Deep Cut”', blurb: 'Track 9. The heads nod. The heads matter.', key: 'cred', label: '+4 Cred', apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 4); } });
+  options.push({ title: run.chartTitles?.[0] ? `“${run.chartTitles[0]}”` : '“The Crowd-Pleaser”', blurb: 'The one they scream for. Give the people what they want.', stat: 'fame', amount: 5, label: '+5 Fame', apply: () => { run.fame += 5; } });
+  options.push({ title: '“The Deep Cut”', blurb: 'Track 9. The heads nod. The heads matter.', stat: 'cred', amount: 4, label: '+4 Cred', apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 4); } });
   if (flags.includes('debt') || run.money < 0) {
-    options.push({ title: '“Curtis (Reprise)”', blurb: 'A ballad for the politest man you owe.', key: 'money', label: '+$100', apply: () => { run.money += 100; } });
+    options.push({ title: '“Curtis (Reprise)”', blurb: 'A ballad for the politest man you owe.', stat: 'money', amount: 100, label: '+$100', apply: () => { run.money += 100; } });
   } else {
-    options.push({ title: '“The Instrumental”', blurb: 'No words. Just proof.', key: 'skill', label: '+4 Skill', apply: () => { run.stats.skill = Math.min(100, run.stats.skill + 4); } });
+    options.push({ title: '“The Instrumental”', blurb: 'No words. Just proof.', stat: 'skill', amount: 4, label: '+4 Skill', apply: () => { run.stats.skill = Math.min(100, run.stats.skill + 4); } });
   }
 
   const s = $('#screen-crossroads'); // reuse the 3-option screen
   s.innerHTML = '';
   s.append(el('h2', 'screen-head', 'The Final Set'));
-  s.append(el('p', 'screen-sub', 'Last night of the run. Pick your closer — then the industry decides what you were.'));
+  const pathName = run.path ? PATHS[run.path].name : 'your path';
+  s.append(el('p', 'screen-sub', `Last night of the run — your <b>${pathName}</b> career gets judged after this. Pick the closer that pushes you over a gate.`));
+
+  // Gate readout for the committed path, so the choice is informed
+  const { readings } = pathFit(run.path);
+  const gates = el('div', 'gate-readout compass finalset-gates');
+  gates.append(el('div', 'trades-head', `🎯 ${pathName.toUpperCase()} — WHAT YOU STILL NEED`));
+  for (const r of readings) {
+    const grow = el('div', 'gate-row' + (r.value >= r.target ? ' met' : ''));
+    const name = r.key === 'fame' ? 'Fame' : r.key === 'hits' ? 'Hits' : STAT_META[r.key].name;
+    grow.append(el('span', 'gate-name', `${r.value >= r.target ? '✓' : '✗'} ${name}`));
+    const bar = el('div', 'gate-bar');
+    const fill = el('div', 'gate-fill');
+    fill.style.width = `${Math.round(r.ratio * 100)}%`;
+    bar.append(fill);
+    grow.append(bar);
+    grow.append(el('span', 'gate-nums', `${r.value}/${r.target}`));
+    gates.append(grow);
+  }
+  if ((run.pathProgress || 0) > 0) {
+    gates.append(el('p', 'momentum-note', `▲ Momentum ×${run.pathProgress} — near-met gates can still upgrade to a win.`));
+  }
+  s.append(gates);
+
   const row = el('div', 'pick-row');
   for (const opt of options.slice(0, 3)) {
-    const card = el('div', 'pick-card path-card');
-    card.append(el('div', 'path-icon', '🎵'));
-    card.append(el('h3', '', opt.title));
+    const impact = closerImpact(opt);
+    const card = el('div', 'pick-card path-card' + (impact.clutch ? ' clutch' : ''));
+    card.append(el('div', 'path-icon', impact.clutch ? '🏆' : '🎵'));
+    const head = el('h3', '', opt.title);
+    if (impact.clutch) head.innerHTML += ' <span class="clutch-badge">clutch</span>';
+    card.append(head);
     card.append(el('p', 'pick-flavor', opt.blurb));
     card.append(el('p', 'pick-mods', opt.label));
+    card.append(el('p', 'closer-impact' + (impact.clutch ? ' clutch' : ''), impact.text));
     card.addEventListener('click', () => {
       sfx.commit();
       opt.apply();
