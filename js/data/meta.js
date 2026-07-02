@@ -331,4 +331,13 @@ export const TROPHIES = [
   { id: 'room_benefit', cat: 'feats', name: 'Saved By The Scene', icon: '🪧',
     desc: 'Save your home venue with a benefit show. The plaque is real.',
     check: (s) => (s.flags || []).includes('room_saved') },
+  { id: 'thursday', cat: 'feats', name: 'It’s About Thursday', icon: '🍳',
+    desc: 'Refuse, on live TV, to say who the hit is about. Sixty wiki theories, all wrong.',
+    check: (s) => (s.flags || []).includes('dedication_private') },
+  { id: 'counterexample', cat: 'feats', name: 'The Counterexample', icon: '📊',
+    desc: 'Face TREND() and survive Member #4’s confession. The dashboard could not compute you.',
+    check: (s) => (s.cardLog || []).some((c) => c.e === 'a2_trend_unmask') },
+  { id: 'under_funded_skies', cat: 'feats', name: 'Under Unfunded Skies', icon: '🪐',
+    desc: 'Make the decommissioned planetarium a local institution. Reverb measured in light-years.',
+    check: (s) => s.venue === 'planetarium' && (s.venueLevel || 0) >= 3 },
 ];
