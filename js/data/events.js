@@ -6005,4 +6005,36 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ THE PLANETARIUM (7th venue's spotlight) ═══════════
+  {
+    id: 'a2_planetarium_night', act: [2, 3], pathAffinity: [], weight: 14,
+    requires: { venueIs: 'planetarium' },
+    art: 'ev_planetarium', context: '{venue}. Lights off. Projector on.',
+    prompt: 'The projectionist — a retired astronomy teacher who never actually left — offers you the full dome for one night: your set, synced to the sky. “I can do Jupiter rising on your loudest song,” she says, adjusting a dial older than you. “I’ve been waiting years for someone whose music deserves planets.”',
+    tags: ['live', 'home'],
+    choices: {
+      left: {
+        label: 'Score the sky. Full sync, no talking.',
+        minigame: 'note',
+        governingStats: { creativity: 0.7, skill: 0.4 },
+        tags: ['live', 'tone', 'risky'],
+        outcomes: {
+          bad: { text: 'Jupiter rises four bars early — the dial is analog, the drummer is not — and the set becomes a duel between you and the solar system. The crowd assumes it’s intentional. The projectionist takes notes for next time. There will ABSOLUTELY be a next time.', effects: { creativity: 4, fame: 3, venueLove: 1 } },
+          good: { text: 'The loudest song hits as Jupiter clears the dome’s horizon and eighty people gasp at a ceiling. Nobody films it — phones down in the dark, the old rule, self-enforced. The show becomes a rumor, which is the best thing a show can become.', effects: { creativity: 6, cred: 4, fame: 4, venueLove: 1 } },
+          incredible: { text: 'For the encore she gives you the Andromeda reel — “I save it,” she says, “for the ones who get it.” The galaxy takes six minutes to cross the dome and you play it home. A famous ambient producer is in row three, weeping into a notebook. The dome is booked out for a year. Your name stays on the first page of the ledger.', effects: { creativity: 9, cred: 6, fame: 5, venueLove: 1, hypeSong: 12 } },
+        },
+      },
+      right: {
+        label: 'Record there instead. That reverb belongs on tape.',
+        governingStats: { skill: 0.8 },
+        tags: ['record', 'tone', 'safe'],
+        outcomes: {
+          bad: { text: 'The dome’s reverb turns out to be measured in light-years AND untameable — every take sounds like it was recorded inside a bell made of sky. You keep exactly one pass of one song. It is unusable and you will never delete it.', effects: { skill: 4, creativity: 3, burnout: 3 } },
+          good: { text: 'One night, one stereo pair in the center of the dome, the projector humming in the noise floor like a distant engine. The recordings have a room tone no plugin sells. Engineers will ask about it for years. You will lie.', effects: { skill: 6, creativity: 4, cred: 3, writeSong: true } },
+          incredible: { text: 'At 3 a.m., between takes, the projectionist runs the sky forward a thousand years just to see what you’ll play. What you play under an unfamiliar sky becomes the best thing on tape all year — a song that sounds homesick for a constellation that hasn’t happened yet.', effects: { skill: 8, creativity: 6, cred: 4, writeSong: true } },
+        },
+      },
+    },
+  },
 ];

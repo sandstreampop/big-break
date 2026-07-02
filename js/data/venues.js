@@ -33,6 +33,11 @@ export const VENUES = [
     flavor: 'Acoustic sets between rinse and spin. The dryers keep better time than most drummers.',
     tags: ['busk', 'indie'],
   },
+  {
+    id: 'planetarium', name: 'The Decommissioned Planetarium', icon: '🪐',
+    flavor: 'The projector still works. Every show ends under a sky nobody funded. Reverb measured in light-years.',
+    tags: ['record', 'electronic', 'tone'],
+  },
 ];
 
 // Level tiers: index = level (0..3)

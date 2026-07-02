@@ -386,6 +386,7 @@ function meetsRequires(ev, state) {
   if (r.genreAny && !state.genre) return false;
   if (r.venueAny && !state.venue) return false;
   if (r.venueLevelMin !== undefined && (!state.venue || (state.venueLevel || 0) < r.venueLevelMin)) return false;
+  if (r.venueIs && state.venue !== r.venueIs) return false;
   if (r.venueNone && state.venue) return false;
   if (r.hustleMin !== undefined && (state.hustles || []).length < r.hustleMin) return false;
   if (r.bandMin !== undefined && (state.band || []).length < r.bandMin) return false;
