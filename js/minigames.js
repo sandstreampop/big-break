@@ -585,3 +585,66 @@ register('merch', {
     next(false);
   },
 });
+
+// ═══════════ HAT TRICK — busking (drag the hat, catch the coins) ═══════════
+register('hat', {
+  name: 'Hat Trick', icon: '🎩',
+  how: 'The crowd is throwing coins. DRAG the hat to catch them — streaks are worth extra, pavement gets nothing. Fifteen coins. Gravity is a critic.',
+  run(stage, ctx, done) {
+    const COINS = 15;
+    const FALL = 1900; // ms to cross the field
+
+    const field = el('div', 'mg-field mg-hatfield');
+    const hat = el('div', 'mg-hat', '🎩');
+    field.append(hat);
+    const tally = el('div', 'mg-dots', 'streak ×0');
+    stage.append(field, tally, el('div', 'mg-hint', 'drag anywhere — the hat follows'));
+
+    let hatX = 0.5, caught = 0, judged = 0, streak = 0, bestBonus = 0, over = false;
+    const place = () => { hat.style.left = `${hatX * 100}%`; };
+    place();
+
+    // the hat follows the pointer horizontally, wherever you touch
+    const track = (e) => {
+      const r = field.getBoundingClientRect();
+      hatX = Math.max(0.06, Math.min(0.94, (e.clientX - r.left) / r.width));
+      place();
+    };
+    stage.addEventListener('pointerdown', track);
+    stage.addEventListener('pointermove', (e) => { if (e.buttons || e.pressure > 0) track(e); });
+
+    let spawned = 0;
+    const spawner = setInterval(() => {
+      if (spawned >= COINS || over) { clearInterval(spawner); return; }
+      spawned++;
+      const coin = el('div', 'mg-coin', '🪙');
+      const x = 0.08 + Math.random() * 0.84;
+      coin.style.left = `${x * 100}%`;
+      coin.style.animationDuration = `${FALL}ms`;
+      field.append(coin);
+      setTimeout(() => {
+        if (over) return;
+        const dx = Math.abs(x - hatX);
+        judged++;
+        if (dx < 0.11) {
+          streak++;
+          caught += 1 + Math.min(0.5, (streak - 1) * 0.1); // streak sweetener
+          bestBonus = Math.max(bestBonus, streak);
+          coin.classList.add('mg-coin-caught');
+          hat.classList.add('mg-hat-pop');
+          setTimeout(() => hat.classList.remove('mg-hat-pop'), 150);
+        } else {
+          streak = 0;
+          coin.classList.add('mg-coin-lost');
+        }
+        tally.textContent = `streak ×${streak}`;
+        setTimeout(() => coin.remove(), 260);
+        if (judged >= COINS) {
+          over = true;
+          // 15 clean catches with streaks ≈ 19+; normalize so ~13 flat catches = solid
+          setTimeout(() => done(Math.min(1, caught / 17)), 300);
+        }
+      }, FALL - 60);
+    }, 820);
+  },
+});
