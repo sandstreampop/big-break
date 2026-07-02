@@ -2681,6 +2681,7 @@ export const EVENTS = [
   },
   {
     id: 'a3_documentary', act: 3, pathAffinity: [], weight: 9,
+    requires: { flagsNone: ['docu_crew'] },
     art: 'ev_docu', context: 'A film student named Juniper',
     prompt: '“I’m documenting your journey. Warts and all. Mostly warts. Warts are what festivals want.”',
     tags: ['fame'],
@@ -2703,6 +2704,121 @@ export const EVENTS = [
           bad: { text: 'The sanitized cut is so boring Juniper recuts it as satire. Of you. It’s good satire.', effects: { fame: 3, cred: -3 } },
           good: { text: 'Polished, professional, safe. A fine EPK. Juniper sighs in art.', effects: { fame: 6, network: 3 } },
           incredible: { text: 'Your curation instincts are elite. The “controlled” doc still feels raw. Executives take note of the control.', effects: { fame: 10, network: 6, cred: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_docu_pitch', act: 1, pathAffinity: [], weight: 9,
+    art: 'ev_docu_pitch', context: 'Juniper. Film student. Already filming.',
+    prompt: '“Origin stories only work if the camera is there BEFORE the origin. I want everything — load-ins, meltdowns, the van. Especially the van.” The lens cap is already off.',
+    tags: ['fame'],
+    choices: {
+      left: {
+        label: 'Full access, from day one',
+        governingStats: { cred: 0.7, creativity: 0.5 },
+        tags: ['fame', 'risky'],
+        outcomes: {
+          bad: { text: 'Day one of filming captures you losing an argument with a parking meter. “PERFECT,” whispers Juniper. You have concerns. The camera captures the concerns.', effects: { cred: 2, fame: 1, addFlag: 'docu_crew' } },
+          good: { text: 'Juniper starts shadowing you with the discipline of a war photographer and the budget of a birthday card. Something about the red light makes you stand straighter.', effects: { cred: 3, fame: 2, addFlag: 'docu_crew' } },
+          incredible: { text: 'The first week of footage already looks like a movie — Juniper shoots your soundcheck like a heist. You catch yourself performing for a documentary that doesn’t exist yet. It will.', effects: { cred: 4, fame: 3, creativity: 2, addFlag: 'docu_crew' } },
+        },
+      },
+      right: {
+        label: '“No cameras. Not yet.”',
+        governingStats: { cred: 1.0 },
+        tags: ['safe', 'indie'],
+        outcomes: {
+          bad: { text: 'Juniper nods, unoffended, and starts filming {rival} instead. You will think about this at 3 a.m. for the rest of the act.', effects: { cred: 2, rivalry: 1 } },
+          good: { text: '“Respect. Call me when there’s a story.” Juniper leaves a card. The card is a QR code to a portfolio that is, annoyingly, excellent.', effects: { cred: 4 } },
+          incredible: { text: 'Your no is so considered that Juniper writes it down. “THAT’s the opening line of the doc I make about you someday.” Someday is a real place; you’ve now both been there.', effects: { cred: 5, creativity: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_docu_moment', act: 2, pathAffinity: [], weight: 14,
+    requires: { flagsAll: ['docu_crew'] },
+    art: 'ev_docu_moment', context: 'The red light is on. It’s always on.',
+    prompt: 'Backstage, mid-crisis: the promoter is shorting the fee, the opener took your gaff tape, and someone is crying near the rider. Juniper’s camera swings toward you. This is the scene. What kind of scene is it?',
+    tags: ['fame', 'live'],
+    choices: {
+      left: {
+        label: 'Let it roll. Warts and all.',
+        governingStats: { cred: 0.8 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'What the camera catches: you, mid-tantrum, using the phrase “do you know who I’m TRYING to be?” Juniper lowers the camera respectfully. The footage does not lower itself.', effects: { cred: 1, burnout: 5, fame: 1, addFlag: 'docu_dirt' } },
+          good: { text: 'You handle the promoter, replace the tape, sit with the crier. The camera gets all of it — competence, unglamorous and total. “That’s the film,” Juniper says quietly.', effects: { cred: 5, network: 3, addFlag: 'docu_gold' } },
+          incredible: { text: 'You defuse the whole backstage like a bomb tech with a setlist, then play the show of the month. Juniper films the promoter APOLOGIZING. Cinema. Actual cinema.', effects: { cred: 7, network: 4, fame: 3, addFlag: 'docu_gold' } },
+        },
+      },
+      right: {
+        label: 'Wave the camera off. Fix it in private.',
+        governingStats: { network: 0.9 },
+        tags: ['safe'],
+        outcomes: {
+          bad: { text: 'The hallway audio still catches everything. A closed door is not a mute button. Juniper looks apologetic and keeps the tape — “it’s the truth, though.”', effects: { network: 2, burnout: 4, addFlag: 'docu_dirt' } },
+          good: { text: 'You sort the mess off-camera and return with a joke. The doc gets a mystery instead of a meltdown. Mysteries edit better than tantrums.', effects: { network: 5, cred: 2, addFlag: 'docu_gold' } },
+          incredible: { text: 'You fix it so smoothly the crisis never visibly happens. Juniper, reviewing footage, finds only a before and an after and calls the missing middle “the most professional thing I’ve ever not filmed.”', effects: { network: 6, cred: 4, addFlag: 'docu_gold' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_docu_gold', act: 3, pathAffinity: [], weight: 14,
+    requires: { flagsAll: ['docu_gold'] },
+    art: 'ev_docu_premiere', context: 'A rep theater. Your face on the marquee, slightly crooked.',
+    prompt: 'Juniper’s doc — “ALMOST” — premieres tonight. It’s good. It’s honest. It ends on the backstage scene where you quietly fix everything, and early viewers keep using the word “rootable.” Juniper saved you a seat.',
+    tags: ['fame'],
+    choices: {
+      left: {
+        label: 'Take the seat. Do the Q&A.',
+        governingStats: { network: 0.6, cred: 0.6 },
+        tags: ['fame', 'mainstream'],
+        outcomes: {
+          bad: { text: 'Watching yourself for 90 minutes is a medical event. At the Q&A someone asks what the van smelled like and you answer honestly, and THAT clip outperforms the trailer.', effects: { fame: 6, cred: 2, burnout: 4 } },
+          good: { text: 'The room laughs where it should and goes silent where it must. The Q&A runs long. Juniper introduces you as “the subject” and you both grin like it means more, because it does.', effects: { fame: 10, cred: 5, network: 3 } },
+          incredible: { text: '“ALMOST” takes the festival’s audience award, and the clip of you both accepting — Juniper mid-sob, you holding the tiny trophy like a grenade — travels far past the music press. You’re a STORY now. Stories sell out rooms.', effects: { fame: 16, cred: 7, network: 5, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Skip it. Send flowers, play a show.',
+        governingStats: { cred: 1.0 },
+        tags: ['indie', 'live'],
+        outcomes: {
+          bad: { text: 'The mystique play half-works: the premiere buzzes, your absence is noted, your show that night draws eleven people and one of them is reviewing the DOC.', effects: { cred: 3, fame: 2 } },
+          good: { text: 'You play a bar show while your movie premieres across town — which is, everyone agrees, the most on-brand thing you’ve ever done. Juniper texts a photo of your empty seat with a heart.', effects: { cred: 6, fame: 4 } },
+          incredible: { text: 'The doc ends, the lights come up, and the audience learns you’re playing RIGHT NOW two blocks away. Half the theater walks over, tickets in hand. The night becomes local legend before it’s over.', effects: { cred: 8, fame: 7, network: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_docu_dirt', act: 3, pathAffinity: [], weight: 14,
+    requires: { flagsAll: ['docu_dirt'] },
+    art: 'ev_docu_premiere', context: 'A festival programmer calls it “unflinching.” Uh oh.',
+    prompt: 'Juniper’s doc premieres, and the centerpiece is your worst backstage moment, uncut. It’s honest. That’s the problem. The internet is already choosing a freeze-frame. Juniper, to their credit, calls you first.',
+    tags: ['fame'],
+    choices: {
+      left: {
+        label: 'Own it. Show up. Take the hit.',
+        governingStats: { cred: 0.9 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'You attend. You laugh at yourself one beat too late in the wrong scene. The audience notices. Growth is apparently also cinema, but so is flinching.', effects: { cred: 3, fame: 3, burnout: 5 } },
+          good: { text: 'At the Q&A you say “that person was drowning and didn’t know how to say so,” and the room goes very quiet, and Juniper nods like the film finally makes sense. The take that saves you isn’t in the movie.', effects: { cred: 7, fame: 4, burnout: 3 } },
+          incredible: { text: 'Your Q&A answer about the meltdown gets clipped, and THE CLIP redeems the film’s worst scene in 40 seconds. “The doc shows the wound, the Q&A shows the healing,” writes the one critic who matters. Both go viral together.', effects: { cred: 10, fame: 8, network: 3, burnout: 3 } },
+        },
+      },
+      right: {
+        label: 'Lawyer up. Kill the cut.',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'The cease-and-desist leaks the same hour as the trailer. Nothing markets a documentary like a musician trying to bury it. Juniper’s film sells out. Your name trends with a gavel emoji.', effects: { network: -2, cred: -4, fame: 4, rivalry: 1 } },
+          good: { text: 'The lawyers trade the meltdown scene for extended interview access. The recut is fairer, duller, and screens twice. Juniper never quite meets your eye again. The problem is solved. A door is also closed.', effects: { network: 3, cred: -2, fame: 2 } },
+          incredible: { text: 'Your lawyer discovers Juniper never cleared the venue’s music rights — checkmate delivered gently, over coffee, with an offer: recut it together, co-sign the story. The new ending is better. Even Juniper says so.', effects: { network: 5, cred: 3, fame: 4 } },
         },
       },
     },
