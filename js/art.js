@@ -39,7 +39,7 @@ const EMOJI = {
   ev_sm_meet: '☕', ev_sm_birthday: '🎂', ev_sm_question: '🫖',
   ev_db_wire: '🐔', ev_db_tuesday: '⚓', ev_db_jukebox: '🎶', ev_db_inspector: '🧊', ev_db_lastcall: '📼',
   ev_bs_van: '🚐', ev_bs_merch: '👕', ev_bs_pearl: '🫧',
-  instrument_modular: '🎛️',
+  instrument_modular: '🎛️', instrument_triangle: '🔺', instrument_hurdy: '⚙️', gear_cowbell: '🔔',
   instrument_kazoo: '🎺', instrument_melodica: '🎹', instrument_buckets: '🥁',
   instrument_cigarbox: '🎸', instrument_glock: '🔔', instrument_theremin: '👋',
   instrument_electric: '🎸', instrument_sampler: '🎛️', instrument_voice: '🗣️',

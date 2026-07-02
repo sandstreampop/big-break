@@ -616,7 +616,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
 
 function gearShelf(state, grant, rng = Math.random) {
   const owned = new Set(state.accessories);
-  const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder', 'merch_cannon'];
+  const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder', 'merch_cannon', 'cowbell'];
   const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears', 'cursed_8track', 'stage_fan', 'humidifier'];
   const ids = grant === 'random_basic' ? basics : goods;
   let pool = ids.filter((id) => !owned.has(id)).map(accessoryById).filter(Boolean);
