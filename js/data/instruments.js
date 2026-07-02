@@ -134,6 +134,39 @@ export const INSTRUMENTS = [
     },
   },
   {
+    id: 'workhorse', name: 'The ’59 Workhorse', family: 'strings',
+    art: 'instrument_workhorse', unlockedByDefault: false,
+    flavor: 'A guitar that has already played every room you’re scared of. It remembers the changes even when you don’t.',
+    modifiers: { skill: 8, cred: 4 },
+    quirk: {
+      id: 'road_hands', name: 'Road Hands',
+      desc: 'Every performance minigame plays +4 easier — the Workhorse has done this before. Live choices roll +4.',
+      hooks: { mgBonus: 4, rollTagBonus: [{ tags: ['live'], bonus: 4 }] },
+    },
+  },
+  {
+    id: 'omnichord', name: 'Omnichord', family: 'electronic',
+    art: 'instrument_omnichord', unlockedByDefault: false,
+    flavor: 'A plastic harp from 1981 that sounds like a sunrise in an elevator. Strum plate included. Dignity sold separately.',
+    modifiers: { creativity: 8, network: 2 },
+    quirk: {
+      id: 'strum_of_fate', name: 'Strum of Fate',
+      desc: 'Indie/Electronic choices roll +7; Incredible outcomes grant +3 bonus Creativity (the sunrise chord).',
+      hooks: { rollTagBonus: [{ tags: ['indie', 'electronic'], bonus: 7 }], onIncredible: { creativity: 3 } },
+    },
+  },
+  {
+    id: 'washboard', name: 'Washboard & Thimbles', family: 'percussion',
+    art: 'instrument_washboard', unlockedByDefault: false,
+    flavor: 'Laundry equipment, weaponized. Comes with a spoon holster you didn’t ask about.',
+    modifiers: { cred: 6, network: 4 },
+    quirk: {
+      id: 'tip_magnet', name: 'Tip Magnet',
+      desc: 'Roots/Busk choices roll +9 and money gains are increased 15%. People PAY for authenticity.',
+      hooks: { rollTagBonus: [{ tags: ['roots', 'busk'], bonus: 9 }], moneyGainMult: 1.15 },
+    },
+  },
+  {
     id: 'own_voice', name: 'Your Own Voice', family: 'voice',
     art: 'instrument_voice', unlockedByDefault: false,
     flavor: 'Free, portable, and everyone has an opinion about it.',

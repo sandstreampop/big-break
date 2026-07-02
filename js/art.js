@@ -50,6 +50,7 @@ const EMOJI = {
   instrument_kazoo: '🎺', instrument_melodica: '🎹', instrument_buckets: '🥁',
   instrument_cigarbox: '🎸', instrument_glock: '🔔', instrument_theremin: '👋',
   instrument_electric: '🎸', instrument_sampler: '🎛️', instrument_voice: '🗣️',
+  instrument_workhorse: '🎸', instrument_omnichord: '🌅', instrument_washboard: '🧺',
   gear_amp: '🔊', gear_loop: '🔁', gear_pedalboard: '🎚️', gear_pick: '🪙',
   gear_inears: '🎧', gear_mic: '🎙️', gear_energy: '⚡', gear_manager: '💳',
   gear_van: '🚐', gear_ringlight: '💡', gear_rolodex: '📇',
