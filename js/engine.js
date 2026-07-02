@@ -794,5 +794,6 @@ export function runSummary(state) {
     venue: state.venue || null,
     venueLevel: state.venueLevel || 0,
     band: [...(state.band || [])],
+    brammy: state.brammy || null, // 'won' | 'lost' | null (Awards night)
   };
 }
