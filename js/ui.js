@@ -19,6 +19,7 @@ import { bandmateById } from './data/band.js';
 import { generateDMs } from './dms.js';
 import { buildEpilogue } from './epilogue.js';
 import { renderShareImage } from './sharecard.js';
+import { buildDiscography } from './discography.js';
 import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
@@ -1422,6 +1423,15 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     wrap.append(el('p', 'trades-row ending-press', `<b>${finalPress.text}</b><span>— ${finalPress.src}</span>`));
   }
   wrap.append(el('p', 'ending-text', ending.text));
+  const disc = buildDiscography(run);
+  if (disc.length) {
+    wrap.append(el('h3', 'wall-tier', 'The Discography'));
+    const list = el('div', 'disc-list');
+    for (const d of disc) {
+      list.append(el('div', 'disc-row', `<b>“${d.title}”</b><span>— ${d.review}</span>`));
+    }
+    wrap.append(list);
+  }
   const epilogue = buildEpilogue(run);
   if (run.exitText || epilogue) {
     wrap.append(el('h3', 'wall-tier', 'Epilogue'));
