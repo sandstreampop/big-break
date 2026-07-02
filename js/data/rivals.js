@@ -36,6 +36,14 @@ export const RIVALS = [
     id: 'ghostnote', name: 'Ghostnote',
     vibe: 'nobody has ever seen them load in or load out',
   },
+  {
+    id: 'brine', name: 'Captain Brine',
+    vibe: 'plays exclusively sea shanties, insists the landlocked city is “technically coastal”',
+  },
+  {
+    id: 'mothra', name: 'Mothra Jones',
+    vibe: 'headlines every show “farewell tour,” has retired eleven times',
+  },
 ];
 
 export function randomRival(rng = Math.random) {
