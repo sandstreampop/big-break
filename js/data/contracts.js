@@ -23,6 +23,18 @@ export const CONTRACTS = [
     mods: { disableEncore: true, jitter: [-22, 22] },
   },
   {
+    id: 'showman', name: 'The Showman’s Pact', icon: '🎪', lpMult: 1.5,
+    unlockedByDefault: false,
+    desc: 'No skipping performance minigames — ever. Botching one hurts double (−16). The show, contractually, must go on.',
+    mods: { forceMinigames: true, mgBotchDouble: true },
+  },
+  {
+    id: 'ghostwriter', name: 'The Ghostwriter Clause', icon: '👻', lpMult: 1.4,
+    unlockedByDefault: false,
+    desc: 'Your name appears nowhere. Fame gains halved; Cred gains +25%. The work is the signature.',
+    mods: { fameGainMult: 0.5, credGainMult: 1.25 },
+  },
+  {
     id: 'imposter', name: 'Imposter Syndrome', icon: '🎭', lpMult: 1.4,
     unlockedByDefault: false,
     desc: 'The risk dots are hidden. You have no idea how any of this is going to go. Just like real life.',

@@ -63,7 +63,6 @@ export function playMinigame(id, ctx = {}) {
     box.append(el('div', 'mg-title', `${def.icon} ${def.name}`));
     box.append(el('div', 'mg-how', def.how));
     const play = el('button', 'btn primary mg-btn', '▶ Play');
-    const skip = el('button', 'btn ghost mg-btn', 'Skip — just roll');
     play.addEventListener('click', () => {
       box.innerHTML = '';
       const stage = el('div', 'mg-stage');
@@ -72,8 +71,15 @@ export function playMinigame(id, ctx = {}) {
       const cap = setTimeout(() => finish(0.2), 32000);
       def.run(stage, ctx, (score) => { clearTimeout(cap); finish(Math.max(0, Math.min(1, score))); });
     });
-    skip.addEventListener('click', () => finish(null));
-    box.append(play, skip);
+    box.append(play);
+    if (ctx.noSkip) {
+      // The Showman's Pact: the show must go on
+      box.append(el('div', 'mg-how mg-noskip', '🎪 Under contract: no skipping. The show must go on.'));
+    } else {
+      const skip = el('button', 'btn ghost mg-btn', 'Skip — just roll');
+      skip.addEventListener('click', () => finish(null));
+      box.append(skip);
+    }
   });
 }
 

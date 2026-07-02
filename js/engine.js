@@ -146,6 +146,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
   if (perks.includes('demo') && !state.flags.includes('demo_in_pocket')) state.flags.push('demo_in_pocket');
   if (perks.includes('calluses')) state.stats.skill = clamp(state.stats.skill + 6, 1, 100);
   if (perks.includes('couch')) state.stats.network = clamp(state.stats.network + 6, 1, 100);
+  if (perks.includes('warmup')) state.encore = 1; // walk in with one banked
   return state;
 }
 
@@ -331,7 +332,8 @@ export function rollComponents(state, choice, opts = {}) {
   }
 
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
-  const pityBonus = Math.min((state.badStreak || 0) * CONFIG.pityPerBad, CONFIG.pityCap);
+  const pityPer = CONFIG.pityPerBad + ((state.perks || []).includes('thick_skin') ? 3 : 0);
+  const pityBonus = Math.min((state.badStreak || 0) * pityPer, CONFIG.pityCap + ((state.perks || []).includes('thick_skin') ? 6 : 0));
   const cMods = contractMods(state);
   const encoreBonus = opts.encore && !cMods.disableEncore ? CONFIG.encoreBonus : 0;
   // Performance bonus: a minigame result (UI-side skill) folded into the roll
@@ -557,6 +559,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   {
     let v = effects.fame || 0;
     if (v && hooks.fameSwingMult) v = Math.round(v * hooks.fameSwingMult);
+    if (v > 0 && cMods.fameGainMult) v = Math.round(v * cMods.fameGainMult);
     if (v) {
       const before = state.fame;
       state.fame = Math.max(0, state.fame + v);
