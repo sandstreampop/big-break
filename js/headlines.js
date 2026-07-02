@@ -70,6 +70,10 @@ export function generateHeadlines(state, count = 3) {
   add(!!fadedSong, fadedSong ? `WHATEVER HAPPENED TO “${fadedSong.title.toUpperCase()}”? A RETROSPECTIVE (IT CAME OUT THIS YEAR)` : '', 'The Discourse, weekly');
   add(flags.includes('chart_passed_rival') && !!topSong, topSong ? `\u201c${topSong.title.toUpperCase()}\u201d PASSES ${rival} ON THE HOT 10; ${rival} POSTS 14-SLIDE RESPONSE` : '', 'Feud Watch');
   add(flags.includes('album_out'), `THE ALBUM IS “A JOURNEY,” CONFIRM PEOPLE WHO MADE A JOURNEY OUT OF IT`, 'Long Play Review'); 
+  add(flags.includes('room_saved'), `LOCAL VENUE SAVED BY BENEFIT; CLIMBING GYM CHAIN “RESPECTS THE HUSTLE”`, 'Four Walls Monthly');
+  add(state.contract === 'deadline', `${you} SHIPS ON SCHEDULE, ALARMING PEERS AND DELIGHTING ONE (1) LABEL`, 'The Invoice');
+  add(!!state.nemesis, `${you} AND ${rival}: THE REMATCH NOBODY BOOKED AND EVERYONE IS WATCHING`, 'Feud Watch');
+  add(flags.includes('album_out') && !!topSong, `THE ALBUM CUTS KEEP CHARTING; SEQUENCING ARGUMENTS DECLARED “WORTH IT”`, 'Long Play Review');
   add(demoCount >= 2, `${you} REPORTEDLY SITTING ON ${demoCount} UNRELEASED SONGS; SOURCES “CAN HEAR THEM THROUGH THE WALL”`, 'Vault Watch');
   add((state.hustles || []).length >= 2, `${you} NOW TECHNICALLY A SMALL BUSINESS`, 'Hustle & Flow (Trade Ed.)');
   add(state.stats.cred >= 70, `SCENE ELDERS APPROVE OF ${you}; SCENE ELDERS APPROVE OF NOTHING`, 'Cred Report');

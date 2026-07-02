@@ -74,6 +74,18 @@ export function generateDMs(state, count = 2) {
   add(state.fame >= 60, 'Mom',
     'A lady at the store had your face on her shirt?? I told her I made you. She did not believe me. Call your mother.');
 
+  // the wave's systems text too
+  add(state.contract === 'deadline', 'A&R (label single deal)',
+    'friendly reminder per clause 4: a song ships THIS act. attached: a calendar invite titled “inspiration.” it recurs.');
+  add((state.hustles || []).includes('sync_royalties'), 'The supervisor (yogurt)',
+    'campaign renewed for Q3!! the probiotic demo loves you. checks incoming. PS my kid says your old song is “retro.” growth!');
+  add(flags.includes('room_saved'), 'The sound guy',
+    'plaque went up today. some tourist asked who saved the room. told him “the scene.” he asked who that was. told him “everyone who ever carried an amp up those stairs.” he bought a shirt.');
+  add(flags.includes('chart_passed_rival') && (state.rivalry ?? 3) >= 5, rival.name,
+    'enjoy the chart position. positions are temporary. I have booked studio time. lots of it. tell your fan account to stretch first.');
+  add(flags.includes('notebook_demo'), 'You (note on the old notebook)',
+    'past you left present you a demo. past you had no idea what was coming. play it for them sometime.');
+
   // the songs text too — every message quotes the real catalog
   const songs = state.songs || [];
   const charting = songs.filter((s) => s.status === 'charting' && s.pos).sort((a, b) => a.pos - b.pos)[0];
