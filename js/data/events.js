@@ -2970,6 +2970,64 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a3_golden_hands', act: 3, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['mg_golden'] },
+    art: 'ev_goldhands', context: 'A stranger at load-in, holding coffee like an offering',
+    prompt: '“I was THERE.” They describe, in detail, the moment this act you did something perfectly — the take, the set, the save. “People talk about it, you know. What are your hands doing Thursday?”',
+    tags: ['network', 'fame'],
+    choices: {
+      left: {
+        label: 'Thursday. Whatever it is. Yes.',
+        governingStats: { skill: 0.7, network: 0.5 },
+        tags: ['risky', 'live'],
+        outcomes: {
+          bad: { text: 'Thursday is a mystery gig that turns out to be a retirement party for a regional cheese executive. You play it perfectly, because that’s the reputation now, to eleven people and a commemorative gouda.', effects: { money: 150, cred: 2, burnout: 4 } },
+          good: { text: 'Thursday is a session for someone whose name you sign an NDA about. The reputation preceded you; your hands confirmed it. Word keeps traveling.', effects: { money: 250, cred: 5, network: 4 } },
+          incredible: { text: 'Thursday becomes a standing Thursday. The stranger, it turns out, books talent for people whose names are logos. “The hands,” they tell clients, is the whole pitch. It keeps being enough.', effects: { money: 350, cred: 6, network: 6, fame: 3, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: '“The moment wasn’t the point.”',
+        governingStats: { cred: 1.0 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You deflect the legend politely. The stranger nods, disappointed, and the story shrinks a little in the retelling — legends need feeding, apparently.', effects: { cred: 3 } },
+          good: { text: '“It was just the work,” you say, and the stranger repeats THAT instead. The humble version of the story travels further than the flashy one would have.', effects: { cred: 6, network: 2 } },
+          incredible: { text: 'Your shrug becomes the legend’s ending: did the thing, called it Tuesday, walked off. Musicians start doing bad impressions of your indifference. The mystique is now self-sustaining and requires no maintenance.', effects: { cred: 8, fame: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_blooper', act: 3, pathAffinity: [], weight: 12,
+    requires: { flagsAll: ['mg_botched'] },
+    art: 'ev_blooper', context: 'Your phone. A compilation. Your face in the thumbnail.',
+    prompt: 'Someone cut your worst on-the-spot moment this act into a blooper edit with air-horn sound effects. It has more views than your last release. The comments are, against all odds, affectionate.',
+    tags: ['fame', 'social'],
+    choices: {
+      left: {
+        label: 'Duet it. Air-horn yourself.',
+        governingStats: { network: 0.6, creativity: 0.5 },
+        tags: ['social', 'mainstream'],
+        outcomes: {
+          bad: { text: 'Your self-aware response video is somehow LESS funny than the original, which the comments note with scientific precision. The bit ends here. The views do not.', effects: { fame: 4, cred: -2 } },
+          good: { text: 'You duet the blooper deadpan, holding the exact wrong note again on purpose. The internet declares you “unbothered royalty.” The algorithm agrees for 72 straight hours.', effects: { fame: 9, network: 3, cred: 2 } },
+          incredible: { text: 'Your response ends with three seconds of you playing the botched part PERFECTLY, then shrugging. The cut becomes a template other musicians use. You are now the patron saint of recovering gracefully.', effects: { fame: 14, cred: 5, network: 3 } },
+        },
+      },
+      right: {
+        label: 'Say nothing. Ship the real thing.',
+        governingStats: { cred: 0.8, creativity: 0.4 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You counter-program the blooper with actual music. The internet, faced with a choice between art and air-horns, chooses air-horns. It was never a fair fight.', effects: { cred: 3, fame: 1 } },
+          good: { text: 'You drop a single the same week and let the blooper be your marketing department. “Came for the fail, stayed for the song” becomes a real comment with real numbers under it.', effects: { cred: 5, fame: 5, creativity: 2 } },
+          incredible: { text: 'The song is good enough that the blooper becomes its origin story — the “before” in a redemption arc you never agreed to star in. Both go up together, permanently linked. You stop fighting it. It stops mattering.', effects: { cred: 7, fame: 8, creativity: 3 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a3_old_friend', act: 3, pathAffinity: [], weight: 9,
     art: 'ev_friend', context: 'A familiar voice',
     prompt: 'The first person who ever believed in you calls. They now run something important. “Been watching. Need anything?”',
