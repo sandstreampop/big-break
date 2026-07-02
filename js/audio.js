@@ -55,6 +55,13 @@ const MOODS = {
   act2:   { bpm: 96,  barsPerChord: 1, prog: [CH.Dm7, CH.G7, CH.Cmaj7, CH.Am7],  hats: true,  bass: true,  cutoff: 900 },
   act3:   { bpm: 90,  barsPerChord: 1, prog: [CH.Am7, CH.Bbmaj7, CH.Am7, CH.E7], hats: true,  bass: true,  cutoff: 820 },
   ending: { bpm: 66,  barsPerChord: 2, prog: [CH.Fmaj7, CH.Cmaj7, CH.Am7, CH.G7], hats: false, bass: false, cutoff: 600 },
+  // Path identities (Pass 52): the score follows who you're becoming
+  act2_megastar:   { bpm: 104, barsPerChord: 1, prog: [CH.Cmaj7, CH.G7, CH.Am7, CH.Fmaj7], hats: true,  bass: true, cutoff: 1050 },
+  act3_megastar:   { bpm: 100, barsPerChord: 1, prog: [CH.Fmaj7, CH.G7, CH.Am7, CH.Cmaj7], hats: true,  bass: true, cutoff: 980 },
+  act2_studio:     { bpm: 86,  barsPerChord: 1, prog: [CH.Dm7, CH.G7, CH.Cmaj7, CH.Em7],   hats: false, bass: true, cutoff: 760 },
+  act3_studio:     { bpm: 82,  barsPerChord: 1, prog: [CH.Bbmaj7, CH.Em7, CH.Dm7, CH.G7],  hats: false, bass: true, cutoff: 700 },
+  act2_hitfactory: { bpm: 100, barsPerChord: 1, prog: [CH.Am7, CH.Fmaj7, CH.Cmaj7, CH.G7], hats: true,  bass: true, cutoff: 940 },
+  act3_hitfactory: { bpm: 96,  barsPerChord: 1, prog: [CH.Am7, CH.Em7, CH.Fmaj7, CH.E7],   hats: true,  bass: true, cutoff: 880 },
 };
 
 function padChord(notes, t, dur, cutoff, dest) {
@@ -219,6 +226,18 @@ export const sfx = {
   },
   gameover() { [330, 277, 233, 196].forEach((f, i) => blip(f, 0.3, 'sawtooth', 0.045, i * 0.16)); },
   win() { [523, 659, 784, 1047, 1319].forEach((f, i) => blip(f, 0.22, 'triangle', 0.07, i * 0.09)); },
+  winPath(path) {
+    if (path === 'megastar') { // stadium: big major climb, doubled octaves
+      [523, 659, 784, 1047].forEach((f, i) => { blip(f, 0.25, 'triangle', 0.07, i * 0.09); blip(f * 2, 0.2, 'triangle', 0.04, i * 0.09); });
+      blip(1568, 0.5, 'triangle', 0.08, 0.4);
+    } else if (path === 'studio') { // warm jazz resolve: ii-V-I shimmer
+      [587, 698, 880].forEach((f, i) => blip(f, 0.3, 'sine', 0.06, i * 0.12));
+      [523, 659, 784, 988].forEach((f) => blip(f, 0.8, 'sine', 0.035, 0.42));
+    } else if (path === 'hitfactory') { // synth stack pulse
+      [440, 440, 554, 659].forEach((f, i) => blip(f, 0.14, 'square', 0.05, i * 0.11));
+      [880, 1109, 1319].forEach((f, i) => blip(f, 0.4, 'sawtooth', 0.03, 0.5 + i * 0.05));
+    } else this.win();
+  },
   ui() { blip(880, 0.05, 'sine', 0.03); },
   cash() { blip(988, 0.07, 'square', 0.03); blip(1319, 0.09, 'square', 0.03, 0.05); },
 };

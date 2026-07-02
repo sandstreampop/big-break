@@ -358,7 +358,9 @@ function startGauntlet() {
 function renderHud() {
   const hud = $('#hud');
   hud.innerHTML = '';
-  music.setMood('act' + run.act);
+  // Path-flavored score after the Crossroads (falls back to the base act mood)
+  const moodKey = run.path && run.act > 1 ? `act${run.act}_${run.path}` : 'act' + run.act;
+  music.setMood(moodKey);
   music.setStress(run.stats.burnout / 100);
   // Burnout vignette: the screen itself runs hot as you do
   const game = $('#screen-game');
@@ -1359,7 +1361,7 @@ function renderFinale() {
   const earned = finishMeta(summary, lp);
 
   const ending = ENDINGS[run.path][evalr.result];
-  if (evalr.result === 'success') sfx.win(); else if (evalr.result === 'failure') sfx.gameover(); else sfx.good();
+  if (evalr.result === 'success') sfx.winPath(run.path); else if (evalr.result === 'failure') sfx.gameover(); else sfx.good();
   renderEndingScreen(ending, lp, earned, evalr, summary);
 }
 
