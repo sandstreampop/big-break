@@ -270,12 +270,20 @@ body {
 .hint-left { left: 12px; }
 .hint-right { right: 12px; }
 
-/* risk tell dots */
-.risk { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
-.risk-low { background: var(--good); }
-.risk-mid { background: var(--accent); }
-.risk-high { background: var(--bad); }
-.risk-hot { background: var(--hot); box-shadow: 0 0 8px var(--hot); }
+/* risk tell: color + shape (colorblind-safe) */
+.risk {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: none; width: 13px; height: 13px;
+  font-size: 10px; line-height: 1; border-radius: 0;
+  background: none !important;
+}
+.risk-low { color: var(--good); }
+.risk-mid { color: var(--accent); }
+.risk-high { color: var(--bad); }
+.risk-hot { color: var(--hot); text-shadow: 0 0 8px var(--hot); }
+
+/* large-text mode */
+body.big-text #app { zoom: 1.18; }
 .risk-hidden {
   background: none; width: auto; height: auto;
   color: var(--dim); font-size: 11px; font-weight: 900;
