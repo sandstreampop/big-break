@@ -358,8 +358,11 @@ const QUERIES = {
 const out = {};
 for (const [name, { sql }] of Object.entries(QUERIES)) {
   try {
+    // The query API silently truncates at 100 rows unless the HogQL has
+    // an explicit LIMIT — coverage diffs need the full result.
+    const limited = /\bLIMIT\s+\d+/i.test(sql) ? sql : sql + '\n    LIMIT 10000';
     const r = await api(`/api/projects/${projectId}/query/`, {
-      query: { kind: 'HogQLQuery', query: sql },
+      query: { kind: 'HogQLQuery', query: limited },
     });
     out[name] = { columns: r.columns, results: r.results };
     console.log(`# ${name}: ${r.results?.length ?? 0} rows`);
@@ -479,7 +482,9 @@ async function buildCoverage() {
   let body = '';
   for (const c of CATALOGS) {
     const { map, failed } = seenMap(c.from, c.keyFn);
-    const rows = c.items.map((it) => ({ ...it, n: map.get(it.id) || 0 }));
+    // dedupe: an id can appear in two waves of the same catalog
+    const uniq = [...new Map(c.items.map((it) => [it.id, it])).values()];
+    const rows = uniq.map((it) => ({ ...it, n: map.get(it.id) || 0 }));
     const never = rows.filter((r) => r.n === 0);
     const rare = rows.filter((r) => r.n > 0 && r.n < c.rareBelow)
       .sort((a, b) => a.n - b.n || (a.id < b.id ? -1 : 1));
