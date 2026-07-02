@@ -8,6 +8,7 @@ import { ACCESSORIES, accessoryById } from './data/accessories.js';
 import { randomRival } from './data/rivals.js';
 import { contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
+import { genreById } from './data/genres.js';
 
 function contractMods(state) {
   return contractById(state.contract)?.mods || {};
@@ -102,6 +103,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     tierLog: [],
     cardLog: [],    // [{e: eventId, t: tier, a: act, s: side}] — scrapbook
     contract: null, // signed contract id (see data/contracts.js)
+    genre: null,    // sound identity (see data/genres.js)
     hustles: [],    // persistent income sources (see data/hustles.js)
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
@@ -265,6 +267,9 @@ export function rollComponents(state, choice, opts = {}) {
   let quirkBonus = 0;
   for (const tb of inst?.quirk?.hooks?.rollTagBonus || []) {
     if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
+  }
+  for (const gb of genreById(state.genre)?.bonuses || []) {
+    if (tagsIntersect(gb.tags, choice.tags)) quirkBonus += gb.bonus;
   }
 
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
@@ -665,5 +670,6 @@ export function runSummary(state) {
     hustles: (state.hustles || []).length,
     swapped: !!state.swappedInstrument,
     flags: [...(state.flags || [])],
+    genre: state.genre || null,
   };
 }
