@@ -5885,4 +5885,63 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ ACT 1 PACK (the early days deserve more days) ═══════════
+  {
+    id: 'a1_first_review', act: 1, pathAffinity: [], weight: 11,
+    requires: { chartingMin: 1 },
+    art: 'ev_first_review', context: 'A blog with eleven readers. You know all eleven now.',
+    prompt: 'Someone REVIEWED it. An actual review of “{song}”, 800 words, on a blog called Ears First. There is a paragraph about your bridge. There is a numerical score. It is a 6.8. Your entire nervous system wants to know what got docked.',
+    tags: ['social', 'home'],
+    choices: {
+      left: {
+        label: 'Read it. Then read it again. Then the comments.',
+        governingStats: { creativity: 0.6, cred: 0.4 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'Comment four is your old bandmate, anonymous, being SPECIFIC. You know the typing cadence. You draft nine replies and send none, which costs a full evening and several years.', effects: { creativity: 2, burnout: 6, fame: 2 } },
+          good: { text: 'The docked points were for the fade-out, which — fine. FINE. He’s right. You fix it in the live set and the reviewer comes to the next show and nods at you during the new ending like a co-writer.', effects: { creativity: 5, skill: 2, fame: 3, hypeSong: 8 } },
+          incredible: { text: 'Buried in paragraph six: a sentence about your bridge so precise it teaches you what you were doing. You print it. Some strangers understand you before you do — that’s what reviews are FOR, once a decade.', effects: { creativity: 8, cred: 3, fame: 3, hypeSong: 12 } },
+        },
+      },
+      right: {
+        label: 'Screenshot the headline. Never read it.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'indie'],
+        outcomes: {
+          bad: { text: 'Your resolve lasts 41 hours, and you read it at 3 a.m. on your worst night, which is the exact wrong dosage. The 6.8 gets tattooed somewhere internal. Unread reviews wait. That’s their whole trick.', effects: { cred: 2, burnout: 4 } },
+          good: { text: '“6.8” goes in the bio, no context. The mystique of an artist who visibly does not care is worth more than the review. The reviewer follows you back. Nobody mentions it. Perfect.', effects: { cred: 5, fame: 2, burnout: -2 } },
+          incredible: { text: 'Years later an interviewer quotes the review’s best line at you and you hear it for the FIRST TIME, on camera, and your genuine delighted surprise becomes the clip of the press cycle. Not reading it was a long game you didn’t know you were playing.', effects: { cred: 7, fame: 4, burnout: -3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a1_borrowed_van', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_borrowed_van', context: 'Your cousin’s van. Your cousin’s ONE condition.',
+    prompt: 'Your cousin will lend you the van for the out-of-town gig — the first REAL out-of-town gig — on one condition: their band’s demo plays the whole drive. Both ways. “It’s a concept album,” they say, holding the keys just out of reach. “About soup.”',
+    tags: ['tour', 'home'],
+    choices: {
+      left: {
+        label: 'Deal. The gig matters more than your ears.',
+        governingStats: { network: 0.5, skill: 0.5 },
+        tags: ['tour', 'safe'],
+        outcomes: {
+          bad: { text: 'The soup album is 74 minutes long and the drive is 68, so you sit in the venue lot for the final track, “Broth (Reprise),” out of contractual respect. The gig is fine. The soup is in your head for a month.', effects: { fame: 3, network: 2, burnout: 4 } },
+          good: { text: 'Track seven — “Minestrone Girl” — is, horrifyingly, GOOD. You tell your cousin. Your cousin cries a little at a red light. The gig goes well and the drive home is the happiest 68 minutes of the month.', effects: { fame: 4, network: 3, creativity: 2 } },
+          incredible: { text: 'You open the gig with a cover of “Minestrone Girl,” announced as “a song by the person who got us here.” Someone films it. Your cousin’s band gets a booking off the clip. The van is yours whenever, forever, gas included. Family is a label too.', effects: { fame: 5, network: 5, cred: 3 } },
+        },
+      },
+      right: {
+        label: 'Counter-offer: you produce ONE soup song properly.',
+        governingStats: { skill: 0.8 },
+        tags: ['studio', 'deal'],
+        outcomes: {
+          bad: { text: 'Producing “Gazpacho (Cold Open)” takes three sessions, two arguments about ladle foley, and one apology dinner. The van arrives late. The gig is rescheduled. The ladle foley, though: crisp.', effects: { skill: 4, burnout: 4, network: 2 } },
+          good: { text: 'One evening, one mic, one honest mix — and the soup song becomes an actual song. Your cousin plays it for everyone at every family event forever, introducing you as “my producer.” The van is a retainer now.', effects: { skill: 6, network: 3, cred: 2 } },
+          incredible: { text: 'The produced track is so much better than the rest that the soup album gets remastered around it, re-released, and — this is real — reviewed. 7.1. Your cousin beats your 6.8 and brings it up EVERY THANKSGIVING. Worth it. The van has your name on the visor.', effects: { skill: 8, network: 4, creativity: 3 } },
+        },
+      },
+    },
+  },
 ];

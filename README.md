@@ -11,7 +11,6 @@ packs, contracts, and perks on the Career Wall.
 
 **Play it (no install, phone Safari/Chrome):**
 - https://sandstreampop.github.io/big-break/
-- Mirror: https://raw.githack.com/sandstreampop/big-break/gh-pages/index.html
 
 It's a PWA: add it to your home screen and it works offline.
 
