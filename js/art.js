@@ -40,6 +40,7 @@ const EMOJI = {
   ev_db_wire: '🐔', ev_db_tuesday: '⚓', ev_db_jukebox: '🎶', ev_db_inspector: '🧊', ev_db_lastcall: '📼',
   ev_bs_van: '🚐', ev_bs_merch: '👕', ev_bs_pearl: '🫧',
   ev_wt_offer: '🗺️', ev_wt_tokyo: '🗼', ev_wt_berlin: '🌫️', ev_wt_sp: '🌧️',
+  ev_cl_dm: '📲', ev_cl_session: '🎙️', ev_cl_reprise: '🤝', ev_cl_regret: '🧾',
   instrument_modular: '🎛️', instrument_triangle: '🔺', instrument_hurdy: '⚙️', gear_cowbell: '🔔',
   instrument_kazoo: '🎺', instrument_melodica: '🎹', instrument_buckets: '🥁',
   instrument_cigarbox: '🎸', instrument_glock: '🔔', instrument_theremin: '👋',
@@ -78,6 +79,7 @@ const SCENE = {
   ev_db_wire: 'stage', ev_db_tuesday: 'stage', ev_db_jukebox: 'shop', ev_db_inspector: 'street', ev_db_lastcall: 'home',
   ev_bs_van: 'street', ev_bs_merch: 'shop', ev_bs_pearl: 'home',
   ev_wt_offer: 'office', ev_wt_tokyo: 'arena', ev_wt_berlin: 'festival', ev_wt_sp: 'arena',
+  ev_cl_dm: 'phone', ev_cl_session: 'studio', ev_cl_reprise: 'stage', ev_cl_regret: 'shop',
   ev_credits: 'office', ev_loyalty: 'studio', ev_diane: 'arena', ev_prodigy: 'studio',
   // studios
   ev_phone_demo: 'studio', ev_session: 'studio', ev_jingle: 'studio', ev_click: 'studio',

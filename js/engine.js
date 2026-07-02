@@ -11,6 +11,7 @@ import { hustleById } from './data/hustles.js';
 import { genreById } from './data/genres.js';
 import { venueById, VENUE_TIERS } from './data/venues.js';
 import { bandmateById, recruitCandidate } from './data/band.js';
+import { collabArtistFor } from './charts.js';
 
 function contractMods(state) {
   return contractById(state.contract)?.mods || {};
@@ -557,7 +558,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
 
   if (effects.chartTitle) {
     state.chartTitles = state.chartTitles || [];
-    state.chartTitles.unshift(effects.chartTitle);
+    state.chartTitles.unshift(effects.chartTitle.replace('{collabArtist}', collabArtistFor(state)));
   }
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
