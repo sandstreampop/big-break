@@ -215,12 +215,24 @@ export function releaseSong(state, songId, hype = 55) {
 
 function debutSong(state, s) {
   const rng = stateRng(state);
+  s.releasedAct = state.act; // The Deadline contract audits this
   s.pos = positionSong(state, s, rng);
   if (s.pos) {
     s.weeks = 1;
     s.peak = s.pos;
     crownCheck(state, s);
   }
+}
+
+// The Deadline contract: a song must ship every act. Called at each act
+// break (auditing the act that just ended) and once more at the finale.
+export function deadlineAudit(state, act) {
+  if (!contractMods(state).releaseDeadline) return [];
+  const shipped = (state.songs || []).some((s) => s.releasedAct === act);
+  if (shipped) return [`📠 The Deadline: act ${act} shipped. The label is quiet, which is love.`];
+  state.fame = Math.max(0, state.fame - 8);
+  state.stats.cred = clamp(state.stats.cred - 4, 0, 100);
+  return [`📠 The Deadline: nothing shipped in act ${act}. The label notes the silence. −8 Fame, −4 Cred`];
 }
 
 function crownCheck(state, s, notes) {
@@ -1036,7 +1048,7 @@ function startAct(state, act) {
       state.fame += bm.actQuirk.fame;
       notes.push(`${bm.icon} ${bm.name}: +${bm.actQuirk.fame} Fame (word travels)`);
     }
-    if (bm?.actQuirk?.demo) {
+    if (bm?.actQuirk?.demo) { // (deadline audit runs below, after quirks)
       // Nadia's notebook: a fresh "spare" appears every act break
       const rng = stateRng(state);
       const s = addSong(state, {
@@ -1046,6 +1058,7 @@ function startAct(state, act) {
       notes.push(`${bm.icon} ${bm.name}: leaves a demo on your amp — “${s.title}”`);
     }
   }
+  notes.push(...deadlineAudit(state, act - 1));
   notes.push(...chartTick(state));
   return notes;
 }
@@ -1053,6 +1066,7 @@ function startAct(state, act) {
 // Hustles pay out one final time when the career is evaluated
 export function finalePayout(state) {
   const notes = [];
+  notes.push(...deadlineAudit(state, 3));
   for (const id of state.hustles || []) {
     const h = hustleById(id);
     if (h) {
