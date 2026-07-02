@@ -720,6 +720,120 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════ THE MONTAGE (3-city world tour chain) ═══════════
+  {
+    id: 'wt_offer', act: 3, pathAffinity: [], weight: 10,
+    requires: { fameMin: 40 },
+    art: 'ev_wt_offer', context: 'A routing sheet with three impossible cities',
+    prompt: 'The offer: three cities, three nights, three flights. Tokyo, Berlin, São Paulo. No days off, no soundchecks longer than an hour, no promises about your circadian rhythm ever recovering.',
+    tags: ['tour', 'live'],
+    choices: {
+      left: {
+        label: 'Three cities. Three nights. Go.',
+        governingStats: { network: 0.7, skill: 0.5 },
+        tags: ['tour', 'risky'],
+        outcomes: {
+          bad: { text: 'The visas clear at the last possible hour. Your bag does not make the first flight. Tokyo will be played in yesterday’s shirt.', effects: { burnout: 4, money: 100, chainEventId: 'wt_tokyo' } },
+          good: { text: 'Everything books clean. Somewhere over the Pacific you realize you’re grinning at a spreadsheet. The spreadsheet says TOKYO in bold.', effects: { burnout: 3, money: 150, chainEventId: 'wt_tokyo' } },
+          incredible: { text: 'The promoter upgrades the whole run sight unseen — “the numbers say you’re about to be worth it.” The numbers have never been romantic before.', effects: { burnout: 3, money: 250, fame: 3, chainEventId: 'wt_tokyo' } },
+        },
+      },
+      right: {
+        label: 'Decline. Protect the finale.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'rest'],
+        outcomes: {
+          bad: { text: 'You pass, and spend the week watching other artists’ tour clips at 1 a.m., which is not resting, technically.', effects: { burnout: -4, fame: -2 } },
+          good: { text: 'You stay, sleep, and finish what needed finishing. The cities will still be there. That’s the thing about cities.', effects: { burnout: -10, creativity: 3 } },
+          incredible: { text: 'The week at home produces the thing you’d have missed at 30,000 feet. The promoter reschedules for next year — headline size.', effects: { burnout: -10, creativity: 5, network: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'wt_tokyo', act: 3, pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_wt_tokyo', context: 'NIGHT ONE — Tokyo, 400-cap, sold out',
+    prompt: 'The Tokyo crowd listens like a studio: total silence in the verses, detonation between songs. Someone holds up a hand-painted sign with a lyric you almost cut from the second album.',
+    tags: ['tour', 'live'],
+    choices: {
+      left: {
+        label: 'Play the almost-cut song for the sign',
+        governingStats: { creativity: 0.7, cred: 0.5 },
+        tags: ['live', 'indie'],
+        outcomes: {
+          bad: { text: 'You half-remember the bridge — it’s been years — and the sign-holder sings the half you drop. The room decides this was the best possible version. Rooms are kind here.', effects: { fame: 5, cred: 3, burnout: 6, chainEventId: 'wt_berlin' } },
+          good: { text: 'The deep cut lands like a single. The sign-holder cries. You cry slightly, professionally, into the stage lights. Night one: perfect.', effects: { fame: 8, cred: 5, burnout: 5, chainEventId: 'wt_berlin' } },
+          incredible: { text: 'The whole room knows the almost-cut song. ALL the words. A song you nearly deleted has a second life on the other side of the planet. You board the next flight changed.', effects: { fame: 12, cred: 6, creativity: 3, burnout: 5, chainEventId: 'wt_berlin' } },
+        },
+      },
+      right: {
+        label: 'Stick to the setlist. Discipline.',
+        governingStats: { skill: 0.9 },
+        tags: ['live', 'safe'],
+        outcomes: {
+          bad: { text: 'Tight set, jet-lagged hands. You play well and remember little. The sign goes home unplayed, which follows you onto the flight.', effects: { skill: 3, fame: 5, burnout: 7, chainEventId: 'wt_berlin' } },
+          good: { text: 'The set is a machine and Tokyo loves machines with feelings. After the show you sign the sign. Compromise: elegant.', effects: { skill: 4, fame: 8, burnout: 5, chainEventId: 'wt_berlin' } },
+          incredible: { text: 'Flawless night one — the kind that makes the crew walk taller at load-out. The promoter texts Berlin: “tape every night.”', effects: { skill: 5, fame: 10, cred: 3, burnout: 5, chainEventId: 'wt_berlin' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'wt_berlin', act: 3, pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_wt_berlin', context: 'NIGHT TWO — Berlin, converted power station, 2 a.m. slot',
+    prompt: 'Berlin does not clap between songs; Berlin nods. The room is concrete and fog and one thousand people conserving their approval. Your body believes it is four different times of day, all of them wrong.',
+    tags: ['tour', 'live'],
+    choices: {
+      left: {
+        label: 'Go long. Give them the 2 a.m. set.',
+        governingStats: { creativity: 0.7, skill: 0.5 },
+        tags: ['live', 'electronic', 'risky'],
+        outcomes: {
+          bad: { text: 'You stretch the songs into the fog until one of them stops being a song. The nodding continues, unreadable. Later you learn the nodding meant it was the best night of the run. Berlin.', effects: { fame: 6, cred: 5, burnout: 9, chainEventId: 'wt_saopaulo' } },
+          good: { text: 'The ten-minute version finds a groove the three-minute version never knew it had. The fog machine operator — a legend, apparently — salutes you.', effects: { fame: 8, creativity: 5, cred: 4, burnout: 8, chainEventId: 'wt_saopaulo' } },
+          incredible: { text: 'At 3:40 a.m. the room stops nodding and starts MOVING, which the promoter says happens twice a year. A techno label asks about remix stems before you’re offstage.', effects: { fame: 12, creativity: 6, cred: 5, money: 150, burnout: 8, chainEventId: 'wt_saopaulo' } },
+        },
+      },
+      right: {
+        label: 'Tight set, then actually sleep',
+        governingStats: { cred: 0.7 },
+        tags: ['live', 'safe', 'rest'],
+        outcomes: {
+          bad: { text: 'You play the hour and leave. The hotel pillow is a miracle of German engineering. You dream in soundcheck tones. It counts as rest. Barely.', effects: { fame: 5, burnout: 2, chainEventId: 'wt_saopaulo' } },
+          good: { text: 'The discipline holds: great hour, real sleep, and dawn over the Spree from the right side of a window for once. São Paulo will get a functioning human.', effects: { fame: 7, cred: 3, burnout: -2, chainEventId: 'wt_saopaulo' } },
+          incredible: { text: 'The short set reads as confidence and Berlin respects nothing more. “No encore,” writes the city’s hardest critic, “because none was needed.” You sleep nine hours. NINE.', effects: { fame: 9, cred: 5, burnout: -4, chainEventId: 'wt_saopaulo' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'wt_saopaulo', act: 3, pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_wt_sp', context: 'NIGHT THREE — São Paulo, outdoor, rain arriving',
+    prompt: 'São Paulo sings everything — the words, the guitar lines, the drum fills. The rain starts during your third song and not one person leaves. This is the night the montage was building to. Your hands know it.',
+    tags: ['tour', 'live'],
+    choices: {
+      left: {
+        label: 'Play THROUGH the rain. All of it.',
+        governingStats: { skill: 0.6, cred: 0.6 },
+        tags: ['live', 'risky'],
+        outcomes: {
+          bad: { text: 'The rain wins the sound war by the last song, so the crowd sings the finale FOR you, five thousand voices to your dead monitors. You conduct it, soaked, laughing. A failure indistinguishable from triumph.', effects: { fame: 10, cred: 6, burnout: 8, pathProgress: 1 } },
+          good: { text: 'Soaked strings, slipping picks, and the best show of the year. The photo — you, arms out, rain lit gold by the rig — is everywhere by morning.', effects: { fame: 15, cred: 7, burnout: 7, pathProgress: 1, chartTitle: 'Night Three (Rain Version)' } },
+          incredible: { text: 'The storm peaks at the bridge and the entire crowd sings INTO it, and for one minute the weather is your backing choir. People will lie about having been here. Thousands will be telling the truth.', effects: { fame: 22, cred: 8, creativity: 4, burnout: 7, pathProgress: 2, chartTitle: 'Night Three (Rain Version)' } },
+        },
+      },
+      right: {
+        label: 'Cut it short, save the gear, promise a return',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'safe'],
+        outcomes: {
+          bad: { text: 'The crowd boos the rain, not you — but the difference is academic from the stage. The promise of a return show is met with the skepticism of a city that has heard promises.', effects: { fame: 5, network: 2, burnout: 4 } },
+          good: { text: 'You call it at the right moment, protect the crew, and announce the return date FROM the stage — already booked, already real. Professional weather management. The city forgives.', effects: { fame: 8, network: 5, money: 100, burnout: 3 } },
+          incredible: { text: 'The shortened set becomes a legend of restraint — and the announced return show sells out in an hour, in the rain, from phones held under jackets. You owe São Paulo a night. São Paulo intends to collect.', effects: { fame: 12, network: 7, money: 200, burnout: 3, pathProgress: 1 } },
+        },
+      },
+    },
+  },
   // ═══════════ BANDMATE SPOTLIGHTS (require specific members) ═══════════
   {
     id: 'bs_fish_van', act: [2, 3], pathAffinity: [], weight: 9,
