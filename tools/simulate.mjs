@@ -38,6 +38,7 @@ function scoreChoice(state, choice) {
 }
 
 const tally = {
+  skew: {},
   ended: 0, byEnding: {}, byPathResult: {},
   lpTotal: 0, fameSum: 0, burnoutDeaths: 0,
   cardsSum: 0, drySum: 0,
@@ -91,6 +92,8 @@ for (let i = 0; i < RUNS; i++) {
         mgBonus = r < 0.15 ? -8 : r < 0.5 ? 4 : r < 0.85 ? 14 : 24;
       }
       const result = engine.resolveSwipe(state, side, Math.random, { encore: armEncore, bonus: mgBonus });
+      const sk = (tally.skew[ev.id] = tally.skew[ev.id] || { left: 0, right: 0 });
+      sk[side]++;
       tally.tierCounts[result.tier]++;
       tally.tiersByAct[act][result.tier]++;
       if (result.tier === 'bad') badCards++;
@@ -151,5 +154,22 @@ console.log(`  → success ${pct(rollup.success)} | partial ${pct(rollup.partial
 if (tally.finaleStats.count) {
   const f = tally.finaleStats, c = f.count;
   console.log(`\navg finale stats: skill ${(f.skill / c).toFixed(0)} cred ${(f.cred / c).toFixed(0)} crea ${(f.creativity / c).toFixed(0)} net ${(f.network / c).toFixed(0)} burn ${(f.burnout / c).toFixed(0)} fame ${(f.fame / c).toFixed(0)} hits ${(f.hits / c).toFixed(1)}`);
+}
+{
+  // Degenerate-choice report: cards the policy swipes one way ≥90% of the
+  // time on ≥40 sightings. CAVEAT: under `smart` (pure odds-argmax) any
+  // consistent odds edge saturates to ~100%, so this is a structural
+  // linter for asymmetric rolls — the authoritative fake-choice detector
+  // is the live swipe telemetry (see docs/telemetry.md, Insight 1).
+  const rows = Object.entries(tally.skew)
+    .map(([id, s]) => ({ id, n: s.left + s.right, skew: Math.round((100 * Math.max(s.left, s.right)) / (s.left + s.right)), dir: s.left >= s.right ? 'L' : 'R' }))
+    .filter((r) => r.n >= 40 && r.skew >= 90)
+    .sort((a, b) => b.skew - a.skew);
+  if (rows.length) {
+    console.log('\ndegenerate-choice suspects (≥90% one side, ≥40 plays):');
+    for (const r of rows.slice(0, 12)) console.log(`  ${r.skew}% ${r.dir}  ${r.id} (${r.n})`);
+  } else {
+    console.log('\ndegenerate-choice suspects: none at ≥90% skew');
+  }
 }
 console.log(`avg LP/run: ${(tally.lpTotal / RUNS).toFixed(1)}\n`);
