@@ -983,3 +983,25 @@ body.big-text #app { zoom: 1.18; }
 .mg-pad:active { transform: scale(.94); }
 .mg-pad-on { background: #3b2b1c; border-color: var(--accent); box-shadow: 0 0 16px rgba(255,179,71,.4); }
 .mg-pad-bad { background: #4a2030; border-color: var(--bad); }
+
+/* Kill the Feedback */
+.mg-board {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+  background: #1c1729; border: 1px solid #3b3352; border-radius: 12px;
+  padding: 12px 10px; height: 190px;
+}
+.mg-strip {
+  appearance: none; cursor: pointer;
+  background: #241e33; border: 1px solid #3b3352; border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding-top: 10px;
+  transition: background .1s, border-color .1s;
+}
+.mg-strip-led { width: 10px; height: 10px; border-radius: 50%; background: #3b3352; }
+.mg-strip-fader { width: 6px; flex: 1; margin-bottom: 10px; border-radius: 3px; background: #322a47; }
+.mg-strip-hot { border-color: var(--bad); background: #3a1520; animation: mgSqueal .18s infinite alternate; }
+.mg-strip-hot .mg-strip-led { background: var(--bad); box-shadow: 0 0 10px var(--bad); }
+@keyframes mgSqueal { from { transform: translateX(-1.5px); } to { transform: translateX(1.5px); } }
+@media (prefers-reduced-motion: reduce) { .mg-strip-hot { animation: none; } }
+.mg-strip-burnt { background: #4a2030; border-color: var(--bad); opacity: .6; }
+.mg-strip-wrong { border-color: var(--accent); background: #3b2b1c; }

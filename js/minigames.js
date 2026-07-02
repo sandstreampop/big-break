@@ -426,3 +426,86 @@ register('tighten', {
     playRound();
   },
 });
+
+// ═══════════ KILL THE FEEDBACK — soundcheck reflexes (tap the hot channel) ═══════════
+register('feedback', {
+  name: 'Kill the Feedback', icon: '🔊',
+  how: 'Channels squeal at random — tap the HOT one fast before it melts the room. Wrong channel costs you. Ten squeals. The board shows no mercy.',
+  run(stage, ctx, done) {
+    const CHANNELS = 6, SQUEALS = 10;
+    const board = el('div', 'mg-board');
+    const tally = el('div', 'mg-dots', '');
+    stage.append(board, tally, el('div', 'mg-hint', 'tap the squealing channel'));
+
+    const strips = [];
+    for (let i = 0; i < CHANNELS; i++) {
+      const s = el('button', 'mg-strip', `<span class="mg-strip-led"></span><span class="mg-strip-fader"></span>`);
+      board.append(s);
+      strips.push(s);
+    }
+
+    let fired = 0, resolved = 0, hits = 0, wrongs = 0, over = false;
+    let hot = -1, hotAt = 0, burnTimer = null;
+
+    function scoreboard() {
+      tally.textContent = `killed ${hits}/${SQUEALS}${wrongs ? `  ✕${wrongs}` : ''}`;
+    }
+    scoreboard();
+
+    function clearHot(burned) {
+      if (hot < 0) return;
+      strips[hot].classList.remove('mg-strip-hot');
+      if (burned) strips[hot].classList.add('mg-strip-burnt');
+      setTimeout((k) => strips[k]?.classList.remove('mg-strip-burnt'), 350, hot);
+      hot = -1;
+      clearTimeout(burnTimer);
+    }
+
+    function nextSqueal() {
+      if (over) return;
+      if (fired >= SQUEALS) return; // resolution of last one ends the game
+      fired++;
+      hot = Math.floor(Math.random() * CHANNELS);
+      hotAt = performance.now();
+      strips[hot].classList.add('mg-strip-hot');
+      // unanswered squeal burns out after 1.5s = miss
+      burnTimer = setTimeout(() => {
+        clearHot(true);
+        resolved++;
+        scoreboard();
+        maybeEnd();
+        setTimeout(nextSqueal, 260 + Math.random() * 420);
+      }, 1500);
+    }
+
+    function maybeEnd() {
+      if (resolved >= SQUEALS && !over) {
+        over = true;
+        // reward accuracy, punish trigger-happiness
+        done(Math.max(0, (hits - wrongs * 0.75) / SQUEALS));
+      }
+    }
+
+    strips.forEach((s, i) => s.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      if (over) return;
+      if (i === hot) {
+        // faster kill = closer to perfect; anything under 350ms is elite
+        const dt = performance.now() - hotAt;
+        hits += dt < 350 ? 1 : dt < 900 ? 0.85 : 0.6;
+        clearHot(false);
+        resolved++;
+        scoreboard();
+        maybeEnd();
+        setTimeout(nextSqueal, 260 + Math.random() * 420);
+      } else {
+        wrongs++;
+        s.classList.add('mg-strip-wrong');
+        setTimeout(() => s.classList.remove('mg-strip-wrong'), 250);
+        scoreboard();
+      }
+    }));
+
+    setTimeout(nextSqueal, 700);
+  },
+});
