@@ -2944,6 +2944,92 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a1_bloom_amp', act: 1, pathAffinity: [], weight: 10,
+    art: 'ev_bloom_amp', context: 'Twenty minutes before doors',
+    prompt: 'The opener — a nervous duo called Static Bloom — just watched their amp die with a smell like burnt toast and futures. They look at your amp. They look at you. Their whole set is on that look.',
+    tags: ['live', 'network'],
+    choices: {
+      left: {
+        label: 'Lend them your amp',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'network'],
+        outcomes: {
+          bad: { text: 'They blow your fuse mid-set. YOUR set runs on a borrowed practice amp that distorts when you breathe near it. Static Bloom apologizes eleven times and buys you a beer with change. You remember the beer. So will they.', effects: { cred: 3, skill: 2, addFlag: 'helped_bloom' } },
+          good: { text: 'Their set soars on your tubes, and they tell the crowd — mid-show, unprompted — whose amp it is. The room claps for an AMP. You go on warm and play warmer.', effects: { cred: 5, network: 3, addFlag: 'helped_bloom' } },
+          incredible: { text: 'Static Bloom plays the set of their lives on your amp and dedicates the closer to “the kindest rig in the city.” Both bands merch out. The scene tells the story for you from here.', effects: { cred: 6, network: 4, fame: 2, addFlag: 'helped_bloom' } },
+        },
+      },
+      right: {
+        label: 'Protect the rig. Yours first.',
+        governingStats: { skill: 0.6, cred: 0.4 },
+        tags: ['safe'],
+        outcomes: {
+          bad: { text: 'Reasonable. Professional. Static Bloom plays through a bass practice combo, and every note sounds like an apology. They don’t look at you at load-out. The scene has eyes.', effects: { skill: 2, cred: -1, addFlag: 'snubbed_bloom' } },
+          good: { text: 'You guard the rig and play a flawless set through it. Static Bloom borrows from the HEADLINER instead, who makes a small show of the kindness. Noted, by everyone, in a small ledger nobody admits keeping.', effects: { skill: 3, cred: 1, addFlag: 'snubbed_bloom' } },
+          incredible: { text: 'Your set is immaculate — the amp never sounded better — and Static Bloom, wounded, plays angry through a rental and finds a NEW sound in the anger. Everyone wins tonight. The ledger still updates.', effects: { skill: 4, fame: 2, addFlag: 'snubbed_bloom' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_bloom_return', act: 3, pathAffinity: [], weight: 13,
+    requires: { flagsAll: ['helped_bloom'] },
+    art: 'ev_bloom_big', context: 'Static Bloom. Yes, THAT Static Bloom.',
+    prompt: 'The nervous duo you lent an amp to is now the biggest band in the country. Their tour manager calls: “They have a list of people who were kind before it mattered. It’s a short list. You’re on it.”',
+    tags: ['network', 'fame'],
+    choices: {
+      left: {
+        label: 'Open their arena run',
+        governingStats: { network: 0.6, skill: 0.6 },
+        tags: ['live', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'Arena crowds arrive late and leave patient. You play to filling seats and phone glow. But every night, Static Bloom tells the amp story to eleven thousand people, and eleven thousand people look you up.', effects: { fame: 8, network: 4, burnout: 6 } },
+          good: { text: 'Twelve arenas. Your merch table needs a SECOND table. Static Bloom brings you out during their encore to play the old song from the old bar, and the roar hits like weather.', effects: { fame: 14, network: 6, money: 300, burnout: 5 } },
+          incredible: { text: 'By the last city, the crowd sings YOUR closer back at you — an opener, hearing an arena carry their song. Static Bloom’s singer watches from side-stage, crying, holding a photo of the amp. The story completes itself.', effects: { fame: 22, network: 8, money: 450, burnout: 5, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Decline — ask for a co-write instead',
+        governingStats: { creativity: 0.7, cred: 0.5 },
+        tags: ['write', 'indie'],
+        outcomes: {
+          bad: { text: 'The writing room is awkward at first — they’re stadium-sized now, you’re you-sized. But the old shorthand comes back by hour two, and the song is honest even if it never charts.', effects: { creativity: 5, cred: 3 } },
+          good: { text: 'One weekend, one song, no managers allowed. It’s the best thing either of you has written all year, and both names go on it at equal size. Their lawyer objects. They overrule the lawyer.', effects: { creativity: 7, cred: 6, hits: 1, money: 200 } },
+          incredible: { text: 'The co-write becomes their next single — and your biggest check — with a music video recreating the night of the amp, starring the actual amp. It wins an award. The AMP wins an award.', effects: { creativity: 8, cred: 7, hits: 1, money: 400, fame: 6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_bloom_cold', act: 3, pathAffinity: [], weight: 13,
+    requires: { flagsAll: ['snubbed_bloom'] },
+    art: 'ev_bloom_big', context: 'Static Bloom. Yes, THAT Static Bloom.',
+    prompt: 'The duo whose amp died next to yours is now the biggest band in the country — and their origin-story interview is out. They don’t name you. They describe you. The internet does the naming.',
+    tags: ['fame', 'rival'],
+    choices: {
+      left: {
+        label: 'Own it. Send the amp, with a note.',
+        governingStats: { cred: 0.8, creativity: 0.4 },
+        tags: ['risky', 'indie'],
+        outcomes: {
+          bad: { text: 'You ship your actual amp to their management with a note: “Better late.” Silence for three weeks. Then a photo: the amp, on their arena stage, with a tiny plaque. The internet debates whether you’re redeemed. Split decision.', effects: { cred: 4, fame: 3 } },
+          good: { text: 'The note says “You sounded great through the practice combo, and I’ve regretted it since.” They post it. “All is forgiven, the amp plays Saturdays now.” The story gets a better ending than it deserved. So do you.', effects: { cred: 7, fame: 5, network: 3 } },
+          incredible: { text: 'They fly you out, sit you in the front row, and mid-set plug into YOUR amp — “this one’s for the guy who taught us self-reliance.” The roast is affectionate, public, and total. You’re in the mythology now. The good part, somehow.', effects: { cred: 9, fame: 8, network: 4 } },
+        },
+      },
+      right: {
+        label: 'Say nothing. Outplay the story.',
+        governingStats: { skill: 0.9 },
+        tags: ['safe'],
+        outcomes: {
+          bad: { text: 'You put your head down and play. The story follows anyway — a heckler yells “nice amp” at three consecutive shows. It becomes a bit. You don’t choose your bits.', effects: { skill: 3, burnout: 4, fame: 2 } },
+          good: { text: 'No statement, no subtweet — just a run of shows so strong the story runs out of oxygen. The scene’s verdict softens to “tough but correct.” You can live there.', effects: { skill: 5, cred: 4, fame: 3 } },
+          incredible: { text: 'Your silence plus an undeniable year forces the interviewers to ask Static Bloom about YOU. “Honestly? They were right to protect the rig. We learned that later.” Vindication, from the source, unprompted. The rarest ending.', effects: { skill: 6, cred: 7, fame: 5 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a1_docu_pitch', act: 1, pathAffinity: [], weight: 9,
     art: 'ev_docu_pitch', context: 'Juniper. Film student. Already filming.',
     prompt: '“Origin stories only work if the camera is there BEFORE the origin. I want everything — load-ins, meltdowns, the van. Especially the van.” The lens cap is already off.',
