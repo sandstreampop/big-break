@@ -6,7 +6,7 @@ export const CONFIG = {
   statStartMin: 18,
   statStartMax: 28,
   burnoutStart: 0,
-  moneyStart: 40,
+  moneyStart: 25,          // R4: broke means broke — Curtis is content
 
   // Acts (spec §2): cards drawn per act
   actLengths: { 1: 8, 2: 12, 3: 8 },
@@ -55,7 +55,7 @@ export const CONFIG = {
   // Fail states (spec §7.3)
   burnoutFail: 100,
   credFailFromAct: 2,      // cred <= 0 fails only in act 2+
-  debtFailMoney: -400,     // hard fail if money <= this AND 'debt' flag set
+  debtFailMoney: -300,     // hard fail if money <= this AND 'debt' flag set
 
   // Finale evaluation (spec §7.1)
   // Success: every gate met. Partial: avg satisfaction >= partialRatio.
@@ -63,16 +63,21 @@ export const CONFIG = {
   // momentum >= momentumForUpgrade, a Partial upgrades to Success.
   partialRatio: 0.72,
   nearMissRatio: 0.85,
-  momentumForUpgrade: 4,
+  momentumForUpgrade: 3,   // R4: gates are meaner, so the clutch is kinder
 
+  // R4 (can-lose pass): gates sit slightly above the old comfortable
+  // ceiling so a cruisy run books a Partial, not an automatic Success —
+  // the finale should be a judgment, not a formality.
   winGates: {
-    megastar:   { fame: 100, network: 76, cred: 35 },
-    studio:     { skill: 69, cred: 62, network: 48 },
+    megastar:   { fame: 101, network: 77, cred: 38 },
+    studio:     { skill: 70, cred: 62, network: 49 },
     hitfactory: { creativity: 92, cred: 64, hits: 4 },
   },
 
   // Passive burnout per card resolved in each act — the grind wears you
   // down even when things go well, so rest stays a real decision.
+  // R4: acts 2–3 wear harder; the coping interstitials and the fear
+  // content behind high burnout are authored and deserve an audience.
   actWear: { 1: 0, 2: 2, 3: 3 },
 
   // Legacy Points (spec §9)
@@ -86,21 +91,21 @@ export const PATHS = {
     id: 'megastar',
     name: 'Megastar',
     blurb: 'Worldwide famous frontperson. Stadiums chant a name your mother didn’t give you.',
-    gateLabel: 'Fame 95 · Network 72 · Cred 35',
+    gateLabel: 'Fame 105 · Network 78 · Cred 38',
     icon: '★',
   },
   studio: {
     id: 'studio',
     name: 'Studio Legend',
     blurb: 'The most-called session musician alive. Nobody knows your face. Everybody knows your take.',
-    gateLabel: 'Skill 75 · Cred 62 · Network 48',
+    gateLabel: 'Skill 74 · Cred 65 · Network 50',
     icon: '♫',
   },
   hitfactory: {
     id: 'hitfactory',
     name: 'Hit Factory',
     blurb: 'The producer-songwriter behind everyone’s hits. Your name is in small print on big money.',
-    gateLabel: 'Creativity 88 · Cred 62 · 4 Hits',
+    gateLabel: 'Creativity 92 · Cred 64 · 4 Hits',
     icon: '✎',
   },
 };
