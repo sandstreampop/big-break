@@ -774,6 +774,10 @@ function startAct(state, act) {
       state.stats.burnout = Math.max(0, before + bm.actQuirk.burnout);
       if (state.stats.burnout !== before) notes.push(`${bm.icon} ${bm.name}: ${bm.actQuirk.burnout} Burnout`);
     }
+    if (bm?.actQuirk?.fame) {
+      state.fame += bm.actQuirk.fame;
+      notes.push(`${bm.icon} ${bm.name}: +${bm.actQuirk.fame} Fame (word travels)`);
+    }
   }
   return notes;
 }

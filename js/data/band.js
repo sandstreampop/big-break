@@ -45,6 +45,30 @@ export const BANDMATES = [
   },
 ];
 
+export const BANDMATES_WAVE2 = [
+  {
+    id: 'ludo', name: 'Ludo', role: 'horns & hype', icon: '🎺',
+    flavor: 'One man, three horns, zero indoor voice. Every room is a stadium to Ludo.',
+    bonus: { tags: ['live', 'mainstream', 'fame'], bonus: 5 },
+    actQuirk: { fame: 2 },
+    quirkDesc: 'Live/Mainstream/Fame +5 · +2 Fame at each act break (Ludo tells everyone)',
+  },
+  {
+    id: 'greta', name: 'Greta', role: 'engineer, owns mics', icon: '🎙️',
+    flavor: 'Carries a suitcase of microphones with names. Records everything “for the archive.” There is an archive.',
+    bonus: { tags: ['studio', 'record', 'tone'], bonus: 6 },
+    quirkDesc: 'Studio/Record/Tone +6 · the archive remembers',
+  },
+  {
+    id: 'saul', name: 'Saul', role: 'keys, ex-lawyer', icon: '⚖️',
+    flavor: 'Passed the bar, chose the piano bar. Reads every contract at the merch table, for fun.',
+    bonus: { tags: ['deal', 'network'], bonus: 5 },
+    actQuirk: { money: 40 },
+    quirkDesc: 'Deal/Network +5 · +$40 at each act break (Saul finds the clause)',
+  },
+];
+BANDMATES.push(...BANDMATES_WAVE2);
+
 export function bandmateById(id) {
   return BANDMATES.find((b) => b.id === id) || null;
 }
