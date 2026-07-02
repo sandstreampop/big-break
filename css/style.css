@@ -406,6 +406,11 @@ body.big-text #app { zoom: 1.18; }
 .choice-btn:active { transform: scale(.96); }
 .choice-btn.armed { border-color: var(--accent); background: #2e2544; }
 .choice-btn .dir { color: var(--dim); font-size: 11px; }
+.choice-btn { flex-wrap: wrap; }
+.btn-label { flex: 1 1 auto; }
+.gov-row { display: inline-flex; gap: 2px; flex: none; }
+.gov { font-size: 11px; opacity: .95; }
+.gov-dim { opacity: .45; font-size: 10px; }
 .choice-left { text-align: left; }
 .choice-right { text-align: right; }
 
