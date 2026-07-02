@@ -953,3 +953,21 @@ body.big-text #app { zoom: 1.18; }
 @keyframes mgFloatUp { to { transform: translateY(-300px); } }
 .mg-word-hit { background: #1e3c2b; color: var(--good); border-color: var(--good); animation-play-state: paused; }
 .mg-word-sting { background: #4a2030; color: var(--bad); border-color: var(--bad); animation-play-state: paused; }
+
+/* Work the Room */
+.mg-room { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mg-guest {
+  appearance: none; font-family: inherit; cursor: pointer;
+  background: #1c1729; border: 1px solid #3b3352; border-radius: 14px;
+  color: var(--ink);
+  padding: 12px 10px 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  transition: transform .1s;
+}
+.mg-guest:active { transform: scale(.95); }
+.mg-guest-talk { border-color: var(--good); }
+.mg-guest-icon { font-size: 30px; }
+.mg-guest-name { font-size: 12.5px; font-weight: 700; }
+.mg-guest-meter { width: 100%; height: 6px; background: #322a47; border-radius: 3px; overflow: hidden; }
+.mg-guest-fill { display: block; height: 100%; width: 90%; background: var(--good); transition: width .12s linear; }
+.mg-guest-gone { opacity: .35; filter: grayscale(1); }
