@@ -41,6 +41,7 @@ const ARC_RECORDS = [
   { flag: 'band_named', title: 'Democracy (Vol. 1)', review: 'four writers, nine arguments, one undeniable record' },
   { flag: 'someone', title: 'Verse Two: Them', review: 'the braver version. hummed first by someone who “doesn’t do music”' },
   { flag: 'constellation', title: 'The Long Way Around', review: 'the stories found each other; the songs were waiting' },
+  { flag: 'album_out', title: 'The Whole Notebook (LP)', review: 'every song you had, in the right order — even the rough ones, especially the rough ones' },
 ];
 
 // The chart fact for a REAL song: where it went, how long it stayed

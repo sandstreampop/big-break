@@ -1024,6 +1024,10 @@ function showResult(result) {
   if (hustle) notice('notice-gear', `${hustle.icon} <b>Side hustle: ${hustle.name}</b> (+$${hustle.moneyPerAct}/act)${hustle.blurb ? ' — ' + hustle.blurb : ''}`);
   const newInst = result.deltas.instrumentSet;
   if (newInst) notice('notice-gear', `🎸 <b>Now playing: ${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`);
+  if (result.deltas.albumOut) {
+    const n = result.deltas.albumOut.tracks;
+    notice('notice-encore', `💿 <b>THE ALBUM IS OUT</b> — ${n ? `${n} vault song${n > 1 ? 's' : ''} ship at once` : 'the catalog gets the halo'} and every charting song feels it`);
+  }
   const sh = result.deltas.songHyped;
   if (sh) notice('notice-good', `📣 <b>“${sh.title}”</b> is everywhere this week — hype ${sh.gain >= 0 ? '+' + sh.gain : sh.gain} (next chart week will show it)`);
   const sp = result.deltas.songPolished;

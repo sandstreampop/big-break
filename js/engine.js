@@ -372,6 +372,7 @@ function meetsRequires(ev, state) {
   if (r.bandHas && !(state.band || []).includes(r.bandHas)) return false;
   if (r.demoMin !== undefined && (state.songs || []).filter((s) => s.status === 'demo').length < r.demoMin) return false;
   if (r.chartingMin !== undefined && (state.songs || []).filter((s) => s.status === 'charting' && s.pos).length < r.chartingMin) return false;
+  if (r.songsMin !== undefined && (state.songs || []).length < r.songsMin) return false;
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');
@@ -788,6 +789,20 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
       top.hype = clamp(top.hype + effects.hypeSong, 0, 100);
       deltas.songHyped = { title: top.title, hype: top.hype, gain: effects.hypeSong };
     }
+  }
+  if (effects.albumDrop) {
+    // THE ALBUM: everything ships at once. Every vault demo releases with
+    // the album's hype; every charting song gets the halo bump.
+    const hype = typeof effects.albumDrop === 'number' ? effects.albumDrop : 60;
+    const demos = (state.songs || []).filter((s) => s.status === 'demo');
+    for (const d of demos) {
+      releaseSong(state, d.id, hype);
+      (deltas.songDebuts = deltas.songDebuts || []).push({ title: d.title, pos: d.pos, hit: d.crowned, released: true });
+    }
+    for (const s of (state.songs || []).filter((x) => x.status === 'charting' && x.pos && !demos.includes(x))) {
+      s.hype = clamp(s.hype + 12, 0, 100);
+    }
+    deltas.albumOut = { tracks: demos.length };
   }
   if (effects.releaseDemo) {
     // Release day: your best demo goes to the chart. The number is the hype
