@@ -2090,6 +2090,65 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a2_truce_tour', act: 2, pathAffinity: [], weight: 10,
+    requires: { rivalryMax: 1 },
+    art: 'ev_truce', context: '{rival}, holding two coffees, one for you',
+    prompt: 'Somewhere along the way the feud became a friendship, and now {rival} has a proposal: a joint tour. Two names, one van, split everything. “We draw better together. You know it. I know it. My accountant knows it.”',
+    tags: ['tour', 'rival'],
+    choices: {
+      left: {
+        label: 'The Truce Tour. Book it.',
+        governingStats: { network: 0.8 },
+        tags: ['tour', 'live', 'safe'],
+        outcomes: {
+          bad: { text: 'Two bands in one van is a chemistry experiment. Night four, the argument about the thermostat lasts longer than either set. But the shows — the shows are undeniable, and you finish the run still friends. Mostly.', effects: { fame: 6, network: 3, burnout: 7, money: 150 } },
+          good: { text: 'The double bill outdraws both solo acts combined. Every night ends with one shared encore that neither crowd expects and both demand. The poster — two names, one lightning bolt — becomes a shirt. The shirt sells OUT.', effects: { fame: 10, network: 5, money: 250, burnout: 5 } },
+          incredible: { text: 'The Truce Tour becomes a scene legend — the feud that ended in a co-headline so good promoters now engineer rivalries hoping for the sequel. The final night, you play each other’s songs. Nobody tells the crowd. Everybody knows.', effects: { fame: 15, network: 7, cred: 5, money: 350, burnout: 5, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Stay solo. Protect the mystery.',
+        governingStats: { cred: 0.8 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You pass, kindly. {rival} tours with someone else and it goes fine, which is somehow worse than it going badly. The coffee was good though.', effects: { cred: 3, burnout: -3 } },
+          good: { text: '“Some things work BECAUSE they never happen,” you say, and {rival} quotes it in their next interview, credited. The almost-tour becomes better mythology than the tour.', effects: { cred: 5, fame: 3, burnout: -3 } },
+          incredible: { text: 'You counter-propose: one show a year, unannounced, different city each time. {rival} extends a hand. The annual secret show becomes the scene’s favorite rumor — and it’s TRUE, which no one believes.', effects: { cred: 7, fame: 5, network: 3, burnout: -3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_diss_track', act: 2, pathAffinity: [], weight: 10,
+    requires: { rivalryMin: 8 },
+    art: 'ev_diss', context: 'The feud has a soundtrack now',
+    prompt: '{rival} released a song. It’s about you. It’s NOT subtle — your haircut is mentioned by name. It’s also, insultingly, kind of good. The scene refreshes its feeds and waits.',
+    tags: ['rival', 'write'],
+    choices: {
+      left: {
+        label: 'Answer in kind. Write the diss.',
+        minigame: 'ideas',
+        governingStats: { creativity: 0.8, cred: 0.4 },
+        tags: ['write', 'risky', 'rival'],
+        outcomes: {
+          bad: { text: 'Your diss track rhymes “poser” with “composer,” which even your fans rate as “a reach.” {rival} responds by simply reposting it. Cold. Effective. The feud ledger tilts their way this round.', effects: { creativity: 3, fame: 3, cred: -2, rivalry: 1, burnout: 3 } },
+          good: { text: 'Your answer track lands clean: specific, funny, no haircuts harmed. The scene declares this the best feud since the Petersen Twins stopped speaking (to each other, in harmony). Streams up on BOTH sides.', effects: { creativity: 5, fame: 7, cred: 3, rivalry: 1 } },
+          incredible: { text: 'The diss is so good it transcends the feud — people who’ve never heard of either of you quote the bridge. {rival} concedes in the most public way possible: covering it live. The war is over. You won the war AND the publishing.', effects: { creativity: 7, fame: 12, cred: 5, hits: 1, rivalry: -2 } },
+        },
+      },
+      right: {
+        label: 'Respond with 15 seconds of silence',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You post a video: you, listening to their track, expressionless, then 15 seconds of silence. The internet decides you’re “processing.” {rival} posts a timer emoji. You’ve been out-postured, briefly.', effects: { cred: 2, fame: 2, rivalry: 1 } },
+          good: { text: 'The silence video lands as devastating restraint. “The loudest thing anyone posted this week,” says the scene blog. {rival}’s track now sounds like shouting at a monastery.', effects: { cred: 6, fame: 5 } },
+          incredible: { text: 'Your silence becomes a FORMAT — artists start replying to drama with 15 seconds of quiet, credited “after you.” {rival}’s diss is now remembered mainly as the prompt for your response. Checkmate by whisper.', effects: { cred: 9, fame: 7, rivalry: -1 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_afterparty', act: 2, pathAffinity: [], weight: 11,
     art: 'ev_afterparty', context: 'Somebody’s loft. Everybody’s business cards.',
     prompt: 'The showcase afterparty. Dario is here. Grub is here. A blogger who spells your name three ways is here. A&R Kim — the actual reason anyone came — is here. Everyone is one drifting conversation away from forgetting you exist.',
