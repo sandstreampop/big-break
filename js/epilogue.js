@@ -52,6 +52,10 @@ export function buildEpilogue(state) {
     'You still play four weddings a year. You know every venue’s power situation by heart. You cry at exactly the right moment, every time, on purpose.');
   add(flags.includes('album_out'),
     'The album aged the way rooms do — slowly, and then all at once into something people miss on purpose. Anniversary reissue pending. You keep saying no. That’s part of it now.');
+  add(flags.includes('nadia_hook'),
+    'The last-page song still opens the reissues. Nadia’s notebook is on volume nine. She lets you read exactly one page per year.');
+  add(flags.includes('nadia_solo'),
+    'Nadia’s solo record went where records go when they’re that good. She still plays your stuff live. “Warm-up,” she says. It’s love. You both know.');
   add(flags.includes('mg_steady'),
     'People who were in the room that night still describe your hands: steady, when nothing else was.');
   add(state.money >= 800,
