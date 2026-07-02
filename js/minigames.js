@@ -743,3 +743,57 @@ register('interview', {
     next();
   },
 });
+
+// ═══════════ HOLD THE NOTE — sustain (hold to rise, release to fall) ═══════════
+register('note', {
+  name: 'Hold the Note', icon: '🎵',
+  how: 'PRESS to push your note up, RELEASE to let it fall — keep it inside the drifting band. Fifteen seconds. The big note doesn’t sing itself.',
+  run(stage, ctx, done) {
+    const DURATION = 15000;
+    const gauge = el('div', 'mg-gauge');
+    const band = el('div', 'mg-band');
+    const pitch = el('div', 'mg-pitch');
+    gauge.append(band, pitch);
+    const clock = el('div', 'mg-take-label', '15');
+    stage.append(clock, gauge, el('div', 'mg-hint', 'hold anywhere · release to drop'));
+
+    let level = 0.5, bandC = 0.5, bandW = 0.26, holding = false;
+    let inside = 0, samples = 0, over = false;
+    let drift = (Math.random() - 0.5) * 0.2;
+    const t0 = performance.now();
+
+    stage.addEventListener('pointerdown', () => { holding = true; });
+    stage.addEventListener('pointerup', () => { holding = false; });
+    stage.addEventListener('pointercancel', () => { holding = false; });
+
+    let last = t0;
+    function frame(now) {
+      if (over) return;
+      const dt = Math.min(50, now - last) / 1000;
+      last = now;
+      // physics: hold pushes up, gravity pulls down
+      level += (holding ? 0.55 : -0.5) * dt;
+      level = Math.max(0, Math.min(1, level));
+      // the band wanders, tightening over time
+      if (Math.random() < 0.02) drift = (Math.random() - 0.5) * 0.24;
+      bandC = Math.max(0.18, Math.min(0.82, bandC + drift * dt));
+      bandW = Math.max(0.14, 0.26 - ((now - t0) / DURATION) * 0.1);
+      // paint
+      pitch.style.bottom = `${level * 100}%`;
+      band.style.bottom = `${(bandC - bandW / 2) * 100}%`;
+      band.style.height = `${bandW * 100}%`;
+      const ok = Math.abs(level - bandC) < bandW / 2;
+      pitch.classList.toggle('mg-pitch-in', ok);
+      inside += ok ? 1 : 0; samples++;
+      const leftS = Math.max(0, Math.ceil((DURATION - (now - t0)) / 1000));
+      clock.textContent = String(leftS);
+      if (now - t0 >= DURATION) {
+        over = true;
+        done(inside / samples);
+        return;
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  },
+});
