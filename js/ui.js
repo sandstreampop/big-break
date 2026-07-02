@@ -117,6 +117,14 @@ function renderTitle() {
       save.clearRun();
       startNewRun();
     }));
+  } else if (!meta.tutorialDone && (meta.runs || 0) === 0) {
+    // First install: the game opens with a playable lesson, not a manual
+    menu.append(btn('▶ Play — Your First Gig', 'primary', startTutorial));
+    menu.append(btn('Skip the gig — I know the drill', 'ghost', () => {
+      meta.tutorialDone = true;
+      save.saveMeta(meta);
+      startNewRun();
+    }));
   } else {
     menu.append(btn('▶ New Run', 'primary', () => startNewRun()));
   }
@@ -393,10 +401,14 @@ function renderHud() {
   game.classList.toggle('burnout-hot', run.stats.burnout >= 72);
   const top = el('div', 'hud-top');
   const actWrap = el('span', 'hud-act-wrap');
-  actWrap.append(el('span', 'hud-act', `ACT ${run.act} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][run.act]}`));
-  const chartBtn = el('button', 'chart-btn', '📈');
-  chartBtn.addEventListener('click', () => { sfx.ui(); showChart(); });
-  actWrap.append(chartBtn);
+  actWrap.append(el('span', 'hud-act', run.tutorial
+    ? 'FIRST GIG · The Rubber Room'
+    : `ACT ${run.act} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][run.act]}`));
+  if (!run.tutorial) {
+    const chartBtn = el('button', 'chart-btn', '📈');
+    chartBtn.addEventListener('click', () => { sfx.ui(); showChart(); });
+    actWrap.append(chartBtn);
+  }
   const helpBtn = el('button', 'chart-btn', '❓');
   helpBtn.addEventListener('click', () => { sfx.ui(); showHelp(); });
   actWrap.append(helpBtn);
@@ -628,9 +640,19 @@ function dealCard() {
     attachDrag(card, bL, bR); // drag still works, snap without spring
   }
 
+  // Tutorial: each First Gig card carries its own one-concept coach mark
+  if (run.tutorial && ev.coach) {
+    run.coached = run.coached || [];
+    if (!run.coached.includes(ev.id)) {
+      run.coached.push(ev.id);
+      coachMark(ev.coach);
+    }
+    return;
+  }
+
   // First-run coaching (once per install)
   meta.coach = meta.coach || {};
-  if (!meta.coach.card) {
+  if (!run.tutorial && !meta.coach.card) {
     meta.coach.card = true;
     save.saveMeta(meta);
     coachMark('Drag the card left/right — or tap a button below. The colored dot is your <b>risk tell</b>. Tap ❓ up top anytime.');
@@ -963,7 +985,7 @@ function showResult(result) {
     ov.removeEventListener('click', done);
     routeAdvance(engine.advance(run));
     meta.coach = meta.coach || {};
-    if (!meta.coach.result) {
+    if (!run.tutorial && !meta.coach.result) {
       meta.coach.result = true;
       save.saveMeta(meta);
       coachMark('Outcomes have three tiers — your stats and gear tilt the roll. Build what your path needs; watch 🔥 Burnout.');
@@ -1033,7 +1055,59 @@ function routeAdvance(step) {
       break;
     case 'finale': renderFinalSet(); break;
     case 'gameover': renderGameOver(step.endingKey); break;
+    case 'tutorialEnd': renderTutorialEnd(); break;
   }
+}
+
+function startTutorial() {
+  const seed = Math.floor(Math.random() * 1e9) + 1;
+  run = engine.newTutorialRun(engine.mulberry32(seed));
+  run.seed = seed + 2;
+  save.saveRun(run);
+  dealCard();
+}
+
+// The First Gig wrap-up: lessons recapped in-fiction, walk-in LP, and the
+// game opens up for real play.
+function renderTutorialEnd() {
+  save.clearRun();
+  const firstTime = !meta.tutorialDone;
+  meta.tutorialDone = true;
+  // the generic coach marks would re-teach what the gig just taught
+  meta.coach = { ...(meta.coach || {}), card: true, result: true };
+  if (firstTime) {
+    meta.lp += 15;
+    meta.lpEarnedTotal = (meta.lpEarnedTotal || 0) + 15;
+  }
+  save.saveMeta(meta);
+  music.setMood('ending');
+  sfx.win();
+
+  const s = $('#screen-ending');
+  s.innerHTML = '';
+  const wrap = el('div', 'ending-wrap');
+  wrap.append(artFor('ev_tut_set', 'ending-art', { fame: 12, network: 40, burnout: 10 }));
+  wrap.append(el('div', 'verdict verdict-success', 'SOUNDCHECK COMPLETE'));
+  wrap.append(el('h2', 'ending-title', 'The First Gig'));
+  wrap.append(el('p', 'ending-text',
+    'Nineteen people, four of them on purpose, and nobody left. Dee flips the clipboard shut: “Tuesday’s yours if you want it.” That’s the whole tutorial — the career ahead is longer, meaner, and much funnier.'));
+  const list = el('div', 'result-notices');
+  const lessons = [
+    ['notice-gear', '👆 <b>Swipe or tap</b> — every card is one decision, left or right.'],
+    ['notice-gear', '🎸 <b>Stat icons</b> on a choice show what it rolls against. Build what your path needs.'],
+    ['notice-gear', '<b>The risk tell</b> — ● safe · ▲ dicey · ■ likely bad · ✦ big upside. Read it before you leap.'],
+    ['notice-bad', '🔥 <b>Burnout</b> drags every roll and ends careers at 100. Rest is a real move.'],
+    ['notice-encore', '🎇 <b>Encores</b> — an INCREDIBLE banks one; arm it on the card that matters.'],
+  ];
+  for (const [cls, html] of lessons) list.append(el('div', 'notice ' + cls, html));
+  wrap.append(list);
+  if (firstTime) wrap.append(el('p', 'lp-award', '+15 Legacy Points — walk-in money for the Career Wall'));
+  const menu = el('div', 'menu');
+  menu.append(btn('▶ Start your real career', 'primary', () => startNewRun()));
+  menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title'); }));
+  wrap.append(menu);
+  s.append(wrap);
+  show('#screen-ending');
 }
 
 // ---------- The Brammies (Pass 44) ----------
@@ -1812,6 +1886,7 @@ function renderSettings() {
 
   menu.append(el('h3', 'contract-head', 'Career data'));
   menu.append(btn('❓ How to play', '', showHelp));
+  menu.append(btn('🎓 Replay the first gig', '', () => { save.clearRun(); startTutorial(); }));
   const exportBtn = btn('📤 Export save (backup code)', '', async () => {
     const code = save.exportSave();
     try {

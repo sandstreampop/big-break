@@ -12,6 +12,13 @@ import { genreById } from './data/genres.js';
 import { venueById, VENUE_TIERS } from './data/venues.js';
 import { bandmateById, recruitCandidate } from './data/band.js';
 import { collabArtistFor } from './charts.js';
+import { TUTORIAL_EVENTS } from './data/tutorial.js';
+
+// Tutorial cards live outside EVENTS so they can never enter normal decks;
+// chains and resume still need to find them by id.
+function findEvent(id) {
+  return EVENTS.find((e) => e.id === id) || TUTORIAL_EVENTS.find((e) => e.id === id) || null;
+}
 
 function contractMods(state) {
   return contractById(state.contract)?.mods || {};
@@ -19,6 +26,7 @@ function contractMods(state) {
 
 // Act length can be shortened by a contract (Overnight Success)
 export function actLength(state, act) {
+  if (state.tutorial) return TUTORIAL_EVENTS.length;
   return contractMods(state).actLengths?.[act] ?? CONFIG.actLengths[act];
 }
 
@@ -141,6 +149,19 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
   return state;
 }
 
+// The First Gig: a scripted 9-card onboarding run. Fixed teaching stats so
+// every risk tell reads exactly as the cards describe it (skill ●,
+// network ●, cred ▲, creativity ■); the deck is one long chain.
+export function newTutorialRun(rng = Math.random) {
+  const state = newRun('melodica', [], rng, []);
+  state.tutorial = true;
+  state.stats = { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 };
+  state.money = 40;
+  state.fame = 0;
+  state.pendingChainId = TUTORIAL_EVENTS[0].id;
+  return state;
+}
+
 // Comeback Mode (unlocked by any Success): start as a faded name.
 // Fame and contacts arrive pre-loaded; cred and burnout arrive bruised.
 export function applyComeback(state) {
@@ -219,12 +240,12 @@ export function eligibleEvents(state) {
 export function drawNextCard(state, rng = Math.random) {
   // Resuming a saved run mid-card: re-deal the same card
   if (state.currentEventId) {
-    const ev = EVENTS.find((e) => e.id === state.currentEventId);
+    const ev = findEvent(state.currentEventId);
     if (ev) return ev;
     state.currentEventId = null;
   }
   if (state.pendingChainId) {
-    const ev = EVENTS.find((e) => e.id === state.pendingChainId);
+    const ev = findEvent(state.pendingChainId);
     state.pendingChainId = null;
     if (ev) {
       state.currentEventId = ev.id;
@@ -335,7 +356,7 @@ export function choiceOdds(state, choice, opts = {}) {
 }
 
 export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
-  const ev = EVENTS.find((e) => e.id === state.currentEventId);
+  const ev = findEvent(state.currentEventId);
   const choice = ev.choices[side];
   const useEncore = !!opts.encore && (state.encore || 0) > 0 && !contractMods(state).disableEncore;
   if (useEncore) state.encore -= 1;
@@ -361,6 +382,10 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   if (roll < CONFIG.tierBadBelow) tier = 'bad';
   else if (roll >= CONFIG.tierIncredibleAt) tier = 'incredible';
   else tier = 'good';
+  // Tutorial cards can script their outcome so each lesson lands
+  // deterministically ('encoreUp': incredible only if the Encore was armed)
+  const forced = ev.forceTier?.[side];
+  if (forced) tier = forced === 'encoreUp' ? (useEncore ? 'incredible' : 'good') : forced;
   state.badStreak = tier === 'bad' ? (state.badStreak || 0) + 1 : 0;
   (state.tierLog = state.tierLog || []).push(tier);
   (state.cardLog = state.cardLog || []).push({ e: ev.id, t: tier, a: state.act, s: side });
@@ -459,7 +484,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
 
   // Burnout coping interstitials: crossing a threshold interrupts the deck
   // once per run with a forced coping card (unless a chain is already queued)
-  if (!state.pendingChainId && !ev.finaleCard && ev.id !== 'coping_50' && ev.id !== 'coping_75') {
+  if (!state.pendingChainId && !state.tutorial && !ev.finaleCard && ev.id !== 'coping_50' && ev.id !== 'coping_75') {
     state.copingSeen = state.copingSeen || [];
     const b = state.stats.burnout;
     if (b >= 75 && !state.copingSeen.includes('coping_75') && b < CONFIG.burnoutFail) {
@@ -682,6 +707,11 @@ export function advance(state) {
   }
   if (state.pendingChainId) return { kind: 'card' };
   if (state.cardsPlayedInAct >= actLength(state, state.act)) {
+    if (state.tutorial) {
+      state.phase = 'ended';
+      state.ending = { key: 'tutorial', result: null };
+      return { kind: 'tutorialEnd' };
+    }
     // The Last Door: every run's final card is its path's climax event —
     // queued here so chains/coping can never displace it.
     if (state.act === 3 && state.path) {
@@ -760,6 +790,7 @@ export function finalePayout(state) {
 }
 
 export function checkFailStates(state) {
+  if (state.tutorial) return null; // the first gig cannot end a career
   if (state.stats.burnout >= CONFIG.burnoutFail) return 'burnout';
   if (state.act >= CONFIG.credFailFromAct && state.stats.cred <= 0) return 'cancelled';
   if (state.money <= CONFIG.debtFailMoney && state.flags.includes('debt')) return 'debt';
