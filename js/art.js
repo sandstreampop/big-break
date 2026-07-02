@@ -39,6 +39,8 @@ const EMOJI = {
   gear_amp: '🔊', gear_loop: '🔁', gear_pedalboard: '🎚️', gear_pick: '🪙',
   gear_inears: '🎧', gear_mic: '🎙️', gear_energy: '⚡', gear_manager: '💳',
   gear_van: '🚐', gear_ringlight: '💡', gear_rolodex: '📇',
+  gear_8track: '📼', gear_cannon: '🎯', gear_recorder: '🎙️',
+  gear_fan: '🌬️', gear_humidifier: '💨', gear_binder: '📒',
   end_megastar_win: '🌟', end_megastar_partial: '🚌', end_megastar_fail: '📉',
   end_studio_win: '📞', end_studio_partial: '🥈', end_studio_fail: '🙏',
   end_hitfactory_win: '🏭', end_hitfactory_partial: '📀', end_hitfactory_fail: '🗄️',
