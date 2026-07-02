@@ -158,6 +158,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Challenge Craig for the corner',
+        minigame: 'hat',
         governingStats: { cred: 0.8, skill: 0.6 },
         tags: ['busk', 'live', 'risky'],
         outcomes: {
