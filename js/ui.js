@@ -12,6 +12,7 @@ import { artFor } from './art.js';
 import { buildChart, playerChartInfo } from './charts.js';
 import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
+import { generateHeadlines } from './headlines.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
@@ -670,6 +671,17 @@ function actInterstitial(step) {
     ? 'The garage is behind you. Everything now costs something.'
     : 'Higher stakes, fewer excuses. The summit is visible. So is the drop.'));
   for (const n of step.notes || []) box.append(el('p', 'upkeep-note', `💸 ${n}`));
+
+  // The Trades: procedural press about YOUR run (Pass 14)
+  const headlines = generateHeadlines(run);
+  if (headlines.length) {
+    const paper = el('div', 'trades');
+    paper.append(el('div', 'trades-head', '📰 MEANWHILE, IN THE TRADES'));
+    for (const h of headlines) {
+      paper.append(el('div', 'trades-row', `<b>${h.text}</b><span>— ${h.src}</span>`));
+    }
+    box.append(paper);
+  }
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
   const done = () => {
@@ -798,6 +810,10 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   const wrap = el('div', 'ending-wrap');
   wrap.append(artFor(ending.art, 'ending-art'));
   wrap.append(el('h2', 'ending-title', ending.title));
+  const finalPress = generateHeadlines(run, 1)[0];
+  if (finalPress) {
+    wrap.append(el('p', 'trades-row ending-press', `<b>${finalPress.text}</b><span>— ${finalPress.src}</span>`));
+  }
   wrap.append(el('p', 'ending-text', ending.text));
 
   if (evalr) {
