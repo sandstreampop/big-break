@@ -243,6 +243,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Enter anyway',
+        minigame: 'crowd',
         governingStats: { skill: 0.7, creativity: 0.7 },
         tags: ['live', 'risky'],
         outcomes: {
@@ -786,6 +787,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Go long. Give them the 2 a.m. set.',
+        minigame: 'crowd',
         governingStats: { creativity: 0.7, skill: 0.5 },
         tags: ['live', 'electronic', 'risky'],
         outcomes: {
@@ -1909,6 +1911,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Win the hostile crowd',
+        minigame: 'crowd',
         governingStats: { network: 0.5, skill: 0.8 },
         tags: ['live', 'risky', 'mainstream'],
         outcomes: {
@@ -2733,6 +2736,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Play it like a coronation',
+        minigame: 'crowd',
         governingStats: { network: 0.7, skill: 0.6 },
         tags: ['live', 'fame'],
         outcomes: {

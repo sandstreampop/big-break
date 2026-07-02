@@ -905,3 +905,33 @@ body.big-text #app { zoom: 1.18; }
 }
 .mg-needle.mg-hit { background: var(--good); box-shadow: 0 0 14px var(--good); }
 .mg-needle.mg-miss { background: var(--bad); box-shadow: 0 0 14px var(--bad); }
+
+/* Crowd Wave */
+.mg-crowdmeter { height: 8px; background: #1c1729; border-radius: 4px; overflow: hidden; border: 1px solid #3b3352; }
+.mg-crowdfill { height: 100%; width: 50%; background: var(--accent); transition: width .25s, background .25s; }
+.mg-crowd-hot { background: var(--good); }
+.mg-crowd-cold { background: var(--bad); }
+.mg-lane {
+  position: relative; height: 72px;
+  background: #1c1729; border: 1px solid #3b3352; border-radius: 12px;
+  overflow: hidden;
+}
+.mg-ring {
+  position: absolute; left: 12px; top: 50%;
+  width: 44px; height: 44px; margin-top: -22px;
+  border: 3px solid var(--accent); border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255, 179, 71, .35);
+}
+.mg-ring-hit { border-color: var(--good); box-shadow: 0 0 18px var(--good); }
+.mg-ring-miss { border-color: var(--bad); box-shadow: 0 0 18px var(--bad); }
+.mg-note {
+  position: absolute; top: 50%; margin-top: -14px;
+  font-size: 24px; line-height: 28px; color: var(--ink);
+  animation-name: mgNoteFly; animation-timing-function: linear; animation-fill-mode: forwards;
+}
+@keyframes mgNoteFly {
+  from { left: 100%; }
+  to { left: 22px; }
+}
+.mg-note-hit { color: var(--good); text-shadow: 0 0 12px var(--good); animation-play-state: paused; }
+.mg-note-miss { color: var(--bad); opacity: .5; animation-play-state: paused; }
