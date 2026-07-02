@@ -5944,4 +5944,35 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ GENRE POLITICS (you claimed a sound; the sound has bylaws) ═══════════
+  {
+    id: 'a3_genre_obituary', act: 3, pathAffinity: [], weight: 11,
+    requires: { genreAny: true },
+    art: 'ev_genre_obit', context: 'A thinkpiece, already trending',
+    prompt: '“{genre} IS DEAD,” declares the year’s laziest thinkpiece, 2,400 words, no interviews, illustrated with a stock photo of a different genre entirely. You are cited as “the last gasp.” Your phone is a casserole of condolences and gleeful rivals.',
+    tags: ['social'],
+    choices: {
+      left: {
+        label: 'Write the rebuttal. 2,401 words.',
+        governingStats: { creativity: 0.6, network: 0.5 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'Your rebuttal is passionate, correct, and contains one (1) typo in the headline, which becomes the discourse. “LAST GAPS” trends. The genre survives; your proofreading does not.', effects: { fame: 4, cred: 2, burnout: 4 } },
+          good: { text: 'You publish “THE GENRE IS AT MY HOUSE, ACTUALLY” with photos from last Tuesday’s packed show. The thinkpiece author replies “fair.” FAIR. The scene frames the exchange like a title belt.', effects: { fame: 6, cred: 5 } },
+          incredible: { text: 'Your rebuttal is one sentence — “come to the show” — plus a ticket link. The show sells out on obituary traffic. The encore is a funeral march played at 180 bpm while the crowd screams. The thinkpiece author is spotted in row four, alive, converted.', effects: { fame: 9, cred: 7, hypeSong: 14 } },
+        },
+      },
+      right: {
+        label: 'Let it die, publicly. Keep it alive, privately.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'Your silence gets quoted — “declined to comment” — which the piece frames as surrender. For one bad week, bookers believe it. The Tuesday shows stay packed. Bookers don’t go to shows.', effects: { cred: 3, money: -40, fame: -2 } },
+          good: { text: 'Declared dead, the genre goes underground, which is where it was born and where the rent is cheaper. The shows get better immediately — no tourists, all lifers. Death, it turns out, was a rebrand.', effects: { cred: 6, creativity: 4 } },
+          incredible: { text: 'You press a run of unmarked black shirts reading only “R.I.P.” in the genre’s founding font. Lifers recognize it instantly; everyone else asks who died. “You wouldn’t know them.” The shirt outsells your records. The genre has never been more alive or better dressed.', effects: { cred: 8, money: 160, fame: 4, creativity: 3 } },
+        },
+      },
+    },
+  },
 ];
