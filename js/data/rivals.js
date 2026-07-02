@@ -44,6 +44,10 @@ export const RIVALS = [
     id: 'mothra', name: 'Mothra Jones',
     vibe: 'headlines every show “farewell tour,” has retired eleven times',
   },
+  {
+    id: 'trend', name: 'TREND()',
+    vibe: 'procedurally generated act; nobody has met the members; the members may be a spreadsheet',
+  },
 ];
 
 export function randomRival(rng = Math.random) {

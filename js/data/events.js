@@ -6037,4 +6037,35 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ TREND() — the rival who might be a spreadsheet ═══════════
+  {
+    id: 'a2_trend_unmask', act: [2, 3], pathAffinity: [], weight: 13,
+    requires: { rivalIs: 'trend' },
+    art: 'ev_trend', context: 'A DM from a burner account, 3:14 a.m.',
+    prompt: '“I quit TREND() today,” says the burner account. “I was Member #4. There were never any members — just four session players, an engagement dashboard, and a manager who says ‘pivot the sadness’ in meetings. You’re the only act we were told to study. Ask me anything.”',
+    tags: ['rival', 'social'],
+    choices: {
+      left: {
+        label: 'Ask everything. Publish nothing.',
+        governingStats: { cred: 0.6, network: 0.5 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'Member #4 talks for two hours and you realize, slowly, that the dashboard studied you because YOU trend well among 25-40s who own vinyl but stream. You are somebody’s data. You needed to not know that.', effects: { network: 3, burnout: 4, creativity: 2 } },
+          good: { text: 'You learn the machine’s one weakness: it cannot write a bridge. Bridges require believing two things at once, and the dashboard only believes in retention. You write nothing down. You didn’t need to.', effects: { creativity: 6, cred: 4, network: 2 } },
+          incredible: { text: 'Member #4, freed by confession, joins your session lineup under their real name. First take, first day, they play the most human eight bars you’ve ever recorded — four years of algorithmic sadness leaving one body. The machine trained your best hire FOR you.', effects: { creativity: 7, cred: 5, network: 5, skill: 3 } },
+        },
+      },
+      right: {
+        label: 'Leak it. The scene deserves to know.',
+        governingStats: { network: 0.7 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'The leak lands and TREND()’s label absorbs it INTO the lore — “TREND() has always been transparent about being synthetic” — and sales go UP. You fought the machine and became its marketing. The dashboard sends a fruit basket. It knows you’ll post it.', effects: { fame: 3, cred: -2, rivalry: 2 } },
+          good: { text: 'The story runs and the scene splits beautifully: half boycott TREND(), half declare it “the only honest act” for admitting music is content. Your shows fill with the boycott half. They are the half that buys merch.', effects: { fame: 5, cred: 4, money: 90, rivalry: 1 } },
+          incredible: { text: 'The exposé becomes THE story of the quarter, and at its center, unplanned: a paragraph contrasting TREND()’s dashboard with your grocery-store, staple-gun, actual-human career. You become the counterexample. “Real” becomes your genre. The dashboard, reportedly, cannot compute the merch numbers.', effects: { fame: 8, cred: 7, rivalry: 2, hypeSong: 12 } },
+        },
+      },
+    },
+  },
 ];
