@@ -52,6 +52,12 @@ export function buildEpilogue(state) {
     'The Brammy lives on the amp, slightly crooked, holding down a stack of unpaid parking tickets. Correct use of an award.');
   add(state.brammy === 'lost',
     `You never got the Brammy. The gracious-loss face, however, became load-bearing at every industry function since. Some trophies are muscles.`);
+  add(flags.includes('second_verse'),
+    'The kitchen is still the best venue you ever played. Audience of one, standing ovation nightly, no door money. The second verse got longer than the first. It’s still going.');
+  add(flags.includes('someone_lost'),
+    'You still have the napkin, or they still have the hoodie — accounts differ. The song about Thursday finally came out. They texted one word: “heard.” You framed the text. Don’t tell anyone.');
+  add(flags.includes('someone') && !flags.includes('second_verse'),
+    'They were in the kitchen for every version of you. Still are. The industry never found out, which was the whole idea.');
   add(!!state.nemesis,
     `You and ${rival.name}, again. Biographers will assume you planned it. Neither of you did. Both of you needed it.`);
   add(flags.includes('comeback'),
