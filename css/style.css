@@ -314,7 +314,7 @@ body {
 }
 .gear-row::-webkit-scrollbar { display: none; }
 .gear-chip {
-  font-size: 11px; padding: 3px 9px; border-radius: 999px;
+  font-size: 11.5px; padding: 5px 10px; border-radius: 999px;
   background: #2a2340; color: var(--dim); border: 1px solid #3b3352;
   white-space: nowrap;
   cursor: pointer;
@@ -658,7 +658,10 @@ body.big-text #app { zoom: 1.18; }
   width: 28px; height: 28px; padding: 0;
   display: inline-flex; align-items: center; justify-content: center;
   cursor: pointer;
+  position: relative;
 }
+/* invisible hit slop: 28px visual, ~44px touchable */
+.chart-btn::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; }
 .chart-btn:active { transform: scale(.94); }
 .chart-sub { color: var(--dim); font-size: 13px; }
 .chart-list { display: flex; flex-direction: column; gap: 4px; }
@@ -719,6 +722,8 @@ body.big-text #app { zoom: 1.18; }
 @media (prefers-reduced-motion: reduce) {
   .confetti, .result-card.shake { animation: none; }
   .stat-floater { animation: none; opacity: 0; }
+  .chip, .notice, .trophy-toast, .coach { animation: none; }
+  .tier-incredible .tier-badge, .verdict-success { animation: none; }
 }
 
 /* ---------- Ending ---------- */
