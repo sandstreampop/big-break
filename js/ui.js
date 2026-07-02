@@ -262,6 +262,7 @@ function modsText(mods) {
 
 function resumeRun() {
   if (run.phase === 'crossroads') renderCrossroads();
+  else if (run.phase === 'finale') renderFinalSet();
   else dealCard();
 }
 
@@ -852,9 +853,47 @@ function routeAdvance(step) {
     case 'card': dealCard(); break;
     case 'crossroads': renderCrossroads(); break;
     case 'actStart': actInterstitial(step); break;
-    case 'finale': renderFinale(); break;
+    case 'finale': renderFinalSet(); break;
     case 'gameover': renderGameOver(step.endingKey); break;
   }
+}
+
+// The Final Set (Pass 32): pick your closer before the career is judged.
+// One last nudge at a gate — and a beat of ceremony before the verdict.
+function renderFinalSet() {
+  const flags = run.flags || [];
+  const options = [];
+  if (flags.includes('song_finished')) {
+    options.push({ title: '“The Door”', blurb: 'The one you found at 3 a.m. and finished anyway.', key: 'momentum', label: '+1 Momentum', apply: () => { run.pathProgress += 1; } });
+  }
+  options.push({ title: run.chartTitles?.[0] ? `“${run.chartTitles[0]}”` : '“The Crowd-Pleaser”', blurb: 'The one they scream for. Give the people what they want.', key: 'fame', label: '+5 Fame', apply: () => { run.fame += 5; } });
+  options.push({ title: '“The Deep Cut”', blurb: 'Track 9. The heads nod. The heads matter.', key: 'cred', label: '+4 Cred', apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 4); } });
+  if (flags.includes('debt') || run.money < 0) {
+    options.push({ title: '“Curtis (Reprise)”', blurb: 'A ballad for the politest man you owe.', key: 'money', label: '+$100', apply: () => { run.money += 100; } });
+  } else {
+    options.push({ title: '“The Instrumental”', blurb: 'No words. Just proof.', key: 'skill', label: '+4 Skill', apply: () => { run.stats.skill = Math.min(100, run.stats.skill + 4); } });
+  }
+
+  const s = $('#screen-crossroads'); // reuse the 3-option screen
+  s.innerHTML = '';
+  s.append(el('h2', 'screen-head', 'The Final Set'));
+  s.append(el('p', 'screen-sub', 'Last night of the run. Pick your closer — then the industry decides what you were.'));
+  const row = el('div', 'pick-row');
+  for (const opt of options.slice(0, 3)) {
+    const card = el('div', 'pick-card path-card');
+    card.append(el('div', 'path-icon', '🎵'));
+    card.append(el('h3', '', opt.title));
+    card.append(el('p', 'pick-flavor', opt.blurb));
+    card.append(el('p', 'pick-mods', opt.label));
+    card.addEventListener('click', () => {
+      sfx.commit();
+      opt.apply();
+      renderFinale();
+    });
+    row.append(card);
+  }
+  s.append(row);
+  show('#screen-crossroads');
 }
 
 function actInterstitial(step) {
