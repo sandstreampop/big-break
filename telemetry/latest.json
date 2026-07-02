@@ -8,43 +8,43 @@
     "results": [
       [
         "swipe",
-        706,
-        6
+        744,
+        7
       ],
       [
         "$pageview",
-        80,
-        12
+        84,
+        13
       ],
       [
         "$pageleave",
-        71,
+        76,
         3
       ],
       [
         "minigame",
-        60,
+        65,
         2
       ],
       [
         "run_end",
-        23,
+        24,
         2
       ],
       [
         "run_start",
-        19,
+        20,
         2
       ],
       [
         "tutorial_start",
-        4,
-        4
+        5,
+        5
       ],
       [
         "tutorial_complete",
-        2,
-        2
+        3,
+        3
       ]
     ]
   },
@@ -58,9 +58,9 @@
     "results": [
       [
         "2026-07-02T11:11:48.171000Z",
-        "2026-07-02T18:52:38.623000Z",
-        965,
-        12
+        "2026-07-02T19:17:06.383000Z",
+        1021,
+        13
       ]
     ]
   },
@@ -73,13 +73,18 @@
     "results": [
       [
         "2.0",
-        814,
+        850,
         6
       ],
       [
         null,
-        151,
-        12
+        160,
+        13
+      ],
+      [
+        "2.1",
+        11,
+        1
       ]
     ]
   },
@@ -94,10 +99,10 @@
     "results": [
       [
         "2026-07-02",
-        19,
-        23,
-        706,
-        12
+        20,
+        24,
+        744,
+        13
       ]
     ]
   },
@@ -113,26 +118,26 @@
     "results": [
       [
         "a1_pawn_shop",
-        23,
-        78,
-        22,
-        78,
-        35
+        24,
+        79,
+        21,
+        79,
+        33
       ],
       [
         "a2_shop_gearhead",
-        23,
-        78,
-        22,
-        78,
+        24,
+        75,
+        25,
+        75,
         4
       ],
       [
         "a3_shop_last",
-        23,
-        57,
-        43,
-        57,
+        24,
+        54,
+        46,
+        54,
         0
       ]
     ]
@@ -149,7 +154,7 @@
     "results": [
       [
         "a1_house_show",
-        7,
+        8,
         100,
         0,
         100,
@@ -252,10 +257,10 @@
         0
       ],
       [
-        "a1_wedding",
+        "a2_soundcheck_song",
         5,
-        20,
         80,
+        20,
         80,
         0
       ],
@@ -280,6 +285,22 @@
         5,
         20,
         80,
+        80,
+        0
+      ],
+      [
+        "a3_last_single",
+        5,
+        80,
+        20,
+        80,
+        0
+      ],
+      [
+        "a3_old_friend",
+        5,
+        80,
+        20,
         80,
         0
       ],
@@ -324,11 +345,11 @@
         0
       ],
       [
-        "a2_soundcheck_hell",
-        7,
-        71,
-        29,
-        71,
+        "finale_the_call",
+        8,
+        25,
+        75,
+        75,
         0
       ],
       [
@@ -340,19 +361,11 @@
         14
       ],
       [
-        "finale_the_call",
-        7,
-        29,
-        71,
-        71,
-        0
-      ],
-      [
         "a2_merch_line",
-        9,
-        67,
-        33,
-        67,
+        10,
+        70,
+        30,
+        70,
         0
       ],
       [
@@ -380,7 +393,7 @@
         17
       ],
       [
-        "db_inspector",
+        "a1_wedding",
         6,
         33,
         67,
@@ -410,6 +423,14 @@
         38,
         62,
         12
+      ],
+      [
+        "a2_soundcheck_hell",
+        8,
+        62,
+        38,
+        62,
+        0
       ],
       [
         "finale_label_meeting",
@@ -500,7 +521,31 @@
         0
       ],
       [
+        "a2_session_sub",
+        5,
+        40,
+        60,
+        60,
+        0
+      ],
+      [
+        "a2_shed_offer",
+        5,
+        60,
+        40,
+        60,
+        0
+      ],
+      [
         "a2_tour_offer",
+        5,
+        60,
+        40,
+        60,
+        0
+      ],
+      [
+        "a3_crash",
         5,
         60,
         40,
@@ -516,12 +561,12 @@
         0
       ],
       [
-        "db_jukebox",
+        "a3_st_supersession",
         5,
+        60,
         40,
         60,
-        60,
-        0
+        20
       ],
       [
         "db_last_call",
@@ -541,6 +586,14 @@
       ],
       [
         "a1_roommate",
+        7,
+        43,
+        57,
+        57,
+        0
+      ],
+      [
+        "db_inspector",
         7,
         43,
         57,
@@ -572,6 +625,14 @@
         0
       ],
       [
+        "db_jukebox",
+        6,
+        50,
+        50,
+        50,
+        0
+      ],
+      [
         "f_secret_set",
         6,
         50,
@@ -593,24 +654,24 @@
     "results": [
       [
         1,
-        183,
+        191,
         10,
-        83,
-        7,
+        82,
+        8,
         0
       ],
       [
         2,
-        279,
+        291,
         4,
         76,
-        18,
+        19,
         2
       ],
       [
         3,
-        218,
-        3,
+        227,
+        4,
         53,
         43,
         0
@@ -642,9 +703,9 @@
       ],
       [
         "studio",
-        7,
-        71,
-        29,
+        8,
+        62,
+        38,
         0
       ]
     ]
@@ -671,12 +732,12 @@
       ],
       [
         "partial",
-        8,
+        9,
         30,
-        97,
-        2.2,
-        64,
-        2.6
+        94,
+        2.3,
+        60,
+        2.3
       ]
     ]
   },
@@ -691,6 +752,11 @@
         null,
         23,
         65
+      ],
+      [
+        "normal",
+        1,
+        0
       ]
     ]
   },
@@ -709,7 +775,7 @@
     "results": [
       [
         29,
-        14
+        15
       ],
       [
         30,
@@ -737,9 +803,9 @@
     ],
     "results": [
       [
-        12,
-        4,
-        2,
+        13,
+        5,
+        3,
         0,
         2,
         2,
@@ -797,9 +863,9 @@
       ],
       [
         "bucket_drums",
-        1,
-        32,
-        100
+        2,
+        30,
+        50
       ],
       [
         "cigarbox_guitar",
@@ -866,7 +932,7 @@
     "results": [
       [
         "normal",
-        16,
+        17,
         1
       ],
       [
@@ -922,6 +988,11 @@
         "nepo_baby",
         1,
         100
+      ],
+      [
+        "none",
+        1,
+        0
       ]
     ]
   },
@@ -933,7 +1004,7 @@
     "results": [
       [
         null,
-        6
+        7
       ],
       [
         "chipfolk",
@@ -971,6 +1042,13 @@
     ],
     "results": [
       [
+        "ideas",
+        14,
+        0.8,
+        17.4,
+        0
+      ],
+      [
         "crowd",
         13,
         0.9,
@@ -978,18 +1056,18 @@
         0
       ],
       [
-        "ideas",
-        12,
+        "take",
+        8,
         0.8,
-        16.3,
+        14.5,
         0
       ],
       [
-        "take",
+        "merch",
         7,
-        0.8,
-        14.6,
-        0
+        1,
+        21.1,
+        14
       ],
       [
         "tighten",
@@ -997,13 +1075,6 @@
         0.9,
         21.7,
         0
-      ],
-      [
-        "merch",
-        6,
-        1,
-        20.7,
-        17
       ],
       [
         "feedback",
@@ -1041,6 +1112,13 @@
         0
       ],
       [
+        "mixdown",
+        1,
+        1,
+        24,
+        0
+      ],
+      [
         "note",
         1,
         0.6,
@@ -1062,5 +1140,1223 @@
         0
       ]
     ]
+  },
+  "card_seen": {
+    "columns": [
+      "card",
+      "swipes"
+    ],
+    "results": [
+      [
+        "a1_algorithm_oracle",
+        3
+      ],
+      [
+        "a1_battle",
+        8
+      ],
+      [
+        "a1_bloom_amp",
+        6
+      ],
+      [
+        "a1_borrowed_van",
+        1
+      ],
+      [
+        "a1_busk",
+        6
+      ],
+      [
+        "a1_clips",
+        5
+      ],
+      [
+        "a1_college_radio",
+        5
+      ],
+      [
+        "a1_cover_band",
+        4
+      ],
+      [
+        "a1_craigslist",
+        3
+      ],
+      [
+        "a1_dayjob",
+        5
+      ],
+      [
+        "a1_docu_pitch",
+        3
+      ],
+      [
+        "a1_first_bandmate",
+        11
+      ],
+      [
+        "a1_first_drop",
+        1
+      ],
+      [
+        "a1_first_fan",
+        2
+      ],
+      [
+        "a1_flyer_war",
+        5
+      ],
+      [
+        "a1_fragment",
+        5
+      ],
+      [
+        "a1_house_show",
+        8
+      ],
+      [
+        "a1_karaoke",
+        8
+      ],
+      [
+        "a1_lessons",
+        6
+      ],
+      [
+        "a1_music_store",
+        6
+      ],
+      [
+        "a1_noise_cop",
+        3
+      ],
+      [
+        "a1_open_mic",
+        2
+      ],
+      [
+        "a1_opendeck",
+        2
+      ],
+      [
+        "a1_pawn_shop",
+        24
+      ],
+      [
+        "a1_phone_demo",
+        8
+      ],
+      [
+        "a1_practice_wall",
+        5
+      ],
+      [
+        "a1_rival_intro",
+        8
+      ],
+      [
+        "a1_roommate",
+        7
+      ],
+      [
+        "a1_shower_hook",
+        3
+      ],
+      [
+        "a1_subway_clip",
+        3
+      ],
+      [
+        "a1_wedding",
+        6
+      ],
+      [
+        "a2_afterparty",
+        4
+      ],
+      [
+        "a2_ar_listen",
+        2
+      ],
+      [
+        "a2_auditions",
+        3
+      ],
+      [
+        "a2_band_drama",
+        4
+      ],
+      [
+        "a2_beat_leak",
+        2
+      ],
+      [
+        "a2_click_track",
+        4
+      ],
+      [
+        "a2_dance_challenge",
+        4
+      ],
+      [
+        "a2_energy_drink",
+        8
+      ],
+      [
+        "a2_fan_account",
+        1
+      ],
+      [
+        "a2_fan_gift",
+        6
+      ],
+      [
+        "a2_genre_purists",
+        5
+      ],
+      [
+        "a2_genre_summit",
+        5
+      ],
+      [
+        "a2_ghostwrite",
+        1
+      ],
+      [
+        "a2_hf_ai_demo",
+        5
+      ],
+      [
+        "a2_hf_camp48",
+        3
+      ],
+      [
+        "a2_hf_forecaster",
+        2
+      ],
+      [
+        "a2_hf_hook_vault",
+        4
+      ],
+      [
+        "a2_image_consultant",
+        5
+      ],
+      [
+        "a2_jingle",
+        3
+      ],
+      [
+        "a2_label_showcase",
+        4
+      ],
+      [
+        "a2_loadout_race",
+        6
+      ],
+      [
+        "a2_manager",
+        3
+      ],
+      [
+        "a2_merch_line",
+        10
+      ],
+      [
+        "a2_morning_zoo",
+        1
+      ],
+      [
+        "a2_ms_feature",
+        5
+      ],
+      [
+        "a2_ms_junket",
+        2
+      ],
+      [
+        "a2_ms_stan_army",
+        4
+      ],
+      [
+        "a2_nadia_meet",
+        4
+      ],
+      [
+        "a2_one_person_band",
+        1
+      ],
+      [
+        "a2_open_for_hero",
+        4
+      ],
+      [
+        "a2_opening_slot",
+        3
+      ],
+      [
+        "a2_pawn_upgrade",
+        3
+      ],
+      [
+        "a2_playlist",
+        8
+      ],
+      [
+        "a2_press_piece",
+        2
+      ],
+      [
+        "a2_producer_call",
+        5
+      ],
+      [
+        "a2_reality_show",
+        5
+      ],
+      [
+        "a2_rest",
+        6
+      ],
+      [
+        "a2_rival_collab",
+        4
+      ],
+      [
+        "a2_rival_leapfrog",
+        4
+      ],
+      [
+        "a2_rival_opener",
+        1
+      ],
+      [
+        "a2_session_sub",
+        5
+      ],
+      [
+        "a2_shed_offer",
+        5
+      ],
+      [
+        "a2_shop_gearhead",
+        24
+      ],
+      [
+        "a2_song_grows",
+        1
+      ],
+      [
+        "a2_soundcheck_hell",
+        8
+      ],
+      [
+        "a2_soundcheck_song",
+        5
+      ],
+      [
+        "a2_splits",
+        5
+      ],
+      [
+        "a2_st_gear_lord",
+        4
+      ],
+      [
+        "a2_st_ghost_solo",
+        2
+      ],
+      [
+        "a2_st_pit",
+        3
+      ],
+      [
+        "a2_stranded_player",
+        5
+      ],
+      [
+        "a2_sync_ad",
+        4
+      ],
+      [
+        "a2_tiktok_trend",
+        3
+      ],
+      [
+        "a2_topline_dj",
+        3
+      ],
+      [
+        "a2_tour_offer",
+        5
+      ],
+      [
+        "a2_tv_scout",
+        1
+      ],
+      [
+        "a2_union",
+        3
+      ],
+      [
+        "a2_venue_trouble",
+        8
+      ],
+      [
+        "a2_woodshed",
+        1
+      ],
+      [
+        "a2_writing_camp",
+        3
+      ],
+      [
+        "a2c_trend_part2",
+        1
+      ],
+      [
+        "a3_album_offer",
+        1
+      ],
+      [
+        "a3_arena_support",
+        4
+      ],
+      [
+        "a3_award_perf",
+        4
+      ],
+      [
+        "a3_biopic_rumor",
+        3
+      ],
+      [
+        "a3_chart_war",
+        1
+      ],
+      [
+        "a3_crash",
+        5
+      ],
+      [
+        "a3_documentary",
+        5
+      ],
+      [
+        "a3_exec_notes",
+        4
+      ]
+    ]
+  },
+  "finale_endings": {
+    "columns": [
+      "path",
+      "outcome",
+      "runs"
+    ],
+    "results": [
+      [
+        "hitfactory",
+        "partial",
+        4
+      ],
+      [
+        "hitfactory",
+        "success",
+        4
+      ],
+      [
+        "megastar",
+        "partial",
+        2
+      ],
+      [
+        "megastar",
+        "success",
+        6
+      ],
+      [
+        "studio",
+        "partial",
+        3
+      ],
+      [
+        "studio",
+        "success",
+        5
+      ]
+    ]
+  },
+  "by_venue": {
+    "columns": [
+      "venue",
+      "runs"
+    ],
+    "results": [
+      [
+        null,
+        7
+      ],
+      [
+        "basement",
+        4
+      ],
+      [
+        "allnight",
+        3
+      ],
+      [
+        "compost",
+        3
+      ],
+      [
+        "laundro",
+        1
+      ],
+      [
+        "ricochet",
+        1
+      ],
+      [
+        "wkrz",
+        1
+      ]
+    ]
+  },
+  "rival_seen": {
+    "columns": [
+      "rival",
+      "runs"
+    ],
+    "results": [
+      [
+        null,
+        24
+      ]
+    ]
+  },
+  "exit_seen": {
+    "columns": [
+      "exit",
+      "n"
+    ],
+    "results": [
+      [
+        null,
+        24
+      ]
+    ]
+  },
+  "trophy_seen": {
+    "columns": [
+      "trophy",
+      "n"
+    ],
+    "results": []
+  },
+  "band_seen": {
+    "columns": [
+      "id",
+      "n"
+    ],
+    "results": []
+  },
+  "gear_seen": {
+    "columns": [
+      "id",
+      "n"
+    ],
+    "results": []
+  },
+  "hustle_seen": {
+    "columns": [
+      "id",
+      "n"
+    ],
+    "results": []
+  },
+  "coverage": {
+    "Cards": {
+      "total": 209,
+      "seen": 100,
+      "never": [
+        "sm_meet",
+        "sm_birthday",
+        "sm_question",
+        "cb_remembered",
+        "cb_nostalgia_fest",
+        "cb_fan_exec",
+        "wt_offer",
+        "wt_tokyo",
+        "wt_berlin",
+        "wt_saopaulo",
+        "cl_dm",
+        "cl_session",
+        "cl_reprise",
+        "cl_regret",
+        "bs_ludo_parade",
+        "bs_greta_archive",
+        "bs_saul_clause",
+        "bs_fish_van",
+        "bs_tanya_empire",
+        "bs_pearl_checkin",
+        "finale_label_meeting",
+        "finale_the_call",
+        "finale_credits",
+        "a3_band_ultimatum",
+        "a3_song_finale",
+        "a3_song_regret",
+        "debt_collector",
+        "a2_shed_nights",
+        "a3_shed_album",
+        "cb_poster_wall",
+        "cb_old_flame_band",
+        "a3_tv_taping",
+        "dc_offer",
+        "dc_blizzard",
+        "dc_birthday",
+        "dc_lastnight",
+        "a2_truce_tour",
+        "a2_diss_track",
+        "a3_hf_placement",
+        "a3_hf_heir",
+        "a3_gala_circuit",
+        "a2c_ms_quote",
+        "a3_bloom_return",
+        "a3_bloom_cold",
+        "a2_docu_moment",
+        "a3_docu_gold",
+        "a3_docu_dirt",
+        "a3_shed_someone",
+        "a3_shed_doc",
+        "a3_bloom_festival",
+        "a3_shed_collab",
+        "a3_music_video",
+        "a3_masters_buyback",
+        "a3_golden_hands",
+        "a3_blooper",
+        "a3_old_friend",
+        "a3_shop_last",
+        "a3_rival_showdown",
+        "a3_rival_supergroup",
+        "a3_hometown",
+        "a3_voice_coach",
+        "a3_scandal",
+        "a3_stadium_call",
+        "a3_ms_worldtour",
+        "a3_ms_persona",
+        "a3_legend_album",
+        "a3_tv_band",
+        "a3_one_take",
+        "a3_masterclass",
+        "a3_st_supersession",
+        "a3c_st_credits",
+        "a3_st_loyalty",
+        "a3_song_of_summer",
+        "a3_three_peat",
+        "a3_secret_album",
+        "a3_hf_diane",
+        "a3_hf_prodigy",
+        "a3_genre_face",
+        "a2_hustle_audit",
+        "a3_hustle_profile",
+        "db_chicken_wire",
+        "db_tuesday_residency",
+        "db_jukebox",
+        "db_inspector",
+        "db_last_call",
+        "coping_50",
+        "coping_75",
+        "f_mud_fest",
+        "f_lineup_font",
+        "f_secret_set",
+        "f_headline_clash",
+        "a3_last_single",
+        "a3_playlist_guy",
+        "a3_hotel_ballad",
+        "a3c_album_drop",
+        "a3_nadia_spotlight",
+        "a3_fan_tattoo",
+        "a3_fan_wars",
+        "a3_nadia_deepcut",
+        "a2_the_sync",
+        "a3_venue_sale",
+        "a3c_venue_benefit",
+        "a3_dedication",
+        "a3_nemesis_soundcheck",
+        "a1_first_review",
+        "a3_genre_obituary",
+        "coping_song",
+        "a2_planetarium_night",
+        "a2_trend_unmask"
+      ],
+      "rare": [
+        {
+          "id": "a1_borrowed_van",
+          "n": 1
+        },
+        {
+          "id": "a1_first_drop",
+          "n": 1
+        },
+        {
+          "id": "a2_fan_account",
+          "n": 1
+        },
+        {
+          "id": "a2_ghostwrite",
+          "n": 1
+        },
+        {
+          "id": "a2_morning_zoo",
+          "n": 1
+        },
+        {
+          "id": "a2_one_person_band",
+          "n": 1
+        },
+        {
+          "id": "a2_rival_opener",
+          "n": 1
+        },
+        {
+          "id": "a2_song_grows",
+          "n": 1
+        },
+        {
+          "id": "a2_tv_scout",
+          "n": 1
+        },
+        {
+          "id": "a2_woodshed",
+          "n": 1
+        },
+        {
+          "id": "a2c_trend_part2",
+          "n": 1
+        },
+        {
+          "id": "a3_album_offer",
+          "n": 1
+        },
+        {
+          "id": "a3_chart_war",
+          "n": 1
+        },
+        {
+          "id": "a1_first_fan",
+          "n": 2
+        },
+        {
+          "id": "a1_open_mic",
+          "n": 2
+        },
+        {
+          "id": "a1_opendeck",
+          "n": 2
+        },
+        {
+          "id": "a2_ar_listen",
+          "n": 2
+        },
+        {
+          "id": "a2_beat_leak",
+          "n": 2
+        },
+        {
+          "id": "a2_hf_forecaster",
+          "n": 2
+        },
+        {
+          "id": "a2_ms_junket",
+          "n": 2
+        },
+        {
+          "id": "a2_press_piece",
+          "n": 2
+        },
+        {
+          "id": "a2_st_ghost_solo",
+          "n": 2
+        },
+        {
+          "id": "a1_algorithm_oracle",
+          "n": 3
+        },
+        {
+          "id": "a1_craigslist",
+          "n": 3
+        },
+        {
+          "id": "a1_docu_pitch",
+          "n": 3
+        },
+        {
+          "id": "a1_noise_cop",
+          "n": 3
+        },
+        {
+          "id": "a1_shower_hook",
+          "n": 3
+        },
+        {
+          "id": "a1_subway_clip",
+          "n": 3
+        },
+        {
+          "id": "a2_auditions",
+          "n": 3
+        },
+        {
+          "id": "a2_hf_camp48",
+          "n": 3
+        },
+        {
+          "id": "a2_jingle",
+          "n": 3
+        },
+        {
+          "id": "a2_manager",
+          "n": 3
+        },
+        {
+          "id": "a2_opening_slot",
+          "n": 3
+        },
+        {
+          "id": "a2_pawn_upgrade",
+          "n": 3
+        },
+        {
+          "id": "a2_st_pit",
+          "n": 3
+        },
+        {
+          "id": "a2_tiktok_trend",
+          "n": 3
+        },
+        {
+          "id": "a2_topline_dj",
+          "n": 3
+        },
+        {
+          "id": "a2_union",
+          "n": 3
+        },
+        {
+          "id": "a2_writing_camp",
+          "n": 3
+        },
+        {
+          "id": "a3_biopic_rumor",
+          "n": 3
+        },
+        {
+          "id": "a1_cover_band",
+          "n": 4
+        },
+        {
+          "id": "a2_afterparty",
+          "n": 4
+        },
+        {
+          "id": "a2_band_drama",
+          "n": 4
+        },
+        {
+          "id": "a2_click_track",
+          "n": 4
+        },
+        {
+          "id": "a2_dance_challenge",
+          "n": 4
+        },
+        {
+          "id": "a2_hf_hook_vault",
+          "n": 4
+        },
+        {
+          "id": "a2_label_showcase",
+          "n": 4
+        },
+        {
+          "id": "a2_ms_stan_army",
+          "n": 4
+        },
+        {
+          "id": "a2_nadia_meet",
+          "n": 4
+        },
+        {
+          "id": "a2_open_for_hero",
+          "n": 4
+        },
+        {
+          "id": "a2_rival_collab",
+          "n": 4
+        },
+        {
+          "id": "a2_rival_leapfrog",
+          "n": 4
+        },
+        {
+          "id": "a2_st_gear_lord",
+          "n": 4
+        },
+        {
+          "id": "a2_sync_ad",
+          "n": 4
+        },
+        {
+          "id": "a3_arena_support",
+          "n": 4
+        },
+        {
+          "id": "a3_award_perf",
+          "n": 4
+        },
+        {
+          "id": "a3_exec_notes",
+          "n": 4
+        }
+      ]
+    },
+    "Minigames": {
+      "total": 15,
+      "seen": 14,
+      "never": [
+        "prompter"
+      ],
+      "rare": [
+        {
+          "id": "duel",
+          "n": 1
+        },
+        {
+          "id": "interview",
+          "n": 1
+        },
+        {
+          "id": "mixdown",
+          "n": 1
+        },
+        {
+          "id": "note",
+          "n": 1
+        },
+        {
+          "id": "room",
+          "n": 1
+        },
+        {
+          "id": "setlist",
+          "n": 1
+        },
+        {
+          "id": "hat",
+          "n": 2
+        }
+      ]
+    },
+    "Finale endings (path × outcome)": {
+      "total": 9,
+      "seen": 6,
+      "never": [
+        "megastar/failure",
+        "studio/failure",
+        "hitfactory/failure"
+      ],
+      "rare": []
+    },
+    "Game-over endings": {
+      "total": 3,
+      "seen": 0,
+      "never": [
+        "burnout",
+        "cancelled",
+        "debt"
+      ],
+      "rare": []
+    },
+    "Exit interviews": {
+      "total": 6,
+      "seen": 0,
+      "never": [
+        "admitted",
+        "buried",
+        "apologized",
+        "vanished",
+        "kept_amp",
+        "clean_slate"
+      ],
+      "rare": []
+    },
+    "Trophies": {
+      "total": 51,
+      "seen": 0,
+      "never": [
+        "first_run",
+        "burnout_death",
+        "cancelled",
+        "repo_man",
+        "win_megastar",
+        "win_studio",
+        "win_hitfactory",
+        "partial_any",
+        "fame_100",
+        "hits_5",
+        "the_door",
+        "glow_up",
+        "diversified",
+        "fine_print",
+        "chart_topper",
+        "wellness_journey",
+        "chain_reaction",
+        "dirt_survivor",
+        "seen_on_tv",
+        "room_saver",
+        "multi_inst",
+        "full_setlist",
+        "steady_hands",
+        "constellation",
+        "golden_hands",
+        "featured",
+        "blood_feud",
+        "supergroup",
+        "ding",
+        "kazoo_win",
+        "broke_finish",
+        "zen_master",
+        "all_paths",
+        "plus_one",
+        "always_you",
+        "second_act",
+        "every_door",
+        "brammy",
+        "full_band",
+        "institution",
+        "old_faithful",
+        "gauntlet_runner",
+        "daily_3",
+        "wall_5",
+        "number_one",
+        "one_week_wonder",
+        "the_vault",
+        "room_benefit",
+        "thursday",
+        "counterexample",
+        "under_funded_skies"
+      ],
+      "rare": []
+    },
+    "Contracts": {
+      "total": 9,
+      "seen": 6,
+      "never": [
+        "one_take",
+        "imposter",
+        "overnight"
+      ],
+      "rare": [
+        {
+          "id": "deadline",
+          "n": 1
+        },
+        {
+          "id": "kazoo_clause",
+          "n": 1
+        },
+        {
+          "id": "nepo_baby",
+          "n": 1
+        }
+      ]
+    },
+    "Instruments": {
+      "total": 16,
+      "seen": 14,
+      "never": [
+        "hurdy_gurdy",
+        "washboard"
+      ],
+      "rare": [
+        {
+          "id": "cigarbox_guitar",
+          "n": 1
+        },
+        {
+          "id": "kazoo",
+          "n": 1
+        },
+        {
+          "id": "loop_station",
+          "n": 1
+        },
+        {
+          "id": "modular_synth",
+          "n": 1
+        },
+        {
+          "id": "omnichord",
+          "n": 1
+        },
+        {
+          "id": "sampler",
+          "n": 1
+        },
+        {
+          "id": "toy_glockenspiel",
+          "n": 1
+        },
+        {
+          "id": "triangle",
+          "n": 1
+        },
+        {
+          "id": "workhorse",
+          "n": 1
+        },
+        {
+          "id": "bucket_drums",
+          "n": 2
+        }
+      ]
+    },
+    "Genres": {
+      "total": 12,
+      "seen": 8,
+      "never": [
+        "bedroom_pop",
+        "yacht_metal",
+        "gothgrass",
+        "gothgrass"
+      ],
+      "rare": [
+        {
+          "id": "doom_jazz",
+          "n": 1
+        },
+        {
+          "id": "stadium_shanty",
+          "n": 1
+        },
+        {
+          "id": "stadium_shanty",
+          "n": 1
+        },
+        {
+          "id": "folk_punk",
+          "n": 2
+        }
+      ]
+    },
+    "Home venues": {
+      "total": 7,
+      "seen": 6,
+      "never": [
+        "planetarium"
+      ],
+      "rare": [
+        {
+          "id": "laundro",
+          "n": 1
+        },
+        {
+          "id": "ricochet",
+          "n": 1
+        },
+        {
+          "id": "wkrz",
+          "n": 1
+        }
+      ]
+    },
+    "Rivals": {
+      "total": 11,
+      "seen": 0,
+      "never": [
+        "vanta",
+        "mickey",
+        "panopticon",
+        "lasagna",
+        "petersens",
+        "juniper_q",
+        "baron",
+        "ghostnote",
+        "brine",
+        "mothra",
+        "trend"
+      ],
+      "rare": []
+    },
+    "Bandmates": {
+      "total": 14,
+      "seen": 0,
+      "never": [
+        "fish",
+        "birdie",
+        "moss",
+        "tanya",
+        "deacon",
+        "pearl",
+        "ludo",
+        "greta",
+        "saul",
+        "nadia",
+        "ludo",
+        "greta",
+        "saul",
+        "nadia"
+      ],
+      "rare": []
+    },
+    "Gear": {
+      "total": 23,
+      "seen": 0,
+      "never": [
+        "four_track",
+        "publicist_rolodex",
+        "loud_amp",
+        "loop_pedal",
+        "pedalboard",
+        "lucky_pick",
+        "in_ears",
+        "vintage_mic",
+        "energy_drink",
+        "managers_card",
+        "cursed_8track",
+        "merch_cannon",
+        "field_recorder",
+        "stage_fan",
+        "humidifier",
+        "setlist_binder",
+        "cowbell",
+        "van_bunk",
+        "fog_machine",
+        "lucky_cable",
+        "tour_van",
+        "ring_light",
+        "session_rolodex"
+      ],
+      "rare": []
+    },
+    "Hustles": {
+      "total": 10,
+      "seen": 0,
+      "never": [
+        "residency",
+        "sleep_podcast",
+        "compost_corner",
+        "merch_line",
+        "jingle_residuals",
+        "hook_licenses",
+        "masterclass_income",
+        "shed_rental",
+        "wedding_circuit",
+        "sync_royalties"
+      ],
+      "rare": []
+    }
   }
 }
