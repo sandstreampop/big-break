@@ -747,7 +747,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
       const s = addSong(state, {
         title: effects.chartTitle
           ? effects.chartTitle.replace('{collabArtist}', collabArtistFor(state))
-          : songName(rng),
+          : songName(rng, genreById(state.genre)),
         quality: 68 + Math.round((rng ? rng() : 0.5) * 12),
         origin: ev?.id || null, status: 'charting', hype: 60,
       });
@@ -793,7 +793,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   if (effects.albumDrop) {
     // THE ALBUM: everything ships at once. Every vault demo releases with
     // the album's hype; every charting song gets the halo bump.
-    const hype = typeof effects.albumDrop === 'number' ? effects.albumDrop : 60;
+    const hype = (typeof effects.albumDrop === 'number' ? effects.albumDrop : 60) + (hooks.releaseHype || 0);
     const demos = (state.songs || []).filter((s) => s.status === 'demo');
     for (const d of demos) {
       releaseSong(state, d.id, hype);
@@ -810,7 +810,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     const demos = (state.songs || []).filter((s) => s.status === 'demo');
     if (demos.length) {
       const best = demos.slice().sort((a, b) => b.quality - a.quality)[0];
-      const hype = typeof effects.releaseDemo === 'number' ? effects.releaseDemo : 55;
+      const hype = (typeof effects.releaseDemo === 'number' ? effects.releaseDemo : 55) + (hooks.releaseHype || 0);
       releaseSong(state, best.id, hype);
       (deltas.songDebuts = deltas.songDebuts || []).push({ title: best.title, pos: best.pos, hit: best.crowned, released: true });
     }
@@ -831,16 +831,17 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     const base = tier === 'incredible' ? 64 : tier === 'good' ? 50 : 36;
     const verdictAdj = { BOTCHED: -10, SCRAPPY: 0, SOLID: 8, GOLDEN: 16 }[mg?.label] || 0;
     const creaAdj = Math.round(((state.stats.creativity || 0) - 40) * 0.2);
+    const instAdj = hooks.demoQuality || 0; // Loop Station: layers stick
     const jit = Math.round((rng ? rng() : 0.5) * 10 - 5);
-    const hooks = mg?.hooks || [];
-    const title = hooks.length
-      ? hooks[Math.floor((rng ? rng() : 0.5) * hooks.length)].replace(/(^|\s)[a-z]/g, (c) => c.toUpperCase())
-      : songName(rng);
+    const grabbedHooks = mg?.hooks || [];
+    const title = grabbedHooks.length
+      ? grabbedHooks[Math.floor((rng ? rng() : 0.5) * grabbedHooks.length)].replace(/(^|\s)[a-z]/g, (c) => c.toUpperCase())
+      : songName(rng, genreById(state.genre));
     const s = addSong(state, {
-      title, quality: base + verdictAdj + creaAdj + jit,
+      title, quality: base + verdictAdj + creaAdj + instAdj + jit,
       origin: ev?.id || null, status: 'demo',
     });
-    deltas.songWritten = { title: s.title, quality: s.quality, fromHook: hooks.length > 0 };
+    deltas.songWritten = { title: s.title, quality: s.quality, fromHook: grabbedHooks.length > 0 };
   }
   state._chartTitleHandled = false;
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
@@ -1038,7 +1039,7 @@ function startAct(state, act) {
       // Nadia's notebook: a fresh "spare" appears every act break
       const rng = stateRng(state);
       const s = addSong(state, {
-        title: songName(rng), status: 'demo',
+        title: songName(rng, genreById(state.genre)), status: 'demo',
         quality: 42 + Math.round(rng() * 26),
       });
       notes.push(`${bm.icon} ${bm.name}: leaves a demo on your amp — “${s.title}”`);

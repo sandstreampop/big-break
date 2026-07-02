@@ -36,7 +36,15 @@ function pick(rng, arr) { return arr[Math.floor(rng() * arr.length)]; }
 export function collabArtistFor(state) {
   return ARTISTS[(state.chartSeed || 1) % ARTISTS.length];
 }
-export function songName(rng) { return pick(rng, ADJ) + ' ' + pick(rng, NOUN) + pick(rng, SUFFIX); }
+// Your songs can carry your genre's vocabulary: pass a genre (with
+// titleWords) and roughly two-thirds of titles borrow its adjective,
+// noun, or both. Industry filler always uses the generic pools.
+export function songName(rng, genre = null) {
+  const tw = genre?.titleWords;
+  const adj = tw && rng() < 0.66 ? pick(rng, tw.adj) : pick(rng, ADJ);
+  const noun = tw && rng() < 0.66 ? pick(rng, tw.noun) : pick(rng, NOUN);
+  return adj + ' ' + noun + pick(rng, SUFFIX);
+}
 
 // Your chart footprint, from REAL songs: charting entries and best peak
 export function playerChartInfo(state) {
