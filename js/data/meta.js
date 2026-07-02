@@ -158,6 +158,8 @@ export const WALL_ITEMS = [
     name: 'Perk: Thick Skin', desc: 'Bad streaks bounce back harder (stronger pity, higher cap). Rejection is just data.' },
   { id: 'inst_workhorse', tier: 3, cost: 60, kind: 'instrument', target: 'workhorse',
     name: 'The ’59 Workhorse', desc: 'Instrument: a guitar with road hands. Performance minigames +4, Live +4. It remembers the changes.' },
+  { id: 'inst_loopstation', tier: 2, cost: 45, kind: 'instrument', target: 'loop_station',
+    name: 'Loop Station', desc: 'Instrument: one pedal, infinite yous. Write +6, demos +8 quality, releases +10 hype. The band is you.' },
   { id: 'inst_omnichord', tier: 2, cost: 45, kind: 'instrument', target: 'omnichord',
     name: 'Omnichord', desc: 'Instrument: a 1981 plastic sunrise. Indie/Electronic +7, bonus Creativity on Incredibles.' },
   { id: 'inst_washboard', tier: 2, cost: 40, kind: 'instrument', target: 'washboard',

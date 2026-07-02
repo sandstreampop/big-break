@@ -177,6 +177,17 @@ export const INSTRUMENTS = [
       hooks: { rollTagBonus: [{ tags: ['vocal'], bonus: 10 }], liveBurnout: 2 },
     },
   },
+  {
+    id: 'loop_station', name: 'Loop Station', family: 'electronic',
+    art: 'instrument_loopstation', unlockedByDefault: false,
+    flavor: 'One pedal, infinite yous. The band is you. The argument is also you.',
+    modifiers: { creativity: 7, skill: 3 },
+    quirk: {
+      id: 'the_overdub', name: 'The Overdub',
+      desc: 'Demos you tape are +8 quality and releases ship with +10 hype. Write-tagged choices roll +6. Songs made in layers stick.',
+      hooks: { rollTagBonus: [{ tags: ['write'], bonus: 6 }], demoQuality: 8, releaseHype: 10 },
+    },
+  },
 ];
 
 export function instrumentById(id) {
