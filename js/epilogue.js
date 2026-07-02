@@ -50,6 +50,8 @@ export function buildEpilogue(state) {
     'The strangest thing about the whole career: the way the stories found each other, like they’d been written to meet.');
   add((state.hustles || []).includes('wedding_circuit'),
     'You still play four weddings a year. You know every venue’s power situation by heart. You cry at exactly the right moment, every time, on purpose.');
+  add(flags.includes('album_out'),
+    'The album aged the way rooms do — slowly, and then all at once into something people miss on purpose. Anniversary reissue pending. You keep saying no. That’s part of it now.');
   add(flags.includes('mg_steady'),
     'People who were in the room that night still describe your hands: steady, when nothing else was.');
   add(state.money >= 800,

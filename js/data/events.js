@@ -5424,4 +5424,66 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ THE ALBUM (act-3 side quest: your catalog becomes an LP) ═══════════
+  {
+    id: 'a3_album_offer', act: 3, pathAffinity: [], weight: 14,
+    requires: { songsMin: 3 },
+    art: 'ev_album_offer', context: 'A whiteboard with your songs on it',
+    prompt: 'Someone writes every song you’ve made this career on a whiteboard, steps back, and says the dangerous sentence: “You know this is an album, right?” The songs look back at you. They knew.',
+    tags: ['record'],
+    choices: {
+      left: {
+        label: 'Cut it live in one weekend',
+        minigame: 'take',
+        governingStats: { skill: 0.7, creativity: 0.4 },
+        tags: ['record', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The weekend produces chaos: blown takes, one fistfight about a tambourine, and — undeniably, underneath — a RECORD. Rough. Alive. Yours.', effects: { skill: 3, burnout: 6, chainEventId: 'a3c_album_drop' } },
+          good: { text: 'Two days, no punch-ins, the room sound doing half the production. Between takes nobody speaks. Everyone knows what this is.', effects: { skill: 5, cred: 4, burnout: 4, chainEventId: 'a3c_album_drop' } },
+          incredible: { text: 'The last take of the last song ends and the engineer just lets the tape run — thirty seconds of the room refusing to exhale. Track twelve is that silence. Critics will write about the silence.', effects: { skill: 7, cred: 6, creativity: 4, burnout: 4, pathProgress: 1, chainEventId: 'a3c_album_drop' } },
+        },
+      },
+      right: {
+        label: 'Produce it properly. Every song deserves its best self.',
+        cost: 140,
+        minigame: 'mixdown',
+        governingStats: { skill: 0.5, network: 0.5 },
+        tags: ['record', 'studio', 'safe'],
+        outcomes: {
+          bad: { text: 'The budget buys polish and the polish buys arguments. Version 9 of track three sounds expensive and lost. You ship version 2 and tell no one.', effects: { skill: 3, money: -40, burnout: 5, chainEventId: 'a3c_album_drop' } },
+          good: { text: 'Real strings on the ballad. The engineer who eats standing up. Every song arrives at the mix wearing its best jacket.', effects: { skill: 5, network: 3, polishDemo: 10, chainEventId: 'a3c_album_drop' } },
+          incredible: { text: 'The sessions attract visitors — players who “happened to be in the building” and leave their parts on your record like tips. The credits read like a scene.', effects: { skill: 6, network: 6, cred: 3, polishDemo: 16, pathProgress: 1, chainEventId: 'a3c_album_drop' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3c_album_drop', act: 3, pathAffinity: [], weight: 0, chainOnly: true,
+    art: 'ev_album_drop', context: 'Release day. The whole notebook, at once.',
+    prompt: 'The album is mastered, sleeved, and staring at you. One decision left — the one every sequencing argument was secretly about: what is this record FOR?',
+    tags: ['record'],
+    choices: {
+      left: {
+        label: 'Lead with the hit. Feed the machine.',
+        governingStats: { network: 0.8 },
+        tags: ['mainstream', 'record'],
+        outcomes: {
+          bad: { text: 'The single leads, the algorithm shrugs — wrong Tuesday. The album takes the stairs instead of the elevator. It gets there. Stairs build character.', effects: { albumDrop: 40, fame: 4, addFlag: 'album_out' } },
+          good: { text: 'The rollout lands: single first, album Friday, everything everywhere at once. Your whole catalog surfaces like a pod of whales.', effects: { albumDrop: 62, fame: 8, money: 150, addFlag: 'album_out' } },
+          incredible: { text: 'The single drags the album up the chart and the album returns the favor — every track feeding every other track. The machine, for one week, works for YOU.', effects: { albumDrop: 82, fame: 12, money: 250, pathProgress: 1, addFlag: 'album_out' } },
+        },
+      },
+      right: {
+        label: 'Sequence for the heads. No singles. A JOURNEY.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'record'],
+        outcomes: {
+          bad: { text: 'The no-singles stance meets the skip button and loses, mostly. But the ones who listen straight through KEEP listening straight through. Forty minutes at a time, forever.', effects: { albumDrop: 34, cred: 5, addFlag: 'album_out' } },
+          good: { text: 'It gets reviewed as a WHOLE — “an album that remembers what albums are for.” People post photos of speakers. Speakers!', effects: { albumDrop: 52, cred: 8, fame: 4, addFlag: 'album_out' } },
+          incredible: { text: 'A generation of bedroom listeners adopts it as furniture — the record that plays while life happens. Nobody can name the third track. Nobody skips it either.', effects: { albumDrop: 70, cred: 11, fame: 7, pathProgress: 1, addFlag: 'album_out' } },
+        },
+      },
+    },
+  },
 ];
