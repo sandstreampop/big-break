@@ -415,6 +415,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Commit to the ballad',
+        minigame: 'note',
         governingStats: { creativity: 0.6, network: 0.6 },
         tags: ['live', 'vocal', 'risky'],
         outcomes: {

@@ -1052,3 +1052,22 @@ body.big-text #app { zoom: 1.18; }
 .mg-say { background: #1e3c2b; color: var(--good); border-color: #2a5a3d; text-align: center; }
 .mg-zip { background: #322a47; color: var(--ink); text-align: center; }
 .mg-noskip { text-align: center; font-size: 12px; color: var(--accent); }
+
+/* Hold the Note */
+.mg-gauge {
+  position: relative; height: 200px;
+  background: #1c1729; border: 1px solid #3b3352; border-radius: 12px;
+  overflow: hidden; touch-action: none;
+}
+.mg-band {
+  position: absolute; left: 0; right: 0;
+  background: linear-gradient(180deg, rgba(255,179,71,.28), rgba(255,179,71,.12));
+  border-top: 1px solid var(--accent); border-bottom: 1px solid var(--accent);
+  transition: none;
+}
+.mg-pitch {
+  position: absolute; left: 8%; right: 8%; height: 4px; margin-bottom: -2px;
+  background: var(--ink); border-radius: 2px;
+  box-shadow: 0 0 10px rgba(242,238,251,.6);
+}
+.mg-pitch-in { background: var(--good); box-shadow: 0 0 14px var(--good); }
