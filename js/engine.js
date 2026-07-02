@@ -334,10 +334,12 @@ export function rollComponents(state, choice, opts = {}) {
   const pityBonus = Math.min((state.badStreak || 0) * CONFIG.pityPerBad, CONFIG.pityCap);
   const cMods = contractMods(state);
   const encoreBonus = opts.encore && !cMods.disableEncore ? CONFIG.encoreBonus : 0;
+  // Performance bonus: a minigame result (UI-side skill) folded into the roll
+  const perfBonus = opts.bonus || 0;
   const jitter = cMods.jitter || inst?.quirk?.hooks?.jitter || [CONFIG.jitterMin, CONFIG.jitterMax];
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
-    gearBonus + quirkBonus + burnoutPenalty + pityBonus + encoreBonus;
-  return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, base, jitter, appliedAccessories: applied };
+    gearBonus + quirkBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
+  return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
 }
 
 // Risk tell (spec §10): probability each tier fires, given uniform jitter.
@@ -375,7 +377,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
     return result;
   }
 
-  const c = rollComponents(state, choice, { encore: useEncore });
+  const c = rollComponents(state, choice, { encore: useEncore, bonus: opts.bonus || 0 });
   const jitter = randInt(rng, c.jitter[0], c.jitter[1]);
   const roll = c.base + jitter;
   let tier;

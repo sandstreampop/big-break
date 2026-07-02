@@ -83,7 +83,14 @@ for (let i = 0; i < RUNS; i++) {
       // Encore usage: smart spends in act 2+, narrative spends on a whim
       const armEncore = (state.encore || 0) > 0 &&
         (POLICY === 'smart' ? state.act >= 2 : Math.random() < 0.5);
-      const result = engine.resolveSwipe(state, side, Math.random, { encore: armEncore });
+      // Minigame choices: model a mid-skill human (verdict distribution
+      // roughly 15% botched / 35% scrappy / 35% solid / 15% golden)
+      let mgBonus = 0;
+      if (ev.choices[side].minigame) {
+        const r = Math.random();
+        mgBonus = r < 0.15 ? -8 : r < 0.5 ? 4 : r < 0.85 ? 14 : 24;
+      }
+      const result = engine.resolveSwipe(state, side, Math.random, { encore: armEncore, bonus: mgBonus });
       tally.tierCounts[result.tier]++;
       tally.tiersByAct[act][result.tier]++;
       if (result.tier === 'bad') badCards++;
