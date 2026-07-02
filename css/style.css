@@ -1030,6 +1030,22 @@ body.big-text #app { zoom: 1.18; }
 .mg-word-hit { background: #1e3c2b; color: var(--good); border-color: var(--good); box-shadow: none; animation-play-state: paused; }
 .mg-word-sting { background: #4a2030; color: var(--bad); border-color: var(--bad); animation-play-state: paused; font-style: normal; }
 
+/* The Setlist */
+.mg-setlist { display: flex; flex-direction: column; gap: 7px; }
+.mg-set-chip {
+  appearance: none; cursor: pointer; font-family: inherit;
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  background: #241e33; border: 1px solid #4b4066; color: var(--ink);
+  border-radius: 10px; padding: 9px 12px; font-size: 13.5px; font-weight: 650;
+  text-align: left;
+}
+.mg-set-chip b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mg-set-bars { color: var(--accent); font-size: 11px; letter-spacing: 1px; flex: none; }
+.mg-set-locked { background: #1e3c2b; border-color: var(--good); color: var(--good); }
+.mg-set-locked .mg-set-bars { color: var(--good); }
+.mg-set-wrong { background: #4a2030; border-color: var(--bad); animation: mgShakeChip .22s; }
+@keyframes mgShakeChip { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
 /* Work the Room */
 .mg-room { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .mg-guest {

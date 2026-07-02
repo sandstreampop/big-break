@@ -79,11 +79,12 @@ It's a PWA: add it to your home screen and it works offline.
 - **Discography** — every run leaves a record: an album-by-album career
   writeup generated from what actually happened — including records that
   only exist because a storyline did ("The Shed Sessions").
-- **Performance minigames (v3)** — thirteen one-thumb skill moments (≤30s)
+- **Performance minigames (v3)** — fourteen one-thumb skill moments (≤30s)
   on flagship choices: studio takes, crowd rhythm, lyric-grabbing,
   networking triage, band-pattern echo, feedback whack-a-mole, merch
   rush, coin-catch busking, interview speed-reads, held notes, van
-  Tetris, a three-fader mixdown, and a mirrored duel with your rival. Verdicts (BOTCHED →
+  Tetris, a three-fader mixdown, a setlist-arc builder starring your
+  actual songs, and a mirrored duel with your rival. Verdicts (BOTCHED →
   GOLDEN) tilt the roll, burnout makes your hands shake, gear and
   contracts bet on your skill, and the scrapbook remembers every one.
   Skippable, with a relaxed mode in Settings.
