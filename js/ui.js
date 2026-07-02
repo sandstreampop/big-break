@@ -561,6 +561,8 @@ function spawnConfetti(host) {
 function dealCard() {
   encoreArmed = false;
   show('#screen-game');
+  // a lesson about the LAST card shouldn't float over the next one
+  document.querySelector('.coach')?.remove();
   renderHud();
   spawnStatFloaters();
   const ev = engine.drawNextCard(run, engine.stateRng(run));
@@ -832,6 +834,8 @@ function showHelp() {
   setTimeout(() => ov.addEventListener('click', done), 200);
 }
 
+// Coach marks stay up until the player taps them — reading speed is the
+// player's business, not a timer's. A new card clears any stale mark.
 function coachMark(text) {
   if (!$('#screen-game').classList.contains('active')) return;
   const old = document.querySelector('.coach');
@@ -839,7 +843,6 @@ function coachMark(text) {
   const c = el('div', 'coach', text + '<span class="coach-x">tap to dismiss</span>');
   c.addEventListener('click', () => c.remove());
   $('#screen-game').append(c);
-  setTimeout(() => c.remove(), 9000);
 }
 
 // ---------- The Hot 10 chart overlay (Pass 6) ----------
