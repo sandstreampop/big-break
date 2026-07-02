@@ -405,6 +405,18 @@ body {
 .trades-row span { display: block; color: var(--dim); font-size: 11px; margin-top: 1px; font-style: italic; }
 .ending-press { background: #17131f; border: 1px solid #2c2540; border-radius: 12px; padding: 10px 12px; }
 
+/* DM inbox */
+.inbox { display: flex; flex-direction: column; gap: 8px; }
+.dm-bubble {
+  background: #1e2a38;
+  border: 1px solid #2a3d52;
+  border-radius: 14px 14px 14px 4px;
+  padding: 9px 12px;
+  max-width: 94%;
+}
+.dm-from { font-size: 11px; font-weight: 800; color: #7fc4ff; margin-bottom: 3px; }
+.dm-text { font-size: 13px; line-height: 1.4; }
+
 .delta-chips { display: flex; flex-wrap: wrap; gap: 7px; }
 .chip {
   font-size: 12.5px; font-weight: 700;

@@ -14,6 +14,7 @@ import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
 import { generateHeadlines } from './headlines.js';
 import { offerGenres, genreById } from './data/genres.js';
+import { generateDMs } from './dms.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
@@ -697,7 +698,7 @@ function actInterstitial(step) {
   for (const n of step.notes || []) box.append(el('p', 'upkeep-note', `💸 ${n}`));
 
   // The Trades: procedural press about YOUR run (Pass 14)
-  const headlines = generateHeadlines(run);
+  const headlines = generateHeadlines(run, 2);
   if (headlines.length) {
     const paper = el('div', 'trades');
     paper.append(el('div', 'trades-head', '📰 MEANWHILE, IN THE TRADES'));
@@ -705,6 +706,19 @@ function actInterstitial(step) {
       paper.append(el('div', 'trades-row', `<b>${h.text}</b><span>— ${h.src}</span>`));
     }
     box.append(paper);
+  }
+  // The inbox: people from your run remember you (Pass 22)
+  const dms = generateDMs(run, 2);
+  if (dms.length) {
+    const inbox = el('div', 'inbox');
+    inbox.append(el('div', 'trades-head', '💬 YOUR PHONE, MEANWHILE'));
+    for (const dm of dms) {
+      const bubble = el('div', 'dm-bubble');
+      bubble.append(el('div', 'dm-from', dm.from));
+      bubble.append(el('div', 'dm-text', dm.text));
+      inbox.append(bubble);
+    }
+    box.append(inbox);
   }
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);

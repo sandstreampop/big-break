@@ -1,0 +1,58 @@
+// The DM inbox: between acts, people from your run text you. Every message
+// is gated on actual run state (flags, gear, rivalry, history), so it reads
+// as memory, not filler. Seeded like headlines for daily consistency.
+
+import { mulberry32 } from './engine.js';
+import { rivalById } from './data/rivals.js';
+
+export function generateDMs(state, count = 2) {
+  const rival = rivalById(state.rival);
+  const flags = state.flags || [];
+  const pool = [];
+  const add = (cond, from, text) => { if (cond) pool.push({ from, text }); };
+
+  add(flags.includes('debt'), 'Curtis',
+    'Checking in! Balance unchanged. No pressure. The clipboard and I hope the music is going well. It would be good for everyone if the music went well.');
+  add(state.money < 0 && !flags.includes('debt'), 'Your bank (automated)',
+    'Your account balance is: creative. Reply STOP to stop receiving reality.');
+  add(flags.includes('keyholder'), 'Todd',
+    'hey. someone left the reverb — I mean walk-in — open again. also u still work here technically? asking for corporate');
+  add(flags.includes('union_card'), 'Local 47-adjacent',
+    'REMINDER: monthly meeting Tues. Agenda: parking validation (contd.), scale rates, parking validation (new business).');
+  add(flags.includes('song_sold'), 'That producer',
+    'the song’s doing numbers. no hard feelings about the door thing, right? doors everywhere. plenty of doors.');
+  add(flags.includes('song_growing'), 'You (note to self, 3:12 a.m.)',
+    'don’t let anyone touch the ending. the ending is the whole door.');
+  add(flags.includes('song_finished'), 'The vocal coach',
+    'I heard it. You walked through. — no reply necessary, obviously');
+  add(flags.includes('grounded'), 'Someone who loves you',
+    'saw a kazoo in a shop window and thought of you. proud of you. eat something green.');
+  add(state.accessories?.includes('managers_card'), 'Dario',
+    'big things cooking. HUGE. can’t say more. also did my 10% land weird last month? ignore that. HUGE things.');
+  add(state.accessories?.includes('energy_drink'), 'GRIND™ Brand Team',
+    'Reminder: per section 4.2, the hat must appear in all photos. We noticed a hatless photo. We are not angry. We are GRIND™.');
+  add((state.rivalry ?? 3) >= 7, rival.name,
+    'heard your new stuff. it’s fine. anyway I booked the room you wanted. the big one. see you around, champ.');
+  add((state.rivalry ?? 3) <= 1, rival.name,
+    'crowd tonight was singing YOUR song between sets. thought you’d want to know. proud of you, weirdo.');
+  add(state.swappedInstrument, 'The superfan',
+    'guitar update: I told my mom it went to someone going somewhere. she cried. no pressure!! (some pressure)');
+  add((state.copingSeen || []).includes('coping_75'), 'Brayden (Cold Plunge)',
+    'DISCOMFORT IS A DOOR. also we miss you in the comments. the water misses you. 11% off code: SHIVER');
+  add((state.hustles || []).includes('compost_corner'), 'Craig (Bagpipes)',
+    'compost corner accords hold. a mime tried to claim 11am. I handled it. you owe me one (1) duet.');
+  add(state.hits >= 2, 'Unknown number',
+    'hey it’s the A&R from the thing. loved the thing. do you have more things? call me. don’t text. calls only. it’s a whole thing.');
+  add(state.stats.burnout >= 60, 'Your calendar',
+    'This is a wellness notification. You have 0 (zero) days off scheduled. This notification counts as your day off.');
+  add(state.fame >= 60, 'Mom',
+    'A lady at the store had your face on her shirt?? I told her I made you. She did not believe me. Call your mother.');
+
+  const rng = mulberry32((state.chartSeed || 1) * 53 + state.act * 613);
+  const picks = [];
+  const bag = [...pool];
+  while (picks.length < count && bag.length) {
+    picks.push(bag.splice(Math.floor(rng() * bag.length), 1)[0]);
+  }
+  return picks;
+}
