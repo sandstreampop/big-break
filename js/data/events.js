@@ -173,7 +173,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'Your audience is flies and one very supportive toddler with no money.', effects: { skill: 2, money: 6 } },
           good: { text: 'Steady tips from people pretending not to hurry past the compost.', effects: { skill: 3, money: 30 } },
-          incredible: { text: 'The compost corner becomes “your” corner. Regulars. Requests. An economy.', effects: { skill: 4, money: 65, network: 3, cred: 2 } },
+          incredible: { text: 'The compost corner becomes “your” corner. Regulars. Requests. An economy.', effects: { skill: 4, money: 65, network: 3, cred: 2, grantHustle: 'compost_corner' } },
         },
       },
     },
@@ -230,7 +230,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'Watch time: 41 seconds average. Your mom made it to minute two. Respect.', effects: { creativity: 3, fame: 1 } },
           good: { text: 'A small, intense audience emerges. They use words like “liminal.” They mean it.', effects: { creativity: 5, cred: 4, fame: 3 } },
-          incredible: { text: 'A sleep-podcast licenses it. Thousands of strangers now dream to your drone.', effects: { creativity: 7, cred: 5, fame: 6, money: 80 } },
+          incredible: { text: 'A sleep-podcast licenses it. Thousands of strangers now dream to your drone.', effects: { creativity: 7, cred: 5, fame: 6, money: 80, grantHustle: 'sleep_podcast' } },
         },
       },
     },
@@ -258,7 +258,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'You spend $20 on one (1) cocktail and talk to a man who claims he “discovered” three bands. He didn’t.', effects: { money: -20, network: 1 } },
           good: { text: 'You befriend the losing bands. Losers stick together. Losers become a scene.', effects: { network: 6, cred: 2, money: -10 } },
-          incredible: { text: 'The venue owner likes that you didn’t enter. “Smart. Want a monthly slot?”', effects: { network: 8, cred: 4, fame: 3, addFlag: 'monthly_residency' } },
+          incredible: { text: 'The venue owner likes that you didn’t enter. “Smart. Want a monthly slot?”', effects: { network: 8, cred: 4, fame: 3, grantHustle: 'residency' } },
         },
       },
     },
@@ -1013,8 +1013,8 @@ export const EVENTS = [
         tags: ['deal', 'mainstream'],
         outcomes: {
           bad: { text: 'Your official shirt ships late and slightly haunted (the ink smells). The bootleg remains superior. Respect.', effects: { money: 120, fame: 3, cred: -2 } },
-          good: { text: 'The drop sells out in a day. You are now a phrase people wear. Surreal. Profitable. Surreal.', effects: { money: 300, fame: 8 } },
-          incredible: { text: 'The shirt funds the next tour. The mural artist collabs on the album cover. The mall metaphor completes itself.', effects: { money: 500, fame: 12, network: 4, pathProgress: 1 } },
+          good: { text: 'The drop sells out in a day. You are now a phrase people wear. Surreal. Profitable. Surreal.', effects: { money: 300, fame: 8, grantHustle: 'merch_line' } },
+          incredible: { text: 'The shirt funds the next tour. The mural artist collabs on the album cover. The mall metaphor completes itself.', effects: { money: 500, fame: 12, network: 4, pathProgress: 1, grantHustle: 'merch_line' } },
         },
       },
       right: {
@@ -1071,7 +1071,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'Seven rounds of revisions. The final note is the client’s nephew humming. You mix the hum.', effects: { skill: 3, money: 120, burnout: 6 } },
           good: { text: 'Clean, catchy, done in a day. The client cries a little. Mattress people feel deeply.', effects: { skill: 5, money: 200, cred: 3 } },
-          incredible: { text: 'The jingle becomes regionally iconic. Children sing it. You are the Tri-County Mozart.', effects: { skill: 6, money: 300, cred: 5, fame: 4, pathProgress: 1 } },
+          incredible: { text: 'The jingle becomes regionally iconic. Children sing it. You are the Tri-County Mozart.', effects: { skill: 6, money: 300, cred: 5, fame: 4, pathProgress: 1, grantHustle: 'jingle_residuals' } },
         },
       },
       right: {
@@ -1504,7 +1504,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'You license hook #7. It gets attached to a crypto ad without your knowledge. #7 was your mother’s favorite.', effects: { money: 150, cred: -2 } },
           good: { text: 'One hook out, at a fair rate, with approval rights. The vault appreciates in mystery.', effects: { money: 250, cred: 3, hits: 1 } },
-          incredible: { text: 'The licensed hook becomes a hit and triples the vault’s market value. Publishers now bid on RUMORS of folder names.', effects: { money: 350, cred: 5, hits: 1, network: 4, pathProgress: 1 } },
+          incredible: { text: 'The licensed hook becomes a hit and triples the vault’s market value. Publishers now bid on RUMORS of folder names.', effects: { money: 350, cred: 5, hits: 1, network: 4, pathProgress: 1, grantHustle: 'hook_licenses' } },
         },
       },
     },
@@ -2035,8 +2035,8 @@ export const EVENTS = [
         tags: ['deal', 'mainstream'],
         outcomes: {
           bad: { text: 'The edit makes you say “unlock your flow-state” 14 times. You said it once. Ironically.', effects: { money: 250, cred: -4, fame: 4 } },
-          good: { text: 'Decent course, passive income, mild embarrassment. The session-player retirement plan.', effects: { money: 400, fame: 5, cred: -1 } },
-          incredible: { text: 'The masterclass slaps, actually. Students improve. Money arrives monthly like weather.', effects: { money: 550, fame: 8, cred: 3 } },
+          good: { text: 'Decent course, passive income, mild embarrassment. The session-player retirement plan.', effects: { money: 400, fame: 5, cred: -1, grantHustle: 'masterclass_income' } },
+          incredible: { text: 'The masterclass slaps, actually. Students improve. Money arrives monthly like weather.', effects: { money: 550, fame: 8, cred: 3, grantHustle: 'masterclass_income' } },
         },
       },
       right: {

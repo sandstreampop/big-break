@@ -7,6 +7,7 @@ import { INSTRUMENTS, instrumentById } from './data/instruments.js';
 import { ACCESSORIES, accessoryById } from './data/accessories.js';
 import { randomRival } from './data/rivals.js';
 import { contractById } from './data/contracts.js';
+import { hustleById } from './data/hustles.js';
 
 function contractMods(state) {
   return contractById(state.contract)?.mods || {};
@@ -101,6 +102,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
     tierLog: [],
     cardLog: [],    // [{e: eventId, t: tier, a: act, s: side}] — scrapbook
     contract: null, // signed contract id (see data/contracts.js)
+    hustles: [],    // persistent income sources (see data/hustles.js)
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
     path: null,
@@ -451,6 +453,13 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
 
+  if (effects.grantHustle) {
+    state.hustles = state.hustles || [];
+    if (!state.hustles.includes(effects.grantHustle)) {
+      state.hustles.push(effects.grantHustle);
+      deltas.hustleGained = hustleById(effects.grantHustle);
+    }
+  }
   if (effects.removeGear) state.accessories = state.accessories.filter((a) => a !== effects.removeGear);
   if (effects.grantGear) {
     const acc = resolveGearGrant(state, effects.grantGear, rng);
@@ -540,6 +549,26 @@ function startAct(state, act) {
       notes.push(`${acc.name}: −$${acc.upkeep} upkeep`);
     }
   }
+  for (const id of state.hustles || []) {
+    const h = hustleById(id);
+    if (h) {
+      state.money += h.moneyPerAct;
+      notes.push(`${h.icon} ${h.name}: +$${h.moneyPerAct}`);
+    }
+  }
+  return notes;
+}
+
+// Hustles pay out one final time when the career is evaluated
+export function finalePayout(state) {
+  const notes = [];
+  for (const id of state.hustles || []) {
+    const h = hustleById(id);
+    if (h) {
+      state.money += h.moneyPerAct;
+      notes.push(`${h.icon} ${h.name}: +$${h.moneyPerAct}`);
+    }
+  }
   return notes;
 }
 
@@ -553,6 +582,7 @@ export function checkFailStates(state) {
 // ---------- Finale (spec §7.1) ----------
 
 export function evaluateFinale(state) {
+  finalePayout(state);
   const gates = CONFIG.winGates[state.path];
   const readings = Object.entries(gates).map(([key, target]) => {
     const value = key === 'fame' ? state.fame : key === 'hits' ? state.hits : state.stats[key];
@@ -612,5 +642,6 @@ export function runSummary(state) {
     cardLog: state.cardLog || [],
     daily: state.daily || null,
     contract: state.contract || null,
+    hustles: (state.hustles || []).length,
   };
 }

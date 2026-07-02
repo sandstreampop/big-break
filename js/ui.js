@@ -11,6 +11,7 @@ import * as save from './save.js';
 import { artFor } from './art.js';
 import { buildChart, playerChartInfo } from './charts.js';
 import { CONTRACTS, contractById } from './data/contracts.js';
+import { hustleById } from './data/hustles.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
@@ -235,6 +236,10 @@ function renderHud() {
     const acc = accessoryById(id);
     const active = accActive(acc);
     gearRow.append(el('span', 'gear-chip' + (active ? '' : ' inert'), acc.name + (active ? '' : ' 💤')));
+  }
+  for (const id of run.hustles || []) {
+    const h = hustleById(id);
+    if (h) gearRow.append(el('span', 'gear-chip hustle-chip', `${h.icon} +$${h.moneyPerAct}/act`));
   }
   hud.append(gearRow);
 }
@@ -554,7 +559,12 @@ function showResult(result) {
     chips.append(deltaChip(d.key, d.amount));
   }
   if (result.gearLost) chips.append(el('span', 'chip chip-bad', `− ${result.gearLost.name} (lost!)`));
+  const hustle = result.deltas.hustleGained;
+  if (hustle) {
+    chips.append(el('span', 'chip chip-gear', `${hustle.icon} Side hustle: ${hustle.name} (+$${hustle.moneyPerAct}/act)`));
+  }
   box.append(chips);
+  if (hustle?.blurb) box.append(el('p', 'gear-blurb', `${hustle.icon} ${hustle.blurb}`));
 
   // Gear gained?
   const pending = result.deltas.pendingGear;
