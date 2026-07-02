@@ -782,7 +782,12 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
 
   const armed = encoreArmed;
   const result = engine.resolveSwipe(run, side, engine.stateRng(run), { encore: encoreArmed, bonus: perf?.bonus || 0 });
-  if (perf) result.minigameInfo = perf;
+  if (perf) {
+    result.minigameInfo = perf;
+    // skill echoes: standout performances enter the fiction as flags
+    if (perf.label === 'GOLDEN' && !run.flags.includes('mg_golden')) run.flags.push('mg_golden');
+    if (perf.label === 'BOTCHED' && !run.flags.includes('mg_botched')) run.flags.push('mg_botched');
+  }
   track('swipe', {
     card: result.event?.id, side, tier: result.tier,
     act: run.act, path: run.path || null, tutorial: !!run.tutorial,
