@@ -2026,7 +2026,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'Your first client is a noise duo whose whole thing is feedback. The neighbors write a letter. The letter has SIGNATURES. Shed diplomacy begins.', effects: { money: 90, network: 2, burnout: 3 } },
           good: { text: 'Word spreads through the scene: cheap hours, weird warmth, no clock-watching. The shed calendar fills, the jar fills with it, and every renter owes you one.', effects: { money: 160, network: 5, cred: 2 } },
-          incredible: { text: 'A renter cuts something great in your shed and tells EVERYONE where. “Recorded at The Shed” starts appearing in liner notes like a badge. You now run the scene’s favorite room and its cheapest favor economy.', effects: { money: 240, network: 7, cred: 4 } },
+          incredible: { text: 'A renter cuts something great in your shed and tells EVERYONE where. “Recorded at The Shed” starts appearing in liner notes like a badge. You now run the scene’s favorite room and its cheapest favor economy.', effects: { money: 240, network: 7, cred: 4, grantHustle: 'shed_rental' } },
         },
       },
     },
@@ -2169,7 +2169,7 @@ export const EVENTS = [
         outcomes: {
           bad: { text: 'The chair wall fails immediately — children treat it as siege equipment. Your set gains a seven-year-old heckler with a juice mustache and unlimited confidence. You lose the exchange.', effects: { fame: 2, burnout: 5, chainEventId: 'dc_lastnight' } },
           good: { text: 'Diplomatic triumph: you negotiate set times with a room mom like it’s Yalta. Your half of the hall gets eleven real listeners. The birthday side gets your bass player for “Happy Birthday.” Everyone wins.', effects: { network: 4, cred: 2, burnout: 2, chainEventId: 'dc_lastnight' } },
-          incredible: { text: 'The two events merge organically at cake time — your encore is “Happy Birthday” in three keys with twenty kids and eleven adults singing. A grandmother books you for a wedding ON THE SPOT. Cash deposit. The Dirt Circuit provides.', effects: { network: 5, money: 150, fame: 3, chainEventId: 'dc_lastnight' } },
+          incredible: { text: 'The two events merge organically at cake time — your encore is “Happy Birthday” in three keys with twenty kids and eleven adults singing. A grandmother books you for a wedding ON THE SPOT. Cash deposit. The Dirt Circuit provides.', effects: { network: 5, money: 150, fame: 3, grantHustle: 'wedding_circuit', chainEventId: 'dc_lastnight' } },
         },
       },
     },
@@ -2198,6 +2198,35 @@ export const EVENTS = [
           bad: { text: 'You play it smart and safe, and the room deserved slightly more madness. Still: three nights, three towns, zero deaths. Gary calls it “a flawless run,” asterisk finally silent.', effects: { fame: 4, cred: 3, burnout: 2 } },
           good: { text: 'A measured, professional set — and the discipline reads as class in a room this old. The committee approves. The tour ends with your voice intact and the van pointed home.', effects: { fame: 6, cred: 4, skill: 2, burnout: 1 } },
           incredible: { text: 'You pace the set like a veteran and land the finale with fuel to spare — then play two encores BECAUSE you saved something. The committee’s president shakes your hand slowly. “Most acts arrive empty. You arrived smart.” Booked for next year before load-out.', effects: { fame: 8, cred: 5, skill: 3, network: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_venue_trouble', act: [2, 3], pathAffinity: [], weight: 11,
+    requires: { venueAny: true, moneyMin: 150 },
+    art: 'ev_venue_trouble', context: 'Your home venue. A notice on the door.',
+    prompt: 'The room that made you — YOUR room — has sixty days before the landlord “explores mixed-use retail.” The owner won’t ask for help. The regulars already started a jar. The jar has $34 and a guitar pick in it.',
+    tags: ['network', 'home'],
+    choices: {
+      left: {
+        label: 'Headline the rent-party benefit',
+        governingStats: { network: 0.7, cred: 0.5 },
+        tags: ['live', 'network', 'risky'],
+        outcomes: {
+          bad: { text: 'The benefit draws the faithful — all thirty of them — and clears enough for one month. Not a save. A stay. But the owner cries in the walk-in, and the room limps on with your name on the effort.', effects: { money: -150, cred: 4, network: 3, venueLove: 1 } },
+          good: { text: 'You headline, everyone you’ve ever gigged with plays for free, and the “SAVE THE ROOM” shirts sell three print runs. Rent secured through the year. The chalkboard now reads: EST. WHENEVER — SAVED [this year].', effects: { money: -150, cred: 6, network: 5, fame: 3, venueLove: 2 } },
+          incredible: { text: 'The benefit outgrows the room and spills into the street, which becomes A STORY, which becomes city council attention, which becomes a heritage designation. The landlord’s mixed-use dreams die in committee. The room is SAFE — and its stage now has a plaque with your name misspelled, permanently, beloved.', effects: { money: -150, cred: 8, network: 7, fame: 5, venueLove: 3 } },
+        },
+      },
+      right: {
+        label: 'Quietly cover a month yourself',
+        governingStats: { cred: 0.9 },
+        tags: ['safe', 'home'],
+        outcomes: {
+          bad: { text: 'You slip the owner an envelope “from a fan.” They know. Of course they know — nobody else has envelope money. The month buys time; the secret buys something warmer.', effects: { money: -200, cred: 3, venueLove: 1 } },
+          good: { text: 'The anonymous month becomes an anonymous quarter as two other “fans” — inspired by rumors of the first envelope — do the same. The owner posts a sign: “TO THE ENVELOPES: the coffee is free forever.” Yours always was.', effects: { money: -200, cred: 5, network: 2, venueLove: 2 } },
+          incredible: { text: 'Years from now, the story will surface — the broke musician who covered the room’s rent the month everything almost ended — and it will be told wrong in your favor forever. Tonight it’s simpler: the lights stay on, and the owner nods at you across the bar for one full second. That’s the whole ceremony. It’s enough.', effects: { money: -200, cred: 7, venueLove: 3 } },
         },
       },
     },

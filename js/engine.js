@@ -208,6 +208,7 @@ function meetsRequires(ev, state) {
   if (r.rivalryMin !== undefined && (state.rivalry ?? 0) < r.rivalryMin) return false;
   if (r.rivalryMax !== undefined && (state.rivalry ?? 0) > r.rivalryMax) return false;
   if (r.genreAny && !state.genre) return false;
+  if (r.venueAny && !state.venue) return false;
   if (r.hustleMin !== undefined && (state.hustles || []).length < r.hustleMin) return false;
   if (r.bandMin !== undefined && (state.band || []).length < r.bandMin) return false;
   if (r.bandHas && !(state.band || []).includes(r.bandHas)) return false;
@@ -587,6 +588,9 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     push('rivalry', state.rivalry - before);
   }
 
+  if (effects.venueLove && state.venue) {
+    state.venueLevel = Math.min(3, (state.venueLevel || 0) + effects.venueLove);
+  }
   if (effects.chartTitle) {
     state.chartTitles = state.chartTitles || [];
     state.chartTitles.unshift(effects.chartTitle.replace('{collabArtist}', collabArtistFor(state)));
