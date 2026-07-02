@@ -5123,4 +5123,93 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ RELEASE DAY (the demos in your notebook want out) ═══════════
+  {
+    id: 'a1_first_drop', act: 1, pathAffinity: [], weight: 12,
+    requires: { demoMin: 1 },
+    art: 'ev_first_drop', context: '11:58 p.m. The upload screen.',
+    prompt: 'The demo is done. The internet is free. Your finger hovers over POST. Nobody is waiting for this song, which is either the problem or the entire point.',
+    tags: ['record', 'social'],
+    choices: {
+      left: {
+        label: 'Midnight drop. No warning.',
+        governingStats: { creativity: 0.6, network: 0.6 },
+        tags: ['social', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You post it and immediately find a typo in the title. The song ships anyway, limping slightly, into a world that mostly doesn’t notice. Mostly.', effects: { releaseDemo: 22, fame: 1 } },
+          good: { text: 'It lands the way midnight drops land: three group chats, one “who IS this?”, a slow warm spread. No machine behind it. Just the song, walking.', effects: { releaseDemo: 48, fame: 4, cred: 2 } },
+          incredible: { text: 'By 2 a.m. a playlist curator with insomnia has found it. By 9 a.m. it isn’t yours anymore — it belongs to everyone’s commute.', effects: { releaseDemo: 72, fame: 8, network: 3 } },
+        },
+      },
+      right: {
+        label: 'Not yet. It can be better.',
+        governingStats: { skill: 0.8 },
+        tags: ['studio', 'safe'],
+        outcomes: {
+          bad: { text: 'You open the session to “fix one thing” and unmix it for three hours. You put it back. Version 1 was fine. Version 1 is now version 9.', effects: { polishDemo: 3, burnout: 4, skill: 2 } },
+          good: { text: 'You live with it for a week and the week tells you what’s wrong: eight bars, one mud frequency, gone. The song thanks you.', effects: { polishDemo: 8, skill: 3 } },
+          incredible: { text: 'You strip it back to the first take and THERE it is — the thing the demo was hiding. Restraint, it turns out, is a producer.', effects: { polishDemo: 14, skill: 3, creativity: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_ar_listen', act: 2, pathAffinity: [], weight: 12,
+    requires: { demoMin: 1 },
+    art: 'ev_ar_listen', context: 'A label office with a famous couch',
+    prompt: 'An A&R agreed to hear “the one.” She listens with her eyes closed, which is either reverence or a nap. Her assistant mouths: “this is huge.” The assistant mouths that to everyone.',
+    tags: ['deal', 'record'],
+    choices: {
+      left: {
+        label: 'Give them the song',
+        governingStats: { network: 0.9 },
+        tags: ['deal', 'mainstream'],
+        outcomes: {
+          bad: { text: 'They pass — “love the energy, don’t hear a single.” On the elevator down you realize the single is the B-side they didn’t play. The song comes home with you, slightly bruised, and ships anyway.', effects: { releaseDemo: 30, network: 2, burnout: 3 } },
+          good: { text: 'A one-song deal with real distribution. Their machine puts your song places you couldn’t reach with a ladder.', effects: { releaseDemo: 62, money: 200, network: 3 } },
+          incredible: { text: 'She opens her eyes before the chorus hits and says “stop the meeting.” The rollout gets a BUDGET. Billboards. Your song, wearing a suit.', effects: { releaseDemo: 85, money: 380, network: 5, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Walk. Release it yourself.',
+        governingStats: { cred: 0.8, creativity: 0.4 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'Your self-release strategy is a post that says “new song :)”. The song deserves a publicist. The song gets a shrug and a slow burn.', effects: { releaseDemo: 28, cred: 3 } },
+          good: { text: 'You ship it on your own terms — masters yours, splits clean, art by a friend. The scene notices WHO didn’t sign. That’s marketing too.', effects: { releaseDemo: 52, cred: 5, fame: 2 } },
+          incredible: { text: 'The self-release does numbers the label quoted you for. The A&R’s assistant DMs: “between us — she still plays it.” You own every note.', effects: { releaseDemo: 70, cred: 7, money: 160, fame: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_last_single', act: 3, pathAffinity: [], weight: 13,
+    requires: { demoMin: 1 },
+    art: 'ev_last_single', context: 'The vault. One song left in it.',
+    prompt: 'There’s one more song in the notebook and one act left in the career. Every artist gets a finite number of releases. You can hear this one ticking.',
+    tags: ['record'],
+    choices: {
+      left: {
+        label: 'Ship it now. Full send.',
+        governingStats: { network: 0.6, creativity: 0.6 },
+        tags: ['record', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'The rollout hits a news cycle that eats everything. The song ships into the noise, elbows out a little space, survives on merit alone.', effects: { releaseDemo: 40, fame: 3, burnout: 3 } },
+          good: { text: 'Full send: premiere, visualizer, the good mastering. The song arrives like it has somewhere to be.', effects: { releaseDemo: 66, fame: 6 } },
+          incredible: { text: 'Everything you’ve built this whole run shows up for one song — every contact, every favor, every room you played. THIS is what a career is FOR.', effects: { releaseDemo: 90, fame: 10, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Hold it. Legacies need a vault.',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'You hold it so long it starts holding YOU. The unreleased song becomes a superstition. You knock on the vault twice before bed.', effects: { polishDemo: 4, creativity: 2, burnout: 3 } },
+          good: { text: 'You master it, sleeve it, and file it with instructions. Some songs are for the estate. The mystique compounds daily.', effects: { polishDemo: 10, cred: 5 } },
+          incredible: { text: 'Word leaks that a finished, unreleased masterpiece exists. The MYTH of the song does more for you than most releases do. The vault glows.', effects: { polishDemo: 16, cred: 7, fame: 4 } },
+        },
+      },
+    },
+  },
 ];

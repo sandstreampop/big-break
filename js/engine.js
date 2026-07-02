@@ -349,6 +349,8 @@ function meetsRequires(ev, state) {
   if (r.bandMin !== undefined && (state.band || []).length < r.bandMin) return false;
   if (r.bandMax !== undefined && (state.band || []).length > r.bandMax) return false;
   if (r.bandHas && !(state.band || []).includes(r.bandHas)) return false;
+  if (r.demoMin !== undefined && (state.songs || []).filter((s) => s.status === 'demo').length < r.demoMin) return false;
+  if (r.chartingMin !== undefined && (state.songs || []).filter((s) => s.status === 'charting' && s.pos).length < r.chartingMin) return false;
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');
@@ -754,6 +756,26 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
       quality: tierQ, origin: ev?.id || null, status: 'charting', hype: 62,
     });
     (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: s.crowned });
+  }
+  if (effects.releaseDemo) {
+    // Release day: your best demo goes to the chart. The number is the hype
+    // it ships with — the fiction (tier) decides how loud the drop lands.
+    const demos = (state.songs || []).filter((s) => s.status === 'demo');
+    if (demos.length) {
+      const best = demos.slice().sort((a, b) => b.quality - a.quality)[0];
+      const hype = typeof effects.releaseDemo === 'number' ? effects.releaseDemo : 55;
+      releaseSong(state, best.id, hype);
+      (deltas.songDebuts = deltas.songDebuts || []).push({ title: best.title, pos: best.pos, hit: best.crowned, released: true });
+    }
+  }
+  if (effects.polishDemo) {
+    // The vault appreciates: unreleased material gets better
+    const demos = (state.songs || []).filter((s) => s.status === 'demo');
+    if (demos.length) {
+      const best = demos.slice().sort((a, b) => b.quality - a.quality)[0];
+      best.quality = clamp(best.quality + effects.polishDemo, 1, 100);
+      deltas.songPolished = { title: best.title, quality: best.quality, gain: effects.polishDemo };
+    }
   }
   if (effects.writeSong) {
     // Songwriting writes a REAL song: a demo lands in the notebook. Quality
