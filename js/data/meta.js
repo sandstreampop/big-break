@@ -71,8 +71,14 @@ export const ENDINGS = {
 };
 
 // ---- Career Wall (spec §9) ----
+// kinds: instrument | accessory | pack | contract | perk
+// Perks are always-on run-start bonuses (see engine.newRun).
 export const WALL_ITEMS = [
   // Tier 1
+  { id: 'perk_savings', tier: 1, cost: 20, kind: 'perk', target: 'savings',
+    name: 'Perk: Modest Savings', desc: 'Start every run with +$120. Compound interest, but for swiping.' },
+  { id: 'perk_demo', tier: 1, cost: 25, kind: 'perk', target: 'demo',
+    name: 'Perk: Demo In Pocket', desc: 'Start every run with a finished demo (unlocks demo-gated moments).' },
   { id: 'acc_ring_light', tier: 1, cost: 25, kind: 'accessory', target: 'ring_light',
     name: 'Ring Light', desc: 'Accessory: Social/Fame choices +10. You now have a good side.' },
   { id: 'acc_tour_van', tier: 1, cost: 30, kind: 'accessory', target: 'tour_van',
@@ -86,6 +92,10 @@ export const WALL_ITEMS = [
     name: 'Sampler / MPC', desc: 'Instrument: +Creativity +Network, Studio +8. Sixteen pads, infinite lawsuits.' },
   { id: 'acc_rolodex', tier: 2, cost: 50, kind: 'accessory', target: 'session_rolodex',
     name: 'Session Rolodex', desc: 'Accessory: Network/Deal/Studio +8. Physical. Alphabetized. Feared.' },
+  { id: 'perk_calluses', tier: 2, cost: 35, kind: 'perk', target: 'calluses',
+    name: 'Perk: Calluses', desc: 'Start every run with +6 Skill. The woodshed remembers.' },
+  { id: 'perk_couch', tier: 2, cost: 35, kind: 'perk', target: 'couch',
+    name: 'Perk: Friend’s Couch Network', desc: 'Start every run with +6 Network. Every city, a couch.' },
   { id: 'ct_one_take', tier: 2, cost: 40, kind: 'contract', target: 'one_take',
     name: 'Contract: One-Take Wonder', desc: 'No Encores, wilder luck. ×1.4 LP. Tape is rolling.' },
   { id: 'ct_imposter', tier: 2, cost: 40, kind: 'contract', target: 'imposter',
@@ -99,6 +109,10 @@ export const WALL_ITEMS = [
     name: 'Contract: Overnight Success', desc: 'Acts run 6/9/6 cards. ×1.6 LP. Same gates, fewer chances.' },
   { id: 'ct_kazoo', tier: 3, cost: 65, kind: 'contract', target: 'kazoo_clause',
     name: 'Contract: The Kazoo Clause', desc: 'Kazoo only. ×2.0 LP. Sign here. SIGN HERE.' },
+  { id: 'perk_therapist', tier: 3, cost: 50, kind: 'perk', target: 'therapist',
+    name: 'Perk: A Good Therapist', desc: 'Burnout relief is 25% stronger, forever. Worth every copay.' },
+  { id: 'perk_crowdwork', tier: 3, cost: 55, kind: 'perk', target: 'crowdwork',
+    name: 'Perk: Crowd Work', desc: 'Encore cap raised to 3. The hot streak gets a third act.' },
 ];
 
 // ---- Trophy Room (spec §9) ----
@@ -170,4 +184,10 @@ export const TROPHIES = [
   { id: 'all_paths', name: 'EGOT-Adjacent', icon: '👑',
     desc: 'Achieve all three Success endings across your career. Touch grass, superstar.',
     special: 'all_paths' },
+  { id: 'daily_3', name: 'Regular', icon: '☕',
+    desc: 'Play the Daily Grind on three different days. The barista knows your order.',
+    special: 'daily_3' },
+  { id: 'wall_5', name: 'Patron Of The Arts (You)', icon: '🧱',
+    desc: 'Buy five Career Wall unlocks. Investing in yourself, with yourself.',
+    special: 'wall_5' },
 ];

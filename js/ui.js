@@ -158,7 +158,7 @@ function renderInstrumentRow(s, offered, seed, daily, getContract) {
     card.append(el('p', 'pick-quirk', `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`));
     card.addEventListener('click', () => {
       sfx.commit();
-      run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1));
+      run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
       run.seed = seed + 2;
       run.daily = daily ? todayStr() : null;
       const contract = getContract();
@@ -780,12 +780,16 @@ function finishMeta(summary, lp) {
   meta.runHistory = meta.runHistory.slice(0, 10);
 
   const earned = [];
+  const specials = {
+    all_paths: () => ['megastar', 'studio', 'hitfactory'].every((p) => meta.successPaths.includes(p)),
+    daily_3: () => Object.keys(meta.dailyResults || {}).length >= 3,
+    wall_5: () => meta.unlockedWall.length >= 5,
+  };
   for (const t of TROPHIES) {
     if (meta.trophies.includes(t.id)) continue;
     let ok = false;
-    if (t.special === 'all_paths') {
-      ok = ['megastar', 'studio', 'hitfactory'].every((p) => meta.successPaths.includes(p));
-    } else if (t.check) ok = t.check(summary);
+    if (t.special) ok = !!specials[t.special]?.();
+    else if (t.check) ok = t.check(summary);
     if (ok) { meta.trophies.push(t.id); earned.push(t); }
   }
   save.saveMeta(meta);

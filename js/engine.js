@@ -71,7 +71,7 @@ export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
   return picks;
 }
 
-export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
+export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = []) {
   const inst = instrumentById(instrumentId);
   const state = {
     version: 1,
@@ -120,6 +120,12 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random) {
       if (k in state.stats) state.stats[k] = clamp(state.stats[k] + v, 1, 100);
     }
   }
+  // Career Wall perks: always-on run-start bonuses
+  state.perks = perks;
+  if (perks.includes('savings')) state.money += 120;
+  if (perks.includes('demo') && !state.flags.includes('demo_in_pocket')) state.flags.push('demo_in_pocket');
+  if (perks.includes('calluses')) state.stats.skill = clamp(state.stats.skill + 6, 1, 100);
+  if (perks.includes('couch')) state.stats.network = clamp(state.stats.network + 6, 1, 100);
   return state;
 }
 
@@ -317,7 +323,8 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   (state.tierLog = state.tierLog || []).push(tier);
   (state.cardLog = state.cardLog || []).push({ e: ev.id, t: tier, a: state.act, s: side });
   let encoreEarned = false;
-  if (tier === 'incredible' && (state.encore || 0) < CONFIG.encoreCap && !contractMods(state).disableEncore) {
+  const encoreCap = (state.perks || []).includes('crowdwork') ? CONFIG.encoreCap + 1 : CONFIG.encoreCap;
+  if (tier === 'incredible' && (state.encore || 0) < encoreCap && !contractMods(state).disableEncore) {
     state.encore = (state.encore || 0) + 1;
     encoreEarned = true;
   }
@@ -413,6 +420,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     if (hooks.liveBurnout && tags.includes('live')) v += hooks.liveBurnout;
     if (v > 0 && cMods.burnoutGainMult) v *= cMods.burnoutGainMult;
     if (v < 0 && cMods.burnoutHealMult) v *= cMods.burnoutHealMult;
+    if (v < 0 && (state.perks || []).includes('therapist')) v *= 1.25;
     v = Math.round(v);
     if (v) {
       const before = state.stats.burnout;
