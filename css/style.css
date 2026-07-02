@@ -740,6 +740,17 @@ body.big-text #app { zoom: 1.18; }
 /* ---------- Career Wall / Trophies ---------- */
 .wall-list { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; }
 .wall-tier { font-size: 13px; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; margin-top: 8px; }
+.wall-balance {
+  position: sticky; top: 0; z-index: 5;
+  margin: 0 -16px; padding: 8px 16px 12px;
+  background: linear-gradient(180deg, var(--bg) 72%, rgba(18, 16, 26, 0));
+  font-size: 15px; color: var(--accent);
+}
+/* unaffordable: quiet, not ghosted-illegible */
+.wall-item .btn.disabled {
+  opacity: 1; color: var(--dim);
+  background: var(--bg2); border-color: #3b3352;
+}
 .wall-item {
   display: flex; align-items: center; gap: 12px;
   background: var(--card); border: 1px solid #372d4e;

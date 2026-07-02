@@ -1616,9 +1616,12 @@ function showScrapbook(summary) {
 
 function renderWall() {
   const s = $('#screen-wall');
+  const keepScroll = s.scrollTop;
   s.innerHTML = '';
   s.append(el('h2', 'screen-head', 'The Career Wall'));
-  s.append(el('p', 'screen-sub', `Spend Legacy Points to widen the random pools. Balance: <b>${meta.lp} LP</b>`));
+  s.append(el('p', 'screen-sub', 'Spend Legacy Points to widen the random pools.'));
+  // balance rides along while you shop
+  s.append(el('div', 'wall-balance', `Balance: <b>${meta.lp} LP</b>`));
 
   const list = el('div', 'wall-list');
   let lastTier = 0;
@@ -1652,6 +1655,7 @@ function renderWall() {
   menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
   s.append(menu);
   show('#screen-wall');
+  s.scrollTop = keepScroll;
 }
 
 // ---------- Trophy Room ----------
