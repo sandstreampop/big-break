@@ -1826,6 +1826,35 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a2_merch_line', act: [1, 2], pathAffinity: [], weight: 9,
+    art: 'ev_merchline', context: 'Post-show. The line reaches the door.',
+    prompt: 'Best set in weeks, and now forty people want a piece of it — shirts, tapes, the pin somebody’s girlfriend designed. The card reader has 12% battery. You ARE the point of sale.',
+    tags: ['live', 'fame'],
+    choices: {
+      left: {
+        label: 'Run the table yourself',
+        minigame: 'merch',
+        governingStats: { network: 0.6, skill: 0.5 },
+        tags: ['fame', 'risky'],
+        outcomes: {
+          bad: { text: 'You hand a medium to a large, a tape to a vinyl person, and someone’s change to someone else entirely. The line forgives; the spreadsheet does not.', effects: { money: 60, fame: 2, burnout: 5 } },
+          good: { text: 'You move product like a deli counter veteran — name, size, tap, next — and every sale comes with eight seconds of eye contact that fans will describe as “a moment.”', effects: { money: 140, fame: 4, network: 3, burnout: 3 } },
+          incredible: { text: 'The table SELLS OUT. Every shirt, every tape, the display pin off the board. The last customer buys the tablecloth. You sign it. That tablecloth will outlive everyone here.', effects: { money: 240, fame: 6, network: 4, burnout: 3 } },
+        },
+      },
+      right: {
+        label: 'Sign things, let the superfan run cash',
+        governingStats: { network: 0.9 },
+        tags: ['network', 'safe'],
+        outcomes: {
+          bad: { text: 'The superfan’s till math is enthusiastic rather than accurate. You break even on the night and gain one extremely loyal accountant of chaos.', effects: { money: 20, network: 3, fame: 2 } },
+          good: { text: 'You shake every hand while the superfan runs the drawer like a casino pit boss. Slower money, deeper roots — half this line will come to the NEXT three shows.', effects: { money: 80, network: 5, fame: 3 } },
+          incredible: { text: 'The superfan turns out to run inventory at a warehouse club and reorganizes your entire merch operation between customers. You leave with money, a mailing list, and a volunteer COO.', effects: { money: 120, network: 7, fame: 3, cred: 2 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_soundcheck_hell', act: [1, 2], pathAffinity: [], weight: 9,
     art: 'ev_checkhell', context: 'Soundcheck. The board is “vintage.” The sound guy is “at lunch.”',
     prompt: 'Every channel on this desk has a personality disorder and the monitors squeal if you look at them with intent. Doors in forty minutes. The room is yours to tame — or to flee.',

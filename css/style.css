@@ -1005,3 +1005,17 @@ body.big-text #app { zoom: 1.18; }
 @media (prefers-reduced-motion: reduce) { .mg-strip-hot { animation: none; } }
 .mg-strip-burnt { background: #4a2030; border-color: var(--bad); opacity: .6; }
 .mg-strip-wrong { border-color: var(--accent); background: #3b2b1c; }
+
+/* Merch Rush */
+.mg-ask { text-align: center; font-size: 16px; font-weight: 700; min-height: 24px; }
+.mg-ask b { font-size: 22px; }
+.mg-merch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.mg-item {
+  appearance: none; cursor: pointer; font-family: inherit;
+  background: #1c1729; border: 1px solid #3b3352; border-radius: 14px;
+  font-size: 32px; padding: 16px 0;
+  transition: transform .08s;
+}
+.mg-item:active { transform: scale(.93); }
+.mg-item-yes { background: #1e3c2b; border-color: var(--good); }
+.mg-item-no { background: #4a2030; border-color: var(--bad); }
