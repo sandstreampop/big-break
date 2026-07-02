@@ -2090,6 +2090,65 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a2_tv_scout', act: 2, pathAffinity: [], weight: 10,
+    requires: { fameMin: 30, flagsNone: ['tv_booked'] },
+    art: 'ev_tv_scout', context: 'After the show. A card that just says a network logo.',
+    prompt: '“I book music for the late show. The couch show. THE couch.” She watched your whole set from the back with the stillness of someone doing math. “We have a cancellation in a few weeks. Do you have a television song?” Nobody has ever asked you this.',
+    tags: ['fame', 'deal'],
+    choices: {
+      left: {
+        label: '“Yes.” (You’ll figure out which one.)',
+        governingStats: { network: 0.8 },
+        tags: ['fame', 'risky'],
+        outcomes: {
+          bad: { text: 'You say yes so fast she laughs. The booking is real; the panic is realer. You now own three weeks of deciding which four minutes of your life four million people will see.', effects: { network: 3, fame: 2, burnout: 4, addFlag: 'tv_booked' } },
+          good: { text: 'You say yes like you’ve been expecting the question since childhood, which — privately — you have. She emails the segment producer from the parking lot. It’s happening. THE couch.', effects: { network: 5, fame: 3, burnout: 2, addFlag: 'tv_booked' } },
+          incredible: { text: 'Your yes comes with a pitch — THE song, THE arrangement, a horn idea that makes her put her phone away. “That’s the segment,” she says. She’s already blocking it in her head. Television has a shape and you just fit it.', effects: { network: 6, fame: 4, creativity: 2, addFlag: 'tv_booked' } },
+        },
+      },
+      right: {
+        label: '“Not yet. Come back when I do.”',
+        governingStats: { cred: 0.9 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'She blinks — nobody says not-yet to the couch. The card stays in your pocket, slowly becoming either a story of integrity or a story of an idiot, depending on how the year goes.', effects: { cred: 4, burnout: -2 } },
+          good: { text: '“Honest,” she says, and means it as currency. The not-yet becomes industry lore in miniature — the booker herself retells it. When you ARE ready, you won’t need the card. She’ll call you.', effects: { cred: 6, network: 3 } },
+          incredible: { text: 'Your not-yet impresses her so thoroughly she books you for the SEASON FINALE instead — “when the song is ready, that’s the slot.” Bigger stage, later date, your terms. Patience, televised.', effects: { cred: 7, network: 4, fame: 3, addFlag: 'tv_booked' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_tv_taping', act: 3, pathAffinity: [], weight: 15,
+    requires: { flagsAll: ['tv_booked'] },
+    art: 'ev_tv_taping', context: 'Studio 6H-adjacent. The couch is RIGHT THERE.',
+    prompt: 'Taping day. Four minutes, one take, four million people, a floor manager counting down with fingers. The host mispronounced your name in rehearsal and apologized with his whole body. This is the four minutes.',
+    tags: ['live', 'fame'],
+    choices: {
+      left: {
+        label: 'Play it. The four minutes.',
+        minigame: 'crowd',
+        governingStats: { skill: 0.7, network: 0.5 },
+        tags: ['live', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'Take one is fine. Television-fine, which is to say: forgettable. The clip does modest numbers, your mom’s comment does better. But you played the couch show, and the couch show plays you forever after in bios: “as seen on.”', effects: { fame: 8, network: 3, burnout: 5 } },
+          good: { text: 'The four minutes LAND — tight, warm, television-shaped without losing your shape. The host waves you to the couch, unplanned, and mispronounces your name with such affection it becomes a bit. The clip travels all week.', effects: { fame: 15, network: 5, cred: 3, burnout: 4 } },
+          incredible: { text: 'Something happens in minute three — the room forgets it’s a taping, the host stands up, a camera operator is visibly weeping into her viewfinder. The clip is the number-one video in the country by morning. Your name (pronounced correctly, now, by everyone) means something it didn’t yesterday.', effects: { fame: 25, network: 7, cred: 4, burnout: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Swap the single for the risky one, live',
+        governingStats: { creativity: 0.8, cred: 0.4 },
+        tags: ['live', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The segment producer’s headset audibly crackles when you start the WRONG song. It half-lands — too strange for the couch, too televised for the fans. Both audiences file confused reports. The booker sends one raised-eyebrow emoji.', effects: { fame: 5, cred: 3, creativity: 2, burnout: 5 } },
+          good: { text: 'You bet four minutes of national television on the weird one — and it holds. Not a smash: a MARK. The people who get it will never un-get it, and they’re exactly the people you wanted. The booker’s email: “not what I booked. better.”', effects: { fame: 10, cred: 6, creativity: 4, burnout: 4 } },
+          incredible: { text: 'The risky song, live, uncut, becomes one of those performances — the kind that gets written about as a moment TV “doesn’t make anymore.” It made one. It was you. The booker frames the setlist you ignored.', effects: { fame: 18, cred: 8, creativity: 5, burnout: 4, pathProgress: 1 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_genre_summit', act: 2, pathAffinity: [], weight: 9,
     requires: { genreAny: true },
     art: 'ev_summit', context: 'The back room of the record store. Neutral ground.',
