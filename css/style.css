@@ -1030,6 +1030,16 @@ body.big-text #app { zoom: 1.18; }
 .mg-word-hit { background: #1e3c2b; color: var(--good); border-color: var(--good); box-shadow: none; animation-play-state: paused; }
 .mg-word-sting { background: #4a2030; color: var(--bad); border-color: var(--bad); animation-play-state: paused; font-style: normal; }
 
+/* The Prompter */
+.mg-prompter-lead { font-size: 16px; font-weight: 700; font-style: italic; text-align: center; min-height: 44px; padding: 4px 6px; }
+.mg-prompter-opts { display: flex; flex-direction: column; gap: 7px; }
+.mg-prompter-opt {
+  appearance: none; cursor: pointer; font-family: inherit;
+  background: #241e33; border: 1px solid #4b4066; color: var(--ink);
+  border-radius: 10px; padding: 10px 12px; font-size: 14px; font-weight: 650;
+  text-align: center;
+}
+
 /* The Setlist */
 .mg-setlist { display: flex; flex-direction: column; gap: 7px; }
 .mg-set-chip {

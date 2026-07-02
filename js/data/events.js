@@ -675,6 +675,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Take the legends slot',
+        minigame: 'prompter',
         governingStats: { network: 0.7, skill: 0.6 },
         tags: ['live', 'mainstream'],
         outcomes: {
@@ -4197,6 +4198,7 @@ export const EVENTS = [
     choices: {
       left: {
         label: 'Safe medley, hit the marks',
+        minigame: 'prompter',
         governingStats: { skill: 1.0 },
         tags: ['live', 'mainstream', 'safe'],
         outcomes: {

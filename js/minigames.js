@@ -1102,3 +1102,69 @@ register('setlist', {
     }
   },
 });
+
+// ═══════════ THE PROMPTER — mid-song, the next line is GONE (taste under fire) ═══════════
+// Same taste rule Idea Grab teaches: the vivid, specific line is yours; the
+// clichés are everyone's. Five lines, one blank each, the band won't stop.
+const PR_LINES = [
+  { lead: 'We kissed in the ___ of the parking lot', right: 'cathedral light', wrong: ['moonlight, baby', 'middle, tonight'] },
+  { lead: 'My heart is a ___ nobody returns', right: 'library book', wrong: ['burning fire', 'lonely road'] },
+  { lead: 'You left like a ___ in a rented house', right: 'security deposit', wrong: ['ghost at night', 'summer rain'] },
+  { lead: 'Love is just ___ with better lighting', right: 'a soundcheck', wrong: ['a battlefield', 'a fire burning'] },
+  { lead: 'I keep your voice in the ___ drawer', right: 'takeout-menu', wrong: ['top secret', 'broken heart'] },
+  { lead: 'We danced like the ___ was watching', right: 'landlord', wrong: ['whole world', 'night sky'] },
+  { lead: 'Missing you is my ___ now', right: 'part-time job', wrong: ['whole life', 'burning flame'] },
+  { lead: 'Your goodbye sounded like a ___', right: 'dial tone from 2009', wrong: ['broken dream', 'sad, sad song'] },
+];
+register('prompter', {
+  name: 'The Prompter', icon: '🎤',
+  how: 'Mid-song and the next line is GONE. Five lines, one blank each — tap the line YOU would have written: the vivid, specific one. The clichés belong to everyone else. Three seconds a line. The band won’t stop.',
+  run(stage, ctx, done) {
+    const lines = [...PR_LINES].sort(() => Math.random() - 0.5).slice(0, 5);
+    const label = el('div', 'mg-take-label', 'LINE 1');
+    const lead = el('div', 'mg-prompter-lead', '');
+    const opts = el('div', 'mg-prompter-opts');
+    const dots = el('div', 'mg-dots', '○ ○ ○ ○ ○');
+    stage.append(label, lead, opts, dots, el('div', 'mg-hint', 'tap the line you’d have written'));
+
+    let i = 0, score = 0, over = false, timer = null;
+    const results = [];
+
+    function paintDots() {
+      dots.textContent = Array.from({ length: 5 }, (_, k) =>
+        k < results.length ? (results[k] ? '●' : '✕') : '○').join(' ');
+    }
+
+    function next() {
+      if (over) return;
+      if (i >= lines.length) { over = true; done(score / lines.length); return; }
+      const L = lines[i];
+      label.textContent = `LINE ${i + 1}`;
+      lead.textContent = `“${L.lead}…”`;
+      opts.innerHTML = '';
+      const options = [L.right, ...L.wrong].sort(() => Math.random() - 0.5);
+      let answered = false;
+      const answer = (ok) => {
+        if (answered || over) return;
+        answered = true;
+        clearTimeout(timer);
+        results.push(ok);
+        if (ok) { score += 1; fx.hit(); } else { fx.miss(); }
+        paintDots();
+        i += 1;
+        setTimeout(next, 260);
+      };
+      for (const o of options) {
+        const b = el('button', 'mg-prompter-opt', o);
+        b.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          b.classList.add(o === L.right ? 'mg-word-hit' : 'mg-word-sting');
+          answer(o === L.right);
+        });
+        opts.append(b);
+      }
+      timer = setTimeout(() => answer(false), 3200); // the band moved on
+    }
+    next();
+  },
+});
