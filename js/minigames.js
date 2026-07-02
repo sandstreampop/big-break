@@ -81,14 +81,17 @@ export function playMinigame(id, ctx = {}) {
       const stage = el('div', 'mg-stage');
       // burnout bleeds into your hands: past 60 the whole stage trembles
       const burnout = ctx.run?.stats?.burnout || 0;
-      if (burnout >= 60) {
+      if (burnout >= 60 && !ctx.relaxed) {
         stage.classList.add('mg-shaky');
         box.append(el('div', 'mg-shaky-note', '🔥 Your hands are shaking.'));
       }
       box.append(stage);
       // hard cap: no game may hold the run hostage
       const cap = setTimeout(() => finish(0.2), 32000);
-      def.run(stage, ctx, (score) => { clearTimeout(cap); finish(Math.max(0, Math.min(1, score))); });
+      // relaxed mode: a gentler curve (score lifted toward the middle) —
+      // GOLDEN still requires real play; BOTCHED requires really missing
+      const soften = (s) => (ctx.relaxed ? Math.min(1, s * 0.85 + 0.18) : s);
+      def.run(stage, ctx, (score) => { clearTimeout(cap); finish(soften(Math.max(0, Math.min(1, score)))); });
     });
     box.append(play);
     if (ctx.noSkip) {

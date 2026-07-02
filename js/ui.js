@@ -765,7 +765,7 @@ function commitSwipe(side, dx = 0, dy = 0) {
     currentCard = null; // freeze the card while the minigame runs
     card.style.transform = ''; // snap back from any drag offset
     const mgMods = contractById(run.contract)?.mods || {};
-    playMinigame(mgId, { run, rivalName: rivalById(run.rival)?.name, noSkip: !!mgMods.forceMinigames }).then(({ score, verdict }) => {
+    playMinigame(mgId, { run, rivalName: rivalById(run.rival)?.name, noSkip: !!mgMods.forceMinigames, relaxed: meta.settings.relaxedMinigames === true }).then(({ score, verdict }) => {
       // instrument hook: some gear makes performance moments play easier
       const mgHook = score == null ? 0 : (instrumentById(run.instrument)?.quirk?.hooks?.mgBonus || 0);
       let bonus = verdict.bonus + mgHook;
@@ -1971,6 +1971,9 @@ function renderSettings() {
   });
   toggleRow('Minigames', meta.settings.minigames !== false, () => {
     meta.settings.minigames = meta.settings.minigames === false;
+  });
+  toggleRow('Relaxed minigames', meta.settings.relaxedMinigames === true, () => {
+    meta.settings.relaxedMinigames = meta.settings.relaxedMinigames !== true;
   });
   toggleRow('Anonymous analytics', analyticsEnabled(), () => {
     meta.settings.analytics = !analyticsEnabled();
