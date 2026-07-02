@@ -1794,6 +1794,65 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a2_afterparty', act: 2, pathAffinity: [], weight: 11,
+    art: 'ev_afterparty', context: 'Somebody’s loft. Everybody’s business cards.',
+    prompt: 'The showcase afterparty. Dario is here. Grub is here. A blogger who spells your name three ways is here. A&R Kim — the actual reason anyone came — is here. Everyone is one drifting conversation away from forgetting you exist.',
+    tags: ['network'],
+    choices: {
+      left: {
+        label: 'Work the entire room',
+        minigame: 'room',
+        governingStats: { network: 1.0 },
+        tags: ['network', 'risky'],
+        outcomes: {
+          bad: { text: 'You spread yourself across four conversations like too little butter. Dario now believes your band is called “anyway, so.” The blogger prints it.', effects: { network: 2, burnout: 5, fame: 1 } },
+          good: { text: 'You keep every plate spinning — a nod here, a callback joke there, one genuinely useful sentence to Kim. Four people leave thinking they had your full attention. Four people are wrong. All four will take your call.', effects: { network: 7, cred: 2, fame: 2, burnout: 3 } },
+          incredible: { text: 'By midnight you’ve introduced the blogger to Dario, gotten Grub a mixing credit, and heard Kim say “send me the record” — a sentence with a dollar value. The room worked YOU into its plans.', effects: { network: 10, cred: 3, money: 100, fame: 3, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Guard the snack table with Grub',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'rest'],
+        outcomes: {
+          bad: { text: 'You and Grub discuss compressors for two hours. Kim leaves without meeting you. The nachos, at least, were load-bearing.', effects: { burnout: -4, network: -1, cred: 2 } },
+          good: { text: 'One real conversation beats ten drifting ones. Grub tells you which studios pad their invoices. This information is worth more than the party.', effects: { burnout: -5, cred: 4, network: 2 } },
+          incredible: { text: 'Turns out Kim ALSO hates these things. She finds the snack table, and the three of you close the party talking about records that matter. “Send me yours,” she says. Sincerity: the rarest networking strategy.', effects: { burnout: -5, cred: 5, network: 6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_gala_circuit', act: 3, pathAffinity: ['megastar'], weight: 10,
+    requires: { fameMin: 30 },
+    art: 'ev_gala', context: 'A charity gala. You’re the entertainment AND the guest.',
+    prompt: 'Post-set, tuxedo-adjacent, you’re released into a room of people who could fund your next three albums by mistake. Your manager’s text: “TALK TO EVERYONE. BE NORMAL. DO NOT RANK THEIR WATCHES.”',
+    tags: ['network', 'fame'],
+    choices: {
+      left: {
+        label: 'Circulate like a professional',
+        minigame: 'room',
+        governingStats: { network: 0.8, cred: 0.4 },
+        tags: ['network', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You call a hedge fund manager “chief” twice and a duchess “dude” once. The donations continue, but pointedly not toward you.', effects: { network: 2, fame: 2, burnout: 6 } },
+          good: { text: 'You navigate the room like a set list: openers, deep cuts, big closer with the museum board. Two “people will call people” promises — the gala currency.', effects: { network: 7, fame: 4, money: 150, burnout: 4 } },
+          incredible: { text: 'You leave with a patron. An actual patron, like it’s 1780. She says the word “residency” and a number with a comma in it. Your manager frames the napkin she wrote it on.', effects: { network: 9, fame: 5, money: 400, burnout: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: 'Find the kitchen, thank the staff',
+        governingStats: { cred: 1.0 },
+        tags: ['indie', 'safe'],
+        outcomes: {
+          bad: { text: 'The caterers are lovely and also extremely busy, and you are extremely in the way. A tray nearly dies. You retreat with six crab puffs and no contacts.', effects: { cred: 2, burnout: -3 } },
+          good: { text: 'The kitchen loves you. The bartender knows every promoter in town — the REAL directory. You leave with three numbers the gala floor doesn’t have.', effects: { cred: 5, network: 4, burnout: -4 } },
+          incredible: { text: 'The head caterer’s kid runs sound at the amphitheater. The bartender’s cousin books the festival. By the dishwasher station you assemble a better rolodex than the ballroom holds — and the staff meal beats the canapés.', effects: { cred: 7, network: 7, burnout: -5 } },
+        },
+      },
+    },
+  },
+  {
     id: 'a2_tiktok_trend', act: 2, pathAffinity: ['megastar'], weight: 10,
     art: 'ev_trend', context: 'Your phone, vibrating ominously',
     prompt: 'Three seconds of your bridge is becoming A Sound. 40,000 teens are using it to reveal their haircuts.',

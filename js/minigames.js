@@ -298,3 +298,67 @@ register('ideas', {
     }
   },
 });
+
+// ═══════════ WORK THE ROOM — networking (keep 4 conversations alive) ═══════════
+register('room', {
+  name: 'Work the Room', icon: '🥂',
+  how: 'Four conversations, one of you. Interest drains — tap a person to keep theirs alive. Anyone who hits empty walks off. 18 seconds. Nobody leaves.',
+  run(stage, ctx, done) {
+    const DURATION = 18000;
+    const PEOPLE = [
+      { icon: '🎩', name: 'Dario', drain: 0.075 },
+      { icon: '🎚️', name: 'Grub', drain: 0.05 },
+      { icon: '📝', name: 'the blogger', drain: 0.095 },
+      { icon: '💼', name: 'A&R Kim', drain: 0.065 },
+    ];
+    const grid = el('div', 'mg-room');
+    const clock = el('div', 'mg-take-label', '18');
+    stage.append(clock, grid, el('div', 'mg-hint', 'tap whoever is fading'));
+
+    const state = PEOPLE.map((p) => ({ ...p, level: 0.9, gone: false }));
+    const cards = state.map((p) => {
+      const c = el('button', 'mg-guest');
+      c.innerHTML = `<span class="mg-guest-icon">${p.icon}</span><span class="mg-guest-name">${p.name}</span><span class="mg-guest-meter"><span class="mg-guest-fill"></span></span>`;
+      c.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        if (p.gone || over) return;
+        p.level = Math.min(1, p.level + 0.38);
+        c.classList.add('mg-guest-talk');
+        setTimeout(() => c.classList.remove('mg-guest-talk'), 200);
+      });
+      grid.append(c);
+      return c;
+    });
+
+    let over = false;
+    const t0 = performance.now();
+    let uptimeSum = 0, samples = 0;
+
+    const timer = setInterval(() => {
+      const elapsed = performance.now() - t0;
+      clock.textContent = String(Math.max(0, Math.ceil((DURATION - elapsed) / 1000)));
+      state.forEach((p, i) => {
+        if (p.gone) return;
+        p.level -= p.drain * 0.12; // per tick (120ms)
+        if (p.level <= 0) {
+          p.gone = true;
+          cards[i].classList.add('mg-guest-gone');
+          cards[i].querySelector('.mg-guest-name').textContent = 'left.';
+        } else {
+          cards[i].querySelector('.mg-guest-fill').style.width = `${p.level * 100}%`;
+          cards[i].querySelector('.mg-guest-fill').style.background =
+            p.level < 0.28 ? 'var(--bad)' : p.level < 0.55 ? 'var(--accent)' : 'var(--good)';
+        }
+      });
+      uptimeSum += state.filter((p) => !p.gone).length / state.length;
+      samples++;
+      if (elapsed >= DURATION) {
+        over = true;
+        clearInterval(timer);
+        const alive = state.filter((p) => !p.gone).length / state.length;
+        const avgLevel = state.reduce((a, p) => a + Math.max(0, p.level), 0) / state.length;
+        done(alive * 0.55 + (uptimeSum / samples) * 0.25 + avgLevel * 0.2);
+      }
+    }, 120);
+  },
+});
