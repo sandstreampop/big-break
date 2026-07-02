@@ -56,14 +56,14 @@ export const CONFIG = {
   momentumForUpgrade: 4,
 
   winGates: {
-    megastar:   { fame: 90, network: 70, cred: 35 },
-    studio:     { skill: 80, cred: 65, network: 50 },
-    hitfactory: { creativity: 80, cred: 55, hits: 3 },
+    megastar:   { fame: 95, network: 72, cred: 35 },
+    studio:     { skill: 75, cred: 62, network: 48 },
+    hitfactory: { creativity: 88, cred: 62, hits: 4 },
   },
 
   // Passive burnout per card resolved in each act — the grind wears you
   // down even when things go well, so rest stays a real decision.
-  actWear: { 1: 0, 2: 1, 3: 2 },
+  actWear: { 1: 0, 2: 2, 3: 3 },
 
   // Legacy Points (spec §9)
   lpStatDivisor: 10,
@@ -76,21 +76,21 @@ export const PATHS = {
     id: 'megastar',
     name: 'Megastar',
     blurb: 'Worldwide famous frontperson. Stadiums chant a name your mother didn’t give you.',
-    gateLabel: 'Fame 90 · Network 70 · Cred 35',
+    gateLabel: 'Fame 95 · Network 72 · Cred 35',
     icon: '★',
   },
   studio: {
     id: 'studio',
     name: 'Studio Legend',
     blurb: 'The most-called session musician alive. Nobody knows your face. Everybody knows your take.',
-    gateLabel: 'Skill 80 · Cred 65 · Network 50',
+    gateLabel: 'Skill 75 · Cred 62 · Network 48',
     icon: '♫',
   },
   hitfactory: {
     id: 'hitfactory',
     name: 'Hit Factory',
     blurb: 'The producer-songwriter behind everyone’s hits. Your name is in small print on big money.',
-    gateLabel: 'Creativity 80 · Cred 55 · 3 Hits',
+    gateLabel: 'Creativity 88 · Cred 62 · 4 Hits',
     icon: '✎',
   },
 };
