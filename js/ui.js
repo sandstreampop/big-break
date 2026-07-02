@@ -1000,6 +1000,8 @@ function showResult(result) {
   if (hustle) notice('notice-gear', `${hustle.icon} <b>Side hustle: ${hustle.name}</b> (+$${hustle.moneyPerAct}/act)${hustle.blurb ? ' — ' + hustle.blurb : ''}`);
   const newInst = result.deltas.instrumentSet;
   if (newInst) notice('notice-gear', `🎸 <b>Now playing: ${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`);
+  const sp = result.deltas.songPolished;
+  if (sp) notice('notice-good', `🎛 <b>“${sp.title}”</b> gets better in the vault — the mix tightens (quality ${sp.quality})`);
   const sw = result.deltas.songWritten;
   if (sw) {
     const feel = sw.quality >= 68 ? 'it might be undeniable' : sw.quality >= 52 ? 'something’s there'
