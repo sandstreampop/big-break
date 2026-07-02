@@ -1411,6 +1411,29 @@ function renderSettings() {
     renderSettings();
   }));
   menu.append(btn('❓ How to play', '', showHelp));
+  const exportBtn = btn('📤 Export save (backup code)', '', async () => {
+    const code = save.exportSave();
+    try {
+      if (navigator.share) await navigator.share({ text: code });
+      else {
+        await navigator.clipboard.writeText(code);
+        exportBtn.textContent = '📋 Copied! Paste it somewhere safe.';
+      }
+    } catch (e) {
+      prompt('Copy your save code:', code);
+    }
+  });
+  menu.append(exportBtn);
+  menu.append(btn('📥 Import save (paste code)', '', () => {
+    const code = prompt('Paste your BIG BREAK save code (starts with BB1.):');
+    if (!code) return;
+    if (save.importSave(code)) {
+      alert('Career restored. Welcome back.');
+      location.reload();
+    } else {
+      alert('That code didn’t scan. The bouncer shrugs.');
+    }
+  }));
   menu.append(btn('⚠ Reset all progress', 'danger', () => {
     if (confirm('Wipe every unlock, trophy, and Legacy Point? The industry forgets fast.')) {
       save.resetAll();
