@@ -109,6 +109,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
     path: null,
     instrument: instrumentId,
+    firstInstrument: instrumentId,
     accessories: [],
     flags: [],
     usedEvents: [],

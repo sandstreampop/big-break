@@ -15,6 +15,7 @@ import { hustleById } from './data/hustles.js';
 import { generateHeadlines } from './headlines.js';
 import { offerGenres, genreById } from './data/genres.js';
 import { generateDMs } from './dms.js';
+import { buildEpilogue } from './epilogue.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 
 let meta = save.loadMeta();
@@ -886,6 +887,11 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     wrap.append(el('p', 'trades-row ending-press', `<b>${finalPress.text}</b><span>— ${finalPress.src}</span>`));
   }
   wrap.append(el('p', 'ending-text', ending.text));
+  const epilogue = buildEpilogue(run);
+  if (epilogue) {
+    wrap.append(el('h3', 'wall-tier', 'Epilogue'));
+    wrap.append(el('p', 'epilogue-text', epilogue));
+  }
 
   if (evalr) {
     const gates = el('div', 'gate-readout');
