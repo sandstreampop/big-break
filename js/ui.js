@@ -95,6 +95,15 @@ function renderTitle() {
       ? `📅 Daily Grind ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
       : `📅 Daily Grind — ${today}`,
     '', () => { save.clearRun(); startNewRun(true); }));
+  if (meta.runs > 0) {
+    const week = weekStr();
+    const gDone = meta.gauntletResults?.[week];
+    menu.append(btn(
+      gDone
+        ? `⚔️ The Gauntlet ✓ (${gDone.result ? gDone.result.toUpperCase() : 'DNF'} — replay?)`
+        : `⚔️ The Gauntlet — ${week}`,
+      '', () => { save.clearRun(); startGauntlet(); }));
+  }
   menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', renderWall));
   menu.append(btn('🎖 Trophy Room', '', renderTrophies));
   if (meta.runs > 0) menu.append(btn('📊 The Résumé', '', renderResume));
@@ -113,6 +122,16 @@ function btn(label, cls, onTap) {
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
+}
+function weekStr() {
+  // ISO week label, e.g. 2026-W27
+  const d = new Date();
+  const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const day = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
+  return `${t.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
 }
 function hashStr(s) {
   let h = 2166136261;
@@ -209,6 +228,49 @@ function modsText(mods) {
 function resumeRun() {
   if (run.phase === 'crossroads') renderCrossroads();
   else dealCard();
+}
+
+// The Gauntlet (Pass 28): one fixed, seeded build per ISO week — same
+// instrument, genre, and contract for everyone. Often cursed. Always fair.
+function startGauntlet() {
+  const week = weekStr();
+  const seed = hashStr('bigbreak-gauntlet-' + week);
+  const rng = engine.mulberry32(seed);
+  const basics = INSTRUMENTS.filter((i) => i.unlockedByDefault);
+  const inst = basics[Math.floor(rng() * basics.length)];
+  const contract = CONTRACTS[Math.floor(rng() * CONTRACTS.length)];
+  const genre = offerGenres(rng)[0];
+
+  const s = $('#screen-instruments');
+  s.innerHTML = '';
+  s.append(el('h2', 'screen-head', `The Gauntlet — ${week}`));
+  s.append(el('p', 'screen-sub', 'One build, chosen by fate, same for everyone this week. No substitutions. The kitchen is closed.'));
+  const sheet = el('div', 'pick-row');
+  const card = el('div', 'pick-card');
+  card.append(artFor(inst.art, 'pick-art'));
+  card.append(el('h3', '', inst.name));
+  card.append(el('p', 'pick-flavor', inst.flavor));
+  card.append(el('p', 'pick-mods', modsText(inst.modifiers)));
+  card.append(el('p', 'pick-quirk',
+    `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}<br><br>` +
+    `${genre.icon} <b>${genre.name}</b> — ${genre.blurb}<br>` +
+    `${contract.icon} <b>${contract.name}</b> ×${contract.lpMult} LP — ${contract.desc}`));
+  card.addEventListener('click', () => {
+    sfx.commit();
+    run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+    run.seed = seed + 2;
+    run.gauntlet = week;
+    run.genre = genre.id;
+    engine.signContract(run, contract.id);
+    save.saveRun(run);
+    dealCard();
+  });
+  sheet.append(card);
+  s.append(sheet);
+  const menu = el('div', 'menu');
+  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
+  s.append(menu);
+  show('#screen-instruments');
 }
 
 // ---------- Game screen ----------
@@ -820,6 +882,12 @@ function finishMeta(summary, lp) {
       meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path, fame: summary.fame };
     }
   }
+  if (summary.gauntlet) {
+    meta.gauntletResults = meta.gauntletResults || {};
+    if (!meta.gauntletResults[summary.gauntlet]) {
+      meta.gauntletResults[summary.gauntlet] = { result: summary.result, path: summary.path, fame: summary.fame };
+    }
+  }
   // Lifetime aggregates (Pass 25)
   const lt = meta.lifetime = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
   lt.swipes += (summary.tierLog || []).length;
@@ -899,7 +967,8 @@ const TIER_EMOJI = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '�
 
 function shareTextFor(summary, lp) {
   const inst = instrumentById(summary.instrument);
-  const head = summary.daily ? `BIG BREAK Daily ${summary.daily}` : 'BIG BREAK';
+  const head = summary.gauntlet ? `BIG BREAK Gauntlet ${summary.gauntlet}`
+    : summary.daily ? `BIG BREAK Daily ${summary.daily}` : 'BIG BREAK';
   const genre = summary.genre ? genreById(summary.genre) : null;
   const pathName = (genre ? genre.name + ' ' : '') + (summary.path ? PATHS[summary.path].name : 'the void');
   const res = summary.result ? summary.result.toUpperCase()
