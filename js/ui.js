@@ -561,12 +561,16 @@ function riskDot(cls) {
 
 function attachDrag(card, bL, bR) {
   let startX = 0, startY = 0, dx = 0, dy = 0, dragging = false, pid = null;
+  let samples = []; // recent (t, x) for flick-velocity detection
   const threshold = Math.min(110, window.innerWidth * 0.28);
+  const FLICK_V = 0.45;   // px/ms — a confident flick commits early
+  const FLICK_MIN = 24;   // but never off a near-tap
 
   card.addEventListener('pointerdown', (e) => {
     dragging = true;
     pid = e.pointerId;
     startX = e.clientX; startY = e.clientY;
+    samples = [[performance.now(), e.clientX]];
     card.setPointerCapture(pid);
     card.classList.add('dragging');
   });
@@ -574,6 +578,9 @@ function attachDrag(card, bL, bR) {
     if (!dragging || e.pointerId !== pid) return;
     dx = e.clientX - startX;
     dy = e.clientY - startY;
+    const now = performance.now();
+    samples.push([now, e.clientX]);
+    while (samples.length > 2 && now - samples[0][0] > 90) samples.shift();
     if (!reducedMotion()) {
       card.style.transform =
         `translate3d(${dx}px, ${dy * 0.15}px, 0) rotate(${dx * 0.055}deg)`;
@@ -590,7 +597,15 @@ function attachDrag(card, bL, bR) {
     card.classList.remove('dragging');
     bL.classList.remove('armed');
     bR.classList.remove('armed');
-    if (Math.abs(dx) > threshold) {
+    // flick velocity over the last ~90ms of the gesture
+    let v = 0;
+    if (samples.length >= 2) {
+      const [t0, x0] = samples[0];
+      const [t1, x1] = samples[samples.length - 1];
+      if (t1 > t0) v = (x1 - x0) / (t1 - t0);
+    }
+    const flick = Math.abs(v) >= FLICK_V && Math.abs(dx) >= FLICK_MIN && Math.sign(v) === Math.sign(dx);
+    if (Math.abs(dx) > threshold || flick) {
       commitSwipe(dx < 0 ? 'left' : 'right', dx, dy);
     } else {
       card.style.transform = '';
