@@ -56,7 +56,7 @@ export const CONFIG = {
   momentumForUpgrade: 4,
 
   winGates: {
-    megastar:   { fame: 95, network: 72, cred: 35 },
+    megastar:   { fame: 100, network: 76, cred: 35 },
     studio:     { skill: 73, cred: 62, network: 48 },
     hitfactory: { creativity: 92, cred: 64, hits: 4 },
   },
