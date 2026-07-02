@@ -15,6 +15,7 @@ import { hustleById } from './data/hustles.js';
 import { generateHeadlines } from './headlines.js';
 import { offerGenres, genreById } from './data/genres.js';
 import { offerVenues, venueById, VENUE_TIERS } from './data/venues.js';
+import { bandmateById } from './data/band.js';
 import { generateDMs } from './dms.js';
 import { buildEpilogue } from './epilogue.js';
 import { renderShareImage } from './sharecard.js';
@@ -428,6 +429,13 @@ function renderHud() {
       ].filter(Boolean),
     });
   }
+  for (const bid of run.band || []) {
+    const bm = bandmateById(bid);
+    if (bm) chip('gear-chip band-chip-mini', `${bm.icon} ${bm.name}`, {
+      emoji: bm.icon, title: `${bm.name} — ${bm.role}`,
+      lines: [bm.flavor, `<b>In the band:</b> ${bm.quirkDesc}`],
+    });
+  }
   for (const id of run.hustles || []) {
     const h = hustleById(id);
     if (h) chip('gear-chip hustle-chip', `${h.icon} +$${h.moneyPerAct}/act`, {
@@ -811,6 +819,9 @@ function showResult(result) {
   if (result.gearLost) chips.append(el('span', 'chip chip-bad', `− ${result.gearLost.name} (lost!)`));
   if (result.venueLeveled) chips.append(el('span', 'chip chip-gear', `${result.venueLeveled.venue.icon} ${result.venueLeveled.venue.name} → ${result.venueLeveled.tier.name}!`));
   else if (result.venueHosted) chips.append(el('span', 'chip chip-good', `${result.venueHosted.venue.icon} home crowd +${result.venueHosted.tier.showBonus}`));
+  const joined = result.deltas.bandmateJoined;
+  if (joined) chips.append(el('span', 'chip chip-gear', `${joined.icon} ${joined.name} joins the band!`));
+  if (result.deltas.bandmateLeft) chips.append(el('span', 'chip chip-bad', `${result.deltas.bandmateLeft.icon} ${result.deltas.bandmateLeft.name} quits`));
   const hustle = result.deltas.hustleGained;
   if (hustle) {
     chips.append(el('span', 'chip chip-gear', `${hustle.icon} Side hustle: ${hustle.name} (+$${hustle.moneyPerAct}/act)`));
@@ -819,6 +830,7 @@ function showResult(result) {
   if (newInst) chips.append(el('span', 'chip chip-gear', `🎸 Now playing: ${newInst.name}`));
   box.append(chips);
   if (hustle?.blurb) box.append(el('p', 'gear-blurb', `${hustle.icon} ${hustle.blurb}`));
+  if (joined) box.append(el('p', 'gear-blurb', `${joined.icon} <b>${joined.name}</b> (${joined.role}) — ${joined.quirkDesc}`));
   if (newInst) box.append(el('p', 'gear-blurb', `🎸 <b>${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`));
 
   // Shop shelf: choose which item you actually bought (Pass 33)
