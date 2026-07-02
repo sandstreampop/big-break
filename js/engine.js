@@ -147,6 +147,14 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
   if (perks.includes('calluses')) state.stats.skill = clamp(state.stats.skill + 6, 1, 100);
   if (perks.includes('couch')) state.stats.network = clamp(state.stats.network + 6, 1, 100);
   if (perks.includes('warmup')) state.encore = 1; // walk in with one banked
+  if (perks.includes('notebook')) {
+    // The Old Notebook: every career starts with one demo already taped
+    addSong(state, {
+      title: songName(rng), status: 'demo',
+      quality: 46 + Math.floor(rng() * 16),
+    });
+    state.flags.push('notebook_demo'); // events/epilogue can reference it
+  }
   return state;
 }
 
@@ -807,7 +815,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   if (effects.albumDrop) {
     // THE ALBUM: everything ships at once. Every vault demo releases with
     // the album's hype; every charting song gets the halo bump.
-    const hype = (typeof effects.albumDrop === 'number' ? effects.albumDrop : 60) + (hooks.releaseHype || 0) + accs.reduce((n, a) => n + (a.releaseHype || 0), 0);
+    const hype = (typeof effects.albumDrop === 'number' ? effects.albumDrop : 60) + (hooks.releaseHype || 0) + accs.reduce((n, a) => n + (a.releaseHype || 0), 0) + ((state.perks || []).includes('promoter') ? 6 : 0);
     const demos = (state.songs || []).filter((s) => s.status === 'demo');
     for (const d of demos) {
       releaseSong(state, d.id, hype);
@@ -824,7 +832,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     const demos = (state.songs || []).filter((s) => s.status === 'demo');
     if (demos.length) {
       const best = demos.slice().sort((a, b) => b.quality - a.quality)[0];
-      const hype = (typeof effects.releaseDemo === 'number' ? effects.releaseDemo : 55) + (hooks.releaseHype || 0) + accs.reduce((n, a) => n + (a.releaseHype || 0), 0);
+      const hype = (typeof effects.releaseDemo === 'number' ? effects.releaseDemo : 55) + (hooks.releaseHype || 0) + accs.reduce((n, a) => n + (a.releaseHype || 0), 0) + ((state.perks || []).includes('promoter') ? 6 : 0);
       releaseSong(state, best.id, hype);
       (deltas.songDebuts = deltas.songDebuts || []).push({ title: best.title, pos: best.pos, hit: best.crowned, released: true });
     }
