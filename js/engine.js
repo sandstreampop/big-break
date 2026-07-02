@@ -13,6 +13,7 @@ import { venueById, VENUE_TIERS } from './data/venues.js';
 import { bandmateById, recruitCandidate } from './data/band.js';
 import { collabArtistFor, songName } from './charts.js';
 import { TUTORIAL_EVENTS } from './data/tutorial.js';
+import { ARCS, arcById, rollSeeds } from './data/arcs.js';
 
 // Tutorial cards live outside EVENTS so they can never enter normal decks;
 // chains and resume still need to find them by id.
@@ -124,6 +125,10 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     hustles: [],    // persistent income sources (see data/hustles.js)
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
+    // Story Seeds (R1): this run secretly roots for these arcs — their
+    // setup cards get a guaranteed window, their payoffs draw hot.
+    seeds: rollSeeds(rng, CONFIG.seedCount),
+    seenCards: null, // per-player seen-card ids (set by the UI from meta)
     path: null,
     instrument: instrumentId,
     firstInstrument: instrumentId,
@@ -414,6 +419,12 @@ function requiresOk(r, state) {
   return true;
 }
 
+// Is a story arc's condition satisfied for this run? (sim + UI reporting)
+export function arcLit(state, arcId) {
+  const arc = arcById(arcId);
+  return !!arc && requiresOk(arc.lit, state);
+}
+
 function pathEligible(ev, state) {
   if (!ev.pathAffinity || ev.pathAffinity.length === 0) return true;
   if (state.act === 1) return false; // path cards never appear pre-commit
@@ -455,10 +466,44 @@ export function drawNextCard(state, rng = Math.random) {
     const shops = pool.filter((e) => e.shop);
     if (shops.length) pool = shops;
   }
+  // Story Seeds (R1): an unlit seeded arc gets its setup card dealt on
+  // schedule — same mechanism as the shop slot. Acts 1–2 only (an arc
+  // seeded in act 3 could never pay off).
+  if (!shopDue && !state.tutorial && state.act <= 2 &&
+      state.cardsPlayedInAct >= (CONFIG.seedSetupSlot[state.act] ?? 99)) {
+    const due = [];
+    for (const arcId of state.seeds || []) {
+      const arc = arcById(arcId);
+      if (!arc || requiresOk(arc.lit, state)) continue; // already lit
+      if (arc.setup.some((id) => state.usedEvents.includes(id))) continue; // setup came & went
+      due.push(...arc.setup);
+    }
+    if (due.length) {
+      const setups = pool.filter((e) => due.includes(e.id));
+      if (setups.length) pool = setups;
+    }
+  }
+  // Lit seeded arcs: their payoff cards draw hot for the rest of the run.
+  // Unlit ones: their setups draw warm even before the guaranteed slot.
+  const litPayoffs = new Set();
+  const warmSetups = new Set();
+  for (const arcId of state.seeds || []) {
+    const arc = arcById(arcId);
+    if (!arc) continue;
+    if (requiresOk(arc.lit, state)) for (const id of arc.payoffs) litPayoffs.add(id);
+    else for (const id of arc.setup) warmSetups.add(id);
+  }
+  // Personal novelty (R2): cards THIS player has never seen draw heavier.
+  // On a first install everything is unseen, so nothing shifts.
+  const seen = state.seenCards ? new Set(state.seenCards) : null;
   let total = 0;
   const weights = pool.map((ev) => {
     const affine = ev.pathAffinity && ev.pathAffinity.includes(state.path);
-    const w = (ev.weight || 1) * (affine ? CONFIG.pathWeightMult : 1);
+    const w = (ev.weight || 1) *
+      (affine ? CONFIG.pathWeightMult : 1) *
+      (litPayoffs.has(ev.id) ? CONFIG.seedPayoffMult : 1) *
+      (warmSetups.has(ev.id) ? CONFIG.seedSetupMult : 1) *
+      (seen && !seen.has(ev.id) ? CONFIG.noveltyWeightMult : 1);
     total += w;
     return w;
   });
@@ -1040,7 +1085,32 @@ export function commitPath(state, pathId) {
   return startAct(state, 2);
 }
 
+// Story Seeds: a dud seed re-rolls at the Crossroads. If an arc can no
+// longer light (setups spent or act-1-only and gone), the run quietly
+// roots for a different story instead of carrying dead weight into act 2.
+function refreshSeeds(state) {
+  if (!(state.seeds || []).length) return;
+  const rng = stateRng(state);
+  const alive = (arc) =>
+    requiresOk(arc.lit, state) ||
+    arc.setup.some((id) => {
+      const ev = findEvent(id);
+      return ev && !state.usedEvents.includes(id) && actMatches(ev, 2);
+    });
+  const taken = new Set(state.seeds);
+  state.seeds = state.seeds.map((arcId) => {
+    const arc = arcById(arcId);
+    if (arc && alive(arc)) return arcId;
+    const pool = ARCS.filter((a) => !taken.has(a.id) && alive(a));
+    if (!pool.length) return arcId;
+    const pick = pool[Math.floor(rng() * pool.length)].id;
+    taken.add(pick);
+    return pick;
+  });
+}
+
 function startAct(state, act) {
+  if (act === 2) refreshSeeds(state);
   state.act = act;
   state.cardsPlayedInAct = 0;
   state.shopPlayedInAct = false;

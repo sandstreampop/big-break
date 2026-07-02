@@ -17,12 +17,20 @@ import { buildEpilogue } from '../js/epilogue.js';
 const KNOWN_TOKENS = new Set(['song', 'hitSong', 'fadedSong', 'venue', 'rival', 'rivalVibe', 'genre', 'collabArtist']);
 const KNOWN_REQ = new Set(['flagsAll', 'flagsNone', 'moneyMax', 'moneyMin', 'burnoutMin', 'fameMin', 'fameMax',
   'gear', 'rivalryMin', 'rivalryMax', 'genreAny', 'venueAny', 'venueNone', 'venueLevelMin', 'venueIs', 'rivalIs',
-  'hustleMin', 'bandMin', 'bandMax', 'bandHas', 'demoMin', 'chartingMin', 'songsMin', 'fadedMin', 'nemesis', 'stats']);
+  'hustleMin', 'bandMin', 'bandMax', 'bandHas', 'demoMin', 'chartingMin', 'songsMin', 'fadedMin', 'nemesis', 'stats',
+  'anyOf']);
+
+function checkRequires(evId, r) {
+  for (const k of Object.keys(r || {})) {
+    if (!KNOWN_REQ.has(k)) issues.push(`${evId}: unknown requires key ${k}`);
+    if (k === 'anyOf') for (const alt of r.anyOf) checkRequires(evId, alt);
+  }
+}
 
 const issues = [];
 
 for (const ev of EVENTS) {
-  const texts = [ev.prompt, ev.context];
+  const texts = [ev.prompt, ev.promptNemesis, ev.context];
   for (const side of ['left', 'right']) {
     const c = ev.choices?.[side];
     if (!c) continue;
@@ -37,9 +45,7 @@ for (const ev of EVENTS) {
     if (/\w'\w/.test(t)) issues.push(`${ev.id}: straight apostrophe: ${t.slice(0, 50)}`);
     if (t.includes('  ')) issues.push(`${ev.id}: double space: ${t.slice(0, 50)}`);
   }
-  for (const k of Object.keys(ev.requires || {})) {
-    if (!KNOWN_REQ.has(k)) issues.push(`${ev.id}: unknown requires key ${k}`);
-  }
+  checkRequires(ev.id, ev.requires);
   if (ev.weight === 0 && !ev.chainOnly && !ev.finaleCard && !ev.shop) {
     issues.push(`${ev.id}: weight 0 but not chainOnly`);
   }

@@ -39,6 +39,16 @@ export const CONFIG = {
   // Deck assembly (spec §8.4)
   pathWeightMult: 2.5,     // weight boost for events matching committed path
 
+  // Story Seeds & novelty (Reach & Rush §2 R1–R2)
+  seedCount: 2,            // hidden arcs each run roots for
+  seedPayoffMult: 4,       // weight boost for a lit seeded arc's payoffs
+  seedSetupMult: 4,        // weight boost for an unlit seeded arc's setups
+  // 0-indexed card slot per act where an unlit seeded arc's setup card is
+  // forced into the deal (if eligible) — the shop-slot mechanism, reused
+  seedSetupSlot: { 1: 4, 2: 6 },
+  noveltyWeightMult: 1.75, // weight boost for cards this player never saw
+  seenCardsCap: 600,       // meta.seenCards ring-buffer cap
+
   // Equipment
   accessorySlots: 3,
 

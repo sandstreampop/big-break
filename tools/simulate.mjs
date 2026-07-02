@@ -13,6 +13,7 @@ import { INSTRUMENTS } from '../js/data/instruments.js';
 import { EVENTS } from '../js/data/events.js';
 import { GENRES } from '../js/data/genres.js';
 import { VENUES } from '../js/data/venues.js';
+import { ARCS, arcById } from '../js/data/arcs.js';
 import * as engine from '../js/engine.js';
 
 const RUNS = parseInt(process.argv[2] || '4000', 10);
@@ -58,6 +59,7 @@ const tally = {
                 3: { bad: 0, good: 0, incredible: 0, declined: 0 } },
   worstRunBadPct: 0, runsOver60Bad: 0,
   reach: {},          // eventId -> number of runs in which it appeared
+  seedsRolled: 0, seedsLit: 0, seedsPaid: 0, // Story Seeds funnel (R1)
   spikeSum: 0,        // total ±20-point swing moments across all runs
   spikeRuns0: 0,      // runs with zero swing moments
   cardCountHist: {},  // cards-per-run distribution (rhythm variance)
@@ -180,6 +182,15 @@ for (let i = 0; i < RUNS; i++) {
   tally.spikeSum += spikes;
   if (!spikes) tally.spikeRuns0++;
   for (const id of seenThisRun) tally.reach[id] = (tally.reach[id] || 0) + 1;
+  // Story Seeds funnel: did each seeded arc light? did a payoff card land?
+  for (const arcId of state.seeds || []) {
+    const arc = arcById(arcId);
+    if (!arc) continue;
+    tally.seedsRolled++;
+    // "lit" = the arc condition held by run end; "paid" = a payoff card landed
+    if (engine.arcLit(state, arcId)) tally.seedsLit++;
+    if (arc.payoffs.some((id) => seenThisRun.has(id))) tally.seedsPaid++;
+  }
   if (cards >= 10) {
     const badPct = badCards / cards;
     tally.worstRunBadPct = Math.max(tally.worstRunBadPct, badPct);
@@ -220,6 +231,13 @@ console.log(`  → success ${pct(rollup.success)} | partial ${pct(rollup.partial
 if (tally.finaleStats.count) {
   const f = tally.finaleStats, c = f.count;
   console.log(`\navg finale stats: skill ${(f.skill / c).toFixed(0)} cred ${(f.cred / c).toFixed(0)} crea ${(f.creativity / c).toFixed(0)} net ${(f.network / c).toFixed(0)} burn ${(f.burnout / c).toFixed(0)} fame ${(f.fame / c).toFixed(0)} hits ${(f.hits / c).toFixed(1)}`);
+}
+
+{
+  // ── Story Seeds funnel (R1): target ≥65% of seeded arcs paying off ──
+  const litPct = (100 * tally.seedsLit) / (tally.seedsRolled || 1);
+  const paidPct = (100 * tally.seedsPaid) / (tally.seedsRolled || 1);
+  console.log(`\nstory seeds: ${tally.seedsRolled} rolled · lit ${litPct.toFixed(0)}% · payoff drawn ${paidPct.toFixed(0)}% (target ≥65%)`);
 }
 
 {

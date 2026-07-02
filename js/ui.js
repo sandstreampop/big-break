@@ -217,6 +217,7 @@ function startNewRun(daily = false, comeback = false) {
     engine.applyMastery(run, lv);
     run.seed = seed + 2;
     run.daily = daily ? todayStr() : null;
+    run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)
     if (chosenContract) engine.signContract(run, chosenContract);
     run.genre = chosenGenre;
     run.venue = chosenVenue;
@@ -387,6 +388,7 @@ function startGauntlet() {
     engine.applyMastery(run, masteryLevel(inst.id));
     run.seed = seed + 2;
     run.gauntlet = week;
+    run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)
     run.genre = genre.id;
     engine.signContract(run, contract.id);
     save.saveRun(run);
@@ -823,6 +825,18 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
     act: run.act, path: run.path || null, tutorial: !!run.tutorial,
     encore_armed: armed, burnout: run.stats.burnout,
   });
+  // Personal novelty ledger (R2): remember what this player has seen so
+  // future decks steer toward what they haven't.
+  if (!run.tutorial && result.event) {
+    meta.seenCards = meta.seenCards || [];
+    if (!meta.seenCards.includes(result.event.id)) {
+      meta.seenCards.push(result.event.id);
+      if (meta.seenCards.length > CONFIG.seenCardsCap) {
+        meta.seenCards = meta.seenCards.slice(-CONFIG.seenCardsCap);
+      }
+      save.saveMeta(meta);
+    }
+  }
   encoreArmed = false;
   $('#encore-bar').innerHTML = '';
   save.saveRun(run);
