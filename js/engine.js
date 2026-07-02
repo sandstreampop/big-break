@@ -1034,6 +1034,15 @@ function startAct(state, act) {
       state.fame += bm.actQuirk.fame;
       notes.push(`${bm.icon} ${bm.name}: +${bm.actQuirk.fame} Fame (word travels)`);
     }
+    if (bm?.actQuirk?.demo) {
+      // Nadia's notebook: a fresh "spare" appears every act break
+      const rng = stateRng(state);
+      const s = addSong(state, {
+        title: songName(rng), status: 'demo',
+        quality: 42 + Math.round(rng() * 26),
+      });
+      notes.push(`${bm.icon} ${bm.name}: leaves a demo on your amp — “${s.title}”`);
+    }
   }
   notes.push(...chartTick(state));
   return notes;

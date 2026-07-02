@@ -5486,4 +5486,65 @@ export const EVENTS = [
       },
     },
   },
+
+  // ═══════════ NADIA (the topline machine — recruit + spotlight) ═══════════
+  {
+    id: 'a2_nadia_meet', act: 2, pathAffinity: [], weight: 9,
+    requires: { bandMax: 2 },
+    art: 'ev_nadia', context: 'A writing room, after everyone else left',
+    prompt: 'The session ended an hour ago but the topliner is still there, humming into a notebook. “Spares,” she says, not looking up. You hear four seconds of one. It is nobody’s spare. Her name is Nadia.',
+    tags: ['write', 'network'],
+    choices: {
+      left: {
+        label: 'Ask her to join the band',
+        governingStats: { network: 0.7, cred: 0.4 },
+        tags: ['band', 'network'],
+        outcomes: {
+          bad: { text: 'She says yes so fast you suspect the notebook told her to. First rehearsal: she rewrites your bridge without asking. It’s better. This will take adjusting.', effects: { grantBandmate: 'nadia', creativity: 2, burnout: 3 } },
+          good: { text: '“I keep the notebook. You keep the name on the door.” Deal. She joins, and the hooks start arriving like weather.', effects: { grantBandmate: 'nadia', creativity: 4, network: 2 } },
+          incredible: { text: 'She auditions YOU — hums half a hook and waits. You finish it without thinking. She closes the notebook: “okay then.” The best hire is the one who was testing you.', effects: { grantBandmate: 'nadia', creativity: 6, cred: 3, network: 2 } },
+        },
+      },
+      right: {
+        label: 'Just buy a spare off her',
+        cost: 100,
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'write'],
+        outcomes: {
+          bad: { text: 'She sells you the WEAKEST spare, on principle, and you both know it. It’s still better than your Tuesday output. This stings in several directions.', effects: { writeSong: true, creativity: 2 } },
+          good: { text: 'One clean transaction: a hook for cash, a handshake, a receipt she writes on notebook paper. The hook works immediately. The receipt you keep for reasons unclear.', effects: { writeSong: true, creativity: 4 } },
+          incredible: { text: 'She watches you react to the hook and sells you a DIFFERENT one instead — “that one wasn’t yours.” She was right. The one she picks fits like it was written in your handwriting.', effects: { writeSong: true, creativity: 6, network: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_nadia_spotlight', act: 3, pathAffinity: [], weight: 14,
+    requires: { bandHas: 'nadia' },
+    art: 'ev_nadia_spot', context: 'Nadia’s notebook, open to the last page',
+    prompt: 'Nadia slides the notebook across the table, open to the last page: the one hook she’s never let anyone hear. “It needs a career like yours. Or,” she pauses, “I need to finally cut it myself. You pick. That’s the deal we never made.”',
+    tags: ['band', 'write'],
+    choices: {
+      left: {
+        label: 'Take the last-page hook',
+        governingStats: { creativity: 0.6, network: 0.6 },
+        tags: ['write', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You cut it, and it’s great, and every time you play it you can feel her hearing her own song from the wrong side of the stage. The credit reads both names. The silence reads more.', effects: { writeSong: true, creativity: 4, burnout: 4, addFlag: 'nadia_hook' } },
+          good: { text: 'You cut it TOGETHER — her topline, your everything else. The song is the sound of the deal being fair. She hums the harmony at the merch table for a week.', effects: { writeSong: true, creativity: 6, network: 3, addFlag: 'nadia_hook' } },
+          incredible: { text: 'The last page becomes the best thing either of you has touched — so obviously right that neither of you mentions it again. Some collaborations don’t need a debrief. The notebook starts a new page that night.', effects: { writeSong: true, creativity: 9, cred: 4, network: 3, addFlag: 'nadia_hook' } },
+        },
+      },
+      right: {
+        label: '“Cut it yourself. I’ll play on it.”',
+        governingStats: { cred: 0.9 },
+        tags: ['band', 'indie', 'safe'],
+        outcomes: {
+          bad: { text: 'Her session runs long, collides with your show, and for one night the band is a scheduling spreadsheet with feelings. Worth it. Probably. Ask again when her song is out.', effects: { cred: 4, burnout: 4, addFlag: 'nadia_solo' } },
+          good: { text: 'You play the second verse on her record and nobody knows it’s you, which is exactly how she wanted it and exactly how you played it. The scene notices whose band lets people GROW.', effects: { cred: 6, network: 4, addFlag: 'nadia_solo' } },
+          incredible: { text: 'Her single comes out and the first comment is “the band behind this must be led by someone secure.” You screenshot it. She frames it. It hangs in the rehearsal space next to the receipt.', effects: { cred: 9, network: 5, fame: 4, addFlag: 'nadia_solo' } },
+        },
+      },
+    },
+  },
 ];

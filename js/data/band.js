@@ -66,6 +66,13 @@ export const BANDMATES_WAVE2 = [
     actQuirk: { money: 40 },
     quirkDesc: 'Deal/Network +5 · +$40 at each act break (Saul finds the clause)',
   },
+  {
+    id: 'nadia', name: 'Nadia', role: 'topline machine', icon: '✒️',
+    flavor: 'Hums hooks in her sleep. Keeps a notebook of “spares.” There are no spares.',
+    bonus: { tags: ['write', 'mainstream'], bonus: 5 },
+    actQuirk: { demo: true },
+    quirkDesc: 'Write/Mainstream +5 · leaves a fresh demo on your amp at each act break',
+  },
 ];
 BANDMATES.push(...BANDMATES_WAVE2);
 
