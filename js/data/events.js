@@ -3604,6 +3604,35 @@ export const EVENTS = [
     },
   },
   {
+    id: 'a3_shed_someone', act: 3, pathAffinity: [], weight: 16,
+    requires: { flagsAll: ['home_studio', 'someone'] },
+    art: 'ev_shed_someone', context: 'The shed, late. A light you didn’t leave on.',
+    prompt: 'You find them in the shed with headphones on, listening to your roughs with their eyes closed — they’ve clearly done this before. On the whiteboard, in their handwriting, one line: “the second verse is braver than you think.” They don’t know you’re in the doorway yet.',
+    tags: ['home'],
+    choices: {
+      left: {
+        label: 'Stay in the doorway. Let them finish.',
+        governingStats: { cred: 0.8 },
+        tags: ['safe', 'home'],
+        outcomes: {
+          bad: { text: 'You stand there too long and the floor creaks — they startle, embarrassed, and the moment gets shy. But the whiteboard line stays up, and later you re-cut the second verse the brave way. They were right. They’re always right in the shed.', effects: { creativity: 4, burnout: -4, addFlag: 'constellation' } },
+          good: { text: 'You watch someone love the unfinished version of the thing — and of you. When the song ends they open their eyes, unsurprised: “the door creaks, you know.” They knew the whole time. Everything after this is easier.', effects: { creativity: 5, cred: 3, burnout: -6, addFlag: 'constellation' } },
+          incredible: { text: 'You let the whole rough play out, watching them hear it. Then, quietly, you play the second verse the brave way, live, from the doorway. The shed does its shed thing. Some rooms exist so two people can be exactly this honest in them. You finish the record that week — THEIR cut order.', effects: { creativity: 7, cred: 4, burnout: -8, pathProgress: 1, addFlag: 'constellation' } },
+        },
+      },
+      right: {
+        label: '“Braver how? Show me.”',
+        governingStats: { creativity: 0.7, network: 0.4 },
+        tags: ['write', 'home'],
+        outcomes: {
+          bad: { text: 'They can’t explain it in music words — they don’t have music words — so they explain it in regular ones, badly, for an hour. Somewhere in the bad explaining is the exact right note. You find it at 2 a.m. They’re asleep on the amp couch, victorious.', effects: { creativity: 5, burnout: 2, addFlag: 'constellation' } },
+          good: { text: 'They hum it. THEY HUM IT — the braver second verse, the one you’d been circling for weeks, hummed by someone who “doesn’t do music.” You record the hum on your phone. The hum makes the album. The credit reads their name.', effects: { creativity: 7, cred: 3, addFlag: 'constellation' } },
+          incredible: { text: 'The show-me session runs till dawn — them talking, you translating, the whiteboard filling with a language only two people speak. The song that comes out of it is the best thing on the record and you both know whose it really is. The liner notes say: “verse two: them.”', effects: { creativity: 9, cred: 4, burnout: -4, pathProgress: 1, addFlag: 'constellation' } },
+        },
+      },
+    },
+  },
+  {
     id: 'a3_shed_doc', act: 3, pathAffinity: [], weight: 16,
     requires: { flagsAll: ['home_studio', 'docu_gold'] },
     art: 'ev_shed_doc', context: 'Juniper, standing in the shed, arms wide',

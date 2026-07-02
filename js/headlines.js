@@ -15,6 +15,12 @@ const NICKNAMES = {
   electric_guitar: 'THE SIX-STRING UPSTART',
   sampler: 'THE PAD LORD',
   own_voice: 'THE VOICE (NO RELATION)',
+  modular_synth: 'THE PATCH BAY ORACLE',
+  triangle: 'ONE NOTE',
+  hurdy_gurdy: 'THE CRANK',
+  workhorse: 'ROAD HANDS',
+  omnichord: 'THE SUNRISE MACHINE',
+  washboard: 'THIMBLES',
 };
 
 export function nicknameFor(instrumentId) {
@@ -43,6 +49,15 @@ export function generateHeadlines(state, count = 3) {
   add((state.rivalry ?? 3) <= 1, `${you} AND ${rival}: JUST FRIENDS? INVESTIGATION ONGOING`, 'Parasocial Times');
   add(state.money < 0, `EXPOSURE ECONOMY CLAIMS ANOTHER: A ${you} STORY`, 'The Invoice');
   add(state.money >= 800, `${you} REPORTEDLY “DOING FINE, MONEY-WISE,” STUNNING ECONOMISTS`, 'The Invoice');
+  const flags = state.flags || [];
+  add(flags.includes('home_studio'), `GARDEN SHED OUTBOOKS THREE “REAL” STUDIOS; SHEDS UNAVAILABLE FOR COMMENT`, 'Tape Op-Ed');
+  add(flags.includes('docu_crew'), `EVERYTHING IS CONTENT: FILM STUDENT SHADOWS ${you}, WARTS CONFIRMED PLENTIFUL`, 'Doc Talk');
+  add(flags.includes('helped_bloom'), `STATIC BLOOM CREDITS “A BORROWED AMP” FOR EVERYTHING; AMP RETAINS COUNSEL`, 'Backline Bulletin');
+  add(flags.includes('constellation'), `LOCAL CAREER ACHIEVES NARRATIVE COHESION; CRITICS SUSPICIOUS`, 'The Discourse, weekly');
+  add(flags.includes('mg_golden'), `WITNESSES DESCRIBE ${you}’S HANDS AS “FRANKLY UNFAIR”`, 'Technique Weekly');
+  add((state.hustles || []).includes('wedding_circuit'), `${you} NOW BOOKED THROUGH WEDDING SEASON; GRANDMOTHERS CITED AS KINGMAKERS`, 'The Aisle Files');
+  add(state.venueLevel >= 3, `THE ROOM THAT ${you} BUILT: A VENUE STORY`, 'Four Walls Monthly');
+  add(flags.includes('band_named'), `LOCAL ACT NOW “A REAL BAND,” VOTES ON EVERYTHING, REGRETS DEMOCRACY WEEKLY`, 'Group Chat Gazette');
   add(state.hits >= 2, `EVERY SONG YOU HATE-LOVE THIS QUARTER TRACES BACK TO ONE PEN`, 'Publishing Weekly');
   add((state.hustles || []).length >= 2, `${you} NOW TECHNICALLY A SMALL BUSINESS`, 'Hustle & Flow (Trade Ed.)');
   add(state.stats.cred >= 70, `SCENE ELDERS APPROVE OF ${you}; SCENE ELDERS APPROVE OF NOTHING`, 'Cred Report');
