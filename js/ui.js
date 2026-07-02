@@ -792,6 +792,7 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
     result.minigameInfo = perf;
     // skill echoes: standout performances enter the fiction as flags
     if (perf.label === 'GOLDEN' && !run.flags.includes('mg_golden')) run.flags.push('mg_golden');
+    if (perf.label === 'GOLDEN' && run.stats.burnout >= 60 && !run.flags.includes('mg_steady')) run.flags.push('mg_steady');
     if (perf.label === 'BOTCHED' && !run.flags.includes('mg_botched')) run.flags.push('mg_botched');
   }
   track('swipe', {
