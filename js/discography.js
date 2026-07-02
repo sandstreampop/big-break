@@ -43,25 +43,43 @@ const ARC_RECORDS = [
   { flag: 'constellation', title: 'The Long Way Around', review: 'the stories found each other; the songs were waiting' },
 ];
 
+// The chart fact for a REAL song: where it went, how long it stayed
+function songFact(s) {
+  if (s.crowned && s.peak === 1) return `№1 · ${s.weeks} wk${s.weeks === 1 ? '' : 's'} on the Hot 10`;
+  if (s.crowned) return `HIT · peaked #${s.peak}, ${s.weeks} wk${s.weeks === 1 ? '' : 's'}`;
+  if (s.status === 'charting' && s.pos) return `still charting at #${s.pos}`;
+  if (s.peak) return `peaked #${s.peak}, ${s.weeks} wk${s.weeks === 1 ? '' : 's'}`;
+  if (s.status === 'demo') return 'unreleased. the vault glows';
+  return 'never charted; beloved anyway';
+}
+
 export function buildDiscography(state) {
   const rng = mulberry32((state.chartSeed || 1) * 211 + 9);
-  const titles = [...new Set(state.chartTitles || [])];
   const flags = state.flags || [];
   const arcCuts = ARC_RECORDS.filter((r) => flags.includes(r.flag));
-  // uncounted hits get names too
-  let extra = Math.max(0, (state.hits || 0) - titles.length);
+
+  // real songs first: the run's actual catalog, hits before also-rans
+  const real = (state.songs || []).slice().sort((a, b) =>
+    (b.crowned - a.crowned) || ((a.peak || 99) - (b.peak || 99)));
+  const titles = real.length
+    ? []
+    : [...new Set(state.chartTitles || [])]; // pre-songs saves fall back
+  // uncounted hits (legacy saves) get names too
+  let extra = Math.max(0, (state.hits || 0) - real.filter((s) => s.crowned).length - titles.length);
   while (extra-- > 0) {
     titles.push(ADJ[Math.floor(rng() * ADJ.length)] + ' ' + NOUN[Math.floor(rng() * NOUN.length)]);
   }
-  // even a hitless run cut SOMETHING
-  if (!titles.length && (state.fame > 10 || (state.cardLog || []).length > 5)) {
+  // even a songless run cut SOMETHING
+  if (!real.length && !titles.length && (state.fame > 10 || (state.cardLog || []).length > 5)) {
     titles.push(ADJ[Math.floor(rng() * ADJ.length)] + ' ' + NOUN[Math.floor(rng() * NOUN.length)] + ' (Demo)');
   }
   const reviewBag = [...REVIEWS];
-  const regular = titles.slice(0, 6 - Math.min(3, arcCuts.length)).map((title) => {
+  const pullReview = () => {
     const i = Math.floor(rng() * reviewBag.length);
-    const review = reviewBag.splice(i, 1)[0] || REVIEWS[0];
-    return { title, review };
-  });
-  return [...arcCuts.slice(0, 3).map(({ title, review }) => ({ title, review })), ...regular];
+    return reviewBag.splice(i, 1)[0] || REVIEWS[0];
+  };
+  const slots = 6 - Math.min(3, arcCuts.length);
+  const fromSongs = real.slice(0, slots).map((s) => ({ title: s.title, review: pullReview(), fact: songFact(s) }));
+  const fromTitles = titles.slice(0, Math.max(0, slots - fromSongs.length)).map((title) => ({ title, review: pullReview() }));
+  return [...arcCuts.slice(0, 3).map(({ title, review }) => ({ title, review })), ...fromSongs, ...fromTitles];
 }

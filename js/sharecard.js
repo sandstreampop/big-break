@@ -4,7 +4,7 @@ const TIER_COLOR = {
   bad: '#ff6b6b', good: '#5fd68a', incredible: '#c084fc', declined: '#ffb347',
 };
 
-export async function renderShareImage({ headline, subline, tierLog, statLine, footer }) {
+export async function renderShareImage({ headline, subline, tierLog, statLine, footer, songLine }) {
   const W = 1080, H = 1080;
   const c = document.createElement('canvas');
   c.width = W; c.height = H;
@@ -45,6 +45,13 @@ export async function renderShareImage({ headline, subline, tierLog, statLine, f
     ctx.fillStyle = TIER_COLOR[t] || '#3b3352';
     roundRect(ctx, 80 + col * (size + 8), 700 + row * (size + 8), size, size, 10);
   });
+
+  // the song the run will be remembered for
+  if (songLine) {
+    ctx.fillStyle = '#f0c33c';
+    ctx.font = 'italic 600 38px -apple-system, "Segoe UI", sans-serif';
+    ctx.fillText(songLine, 80, 868);
+  }
 
   // stat line
   ctx.fillStyle = '#ffb347';
