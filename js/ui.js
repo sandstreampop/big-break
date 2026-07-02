@@ -1773,38 +1773,41 @@ function renderSettings() {
   s.innerHTML = '';
   s.append(el('h2', 'screen-head', 'Settings'));
   const menu = el('div', 'menu');
-  menu.append(btn(`Sound effects: ${meta.settings.sound ? 'ON' : 'OFF'}`, '', () => {
+
+  // A row with a real switch (knob for booleans, labeled pill for tri-state)
+  const toggleRow = (label, value, onTap, pillText) => {
+    const row = el('button', 'setting-row');
+    const sw = pillText !== undefined
+      ? `<span class="switch-pill${value ? ' on' : ''}">${pillText}</span>`
+      : `<span class="switch${value ? ' on' : ''}"></span>`;
+    row.innerHTML = `<span>${label}</span>${sw}`;
+    row.addEventListener('click', () => { onTap(); save.saveMeta(meta); renderSettings(); });
+    menu.append(row);
+  };
+
+  menu.append(el('h3', 'contract-head', 'Sound & feel'));
+  toggleRow('Sound effects', meta.settings.sound, () => {
     meta.settings.sound = !meta.settings.sound;
     setSoundEnabled(meta.settings.sound);
-    save.saveMeta(meta);
-    renderSettings();
-  }));
-  menu.append(btn(`Music: ${meta.settings.music !== false ? 'ON' : 'OFF'}`, '', () => {
+  });
+  toggleRow('Music', meta.settings.music !== false, () => {
     meta.settings.music = meta.settings.music === false;
     setMusicEnabled(meta.settings.music);
-    save.saveMeta(meta);
-    renderSettings();
-  }));
-  const rmLabel = meta.settings.reducedMotion === null ? 'SYSTEM'
-    : meta.settings.reducedMotion ? 'ON' : 'OFF';
-  menu.append(btn(`Reduced motion: ${rmLabel}`, '', () => {
+  });
+  toggleRow('Haptics', meta.settings.haptics !== false, () => {
+    meta.settings.haptics = meta.settings.haptics === false;
+  });
+  toggleRow('Reduced motion', meta.settings.reducedMotion !== false && meta.settings.reducedMotion !== null, () => {
     meta.settings.reducedMotion =
       meta.settings.reducedMotion === null ? true
         : meta.settings.reducedMotion === true ? false : null;
-    save.saveMeta(meta);
-    renderSettings();
-  }));
-  menu.append(btn(`Large text: ${meta.settings.bigText ? 'ON' : 'OFF'}`, '', () => {
+  }, meta.settings.reducedMotion === null ? 'SYSTEM' : meta.settings.reducedMotion ? 'ON' : 'OFF');
+  toggleRow('Large text', !!meta.settings.bigText, () => {
     meta.settings.bigText = !meta.settings.bigText;
     document.body.classList.toggle('big-text', meta.settings.bigText);
-    save.saveMeta(meta);
-    renderSettings();
-  }));
-  menu.append(btn(`Haptics: ${meta.settings.haptics !== false ? 'ON' : 'OFF'}`, '', () => {
-    meta.settings.haptics = meta.settings.haptics === false;
-    save.saveMeta(meta);
-    renderSettings();
-  }));
+  });
+
+  menu.append(el('h3', 'contract-head', 'Career data'));
   menu.append(btn('❓ How to play', '', showHelp));
   const exportBtn = btn('📤 Export save (backup code)', '', async () => {
     const code = save.exportSave();
@@ -1840,6 +1843,6 @@ function renderSettings() {
   }));
   menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
   s.append(menu);
-  s.append(el('p', 'title-foot', 'BIG BREAK v0.1 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.'));
+  s.append(el('p', 'title-foot', 'BIG BREAK v2.0 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.'));
   show('#screen-settings');
 }
