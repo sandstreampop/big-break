@@ -2508,6 +2508,123 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════ SCENE POLITICS (react to genre/hustle systems) ═══════════
+  {
+    id: 'a2_genre_purists', act: 2, pathAffinity: [], weight: 9,
+    requires: { genreAny: true },
+    art: 'ev_purists', context: 'The {genre} forum, thread #4,118',
+    prompt: 'The {genre} purists have ruled: you are “killing the scene.” The scene, notably, has 312 members, and 280 of them found it through you.',
+    tags: ['social'],
+    choices: {
+      left: {
+        label: 'Engage. Respectfully. Once.',
+        governingStats: { cred: 0.8, network: 0.5 },
+        tags: ['social', 'risky'],
+        outcomes: {
+          bad: { text: 'Your measured reply spawns four new threads, two manifestos, and a diss remix of your own song. In {genre}. Which they said you killed.', effects: { cred: 2, fame: 3, burnout: 5 } },
+          good: { text: 'You cite the founding records, correctly. The forum elders emerge from dormancy to vouch. The thread locks itself out of respect.', effects: { cred: 6, network: 3, fame: 3 } },
+          incredible: { text: 'Your reply becomes the pinned history of the genre. Purists now cite YOU. The scene grows. Nobody killed anything.', effects: { cred: 9, fame: 6, network: 4 } },
+        },
+      },
+      right: {
+        label: 'Post nothing. Drop a better record.',
+        governingStats: { creativity: 1.0 },
+        tags: ['record', 'indie'],
+        outcomes: {
+          bad: { text: 'The record is good but drops the same day as a scandal in an adjacent scene. The purists claim victory over the silence.', effects: { creativity: 4, fame: 2 } },
+          good: { text: 'The album answers every thread without naming one. Purism, it turns out, cannot survive contact with a great bridge.', effects: { creativity: 7, cred: 4, fame: 4 } },
+          incredible: { text: 'The record redefines what {genre} even is. Thread #4,118 quietly retitles itself “early press.”', effects: { creativity: 9, cred: 6, fame: 8 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_genre_face', act: 3, pathAffinity: [], weight: 10,
+    requires: { genreAny: true },
+    art: 'ev_genre_face', context: 'A trend piece, going to print either way',
+    prompt: 'A culture magazine is declaring the {genre} wave, and they want you as the face of it. Cover shoot Thursday. Waves, historically, crash.',
+    tags: ['fame', 'social'],
+    choices: {
+      left: {
+        label: 'Be the face. Ride the wave.',
+        governingStats: { network: 0.9 },
+        tags: ['fame', 'mainstream'],
+        outcomes: {
+          bad: { text: 'The wave crests early. By the time the issue prints, the trend piece reads like an obituary with your face on it.', effects: { fame: 6, cred: -3, burnout: 4 } },
+          good: { text: 'The cover mints you as shorthand for a sound. Bookings triple. The wave holds long enough to matter.', effects: { fame: 14, network: 5, cred: 2, pathProgress: 1 } },
+          incredible: { text: 'The wave becomes an era, and eras need a face. Museums will one day caption this photo. You wore the good jacket. Thank god.', effects: { fame: 22, network: 6, cred: 4, pathProgress: 1 } },
+        },
+      },
+      right: {
+        label: '“Genres are marketing. Next question.”',
+        governingStats: { cred: 1.0 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'They run the piece anyway with a photo of your rival, captioned as you. Everyone involved apologizes except the wave.', effects: { cred: 3, fame: -2, rivalry: 1 } },
+          good: { text: 'The refusal quote runs as the headline and ages beautifully. When the wave crashes, you are standing on the beach, dry.', effects: { cred: 7, creativity: 3, fame: 4 } },
+          incredible: { text: '“Genres are marketing” becomes the epigraph of the scene’s definitive book. You outlived the wave by refusing to surf it.', effects: { cred: 10, creativity: 4, fame: 7 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a2_hustle_audit', act: [2, 3], pathAffinity: [], weight: 9,
+    requires: { hustleMin: 1 },
+    art: 'ev_audit', context: 'The Bureau of Supplemental Income (est. Tuesday)',
+    prompt: 'A person with a lanyard and a tote bag audits your side income. “Merch, royalties, a… compost corner? We’re going to need receipts. Or a really good story.”',
+    tags: ['deal', 'work'],
+    choices: {
+      left: {
+        label: 'Produce the receipts',
+        governingStats: { skill: 0.5, cred: 0.7 },
+        tags: ['work', 'safe'],
+        outcomes: {
+          bad: { text: 'Your receipts are setlists with numbers on them. The auditor sighs a fine into existence.', effects: { money: -80, burnout: 4 } },
+          good: { text: 'The shoebox holds. The auditor stamps everything and mutters “most organized musician this quarter,” which is damning and delightful.', effects: { cred: 4, money: -20 } },
+          incredible: { text: 'Your paperwork is so clean the Bureau asks who does your books. It’s you. They offer you a job. You decline via song.', effects: { cred: 6, money: 60, network: 3 } },
+        },
+      },
+      right: {
+        label: 'Tell the really good story',
+        governingStats: { creativity: 0.9 },
+        tags: ['risky'],
+        outcomes: {
+          bad: { text: 'The story is excellent. Fiction, but excellent. The fine includes a small surcharge for wasting the auditor’s afternoon beautifully.', effects: { money: -120, creativity: 3, fame: 2 } },
+          good: { text: 'Halfway through the saga of Craig and the corner, the auditor closes the folder. “I don’t get paid enough for lore.” Case dismissed.', effects: { creativity: 5, cred: 3 } },
+          incredible: { text: 'The auditor becomes a fan mid-audit, buys merch AT the audit, and files your case under “cultural contribution.” The tote bag has your logo now.', effects: { creativity: 7, fame: 5, money: 40, network: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'a3_hustle_profile', act: 3, pathAffinity: [], weight: 9,
+    requires: { hustleMin: 2 },
+    art: 'ev_profile', context: 'HUSTLE Quarterly (a business magazine)',
+    prompt: '“Musician? Sure. But our readers want the PORTFOLIO. The residency, the royalties, the corner. We’re calling it: ‘The Artist As Small Business.’”',
+    tags: ['fame', 'deal'],
+    choices: {
+      left: {
+        label: 'Do the business profile',
+        governingStats: { network: 0.9 },
+        tags: ['mainstream', 'deal'],
+        outcomes: {
+          bad: { text: 'The photo shoot involves a blazer over a band tee and the caption “founder.” Musicians text you the cover with no message. None needed.', effects: { money: 150, fame: 5, cred: -4 } },
+          good: { text: 'The profile is embarrassing and lucrative — the industry special. Three venues raise your fee because “the market spoke.”', effects: { money: 300, fame: 8, cred: -2, network: 4 } },
+          incredible: { text: 'The piece coins “portfolio artist” and credits you. Business school syllabi now contain your compost corner. Unstoppable. Absurd. Unstoppable.', effects: { money: 450, fame: 12, network: 6 } },
+        },
+      },
+      right: {
+        label: '“The business is a side effect.”',
+        governingStats: { cred: 0.9 },
+        tags: ['indie'],
+        outcomes: {
+          bad: { text: 'They print the refusal as a pull quote next to your merch revenue. The juxtaposition does numbers. Against you.', effects: { cred: 3, fame: 2 } },
+          good: { text: 'The quote reframes the piece into something almost true. The art stays the headline; the hustles stay the footnote.', effects: { cred: 6, fame: 4 } },
+          incredible: { text: '“The business is a side effect” gets embroidered, bootlegged, and tattooed. Your accountant frames the original invoice.', effects: { cred: 9, fame: 7, money: 100 } },
+        },
+      },
+    },
+  },
   // ═══════════════ BURNOUT COPING (forced interstitials) ═══════════════
   {
     id: 'coping_50', act: [1, 2, 3], pathAffinity: [], weight: 0, chainOnly: true,

@@ -157,6 +157,8 @@ function meetsRequires(ev, state) {
   if (r.gear && !r.gear.every((g) => state.accessories.includes(g))) return false;
   if (r.rivalryMin !== undefined && (state.rivalry ?? 0) < r.rivalryMin) return false;
   if (r.rivalryMax !== undefined && (state.rivalry ?? 0) > r.rivalryMax) return false;
+  if (r.genreAny && !state.genre) return false;
+  if (r.hustleMin !== undefined && (state.hustles || []).length < r.hustleMin) return false;
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');
