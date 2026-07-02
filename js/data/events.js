@@ -545,6 +545,91 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════ THE LAST DOOR (guaranteed path climaxes) ═══════════
+  {
+    id: 'finale_label_meeting', act: 3, pathAffinity: ['megastar'], weight: 10, finaleCard: true,
+    art: 'ev_last_meeting', context: 'The 40th floor. The good conference room.',
+    prompt: 'The deal is on the table: global push, stadium routing, your face on things you haven’t imagined yet. Clause 14 is about your masters. The pen is heavier than it looks. Everyone is smiling.',
+    tags: ['deal', 'fame'],
+    choices: {
+      left: {
+        label: 'Sign everything. Go supernova.',
+        governingStats: { network: 0.9 },
+        tags: ['deal', 'mainstream', 'risky'],
+        outcomes: {
+          bad: { text: 'You sign. The machine turns on. It is enormous and impersonal and it works — for the label. Your song plays everywhere; clause 14 hums beneath it like a fridge.', effects: { fame: 14, money: 400, cred: -6, burnout: 6 } },
+          good: { text: 'You sign, eyes open. The rocket takes off with you strapped to the outside. It’s everything you wanted, at the price you agreed to, which is the best deal anyone gets up here.', effects: { fame: 22, money: 600, cred: -3, network: 5, pathProgress: 1 } },
+          incredible: { text: 'You sign — after your lawyer rewrites clause 14 at the table while the room pretends not to sweat. The push is global AND the masters revert. They frame the pen. So do you.', effects: { fame: 30, money: 700, network: 7, cred: 3, pathProgress: 2 } },
+        },
+      },
+      right: {
+        label: 'Own your masters. Walk.',
+        governingStats: { cred: 0.9 },
+        tags: ['deal', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You walk. The elevator ride down is very long and very quiet. Independence is real, and so is the marketing budget you just declined.', effects: { cred: 7, fame: -3, burnout: 4 } },
+          good: { text: 'You walk, and the story of the walk travels further than the deal would have. “The one who kept everything” is a durable brand. You own every note of it.', effects: { cred: 9, fame: 8, network: 3, pathProgress: 1 } },
+          incredible: { text: 'You walk — into a distribution deal on YOUR terms by Friday. The 40th floor calls back with clause 14 deleted. You let it ring once. Just once.', effects: { cred: 10, fame: 14, money: 300, network: 5, pathProgress: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'finale_the_call', act: 3, pathAffinity: ['studio'], weight: 10, finaleCard: true,
+    art: 'ev_last_call', context: '3:11 a.m. Unknown number. You know exactly who it is.',
+    prompt: '“One take. Tonight. The record ships Friday and the part doesn’t exist yet. Everyone says you’re the call.” Behind the voice: the biggest artist alive, humming the hole in their song.',
+    tags: ['studio'],
+    choices: {
+      left: {
+        label: 'Go. Be the call.',
+        governingStats: { skill: 1.0 },
+        tags: ['studio', 'risky'],
+        outcomes: {
+          bad: { text: 'You get there and the part fights you for two hours before it gives in. What ships is good — honest, road-worn good — and the room remembers you were there at 3 a.m. That counts. It all counts.', effects: { skill: 5, cred: 5, money: 250, burnout: 8 } },
+          good: { text: 'Take one lands. The artist stops humming. The engineer looks up like something walked through the room. “THAT,” says the voice. That is yours.', effects: { skill: 8, cred: 9, money: 350, pathProgress: 1 } },
+          incredible: { text: 'The take becomes the moment the record is remembered for. Liner notes, first name, no asterisk. Somewhere a kid slows it down to learn it, the way you once did. The circle closes with you inside it.', effects: { skill: 10, cred: 12, money: 450, fame: 6, pathProgress: 2 } },
+        },
+      },
+      right: {
+        label: 'Send Wren. Pass the call on.',
+        governingStats: { cred: 0.7, network: 0.7 },
+        tags: ['network', 'risky'],
+        outcomes: {
+          bad: { text: 'Wren freezes for one take, then finds it on the second. The record ships. Your phone learns a new silence — the sound of a torch changing hands slightly before you meant it to.', effects: { cred: 4, network: 3, burnout: -4 } },
+          good: { text: 'Wren nails it, and tells the room who taught them the voicing. The industry hears both names in the story forever after. First-call players get old; first-call judgment doesn’t.', effects: { cred: 8, network: 6, burnout: -6, pathProgress: 1 } },
+          incredible: { text: 'Wren delivers a take you couldn’t have — and says so, publicly, wrongly, beautifully. The legend that you KNEW, at 3 a.m., outlives every session you ever played. Kingmaker is also a chair.', effects: { cred: 11, network: 9, fame: 5, burnout: -6, pathProgress: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'finale_credits', act: 3, pathAffinity: ['hitfactory'], weight: 10, finaleCard: true,
+    art: 'ev_last_credits', context: 'The label president’s office. There’s a view.',
+    prompt: '“VP of A&R. Your taste, our machine. You’d never chase a placement again — you’d BE the placement.” On the desk: a contract, a nameplate they already printed, and the exact pen from every deal that ever shelved you.',
+    tags: ['deal', 'write'],
+    choices: {
+      left: {
+        label: 'Take the desk. Run the machine.',
+        governingStats: { network: 0.9 },
+        tags: ['deal', 'mainstream'],
+        outcomes: {
+          bad: { text: 'You take it. The meetings metastasize. You greenlight other people’s doors all day and drive home humming fragments you’ll never finish. The money is superb. The silence is specific.', effects: { money: 700, network: 8, creativity: -6, burnout: 6 } },
+          good: { text: 'You take the desk and use it like a crowbar: every writer you ever shared a shelf with gets a real shot. The machine runs warmer with your hand on it. Some doors you open for others.', effects: { money: 800, network: 10, cred: 4, creativity: -3, pathProgress: 1 } },
+          incredible: { text: 'You take the desk AND keep Thursday nights for the vault. Two years later a song escapes it, uncredited, and outcharts your whole roster. Only you know. It’s enough. It’s somehow exactly enough.', effects: { money: 900, network: 10, cred: 6, hits: 1, pathProgress: 2 } },
+        },
+      },
+      right: {
+        label: 'Stay a writer. Forever. On purpose.',
+        governingStats: { creativity: 0.9 },
+        tags: ['write', 'indie', 'risky'],
+        outcomes: {
+          bad: { text: 'You decline, and the industry hears “difficult.” The rooms cool for a season. You write through it, because that was always the deal you actually signed — the one with yourself.', effects: { creativity: 7, cred: 4, burnout: 4 } },
+          good: { text: '“I’m a writer.” The president nods like they lost a bet with themselves. The nameplate goes in a drawer; your next three placements go on the wall. The pen stays on their desk, unused.', effects: { creativity: 9, cred: 7, hits: 1, pathProgress: 1 } },
+          incredible: { text: 'You decline in one sentence they later quote in a keynote. The vault opens like a second act: your best year starts at an age the trades call “improbable.” Improbable charts anyway.', effects: { creativity: 12, cred: 9, hits: 2, fame: 6, pathProgress: 2 } },
+        },
+      },
+    },
+  },
   // ═══════════════════ THE BAND (recruit & drama) ═══════════════════
   {
     id: 'a1_first_bandmate', act: 1, pathAffinity: [], weight: 9,
