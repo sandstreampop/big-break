@@ -35,24 +35,20 @@ function pick(rng, arr) { return arr[Math.floor(rng() * arr.length)]; }
 export function collabArtistFor(state) {
   return ARTISTS[(state.chartSeed || 1) % ARTISTS.length];
 }
-function songName(rng) { return pick(rng, ADJ) + ' ' + pick(rng, NOUN) + pick(rng, SUFFIX); }
+export function songName(rng) { return pick(rng, ADJ) + ' ' + pick(rng, NOUN) + pick(rng, SUFFIX); }
 
-// Your chart footprint: how many songs you have on, and your peak position
+// Your chart footprint, from REAL songs: charting entries and best peak
 export function playerChartInfo(state) {
-  const score = state.fame + state.hits * 15;
-  const entries = Math.min(3, (state.hits > 0 ? 1 : 0) + (state.fame >= 45 ? 1 : 0) + (state.fame >= 85 ? 1 : 0));
-  if (entries === 0 || score < 20) return { entries: 0, peak: null };
-  const peak = Math.max(1, Math.min(10, 11 - Math.floor(score / 12)));
-  return { entries, peak };
+  const songs = (state.songs || []).filter((s) => s.status === 'charting' && s.pos);
+  const peak = (state.songs || []).reduce((best, s) => (s.peak && (!best || s.peak < best) ? s.peak : best), null);
+  return { entries: songs.length, peak };
 }
 
-export function buildChart(state) {
+// The filler rows + the lurking rival (deterministic per chartSeed+act)
+function industryRows(state) {
   const rng = mulberry32((state.chartSeed || 1) * 7919 + state.act * 104729);
   const rival = rivalById(state.rival);
-  const info = playerChartInfo(state);
-
   const rows = [];
-  // filler industry product
   const artists = [...ARTISTS];
   for (let i = 0; i < 10; i++) {
     const ai = Math.floor(rng() * artists.length);
@@ -63,40 +59,48 @@ export function buildChart(state) {
       you: false, rival: false,
     });
   }
-  // the rival always lurks; they thrive on the feud
   const rivalPos = Math.max(1, Math.min(10,
     9 - Math.floor(state.fame / 22) - Math.floor((state.rivalry ?? 3) / 3)));
   rows[rivalPos - 1] = {
     artist: rival.name, song: songName(rng), weeks: 2 + Math.floor(rng() * 6),
     you: false, rival: true,
   };
-  // your songs
-  if (info.entries > 0) {
-    const titles = (state.chartTitles || []).slice();
-    while (titles.length < info.entries) titles.push(songName(rng));
-    state.chartTitles = titles;
-    for (let e = 0; e < info.entries; e++) {
-      const pos = Math.min(10, info.peak + e * 3 + Math.floor(rng() * 2));
-      rows[pos - 1] = {
-        artist: 'YOU', song: titles[e], weeks: Math.max(1, state.act - 1),
-        you: true, rival: false,
-      };
-    }
+  return rows;
+}
+
+export function buildChart(state) {
+  const rows = industryRows(state);
+  // your REAL songs occupy their simulated positions
+  const yours = (state.songs || [])
+    .filter((s) => s.status === 'charting' && s.pos)
+    .sort((a, b) => a.pos - b.pos);
+  const taken = new Set();
+  for (const s of yours) {
+    let p = s.pos;
+    while ((taken.has(p) || rows[p - 1]?.rival) && p < 10) p++; // never evict the rival row
+    if (taken.has(p) || rows[p - 1]?.rival) continue; // chart is full below you
+    taken.add(p);
+    rows[p - 1] = {
+      artist: 'YOU', song: s.title, weeks: s.weeks,
+      you: true, rival: false,
+      songMove: s.prevPos ? s.prevPos - s.pos : null, songNew: !s.prevPos,
+    };
   }
   return rows.map((r, i) => ({ ...r, pos: i + 1 }));
 }
 
-// Chart with movement vs the previous act's chart (▲ risers, ▼ fallers, NEW)
+// Chart with movement (▲ risers, ▼ fallers, NEW). Your rows carry real
+// simulated movement; the industry filler compares acts as before.
 export function buildChartWithMovement(state) {
   const now = buildChart(state);
-  if ((state.act || 1) <= 1) return { rows: now.map((r) => ({ ...r, move: null, isNew: false })), dethroned: null };
-  const prev = buildChart({ ...state, act: state.act - 1, chartTitles: [...(state.chartTitles || [])] });
-  const prevPos = new Map(prev.map((r) => [r.artist + '|' + r.song, r.pos]));
-  const prevByArtist = new Map(prev.map((r) => [r.artist, r.pos]));
+  if ((state.act || 1) <= 1) {
+    return { rows: now.map((r) => ({ ...r, move: r.you ? r.songMove : null, isNew: !!(r.you && r.songNew) })), dethroned: null };
+  }
+  const prev = industryRows({ ...state, act: state.act - 1 });
+  const prevByArtist = new Map(prev.map((r, i) => [r.artist, i + 1]));
   const rows = now.map((r) => {
-    const exact = prevPos.get(r.artist + '|' + r.song);
-    const byArtist = prevByArtist.get(r.artist);
-    const was = exact ?? byArtist;
+    if (r.you) return { ...r, move: r.songMove, isNew: !!r.songNew };
+    const was = prevByArtist.get(r.artist);
     if (was === undefined) return { ...r, move: null, isNew: true };
     return { ...r, move: was - r.pos, isNew: false };
   });

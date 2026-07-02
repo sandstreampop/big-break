@@ -11,7 +11,7 @@ import { hustleById } from './data/hustles.js';
 import { genreById } from './data/genres.js';
 import { venueById, VENUE_TIERS } from './data/venues.js';
 import { bandmateById, recruitCandidate } from './data/band.js';
-import { collabArtistFor } from './charts.js';
+import { collabArtistFor, songName } from './charts.js';
 import { TUTORIAL_EVENTS } from './data/tutorial.js';
 
 // Tutorial cards live outside EVENTS so they can never enter normal decks;
@@ -148,6 +148,125 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
   if (perks.includes('couch')) state.stats.network = clamp(state.stats.network + 6, 1, 100);
   if (perks.includes('warmup')) state.encore = 1; // walk in with one banked
   return state;
+}
+
+// ---------- Songs (first-class citizens) ----------
+// A song is written (demo), released (charting), climbs or fades. The Hot 10
+// ticks at every act break and the finale: position comes from quality +
+// hype + fame, hype decays, peaks are recorded, and cracking the top 3
+// crowns the song — THAT is what the hits counter counts from now on.
+
+export function ensureSongs(state) {
+  if (!state.songs) state.songs = [];
+  // migrate old saves: chart titles become charting songs
+  if (!state.songs.length && (state.chartTitles || []).length) {
+    for (const title of state.chartTitles) {
+      state.songs.push({
+        id: 'legacy_' + state.songs.length, title, quality: 58, hype: 40,
+        status: 'charting', origin: null, act: state.act,
+        pos: null, prevPos: null, peak: null, weeks: 0, crowned: false,
+      });
+    }
+    positionAll(state);
+  }
+  return state.songs;
+}
+
+function positionSong(state, s, rng) {
+  const power = s.quality * 0.45 + s.hype * 0.35 + Math.min(100, state.fame) * 0.25 + (rng() * 16 - 8);
+  if (power >= 88) return 1;
+  if (power < 30) return null;
+  return Math.max(1, Math.min(10, Math.round(11 - power / 9)));
+}
+
+function positionAll(state) {
+  const rng = stateRng(state);
+  for (const s of state.songs) {
+    if (s.status !== 'charting') continue;
+    s.pos = positionSong(state, s, rng);
+  }
+}
+
+export function addSong(state, { title, quality, origin = null, status = 'demo', hype = 0 }) {
+  ensureSongs(state);
+  const s = {
+    id: 'song_' + (state.songs.length + 1) + '_' + (state.rngUses || 0),
+    title, quality: clamp(Math.round(quality), 1, 100), hype: clamp(Math.round(hype), 0, 100),
+    status, origin, act: state.act,
+    pos: null, prevPos: null, peak: null, weeks: 0, crowned: false,
+  };
+  state.songs.push(s);
+  // keep the legacy list in sync (discography, older UI paths)
+  state.chartTitles = state.chartTitles || [];
+  if (!state.chartTitles.includes(title)) state.chartTitles.unshift(title);
+  if (status === 'charting') debutSong(state, s);
+  return s;
+}
+
+export function releaseSong(state, songId, hype = 55) {
+  ensureSongs(state);
+  const s = state.songs.find((x) => x.id === songId);
+  if (!s || s.status === 'charting') return null;
+  s.status = 'charting';
+  s.hype = clamp(Math.round(hype), 0, 100);
+  debutSong(state, s);
+  return s;
+}
+
+function debutSong(state, s) {
+  const rng = stateRng(state);
+  s.pos = positionSong(state, s, rng);
+  if (s.pos) {
+    s.weeks = 1;
+    s.peak = s.pos;
+    crownCheck(state, s);
+  }
+}
+
+function crownCheck(state, s, notes) {
+  if (s.pos && s.pos <= 3 && !s.crowned) {
+    s.crowned = true;
+    state.hits += 1;
+    if (notes) notes.push(`♪ “${s.title}” cracks the top 3 — that’s a HIT`);
+    return true;
+  }
+  return false;
+}
+
+// One chart week passes: act breaks and the finale call this.
+export function chartTick(state) {
+  ensureSongs(state);
+  const rng = stateRng(state);
+  const notes = [];
+  for (const s of state.songs) {
+    if (s.status !== 'charting') continue;
+    s.prevPos = s.pos ?? null;
+    s.pos = positionSong(state, s, rng);
+    if (s.pos) {
+      s.weeks += 1;
+      if (s.peak == null || s.pos < s.peak) s.peak = s.pos;
+      if (!crownCheck(state, s, notes)) {
+        if (!s.prevPos) notes.push(`♪ “${s.title}” debuts at #${s.pos}`);
+        else if (s.pos < s.prevPos) notes.push(`♪ “${s.title}” climbs to #${s.pos}`);
+        else if (s.pos > s.prevPos) notes.push(`♪ “${s.title}” slips to #${s.pos}`);
+      }
+    } else {
+      if (s.prevPos) notes.push(`♪ “${s.title}” drops off the Hot 10 after ${s.weeks} week${s.weeks === 1 ? '' : 's'}`);
+      s.status = 'faded';
+    }
+    s.hype = Math.round(s.hype * 0.55);
+  }
+  return notes;
+}
+
+// The song most worth talking about right now (for {song} templating)
+export function flagshipSong(state) {
+  ensureSongs(state);
+  const charting = state.songs.filter((s) => s.status === 'charting' && s.pos);
+  if (charting.length) return charting.sort((a, b) => a.pos - b.pos)[0];
+  const demos = state.songs.filter((s) => s.status === 'demo');
+  if (demos.length) return demos[demos.length - 1];
+  return state.songs[state.songs.length - 1] || null;
 }
 
 // The First Gig: a scripted 9-card onboarding run. Fixed teaching stats so
@@ -582,7 +701,21 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     if (v) { state.money += v; push('money', v); }
   }
 
-  if (effects.hits) { state.hits += effects.hits; push('hits', effects.hits); }
+  if (effects.hits) {
+    // an "instant classic": the fiction says this song is a hit — make it one
+    for (let i = 0; i < effects.hits; i++) {
+      const s = addSong(state, {
+        title: effects.chartTitle
+          ? effects.chartTitle.replace('{collabArtist}', collabArtistFor(state))
+          : songName(rng),
+        quality: 68 + Math.round((rng ? rng() : 0.5) * 12),
+        origin: ev?.id || null, status: 'charting', hype: 60,
+      });
+      if (!s.crowned) { s.crowned = true; state.hits += 1; } else { /* crowned at debut */ }
+    }
+    push('hits', effects.hits);
+    state._chartTitleHandled = !!effects.chartTitle;
+  }
   if (effects.pathProgress) { state.pathProgress += effects.pathProgress; push('pathProgress', effects.pathProgress); }
   if (effects.rivalry) {
     const before = state.rivalry ?? 3;
@@ -597,10 +730,14 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   if (effects.venueLove && state.venue) {
     state.venueLevel = Math.min(3, (state.venueLevel || 0) + effects.venueLove);
   }
-  if (effects.chartTitle) {
-    state.chartTitles = state.chartTitles || [];
-    state.chartTitles.unshift(effects.chartTitle.replace('{collabArtist}', collabArtistFor(state)));
+  if (effects.chartTitle && !state._chartTitleHandled) {
+    const tierQ = tier === 'incredible' ? 66 : tier === 'good' ? 58 : 50;
+    addSong(state, {
+      title: effects.chartTitle.replace('{collabArtist}', collabArtistFor(state)),
+      quality: tierQ, origin: ev?.id || null, status: 'charting', hype: 62,
+    });
   }
+  state._chartTitleHandled = false;
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
 
@@ -793,6 +930,7 @@ function startAct(state, act) {
       notes.push(`${bm.icon} ${bm.name}: +${bm.actQuirk.fame} Fame (word travels)`);
     }
   }
+  notes.push(...chartTick(state));
   return notes;
 }
 
@@ -821,6 +959,7 @@ export function checkFailStates(state) {
 
 export function evaluateFinale(state) {
   state.phase = 'ended';
+  chartTick(state); // one last chart week before judgment
   finalePayout(state);
   const gates = CONFIG.winGates[state.path];
   const readings = Object.entries(gates).map(([key, target]) => {
@@ -874,10 +1013,8 @@ export function runSummary(state) {
     rival: state.rival,
     encoreChained: !!state.encoreChained,
     copingCount: (state.copingSeen || []).length,
-    // Hot 10 peak (mirrors js/charts.js playerChartInfo)
-    chartPeak: (state.fame + state.hits * 15) >= 20
-      ? Math.max(1, Math.min(10, 11 - Math.floor((state.fame + state.hits * 15) / 12)))
-      : null,
+    chartPeak: (state.songs || []).reduce((best, s) => (s.peak && (!best || s.peak < best) ? s.peak : best), null),
+    songs: (state.songs || []).map((s) => ({ ...s })),
     tierLog: state.tierLog || [],
     cardLog: state.cardLog || [],
     daily: state.daily || null,
