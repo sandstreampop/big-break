@@ -79,6 +79,12 @@ export function playMinigame(id, ctx = {}) {
     play.addEventListener('click', () => {
       box.innerHTML = '';
       const stage = el('div', 'mg-stage');
+      // burnout bleeds into your hands: past 60 the whole stage trembles
+      const burnout = ctx.run?.stats?.burnout || 0;
+      if (burnout >= 60) {
+        stage.classList.add('mg-shaky');
+        box.append(el('div', 'mg-shaky-note', '🔥 Your hands are shaking.'));
+      }
       box.append(stage);
       // hard cap: no game may hold the run hostage
       const cap = setTimeout(() => finish(0.2), 32000);

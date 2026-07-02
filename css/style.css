@@ -1086,3 +1086,15 @@ body.big-text #app { zoom: 1.18; }
 }
 .mg-gear-in { opacity: .18; transform: scale(.7); }
 .mg-gear-no { border-color: var(--bad); background: #4a2030; }
+
+/* burnout tremor: precision gets honestly harder past 60 🔥 */
+.mg-shaky { animation: mgTremor .38s infinite; }
+@keyframes mgTremor {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(1.6px, -1px) rotate(.15deg); }
+  50% { transform: translate(-1.4px, 1.2px) rotate(-.2deg); }
+  75% { transform: translate(1px, 1.4px) rotate(.1deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) { .mg-shaky { animation: none; } }
+.mg-shaky-note { text-align: center; font-size: 12px; font-weight: 800; color: var(--bad); }
