@@ -954,6 +954,22 @@ function showChart() {
       else if (s.status === 'faded') state = s.peak ? `faded — peaked #${s.peak}, ${s.weeks} wk${s.weeks === 1 ? '' : 's'}` : 'faded — never charted';
       else state = s.quality >= 68 ? 'demo — might be undeniable' : s.quality >= 52 ? 'demo — something’s there' : s.quality >= 38 ? 'demo — rough but honest' : 'demo — it exists';
       row.innerHTML = `<b>“${s.title}”</b><span class="sb-state">${state}</span>`;
+      // tap a song to unfold its biography
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = row.nextElementSibling?.classList?.contains('sb-detail');
+        book.querySelectorAll('.sb-detail').forEach((d) => d.remove());
+        if (open) return;
+        const origin = s.origin ? EVENTS.find((ev) => ev.id === s.origin) : null;
+        const bits = [];
+        bits.push(`written in act ${s.act}${origin?.context ? ` — ${origin.context.replace(/\{\w+\}/g, '…')}` : ''}`);
+        bits.push(`quality ${s.quality} · hype ${s.hype}`);
+        if (s.peak) bits.push(`chart life: debuted, peaked #${s.peak}, ${s.weeks} week${s.weeks === 1 ? '' : 's'}${s.crowned ? ' — certified HIT 👑' : ''}`);
+        else if (s.status === 'demo') bits.push('still in the vault — a release card ships it');
+        else bits.push('shipped, never charted — the sync desk may still call');
+        const d = el('div', 'sb-detail', bits.join('<br>'));
+        row.after(d);
+      });
       book.append(row);
     }
     box.append(book);
