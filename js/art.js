@@ -232,7 +232,7 @@ const SCENES = {
     <circle cx="160" cy="122" r="7" fill="hsla(0,0%,95%,.85)"/>`,
 };
 
-function sceneFor(slot) {
+export function sceneFor(slot) {
   if (SCENE[slot]) return SCENE[slot];
   if (slot.startsWith('instrument_') || slot.startsWith('gear_')) return 'pedestal';
   return 'stage';

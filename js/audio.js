@@ -94,12 +94,14 @@ function bassNote(note, t, dur, dest) {
 }
 
 let noiseBuf = null;
+function ensureNoise() {
+  if (noiseBuf || !ctx) return;
+  noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+}
 function hat(t, dest, open = false) {
-  if (!noiseBuf) {
-    noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
-    const d = noiseBuf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-  }
+  ensureNoise();
   const src = ctx.createBufferSource();
   src.buffer = noiseBuf;
   const hp = ctx.createBiquadFilter();
@@ -114,10 +116,13 @@ function hat(t, dest, open = false) {
 
 export const music = {
   mood: null,
+  stress: 0, // 0..1 (burnout): darkens the filter, drags the tempo
   _timer: null,
   _nextTime: 0,
   _step: 0,
   _gain: null,
+
+  setStress(v) { this.stress = Math.max(0, Math.min(1, v)); },
 
   start(mood) {
     this.mood = mood;
@@ -147,13 +152,15 @@ export const music = {
     if (!ctx || !musicEnabled) return;
     if (ctx.state === 'suspended') { ctx.resume(); return; }
     const m = MOODS[this.mood] || MOODS.title;
-    const beat = 60 / m.bpm;
+    // stress (burnout) drags the tempo and closes the filter
+    const beat = 60 / (m.bpm * (1 - 0.12 * this.stress));
+    const cutoff = m.cutoff * (1 - 0.45 * this.stress);
     const chordDur = beat * 4 * m.barsPerChord;
     // schedule chord-by-chord, 0.4s lookahead
     while (this._nextTime < ctx.currentTime + 0.4) {
       const t = this._nextTime;
       const chord = m.prog[this._step % m.prog.length];
-      padChord(chord, t, chordDur, m.cutoff, this._gain);
+      padChord(chord, t, chordDur, cutoff, this._gain);
       if (m.bass) {
         bassNote(chord[0], t, beat * 1.6, this._gain);
         bassNote(chord[0], t + beat * 2, beat * 1.2, this._gain);
@@ -173,6 +180,34 @@ export const music = {
     }
   },
 };
+
+// Scene ambiences: one subtle synthesized texture as a card deals
+export function ambient(scene) {
+  if (!ctx || !enabled) return;
+  const t = ctx.currentTime + 0.05;
+  const g = ctx.createGain();
+  g.connect(ctx.destination);
+  switch (scene) {
+    case 'stage': case 'arena': case 'festival': { // crowd murmur swell
+      ensureNoise();
+      const src = ctx.createBufferSource();
+      src.buffer = noiseBuf; src.loop = true;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 500;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.03, t + 0.4);
+      g.gain.linearRampToValueAtTime(0.0001, t + 1.4);
+      src.connect(lp).connect(g);
+      src.start(t); src.stop(t + 1.5);
+      break;
+    }
+    case 'phone': blip(1245, 0.09, 'sine', 0.035); blip(1661, 0.12, 'sine', 0.03, 0.09); break;
+    case 'studio': blip(98, 0.25, 'sine', 0.045); blip(65, 0.3, 'sine', 0.04, 0.1); break; // tape thunk
+    case 'office': blip(2200, 0.03, 'square', 0.018); blip(1800, 0.03, 'square', 0.015, 0.13); break; // pen ticks
+    case 'shop': blip(880, 0.06, 'triangle', 0.03); blip(1319, 0.08, 'triangle', 0.03, 0.06); break; // door chime
+    case 'crisis': blip(415, 0.3, 'sawtooth', 0.025); break;
+    default: break;
+  }
+}
 
 export const sfx = {
   swipe() { blip(320, 0.08, 'sine', 0.05); },
