@@ -119,6 +119,14 @@ export const ACCESSORIES = [
     appliesTo: ['safe'], modifier: 7,
     blurb: 'Safe choices +7 · preparation is a genre',
   },
+  {
+    id: 'cowbell', name: 'Cowbell', art: 'gear_cowbell', unlockedByDefault: true,
+    flavor: 'The prescription is known. The dosage is infinite.',
+    compatibility: { universal: true },
+    appliesTo: ['live'], modifier: 6,
+    sideEffect: { burnoutPerMatch: 1 },
+    blurb: 'Live +6 · +1 Burnout per use (you cannot stop)',
+  },
   // ---- Career Wall unlocks ----
   {
     id: 'tour_van', name: 'Tour Van (Runs)', art: 'gear_van', unlockedByDefault: false,

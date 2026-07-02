@@ -112,6 +112,28 @@ export const INSTRUMENTS = [
     },
   },
   {
+    id: 'triangle', name: 'The Triangle', family: 'percussion',
+    art: 'instrument_triangle', unlockedByDefault: false,
+    flavor: 'One note. You have one note. It is, admittedly, a perfect note.',
+    modifiers: { cred: 6, skill: 4 },
+    quirk: {
+      id: 'ding', name: 'Ding',
+      desc: 'Safe choices roll +8 (precision is your whole thing); Risky choices roll −4.',
+      hooks: { rollTagBonus: [{ tags: ['safe'], bonus: 8 }, { tags: ['risky'], bonus: -4 }] },
+    },
+  },
+  {
+    id: 'hurdy_gurdy', name: 'Hurdy-Gurdy', family: 'strings',
+    art: 'instrument_hurdy', unlockedByDefault: false,
+    flavor: 'A medieval drone machine with a crank. Airport security has QUESTIONS.',
+    modifiers: { creativity: 8, network: -4 },
+    quirk: {
+      id: 'the_drone', name: 'The Drone',
+      desc: 'Roots/Indie choices roll +8; Mainstream rolls −6. The crank waits for no trend.',
+      hooks: { rollTagBonus: [{ tags: ['roots', 'indie'], bonus: 8 }, { tags: ['mainstream'], bonus: -6 }] },
+    },
+  },
+  {
     id: 'own_voice', name: 'Your Own Voice', family: 'voice',
     art: 'instrument_voice', unlockedByDefault: false,
     flavor: 'Free, portable, and everyone has an opinion about it.',
