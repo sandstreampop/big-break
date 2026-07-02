@@ -144,7 +144,7 @@ export const EVENTS = [
         tags: ['studio', 'safe'],
         outcomes: {
           bad: { text: 'You demo it to death. Version 14 has lost whatever version 1 had.', effects: { skill: 3, creativity: -2, burnout: 4 } },
-          good: { text: 'You chart it properly. Future-you will thank present-you in the liner notes.', effects: { skill: 5, creativity: 2, addFlag: 'demo_in_pocket' } },
+          good: { text: 'You chart it properly. Future-you will thank present-you in the liner notes.', effects: { skill: 5, creativity: 2, addFlag: 'demo_in_pocket', addPromise: { label: 'Book real studio time', tags: ['studio', 'record'], cards: 4, reward: { skill: 3, cred: 2 }, penalty: { cred: -2 } } } },
           incredible: { text: 'The arrangement blooms. This isn’t a demo anymore. It’s a plan.', effects: { skill: 7, creativity: 4, cred: 2, addFlag: 'demo_in_pocket' } },
         },
       },
@@ -276,7 +276,7 @@ export const EVENTS = [
         cost: 60,
         outcomes: {
           bad: { text: 'She watches you play, sighs, and starts you on whole notes. Whole. Notes.', effects: { money: -60, skill: 5, cred: 1, burnout: 3 } },
-          good: { text: '“Stop trying to be interesting. Be correct first.” It stings. It works.', effects: { money: -60, skill: 8, cred: 2 } },
+          good: { text: '“Stop trying to be interesting. Be correct first.” It stings. It works.', effects: { money: -60, skill: 8, cred: 2, addPromise: { label: 'Practice what she taught you', tags: ['practice', 'studio'], cards: 4, reward: { skill: 4 }, penalty: { skill: -1 } } } },
           incredible: { text: 'She hears something in you. Lesson runs three hours. She refuses half the money.', effects: { money: -30, skill: 11, cred: 4, network: 3 } },
         },
       },
@@ -597,7 +597,7 @@ export const EVENTS = [
         tags: ['work', 'risky'],
         outcomes: {
           bad: { text: 'The session goes fine. The texts get shorter for a while — then stop being about anything. Some songs cost more than studio time. You learn the exchange rate slowly.', effects: { fame: 5, network: 3, removeFlag: 'someone', addFlag: 'someone_lost', burnout: 4 } },
-          good: { text: 'The session lands and you show up at the tail of the dinner with the rough mix and an apology shaped like dessert. “You’re lucky it’s good,” they say, about both.', effects: { fame: 6, network: 3, burnout: 3 } },
+          good: { text: 'The session lands and you show up at the tail of the dinner with the rough mix and an apology shaped like dessert. “You’re lucky it’s good,” they say, about both.', effects: { fame: 6, network: 3, burnout: 3, addPromise: { label: 'Make real time for them', tags: ['home', 'rest'], cards: 4, reward: { burnout: -8 }, penalty: { burnout: 4 } } } },
           incredible: { text: 'You dedicate the on-air performance to them, by name, on their birthday, live. The clip outlives the argument. The argument was already small. You still bring dessert.', effects: { fame: 9, network: 4, cred: 2 } },
         },
       },
@@ -1078,7 +1078,7 @@ export const EVENTS = [
         tags: ['deal', 'risky'],
         outcomes: {
           bad: { text: 'Dario’s “next level” is a casino lounge in another state. You play it. Twice.', effects: { network: 3, burnout: 6, grantGear: 'managers_card', money: 40 } },
-          good: { text: 'Dario is, against every visible indicator, competent. Doors open. He takes his cut.', effects: { network: 7, fame: 4, grantGear: 'managers_card' } },
+          good: { text: 'Dario is, against every visible indicator, competent. Doors open. He takes his cut.', effects: { network: 7, fame: 4, grantGear: 'managers_card', addPromise: { label: 'Answer Dario’s calls', tags: ['deal', 'network'], cards: 3, reward: { money: 100, network: 2 }, penalty: { network: -3 } } } },
           incredible: { text: 'Dario knows EVERYONE. It’s unsettling. A booking agent hugs him and pales.', effects: { network: 10, fame: 6, cred: 2, grantGear: 'managers_card' } },
         },
       },
@@ -1984,7 +1984,7 @@ export const EVENTS = [
         tags: ['write', 'risky'],
         outcomes: {
           bad: { text: 'You rhyme “tonight” with “tonight.” Estonia notices. Estonia is rigorous.', effects: { creativity: 3, burnout: 7, money: 60 } },
-          good: { text: 'Serviceable banger delivered. It does numbers in three Baltic states.', effects: { creativity: 5, money: 180, fame: 4, hits: 1 } },
+          good: { text: 'Serviceable banger delivered. It does numbers in three Baltic states.', effects: { creativity: 5, money: 180, fame: 4, hits: 1, addPromise: { label: 'Deliver the stems by Friday', tags: ['write', 'studio'], cards: 3, reward: { money: 120 }, penalty: { cred: -2 } } } },
           incredible: { text: 'The topline transcends the drop. Radio picks it up continent-wide. DJ Probability sends a jet ski photo captioned “us.”', effects: { creativity: 7, money: 300, fame: 8, hits: 1, pathProgress: 1 } },
         },
       },

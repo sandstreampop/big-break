@@ -111,6 +111,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     venueLevel: 0,
     venueShows: 0,
     band: [],       // recruited bandmates (see data/band.js), max 3
+    promises: [],   // short-horizon objectives [{label,tags,remaining,reward,penalty}]
     hustles: [],    // persistent income sources (see data/hustles.js)
     rival: randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
@@ -399,6 +400,36 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
     tier, roll: Math.round(roll), text: outcome.text, deltas, event: ev, side,
     encoreEarned, encoreSpent: useEncore,
   };
+
+  // Promises (short-horizon objectives): a matching-tagged choice fulfills;
+  // the deadline lapsing breaks. Checked before this card's own addPromise.
+  if ((state.promises || []).length) {
+    const kept = [], remaining = [];
+    for (const p of state.promises) {
+      if (tagsIntersect(p.tags, choice.tags) && tier !== 'declined') {
+        kept.push(p);
+      } else if (p.remaining <= 1) {
+        (result.promisesBroken = result.promisesBroken || []).push(p);
+      } else {
+        remaining.push({ ...p, remaining: p.remaining - 1 });
+      }
+    }
+    state.promises = remaining;
+    for (const p of kept) {
+      applyEffects(state, p.reward || {}, null, null, rng).forEach((d) => deltas.push(d));
+      (result.promisesKept = result.promisesKept || []).push(p);
+    }
+    for (const p of result.promisesBroken || []) {
+      applyEffects(state, p.penalty || {}, null, null, rng).forEach((d) => deltas.push(d));
+    }
+  }
+  if (effects.addPromise && tier !== 'declined') {
+    state.promises = state.promises || [];
+    if (state.promises.length < 2) { // at most two open promises
+      state.promises.push({ ...effects.addPromise, remaining: effects.addPromise.cards });
+      result.promiseMade = effects.addPromise;
+    }
+  }
 
   // Build the room: venue-tagged shows (any tier — you showed up) level it up
   if (venue && tagsIntersect(venue.tags, choice.tags)) {

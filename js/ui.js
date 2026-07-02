@@ -443,6 +443,13 @@ function renderHud() {
       ].filter(Boolean),
     });
   }
+  for (const p of run.promises || []) {
+    chip('gear-chip promise-chip', `🤞 ${p.label} (${p.remaining})`, {
+      emoji: '🤞', title: `Promise: ${p.label}`,
+      lines: [`Play a <b>${p.tags.join(' or ')}</b> choice within <b>${p.remaining}</b> card${p.remaining === 1 ? '' : 's'} to keep it.`,
+        'Kept promises pay off. Broken ones cost you.'],
+    });
+  }
   for (const bid of run.band || []) {
     const bm = bandmateById(bid);
     if (bm) chip('gear-chip band-chip-mini', `${bm.icon} ${bm.name}`, {
@@ -833,6 +840,9 @@ function showResult(result) {
   if (result.gearLost) chips.append(el('span', 'chip chip-bad', `− ${result.gearLost.name} (lost!)`));
   if (result.venueLeveled) chips.append(el('span', 'chip chip-gear', `${result.venueLeveled.venue.icon} ${result.venueLeveled.venue.name} → ${result.venueLeveled.tier.name}!`));
   else if (result.venueHosted) chips.append(el('span', 'chip chip-good', `${result.venueHosted.venue.icon} home crowd +${result.venueHosted.tier.showBonus}`));
+  for (const p of result.promisesKept || []) chips.append(el('span', 'chip chip-good', `🤞 Promise kept: ${p.label}`));
+  for (const p of result.promisesBroken || []) chips.append(el('span', 'chip chip-bad', `💔 Promise broken: ${p.label}`));
+  if (result.promiseMade) chips.append(el('span', 'chip chip-gear', `🤞 Promised: ${result.promiseMade.label} (${result.promiseMade.cards} cards)`));
   const joined = result.deltas.bandmateJoined;
   if (joined) chips.append(el('span', 'chip chip-gear', `${joined.icon} ${joined.name} joins the band!`));
   if (result.deltas.bandmateLeft) chips.append(el('span', 'chip chip-bad', `${result.deltas.bandmateLeft.icon} ${result.deltas.bandmateLeft.name} quits`));
