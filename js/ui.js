@@ -97,6 +97,7 @@ function renderTitle() {
     '', () => { save.clearRun(); startNewRun(true); }));
   menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', renderWall));
   menu.append(btn('🎖 Trophy Room', '', renderTrophies));
+  if (meta.runs > 0) menu.append(btn('📊 The Résumé', '', renderResume));
   menu.append(btn('⚙ Settings', '', renderSettings));
   s.append(menu);
   s.append(el('p', 'title-foot', `Runs: ${meta.runs} · Best fame: ${meta.best.fame} · Legacy: ${meta.lpEarnedTotal} LP`));
@@ -815,6 +816,22 @@ function finishMeta(summary, lp) {
       meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path, fame: summary.fame };
     }
   }
+  // Lifetime aggregates (Pass 25)
+  const lt = meta.lifetime = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
+  lt.swipes += (summary.tierLog || []).length;
+  lt.incredibles += (summary.tierLog || []).filter((t) => t === 'incredible').length;
+  lt.bads += (summary.tierLog || []).filter((t) => t === 'bad').length;
+  lt.hits += summary.hits || 0;
+  lt.moneyBest = Math.max(lt.moneyBest, summary.money);
+  const bi = lt.byInstrument[summary.instrument] = lt.byInstrument[summary.instrument] || { runs: 0, wins: 0 };
+  bi.runs += 1;
+  if (summary.result === 'success') bi.wins += 1;
+  if (summary.path) {
+    const bp = lt.byPath[summary.path] = lt.byPath[summary.path] || { runs: 0, wins: 0 };
+    bp.runs += 1;
+    if (summary.result === 'success') bp.wins += 1;
+  }
+
   meta.runHistory = meta.runHistory || [];
   meta.runHistory.unshift({
     date: todayStr(),
@@ -1067,6 +1084,51 @@ function renderTrophies() {
   menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
   s.append(menu);
   show('#screen-trophies');
+}
+
+// ---------- The Résumé (lifetime stats, Pass 25) ----------
+
+function renderResume() {
+  const s = $('#screen-settings'); // reuse a spare screen container
+  s.innerHTML = '';
+  s.append(el('h2', 'screen-head', 'The Résumé'));
+  s.append(el('p', 'screen-sub', 'References available upon request. The references are Todd and Curtis.'));
+  const lt = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
+
+  const list = el('div', 'wall-list');
+  const row = (label, value) => {
+    const r = el('div', 'wall-item');
+    r.append(el('div', 'wall-info', `<b>${label}</b>`));
+    r.append(el('span', 'resume-val', String(value)));
+    list.append(r);
+  };
+  row('Careers attempted', meta.runs);
+  row('Decisions swiped', lt.swipes);
+  row('Incredibles rolled', lt.incredibles);
+  row('Faceplants survived', lt.bads);
+  row('Hits written', lt.hits);
+  row('Best bank balance', `$${lt.moneyBest}`);
+  row('Best fame', `★${meta.best.fame}`);
+  row('Legacy earned', `${meta.lpEarnedTotal} LP`);
+  row('Dailies played', Object.keys(meta.dailyResults || {}).length);
+
+  list.append(el('h3', 'wall-tier', 'By path'));
+  for (const [pid, p] of Object.entries(lt.byPath)) {
+    row(`${PATHS[pid]?.icon || ''} ${PATHS[pid]?.name || pid}`,
+      `${p.wins}/${p.runs} won (${p.runs ? Math.round((100 * p.wins) / p.runs) : 0}%)`);
+  }
+  const instRuns = Object.entries(lt.byInstrument).sort((a, b) => b[1].runs - a[1].runs);
+  if (instRuns.length) {
+    list.append(el('h3', 'wall-tier', 'Weapon of choice'));
+    for (const [iid, st] of instRuns.slice(0, 3)) {
+      row(instrumentById(iid)?.name || iid, `${st.runs} run${st.runs === 1 ? '' : 's'}, ${st.wins} win${st.wins === 1 ? '' : 's'}`);
+    }
+  }
+  s.append(list);
+  const menu = el('div', 'menu');
+  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
+  s.append(menu);
+  show('#screen-settings');
 }
 
 // ---------- Settings ----------
