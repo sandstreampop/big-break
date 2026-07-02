@@ -32,9 +32,22 @@ const REVIEWS = [
   'the deep cut the heads were right about',
 ];
 
+// Arc records: albums that exist because a storyline happened. Each gets
+// its own review instead of a random one — the criticism remembers too.
+const ARC_RECORDS = [
+  { flag: 'home_studio', title: 'The Shed Sessions', review: 'recorded eleven steps from a bed; sounds like nowhere else on earth' },
+  { flag: 'docu_gold', title: 'ALMOST (Original Soundtrack)', review: 'the backstage scene, in song form; festival audiences sat through the credits' },
+  { flag: 'helped_bloom', title: 'The Amp Story (Live)', review: 'forty thousand people cheering for borrowed equipment' },
+  { flag: 'band_named', title: 'Democracy (Vol. 1)', review: 'four writers, nine arguments, one undeniable record' },
+  { flag: 'someone', title: 'Verse Two: Them', review: 'the braver version. hummed first by someone who “doesn’t do music”' },
+  { flag: 'constellation', title: 'The Long Way Around', review: 'the stories found each other; the songs were waiting' },
+];
+
 export function buildDiscography(state) {
   const rng = mulberry32((state.chartSeed || 1) * 211 + 9);
   const titles = [...new Set(state.chartTitles || [])];
+  const flags = state.flags || [];
+  const arcCuts = ARC_RECORDS.filter((r) => flags.includes(r.flag));
   // uncounted hits get names too
   let extra = Math.max(0, (state.hits || 0) - titles.length);
   while (extra-- > 0) {
@@ -45,9 +58,10 @@ export function buildDiscography(state) {
     titles.push(ADJ[Math.floor(rng() * ADJ.length)] + ' ' + NOUN[Math.floor(rng() * NOUN.length)] + ' (Demo)');
   }
   const reviewBag = [...REVIEWS];
-  return titles.slice(0, 6).map((title) => {
+  const regular = titles.slice(0, 6 - Math.min(3, arcCuts.length)).map((title) => {
     const i = Math.floor(rng() * reviewBag.length);
     const review = reviewBag.splice(i, 1)[0] || REVIEWS[0];
     return { title, review };
   });
+  return [...arcCuts.slice(0, 3).map(({ title, review }) => ({ title, review })), ...regular];
 }
