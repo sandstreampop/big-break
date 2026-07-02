@@ -720,6 +720,96 @@ export const EVENTS = [
       },
     },
   },
+  // ═══════════ BANDMATE SPOTLIGHTS (require specific members) ═══════════
+  {
+    id: 'bs_fish_van', act: [2, 3], pathAffinity: [], weight: 9,
+    requires: { bandHas: 'fish' },
+    art: 'ev_bs_van', context: 'Mile 40,012. A new sound from the engine.',
+    prompt: 'The van makes a sound vans do not recover from. Fish pulls over, listens with a mechanic’s grief, and says the sentence you’ve been dreading for two acts: “It’s her transmission or our next month of gigs.”',
+    tags: ['tour', 'band'],
+    choices: {
+      left: {
+        label: 'Save the van. It’s family.',
+        governingStats: { cred: 0.7, network: 0.5 },
+        tags: ['band', 'safe'],
+        cost: 200,
+        outcomes: {
+          bad: { text: 'The transmission costs the $200 and then finds friends: belts, bearings, a mystery hose. Fish does half the labor himself, cursing tenderly. The van lives. Barely. Like all of you.', effects: { money: -200, burnout: 4, cred: 3 } },
+          good: { text: 'The shop fixes her right. First highway mile after, Fish pats the dash without a word, and the whole van pretends not to see it. Morale: unmeasurable. Also measurable: +every show you don’t cancel.', effects: { money: -200, cred: 5, network: 3, burnout: -4 } },
+          incredible: { text: 'The mechanic turns out to be a fan — of FISH, from his roadie decades. “You carried half this scene’s gear.” Parts at cost, labor free, one signed setlist. The van purrs like the year she was born.', effects: { money: -80, cred: 6, network: 5, burnout: -5 } },
+        },
+      },
+      right: {
+        label: 'Let her go. Rent a box truck.',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'risky'],
+        outcomes: {
+          bad: { text: 'Fish agrees with the math and hates every digit of it. He keeps the gearshift knob. The rental smells like nothing, which is somehow worse than smelling like Fish’s van.', effects: { money: 60, network: 2, burnout: 5 } },
+          good: { text: 'You sell her to a young band for cheap, on the condition they keep the name painted on the side. Fish inspects their drummer’s attitude first. The lineage continues.', effects: { money: 150, network: 4, cred: 3 } },
+          incredible: { text: 'The young band’s first tour in her goes viral — “THE van” becomes scene shorthand — and Fish becomes godfather to a second generation of vans. He allows exactly one (1) documentary interview about it.', effects: { money: 150, network: 6, cred: 5, fame: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'bs_tanya_empire', act: [2, 3], pathAffinity: [], weight: 9,
+    requires: { bandHas: 'tanya' },
+    art: 'ev_bs_merch', context: 'The trunk no longer closes.',
+    prompt: 'Tanya’s merch operation has outgrown the trunk, the backseat, and plausibly the law. “I need a decision,” she says, holding spreadsheets. “We go legit — LLC, webstore, fulfillment — or I keep doing crimes of scale out of a Honda.”',
+    tags: ['deal', 'band'],
+    choices: {
+      left: {
+        label: 'Go legit. Tanya gets a title.',
+        governingStats: { network: 0.8 },
+        tags: ['deal', 'safe'],
+        cost: 120,
+        outcomes: {
+          bad: { text: 'The paperwork takes a month and the webstore crashes on launch night. Tanya fixes it by 2 a.m., adds a “crash survivor” tee to the store by 3, and sells forty of them by dawn.', effects: { money: -120, network: 3, grantHustle: 'merch_line' } },
+          good: { text: 'MERCH DIRECTOR, says her new email signature, and the numbers agree: legit Tanya moves triple the units. The Honda is retired with honors and one final full trunk.', effects: { money: -120, network: 4, grantHustle: 'merch_line', cred: 2 } },
+          incredible: { text: 'Tanya’s designs start selling to people who’ve never heard the music — the shirts are simply GOOD now. A boutique asks to stock them. You are, income-wise, briefly a fashion label with a band attached.', effects: { money: -120, fame: 6, network: 5, grantHustle: 'merch_line', cred: 3 } },
+        },
+      },
+      right: {
+        label: 'Stay Honda-core. It’s the brand.',
+        governingStats: { cred: 0.8 },
+        tags: ['indie', 'risky'],
+        outcomes: {
+          bad: { text: 'The trunk economy hits its ceiling the night two hundred people want shirts and Tanya has sixty. She invents the “merch IOU,” which is illegal-adjacent and beloved.', effects: { cred: 4, money: 60, burnout: 3 } },
+          good: { text: '“Trunk exclusive” becomes a thing people line up for. Scarcity, authenticity, and a hatchback: the whole indie economy in one parking lot.', effects: { cred: 6, money: 100, network: 3 } },
+          incredible: { text: 'A business podcast does an episode on “the Honda model.” Tanya declines the interview, which makes it legend. The trunk stays. The line grows. The mystery compounds.', effects: { cred: 8, money: 140, fame: 5, network: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'bs_pearl_checkin', act: [2, 3], pathAffinity: [], weight: 9,
+    requires: { bandHas: 'pearl' },
+    art: 'ev_bs_pearl', context: 'Pearl, in the doorway, arms crossed. Kindly.',
+    prompt: 'You’ve rewritten the same eight bars for three hours. Pearl has been watching from the doorway for the last ten minutes. “Two options,” she says. “We take a walk right now, or I start singing your part until you cry. I know which note does it.”',
+    tags: ['band', 'rest'],
+    choices: {
+      left: {
+        label: 'Take the walk',
+        governingStats: { cred: 0.6 },
+        tags: ['rest', 'safe'],
+        outcomes: {
+          bad: { text: 'You walk four blocks arguing that you’re FINE, which Pearl allows, nodding, until you run out of fine around block five and just talk. She buys the coffees. She always buys the coffees.', effects: { burnout: -8, cred: 2 } },
+          good: { text: 'Forty minutes, no music talk allowed — Pearl’s rule. On the way back the eight bars solve themselves in your head, the way they always do the second you stop gripping them.', effects: { burnout: -12, creativity: 4 } },
+          incredible: { text: 'The walk ends on a bridge at golden hour, and Pearl hums the harmony she’s been hearing for your broken eight bars this whole time. It was never a rewrite problem. It was a duet.', effects: { burnout: -14, creativity: 6, skill: 2 } },
+        },
+      },
+      right: {
+        label: '“Sing it, then. Do your worst.”',
+        governingStats: { creativity: 0.8 },
+        tags: ['vocal', 'risky'],
+        outcomes: {
+          bad: { text: 'She sings it. She finds the note — THE note — by bar two. You cry in front of your whole band, who politely study the ceiling. The eight bars, for the record: fixed.', effects: { creativity: 5, burnout: -6, cred: -1 } },
+          good: { text: 'She sings your part better than you wrote it and worse than you’ll now rewrite it — which was, obviously, the entire plan. Pearl winks and returns to her book.', effects: { creativity: 7, skill: 2, burnout: -5 } },
+          incredible: { text: 'The take of Pearl singing your unfinished part — captured by Moss, allegedly by accident — becomes the album’s hidden track. Nobody speaks during it at shows. Nobody ever will.', effects: { creativity: 9, cred: 4, burnout: -6, chartTitle: 'Eight Bars (Pearl’s Version)' } },
+        },
+      },
+    },
+  },
   // ═══════════ THE LAST DOOR (guaranteed path climaxes) ═══════════
   {
     id: 'finale_label_meeting', act: 3, pathAffinity: ['megastar'], weight: 10, finaleCard: true,
