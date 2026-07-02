@@ -1,16 +1,25 @@
 // Balance simulator: plays thousands of runs through the real engine.
 // Usage: node tools/simulate.mjs [runs] [policy]
-//   policy: smart (default) | random
+//   policy: smart (default) | random | narrative
+//
+// `narrative` models a human following the story (whim-heavy, decent
+// instincts) with a human-shaped loadout: genres, venues, event packs,
+// comeback runs, cross-run nemeses, and minigame flags — so pack-gated
+// and flag-gated content is structurally reachable and the reach report
+// below means something. Judge feel by `narrative`, not `smart`.
 
 import { CONFIG, PATHS } from '../js/config.js';
 import { INSTRUMENTS } from '../js/data/instruments.js';
 import { EVENTS } from '../js/data/events.js';
+import { GENRES } from '../js/data/genres.js';
+import { VENUES } from '../js/data/venues.js';
 import * as engine from '../js/engine.js';
 
 const RUNS = parseInt(process.argv[2] || '4000', 10);
 const POLICY = process.argv[3] || 'smart';
 
 const DEFAULT_INSTRUMENTS = INSTRUMENTS.filter((i) => i.unlockedByDefault).map((i) => i.id);
+const ALL_PACKS = ['pack_divebar', 'pack_festival'];
 
 function pathScore(state, pathId) {
   const g = CONFIG.winGates[pathId];
@@ -40,7 +49,7 @@ function scoreChoice(state, choice) {
 const tally = {
   skew: {},
   ended: 0, byEnding: {}, byPathResult: {},
-  lpTotal: 0, fameSum: 0, burnoutDeaths: 0,
+  lpTotal: 0, lpValues: [], fameSum: 0, burnoutDeaths: 0,
   cardsSum: 0, drySum: 0,
   finaleStats: { skill: 0, cred: 0, creativity: 0, network: 0, burnout: 0, fame: 0, hits: 0, count: 0 },
   tierCounts: { bad: 0, good: 0, incredible: 0, declined: 0 },
@@ -48,27 +57,60 @@ const tally = {
                 2: { bad: 0, good: 0, incredible: 0, declined: 0 },
                 3: { bad: 0, good: 0, incredible: 0, declined: 0 } },
   worstRunBadPct: 0, runsOver60Bad: 0,
+  reach: {},          // eventId -> number of runs in which it appeared
+  spikeSum: 0,        // total ±20-point swing moments across all runs
+  spikeRuns0: 0,      // runs with zero swing moments
+  cardCountHist: {},  // cards-per-run distribution (rhythm variance)
 };
+
+// How hard a single card swung the run: stat points + fame, with money
+// mapped to a comparable scale. ≥20 counts as a "spike moment" (RUSH §5b).
+function swingPoints(result) {
+  let pts = 0;
+  for (const d of result.deltas) {
+    if (d.key === 'money') pts += Math.abs(d.amount) / 10;
+    else pts += Math.abs(d.amount);
+  }
+  return pts;
+}
 
 for (let i = 0; i < RUNS; i++) {
   const inst = DEFAULT_INSTRUMENTS[Math.floor(Math.random() * DEFAULT_INSTRUMENTS.length)];
-  const state = engine.newRun(inst, []);
+  // Human-shaped loadout: veterans have packs; most runs claim a sound
+  // and adopt a room; some are comebacks facing an old nemesis.
+  const packs = ALL_PACKS.filter(() => Math.random() < 0.5);
+  const state = engine.newRun(inst, packs);
+  if (POLICY !== 'smart' || Math.random() < 0.7) {
+    if (Math.random() < 0.7) state.genre = GENRES[Math.floor(Math.random() * GENRES.length)].id;
+    if (Math.random() < 0.6) state.venue = VENUES[Math.floor(Math.random() * VENUES.length)].id;
+  }
+  if (Math.random() < 0.15) engine.applyComeback(state);
+  state.nemesis = Math.random() < 0.2; // 3rd+ meeting with this rival (meta-run)
   let cards = 0;
   let badCards = 0;
+  let spikes = 0;
   let guard = 0;
+  const seenThisRun = new Set();
 
   while (state.phase !== 'ended' && guard++ < 200) {
     if (state.phase === 'crossroads') {
-      const best = Object.keys(PATHS).sort((a, b) => pathScore(state, b) - pathScore(state, a))[0];
-      engine.commitPath(state, POLICY === 'random' ? Object.keys(PATHS)[Math.floor(Math.random() * 3)] : best);
+      const ids = Object.keys(PATHS);
+      const best = ids.sort((a, b) => pathScore(state, b) - pathScore(state, a))[0];
+      // narrative: humans pick the summit they WANT about as often as the
+      // one the compass suggests — every path's deck must stay reachable
+      const pick = POLICY === 'random' ? ids[Math.floor(Math.random() * 3)]
+        : POLICY === 'narrative' && Math.random() < 0.45 ? ids[Math.floor(Math.random() * 3)]
+        : best;
+      engine.commitPath(state, pick);
       continue;
     }
     const ev = engine.drawNextCard(state);
     if (!ev) {
       tally.drySum++;
-      state.cardsPlayedInAct = CONFIG.actLengths[state.act];
+      state.cardsPlayedInAct = engine.actLength(state, state.act);
     } else {
       cards++;
+      seenThisRun.add(ev.id);
       let side;
       if (POLICY === 'random') {
         side = Math.random() < 0.5 ? 'left' : 'right';
@@ -85,11 +127,17 @@ for (let i = 0; i < RUNS; i++) {
       const armEncore = (state.encore || 0) > 0 &&
         (POLICY === 'smart' ? state.act >= 2 : Math.random() < 0.5);
       // Minigame choices: model a mid-skill human (verdict distribution
-      // roughly 15% botched / 35% scrappy / 35% solid / 15% golden)
+      // roughly 15% botched / 35% scrappy / 35% solid / 15% golden), and
+      // mirror ui.js's skill-echo flags so flag-gated cards are reachable.
       let mgBonus = 0;
       if (ev.choices[side].minigame) {
         const r = Math.random();
         mgBonus = r < 0.15 ? -8 : r < 0.5 ? 4 : r < 0.85 ? 14 : 24;
+        if (r < 0.15 && !state.flags.includes('mg_botched')) state.flags.push('mg_botched');
+        if (r >= 0.85) {
+          if (!state.flags.includes('mg_golden')) state.flags.push('mg_golden');
+          if (state.stats.burnout >= 60 && !state.flags.includes('mg_steady')) state.flags.push('mg_steady');
+        }
       }
       const result = engine.resolveSwipe(state, side, Math.random, { encore: armEncore, bonus: mgBonus });
       const sk = (tally.skew[ev.id] = tally.skew[ev.id] || { left: 0, right: 0 });
@@ -97,6 +145,7 @@ for (let i = 0; i < RUNS; i++) {
       tally.tierCounts[result.tier]++;
       tally.tiersByAct[act][result.tier]++;
       if (result.tier === 'bad') badCards++;
+      if (swingPoints(result) >= 20) spikes++;
       const pend = result.deltas.pendingGear ||
         (result.deltas.pendingGearChoices ? result.deltas.pendingGearChoices[0] : null);
       if (pend) {
@@ -123,8 +172,14 @@ for (let i = 0; i < RUNS; i++) {
   }
   tally.ended++;
   tally.cardsSum += cards;
-  tally.lpTotal += engine.legacyPoints(state);
+  tally.cardCountHist[cards] = (tally.cardCountHist[cards] || 0) + 1;
+  const lp = engine.legacyPoints(state);
+  tally.lpTotal += lp;
+  tally.lpValues.push(lp);
   tally.fameSum += state.fame;
+  tally.spikeSum += spikes;
+  if (!spikes) tally.spikeRuns0++;
+  for (const id of seenThisRun) tally.reach[id] = (tally.reach[id] || 0) + 1;
   if (cards >= 10) {
     const badPct = badCards / cards;
     tally.worstRunBadPct = Math.max(tally.worstRunBadPct, badPct);
@@ -135,6 +190,11 @@ for (let i = 0; i < RUNS; i++) {
 const pct = (n) => ((100 * n) / RUNS).toFixed(1) + '%';
 console.log(`\n=== BIG BREAK simulation — ${RUNS} runs, policy=${POLICY} ===`);
 console.log(`avg cards/run: ${(tally.cardsSum / RUNS).toFixed(1)}   deck-dry events: ${tally.drySum}`);
+{
+  // run-length spread (RUSH U5 wants the 29–32 metronome broken)
+  const lens = Object.keys(tally.cardCountHist).map(Number).sort((a, b) => a - b);
+  if (lens.length) console.log(`run length: ${lens[0]}–${lens[lens.length - 1]} cards (${lens.length} distinct lengths)`);
+}
 const t = tally.tierCounts, tot = t.bad + t.good + t.incredible + t.declined;
 console.log(`tiers: bad ${((100 * t.bad) / tot).toFixed(1)}% / good ${((100 * t.good) / tot).toFixed(1)}% / incredible ${((100 * t.incredible) / tot).toFixed(1)}% / declined ${((100 * t.declined) / tot).toFixed(1)}%`);
 for (const act of [1, 2, 3]) {
@@ -151,10 +211,51 @@ for (const [k, v] of Object.entries(tally.byPathResult).sort()) {
   rollup[k.split(':')[1]] += v;
 }
 console.log(`  → success ${pct(rollup.success)} | partial ${pct(rollup.partial)} | failure ${pct(rollup.failure)}`);
+{
+  // R4 gate: careers should be losable — success band 25–40% (narrative)
+  const s = (100 * rollup.success) / RUNS;
+  const inBand = s >= 25 && s <= 40;
+  console.log(`  success band 25–40%: ${inBand ? '✓ in band' : `✗ OUT OF BAND (${s.toFixed(1)}%)`}`);
+}
 if (tally.finaleStats.count) {
   const f = tally.finaleStats, c = f.count;
   console.log(`\navg finale stats: skill ${(f.skill / c).toFixed(0)} cred ${(f.cred / c).toFixed(0)} crea ${(f.creativity / c).toFixed(0)} net ${(f.network / c).toFixed(0)} burn ${(f.burnout / c).toFixed(0)} fame ${(f.fame / c).toFixed(0)} hits ${(f.hits / c).toFixed(1)}`);
 }
+
+{
+  // ── Variance index (RUSH §5b): spike moments per run + LP spread ──
+  const avgSpikes = tally.spikeSum / RUNS;
+  const mean = tally.lpTotal / RUNS;
+  const sd = Math.sqrt(tally.lpValues.reduce((s, v) => s + (v - mean) ** 2, 0) / RUNS);
+  console.log(`\nvariance index: ${avgSpikes.toFixed(2)} spike moments/run (≥20-pt swings; target ≥2)` +
+    ` · ${pct(tally.spikeRuns0)} of runs flatlined (zero spikes) · LP stddev ${sd.toFixed(1)}`);
+}
+
+{
+  // ── Card-reach report (REACH §5a): find the invisible content ──
+  // Gates: 0 never-drawn ungated cards; ≤10 cards under 1% of runs.
+  const rows = EVENTS.map((e) => ({
+    id: e.id,
+    gated: !!(e.requires || e.pack || e.chainOnly || e.finaleCard || (e.pathAffinity || []).length),
+    runs: tally.reach[e.id] || 0,
+  }));
+  const never = rows.filter((r) => !r.runs);
+  const neverOpen = never.filter((r) => !r.gated);
+  const under1 = rows.filter((r) => r.runs > 0 && r.runs / RUNS < 0.01);
+  const under5 = rows.filter((r) => r.runs / RUNS < 0.05);
+  console.log(`\ncard reach: ${rows.length - never.length}/${rows.length} cards appeared` +
+    ` · never: ${never.length} (${neverOpen.length} ungated) · <1%: ${under1.length} · <5%: ${under5.length}`);
+  console.log(`  gate — never-drawn ungated = 0: ${neverOpen.length === 0 ? '✓' : '✗ FAIL'}` +
+    `   gate — cards under 1% ≤ 10: ${never.length + under1.length <= 10 ? '✓' : `✗ FAIL (${never.length + under1.length})`}`);
+  if (never.length) {
+    console.log('  never drawn:');
+    for (const r of never) console.log(`    ${r.gated ? '[gated]' : '[OPEN ⚠️]'} ${r.id}`);
+  }
+  if (under1.length) {
+    console.log('  under 1% of runs: ' + under1.map((r) => r.id).join(', '));
+  }
+}
+
 {
   // Degenerate-choice report: cards the policy swipes one way ≥90% of the
   // time on ≥40 sightings. CAVEAT: under `smart` (pure odds-argmax) any

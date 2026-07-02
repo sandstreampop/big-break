@@ -2382,7 +2382,7 @@ export const EVENTS = [
   },
   {
     id: 'a2_truce_tour', act: 2, pathAffinity: [], weight: 10,
-    requires: { rivalryMax: 1 },
+    requires: { rivalryMax: 2 },
     art: 'ev_truce', context: '{rival}, holding two coffees, one for you',
     prompt: 'Somewhere along the way the feud became a friendship, and now {rival} has a proposal: a joint tour. Two names, one van, split everything. “We draw better together. You know it. I know it. My accountant knows it.”',
     tags: ['tour', 'rival'],
@@ -2411,7 +2411,7 @@ export const EVENTS = [
   },
   {
     id: 'a2_diss_track', act: 2, pathAffinity: [], weight: 10,
-    requires: { rivalryMin: 8 },
+    requires: { rivalryMin: 6 },
     art: 'ev_diss', context: 'The feud has a soundtrack now',
     prompt: '{rival} released a song. It’s about you. It’s NOT subtle — your haircut is mentioned by name. It’s also, insultingly, kind of good. The scene refreshes its feeds and waits.',
     tags: ['rival', 'write'],
@@ -4790,7 +4790,7 @@ export const EVENTS = [
   },
   {
     id: 'a3_hustle_profile', act: 3, pathAffinity: [], weight: 9,
-    requires: { hustleMin: 2 },
+    requires: { hustleMin: 1 },
     art: 'ev_profile', context: 'HUSTLE Quarterly (a business magazine)',
     prompt: '“Musician? Sure. But our readers want the PORTFOLIO. The residency, the royalties, the corner. We’re calling it: ‘The Artist As Small Business.’”',
     tags: ['fame', 'deal'],
@@ -5858,9 +5858,10 @@ export const EVENTS = [
   },
   {
     id: 'a3_nemesis_soundcheck', act: 3, pathAffinity: [], weight: 15,
-    requires: { nemesis: true },
+    requires: { anyOf: [{ nemesis: true }, { rivalryMin: 7 }] },
     art: 'ev_nemesis_check', context: 'An empty venue, four hours before doors',
-    prompt: 'Festival soundcheck. You walk in as {rival} finishes theirs — the rival who has already beaten you once, in another life, before the comeback. They see you across two hundred empty seats. Nobody else in the building knows the whole history. Both of you are the whole history.',
+    prompt: 'Festival soundcheck. You walk in as {rival} finishes theirs — the feud made flesh, twenty feet away, unplugging a tuner. They see you across two hundred empty seats. Nobody else in the building knows the whole history. Both of you are the whole history.',
+    promptNemesis: 'Festival soundcheck. You walk in as {rival} finishes theirs — the rival who has already beaten you once, in another life, before the comeback. They see you across two hundred empty seats. Nobody else in the building knows the whole history. Both of you are the whole history.',
     tags: ['rival', 'live'],
     choices: {
       left: {
@@ -5888,7 +5889,7 @@ export const EVENTS = [
 
   // ═══════════ ACT 1 PACK (the early days deserve more days) ═══════════
   {
-    id: 'a1_first_review', act: 1, pathAffinity: [], weight: 11,
+    id: 'a1_first_review', act: [1, 2], pathAffinity: [], weight: 11,
     requires: { chartingMin: 1 },
     art: 'ev_first_review', context: 'A blog with eleven readers. You know all eleven now.',
     prompt: 'Someone REVIEWED it. An actual review of “{song}”, 800 words, on a blog called Ears First. There is a paragraph about your bridge. There is a numerical score. It is a 6.8. Your entire nervous system wants to know what got docked.',

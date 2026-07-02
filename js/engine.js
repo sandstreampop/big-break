@@ -371,8 +371,15 @@ function actMatches(ev, act) {
 }
 
 function meetsRequires(ev, state) {
-  const r = ev.requires;
+  return requiresOk(ev.requires, state);
+}
+
+function requiresOk(r, state) {
   if (!r) return true;
+  // anyOf: alternative gates — the card fires if ANY branch is satisfied
+  // (e.g. nemesis_soundcheck accepts a cross-run nemesis OR an in-run feud)
+  if (r.anyOf && !r.anyOf.some((alt) => requiresOk(alt, state))) return false;
+  if (r.nemesis && !state.nemesis) return false;
   if (r.flagsAll && !r.flagsAll.every((f) => state.flags.includes(f))) return false;
   if (r.flagsNone && r.flagsNone.some((f) => state.flags.includes(f))) return false;
   if (r.moneyMax !== undefined && state.money > r.moneyMax) return false;
@@ -397,7 +404,6 @@ function meetsRequires(ev, state) {
   if (r.chartingMin !== undefined && (state.songs || []).filter((s) => s.status === 'charting' && s.pos).length < r.chartingMin) return false;
   if (r.songsMin !== undefined && (state.songs || []).length < r.songsMin) return false;
   if (r.fadedMin !== undefined && (state.songs || []).filter((s) => s.status === 'faded' && s.peak).length < r.fadedMin) return false;
-  if (r.nemesis && !state.nemesis) return false;
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');
@@ -650,10 +656,12 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
     }
   }
 
-  // Build the room: venue-tagged shows (any tier — you showed up) level it up
+  // Build the room: venue-tagged shows (any tier — you showed up) level it up.
+  // ×0.75 (was /2): a home room becomes an institution within one career —
+  // level 2 by the third show, so venue-gated act-3 cards actually fire.
   if (venue && tagsIntersect(venue.tags, choice.tags)) {
     state.venueShows = (state.venueShows || 0) + 1;
-    const newLevel = Math.min(VENUE_TIERS.length - 1, Math.floor(state.venueShows / 2));
+    const newLevel = Math.min(VENUE_TIERS.length - 1, Math.floor(state.venueShows * 0.75));
     if (newLevel > state.venueLevel) {
       state.venueLevel = newLevel;
       result.venueLeveled = { venue, level: newLevel, tier: VENUE_TIERS[newLevel] };
