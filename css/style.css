@@ -143,6 +143,7 @@ body {
 }
 .pick-card:active { transform: scale(.98); }
 .pick-card h3 { grid-column: 2; font-size: 18px; }
+.mastery { color: var(--accent); font-size: 14px; letter-spacing: 1px; }
 .pick-art {
   grid-row: 1 / span 3;
   width: 84px; height: 84px;

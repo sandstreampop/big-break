@@ -234,13 +234,15 @@ function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre) {
   for (const inst of offered) {
     const card = el('div', 'pick-card');
     card.append(artFor(inst.art, 'pick-art'));
-    card.append(el('h3', '', inst.name));
+    const lv = masteryLevel(inst.id);
+    card.append(el('h3', '', inst.name + (lv ? ` <span class="mastery">${'★'.repeat(lv)}</span>` : '')));
     card.append(el('p', 'pick-flavor', inst.flavor));
-    card.append(el('p', 'pick-mods', modsText(inst.modifiers)));
+    card.append(el('p', 'pick-mods', modsText(inst.modifiers) + (lv ? ` · Mastery +${lv} to all stats` : '')));
     card.append(el('p', 'pick-quirk', `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`));
     card.addEventListener('click', () => {
       sfx.commit();
       run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+      engine.applyMastery(run, lv);
       run.seed = seed + 2;
       run.daily = daily ? todayStr() : null;
       const contract = getContract();
@@ -252,6 +254,13 @@ function renderInstrumentRow(s, offered, seed, daily, getContract, getGenre) {
     row.append(card);
   }
   s.append(row);
+}
+
+// Mastery level for an instrument: earned by finishing (and winning) runs
+function masteryLevel(instrumentId) {
+  const st = meta.lifetime?.byInstrument?.[instrumentId];
+  if (!st) return 0;
+  return Math.min(3, Math.floor(st.runs / 2) + st.wins);
 }
 
 function modsText(mods) {
@@ -294,6 +303,7 @@ function startGauntlet() {
   card.addEventListener('click', () => {
     sfx.commit();
     run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+    engine.applyMastery(run, masteryLevel(inst.id));
     run.seed = seed + 2;
     run.gauntlet = week;
     run.genre = genre.id;
@@ -1074,6 +1084,8 @@ function finishMeta(summary, lp) {
     all_paths: () => ['megastar', 'studio', 'hitfactory'].every((p) => meta.successPaths.includes(p)),
     daily_3: () => Object.keys(meta.dailyResults || {}).length >= 3,
     wall_5: () => meta.unlockedWall.length >= 5,
+    mastery_3: () => Object.values(meta.lifetime?.byInstrument || {})
+      .some((st) => Math.min(3, Math.floor(st.runs / 2) + st.wins) >= 3),
   };
   for (const t of TROPHIES) {
     if (meta.trophies.includes(t.id)) continue;

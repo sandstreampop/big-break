@@ -133,6 +133,14 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
   return state;
 }
 
+// Instrument mastery (earned across runs): +level to every core stat
+export function applyMastery(state, level) {
+  const lv = Math.max(0, Math.min(3, level | 0));
+  if (!lv) return;
+  state.mastery = lv;
+  for (const k of STATS) state.stats[k] = clamp(state.stats[k] + lv, 1, 100);
+}
+
 export function signContract(state, contractId) {
   state.contract = contractId;
   const mods = contractMods(state);
