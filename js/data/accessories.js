@@ -11,6 +11,22 @@
 
 export const ACCESSORIES = [
   {
+    id: 'four_track', name: 'Thrift-Store Four-Track', art: 'gear_fourtrack', unlockedByDefault: true,
+    flavor: 'Someone recorded a divorce on this. It adds warmth.',
+    compatibility: { universal: true },
+    appliesTo: ['record', 'write'], modifier: 6,
+    demoQuality: 6,
+    blurb: 'Record/Write +6 · demos you tape are +6 quality (tape warmth is real)',
+  },
+  {
+    id: 'publicist_rolodex', name: 'The Publicist’s Rolodex', art: 'gear_rolodex', unlockedByDefault: true,
+    flavor: 'A retired publicist’s actual rolodex. Half the cards just say “owes me.”',
+    compatibility: { universal: true },
+    appliesTo: ['social', 'deal'], modifier: 6,
+    releaseHype: 8,
+    blurb: 'Social/Deal +6 · releases ship with +8 hype (the cards remember)',
+  },
+  {
     id: 'loud_amp', name: 'Loud Amp', art: 'gear_amp', unlockedByDefault: true,
     flavor: 'Goes to 10. Knows no other number.',
     compatibility: { families: ['strings', 'electronic'] },

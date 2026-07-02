@@ -806,7 +806,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
   if (effects.albumDrop) {
     // THE ALBUM: everything ships at once. Every vault demo releases with
     // the album's hype; every charting song gets the halo bump.
-    const hype = (typeof effects.albumDrop === 'number' ? effects.albumDrop : 60) + (hooks.releaseHype || 0);
+    const hype = (typeof effects.albumDrop === 'number' ? effects.albumDrop : 60) + (hooks.releaseHype || 0) + accs.reduce((n, a) => n + (a.releaseHype || 0), 0);
     const demos = (state.songs || []).filter((s) => s.status === 'demo');
     for (const d of demos) {
       releaseSong(state, d.id, hype);
@@ -823,7 +823,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     const demos = (state.songs || []).filter((s) => s.status === 'demo');
     if (demos.length) {
       const best = demos.slice().sort((a, b) => b.quality - a.quality)[0];
-      const hype = (typeof effects.releaseDemo === 'number' ? effects.releaseDemo : 55) + (hooks.releaseHype || 0);
+      const hype = (typeof effects.releaseDemo === 'number' ? effects.releaseDemo : 55) + (hooks.releaseHype || 0) + accs.reduce((n, a) => n + (a.releaseHype || 0), 0);
       releaseSong(state, best.id, hype);
       (deltas.songDebuts = deltas.songDebuts || []).push({ title: best.title, pos: best.pos, hit: best.crowned, released: true });
     }
@@ -844,7 +844,8 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     const base = tier === 'incredible' ? 64 : tier === 'good' ? 50 : 36;
     const verdictAdj = { BOTCHED: -10, SCRAPPY: 0, SOLID: 8, GOLDEN: 16 }[mg?.label] || 0;
     const creaAdj = Math.round(((state.stats.creativity || 0) - 40) * 0.2);
-    const instAdj = hooks.demoQuality || 0; // Loop Station: layers stick
+    const gearAdj = accs.reduce((n, a) => n + (a.demoQuality || 0), 0);
+    const instAdj = (hooks.demoQuality || 0) + gearAdj; // Loop Station / four-track: layers stick
     const jit = Math.round((rng ? rng() : 0.5) * 10 - 5);
     const grabbedHooks = mg?.hooks || [];
     const title = grabbedHooks.length
@@ -914,8 +915,8 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
 
 function gearShelf(state, grant, rng = Math.random) {
   const owned = new Set(state.accessories);
-  const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder', 'merch_cannon', 'cowbell'];
-  const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears', 'cursed_8track', 'stage_fan', 'humidifier'];
+  const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder', 'merch_cannon', 'cowbell', 'four_track'];
+  const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears', 'cursed_8track', 'stage_fan', 'humidifier', 'publicist_rolodex'];
   const ids = grant === 'random_basic' ? basics : goods;
   let pool = ids.filter((id) => !owned.has(id)).map(accessoryById).filter(Boolean);
   if (!pool.length) {
