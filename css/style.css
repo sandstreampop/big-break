@@ -586,6 +586,7 @@ body.big-text #app { zoom: 1.18; }
 .ending-art { width: 100%; aspect-ratio: 16/9; border-radius: 16px; object-fit: cover; }
 .ending-title { font-size: 30px; font-weight: 900; line-height: 1.05; }
 .ending-text { font-size: 15.5px; line-height: 1.55; color: var(--ink); }
+.exit-text { border-left-color: var(--accent2); }
 .epilogue-text {
   font-size: 14px; line-height: 1.6; color: var(--dim);
   font-style: italic;
