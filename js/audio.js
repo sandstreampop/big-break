@@ -239,5 +239,10 @@ export const sfx = {
     } else this.win();
   },
   ui() { blip(880, 0.05, 'sine', 0.03); },
+  // minigame feedback: light, fast, distinct from result stingers
+  mgHit() { blip(1175, 0.06, 'triangle', 0.05); },
+  mgMiss() { blip(196, 0.1, 'sawtooth', 0.04); },
+  mgGolden() { [784, 988, 1175, 1568].forEach((f, i) => blip(f, 0.14, 'triangle', 0.06, i * 0.06)); },
+  mgBotched() { blip(147, 0.3, 'sawtooth', 0.05); blip(139, 0.35, 'sawtooth', 0.04, 0.1); },
   cash() { blip(988, 0.07, 'square', 0.03); blip(1319, 0.09, 'square', 0.03, 0.05); },
 };
