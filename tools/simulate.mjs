@@ -22,9 +22,14 @@ import { simulateRun } from './sim-core.mjs';
 const args = process.argv.slice(2);
 const seedArg = args.find((a) => a.startsWith('--seed='));
 const positional = args.filter((a) => !a.startsWith('--'));
-const RUNS = parseInt(positional[0] || '4000', 10);
-const POLICY = positional[1] || 'smart';
-const BASE_SEED = seedArg ? parseInt(seedArg.split('=')[1], 10) : 0x1B16B00B;
+// --check: the CI gate. A fixed seed set under the human model (narrative),
+// evaluated against hard balance/reach invariants; exit(1) on any breach.
+// Separate from the free-running Monte-Carlo feel report.
+const CHECK = args.includes('--check');
+const RUNS = parseInt(positional[0] || (CHECK ? '4000' : '4000'), 10);
+const POLICY = CHECK ? 'narrative' : (positional[1] || 'smart');
+const CHECK_SEED = 0xC4EC; // pinned so the gate is reproducible run-to-run
+const BASE_SEED = seedArg ? parseInt(seedArg.split('=')[1], 10) : (CHECK ? CHECK_SEED : 0x1B16B00B);
 
 // Top-level seeded generator hands each run its own base seed, so the whole
 // sim is reproducible from BASE_SEED while every career stays independent.
@@ -111,6 +116,7 @@ for (let i = 0; i < RUNS; i++) {
 }
 
 const pct = (n) => ((100 * n) / RUNS).toFixed(1) + '%';
+const gates = {}; // gate metrics stashed by the report blocks, checked below
 console.log(`\n=== BIG BREAK simulation — ${RUNS} runs, policy=${POLICY}, seed=${BASE_SEED} ===`);
 console.log(`avg cards/run: ${(tally.cardsSum / RUNS).toFixed(1)}   deck-dry events: ${tally.drySum}`);
 {
@@ -138,6 +144,7 @@ console.log(`  → success ${pct(rollup.success)} | partial ${pct(rollup.partial
   // R4 gate: careers should be losable — success band 25–40% (narrative)
   const s = (100 * rollup.success) / RUNS;
   const inBand = s >= 25 && s <= 40;
+  gates.successPct = s;
   console.log(`  success band 25–40%: ${inBand ? '✓ in band' : `✗ OUT OF BAND (${s.toFixed(1)}%)`}`);
 }
 if (tally.finaleStats.count) {
@@ -149,6 +156,7 @@ if (tally.finaleStats.count) {
   // ── Story Seeds funnel (R1): target ≥65% of seeded arcs paying off ──
   const litPct = (100 * tally.seedsLit) / (tally.seedsRolled || 1);
   const paidPct = (100 * tally.seedsPaid) / (tally.seedsRolled || 1);
+  gates.seedLitPct = litPct;
   console.log(`\nstory seeds: ${tally.seedsRolled} rolled · lit ${litPct.toFixed(0)}% · payoff drawn ${paidPct.toFixed(0)}% (target ≥65%)`);
 }
 
@@ -211,8 +219,12 @@ if (tally.finaleStats.count) {
   // stays at 0 — they're conditional by design, waiting for the run that
   // earns them. 7% of the deck is the honest floor for that conditional tail.
   const under1Cap = Math.max(10, Math.round(EVENTS.length * 0.07));
+  const under1Count = never.filter((r) => !exempt(r)).length + under1.length;
+  gates.neverOpen = neverOpen.length;
+  gates.under1Count = under1Count;
+  gates.under1Cap = under1Cap;
   console.log(`  gate — never-drawn ungated = 0: ${neverOpen.length === 0 ? '✓' : '✗ FAIL'}` +
-    `   gate — non-exempt under 1% ≤ ${under1Cap}: ${never.filter((r) => !exempt(r)).length + under1.length <= under1Cap ? '✓' : `✗ FAIL (${never.filter((r) => !exempt(r)).length + under1.length})`}`);
+    `   gate — non-exempt under 1% ≤ ${under1Cap}: ${under1Count <= under1Cap ? '✓' : `✗ FAIL (${under1Count})`}`);
   if (never.length) {
     console.log('  never drawn:');
     for (const r of never) console.log(`    ${r.variety ? '[variety]' : r.arc ? '[arc]' : r.gated ? '[gated]' : (exempt(r) ? '[flash]' : '[OPEN ⚠️]')} ${r.id}`);
@@ -240,3 +252,35 @@ if (tally.finaleStats.count) {
   }
 }
 console.log(`avg LP/run: ${(tally.lpTotal / RUNS).toFixed(1)}\n`);
+
+if (CHECK) {
+  // ── CI gate (Phase 0.3) ── hard invariants on the human model. A breach
+  // exits non-zero so the deploy workflow blocks. Thresholds sit where the
+  // healthy game lives today (success ~32%, seed-lit ~87%, 0 dead cards)
+  // with margin, so noise never trips them but real regressions do.
+  const checks = [
+    { name: 'success band 25–40%',
+      ok: gates.successPct >= 25 && gates.successPct <= 40,
+      detail: `${gates.successPct.toFixed(1)}%` },
+    { name: 'never-drawn ungated cards = 0',
+      ok: gates.neverOpen === 0,
+      detail: `${gates.neverOpen}` },
+    { name: 'story-seed funnel: lit ≥ 65%',
+      ok: gates.seedLitPct >= 65,
+      detail: `${gates.seedLitPct.toFixed(0)}%` },
+    { name: `non-exempt under-1% ≤ ${gates.under1Cap}`,
+      ok: gates.under1Count <= gates.under1Cap,
+      detail: `${gates.under1Count}` },
+  ];
+  console.log(`=== --check gates (seed=${BASE_SEED}, ${RUNS} runs, ${POLICY}) ===`);
+  let failed = 0;
+  for (const c of checks) {
+    console.log(`  ${c.ok ? '✓' : '✗ FAIL'}  ${c.name}  (${c.detail})`);
+    if (!c.ok) failed++;
+  }
+  if (failed) {
+    console.error(`\n✗ ${failed} gate(s) breached — deploy blocked.\n`);
+    process.exit(1);
+  }
+  console.log(`\n✓ all ${checks.length} gates passed.\n`);
+}
