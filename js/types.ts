@@ -318,7 +318,7 @@ export interface PerkDef {
 // and any teaching resources (by name, applied generically), declared by the
 // pack instead of hardcoded genre values.
 export interface TutorialStart {
-  instrument: string;
+  loadout: string;
   stats: Record<string, number>;
   resources?: Record<string, number>;
 }
@@ -352,8 +352,8 @@ export interface Pack {
   tutorialEvents: GameEvent[];
   // The loadout: at least one selectable persona and a lookup. Required — a
   // run always starts as SOMEONE.
-  instruments: any[];
-  instrumentById: (id: string) => any;
+  loadouts: any[];
+  loadoutById: (id: string) => any;
   // Optional capabilities the engine feature-detects (Phase E — ISP). A genre
   // that doesn't ship one simply omits it. Every music SUBSYSTEM (accessories,
   // arcs, contracts, genres, hustles, band, weather, seeds) is GONE from this

@@ -28,7 +28,7 @@ export function nicknameFor(instrumentId) {
 }
 
 export function generateHeadlines(state, count = 3) {
-  const you = nicknameFor(state.instrument);
+  const you = nicknameFor(state.loadout);
   const rival = rivalById(state.rival).name.toUpperCase();
   const lastAct = state.act - 1;
   const lastTiers = (state.cardLog || []).filter((c) => c.a === lastAct);

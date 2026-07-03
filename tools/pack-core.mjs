@@ -38,8 +38,8 @@ function sideScore(state, choice) {
 // defines. Returns the record the invariants and golden both consume.
 export function simulatePackRun(pack, seed, policy = 'narrative') {
   const meta = engine.mulberry32(seed >>> 0 || 1);
-  const personas = pack.instruments.filter((i) => i.unlockedByDefault).map((i) => i.id);
-  const persona = personas[Math.floor(meta() * personas.length)] || pack.instruments[0].id;
+  const personas = pack.loadouts.filter((i) => i.unlockedByDefault).map((i) => i.id);
+  const persona = personas[Math.floor(meta() * personas.length)] || pack.loadouts[0].id;
   const state = engine.newRun(pack, persona, [], engine.mulberry32(seed + 1), []);
   state.seed = seed + 2;
   const play = engine.stateRng(state);

@@ -8,7 +8,7 @@ import { mysteryPack } from '../dist/js/packs/mystery.js';
 
 export const PATHS = mysteryPack.manifest.paths;
 export const PATH_IDS = Object.keys(PATHS);
-export const PERSONAS = mysteryPack.instruments.map((p) => p.id);
+export const PERSONAS = mysteryPack.loadouts.map((p) => p.id);
 
 export function pathScore(state, pathId) {
   const g = mysteryPack.manifest.winGates[pathId];

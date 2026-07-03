@@ -17,7 +17,7 @@ import { simulatePackRun } from '../tools/pack-core.mjs';
 // A fresh, un-played run for a pack (default persona, no seed → construction
 // draws only). Enough to probe manifest wiring without playing cards.
 function freshRun(pack) {
-  const persona = (pack.instruments.find((i) => i.unlockedByDefault) || pack.instruments[0]).id;
+  const persona = (pack.loadouts.find((i) => i.unlockedByDefault) || pack.loadouts[0]).id;
   return engine.newRun(pack, persona, [], engine.mulberry32(1), []);
 }
 

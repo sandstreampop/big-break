@@ -23,8 +23,8 @@ declare module '../types.js' {
 }
 // #endregion effect-augmentation
 
-// "Instruments" here are the reality-show personas you walk in as. The engine
-// only needs id + unlockedByDefault (+ optional stat modifiers/quirk).
+// The loadout roster here is the reality-show personas you walk in as. The
+// engine only needs id + unlockedByDefault (+ optional stat modifiers/quirk).
 const PERSONAS = [
   { id: 'detective', name: 'The Off-Duty Detective', family: 'sleuth', unlockedByDefault: true,
     flavor: 'You notice things. It has never once made you popular.', modifiers: { insight: 6, nerve: 2 } },
@@ -44,8 +44,8 @@ export const mysteryPack: Pack = {
   events: MYSTERY_EVENTS,
   tutorialEvents: [],
   presenter: mysteryPresenter,
-  instruments: PERSONAS,
-  instrumentById: byId(PERSONAS),
+  loadouts: PERSONAS,
+  loadoutById: byId(PERSONAS),
   // No accessories, arcs, venues, band, rivals, contracts, hustles, genres,
   // seeds, or weather. Those aren't Pack fields at all any more — every genre's
   // subsystems live in its own plugins — so there's nothing to omit or stub:

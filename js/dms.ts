@@ -37,7 +37,7 @@ export function generateDMs(state, count = 2) {
     'heard your new stuff. it’s fine. anyway I booked the room you wanted. the big one. see you around, champ.');
   add((state.rivalry ?? 3) <= 1, rival.name,
     'crowd tonight was singing YOUR song between sets. thought you’d want to know. proud of you, weirdo.');
-  add(state.swappedInstrument, 'The superfan',
+  add(state.swappedLoadout, 'The superfan',
     'guitar update: I told my mom it went to someone going somewhere. she cried. no pressure!! (some pressure)');
   add((state.copingSeen || []).includes('coping_75'), 'Brayden (Cold Plunge)',
     'DISCOMFORT IS A DOOR. also we miss you in the comments. the water misses you. 11% off code: SHIVER');

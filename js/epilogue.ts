@@ -12,7 +12,7 @@ import { bandmateById } from './data/band.js';
 export function buildEpilogue(state) {
   const rival = rivalById(state.rival);
   const flags = state.flags || [];
-  const firstInst = instrumentById(state.firstInstrument || state.instrument);
+  const firstInst = instrumentById(state.firstLoadout || state.loadout);
   const pool = [];
   const add = (cond, text) => { if (cond) pool.push(text); };
 
@@ -24,7 +24,7 @@ export function buildEpilogue(state) {
     `Every winter, you and ${rival.name} play the diner unannounced. No poster, no setlist, no feud. The waitress keeps your booth.`);
   add((state.rivalry ?? 3) >= 8,
     `You and ${rival.name} never spoke again. You check their numbers weekly. Reliable sources say they check yours hourly.`);
-  add(state.swappedInstrument && firstInst,
+  add(state.swappedLoadout && firstInst,
     `The ${firstInst.name.toLowerCase()} hangs framed above your desk — the one that couldn’t, next to all the things it started anyway.`);
   add((state.hustles || []).length >= 2,
     'In Q3, the side hustles quietly out-earned the art. You told no one. The spreadsheet knows.');

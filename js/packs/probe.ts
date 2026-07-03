@@ -105,8 +105,8 @@ export const probePack: Pack = {
   events: EVENTS,
   tutorialEvents: [],
   // Personas: the engine only needs id + unlockedByDefault to offer a loadout.
-  instruments: [{ id: 'runner', name: 'The Runner', family: 'plain', unlockedByDefault: true }],
-  instrumentById: (id) => (id === 'runner' ? { id: 'runner', name: 'The Runner', family: 'plain', unlockedByDefault: true } : null),
+  loadouts: [{ id: 'runner', name: 'The Runner', family: 'plain', unlockedByDefault: true }],
+  loadoutById: (id) => (id === 'runner' ? { id: 'runner', name: 'The Runner', family: 'plain', unlockedByDefault: true } : null),
   // ── ZERO capability stubs. Everything else is feature-detected by the engine
   // (Phase E). This is the probe's definition of done: a genre that ships one
   // stat, one resource, one summit, and a deck — and runs on the bare core. ──

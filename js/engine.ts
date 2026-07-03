@@ -9,7 +9,7 @@ import type { Pack, RunState, Plugin } from './types.js';
 // a Pack, set at run start (newRun) and re-affirmed at boot/resume via
 // useContentPack. One game session runs one active pack; a second game is a
 // second Pack against this same engine. Everything below reads PACK.* where it
-// used to import PACK.events / instruments / venues / arcs / weather / etc.
+// used to import PACK.events / loadouts / venues / arcs / weather / etc.
 let PACK: Pack;
 
 // The active pack is used directly (WP7). Every music subsystem the engine used
@@ -17,7 +17,7 @@ let PACK: Pack;
 // weather, seeds — now lives in that pack's plugins, which own their data. So
 // the engine no longer needs to inject inert stubs for a genre that omits a
 // subsystem: it never calls a subsystem provider at all. The irreducible Pack
-// (id, manifest, events, tutorialEvents, instruments) plus its optional plugins/
+// (id, manifest, events, tutorialEvents, loadouts) plus its optional plugins/
 // presenter/perks/interstitials is the whole surface the core touches.
 export function useContentPack(pack: Pack): void {
   PACK = pack;
@@ -98,8 +98,8 @@ export function gateValue(state, key): number {
 
 // ---------- Run lifecycle ----------
 
-export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
-  const pool = PACK.instruments.filter((i) => unlockedInstrumentIds.includes(i.id));
+export function offerLoadouts(unlockedLoadoutIds, rng = Math.random) {
+  const pool = PACK.loadouts.filter((i) => unlockedLoadoutIds.includes(i.id));
   const picks = [];
   const bag = [...pool];
   while (picks.length < 3 && bag.length) {
@@ -108,9 +108,9 @@ export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
   return picks;
 }
 
-export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.random, perks = []) {
+export function newRun(pack: Pack, loadoutId, unlockedPacks, rng = Math.random, perks = []) {
   PACK = pack; // this run's content pack; also settable via useContentPack
-  const inst = PACK.instrumentById(instrumentId);
+  const inst = PACK.loadoutById(loadoutId);
   // Stats are the pack's, not a hardwired list: roll each core stat in manifest
   // order (music order skill→cred→creativity→network keeps the seeded draws
   // byte-identical), then burnout. A pack with different stats just works.
@@ -146,8 +146,8 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
     hotStreak: 0,
     actTwist: null,
     path: null,
-    instrument: instrumentId,
-    firstInstrument: instrumentId,
+    loadout: loadoutId,
+    firstLoadout: loadoutId,
     flags: [],
     usedEvents: [],
     unlockedPacks: unlockedPacks || [],
@@ -204,7 +204,7 @@ export function newTutorialRun(pack: Pack, rng = Math.random) {
   // Teaching stats + starting persona are pack-declared (D.3), not hardcoded
   // music values. Only a pack that ships tutorialEvents reaches here.
   const t = pack.tutorialStart;
-  const state = newRun(pack, t?.instrument ?? pack.instruments[0].id, [], rng, []);
+  const state = newRun(pack, t?.loadout ?? pack.loadouts[0].id, [], rng, []);
   state.tutorial = true;
   if (t?.stats) state.stats = { ...t.stats } as RunState['stats'];
   // Teaching resources are pack-declared by name, applied generically — the
@@ -222,7 +222,7 @@ export function applyComeback(state) {
   PACK.comeback?.(state);
 }
 
-// Instrument mastery (earned across runs): +level to every core stat
+// Loadout mastery (earned across runs): +level to every core stat
 export function applyMastery(state, level) {
   const lv = Math.max(0, Math.min(3, level | 0));
   if (!lv) return;
@@ -445,7 +445,7 @@ function foldJitter(state, jitter: [number, number], ctx): [number, number] {
   return jitter;
 }
 // The per-resolution gain-hook bags a subsystem contributes (contract, weather),
-// applied by the stat/burnout loops after the instrument's own (core).
+// applied by the stat/burnout loops after the loadout's own (core).
 function gainBags(state): any[] {
   const bags: any[] = [];
   for (const p of orderedPlugins()) { const b = p.gainHooks?.(state); if (b) bags.push(b); }
@@ -457,7 +457,7 @@ function encoreDisabled(state): boolean {
   return false;
 }
 // Fold each plugin's burnout-delta adjustment (gear tag mults + side effects),
-// between the instrument's own burnout hooks and the contract/weather mults.
+// between the loadout's own burnout hooks and the contract/weather mults.
 function foldBurnout(state, v: number, ctx): number {
   for (const p of orderedPlugins()) if (p.modifyBurnout) v = p.modifyBurnout(state, v, ctx);
   return v;
@@ -517,9 +517,9 @@ export function rollComponents(state, choice, opts: any = {}) {
   // effects). The gear plugin's modifyRoll pushes onto this via rollCtx.applied.
   const applied = [];
 
-  const inst = PACK.instrumentById(state.instrument);
+  const inst = PACK.loadoutById(state.loadout);
   let quirkBonus = 0;
-  // The instrument's tag bonus is core (the loadout is core); genre and band
+  // The loadout's tag bonus is core (the loadout is core); genre and band
   // tag bonuses fold in via modifyRoll below (genre/band plugins).
   for (const tb of inst?.quirk?.hooks?.rollTagBonus || []) {
     if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
@@ -536,13 +536,13 @@ export function rollComponents(state, choice, opts: any = {}) {
   const encoreBonus = opts.encore && !encoreDisabled(state) ? CONFIG.encoreBonus : 0;
   // Performance bonus: a minigame result (UI-side skill) folded into the roll
   const perfBonus = opts.bonus || 0;
-  // Base jitter is the instrument's or the per-act default; a subsystem may
+  // Base jitter is the loadout's or the per-act default; a subsystem may
   // override it (contract) or widen it (weather) via modifyJitter, in
   // registration order (contract override before weather widen).
   let jitter: [number, number] = inst?.quirk?.hooks?.jitter ||
     CONFIG.jitterByAct?.[state.act] || [CONFIG.jitterMin, CONFIG.jitterMax];
   jitter = foldJitter(state, jitter, rollCtx);
-  // The instrument's quirk bonus is core; every subsystem bonus (gear, genre,
+  // The loadout's quirk bonus is core; every subsystem bonus (gear, genre,
   // band, weather, contract) is folded in via pluginRollBonus. All are integers,
   // so this sums identically to the old gearBonus + quirkBonus regardless of
   // grouping (byte-green).
@@ -652,8 +652,8 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     }
   }
 
-  // Instrument quirk: bonus effects on Incredible (e.g. Kazoo's Novelty)
-  const inst = PACK.instrumentById(state.instrument);
+  // Loadout quirk: bonus effects on Incredible (e.g. the Kazoo's Novelty)
+  const inst = PACK.loadoutById(state.loadout);
   if (tier === 'incredible' && inst?.quirk?.hooks?.onIncredible) {
     for (const [k, v] of Object.entries(inst.quirk.hooks.onIncredible)) {
       effects[k] = (effects[k] || 0) + v;
@@ -762,7 +762,7 @@ function finishCard(state, ev) {
 // onAcquire payload with the full resolution pipeline.
 export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories = [], mg = null) {
   const deltas: any = [];
-  const inst = PACK.instrumentById(state.instrument);
+  const inst = PACK.loadoutById(state.loadout);
   const hooks: Record<string, any> = inst?.quirk?.hooks || {};
   const tags = choice?.tags || [];
 
@@ -770,13 +770,13 @@ export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAcce
 
   // Per-resolution gain-multiplier bags a subsystem contributes (contract, then
   // weather, in registration order), applied by the stat/burnout loops right
-  // after the instrument's own (which is core — instruments are core). The core
+  // after the loadout's own (which is core — loadouts are core). The core
   // keeps the multiplier MECHANIC; the SOURCES are plugins (WP6-infra).
   const bags = gainBags(state);
   for (const stat of stats()) {
     let v = effects[stat] || 0;
     if (!v) continue;
-    // Positive stat gains scale by the instrument (core), then each subsystem's
+    // Positive stat gains scale by the loadout (core), then each subsystem's
     // per-stat multiplier — all generic, no stat named.
     if (v > 0 && hooks.statGainMult?.[stat]) v = Math.round(v * hooks.statGainMult[stat]);
     for (const bag of bags) if (v > 0 && bag.statGainMult?.[stat]) v = Math.round(v * bag.statGainMult[stat]);
@@ -785,9 +785,9 @@ export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAcce
     push(stat, state.stats[stat] - before);
   }
 
-  // Burnout: the instrument's tag multiplier (core), then subsystem adjustments
+  // Burnout: the loadout's tag multiplier (core), then subsystem adjustments
   // (gear's tag mults + per-match side effects via modifyBurnout), the
-  // instrument's live-show cost (core), then the contract/weather gain/heal
+  // loadout's live-show cost (core), then the contract/weather gain/heal
   // multipliers (gainHooks), and the perk heal — plus passive act wear.
   {
     let v = (effects.burnout || 0) + (ev ? (CONFIG.actWear[state.act] || 0) : 0);
@@ -999,7 +999,7 @@ export function runSummary(state) {
     hits: state.hits,
     burnout: state.stats.burnout,
     stats: { ...state.stats },
-    instrument: state.instrument,
+    loadout: state.loadout,
     pathProgress: state.pathProgress,
     rivalry: state.rivalry ?? 3,
     rival: state.rival,
@@ -1013,7 +1013,7 @@ export function runSummary(state) {
     gauntlet: state.gauntlet || null,
     contract: state.contract || null,
     hustles: (state.hustles || []).length,
-    swapped: !!state.swappedInstrument,
+    swapped: !!state.swappedLoadout,
     flags: [...(state.flags || [])],
     genre: state.genre || null,
     venue: state.venue || null,

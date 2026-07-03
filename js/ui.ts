@@ -240,7 +240,7 @@ function renderTitle() {
   // Today in the industry — flavor headline from the evergreen pool
   const fakeState = {
     flavorSeed: dayNum, act: 1, cardLog: [], fame: 0, money: 50, hits: 0,
-    stats: { burnout: 0, cred: 50, skill: 0 }, rival: 'vanta', instrument: 'kazoo',
+    stats: { burnout: 0, cred: 50, skill: 0 }, rival: 'vanta', loadout: 'kazoo',
     hustles: [], rivalry: 3,
   };
   const news = (PRES.headlines?.(fakeState as any, 1) || [])[0];
@@ -286,7 +286,7 @@ function startNewRun(daily = false, comeback = false) {
   // Committing is a separate, explicit act — tapping an instrument only
   // selects it, so the optional pickers below can't be silently skipped.
   const beginRun = () => {
-    const inst = activePack.instrumentById(chosenInst);
+    const inst = activePack.loadoutById(chosenInst);
     if (!inst) return;
     sfx.commit();
     const lv = masteryLevel(inst.id);
@@ -322,8 +322,8 @@ function startNewRun(daily = false, comeback = false) {
       ? [cMods.forceInstrument]
       : activePack.id === 'music'
       ? save.unlockedInstrumentIds(meta) // music: default + Career-Wall unlocks
-      : activePack.instruments.filter((i) => i.unlockedByDefault).map((i) => i.id);
-    const offered = engine.offerInstruments(pool, engine.mulberry32(seed));
+      : activePack.loadouts.filter((i) => i.unlockedByDefault).map((i) => i.id);
+    const offered = engine.offerLoadouts(pool, engine.mulberry32(seed));
     if (chosenInst && !offered.some((i) => i.id === chosenInst)) chosenInst = null;
     const keepScroll = s.scrollTop;
     s.innerHTML = '';
@@ -388,7 +388,7 @@ function startNewRun(daily = false, comeback = false) {
     }
 
     // Sticky commit bar: always visible, states the full loadout
-    const inst = chosenInst ? activePack.instrumentById(chosenInst) : null;
+    const inst = chosenInst ? activePack.loadoutById(chosenInst) : null;
     const bar = el('div', 'start-bar');
     const extras = [
       chosenVenue ? venueById(chosenVenue)?.icon : null,
@@ -562,7 +562,7 @@ function renderHud() {
     c.addEventListener('click', () => { sfx.ui(); showInspect(sheet); });
     gearRow.append(c);
   };
-  const inst = activePack.instrumentById(run.instrument);
+  const inst = activePack.loadoutById(run.loadout);
   chip('gear-chip inst-chip', inst.name, {
     art: inst.art, title: inst.name, lines: [
       inst.flavor,
@@ -631,7 +631,7 @@ function renderHud() {
 
 function accActive(acc) {
   if (acc.compatibility?.universal) return true;
-  return (acc.compatibility?.families || []).includes(activePack.instrumentById(run.instrument).family);
+  return (acc.compatibility?.families || []).includes(activePack.loadoutById(run.loadout).family);
 }
 
 let currentCard = null;
@@ -889,7 +889,7 @@ function commitSwipe(side, dx = 0, dy = 0) {
     const mgMods: any = contractById(run.contract)?.mods || {};
     playMinigame(mgId, { run, rivalName: rivalById(run.rival)?.name, noSkip: !!mgMods.forceMinigames, relaxed: meta.settings.relaxedMinigames === true }).then(({ score, verdict, detail }) => {
       // instrument hook: some gear makes performance moments play easier
-      const mgHook = score == null ? 0 : (activePack.instrumentById(run.instrument)?.quirk?.hooks?.mgBonus || 0);
+      const mgHook = score == null ? 0 : (activePack.loadoutById(run.loadout)?.quirk?.hooks?.mgBonus || 0);
       let bonus = verdict.bonus + mgHook;
       // The Showman's Pact: botching on stage, under contract, hurts double
       if (verdict.label === 'BOTCHED' && mgMods.mgBotchDouble) bonus = verdict.bonus * 2;
@@ -1174,7 +1174,7 @@ function showResult(result) {
   if (result.deltas.bandmateLeft) notice('notice-bad', `${result.deltas.bandmateLeft.icon} <b>${result.deltas.bandmateLeft.name}</b> quits the band`);
   const hustle = result.deltas.hustleGained;
   if (hustle) notice('notice-gear', `${hustle.icon} <b>Side hustle: ${hustle.name}</b> (+$${hustle.moneyPerAct}/act)${hustle.blurb ? ' — ' + hustle.blurb : ''}`);
-  const newInst = result.deltas.instrumentSet;
+  const newInst = result.deltas.loadoutSet;
   if (newInst) notice('notice-gear', `🎸 <b>Now playing: ${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`);
   if (result.deltas.albumOut) {
     const n = result.deltas.albumOut.tracks;
@@ -1768,7 +1768,7 @@ function finishMeta(summary, lp) {
   lt.bads += (summary.tierLog || []).filter((t) => t === 'bad').length;
   lt.hits += summary.hits || 0;
   lt.moneyBest = Math.max(lt.moneyBest, summary.money);
-  const bi = lt.byInstrument[summary.instrument] = lt.byInstrument[summary.instrument] || { runs: 0, wins: 0 };
+  const bi = lt.byInstrument[summary.loadout] = lt.byInstrument[summary.loadout] || { runs: 0, wins: 0 };
   bi.runs += 1;
   if (summary.result === 'success') bi.wins += 1;
   if (summary.path) {
@@ -1785,7 +1785,7 @@ function finishMeta(summary, lp) {
   meta.runHistory = meta.runHistory || [];
   meta.runHistory.unshift({
     date: todayStr(),
-    instrument: summary.instrument,
+    instrument: summary.loadout,
     path: summary.path,
     result: summary.result,
     endingKey: summary.endingKey,
@@ -1861,7 +1861,7 @@ function renderFinale() {
   track('run_end', {
     outcome: evalr.result, path: run.path, cause: 'finale', mode: runMode(run),
     cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
-    burnout: run.stats.burnout, lp, instrument: summary.instrument,
+    burnout: run.stats.burnout, lp, instrument: summary.loadout,
     contract: summary.contract || 'none', chart_peak: summary.chartPeak || null,
     ...runContentProps(run, summary),
   });
@@ -1882,7 +1882,7 @@ function renderGameOver(endingKey) {
   track('run_end', {
     outcome: 'gameover', path: run.path || null, cause: endingKey, mode: runMode(run),
     cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
-    burnout: run.stats.burnout, lp, instrument: summary.instrument,
+    burnout: run.stats.burnout, lp, instrument: summary.loadout,
     contract: summary.contract || 'none', chart_peak: summary.chartPeak || null,
     exit: run.exitChoice || 'none',
     ...runContentProps(run, summary),
@@ -1921,7 +1921,7 @@ function showExitInterview(endingKey, interview) {
 const TIER_EMOJI = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
 
 function shareTextFor(summary, lp) {
-  const inst = activePack.instrumentById(summary.instrument);
+  const inst = activePack.loadoutById(summary.loadout);
   const head = summary.gauntlet ? `BIG BREAK Gauntlet ${summary.gauntlet}`
     : summary.daily ? `BIG BREAK Daily ${summary.daily}` : 'BIG BREAK';
   const genre = summary.genre ? genreById(summary.genre) : null;
@@ -2024,7 +2024,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
       const text = shareTextFor(summary, lp);
       try {
         // Prefer a poster image via the native sheet (Pass 38)
-        const inst = activePack.instrumentById(summary.instrument);
+        const inst = activePack.loadoutById(summary.loadout);
         const genre = summary.genre ? genreById(summary.genre) : null;
         const res = summary.result ? summary.result.toUpperCase()
           : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[summary.endingKey] || 'GAME OVER';
@@ -2187,7 +2187,7 @@ function renderTrophies() {
     s.append(el('h3', 'wall-tier', 'Past Lives'));
     const hist = el('div', 'history-list');
     for (const h of meta.runHistory) {
-      const inst = activePack.instrumentById(h.instrument);
+      const inst = activePack.loadoutById(h.instrument);
       const res = h.result ? h.result.toUpperCase()
         : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[h.endingKey] || 'DNF';
       const pathName = h.path ? PATHS[h.path].name : '—';
@@ -2241,7 +2241,7 @@ function renderResume() {
   if (instRuns.length) {
     list.append(el('h3', 'wall-tier', 'Weapon of choice'));
     for (const [iid, st] of instRuns.slice(0, 3)) {
-      row(activePack.instrumentById(iid)?.name || iid, `${st.runs} run${st.runs === 1 ? '' : 's'}, ${st.wins} win${st.wins === 1 ? '' : 's'}`);
+      row(activePack.loadoutById(iid)?.name || iid, `${st.runs} run${st.runs === 1 ? '' : 's'}, ${st.wins} win${st.wins === 1 ? '' : 's'}`);
     }
   }
   s.append(list);

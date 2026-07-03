@@ -382,7 +382,7 @@ export function accessoryById(id) {
 import { instrumentById } from './instruments.js';
 export function accessoryActive(acc, state): boolean {
   if (acc.compatibility?.universal) return true;
-  const inst = instrumentById(state.instrument);
+  const inst = instrumentById(state.loadout);
   return !!inst && (acc.compatibility?.families || []).includes(inst.family);
 }
 // The equipped accessories that are currently active, in equip order.

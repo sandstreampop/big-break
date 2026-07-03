@@ -96,7 +96,7 @@ export const musicPack: Pack = {
     { id: 'coping_50', burnoutMin: 50 },
   ],
   // The First Gig onboarding run's fixed teaching setup (D.3).
-  tutorialStart: { instrument: 'melodica', stats: { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 }, resources: { money: 40, fame: 0 } },
+  tutorialStart: { loadout: 'melodica', stats: { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 }, resources: { money: 40, fame: 0 } },
   presenter: musicPresenter,
   perks: MUSIC_PERKS,
   comeback: musicComeback,
@@ -104,6 +104,6 @@ export const musicPack: Pack = {
   // as someone). Every other music subsystem's data — accessories, arcs,
   // contracts, genres, hustles, band, weather, seeds — lives inside its plugin
   // (above), imported straight from the data modules. Nothing else on the Pack.
-  instruments: INSTRUMENTS,
-  instrumentById,
+  loadouts: INSTRUMENTS,
+  loadoutById: instrumentById,
 };
