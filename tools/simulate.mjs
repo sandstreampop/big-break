@@ -1,51 +1,35 @@
 // Balance simulator: plays thousands of runs through the real engine.
-// Usage: node tools/simulate.mjs [runs] [policy]
+// Usage: node tools/simulate.mjs [runs] [policy] [--seed=N]
 //   policy: smart (default) | random | narrative
+//   --seed: base seed for the deterministic run stream (default 0x1B16B00B)
 //
 // `narrative` models a human following the story (whim-heavy, decent
 // instincts) with a human-shaped loadout: genres, venues, event packs,
 // comeback runs, cross-run nemeses, and minigame flags — so pack-gated
 // and flag-gated content is structurally reachable and the reach report
 // below means something. Judge feel by `narrative`, not `smart`.
+//
+// Every run is now SEEDED (see tools/sim-core.mjs): the same base seed
+// replays the same corpus of careers byte-for-byte, so this report is
+// reproducible and the golden-master oracle can trust it.
 
 import { CONFIG, PATHS } from '../js/config.js';
-import { INSTRUMENTS } from '../js/data/instruments.js';
 import { EVENTS } from '../js/data/events.js';
-import { GENRES } from '../js/data/genres.js';
-import { VENUES } from '../js/data/venues.js';
 import { ARCS, arcById } from '../js/data/arcs.js';
 import * as engine from '../js/engine.js';
+import { simulateRun } from './sim-core.mjs';
 
-const RUNS = parseInt(process.argv[2] || '4000', 10);
-const POLICY = process.argv[3] || 'smart';
+const args = process.argv.slice(2);
+const seedArg = args.find((a) => a.startsWith('--seed='));
+const positional = args.filter((a) => !a.startsWith('--'));
+const RUNS = parseInt(positional[0] || '4000', 10);
+const POLICY = positional[1] || 'smart';
+const BASE_SEED = seedArg ? parseInt(seedArg.split('=')[1], 10) : 0x1B16B00B;
 
-const DEFAULT_INSTRUMENTS = INSTRUMENTS.filter((i) => i.unlockedByDefault).map((i) => i.id);
-const ALL_PACKS = ['pack_divebar', 'pack_festival', 'pack_wedding', 'pack_cruise'];
-
-function pathScore(state, pathId) {
-  const g = CONFIG.winGates[pathId];
-  let s = 0;
-  for (const [k, target] of Object.entries(g)) {
-    const v = k === 'fame' ? state.fame : k === 'hits' ? state.hits : state.stats[k];
-    s += v / target;
-  }
-  return s;
-}
-
-// Rough per-side desirability for a "decent player"
-function scoreChoice(state, choice) {
-  const odds = engine.choiceOdds(state, choice);
-  let score = odds.good + 2.4 * odds.incredible - 1.4 * odds.bad;
-  // burnout hygiene: read the outcome payloads
-  const avgBurnout =
-    ((choice.outcomes.bad.effects.burnout || 0) +
-      (choice.outcomes.good.effects.burnout || 0) +
-      (choice.outcomes.incredible.effects.burnout || 0)) / 3;
-  if (state.stats.burnout > 55) score -= avgBurnout * 0.12;
-  if (state.stats.burnout > 55 && avgBurnout < 0) score += 1.2;
-  if (choice.cost && state.money < choice.cost) score -= 3;
-  return score;
-}
+// Top-level seeded generator hands each run its own base seed, so the whole
+// sim is reproducible from BASE_SEED while every career stays independent.
+const seedGen = engine.mulberry32(BASE_SEED);
+const nextSeed = () => Math.floor(seedGen() * 1e9) + 1;
 
 const tally = {
   skew: {},
@@ -66,125 +50,46 @@ const tally = {
   cardCountHist: {},  // cards-per-run distribution (rhythm variance)
 };
 
-// A "spike moment" (RUSH §5b): one card that visibly bends the run —
-// a single ±18 stat/fame delta, ±$180, or a ≥30-point total swing.
-function isSpike(result) {
-  let total = 0;
-  for (const d of result.deltas) {
-    if (d.key === 'money') {
-      if (Math.abs(d.amount) >= 180) return true;
-      total += Math.abs(d.amount) / 10;
-    } else {
-      if (Math.abs(d.amount) >= 18) return true;
-      total += Math.abs(d.amount);
-    }
-  }
-  return total >= 30;
-}
-
 for (let i = 0; i < RUNS; i++) {
-  const inst = DEFAULT_INSTRUMENTS[Math.floor(Math.random() * DEFAULT_INSTRUMENTS.length)];
-  // Human-shaped loadout: veterans have packs; most runs claim a sound
-  // and adopt a room; some are comebacks facing an old nemesis.
-  const packs = ALL_PACKS.filter(() => Math.random() < 0.5);
-  const state = engine.newRun(inst, packs);
-  if (POLICY !== 'smart' || Math.random() < 0.7) {
-    if (Math.random() < 0.7) state.genre = GENRES[Math.floor(Math.random() * GENRES.length)].id;
-    if (Math.random() < 0.6) state.venue = VENUES[Math.floor(Math.random() * VENUES.length)].id;
-  }
-  if (Math.random() < 0.15) engine.applyComeback(state);
-  state.nemesis = Math.random() < 0.2; // 3rd+ meeting with this rival (meta-run)
+  const run = simulateRun(nextSeed(), POLICY);
+  const state = run.state;
+  const seenThisRun = new Set();
   let cards = 0;
   let badCards = 0;
   let spikes = 0;
-  let guard = 0;
-  const seenThisRun = new Set();
 
-  while (state.phase !== 'ended' && guard++ < 200) {
-    if (state.phase === 'crossroads') {
-      const ids = Object.keys(PATHS);
-      const best = ids.sort((a, b) => pathScore(state, b) - pathScore(state, a))[0];
-      // narrative: humans pick the summit they WANT about as often as the
-      // one the compass suggests — every path's deck must stay reachable
-      const pick = POLICY === 'random' ? ids[Math.floor(Math.random() * 3)]
-        : POLICY === 'narrative' && Math.random() < 0.45 ? ids[Math.floor(Math.random() * 3)]
-        : best;
-      engine.commitPath(state, pick);
-      continue;
-    }
-    const ev = engine.drawNextCard(state);
-    if (!ev) {
-      tally.drySum++;
-      state.cardsPlayedInAct = engine.actLength(state, state.act);
-    } else {
-      cards++;
-      seenThisRun.add(ev.id);
-      let side;
-      if (POLICY === 'random') {
-        side = Math.random() < 0.5 ? 'left' : 'right';
-      } else if (POLICY === 'narrative') {
-        // A human following the story: usually whim, sometimes the safer side
-        side = Math.random() < 0.65
-          ? (Math.random() < 0.5 ? 'left' : 'right')
-          : (scoreChoice(state, ev.choices.left) >= scoreChoice(state, ev.choices.right) ? 'left' : 'right');
-      } else {
-        side = scoreChoice(state, ev.choices.left) >= scoreChoice(state, ev.choices.right) ? 'left' : 'right';
-      }
-      const act = state.act;
-      // Encore usage: smart spends in act 2+, narrative spends on a whim
-      const armEncore = (state.encore || 0) > 0 &&
-        (POLICY === 'smart' ? state.act >= 2 : Math.random() < 0.5);
-      // Minigame choices: model a mid-skill human (verdict distribution
-      // roughly 15% botched / 35% scrappy / 35% solid / 15% golden), and
-      // mirror ui.js's skill-echo flags so flag-gated cards are reachable.
-      let mgBonus = 0;
-      if (ev.choices[side].minigame) {
-        const r = Math.random();
-        mgBonus = r < 0.15 ? -8 : r < 0.5 ? 4 : r < 0.85 ? 14 : 24;
-        if (r < 0.15 && !state.flags.includes('mg_botched')) state.flags.push('mg_botched');
-        if (r >= 0.85) {
-          if (!state.flags.includes('mg_golden')) state.flags.push('mg_golden');
-          if (state.stats.burnout >= 60 && !state.flags.includes('mg_steady')) state.flags.push('mg_steady');
-        }
-      }
-      const result = engine.resolveSwipe(state, side, Math.random, { encore: armEncore, bonus: mgBonus });
-      const sk = (tally.skew[ev.id] = tally.skew[ev.id] || { left: 0, right: 0 });
-      sk[side]++;
-      tally.tierCounts[result.tier]++;
-      tally.tiersByAct[act][result.tier]++;
-      if (result.tier === 'bad') badCards++;
-      if (isSpike(result)) spikes++;
-      if (ev.flashpoint) tally.flashpoints++;
-      const pend = result.deltas.pendingGear ||
-        (result.deltas.pendingGearChoices ? result.deltas.pendingGearChoices[0] : null);
-      if (pend) {
-        if (state.accessories.length >= CONFIG.accessorySlots) {
-          state.accessories.splice(Math.floor(Math.random() * state.accessories.length), 1);
-        }
-        engine.equipAccessory(state, pend.id);
-      }
-    }
-    const step = engine.advance(state);
-    if (step.kind === 'finale') {
-      const res = engine.evaluateFinale(state);
-      const key = `${state.path}:${res.result}`;
-      tally.byPathResult[key] = (tally.byPathResult[key] || 0) + 1;
-      const f = tally.finaleStats;
-      f.skill += state.stats.skill; f.cred += state.stats.cred;
-      f.creativity += state.stats.creativity; f.network += state.stats.network;
-      f.burnout += state.stats.burnout; f.fame += state.fame; f.hits += state.hits;
-      f.count++;
-    } else if (step.kind === 'gameover') {
-      tally.byEnding[step.endingKey] = (tally.byEnding[step.endingKey] || 0) + 1;
-      if (step.endingKey === 'burnout') tally.burnoutDeaths++;
-    }
+  tally.drySum += run.dry;
+  for (const c of run.cards) {
+    cards++;
+    seenThisRun.add(c.id);
+    const sk = (tally.skew[c.id] = tally.skew[c.id] || { left: 0, right: 0 });
+    sk[c.side]++;
+    tally.tierCounts[c.tier]++;
+    tally.tiersByAct[c.act][c.tier]++;
+    if (c.tier === 'bad') badCards++;
+    if (c.spike) spikes++;
+    if (c.flashpoint) tally.flashpoints++;
   }
+
+  if (run.finale) {
+    const key = `${run.finale.path}:${run.finale.result}`;
+    tally.byPathResult[key] = (tally.byPathResult[key] || 0) + 1;
+    const f = tally.finaleStats;
+    f.skill += state.stats.skill; f.cred += state.stats.cred;
+    f.creativity += state.stats.creativity; f.network += state.stats.network;
+    f.burnout += state.stats.burnout; f.fame += state.fame; f.hits += state.hits;
+    f.count++;
+  }
+  if (run.gameover) {
+    tally.byEnding[run.gameover] = (tally.byEnding[run.gameover] || 0) + 1;
+    if (run.gameover === 'burnout') tally.burnoutDeaths++;
+  }
+
   tally.ended++;
   tally.cardsSum += cards;
   tally.cardCountHist[cards] = (tally.cardCountHist[cards] || 0) + 1;
-  const lp = engine.legacyPoints(state);
-  tally.lpTotal += lp;
-  tally.lpValues.push(lp);
+  tally.lpTotal += run.lp;
+  tally.lpValues.push(run.lp);
   tally.fameSum += state.fame;
   tally.spikeSum += spikes;
   if (!spikes) tally.spikeRuns0++;
@@ -206,7 +111,7 @@ for (let i = 0; i < RUNS; i++) {
 }
 
 const pct = (n) => ((100 * n) / RUNS).toFixed(1) + '%';
-console.log(`\n=== BIG BREAK simulation — ${RUNS} runs, policy=${POLICY} ===`);
+console.log(`\n=== BIG BREAK simulation — ${RUNS} runs, policy=${POLICY}, seed=${BASE_SEED} ===`);
 console.log(`avg cards/run: ${(tally.cardsSum / RUNS).toFixed(1)}   deck-dry events: ${tally.drySum}`);
 {
   // run-length spread (RUSH U5 wants the 29–32 metronome broken)
