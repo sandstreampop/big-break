@@ -43,21 +43,7 @@ export const mysteryPack: Pack = {
   presenter: mysteryPresenter,
   instruments: PERSONAS,
   instrumentById: byId(PERSONAS),
-  // Music-shaped subsystems this genre doesn't use — stubbed so the shared
-  // engine (and the Pack type) are satisfied without any music content.
-  accessories: [],
-  accessoryById: () => null,
-  arcs: [],
-  arcById: () => null,
-  VENUE_TIERS: [],
-  venueById: () => null,
-  bandmateById: () => null,
-  recruitCandidate: () => null,
-  randomRival: () => ({ id: 'the_host' }),
-  contractById: () => null,
-  hustleById: () => null,
-  genreById: () => null,
-  rollSeeds: () => [],
-  weatherHooks: () => ({}),
-  rollWeather: () => 'none',
+  // No accessories, arcs, venues, band, rivals, contracts, hustles, genres,
+  // seeds, or weather — the engine feature-detects their absence (Phase E).
+  // Where the music game stubbed 14 fields, mystery now declares none.
 };

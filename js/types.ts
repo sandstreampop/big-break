@@ -221,27 +221,31 @@ export interface Pack {
   plugins?: Plugin[];
   events: GameEvent[];
   tutorialEvents: GameEvent[];
-  // Optional pack capabilities (feature-detected by the engine / UI).
+  // The loadout: at least one selectable persona and a lookup. Required — a
+  // run always starts as SOMEONE.
+  instruments: any[];
+  instrumentById: (id: string) => any;
+  // Optional pack capabilities (Phase E — ISP). The engine feature-detects
+  // each: a genre that doesn't ship a subsystem simply omits its provider and
+  // the engine substitutes an inert default (see normalizePack). Mystery
+  // declares the handful it uses; the probe declares none. (Venue/rival data
+  // are consumed by those plugins via direct import, so they aren't Pack
+  // fields — a pack's plugins own their own content.)
   interstitials?: InterstitialRule[];
   tutorialStart?: TutorialStart;
   presenter?: Presenter;
-  instruments: any[];
-  accessories: any[];
-  arcs: any[];
-  VENUE_TIERS: any[];
-  instrumentById: (id: string) => any;
-  accessoryById: (id: string) => any;
-  randomRival: (rng: () => number) => any;
-  contractById: (id: string) => any;
-  hustleById: (id: string) => any;
-  genreById: (id: string) => any;
-  venueById: (id: string) => any;
-  bandmateById: (id: string) => any;
-  recruitCandidate: (state: any, rng?: () => number) => any;
-  arcById: (id: string) => any;
-  rollSeeds: (rng: () => number, count: number) => string[];
-  weatherHooks: (state: any) => Record<string, any>;
-  rollWeather: (rng: () => number) => string;
+  accessories?: any[];
+  accessoryById?: (id: string) => any;
+  arcs?: any[];
+  arcById?: (id: string) => any;
+  contractById?: (id: string) => any;
+  hustleById?: (id: string) => any;
+  genreById?: (id: string) => any;
+  bandmateById?: (id: string) => any;
+  recruitCandidate?: (state: any, rng?: () => number) => any;
+  rollSeeds?: (rng: () => number, count: number) => string[];
+  weatherHooks?: (state: any) => Record<string, any>;
+  rollWeather?: (rng: () => number) => string | null;
 }
 
 // ---------- Runtime run state ----------

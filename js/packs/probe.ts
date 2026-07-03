@@ -100,22 +100,7 @@ export const probePack: Pack = {
   // Personas: the engine only needs id + unlockedByDefault to offer a loadout.
   instruments: [{ id: 'runner', name: 'The Runner', family: 'plain', unlockedByDefault: true }],
   instrumentById: (id) => (id === 'runner' ? { id: 'runner', name: 'The Runner', family: 'plain', unlockedByDefault: true } : null),
-  // ── Capability stubs the CURRENT fat Pack type demands. Phase E makes these
-  // optional providers the engine feature-detects, and every line below
-  // deletes — that deletion is the probe's definition of done. ──
-  accessories: [],
-  accessoryById: () => null,
-  arcs: [],
-  arcById: () => null,
-  VENUE_TIERS: [],
-  venueById: () => null,
-  bandmateById: () => null,
-  recruitCandidate: () => null,
-  randomRival: () => null,
-  contractById: () => null,
-  hustleById: () => null,
-  genreById: () => null,
-  rollSeeds: () => [],
-  weatherHooks: () => ({}),
-  rollWeather: () => 'none',
+  // ── ZERO capability stubs. Everything else is feature-detected by the engine
+  // (Phase E). This is the probe's definition of done: a genre that ships one
+  // stat, one resource, one summit, and a deck — and runs on the bare core. ──
 };

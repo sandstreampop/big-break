@@ -12,8 +12,36 @@ import type { Pack, RunState, Song } from './types.js';
 // second Pack against this same engine. Everything below reads PACK.* where it
 // used to import PACK.events / instruments / venues / arcs / weather / etc.
 let PACK: Pack;
+
+// Fill absent OPTIONAL capabilities with inert defaults (Phase E — ISP). The
+// engine feature-detects a genre's capabilities by letting a pack omit the ones
+// it doesn't use; normalizing once here means the rest of the engine can call
+// PACK.rollWeather / accessoryById / etc unconditionally without a stub in
+// every pack. A pack that provides a capability is untouched (byte-green); a
+// pack that omits it gets a no-op, so the mystery/probe stubs delete entirely.
+function normalizePack(pack: Pack): Pack {
+  const none = () => null;
+  return {
+    ...pack,
+    instruments: pack.instruments || [],
+    instrumentById: pack.instrumentById || none,
+    accessories: pack.accessories || [],
+    accessoryById: pack.accessoryById || none,
+    arcs: pack.arcs || [],
+    arcById: pack.arcById || none,
+    contractById: pack.contractById || none,
+    genreById: pack.genreById || none,
+    hustleById: pack.hustleById || none,
+    bandmateById: pack.bandmateById || none,
+    recruitCandidate: pack.recruitCandidate || none,
+    rollSeeds: pack.rollSeeds || (() => []),
+    rollWeather: pack.rollWeather || (() => null),
+    weatherHooks: pack.weatherHooks || (() => ({})),
+  };
+}
+
 export function useContentPack(pack: Pack): void {
-  PACK = pack;
+  PACK = normalizePack(pack);
 }
 export function activePack(): Pack {
   return PACK;
@@ -148,7 +176,7 @@ export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
 }
 
 export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.random, perks = []) {
-  PACK = pack; // this run's content pack; also settable via useContentPack
+  PACK = normalizePack(pack); // this run's content pack; also settable via useContentPack
   const inst = PACK.instrumentById(instrumentId);
   // Stats are the pack's, not a hardwired list: roll each core stat in manifest
   // order (music order skill→cred→creativity→network keeps the seeded draws
