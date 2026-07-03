@@ -8,6 +8,8 @@
 // Choice extras: `cost: N` — if money < cost the buy fails comedically
 //   (declined-card outcome) instead of rolling.
 
+import { EVENTS2 } from './events2.js';
+
 export const EVENTS = [
   // ═══════════════════════ ACT 1 — THE GARAGE ═══════════════════════
   {
@@ -7535,3 +7537,6 @@ export const EVENTS = [
     },
   },
 ];
+
+// Wave 3 (the doubling): authored in events2.js, one deck at runtime.
+EVENTS.push(...EVENTS2);

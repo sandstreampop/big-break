@@ -2016,7 +2016,9 @@ function renderWall() {
 
   const list = el('div', 'wall-list');
   let lastTier = 0;
-  for (const item of WALL_ITEMS) {
+  // stable-sort by tier so each tier renders as one section (the authored
+  // list interleaves tiers now that the wall has a second wing)
+  for (const item of [...WALL_ITEMS].sort((a, b) => a.tier - b.tier)) {
     if (item.tier !== lastTier) {
       lastTier = item.tier;
       list.append(el('h3', 'wall-tier', `Tier ${item.tier}`));

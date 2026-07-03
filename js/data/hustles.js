@@ -23,6 +23,28 @@ export const HUSTLES = [
     blurb: 'One grandmother’s booking became a referral network. You know every venue’s power situation by heart.' },
   { id: 'sync_royalties', name: 'Sync Royalties', icon: '📺', moneyPerAct: 85,
     blurb: 'Your faded single sells yogurt now. The song died on the chart and got a better job.' },
+
+  // Wave 2: ten more ways the music pays for the music.
+  { id: 'lesson_studio', name: 'Tiny Prodigies LLC', icon: '🧒', moneyPerAct: 50,
+    blurb: 'Six students, five recorders, one future. The parents pay a semester in advance.' },
+  { id: 'corner_atlas', name: 'The Busker Atlas', icon: '🗺️', moneyPerAct: 40,
+    blurb: 'You sold laminated maps of the good corners. The bagpiper bought two.' },
+  { id: 'ringtone_shop', name: 'Custom Ringtones', icon: '📳', moneyPerAct: 55,
+    blurb: 'Forty bucks a pop to make a stranger’s phone unbearable in their voice of choice. Yours.' },
+  { id: 'karaoke_host', name: 'Karaoke Tuesdays', icon: '🎙️', moneyPerAct: 65,
+    blurb: 'You host, you judge, you key-change for the weak. Beloved. Feared. Tipped.' },
+  { id: 'pedal_flipping', name: 'Pedal Flipping', icon: '🔁', moneyPerAct: 70,
+    blurb: 'Buy broken, solder, sell “vintage.” The margin is the mythology.' },
+  { id: 'hold_music', name: 'Hold Music (Regional Bank)', icon: '☎️', moneyPerAct: 60,
+    blurb: 'Four hundred people a day hear your étude and hate it. Royalties don’t care.' },
+  { id: 'ghost_sessions', name: 'Ghost Sessions', icon: '🕶️', moneyPerAct: 85,
+    blurb: 'You play on tracks by artists you legally cannot name. The NDA has a groove to it.' },
+  { id: 'alarm_app', name: 'Wake-Up App Placement', icon: '⏰', moneyPerAct: 45,
+    blurb: 'Ten thousand strangers wake to your gentlest chord. Nine thousand snooze it. Money either way.' },
+  { id: 'supper_club', name: 'Supper Club Sundays', icon: '🍷', moneyPerAct: 75,
+    blurb: 'Standards at dinner volume for people who call you “the entertainment.” The tips are folded like secrets.' },
+  { id: 'sample_packs', name: 'Sample Pack Sales', icon: '📦', moneyPerAct: 80,
+    blurb: 'Producers worldwide buy your kitchen sounds. The faucet gets a writing credit.' },
 ];
 
 export function hustleById(id) {

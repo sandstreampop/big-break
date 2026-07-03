@@ -76,6 +76,74 @@ export const BANDMATES_WAVE2 = [
 ];
 BANDMATES.push(...BANDMATES_WAVE2);
 
+export const BANDMATES_WAVE3 = [
+  {
+    id: 'ox', storyCard: 'bs_ox_amps', name: 'Ox', role: 'drums, gentle giant', icon: '🐂',
+    flavor: 'Carries the full backline in one trip and apologizes for taking up room. The kick drum obeys.',
+    bonus: { tags: ['live', 'tour'], bonus: 5 },
+    actQuirk: { burnout: -2 },
+    quirkDesc: 'Live/Tour +5 · −2 Burnout at each act break (Ox carries everything)',
+  },
+  {
+    id: 'wren', name: 'Wren', role: 'fiddle, feral optimist', icon: '🎻',
+    flavor: 'Learned by ear, plays by dare. Has never once checked what key the song is in. Has never once been wrong.',
+    bonus: { tags: ['roots', 'busk'], bonus: 5 },
+    quirkDesc: 'Roots/Busk +5 · the ear never lies',
+  },
+  {
+    id: 'cassette', storyCard: 'bs_cassette_wall', name: 'Cassette', role: 'DJ / archivist of the uncool', icon: '📼',
+    flavor: 'Owns every flop of the last forty years and knows which four seconds of each one was genius.',
+    bonus: { tags: ['electronic', 'social'], bonus: 5 },
+    quirkDesc: 'Electronic/Social +5 · the crates go deep',
+  },
+  {
+    id: 'marisol', name: 'Marisol', role: 'trumpet, mariachi-trained', icon: '🎺',
+    flavor: 'Grew up playing weddings, funerals, and everything either could turn into. Reads a room like sheet music.',
+    bonus: { tags: ['live', 'family'], bonus: 5 },
+    actQuirk: { fame: 1 },
+    quirkDesc: 'Live/Family +5 · +1 Fame at each act break (people remember the trumpet)',
+  },
+  {
+    id: 'dot', storyCard: 'bs_dot_ledger', name: 'Dot', role: 'keys, accountant by day', icon: '🧮',
+    flavor: 'Plays like the piano owes her money. It does. She has the paperwork.',
+    bonus: { tags: ['deal', 'work'], bonus: 5 },
+    actQuirk: { money: 50 },
+    quirkDesc: 'Deal/Work +5 · +$50 at each act break (Dot finds the deductions)',
+  },
+  {
+    id: 'reverend', name: 'The Reverend', role: 'organ, denomination unclear', icon: '⛪',
+    flavor: 'Appeared at load-in with his own Leslie speaker and a look of forgiveness. Nobody booked him. Nobody would dare unbook him.',
+    bonus: { tags: ['tone', 'studio'], bonus: 5 },
+    quirkDesc: 'Tone/Studio +5 · the organ swells and so does the room',
+  },
+  {
+    id: 'kiki', name: 'Kiki', role: 'content, unpaid (her words)', icon: '📱',
+    flavor: 'Films everything from the one angle that makes the crowd look double. The comments fear her.',
+    bonus: { tags: ['social', 'fame'], bonus: 5 },
+    actQuirk: { fame: 2 },
+    quirkDesc: 'Social/Fame +5 · +2 Fame at each act break (the clips keep landing)',
+  },
+  {
+    id: 'gus', storyCard: 'bs_gus_board', name: 'Gus', role: 'sound engineer, finally said yes', icon: '🎚️',
+    flavor: 'Mixed every band in town for a decade and joined yours. The scene is still processing the endorsement.',
+    bonus: { tags: ['live', 'tone'], bonus: 6 },
+    quirkDesc: 'Live/Tone +6 · the mix is finally on your side',
+  },
+  {
+    id: 'paloma', name: 'Paloma', role: 'harmonies, ex-choir director', icon: '🕊️',
+    flavor: 'Can make eleven strangers sound like one voice. You are, on your best night, four strangers.',
+    bonus: { tags: ['vocal', 'mainstream'], bonus: 5 },
+    quirkDesc: 'Vocal/Mainstream +5 · the blend forgives everything',
+  },
+  {
+    id: 'zed', name: 'Zed', role: 'bass, communicates in nods', icon: '🧷',
+    flavor: 'Has said nine words since joining. Three were “turn me down slightly.” The pocket speaks for him.',
+    bonus: { tags: ['studio', 'safe'], bonus: 5 },
+    quirkDesc: 'Studio/Safe +5 · the nod means yes',
+  },
+];
+BANDMATES.push(...BANDMATES_WAVE3);
+
 export function bandmateById(id) {
   return BANDMATES.find((b) => b.id === id) || null;
 }

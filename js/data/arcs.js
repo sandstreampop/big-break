@@ -87,6 +87,10 @@ export const ARCS = [
   },
 ];
 
+// Wave 3 (the doubling): twelve more arcs, authored in events2.js.
+import { NEW_ARCS } from './events2.js';
+ARCS.push(...NEW_ARCS);
+
 export function arcById(id) {
   return ARCS.find((a) => a.id === id) || null;
 }

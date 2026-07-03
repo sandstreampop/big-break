@@ -5,6 +5,7 @@
 // the illustrator's reference.
 
 import { ASSET_MANIFEST } from './data/assets.js';
+import { ART2 } from './data/events2.js';
 
 const EMOJI = {
   // act-1 expansion + new arcs + weather + extras (More P5)
@@ -63,6 +64,19 @@ const EMOJI = {
   ev_tut_green: '🛋️', ev_tut_opener: '🎤', ev_tut_encore: '🎇', ev_tut_tipjar: '🫙', ev_tut_set: '🌟',
   ev_afterparty: '🥂', ev_gala: '🍾', ev_woodshed: '🚜',
   ev_docu_pitch: '🎬', ev_docu_moment: '🎥', ev_docu_premiere: '🍿', ev_checkhell: '🔊', ev_merchline: '🧾', ev_goldhands: '🫳', ev_musicvideo: '🌊', ev_masters: '🗃️', ev_blooper: '📯', ev_shed: '🛖', ev_shed_night: '🌙', ev_shed_album: '📀', ev_shed_doc: '🎦', ev_shed_someone: '🕯️', ev_bloom_fest: '🎪', ev_shed_collab: '🚗', ev_bloom_amp: '🔌', ev_coverband: '🌺', ev_flyerwar: '📎', ev_opendeck: '🎧', ev_practicewall: '🧱', ev_bloom_big: '🌸', ev_summit: '🥐', ev_tv_scout: '📺', ev_tv_taping: '🛋️', ev_truce: '☕', ev_diss: '🎤', ev_venue_trouble: '📌', ev_loadout: '⏱️', ev_camp48: '⏳', ev_placement: '🥗', ev_heir: '💇', ev_dc_offer: '📇', ev_dc_blizzard: '❄️', ev_dc_birthday: '🎂', ev_dc_last: '🏛️',
+  // Wave 3 instruments & gear
+  instrument_spoons: '🥄', instrument_recorder: '🪈', instrument_stylophone: '🖊️',
+  instrument_washtub: '🪣', instrument_accordion: '🪗', instrument_banjo: '🪕',
+  instrument_sax: '🎷', instrument_talkbox: '💬', instrument_harp: '🦢',
+  instrument_808: '👻', instrument_susan: '🎻', instrument_bagpipes: '📯',
+  instrument_steelpan: '🛢️', instrument_mellotron: '🎞️', instrument_autoharp: '🌷',
+  instrument_laptop: '💻',
+  gear_gafftape: '🗜️', gear_earplugs: '🙉', gear_qr: '🔳', gear_metronome: '⏲️',
+  gear_cape: '🦇', gear_wireless: '📡', gear_ricecooker: '🍚', gear_contactmic: '🧲',
+  gear_thermos: '☕', gear_presspass: '🪪', gear_unioncard: '⚒️', gear_mascot: '🦝',
+  gear_demotrunk: '💽', gear_socks: '🧦', gear_tuner: '🟢', gear_shoebox: '👟',
+  gear_suitcase: '🧳', gear_greenkit: '🧃', gear_projector: '📽️', gear_fakemanager: '🕴️',
+  gear_flightcase: '🧰', gear_homebooth: '🧥', gear_monitor: '👂',
   instrument_modular: '🎛️', instrument_triangle: '🔺', instrument_hurdy: '⚙️', gear_cowbell: '🔔',
   instrument_kazoo: '🎺', instrument_melodica: '🎹', instrument_buckets: '🥁',
   instrument_cigarbox: '🎸', instrument_glock: '🔔', instrument_theremin: '👋',
@@ -153,6 +167,13 @@ const SCENE = {
   end_hitfactory_win: 'studio', end_hitfactory_partial: 'office', end_hitfactory_fail: 'office',
   end_burnout: 'office', end_cancelled: 'crisis', end_debt: 'crisis',
 };
+
+// Wave-3 slots register alongside their cards (events2.js) so the two files
+// can't drift: one entry feeds both the emoji badge and the scene painter.
+for (const [slot, v] of Object.entries(ART2)) {
+  if (!(slot in EMOJI)) EMOJI[slot] = v.e;
+  if (!(slot in SCENE)) SCENE[slot] = v.s;
+}
 
 function hueFor(slot) {
   let h = 0;

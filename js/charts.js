@@ -17,16 +17,27 @@ function mulberry32(a) {
 
 const ADJ = ['Conditional', 'Parking Lot', 'Emotional', 'Lowercase', 'Infinite', 'Discount',
   'Golden Hour', 'Feral', 'Corporate', 'Midnight', 'Artisanal', 'Post-', 'Unskippable',
-  'Barefoot', 'Borrowed', 'Glitter', 'Basement', 'Terminal', 'Soft Launch', 'Rent-Controlled'];
+  'Barefoot', 'Borrowed', 'Glitter', 'Basement', 'Terminal', 'Soft Launch', 'Rent-Controlled',
+  'Load-Bearing', 'Off-Brand', 'Beige', 'Volunteer', 'Decaf', 'Municipal', 'Freelance',
+  'Non-Refundable', 'Heirloom', 'Understudy', 'Long-Weekend', 'Pre-Owned', 'Lukewarm',
+  'Sponsored', 'Invasive', 'Orthopedic', 'Diplomatic', 'Leap-Year', 'Adjacent', 'Uninsured'];
 const NOUN = ['Halo', 'Arithmetic', 'Girlfriend', 'Layover', 'Apology', 'Mercury', 'Cowboy',
   'Situationship', 'Voicemail', 'Angel Investor', 'Summer', 'Blackout', 'Merch Table',
-  'Heartbeat', 'Landlord', 'Renaissance', 'Group Chat', 'Encore', 'Mood Board', 'Sequel'];
-const SUFFIX = ['', '', '', ' (Remix)', ' (Sped Up)', ' — Acoustic', ' (feat. no one)', ' II'];
+  'Heartbeat', 'Landlord', 'Renaissance', 'Group Chat', 'Encore', 'Mood Board', 'Sequel',
+  'Deductible', 'Casserole', 'Frontage Road', 'Middle Seat', 'Understudy', 'Escrow',
+  'Houseguest', 'Comet', 'Intermission', 'Warranty', 'Getaway Car', 'Peninsula',
+  'Security Deposit', 'Last Call', 'Carousel', 'Alibi', 'Greenhouse', 'Layaway', 'Plus-One'];
+const SUFFIX = ['', '', '', ' (Remix)', ' (Sped Up)', ' — Acoustic', ' (feat. no one)', ' II',
+  ' (Demo)', ' (Deluxe)', ' — Live From the Van', ' (Radio Edit)', ' Pt. 2'];
 
 const ARTISTS = ['The Algorithm', 'Brayden', 'Yacht Arithmetic', 'DJ Mattress Emporium',
   'The Nepo Babies', 'Craig (Bagpipes)', 'GRIND™ presents: Hustle', 'Soup Man',
   'Vibe Committee', 'The Petersen Twins', 'Focus Beats for Chinchillas', 'Todd',
-  'The Other Bands', 'Juniper (Film Student)', 'Approachable Lightning', 'The 11 Writers'];
+  'The Other Bands', 'Juniper (Film Student)', 'Approachable Lightning', 'The 11 Writers',
+  'Gravy Boat Summer', 'The Municipal Waste Committee (Reformed)', 'Ampersandra',
+  'Twelve Ostriches', 'HOA Meeting', 'The Sad Dads', 'Lil Escrow', 'Parallel Parking Champion',
+  'The Regional Managers', 'Doreen', 'Free Sample Society', 'Weighted Blanket',
+  'CAPS LOCK ENERGY', 'The Adjunct Professors', 'Sincerely, The Building', 'Notary Public Image'];
 
 function pick(rng, arr) { return arr[Math.floor(rng() * arr.length)]; }
 

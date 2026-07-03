@@ -167,6 +167,9 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
   if (perks.includes('calluses')) state.stats.skill = clamp(state.stats.skill + 6, 1, 100);
   if (perks.includes('couch')) state.stats.network = clamp(state.stats.network + 6, 1, 100);
   if (perks.includes('warmup')) state.encore = 1; // walk in with one banked
+  if (perks.includes('perfect_pitch')) state.stats.creativity = clamp(state.stats.creativity + 6, 1, 100);
+  if (perks.includes('stage_legs')) state.stats.cred = clamp(state.stats.cred + 6, 1, 100);
+  if (perks.includes('headliner')) state.fame += 8; // somebody remembers the name
   state.money += weatherHooks(state).startMoney || 0; // Scene Weather walk-in
   if (perks.includes('notebook')) {
     // The Old Notebook: every career starts with one demo already taped
@@ -391,6 +394,8 @@ export function signContract(state, contractId) {
   state.contract = contractId;
   const mods = contractMods(state);
   if (mods.startMoney !== undefined) state.money = mods.startMoney;
+  // e.g. The Handshake Loan: walk in flush, walk in owing (debt fail-state armed)
+  if (mods.startFlag && !state.flags.includes(mods.startFlag)) state.flags.push(mods.startFlag);
 }
 
 // ---------- Deck assembly (spec §8.4) ----------
@@ -629,6 +634,10 @@ export function rollComponents(state, choice, opts = {}) {
   const pityPer = CONFIG.pityPerBad + ((state.perks || []).includes('thick_skin') ? 3 : 0);
   const pityBonus = Math.min((state.badStreak || 0) * pityPer, CONFIG.pityCap + ((state.perks || []).includes('thick_skin') ? 6 : 0));
   const cMods = contractMods(state);
+  // Contract clauses can bend tag-matched rolls (Stage Fright, Analog Only…)
+  for (const tb of cMods.rollTagBonus || []) {
+    if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
+  }
   const encoreBonus = opts.encore && !cMods.disableEncore ? CONFIG.encoreBonus : 0;
   // Performance bonus: a minigame result (UI-side skill) folded into the roll
   const perfBonus = opts.bonus || 0;
@@ -799,7 +808,8 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   }
 
   // Lucky Pick-style gear: lost when it applied and things went Bad
-  if (tier === 'bad') {
+  // (the Roadie Insurance perk keeps it bolted down)
+  if (tier === 'bad' && !(state.perks || []).includes('insurance')) {
     for (const acc of c.appliedAccessories) {
       if (acc.loseOnBad && state.accessories.includes(acc.id)) {
         state.accessories = state.accessories.filter((a) => a !== acc.id);
@@ -906,6 +916,7 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     if (v > 0) {
       if (hooks.moneyGainMult) v = Math.round(v * hooks.moneyGainMult);
       if (wHooks.moneyGainMult) v = Math.round(v * wHooks.moneyGainMult);
+      if (cMods.moneyGainMult) v = Math.round(v * cMods.moneyGainMult);
       for (const acc of accs) {
         if (acc.moneySiphon) v = Math.round(v * (1 - acc.moneySiphon));
       }
@@ -1004,7 +1015,8 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
     const verdictAdj = { BOTCHED: -10, SCRAPPY: 0, SOLID: 8, GOLDEN: 16 }[mg?.label] || 0;
     const creaAdj = Math.round(((state.stats.creativity || 0) - 40) * 0.2);
     const gearAdj = accs.reduce((n, a) => n + (a.demoQuality || 0), 0);
-    const instAdj = (hooks.demoQuality || 0) + gearAdj; // Loop Station / four-track: layers stick
+    const perkAdj = (state.perks || []).includes('golden_ears') ? 6 : 0;
+    const instAdj = (hooks.demoQuality || 0) + gearAdj + perkAdj; // Loop Station / four-track: layers stick
     const jit = Math.round((rng ? rng() : 0.5) * 10 - 5);
     const grabbedHooks = mg?.hooks || [];
     const title = grabbedHooks.length
@@ -1074,8 +1086,10 @@ function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories 
 
 function gearShelf(state, grant, rng = Math.random) {
   const owned = new Set(state.accessories);
-  const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder', 'merch_cannon', 'cowbell', 'four_track'];
-  const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears', 'cursed_8track', 'stage_fan', 'humidifier', 'publicist_rolodex'];
+  const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder', 'merch_cannon', 'cowbell', 'four_track',
+    'gaff_tape', 'tip_qr', 'pocket_metronome', 'lucky_socks', 'thermos', 'demo_trunk'];
+  const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears', 'cursed_8track', 'stage_fan', 'humidifier', 'publicist_rolodex',
+    'wireless_rig', 'contact_mic', 'stage_cape', 'projector', 'press_pass', 'mascot_head', 'shoebox_archive', 'green_room_kit', 'rice_cooker'];
   const ids = grant === 'random_basic' ? basics : goods;
   let pool = ids.filter((id) => !owned.has(id)).map(accessoryById).filter(Boolean);
   if (!pool.length) {
@@ -1095,8 +1109,10 @@ function resolveGearGrant(state, grant, rng = Math.random) {
   const owned = new Set(state.accessories);
   let candidates;
   if (grant === 'random_basic' || grant === 'random_good') {
-    const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder'];
-    const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'cursed_8track', 'stage_fan', 'in_ears'];
+    const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder',
+      'gaff_tape', 'tip_qr', 'pocket_metronome', 'thermos'];
+    const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'cursed_8track', 'stage_fan', 'in_ears',
+      'wireless_rig', 'contact_mic', 'stage_cape', 'projector'];
     const ids = grant === 'random_basic' ? basics : goods;
     candidates = ids.filter((id) => !owned.has(id)).map(accessoryById).filter(Boolean);
     if (!candidates.length) {
@@ -1214,10 +1230,31 @@ function startAct(state, act) {
   for (const id of state.hustles || []) {
     const h = hustleById(id);
     if (h) {
-      const pay = Math.round(h.moneyPerAct * (weatherHooks(state).hustleMult || 1));
+      const pay = Math.round(h.moneyPerAct * (weatherHooks(state).hustleMult || 1) *
+        ((state.perks || []).includes('cheap_rent') ? 1.2 : 1));
       state.money += pay;
       notes.push(`${h.icon} ${h.name}: +$${pay}`);
     }
+  }
+  // Career Wall perks that fire at every act break
+  const perks = state.perks || [];
+  if (perks.includes('merch_table')) {
+    state.money += 45;
+    notes.push('🧺 The Folding Merch Table: +$45');
+  }
+  if (perks.includes('street_team')) {
+    state.fame += 2;
+    notes.push('📣 The Street Team: +2 Fame (the flyers went up overnight)');
+  }
+  if (perks.includes('roadie_friend') && state.stats.burnout > 0) {
+    const before = state.stats.burnout;
+    state.stats.burnout = Math.max(0, before - 3);
+    if (state.stats.burnout !== before) notes.push('🧤 A Friend With A Truck: −3 Burnout');
+  }
+  if (perks.includes('archivist')) {
+    const demos = (state.songs || []).filter((s) => s.status === 'demo');
+    for (const d of demos) d.quality = clamp(d.quality + 2, 1, 100);
+    if (demos.length) notes.push(`🗃️ The Archivist: ${demos.length} vault demo${demos.length === 1 ? '' : 's'} +2 quality`);
   }
   for (const bid of state.band || []) {
     const bm = bandmateById(bid);
@@ -1262,7 +1299,8 @@ export function finalePayout(state) {
   for (const id of state.hustles || []) {
     const h = hustleById(id);
     if (h) {
-      const pay = Math.round(h.moneyPerAct * (weatherHooks(state).hustleMult || 1));
+      const pay = Math.round(h.moneyPerAct * (weatherHooks(state).hustleMult || 1) *
+        ((state.perks || []).includes('cheap_rent') ? 1.2 : 1));
       state.money += pay;
       notes.push(`${h.icon} ${h.name}: +$${pay}`);
     }
@@ -1350,6 +1388,7 @@ export function runSummary(state) {
     genre: state.genre || null,
     venue: state.venue || null,
     venueLevel: state.venueLevel || 0,
+    weather: state.weather || null,
     band: [...(state.band || [])],
     brammy: state.brammy || null, // 'won' | 'lost' | null (Awards night)
   };

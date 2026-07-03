@@ -40,6 +40,46 @@ export const VENUES = [
   },
 ];
 
+// Wave 2: seven more rooms worth adopting.
+export const VENUES_WAVE2 = [
+  {
+    id: 'underpass', name: 'The Underpass Amphitheater', icon: '🌉',
+    flavor: 'Natural reverb nobody engineered and nobody can turn off. Rush hour is your drummer.',
+    tags: ['busk', 'roots', 'live'],
+  },
+  {
+    id: 'botanica', name: 'Petal & Distortion (a flower shop)', icon: '🌼',
+    flavor: 'Sets among the ferns after closing. The owner swears the plants lean toward the amp.',
+    tags: ['live', 'tone'],
+  },
+  {
+    id: 'rollercade', name: 'The Rollercade', icon: '🛼',
+    flavor: 'You play the old organ booth. Couples skate to your originals whether they know it or not.',
+    tags: ['live', 'mainstream'],
+  },
+  {
+    id: 'ferry', name: 'The 9:40 Ferry', icon: '⛴️',
+    flavor: 'Both decks, one crossing, a captive audience with somewhere better to be. Convert them.',
+    tags: ['busk', 'home'],
+  },
+  {
+    id: 'union_hall', name: 'Steamfitters Local 401', icon: '🔧',
+    flavor: 'Folding chairs, a real stage, and a bar staffed by people who remember every band since 1974.',
+    tags: ['live', 'family'],
+  },
+  {
+    id: 'arcade', name: 'Coin-Op Castle', icon: '🕹️',
+    flavor: 'You set up between the pinball banks. Every high score in the building is about to be yours emotionally.',
+    tags: ['live', 'electronic'],
+  },
+  {
+    id: 'chapel', name: 'The Deconsecrated Chapel', icon: '🕯️',
+    flavor: 'The acoustics forgive everything. The stained glass has seen worse bands than yours.',
+    tags: ['record', 'tone'],
+  },
+];
+VENUES.push(...VENUES_WAVE2);
+
 // Level tiers: index = level (0..3)
 export const VENUE_TIERS = [
   { name: 'a room you play', showBonus: 0 },

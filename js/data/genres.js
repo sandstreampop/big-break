@@ -72,6 +72,73 @@ export const GENRES_WAVE2 = [
 ];
 GENRES.push(...GENRES_WAVE2);
 
+export const GENRES_WAVE3 = [
+  {
+    id: 'ambient_country', name: 'Ambient Country', icon: '🌵',
+    blurb: 'Studio/Tone +6 · Social −5',
+    flavor: 'Slide guitar for empty interstates. Every song is eleven minutes and none of them waste it.',
+    bonuses: [{ tags: ['studio', 'tone', 'roots'], bonus: 6 }, { tags: ['social'], bonus: -5 }],
+    titleWords: { adj: ['Interstate', 'Dust-Colored', 'Wide-Open', 'Motel', 'Horizon Line', 'Golden Hour'], noun: ['Mirage', 'Odometer', 'Rest Stop', 'Tumbleweed', 'Vacancy', 'Frontage Road'] },
+  },
+  {
+    id: 'dialup_soul', name: 'Dial-Up Soul', icon: '📠',
+    blurb: 'Record/Vocal +6 · Tour −5',
+    flavor: 'Slow jams for machines that scream. The handshake is the hook.',
+    bonuses: [{ tags: ['record', 'vocal'], bonus: 6 }, { tags: ['tour'], bonus: -5 }],
+    titleWords: { adj: ['56k', 'Buffering', 'Midnight Modem', 'Screen-Glow', 'Offline', 'Low Battery'], noun: ['Handshake', 'Download', 'Chatroom', 'Signal', 'Reboot', 'Inbox'] },
+  },
+  {
+    id: 'sludge_disco', name: 'Sludge Disco', icon: '🪩',
+    blurb: 'Live/Electronic +6 · Roots −5',
+    flavor: 'Four on the floor. The floor is tar. Nobody has ever left one of your shows quickly.',
+    bonuses: [{ tags: ['live', 'electronic'], bonus: 6 }, { tags: ['roots'], bonus: -5 }],
+    titleWords: { adj: ['Tar-Pit', 'Strobe-Lit', 'Quicksand', 'Heavy Glitter', 'Molasses', 'Doom Boogie'], noun: ['Inferno', 'Hustle', 'Mirrorball', 'Undertow', 'Fever', 'Ooze'] },
+  },
+  {
+    id: 'chamber_punk', name: 'Chamber Punk', icon: '🎻',
+    blurb: 'Write/Indie +6 · Deal −5',
+    flavor: 'A string quartet with a grudge. The cello has been kicked over on purpose, as art, twice.',
+    bonuses: [{ tags: ['write', 'indie'], bonus: 6 }, { tags: ['deal'], bonus: -5 }],
+    titleWords: { adj: ['Rosin-Burn', 'Velvet Riot', 'Feral', 'First-Chair', 'Untuxedoed', 'Baroque'], noun: ['Sonata', 'Mutiny', 'Manifesto', 'Crescendo', 'Recital', 'Bow Hair'] },
+  },
+  {
+    id: 'yodelcore', name: 'Yodelcore', icon: '🏔️',
+    blurb: 'Live/Vocal +6 · Studio −4 (the booth cannot hold it)',
+    flavor: 'High, lonesome, and load-bearing. Somewhere between a hymn and an avalanche warning.',
+    bonuses: [{ tags: ['live', 'vocal'], bonus: 6 }, { tags: ['studio'], bonus: -4 }],
+    titleWords: { adj: ['Alpine', 'High-Lonesome', 'Echo-Broke', 'Avalanche', 'Switchback', 'Thin-Air'], noun: ['Holler', 'Summit', 'Chalet', 'Landslide', 'Altitude', 'Yonder'] },
+  },
+  {
+    id: 'freak_polka', name: 'Freak Polka', icon: '🪗',
+    blurb: 'Busk/Roots +6 · Mainstream −5',
+    flavor: 'The oom is traditional. The pah is not. Third-beer energy at any hour.',
+    bonuses: [{ tags: ['busk', 'roots'], bonus: 6 }, { tags: ['mainstream'], bonus: -5 }],
+    titleWords: { adj: ['Accordion', 'Spinning', 'Feral', 'Bratwurst', 'Double-Time', 'Cellar-Door'], noun: ['Waltz', 'Panic', 'Festhalle', 'Knees', 'Squeeze', 'Kermis'] },
+  },
+  {
+    id: 'cubicle_funk', name: 'Cubicle Funk', icon: '🖇️',
+    blurb: 'Social/Mainstream +6 · Roots −4',
+    flavor: 'Grooves built from copier jams and quarterly dread. The breakdown is literal.',
+    bonuses: [{ tags: ['social', 'mainstream'], bonus: 6 }, { tags: ['roots'], bonus: -4 }],
+    titleWords: { adj: ['Beige', 'Overtime', 'Fluorescent', 'Casual Friday', 'Laminated', 'Q4'], noun: ['Payroll', 'Stapler', 'Break Room', 'Synergy', 'Memo', 'Commute'] },
+  },
+  {
+    id: 'baroque_ska', name: 'Baroque Ska', icon: '🎺',
+    blurb: 'Live/Band +6 · Solo −4 (it takes eleven of you)',
+    flavor: 'The harpsichord skanks. Powdered wigs in the pit. Pick it up, pick it up, pick it up (allegro).',
+    bonuses: [{ tags: ['live', 'band'], bonus: 6 }, { tags: ['solo'], bonus: -4 }],
+    titleWords: { adj: ['Powdered', 'Contrapuntal', 'Two-Tone', 'Gilded', 'Upstroke', 'Chandelier'], noun: ['Fugue', 'Rudeboy', 'Minuet', 'Horn Section', 'Courtship', 'Gavotte'] },
+  },
+  {
+    id: 'lofi_opera', name: 'Lo-Fi Opera', icon: '🎭',
+    blurb: 'Vocal/Record +6 · Busk −4 (the aria needs a door)',
+    flavor: 'Arias recorded under a duvet at 2 a.m. Tragic, enormous, and slightly muffled.',
+    bonuses: [{ tags: ['vocal', 'record'], bonus: 6 }, { tags: ['busk'], bonus: -4 }],
+    titleWords: { adj: ['Whispered', 'Duvet', 'Four-Track', 'Tragic', 'Intermission', 'Understudy'], noun: ['Aria', 'Libretto', 'Overture', 'Curtain', 'Diva', 'Encore'] },
+  },
+];
+GENRES.push(...GENRES_WAVE3);
+
 export function genreById(id) {
   return GENRES.find((g) => g.id === id) || null;
 }

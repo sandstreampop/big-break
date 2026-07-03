@@ -50,6 +50,55 @@ export const RIVALS = [
   },
 ];
 
+// Wave 3: eleven more acts sharing your city, your venues, and your nerve.
+export const RIVALS_WAVE3 = [
+  {
+    id: 'okays', name: 'The Okays',
+    vibe: 'settle every argument by playing louder; have never lost an argument',
+  },
+  {
+    id: 'gruel', name: 'Gruel',
+    vibe: 'a noise duo who bill themselves as “a texture” and charge extra for earplugs',
+  },
+  {
+    id: 'tilly', name: 'Tilly Fontaine',
+    vibe: 'classically trained, mentions it before hello',
+  },
+  {
+    id: 'brass_tax', name: 'Brass Tax',
+    vibe: 'a ska nine-piece that keeps absorbing smaller bands like a corporation',
+  },
+  {
+    id: 'nocturne', name: 'Baby Nocturne',
+    vibe: 'only plays 3 a.m. sets, insists daylight is a label construct',
+  },
+  {
+    id: 'crawlspace', name: 'Crawlspace Choir',
+    vibe: 'records exclusively in condemned buildings, for the reverb and the menace',
+  },
+  {
+    id: 'minivan', name: 'Minivan Sunset',
+    vibe: 'four dads, zero irony, terrifying pocket',
+  },
+  {
+    id: 'astrid', name: 'Astrid Antenna',
+    vibe: 'claims to receive melodies from a satellite only she can hear',
+  },
+  {
+    id: 'understudy', name: 'The Understudy',
+    vibe: 'covers your setlist one week before you play it, somehow',
+  },
+  {
+    id: 'ferns', name: 'Emotional Ferns',
+    vibe: 'whisper-quiet twee collective with the most vicious lawyer in the tri-county',
+  },
+  {
+    id: 'kudzu', name: 'DJ Kudzu',
+    vibe: 'remixes anything left unattended; your soundcheck is already on his mixtape',
+  },
+];
+RIVALS.push(...RIVALS_WAVE3);
+
 export function randomRival(rng = Math.random) {
   return RIVALS[Math.floor(rng() * RIVALS.length)];
 }

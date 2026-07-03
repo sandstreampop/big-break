@@ -110,6 +110,118 @@ export const WEATHER = [
       statGainMult: { network: 1.25 },
     },
   },
+
+  // Wave 2: twelve more eras to be alive in.
+  {
+    id: 'awards_season', name: 'Awards Season', icon: '🏅',
+    blurb: 'The industry is watching itself: fame/mainstream plays +3, fame gains +20%.',
+    flavor: 'Every lobby has a step-and-repeat. Every conversation is a campaign.',
+    hooks: {
+      rollTagBonus: [{ tags: ['fame', 'mainstream'], bonus: 3 }],
+      fameGainMult: 1.2,
+    },
+  },
+  {
+    id: 'heatwave', name: 'The Heatwave', icon: '🥵',
+    blurb: 'Nobody moves before dark: burnout runs +25%, live/tour fade, home/studio draw hot.',
+    flavor: 'The asphalt is technically a griddle. The van’s AC is a rumor.',
+    hooks: {
+      burnoutGainMult: 1.25,
+      weightTagMult: [{ tags: ['live', 'tour'], mult: 0.7 }, { tags: ['home', 'studio'], mult: 1.3 }],
+    },
+  },
+  {
+    id: 'wedding_season', name: 'Wedding Season', icon: '💍',
+    blurb: 'Everyone you have ever met is getting married: money +30%, mainstream plays +3.',
+    flavor: 'Four venues, three open bars, two chicken options, one song they all want.',
+    hooks: {
+      moneyGainMult: 1.3,
+      rollTagBonus: [{ tags: ['mainstream', 'family'], bonus: 3 }],
+    },
+  },
+  {
+    id: 'rush_week', name: 'Rush Week', icon: '🎓',
+    blurb: 'The colleges empty into the venues: network gains +25%, live draws hot.',
+    flavor: 'Forty thousand new adults just discovered live music and $4 pitchers, in that order.',
+    hooks: {
+      statGainMult: { network: 1.25 },
+      weightTagMult: [{ tags: ['live'], mult: 1.4 }],
+    },
+  },
+  {
+    id: 'doc_fever', name: 'Documentary Fever', icon: '🎥',
+    blurb: 'Every scene wants its own film: cred gains +25%, social/fame plays +2.',
+    flavor: 'Three streaming services are bidding on “the untold story” of things that happened recently, to you.',
+    hooks: {
+      statGainMult: { cred: 1.25 },
+      rollTagBonus: [{ tags: ['social', 'fame'], bonus: 2 }],
+    },
+  },
+  {
+    id: 'transit_strike', name: 'The Transit Strike', icon: '🚧',
+    blurb: 'Nobody can get anywhere: tour plays −3, home/busk draw hot, burnout +10%.',
+    flavor: 'The scene walks now. The scene is developing calves and opinions.',
+    hooks: {
+      rollTagBonus: [{ tags: ['tour'], bonus: -3 }],
+      weightTagMult: [{ tags: ['home', 'busk'], mult: 1.4 }],
+      burnoutGainMult: 1.1,
+    },
+  },
+  {
+    id: 'zine_revival', name: 'The Zine Revival', icon: '📮',
+    blurb: 'Print is back, staples and all: write/indie plays +3, cred gains +20%.',
+    flavor: 'A review in “GLUE STICK QUARTERLY” moves more tickets than the algorithm now. Circulation: 90.',
+    hooks: {
+      rollTagBonus: [{ tags: ['write', 'indie'], bonus: 3 }],
+      statGainMult: { cred: 1.2 },
+    },
+  },
+  {
+    id: 'reunion_glut', name: 'The Reunion-Tour Glut', icon: '🦖',
+    blurb: 'Legacy acts hog every shed: mainstream plays −3, indie/busk draw hot.',
+    flavor: 'Five bands your parents loved un-broke-up this quarter. The arenas are full of the past.',
+    hooks: {
+      rollTagBonus: [{ tags: ['mainstream'], bonus: -3 }],
+      weightTagMult: [{ tags: ['indie', 'busk'], mult: 1.4 }],
+    },
+  },
+  {
+    id: 'payola_probe', name: 'The Payola Probe', icon: '🕵️',
+    blurb: 'Subpoenas in the mailroom: deal plays −3, cred gains +25%, run pays ×1.1 Legacy.',
+    flavor: 'Every playlist editor is suddenly “on sabbatical.” Honest work is briefly fashionable.',
+    hooks: {
+      rollTagBonus: [{ tags: ['deal'], bonus: -3 }],
+      statGainMult: { cred: 1.25 },
+      lpMult: 1.1,
+    },
+  },
+  {
+    id: 'dance_craze', name: 'The Dance Craze', icon: '🕺',
+    blurb: 'Fifteen seconds of choreography rule the earth: social plays +4, releases +8 hype.',
+    flavor: 'It has a name. It has a hand thing. Your song either fits it or doesn’t exist.',
+    hooks: {
+      rollTagBonus: [{ tags: ['social', 'mainstream'], bonus: 4 }],
+      releaseHype: 8,
+    },
+  },
+  {
+    id: 'off_season', name: 'The Off Season', icon: '🧣',
+    blurb: 'The circuit hibernates: live fades, rest/practice draw hot, hustles pay +30%.',
+    flavor: 'Nothing books until spring. The scene sharpens its knives and its choruses indoors.',
+    hooks: {
+      weightTagMult: [{ tags: ['live', 'tour'], mult: 0.7 }, { tags: ['rest', 'practice', 'write'], mult: 1.4 }],
+      hustleMult: 1.3,
+    },
+  },
+  {
+    id: 'lost_masters', name: 'The Masters Fire', icon: '🚒',
+    blurb: 'A vault burned upstate: record/studio plays +3, releases +10 hype (scarcity is real).',
+    flavor: 'Decades of tape went up in one night. Suddenly everyone wants everything preserved, twice.',
+    hooks: {
+      rollTagBonus: [{ tags: ['record', 'studio'], bonus: 3 }],
+      releaseHype: 10,
+    },
+  },
 ];
 
 export function weatherById(id) {
