@@ -6,7 +6,7 @@
 import { EVENTS } from '../data/events.js';
 import { TUTORIAL_EVENTS } from '../data/tutorial.js';
 import { INSTRUMENTS, instrumentById } from '../data/instruments.js';
-import { ACCESSORIES, accessoryById } from '../data/accessories.js';
+import { ACCESSORIES, accessoryById, gearPool } from '../data/accessories.js';
 import { contractById } from '../data/contracts.js';
 import { hustleById } from '../data/hustles.js';
 import { genreById } from '../data/genres.js';
@@ -84,6 +84,7 @@ export const musicPack: Pack = {
   perks: MUSIC_PERKS,
   instruments: INSTRUMENTS,
   accessories: ACCESSORIES,
+  gearPool,
   arcs: ARCS,
   instrumentById,
   accessoryById,

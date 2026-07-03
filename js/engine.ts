@@ -26,6 +26,7 @@ function normalizePack(pack: Pack): Pack {
     instrumentById: pack.instrumentById || none,
     accessories: pack.accessories || [],
     accessoryById: pack.accessoryById || none,
+    gearPool: pack.gearPool || (() => []),
     arcs: pack.arcs || [],
     arcById: pack.arcById || none,
     contractById: pack.contractById || none,
@@ -1164,11 +1165,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
 
 function gearShelf(state, grant, rng = Math.random) {
   const owned = new Set(state.accessories);
-  const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder', 'merch_cannon', 'cowbell', 'four_track',
-    'gaff_tape', 'tip_qr', 'pocket_metronome', 'lucky_socks', 'thermos', 'demo_trunk'];
-  const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears', 'cursed_8track', 'stage_fan', 'humidifier', 'publicist_rolodex',
-    'wireless_rig', 'contact_mic', 'stage_cape', 'projector', 'press_pass', 'mascot_head', 'shoebox_archive', 'green_room_kit', 'rice_cooker'];
-  const ids = grant === 'random_basic' ? basics : goods;
+  const ids = PACK.gearPool(grant, true);
   let pool = ids.filter((id) => !owned.has(id)).map(PACK.accessoryById).filter(Boolean);
   if (!pool.length) {
     pool = PACK.accessories.filter((a) => a.unlockedByDefault && !owned.has(a.id));
@@ -1187,11 +1184,7 @@ function resolveGearGrant(state, grant, rng = Math.random) {
   const owned = new Set(state.accessories);
   let candidates;
   if (grant === 'random_basic' || grant === 'random_good') {
-    const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder',
-      'gaff_tape', 'tip_qr', 'pocket_metronome', 'thermos'];
-    const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'cursed_8track', 'stage_fan', 'in_ears',
-      'wireless_rig', 'contact_mic', 'stage_cape', 'projector'];
-    const ids = grant === 'random_basic' ? basics : goods;
+    const ids = PACK.gearPool(grant, false);
     candidates = ids.filter((id) => !owned.has(id)).map(PACK.accessoryById).filter(Boolean);
     if (!candidates.length) {
       candidates = PACK.accessories.filter((a) => a.unlockedByDefault && !owned.has(a.id));

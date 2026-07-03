@@ -286,6 +286,11 @@ export interface Pack {
   perks?: Record<string, PerkDef>;
   accessories?: any[];
   accessoryById?: (id: string) => any;
+  // The random-gear shelf pools (WP2): candidate accessory ids for a
+  // random_basic/random_good grant. `forShelf` picks the multi-candidate shop
+  // shelf vs the single-grant fallback list. The engine does the generic
+  // filter/sample; the content (which ids) is the pack's.
+  gearPool?: (grant: string, forShelf: boolean) => string[];
   arcs?: any[];
   arcById?: (id: string) => any;
   contractById?: (id: string) => any;
