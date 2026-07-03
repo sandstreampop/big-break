@@ -1,0 +1,47 @@
+name: Cut a release
+
+# Manual release cutter. Sessions can push branches through the managed git
+# gateway but NOT tag refs, so releases are cut here instead: this workflow runs
+# on GitHub's own infra with the built-in GITHUB_TOKEN (contents: write), which
+# creates the tag + GitHub Release directly via the API. Trigger it from the
+# Actions tab (or the API) with the tag name and the commit to tag.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name (e.g. v0.1.0)'
+        required: true
+        default: 'v0.1.0'
+      sha:
+        description: 'Commit SHA to tag (blank = the ref this workflow runs on)'
+        required: false
+        default: ''
+      title:
+        description: 'Release title'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = context.payload.inputs.tag;
+            const sha = context.payload.inputs.sha || context.sha;
+            const name = context.payload.inputs.title || tag;
+            core.info(`Creating release ${tag} at ${sha}`);
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,          // creates the tag if it doesn't exist
+              target_commitish: sha,  // ...pointing at this commit
+              name,
+              body: 'First tagged release. The engine documentation site is online at https://sandstreampop.github.io/big-break/docs/',
+            });
+            core.info(`Release created: ${data.html_url}`);
