@@ -7,6 +7,7 @@
 import { mysteryManifest } from './mystery-manifest.js';
 import { MYSTERY_EVENTS } from '../data/mystery-events.js';
 import { cluesPlugin } from './plugins/clues.js';
+import { mysteryPresenter } from './mystery-presenter.js';
 import type { Pack } from '../types.js';
 
 // The mystery genre's effect vocabulary (Phase C): its four core stats and the
@@ -39,6 +40,7 @@ export const mysteryPack: Pack = {
   plugins: [cluesPlugin],
   events: MYSTERY_EVENTS,
   tutorialEvents: [],
+  presenter: mysteryPresenter,
   instruments: PERSONAS,
   instrumentById: byId(PERSONAS),
   // Music-shaped subsystems this genre doesn't use — stubbed so the shared

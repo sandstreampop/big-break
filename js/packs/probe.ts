@@ -45,6 +45,9 @@ const manifest: PackManifest = {
     focus: { name: 'Focus', icon: '◎' },
     burnout: { name: 'Strain', icon: '△' }, // the engine's burnout slot, reskinned
   },
+  resourceMeta: {
+    points: { name: 'Points', icon: '◆' },
+  },
 };
 
 // A generic card: two sides, each a stat/resource swing across the three tiers.

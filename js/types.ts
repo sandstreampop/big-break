@@ -124,6 +124,10 @@ export interface PackManifest {
   paths: Record<string, PathDef>;
   winGates: Record<string, Record<string, number>>;
   statMeta: Record<string, StatMeta>;
+  // Display name/icon for each resource (Phase G.4) — the sibling of statMeta,
+  // so the UI can label ANY winGates/delta key generically instead of
+  // special-casing fame/hits. A pack without an entry falls back to the raw key.
+  resourceMeta?: Record<string, StatMeta>;
 }
 
 // ---------- Plugin framework (Phase 4) ----------
@@ -190,15 +194,37 @@ export interface TutorialStart {
   fame?: number;
 }
 
+// The Presenter (Phase G): the genre's UI-facing flavor, provided by the pack
+// so the UI shell reads it instead of statically importing music content. This
+// is what carries the refactor through the UI — a mystery run reaches its
+// finale rendering MYSTERY endings/epilogue, not music's (which crashed on an
+// unknown path key). Fields are optional; the UI falls back to sensible
+// neutral behavior when a pack omits one.
+export interface Presenter {
+  // Ending copy: path id → { success, partial, failure } and fail-state keys
+  // (burnout/cancelled/debt) → { title, art?, text } (see data/meta.ts shape).
+  endings: Record<string, any>;
+  exitInterviews?: Record<string, any>;
+  wallItems?: any[];
+  trophies?: any[];
+  // Flavor generators (pure: state → copy). The UI calls these for the act
+  // interstitial (headlines/dms) and the ending screen (epilogue/discography).
+  epilogue?: (state: RunState) => string;
+  headlines?: (state: RunState, seed: number) => { text: string; src: string }[];
+  dms?: (state: RunState, seed: number) => { from: string; text: string }[];
+  discography?: (state: RunState) => any[];
+}
+
 export interface Pack {
   id: string;
   manifest: PackManifest;
   plugins?: Plugin[];
   events: GameEvent[];
   tutorialEvents: GameEvent[];
-  // Optional pack capabilities (feature-detected by the engine).
+  // Optional pack capabilities (feature-detected by the engine / UI).
   interstitials?: InterstitialRule[];
   tutorialStart?: TutorialStart;
+  presenter?: Presenter;
   instruments: any[];
   accessories: any[];
   arcs: any[];

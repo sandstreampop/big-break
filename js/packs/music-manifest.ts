@@ -54,10 +54,21 @@ export const STAT_META: Record<string, StatMeta> = {
   burnout:    { name: 'Burnout',    icon: '🔥' },
 };
 
+// Resource display metadata (Phase G.4): matches the labels/icons the UI used
+// to hardcode (fame ★, hits ♪, pathProgress ▲ "Momentum"), now data.
+export const RESOURCE_META: Record<string, StatMeta> = {
+  fame:        { name: 'Fame',     icon: '★' },
+  money:       { name: 'Money',    icon: '$' },
+  hits:        { name: 'Hits',     icon: '♪' },
+  pathProgress:{ name: 'Momentum', icon: '▲' },
+  rivalry:     { name: 'Rivalry',  icon: '⚔️' },
+};
+
 export const musicManifest: PackManifest = {
   stats: STATS,
   resources: RESOURCES,
   paths: PATHS,
   winGates: WIN_GATES,
   statMeta: STAT_META,
+  resourceMeta: RESOURCE_META,
 };

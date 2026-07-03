@@ -1,7 +1,6 @@
 // BIG BREAK — UI: screens, card swipe physics, result presentation.
 
 import { CONFIG } from './config.js';
-import { ENDINGS, WALL_ITEMS, TROPHIES, EXIT_INTERVIEWS } from './data/meta.js';
 import { INSTRUMENTS } from './data/instruments.js';
 import { rivalById } from './data/rivals.js';
 import { accessoryById } from './data/accessories.js';
@@ -13,15 +12,11 @@ import { artFor, sceneFor } from './art.js';
 import { buildChart, buildChartWithMovement, playerChartInfo, collabArtistFor } from './charts.js';
 import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
-import { generateHeadlines } from './headlines.js';
 import { offerGenres, genreById } from './data/genres.js';
 import { weatherById } from './data/weather.js';
 import { offerVenues, venueById, VENUE_TIERS } from './data/venues.js';
 import { bandmateById } from './data/band.js';
-import { generateDMs } from './dms.js';
-import { buildEpilogue } from './epilogue.js';
 import { renderShareImage } from './sharecard.js';
-import { buildDiscography } from './discography.js';
 import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from './analytics.js';
 import { playMinigame, minigameById } from './minigames.js';
@@ -32,10 +27,20 @@ import { playMinigame, minigameById } from './minigames.js';
 let activePack = musicPack;
 let PATHS = musicPack.manifest.paths;
 let STAT_META = musicPack.manifest.statMeta;
+let RESOURCE_META = musicPack.manifest.resourceMeta || {};
+// The active pack's Presenter: endings, exit interviews, wall, trophies, and
+// flavor generators. The UI reads this instead of importing music's meta and
+// flavor modules, so a mystery run renders mystery endings (Phase G).
+let PRES = musicPack.presenter;
 let meta = save.loadMeta();
 let run = null;
 
 const $ = (sel) => document.querySelector(sel);
+
+// Display name/icon for ANY taxonomy key — stat, burnout, or resource — read
+// from the pack manifest (Phase G.4). Replaces the old fame/hits label
+// special-cases so a genre whose gates name money/clues/points renders them.
+const metaFor = (key) => STAT_META[key] || RESOURCE_META[key] || { name: key, icon: '' };
 const el = (tag, cls?, html?) => {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
@@ -78,6 +83,8 @@ export function boot(pack = musicPack) {
   activePack = pack;
   PATHS = pack.manifest.paths;
   STAT_META = pack.manifest.statMeta;
+  RESOURCE_META = pack.manifest.resourceMeta || {};
+  PRES = pack.presenter || musicPack.presenter;
   save.setSaveNamespace(pack.id === 'music' ? '' : pack.id);
   meta = save.loadMeta();
   engine.useContentPack(pack); // this game's content; set before any engine call
@@ -184,7 +191,7 @@ function renderTitle() {
     stats: { burnout: 0, cred: 50, skill: 0 }, rival: 'vanta', instrument: 'kazoo',
     hustles: [], rivalry: 3,
   };
-  const news = generateHeadlines(fakeState, 1)[0];
+  const news = (PRES.headlines?.(fakeState as any, 1) || [])[0];
   if (news) s.append(el('p', 'title-news', `📰 ${news.text} <span>— ${news.src}</span>`));
   s.append(el('p', 'title-foot', `Runs: ${meta.runs} · Best fame: ${meta.best.fame} · Legacy: ${meta.lpEarnedTotal} LP`));
 }
@@ -1211,10 +1218,10 @@ function deltaChip(key, amount) {
     return el('span', 'chip ' + (goodDelta ? 'chip-good' : 'chip-bad'),
       `${amount > 0 ? '+' : '−'}$${Math.abs(amount)}`);
   }
-  const label = key === 'fame' ? 'Fame' : key === 'hits' ? 'Hit!'
-    : key === 'pathProgress' ? 'Momentum' : (STAT_META[key]?.name || key);
-  const icon = key === 'fame' ? '★' : key === 'hits' ? '♪'
-    : key === 'pathProgress' ? '▲' : (STAT_META[key]?.icon || '');
+  // 'Hit!' keeps its exclamation flourish; everything else reads the manifest
+  // (metaFor covers any pack's stats + resources — money/clues/points included).
+  const label = key === 'hits' ? 'Hit!' : metaFor(key).name;
+  const icon = metaFor(key).icon;
   return el('span', 'chip ' + (goodDelta ? 'chip-good' : 'chip-bad'),
     `${icon} ${sign}${amount} ${label}`);
 }
@@ -1423,7 +1430,7 @@ function closerImpact(opt) {
     return { text: `Money isn't a win gate — but it clears debt (no Curtis ending) and pads your Legacy Points.`, clutch: false };
   }
 
-  const statName = opt.stat === 'fame' ? 'Fame' : STAT_META[opt.stat].name;
+  const statName = metaFor(opt.stat).name;
   const cur = opt.stat === 'fame' ? run.fame : run.stats[opt.stat];
   const after = opt.stat === 'fame' ? cur + opt.amount : Math.min(100, cur + opt.amount);
   const target = gates[opt.stat];
@@ -1487,7 +1494,7 @@ function renderFinalSet() {
   gates.append(el('div', 'trades-head', `🎯 ${pathName.toUpperCase()} — WHAT YOU STILL NEED`));
   for (const r of readings) {
     const grow = el('div', 'gate-row' + (r.value >= r.target ? ' met' : ''));
-    const name = r.key === 'fame' ? 'Fame' : r.key === 'hits' ? 'Hits' : STAT_META[r.key].name;
+    const name = metaFor(r.key).name;
     grow.append(el('span', 'gate-name', `${r.value >= r.target ? '✓' : '✗'} ${name}`));
     const bar = el('div', 'gate-bar');
     const fill = el('div', 'gate-fill');
@@ -1589,7 +1596,7 @@ function actInterstitial(step) {
   }
 
   // The Trades: procedural press about YOUR run (Pass 14)
-  const headlines = generateHeadlines(run, 2);
+  const headlines = PRES.headlines?.(run, 2) || [];
   if (headlines.length) {
     const paper = el('div', 'trades');
     paper.append(el('div', 'trades-head', '📰 MEANWHILE, IN THE TRADES'));
@@ -1599,7 +1606,7 @@ function actInterstitial(step) {
     box.append(paper);
   }
   // The inbox: people from your run remember you (Pass 22)
-  const dms = generateDMs(run, 2);
+  const dms = PRES.dms?.(run, 2) || [];
   if (dms.length) {
     const inbox = el('div', 'inbox');
     inbox.append(el('div', 'trades-head', '💬 YOUR PHONE, MEANWHILE'));
@@ -1655,7 +1662,7 @@ function renderCrossroads() {
     const gates = el('div', 'gate-readout compass');
     for (const r of readings) {
       const grow = el('div', 'gate-row' + (r.value >= r.target ? ' met' : ''));
-      const name = r.key === 'fame' ? 'Fame' : r.key === 'hits' ? 'Hits' : STAT_META[r.key].name;
+      const name = metaFor(r.key).name;
       grow.append(el('span', 'gate-name', name));
       const bar = el('div', 'gate-bar');
       const fill = el('div', 'gate-fill');
@@ -1744,7 +1751,7 @@ function finishMeta(summary, lp) {
     mg_6: () => Object.keys(meta.minigamesPlayed || {}).length >= 6,
     mg_12: () => Object.keys(meta.minigamesPlayed || {}).length >= 12,
   };
-  for (const t of TROPHIES) {
+  for (const t of (PRES.trophies || [])) {
     if (meta.trophies.includes(t.id)) continue;
     let ok = false;
     if (t.special) ok = !!specials[t.special]?.();
@@ -1795,7 +1802,7 @@ function renderFinale() {
   }
   const earned = finishMeta(summary, lp);
 
-  const ending = ENDINGS[run.path][evalr.result];
+  const ending = PRES.endings[run.path][evalr.result];
   track('run_end', {
     outcome: evalr.result, path: run.path, cause: 'finale', mode: runMode(run),
     cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
@@ -1808,7 +1815,7 @@ function renderFinale() {
 }
 
 function renderGameOver(endingKey) {
-  const interview = EXIT_INTERVIEWS[endingKey];
+  const interview = PRES.exitInterviews?.[endingKey];
   if (interview && !run.exitChoice) {
     showExitInterview(endingKey, interview);
     return;
@@ -1826,7 +1833,7 @@ function renderGameOver(endingKey) {
     ...runContentProps(run, summary),
   });
   sfx.gameover();
-  renderEndingScreen(ENDINGS[endingKey], lp, earned, null, summary);
+  renderEndingScreen(PRES.endings[endingKey], lp, earned, null, summary);
 }
 
 // The Exit Interview (Pass 45): one final choice inside a fail state
@@ -1887,7 +1894,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   const pathLabel = summary?.path ? PATHS[summary.path].name.toUpperCase() + ' · ' : '';
   wrap.append(el('div', `verdict verdict-${resKey || 'over'}`, `${pathLabel}${resLabel}`));
   wrap.append(el('h2', 'ending-title', ending.title));
-  const finalPress = generateHeadlines(run, 1)[0];
+  const finalPress = (PRES.headlines?.(run, 1) || [])[0];
   if (finalPress) {
     wrap.append(el('p', 'trades-row ending-press', `<b>${finalPress.text}</b><span>— ${finalPress.src}</span>`));
   }
@@ -1912,7 +1919,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     const gates = el('div', 'gate-readout');
     for (const r of evalr.readings) {
       const row = el('div', 'gate-row' + (r.met ? ' met' : ''));
-      const name = r.key === 'fame' ? 'Fame' : r.key === 'hits' ? 'Hits' : STAT_META[r.key].name;
+      const name = metaFor(r.key).name;
       row.append(el('span', 'gate-name', `${r.met ? '✓' : '✗'} ${name}`));
       const bar = el('div', 'gate-bar');
       const fill = el('div', 'gate-fill');
@@ -1933,7 +1940,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     wrap.append(el('p', 'trophy-toast', `${t.icon} Trophy: <b>${t.name}</b> — ${t.desc}`));
   }
 
-  const disc = buildDiscography(run);
+  const disc = PRES.discography?.(run) || [];
   if (disc.length) {
     wrap.append(el('h3', 'wall-tier', 'The Discography'));
     const list = el('div', 'disc-list');
@@ -1942,7 +1949,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     }
     wrap.append(list);
   }
-  const epilogue = buildEpilogue(run);
+  const epilogue = PRES.epilogue?.(run) || '';
   if (run.exitText || epilogue) {
     wrap.append(el('h3', 'wall-tier', 'Epilogue'));
     if (run.exitText) wrap.append(el('p', 'epilogue-text exit-text', run.exitText));
@@ -2044,7 +2051,7 @@ function renderWall() {
   let lastTier = 0;
   // stable-sort by tier so each tier renders as one section (the authored
   // list interleaves tiers now that the wall has a second wing)
-  for (const item of [...WALL_ITEMS].sort((a, b) => a.tier - b.tier)) {
+  for (const item of [...(PRES.wallItems || [])].sort((a, b) => a.tier - b.tier)) {
     if (item.tier !== lastTier) {
       lastTier = item.tier;
       list.append(el('h3', 'wall-tier', `Tier ${item.tier}`));
@@ -2083,10 +2090,11 @@ function renderTrophies() {
   const s = $('#screen-trophies');
   s.innerHTML = '';
   s.append(el('h2', 'screen-head', 'Trophy Room'));
-  s.append(el('p', 'screen-sub', `${meta.trophies.length}/${TROPHIES.length} collected. Each one cost you something.`));
+  const allTrophies = PRES.trophies || [];
+  s.append(el('p', 'screen-sub', `${meta.trophies.length}/${allTrophies.length} collected. Each one cost you something.`));
 
   const owned = new Set(meta.trophies);
-  const pct = Math.round((100 * meta.trophies.length) / TROPHIES.length);
+  const pct = allTrophies.length ? Math.round((100 * meta.trophies.length) / allTrophies.length) : 0;
   const meter = el('div', 'trophy-meter');
   const fill = el('div', 'trophy-meter-fill');
   fill.style.width = pct + '%';
@@ -2095,7 +2103,7 @@ function renderTrophies() {
 
   const CATS = [['endings', 'Ways It Ends'], ['feats', 'Feats'], ['career', 'The Long Game']];
   for (const [cat, label] of CATS) {
-    const group = TROPHIES.filter((t) => (t.cat || 'feats') === cat);
+    const group = allTrophies.filter((t) => (t.cat || 'feats') === cat);
     if (!group.length) continue;
     s.append(el('h3', 'wall-tier', label));
     const grid = el('div', 'trophy-grid');

@@ -57,10 +57,21 @@ export const STAT_META: Record<string, StatMeta> = {
   burnout:  { name: 'Suspicion', icon: '🕵️' }, // engine burnout slot, reskinned
 };
 
+// Resource display metadata (Phase G.4): the reality-show currencies the
+// generic resource slots are reskinned into.
+export const RESOURCE_META: Record<string, StatMeta> = {
+  fame:        { name: 'Notoriety', icon: '📸' },
+  money:       { name: 'Cash',      icon: '💵' },
+  pathProgress:{ name: 'Leads',     icon: '🧩' },
+  rivalry:     { name: 'Feud',      icon: '🔥' },
+  clues:       { name: 'Clues',     icon: '🔎' },
+};
+
 export const mysteryManifest: PackManifest = {
   stats: STATS,
   resources: RESOURCES,
   paths: PATHS,
   winGates: WIN_GATES,
   statMeta: STAT_META,
+  resourceMeta: RESOURCE_META,
 };
