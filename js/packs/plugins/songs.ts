@@ -28,7 +28,7 @@ export const songsPlugin: Plugin = {
 
   onEffect(state, effects, ctx) {
     const { deltas, hooks = {}, accs = [], mg = null, tier, rng, ev } = ctx;
-    if (effects.chartTitle && !state._chartTitleHandled) {
+    if (effects.chartTitle && !ctx.chartTitleHandled) {
       const tierQ = tier === 'incredible' ? 66 : tier === 'good' ? 58 : 50;
       const s = addSong(state, {
         title: effects.chartTitle.replace('{collabArtist}', collabArtistFor(state)),
@@ -99,7 +99,7 @@ export const songsPlugin: Plugin = {
       });
       deltas.songWritten = { title: s.title, quality: s.quality, fromHook: grabbedHooks.length > 0 };
     }
-    state._chartTitleHandled = false;
+    ctx.chartTitleHandled = false; // reset the per-resolution handshake
   },
 
   // Act break: audit the act that just ended for a shipped release, then run a

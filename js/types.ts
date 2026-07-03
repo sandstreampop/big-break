@@ -147,9 +147,19 @@ export interface PluginContext {
   hooks?: Record<string, any>;
   accs?: any[];
   mg?: any;
+  // Per-resolution scratch a subsystem stashes for itself across the hooks of
+  // ONE card (Phase F) — replaces module-level plugin state. The engine hands
+  // the same context object to modifyEffects/onEffect/afterResolve of a card.
+  chartTitleHandled?: boolean; // songs: has the engine's hits block minted the chartTitle already?
+  venueThisCard?: any;         // venue: the room as it was before adoptVenue could fire this card
+  hostedThisCard?: boolean;    // venue: did the adopted room host this card's show?
 }
 export interface Plugin {
   id: string;
+  // Explicit ordering (Phase F): plugins fire in ascending priority (default
+  // 0), ties broken by registration order. Lets a pack declare intent instead
+  // of relying on array position.
+  priority?: number;
   // The effect verbs this subsystem owns (Phase C — the open registry's
   // declaration half). The core owns the closed neutral set (stat/resource
   // deltas, burnout, addFlag/removeFlag/chainEventId, addPromise); every other

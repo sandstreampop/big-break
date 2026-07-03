@@ -3,7 +3,7 @@
 
 import { CONFIG } from './config.js';
 import { collabArtistFor, songName } from './charts.js';
-import type { Pack, RunState, Song } from './types.js';
+import type { Pack, RunState, Song, Plugin } from './types.js';
 
 // ---------- Injected content pack (Phase 2: IoC) ----------
 // The engine imports NO content module. All music-specific content arrives as
@@ -688,15 +688,30 @@ export function tagsIntersect(a, b) {
   return a && b && a.some((t) => b.includes(t));
 }
 
-// ---------- Plugin dispatch (Phase 4) ----------
-// Fire a lifecycle hook across the active pack's plugins, in registration
-// order. Empty/absent registry = no-op, so wiring a dispatch point in is
-// byte-green until a plugin implements it.
-function firePlugins(hook: string, ...args: any[]): void {
+// ---------- Plugin dispatch (Phase 4, hardened in Phase F) ----------
+// The lifecycle hooks a plugin may implement. Typed, so a typo'd hook name is
+// a COMPILE error, not a silent no-op (the old (p as any)[hook] swallowed it).
+type PluginHook = 'onConstruct' | 'modifyEffects' | 'onEffect' | 'afterResolve'
+  | 'onActBreak' | 'onTick' | 'onFinale';
+
+// Plugins fire in ascending `priority` (default 0), ties broken by registration
+// order (a stable sort) — so ordering is INTENTIONAL and declared, not pinned
+// by array position alone. With no priorities set it is exactly registration
+// order, so existing packs are byte-green.
+function orderedPlugins(): Plugin[] {
   const plugins = PACK.plugins;
-  if (!plugins) return;
-  for (const p of plugins) {
-    const fn = (p as any)[hook];
+  if (!plugins) return [];
+  return plugins
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => (a.p.priority ?? 0) - (b.p.priority ?? 0) || a.i - b.i)
+    .map((x) => x.p);
+}
+
+// Fire a lifecycle hook across the active pack's plugins. Empty/absent registry
+// = no-op, so wiring a dispatch point in is byte-green until a plugin uses it.
+function firePlugins(hook: PluginHook, ...args: any[]): void {
+  for (const p of orderedPlugins()) {
+    const fn = p[hook] as ((...a: any[]) => void) | undefined;
     if (fn) fn.apply(p, args);
   }
 }
@@ -869,9 +884,15 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     }
   }
 
+  // One per-card context object (Phase F), shared by modifyEffects and
+  // afterResolve so a subsystem can snapshot state between them WITHOUT
+  // module-level scratch (the venue plugin used to keep `venueThisCard` at
+  // module scope — safe only because runs are single-threaded; this fixes that).
+  const cardCtx: any = { ev, choice, tier, rng };
+
   // Home-venue show bonus (venue plugin, Phase 4.2): lifts fame/cred on a
   // Good/Incredible night in your adopted room, before effects land.
-  firePlugins('modifyEffects', state, effects, { ev, choice, tier, rng });
+  firePlugins('modifyEffects', state, effects, cardCtx);
 
   const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories, opts.mgDetail || null);
   const result: any = {
@@ -911,7 +932,8 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   }
 
   // Build the room (venue plugin, Phase 4.2): venue-tagged shows level it up.
-  firePlugins('afterResolve', state, result, { ev, choice, tier, rng });
+  // Same cardCtx as modifyEffects, so the venue snapshot survives across them.
+  firePlugins('afterResolve', state, result, cardCtx);
 
   // Lucky Pick-style gear: lost when it applied and things went Bad
   // (the Roadie Insurance perk keeps it bolted down)
@@ -1017,6 +1039,11 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
   // subsystem, applied inline here (extracted in Phase 4.5). Order is the
   // manifest's, matching the old block order fame → money → hits →
   // pathProgress → rivalry, so deltas and RNG-consuming draws don't move.
+  // Per-resolution plugin context (Phase F): the deltas/hooks/accs/mg the
+  // onEffect handlers read, plus a chartTitleHandled handshake between the
+  // engine's hits block and the songs plugin — carried HERE, not on state
+  // (state._chartTitleHandled was a mutable flag smuggled between the two).
+  const pctx: any = { ev, choice, tier, rng, deltas, hooks, accs, mg, chartTitleHandled: false };
   const rctx: ResourceCtx = { hooks, cMods, wHooks, accs };
   for (const res of PACK.manifest.resources) {
     if (res === 'hits') {
@@ -1034,7 +1061,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
           (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true, viral: !!s.viral });
         }
         push('hits', effects.hits);
-        state._chartTitleHandled = !!effects.chartTitle;
+        pctx.chartTitleHandled = !!effects.chartTitle;
       }
       continue;
     }
@@ -1047,7 +1074,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
   // Plugin effect handlers (Phase 4.2 venue; Phase 4.5 songs — write/hype/
   // release/album/polish/chartTitle). Fires here so the songs plugin lands its
   // effects at the exact spot the old inline block did; deltas/RNG order held.
-  firePlugins('onEffect', state, effects, { ev, choice, tier, rng, deltas, hooks, accs, mg });
+  firePlugins('onEffect', state, effects, pctx);
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
 
