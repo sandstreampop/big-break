@@ -19,6 +19,7 @@ let hostedThisCard = false;
 
 export const venuePlugin: Plugin = {
   id: 'venue',
+  effectVerbs: ['adoptVenue', 'venueLove', 'venueLoveStart'],
 
   // A show in your adopted room lifts a Good/Incredible night (flat fame+cred
   // by venue level). Applied to the effects payload before it lands.

@@ -9,6 +9,17 @@ import { MYSTERY_EVENTS } from '../data/mystery-events.js';
 import { cluesPlugin } from './plugins/clues.js';
 import type { Pack } from '../types.js';
 
+// The mystery genre's effect vocabulary (Phase C): its four core stats and the
+// clues counter the clues plugin maintains — declared here, editing no shared
+// type. (fame/money/pathProgress/rivalry are engine-known resources on the
+// core Effect already.)
+declare module '../types.js' {
+  interface Effect {
+    nerve?: number; charm?: number; insight?: number; alliance?: number;
+    clues?: number;
+  }
+}
+
 // "Instruments" here are the reality-show personas you walk in as. The engine
 // only needs id + unlockedByDefault (+ optional stat modifiers/quirk).
 const PERSONAS = [

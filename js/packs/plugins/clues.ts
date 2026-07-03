@@ -9,9 +9,10 @@ import type { Plugin } from '../../types.js';
 
 export const cluesPlugin: Plugin = {
   id: 'clues',
+  effectVerbs: ['clues'],
 
   onEffect(state, effects, ctx) {
-    const gained = (effects as any).clues || 0;
+    const gained = effects.clues || 0;
     if (gained) {
       state.clues = (state.clues || 0) + gained;
       // record the delta so the trace/UI shows it (same shape as resources)

@@ -32,35 +32,32 @@ export interface PromiseSpec {
   penalty?: Effect;
 }
 
-// Effect keys are partly PACK-DEFINED (core stats/resources are named by each
-// pack's manifest). Rather than open the type with an index signature (which
-// would forfeit hallucinated-key detection), we ENUMERATE every registered
-// pack's numeric keys. Two packs today: music (skill/cred/…) and mystery
-// (nerve/charm/insight/alliance + the clues counter). A third genre adds its
-// keys here — until per-pack generics (Pack<S extends StatSchema>) land.
+// Effect is the OPEN payload vocabulary (Phase C — the §2A OCP fix). This
+// declares only the GENRE-NEUTRAL core: the engine's burnout slot, the
+// engine-known resources it applies by name, the universal structural verbs it
+// resolves inline, and flag/chain/promise control. Every pack's OWN vocabulary
+// — its core stats and its subsystem verbs — is added by that pack via
+// declaration merging in its OWN file (see packs/music.ts, packs/mystery.ts,
+// packs/probe.ts), so adding a genre edits NO shared type. That is the OCP
+// boundary the god-union violated: the shared type no longer enumerates any
+// genre's keys, yet a truly unknown key is still a compile error (no index
+// signature), preserving hallucinated-key detection. The runtime guard that a
+// card names no verb outside its pack's declared set lives in the cross-pack
+// "no unknown verb" invariant.
 export interface Effect {
-  // music core stats
-  skill?: number; cred?: number; creativity?: number; network?: number;
+  // The engine's universal burnout slot.
   burnout?: number;
-  // mystery core stats + its clues counter (clues plugin)
-  nerve?: number; charm?: number; insight?: number; alliance?: number; clues?: number;
-  // resources
+  // Engine-known resources (RESOURCE_APPLY + the songs hits/chartTitle block,
+  // engine-resident until the songs subsystem fully owns them in Phase D).
   fame?: number; money?: number; hits?: number; pathProgress?: number; rivalry?: number;
-  // flags & chaining
+  chartTitle?: string;
+  // Flag / chain / promise control (genre-neutral).
   addFlag?: string; removeFlag?: string; chainEventId?: string;
   addPromise?: PromiseSpec;
-  // venue subsystem
-  adoptVenue?: string; venueLove?: number; venueLoveStart?: number;
-  // songs subsystem
-  chartTitle?: string; hypeSong?: number; polishDemo?: number; writeSong?: boolean;
-  // number in data today; the engine also accepts a truthy flag (=> default)
-  albumDrop?: number | boolean; releaseDemo?: number | boolean;
-  // instrument / band / hustle / gear
+  // Content-structural verbs the engine resolves inline today (loadout / roster
+  // / gear). Music-shaped; the keys follow their handlers to a plugin in Phase D.
   setInstrument?: string; grantBandmate?: string; removeBandmate?: string;
   grantHustle?: string; removeGear?: string; grantGear?: string;
-  // legacy no-op present in a few authored cards (value 0); ignored by the
-  // engine. Typed so the byte-green rename passes; a lint can retire it later.
-  tone?: number;
 }
 
 // ---------- Requires (deck-eligibility gate) ----------
@@ -149,6 +146,13 @@ export interface PluginContext {
 }
 export interface Plugin {
   id: string;
+  // The effect verbs this subsystem owns (Phase C — the open registry's
+  // declaration half). The core owns the closed neutral set (stat/resource
+  // deltas, burnout, addFlag/removeFlag/chainEventId, addPromise); every other
+  // key an eligible card may name must be declared here by exactly one plugin.
+  // The cross-pack "no unknown verb" invariant checks each card's effect keys
+  // against manifest.stats ∪ manifest.resources ∪ core ∪ these.
+  effectVerbs?: string[];
   // Seeded construction draws at run start (weather, rival). Fired in
   // registration order, so the pack fixes the draw order.
   onConstruct?(state: RunState, rng: () => number): void;

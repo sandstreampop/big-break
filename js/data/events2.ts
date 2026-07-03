@@ -4373,8 +4373,7 @@ export const EVENTS2: GameEvent[] = [
             "text": "The revived fuzz becomes your sound. People ask what it is. You say “a garage sale.” They think it’s a brand.",
             "effects": {
               "creativity": 6,
-              "cred": 3,
-              "tone": 0
+              "cred": 3
             }
           },
           "incredible": {
@@ -9134,8 +9133,7 @@ export const EVENTS2: GameEvent[] = [
             "text": "Your secret sound palette becomes your signature — nobody can copy a record made of your specific junk drawer. Sonic fingerprint.",
             "effects": {
               "creativity": 7,
-              "cred": 4,
-              "tone": 0
+              "cred": 4
             }
           },
           "incredible": {
@@ -24125,8 +24123,7 @@ export const EVENTS2: GameEvent[] = [
             "text": "You trade for a “vintage” piece that turns out to be broken in a way the seller definitely knew about. You learn the swap meet’s first rule too late. It has character, at least. Loud character.",
             "effects": {
               "creativity": 3,
-              "money": -20,
-              "tone": 0
+              "money": -20
             }
           },
           "good": {

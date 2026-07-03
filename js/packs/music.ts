@@ -22,6 +22,21 @@ import { bandPlugin } from './plugins/band.js';
 import { songsPlugin } from './plugins/songs.js';
 import type { Pack } from '../types.js';
 
+// The music genre's effect vocabulary, declared by the pack rather than baked
+// into the shared Effect union (Phase C). Its four core stats and its venue /
+// songs subsystem verbs — added here, editing no shared type.
+declare module '../types.js' {
+  interface Effect {
+    // music core stats
+    skill?: number; cred?: number; creativity?: number; network?: number;
+    // venue subsystem
+    adoptVenue?: string; venueLove?: number; venueLoveStart?: number;
+    // songs subsystem
+    hypeSong?: number; polishDemo?: number; writeSong?: boolean;
+    albumDrop?: number | boolean; releaseDemo?: number | boolean;
+  }
+}
+
 export const musicPack: Pack = {
   id: 'music',
   manifest: musicManifest,

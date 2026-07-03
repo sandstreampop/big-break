@@ -52,6 +52,39 @@ for (const pack of PACKS) {
     }
   });
 
+  // ── Open vocabulary is safe (Phase C): every effect verb an eligible card
+  // names must be OWNED — a manifest stat/resource, a genre-neutral core verb,
+  // or a verb exactly one plugin declares (effectVerbs). A hallucinated or
+  // stranded verb (a card that names a subsystem the pack doesn't ship) is a
+  // silent no-op the engine would swallow; this catches it. ──
+  test(`[${pack.id}] no eligible card names an unknown effect verb`, () => {
+    const CORE_VERBS = ['burnout', 'chartTitle', 'addFlag', 'removeFlag', 'chainEventId',
+      'addPromise', 'setInstrument', 'grantBandmate', 'removeBandmate', 'grantHustle',
+      'removeGear', 'grantGear'];
+    const known = new Set([
+      ...pack.manifest.stats, ...pack.manifest.resources, ...CORE_VERBS,
+      ...(pack.plugins || []).flatMap((p) => p.effectVerbs || []),
+    ]);
+    const scan = (effects, where) => {
+      if (!effects) return;
+      for (const k of Object.keys(effects)) {
+        assert.ok(known.has(k), `${where}: unknown effect verb '${k}'`);
+      }
+      // Promises carry their own reward/penalty payloads.
+      if (effects.addPromise) {
+        scan(effects.addPromise.reward, `${where}.promise.reward`);
+        scan(effects.addPromise.penalty, `${where}.promise.penalty`);
+      }
+    };
+    for (const ev of [...pack.events, ...pack.tutorialEvents]) {
+      for (const side of ['left', 'right']) {
+        const c = ev.choices?.[side];
+        if (!c) continue;
+        for (const t of ['bad', 'good', 'incredible']) scan(c.outcomes?.[t]?.effects, `${ev.id}.${side}.${t}`);
+      }
+    }
+  });
+
   // ── §2E symmetry: the INCREDIBLE payload multiplier must scale EVERY core
   // stat the pack declares — not a hardcoded music list that silently skips a
   // second genre's stats. Guards against re-coupling the multiplier to one

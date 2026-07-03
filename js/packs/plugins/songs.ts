@@ -22,6 +22,9 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 
 export const songsPlugin: Plugin = {
   id: 'songs',
+  // chartTitle is shared with the engine's hits block (Phase D unifies them);
+  // it is listed on the core Effect, so it isn't re-declared here.
+  effectVerbs: ['hypeSong', 'albumDrop', 'releaseDemo', 'polishDemo', 'writeSong'],
 
   onEffect(state, effects, ctx) {
     const { deltas, hooks = {}, accs = [], mg = null, tier, rng, ev } = ctx;
