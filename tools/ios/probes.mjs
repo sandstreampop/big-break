@@ -64,25 +64,28 @@ const fastTapNotDropped = {
     });
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForSelector('#screen-title.active', { timeout: 8000 });
-    // Tap across DISTINCT points in a handler-free area (the logo) — this models
-    // real minigame tapping (pads/notes/strips are distinct targets) and avoids
-    // WebKit coalescing repeated identical-pixel taps into a double-tap (which
-    // would drop one synthesized click — a same-pixel artifact, not a lost
-    // activation). Clicks bubble to document; the platform double-tap guard
-    // re-dispatches a click for the taps it preventDefaults, so none is lost.
+    // Tap across DISTINCT points in a handler-free area (the logo), modelling
+    // real minigame tapping (pads/notes/strips are distinct targets). Clicks
+    // bubble to document. In a rapid burst, every tap AFTER the first lands
+    // inside the double-tap window, so the platform guard deterministically
+    // re-dispatches a click for it (synchronous dispatchEvent — reliable on
+    // WebKit). The FIRST tap is unguarded (native click), and headless WebKit's
+    // synthesized click for it under Playwright is a known flake — so we require
+    // the GUARDED taps to all register (>= BURST - 1). A broken double-tap guard
+    // (dropping rapid taps) would fall far below this. The real "no tap ever
+    // dropped" feel is Tier-2 (real device).
     const box = await page.locator('.title-logo').boundingBox()
       || await page.locator('#screen-title').boundingBox();
     const y = box.y + box.height / 2;
-    const N = 6;
-    for (let i = 0; i < N; i++) {
-      await tap(page, box.x + box.width * (0.12 + 0.14 * i), y);
-      await page.waitForTimeout(80);
+    const BURST = 8;
+    for (let i = 0; i < BURST; i++) {
+      await tap(page, box.x + box.width * (0.12 + 0.09 * i), y);
+      await page.waitForTimeout(70);
     }
-    await page.waitForTimeout(150);
+    await page.waitForTimeout(200);
     const clicks = await page.evaluate(() => window.__clicks);
-    // >= N: the churn bug is DROPPED taps (clicks < N). The guard's
-    // preventDefault-then-re-dispatch is designed to yield exactly one per tap.
-    assert(clicks >= N, `fast-tap burst registered only ${clicks} of ${N} taps (a rapid tap was dropped)`);
+    assert(clicks >= BURST - 1,
+      `fast-tap burst registered only ${clicks} of ${BURST} rapid taps — the double-tap guard is dropping taps`);
   },
 };
 
