@@ -5,8 +5,27 @@
 // gear machinery. Sampling draws ctx.rng at the same ordinal the old inline
 // block did, so the seeded stream is unchanged.
 
-import { accessoryById, ACCESSORIES, gearPool } from '../../data/accessories.js';
+import { accessoryById, ACCESSORIES, gearPool, accessoryActive, equippedActive } from '../../data/accessories.js';
+import { applyEffects, tagsIntersect } from '../../engine.js';
+import { CONFIG } from '../../config.js';
 import type { Plugin } from '../../types.js';
+
+// Equip an accessory (after any UI slot decision). Fires onAcquire effects
+// through the engine's applyEffects. Exported for the UI/sim drivers — moved
+// out of the engine so the core resolves no accessory (WP6-infra / WP7).
+export function equipAccessory(state: any, accId: string, replaceId: string | null = null) {
+  if (replaceId) state.accessories = state.accessories.filter((a: string) => a !== replaceId);
+  if (state.accessories.length >= CONFIG.accessorySlots) return null;
+  state.accessories.push(accId);
+  const acc = accessoryById(accId);
+  const deltas: any = [];
+  if (acc?.grantsFlag && !state.flags.includes(acc.grantsFlag)) state.flags.push(acc.grantsFlag);
+  if (acc?.onAcquire) {
+    const d = applyEffects(state, acc.onAcquire, null, null, Math.random);
+    deltas.push(...d);
+  }
+  return deltas;
+}
 
 // Up to three fresh candidates for a shop shelf (the player picks one).
 function gearShelf(state: any, grant: string, rng: () => number) {
@@ -46,6 +65,38 @@ function resolveGearGrant(state: any, grant: string, rng: () => number) {
 export const gearPlugin: Plugin = {
   id: 'gear',
   effectVerbs: ['removeGear', 'grantGear'],
+
+  // Equipped, active gear adds tag-matched roll bonuses (and counter-tag
+  // penalties); the accessories whose modifier fires are recorded on
+  // ctx.applied for lose-on-bad and burnout side effects. Pure (no rng, no state
+  // mutation) — the risk-tell calls this too.
+  modifyRoll(state, choice, ctx) {
+    let bonus = 0;
+    for (const acc of equippedActive(state)) {
+      if (acc.modifier && (acc.appliesTo?.includes('*') || tagsIntersect(acc.appliesTo, choice.tags))) {
+        bonus += acc.modifier;
+        ctx.applied.push(acc);
+      }
+      for (const ct of acc.counterTags || []) {
+        if (tagsIntersect(ct.tags, choice.tags)) bonus += ct.modifier;
+      }
+    }
+    return bonus;
+  },
+
+  // Gear's burnout adjustments: tag-matched multipliers on a positive delta,
+  // plus per-match side effects from the gear that fired this card.
+  modifyBurnout(state, v, ctx) {
+    if (v > 0) {
+      for (const acc of equippedActive(state)) {
+        if (acc.burnoutTagMult && tagsIntersect(acc.burnoutTagMult.tags, ctx.tags)) v *= acc.burnoutTagMult.mult;
+      }
+    }
+    for (const acc of ctx.appliedAccessories || []) {
+      if (acc.sideEffect?.burnoutPerMatch) v += acc.sideEffect.burnoutPerMatch;
+    }
+    return v;
+  },
 
   onEffect(state, effects, ctx) {
     const { deltas, rng } = ctx as any;

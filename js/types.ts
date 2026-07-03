@@ -262,6 +262,11 @@ export interface Plugin {
   // Whether this subsystem disables the Encore mechanic this run (a contract
   // clause). OR'd across plugins.
   blocksEncore?(state: RunState): boolean;
+  // Adjust the burnout delta a card lands — gear's tag-matched multipliers and
+  // per-match side effects fold in here, between the instrument's own burnout
+  // hooks (core) and the contract/weather gain multipliers. `ctx.tags` are the
+  // choice tags, `ctx.appliedAccessories` the gear whose roll bonus fired.
+  modifyBurnout?(state: RunState, v: number, ctx: any): number;
 }
 
 // A burnout-threshold interstitial: crossing the bar interrupts the deck once

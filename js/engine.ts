@@ -440,14 +440,6 @@ export function applyMastery(state, level) {
   for (const k of stats()) state.stats[k] = clamp(state.stats[k] + lv, 1, 100);
 }
 
-export function signContract(state, contractId) {
-  state.contract = contractId;
-  const mods = contractMods(state);
-  if (mods.startMoney !== undefined) state.money = mods.startMoney;
-  // e.g. The Handshake Loan: walk in flush, walk in owing (debt fail-state armed)
-  if (mods.startFlag && !state.flags.includes(mods.startFlag)) state.flags.push(mods.startFlag);
-}
-
 // ---------- Deck assembly (spec §8.4) ----------
 
 export function actMatches(ev, act) {
@@ -618,16 +610,6 @@ export function drawNextCard(state, rng = Math.random) {
 
 // ---------- Resolution (spec §4.1) ----------
 
-function equippedAccessories(state) {
-  return state.accessories.map(PACK.accessoryById).filter(Boolean);
-}
-
-function accessoryActive(acc, state) {
-  if (acc.compatibility?.universal) return true;
-  const inst = PACK.instrumentById(state.instrument);
-  return !!inst && (acc.compatibility?.families || []).includes(inst.family);
-}
-
 export function tagsIntersect(a, b) {
   return a && b && a.some((t) => b.includes(t));
 }
@@ -687,6 +669,12 @@ function encoreDisabled(state): boolean {
   for (const p of orderedPlugins()) if (p.blocksEncore?.(state)) return true;
   return false;
 }
+// Fold each plugin's burnout-delta adjustment (gear tag mults + side effects),
+// between the instrument's own burnout hooks and the contract/weather mults.
+function foldBurnout(state, v: number, ctx): number {
+  for (const p of orderedPlugins()) if (p.modifyBurnout) v = p.modifyBurnout(state, v, ctx);
+  return v;
+}
 // Fold each plugin's deck-weight multiplier (weather recolor, seeded-arc bias).
 function foldDeckWeight(state, ev, weight: number): number {
   for (const p of orderedPlugins()) if (p.weightDeck) weight = p.weightDeck(state, ev, weight);
@@ -738,18 +726,9 @@ export function rollComponents(state, choice, opts: any = {}) {
   }
   const aptitude = wsum ? sum / wsum : 30;
 
-  let gearBonus = 0;
-  const applied = []; // accessories whose modifier fired (for side effects)
-  for (const acc of equippedAccessories(state)) {
-    if (!accessoryActive(acc, state)) continue;
-    if (acc.modifier && (acc.appliesTo?.includes('*') || tagsIntersect(acc.appliesTo, choice.tags))) {
-      gearBonus += acc.modifier;
-      applied.push(acc);
-    }
-    for (const ct of acc.counterTags || []) {
-      if (tagsIntersect(ct.tags, choice.tags)) gearBonus += ct.modifier;
-    }
-  }
+  // Gear whose roll bonus fired this card (for lose-on-bad + burnout side
+  // effects). The gear plugin's modifyRoll pushes onto this via rollCtx.applied.
+  const applied = [];
 
   const inst = PACK.instrumentById(state.instrument);
   let quirkBonus = 0;
@@ -776,9 +755,13 @@ export function rollComponents(state, choice, opts: any = {}) {
   let jitter: [number, number] = inst?.quirk?.hooks?.jitter ||
     CONFIG.jitterByAct?.[state.act] || [CONFIG.jitterMin, CONFIG.jitterMax];
   jitter = foldJitter(state, jitter, rollCtx);
+  // The instrument's quirk bonus is core; every subsystem bonus (gear, genre,
+  // band, weather, contract) is folded in via pluginRollBonus. All are integers,
+  // so this sums identically to the old gearBonus + quirkBonus regardless of
+  // grouping (byte-green).
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
-    gearBonus + quirkBonus + pluginRollBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
-  return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
+    quirkBonus + pluginRollBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
+  return { aptitude, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
 }
 
 // The keys an INCREDIBLE payload scales (§2E): every core stat the pack
@@ -985,12 +968,13 @@ function finishCard(state, ev) {
   state.currentEventId = null;
 }
 
-// Applies an effects payload; returns display deltas [{key, amount}].
-function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories = [], mg = null) {
+// Applies an effects payload; returns display deltas [{key, amount}]. Exported
+// as a plugin-facing service so a subsystem (gear) can apply an accessory's
+// onAcquire payload with the full resolution pipeline.
+export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories = [], mg = null) {
   const deltas: any = [];
   const inst = PACK.instrumentById(state.instrument);
   const hooks: Record<string, any> = inst?.quirk?.hooks || {};
-  const accs = equippedAccessories(state).filter((a) => accessoryActive(a, state));
   const tags = choice?.tags || [];
 
   const push = (key, amount) => { if (amount) deltas.push({ key, amount }); };
@@ -1012,19 +996,14 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     push(stat, state.stats[stat] - before);
   }
 
-  // Burnout: quirk + accessory multipliers on tag-matched gains, plus per-use
-  // side effects and passive act wear
+  // Burnout: the instrument's tag multiplier (core), then subsystem adjustments
+  // (gear's tag mults + per-match side effects via modifyBurnout), the
+  // instrument's live-show cost (core), then the contract/weather gain/heal
+  // multipliers (gainHooks), and the perk heal — plus passive act wear.
   {
     let v = (effects.burnout || 0) + (ev ? (CONFIG.actWear[state.act] || 0) : 0);
-    if (v > 0) {
-      if (hooks.burnoutTagMult && tagsIntersect(hooks.burnoutTagMult.tags, tags)) v *= hooks.burnoutTagMult.mult;
-      for (const acc of accs) {
-        if (acc.burnoutTagMult && tagsIntersect(acc.burnoutTagMult.tags, tags)) v *= acc.burnoutTagMult.mult;
-      }
-    }
-    for (const acc of appliedAccessories) {
-      if (acc.sideEffect?.burnoutPerMatch) v += acc.sideEffect.burnoutPerMatch;
-    }
+    if (v > 0 && hooks.burnoutTagMult && tagsIntersect(hooks.burnoutTagMult.tags, tags)) v *= hooks.burnoutTagMult.mult;
+    v = foldBurnout(state, v, { tags, appliedAccessories });
     if (hooks.liveBurnout && tags.includes('live')) v += hooks.liveBurnout;
     for (const bag of bags) if (v > 0 && bag.burnoutGainMult) v *= bag.burnoutGainMult;
     for (const bag of bags) if (v < 0 && bag.burnoutHealMult) v *= bag.burnoutHealMult;
@@ -1046,7 +1025,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
   // a novel genre resource (the probe's 'points') isn't silently dropped.
   // Per-resolution plugin context (Phase F): the deltas/hooks/accs/mg the
   // handlers read, plus a chartTitleHandled handshake for the songs plugin.
-  const pctx: any = { ev, choice, tier, rng, deltas, hooks, accs, mg, chartTitleHandled: false };
+  const pctx: any = { ev, choice, tier, rng, deltas, hooks, mg, chartTitleHandled: false };
   for (const res of PACK.manifest.resources) {
     let handled = false;
     for (const p of orderedPlugins()) {
@@ -1066,21 +1045,6 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
   firePlugins('onEffect', state, effects, pctx);
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
-  return deltas;
-}
-
-// Equip an accessory (after any UI slot decision). Fires onAcquire effects.
-export function equipAccessory(state, accId, replaceId = null) {
-  if (replaceId) state.accessories = state.accessories.filter((a) => a !== replaceId);
-  if (state.accessories.length >= CONFIG.accessorySlots) return null;
-  state.accessories.push(accId);
-  const acc = PACK.accessoryById(accId);
-  const deltas: any = [];
-  if (acc?.grantsFlag && !state.flags.includes(acc.grantsFlag)) state.flags.push(acc.grantsFlag);
-  if (acc?.onAcquire) {
-    const d = applyEffects(state, acc.onAcquire, null, null, Math.random);
-    deltas.push(...d);
-  }
   return deltas;
 }
 

@@ -22,6 +22,7 @@ import { GENRES } from '../dist/js/data/genres.js';
 import { VENUES } from '../dist/js/data/venues.js';
 import * as engine from '../dist/js/engine.js';
 import { musicPack } from '../dist/js/packs/music.js';
+import { equipAccessory } from '../dist/js/packs/plugins/gear.js';
 const PATHS = musicPack.manifest.paths;
 
 export const DEFAULT_INSTRUMENTS = INSTRUMENTS.filter((i) => i.unlockedByDefault).map((i) => i.id);
@@ -152,7 +153,7 @@ export function simulateRun(seed, policy) {
         if (state.accessories.length >= CONFIG.accessorySlots) {
           state.accessories.splice(Math.floor(meta() * state.accessories.length), 1);
         }
-        engine.equipAccessory(state, pend.id);
+        equipAccessory(state, pend.id);
       }
     }
     const step = engine.advance(state);

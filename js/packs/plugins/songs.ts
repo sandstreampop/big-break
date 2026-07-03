@@ -16,6 +16,7 @@
 import { addSong, releaseSong, chartTick, deadlineAudit } from '../../engine.js';
 import { collabArtistFor, songName } from '../../charts.js';
 import { genreById } from '../../data/genres.js';
+import { equippedActive } from '../../data/accessories.js';
 import type { Plugin } from '../../types.js';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -71,7 +72,8 @@ export const songsPlugin: Plugin = {
   // #endregion apply-resource
 
   onEffect(state, effects, ctx) {
-    const { deltas, hooks = {}, accs = [], mg = null, tier, rng, ev } = ctx;
+    const { deltas, hooks = {}, mg = null, tier, rng, ev } = ctx;
+    const accs = equippedActive(state);
     if (effects.chartTitle && !ctx.chartTitleHandled) {
       const tierQ = tier === 'incredible' ? 66 : tier === 'good' ? 58 : 50;
       const s = addSong(state, {

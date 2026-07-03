@@ -4,6 +4,8 @@ import { CONFIG } from './config.js';
 import { INSTRUMENTS } from './data/instruments.js';
 import { rivalById } from './data/rivals.js';
 import { accessoryById } from './data/accessories.js';
+import { equipAccessory } from './packs/plugins/gear.js';
+import { signContract } from './packs/plugins/contract.js';
 import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
 import { musicPack } from './packs/music.js';
@@ -292,7 +294,7 @@ function startNewRun(daily = false, comeback = false) {
     run.seed = seed + 2;
     run.daily = daily ? todayStr() : null;
     run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)
-    if (chosenContract) engine.signContract(run, chosenContract);
+    if (chosenContract) signContract(run, chosenContract);
     run.genre = chosenGenre;
     run.venue = chosenVenue;
     if (!daily) {
@@ -472,7 +474,7 @@ function startGauntlet() {
     run.gauntlet = week;
     run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)
     run.genre = genre.id;
-    engine.signContract(run, contract.id);
+    signContract(run, contract.id);
     save.saveRun(run);
     track('run_start', {
       instrument: inst.id, contract: contract.id,
@@ -1205,7 +1207,7 @@ function showResult(result) {
       list.append(btn(`${acc.name} — ${acc.blurb}`, '', () => {
         ov.classList.remove('active');
         if (run.accessories.length < CONFIG.accessorySlots) {
-          engine.equipAccessory(run, acc.id);
+          equipAccessory(run, acc.id);
           save.saveRun(run);
           routeAdvance(engine.advance(run));
         } else {
@@ -1223,7 +1225,7 @@ function showResult(result) {
   const pending = result.deltas.pendingGear;
   if (pending) {
     if (run.accessories.length < CONFIG.accessorySlots) {
-      const extra = engine.equipAccessory(run, pending.id) || [];
+      const extra = equipAccessory(run, pending.id) || [];
       save.saveRun(run);
       for (const d of extra) chips.append(deltaChip(d.key, d.amount));
       notice('notice-gear', `🧰 <b>${pending.name}</b> is yours${pending.blurb ? ' — ' + pending.blurb : ''}`);
@@ -1289,7 +1291,7 @@ function gearChooser(newAcc, result) {
   for (const id of run.accessories) {
     const acc = accessoryById(id);
     list.append(btn(`Drop ${acc.name}`, '', () => {
-      engine.equipAccessory(run, newAcc.id, id);
+      equipAccessory(run, newAcc.id, id);
       save.saveRun(run);
       ov.classList.remove('active');
       routeAdvance(engine.advance(run));

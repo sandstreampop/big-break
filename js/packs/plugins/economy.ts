@@ -11,6 +11,7 @@
 
 import { contractById } from '../../data/contracts.js';
 import { weatherHooks } from '../../data/weather.js';
+import { equippedActive } from '../../data/accessories.js';
 import type { Plugin } from '../../types.js';
 
 export const economyPlugin: Plugin = {
@@ -49,7 +50,7 @@ export const economyPlugin: Plugin = {
         if (hooks.moneyGainMult) v = Math.round(v * hooks.moneyGainMult);
         if (wHooks.moneyGainMult) v = Math.round(v * wHooks.moneyGainMult);
         if (cMods.moneyGainMult) v = Math.round(v * cMods.moneyGainMult);
-        for (const acc of (ctx as any).accs || []) {
+        for (const acc of equippedActive(state)) {
           if (acc.moneySiphon) v = Math.round(v * (1 - acc.moneySiphon));
         }
       }

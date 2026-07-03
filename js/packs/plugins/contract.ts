@@ -11,6 +11,16 @@ import type { Plugin } from '../../types.js';
 
 const mods = (state: any): Record<string, any> => contractById(state.contract)?.mods || {};
 
+// Sign a contract at run setup: record it, apply its walk-in money and any
+// armed flag (The Handshake Loan's debt). Exported for the UI driver — moved
+// out of the engine so the core resolves no contract.
+export function signContract(state: any, contractId: string) {
+  state.contract = contractId;
+  const m = mods(state);
+  if (m.startMoney !== undefined) state.money = m.startMoney;
+  if (m.startFlag && !state.flags.includes(m.startFlag)) state.flags.push(m.startFlag);
+}
+
 export const contractPlugin: Plugin = {
   id: 'contract',
 
