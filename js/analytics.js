@@ -36,6 +36,42 @@ export function exportEvents() {
   return localStorage.getItem(RING_KEY) || '[]';
 }
 
+// ---- non-PII identity, so the telemetry pull can COUNT unique players ----
+// install_id is a random UUID that pins one browser install (not PII, not
+// tied to any person). env/is_owner let the pull strip your own testing:
+// env is derived from the hostname, is_owner is a self-set flag (?dev=1)
+// that persists in localStorage. All three ride along as PostHog super-
+// properties on every event. Caveat by design: a human on two browsers or
+// in incognito still mints two install_ids — cookieless analytics can only
+// bound the true head-count, never pin it exactly.
+const OWNER_KEY = 'bigbreak_owner';
+const INSTALL_KEY = 'bigbreak_install_id';
+
+function installId() {
+  try {
+    let id = localStorage.getItem(INSTALL_KEY);
+    if (!id) {
+      id = (globalThis.crypto?.randomUUID?.())
+        || 'ins-' + Math.random().toString(36).slice(2) + '-' + Date.now().toString(36);
+      localStorage.setItem(INSTALL_KEY, id);
+    }
+    return id;
+  } catch (e) { return null; } // private mode: fall back to PostHog's own id
+}
+
+function identity() {
+  const host = (typeof location !== 'undefined' && location.hostname) || '';
+  const env = (host === '' || host === 'localhost' || /^127\.|^0\.0\.0\.0$/.test(host))
+    ? 'dev' : 'prod';
+  let is_owner = false;
+  try {
+    if (new URLSearchParams(location.search).get('dev') === '1')
+      localStorage.setItem(OWNER_KEY, '1');
+    is_owner = localStorage.getItem(OWNER_KEY) === '1';
+  } catch (e) { /* private mode */ }
+  return { install_id: installId(), env, is_owner };
+}
+
 // ---- PostHog async loader (official snippet, gated on opt-in) ----
 function loadPostHog() {
   if (loaded || !enabled || typeof window === 'undefined') return;
@@ -51,6 +87,9 @@ function loadPostHog() {
       disable_session_recording: true, // replay is a later opt-in (one flag)
       persistence: 'localStorage',     // no cookie banner surface
     });
+    // Attach install_id/env/is_owner to every future capture so the pull
+    // can dedupe installs and subtract owner/dev traffic from head-counts.
+    window.posthog.register(identity());
   } catch (e) { /* offline / blocked — ring buffer still captures */ }
 }
 

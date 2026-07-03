@@ -81,6 +81,103 @@ const QUERIES = {
     FROM events GROUP BY day ORDER BY day`,
   },
 
+  // --- how many unique players? (report a RANGE, never a false single) ---
+  // distinct_installs is the CEILING (localStorage identity double-counts a
+  // human across browsers/incognito). real_players_est strips dev/owner/
+  // localhost and is the working floor. tagged_installs uses the install_id
+  // super-property (js/analytics.js) — populated from this pass forward, so
+  // it reads 0 for historical events. The truth sits between the floor and
+  // the ceiling; cookieless analytics cannot collapse it to one number.
+  unique_players: {
+    title: 'Unique players (distinct installs = ceiling; real_players_est = testing stripped)',
+    sql: `
+    SELECT
+      count(DISTINCT person_id) AS distinct_installs,
+      count(DISTINCT nullIf(properties.install_id, '')) AS tagged_installs,
+      count(DISTINCT if(
+        coalesce(properties.env, '') != 'dev'
+        AND coalesce(toString(properties.is_owner), '') NOT IN ('true', '1')
+        AND coalesce(properties.$host, '') NOT IN ('localhost', '127.0.0.1', ''),
+        person_id, NULL)) AS real_players_est
+    FROM events`,
+  },
+  players_by_env: {
+    title: 'Players by env / owner tag (populated from this telemetry pass forward)',
+    sql: `
+    SELECT
+      coalesce(properties.env, '(untagged)') AS env,
+      coalesce(toString(properties.is_owner), '(untagged)') AS is_owner,
+      count(DISTINCT person_id) AS players, count() AS events
+    FROM events GROUP BY env, is_owner ORDER BY players DESC, env, is_owner`,
+  },
+
+  // --- who is playing: separate real players from dev/owner traffic ---
+  // PostHog attaches $host/$current_url/$geoip/$browser to EVERY event by
+  // default (autocapture off only disables DOM-click capture, not these).
+  // None of it is PII — it's the coarse metadata any web request carries.
+  // We deliberately stay at host/country/device granularity (never city,
+  // never per-person rows) so the committed file can't deanonymize anyone.
+  players_by_host: {
+    title: 'Players by host (localhost / 127.* / file: is owner testing; the github.io host is real play)',
+    sql: `
+    SELECT properties.$host AS host,
+           count(DISTINCT person_id) AS players,
+           count() AS events,
+           countIf(event = 'run_end') AS run_ends
+    FROM events GROUP BY host ORDER BY players DESC, events DESC, host`,
+  },
+  players_by_geo: {
+    title: 'Players by country (spread beyond your own = genuine reach)',
+    sql: `
+    SELECT properties.$geoip_country_code AS country,
+           count(DISTINCT person_id) AS players, count() AS events
+    FROM events GROUP BY country ORDER BY players DESC, events DESC, country`,
+  },
+  players_by_device: {
+    title: 'Players by device / browser / OS (many browsers, one human = inflated player count)',
+    sql: `
+    SELECT properties.$device_type AS device, properties.$browser AS browser,
+           properties.$os AS os,
+           count(DISTINCT person_id) AS players, count() AS events
+    FROM events GROUP BY device, browser, os
+    ORDER BY players DESC, events DESC, device, browser, os`,
+  },
+
+  // --- how the data clusters across players (the pseudoreplication check) ---
+  // Histograms, NOT per-person rows: keeps the file identifier-free and
+  // diff-stable while still showing "one tester with 30 runs" vs "a spread".
+  runs_per_player_dist: {
+    title: 'Distribution of finished runs per player (is it one whale or many players?)',
+    sql: `
+    SELECT run_ends, count() AS players
+    FROM (
+      SELECT person_id, countIf(event = 'run_end') AS run_ends
+      FROM events GROUP BY person_id
+    )
+    WHERE run_ends > 0
+    GROUP BY run_ends ORDER BY run_ends`,
+  },
+  active_days_per_player_dist: {
+    title: 'Distribution of active days per player (engagement depth)',
+    sql: `
+    SELECT active_days, count() AS players
+    FROM (
+      SELECT person_id, count(DISTINCT toDate(timestamp)) AS active_days
+      FROM events GROUP BY person_id
+    )
+    GROUP BY active_days ORDER BY active_days`,
+  },
+  players_by_first_day: {
+    title: 'New players by first-seen day (acquisition curve)',
+    sql: `
+    SELECT first_day AS day, count() AS new_players
+    FROM (
+      SELECT person_id, min(toDate(timestamp)) AS first_day
+      FROM events GROUP BY person_id
+    )
+    GROUP BY day ORDER BY day`,
+  },
+
   // --- Insight 1: degenerate choices (fake-choice detector) ---
   degenerate_choices: {
     title: 'Degenerate choices (n ≥ 20; skew ≥ 85 is suspect)',
