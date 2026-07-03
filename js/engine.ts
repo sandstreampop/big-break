@@ -38,7 +38,10 @@ export function actLength(state, act) {
   return Math.max(3, base + twist);
 }
 
-const STATS = ['skill', 'cred', 'creativity', 'network'];
+// The core stat list is genre taxonomy — read from the injected pack manifest
+// (Phase 3.1), not hardwired. Order is load-bearing (it fixes the order stat
+// deltas are recorded), so a pack must keep it stable.
+const stats = () => PACK.manifest.stats;
 
 function randInt(rng, min, max) {
   return Math.floor(rng() * (max - min + 1)) + min;
@@ -391,7 +394,7 @@ export function applyMastery(state, level) {
   const lv = Math.max(0, Math.min(3, level | 0));
   if (!lv) return;
   state.mastery = lv;
-  for (const k of STATS) state.stats[k] = clamp(state.stats[k] + lv, 1, 100);
+  for (const k of stats()) state.stats[k] = clamp(state.stats[k] + lv, 1, 100);
 }
 
 export function signContract(state, contractId) {
@@ -866,7 +869,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
 
   const cMods = contractMods(state);
   const wHooks = PACK.weatherHooks(state);
-  for (const stat of STATS) {
+  for (const stat of stats()) {
     let v = effects[stat] || 0;
     if (!v) continue;
     if (stat === 'cred' && v > 0 && hooks.credGainMult) v = Math.round(v * hooks.credGainMult);
