@@ -175,7 +175,7 @@ node tools/simulate.mjs 4000 narrative   # reach report, variance index,
 node tools/lint-content.mjs   # template/style/gating audit of all content
 ```
 
-The sim's gates (from docs/design-reach-and-rush.md §5): 0 never-drawn
+The sim's gates: 0 never-drawn
 ungated cards, under-1% cards within a deck-scaled cap (flashpoints,
 variety-pool-gated, and Story-Seed arc cards are exempt — they're rare by
 design, delivered by their own schedulers), success 25–40%, act-3
