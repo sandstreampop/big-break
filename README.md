@@ -151,11 +151,13 @@ python3 -m http.server 8000   # → http://localhost:8000
 
 - `js/config.js` — **every tuning knob** (roll shape, tier thresholds, wear,
   win gates, LP formula, pity/encore numbers)
-- `js/data/` — all content: `events.js` (260 cards), `instruments.js`,
-  `accessories.js`, `rivals.js`, `contracts.js`, `hustles.js`, `genres.js`
-  (incl. per-genre sound recipes), `venues.js`, `band.js`, `arcs.js` (the
-  Story Seeds registry), `weather.js` (Scene Weather), `meta.js`
-  (endings/wall/trophies), `assets.js` (art-slot manifest)
+- `js/data/` — all content: `events.js` + `events2.js` (523 cards total;
+  `events2.js` holds the wave-3 "doubling" deck and its ART2/NEW_ARCS
+  registries), `instruments.js` (32), `accessories.js` (46), `rivals.js` (22),
+  `contracts.js` (18), `hustles.js` (20), `genres.js` (18, incl. per-genre
+  sound recipes), `venues.js` (14), `band.js` (20 bandmates), `arcs.js` (25 —
+  the Story Seeds registry), `weather.js` (24 Scene Weather mutators),
+  `meta.js` (endings, 68 wall items, 112 trophies), `assets.js` (art manifest)
 - `js/engine.js` — DOM-free rules: rolls, deck assembly, fail states,
   finale, seeded RNG (`tools/simulate.mjs` drives it in Node)
 - `js/ui.js` — screens + swipe physics; `js/art.js` — generative SVG scenes;
@@ -174,7 +176,9 @@ node tools/lint-content.mjs   # template/style/gating audit of all content
 ```
 
 The sim's gates (from docs/design-reach-and-rush.md §5): 0 never-drawn
-ungated cards, ≤10 cards under 1% of runs, success 25–40%, act-3
+ungated cards, under-1% cards within a deck-scaled cap (flashpoints,
+variety-pool-gated, and Story-Seed arc cards are exempt — they're rare by
+design, delivered by their own schedulers), success 25–40%, act-3
 INCREDIBLE 10–18%, ≥2 spike moments/run, flashpoints in ~25% of runs.
 
 The `narrative` policy models a human following the story — judge feel by

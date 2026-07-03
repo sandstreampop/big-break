@@ -85,10 +85,14 @@ export const CONFIG = {
   // R4 (can-lose pass): gates sit slightly above the old comfortable
   // ceiling so a cruisy run books a Partial, not an automatic Success —
   // the finale should be a judgment, not a formality.
+  // Wave-3 (the doubling) re-tune: the expanded deck raised the whole
+  // economy (avg cred/fame/network climbed well past the old gates), so a
+  // cruisy run was booking Success again. Gates nudged back up to re-center
+  // Success in the 25–40% band with twice the content in play.
   winGates: {
-    megastar:   { fame: 101, network: 77, cred: 38 },
-    studio:     { skill: 70, cred: 62, network: 49 },
-    hitfactory: { creativity: 92, cred: 64, hits: 4 },
+    megastar:   { fame: 112, network: 83, cred: 46 },
+    studio:     { skill: 76, cred: 68, network: 55 },
+    hitfactory: { creativity: 95, cred: 70, hits: 4 },
   },
 
   // Passive burnout per card resolved in each act — the grind wears you
