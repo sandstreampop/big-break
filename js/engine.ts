@@ -61,7 +61,9 @@ function contractMods(state): Record<string, any> {
 // by this run's act twist (U5: the tour got cut short / extended)
 export function actLength(state, act) {
   if (state.tutorial) return PACK.tutorialEvents.length;
-  const base = contractMods(state).actLengths?.[act] ?? CONFIG.actLengths[act];
+  // A subsystem may shorten/lengthen the act (a contract's Overnight Success);
+  // the core owns only the per-act default and the run's act twist.
+  const base = foldActLength(state, act, CONFIG.actLengths[act]);
   const twist = state.actTwist && state.actTwist.act === act ? state.actTwist.delta : 0;
   return Math.max(3, base + twist);
 }
@@ -687,6 +689,51 @@ function firePlugins(hook: PluginHook, ...args: any[]): void {
   }
 }
 
+// ── The neutral modify-hook folds (WP6-infra). Each gathers a subsystem's
+// contribution at the exact site the old inline code sat, in registration
+// order — so a subsystem stops being named by the core without moving any draw. ──
+
+// Additive roll bonus summed across plugins (gear/genre/band/weather/contract).
+function sumRollBonus(state, choice, ctx): number {
+  let bonus = 0;
+  for (const p of orderedPlugins()) bonus += p.modifyRoll?.(state, choice, ctx) ?? 0;
+  return bonus;
+}
+// Fold each plugin's jitter transform (contract override → weather widen).
+function foldJitter(state, jitter: [number, number], ctx): [number, number] {
+  for (const p of orderedPlugins()) if (p.modifyJitter) jitter = p.modifyJitter(state, jitter, ctx);
+  return jitter;
+}
+// The per-resolution gain-hook bags a subsystem contributes (contract, weather),
+// applied by the stat/burnout loops after the instrument's own (core).
+function gainBags(state): any[] {
+  const bags: any[] = [];
+  for (const p of orderedPlugins()) { const b = p.gainHooks?.(state); if (b) bags.push(b); }
+  return bags;
+}
+// Does any subsystem disable the Encore mechanic this run?
+function encoreDisabled(state): boolean {
+  for (const p of orderedPlugins()) if (p.blocksEncore?.(state)) return true;
+  return false;
+}
+// Fold each plugin's deck-weight multiplier (weather recolor, seeded-arc bias).
+function foldDeckWeight(state, ev, weight: number): number {
+  for (const p of orderedPlugins()) if (p.weightDeck) weight = p.weightDeck(state, ev, weight);
+  return weight;
+}
+// Product of each plugin's Legacy Points multiplier (contract, weather). Starts
+// at 1 (identity), so the accumulation is byte-exact with the old `mult *= …`.
+function scoreMult(state): number {
+  let mult = 1;
+  for (const p of orderedPlugins()) mult *= p.scoreMult?.(state) ?? 1;
+  return mult;
+}
+// Fold each plugin's act-length override (a contract can shorten an act).
+function foldActLength(state, act, base: number): number {
+  for (const p of orderedPlugins()) if (p.modifyActLength) base = p.modifyActLength(state, act, base);
+  return base;
+}
+
 // ---------- Perks (Career-Wall modifiers, pack-declared — D.1) ----------
 // The active run's perk definitions, looked up from the pack's perk table. The
 // engine no longer knows any perk id; it sums/applies whatever the perks
@@ -749,19 +796,23 @@ export function rollComponents(state, choice, opts: any = {}) {
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
   const pityPer = CONFIG.pityPerBad + perkSum(state, 'pityPerBonus');
   const pityBonus = Math.min((state.badStreak || 0) * pityPer, CONFIG.pityCap + perkSum(state, 'pityCapBonus'));
-  const cMods = contractMods(state);
-  // Contract clauses can bend tag-matched rolls (Stage Fright, Analog Only…)
-  for (const tb of cMods.rollTagBonus || []) {
-    if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
-  }
-  const encoreBonus = opts.encore && !cMods.disableEncore ? CONFIG.encoreBonus : 0;
+  // Subsystem roll bonuses (contract clauses; genre/band/weather/gear follow),
+  // folded in at the old inline slot in registration order. `rollCtx.applied`
+  // is where the gear plugin records the accessories whose bonus fired.
+  const rollCtx: any = { applied, tags: choice.tags };
+  const pluginRollBonus = sumRollBonus(state, choice, rollCtx);
+  const encoreBonus = opts.encore && !encoreDisabled(state) ? CONFIG.encoreBonus : 0;
   // Performance bonus: a minigame result (UI-side skill) folded into the roll
   const perfBonus = opts.bonus || 0;
-  let jitter = cMods.jitter || inst?.quirk?.hooks?.jitter ||
+  // Base jitter is the instrument's or the per-act default; a subsystem may
+  // override it (contract) or widen it (weather) via modifyJitter, in
+  // registration order (contract override before weather widen).
+  let jitter: [number, number] = inst?.quirk?.hooks?.jitter ||
     CONFIG.jitterByAct?.[state.act] || [CONFIG.jitterMin, CONFIG.jitterMax];
+  jitter = foldJitter(state, jitter, rollCtx);
   if (wHooks.jitterWiden) jitter = [jitter[0] - wHooks.jitterWiden, jitter[1] + wHooks.jitterWiden];
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
-    gearBonus + quirkBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
+    gearBonus + quirkBonus + pluginRollBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
   return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
 }
 
@@ -799,7 +850,7 @@ export function choiceOdds(state, choice, opts: any = {}) {
 export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   const ev = findEvent(state.currentEventId);
   const choice = ev.choices[side];
-  const useEncore = !!opts.encore && (state.encore || 0) > 0 && !contractMods(state).disableEncore;
+  const useEncore = !!opts.encore && (state.encore || 0) > 0 && !encoreDisabled(state);
   if (useEncore) state.encore -= 1;
 
   // Shop affordability: a declined card is comedy, not a roll (spec §8 shop note)
@@ -835,7 +886,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   (state.cardLog = state.cardLog || []).push({ e: ev.id, t: tier, a: state.act, s: side });
   let encoreEarned = false;
   const encoreCap = CONFIG.encoreCap + perkSum(state, 'encoreCapBonus');
-  if (tier === 'incredible' && (state.encore || 0) < encoreCap && !contractMods(state).disableEncore) {
+  if (tier === 'incredible' && (state.encore || 0) < encoreCap && !encoreDisabled(state)) {
     state.encore = (state.encore || 0) + 1;
     encoreEarned = true;
   }
@@ -843,7 +894,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   // U3: riding the streak — an armed Encore that lands INCREDIBLE while
   // ON A ROLL refunds its token on top of the normal earn, cap be damned.
   let encoreRefunded = false;
-  if (streakWasHot && useEncore && tier === 'incredible' && !contractMods(state).disableEncore) {
+  if (streakWasHot && useEncore && tier === 'incredible' && !encoreDisabled(state)) {
     state.encore = (state.encore || 0) + 1;
     encoreRefunded = true;
   }
@@ -1259,7 +1310,10 @@ export function legacyPoints(state) {
   const base = Math.round((state.fame + statSum) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
-  let mult = PACK.contractById(state.contract)?.lpMult || 1;
+  // Subsystem score multipliers (contract lpMult; weather follows), folded in
+  // the same order the old `mult *= …` used. The comeback bonus is flag-based
+  // and genre-neutral, so it stays core.
+  let mult = scoreMult(state);
   mult *= PACK.weatherHooks(state).lpMult || 1;
   if ((state.flags || []).includes('comeback')) mult *= 1.2;
   return Math.max(1, Math.round((base + bonus) * mult));

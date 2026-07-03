@@ -24,6 +24,7 @@ import { hustlePlugin } from './plugins/hustle.js';
 import { economyPlugin } from './plugins/economy.js';
 import { gearPlugin } from './plugins/gear.js';
 import { loadoutPlugin } from './plugins/loadout.js';
+import { contractPlugin } from './plugins/contract.js';
 import { musicPresenter } from './music-presenter.js';
 import { MUSIC_PERKS } from './music-perks.js';
 import type { Pack, RunState } from '../types.js';
@@ -90,7 +91,7 @@ export const musicPack: Pack = {
   // weather before songs' notebook demo; onActBreak fires band quirks (notebook
   // draws RNG) before songs' deadline audit + chart week — matching the old
   // inline order so the seeded stream is unchanged.
-  plugins: [venuePlugin, rivalPlugin, weatherPlugin, genrePlugin, loadoutPlugin, gearPlugin, hustlePlugin, bandPlugin, songsPlugin, economyPlugin],
+  plugins: [venuePlugin, rivalPlugin, contractPlugin, weatherPlugin, genrePlugin, loadoutPlugin, gearPlugin, hustlePlugin, bandPlugin, songsPlugin, economyPlugin],
   events: EVENTS,
   tutorialEvents: TUTORIAL_EVENTS,
   // Burnout coping interstitials, high→low priority (D.3): the ids and the

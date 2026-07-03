@@ -225,6 +225,38 @@ export interface Plugin {
   onTick?(state: RunState, notes: string[]): void;
   // Fired once as the finale is evaluated (e.g. one last chart week).
   onFinale?(state: RunState): void;
+
+  // ── The neutral modify-hooks (WP6-infra). The engine fires these at the exact
+  // site of the code they replace, in registration order, so a subsystem folds
+  // its bonus/multiplier in without the core naming it. Each is genre-neutral
+  // and something a second genre would plausibly want. ──
+
+  // Additive roll bonus, summed into rollComponents' base at the gear/genre/
+  // band/weather/contract slot. `ctx.applied` is an array a subsystem pushes the
+  // items whose bonus fired onto (gear reads it back for lose-on-bad and burnout
+  // side-effects). Consumes no rng; called for the risk-tell too, so keep it pure.
+  modifyRoll?(state: RunState, choice: Choice, ctx: any): number;
+  // Transform the roll's jitter band [lo,hi] — a subsystem may override it
+  // (contract) or widen it (weather). Returns the new band.
+  modifyJitter?(state: RunState, jitter: [number, number], ctx: any): [number, number];
+  // Override the number of cards an act runs (a contract can shorten it).
+  modifyActLength?(state: RunState, act: number, base: number): number;
+  // A Legacy Points multiplier this subsystem contributes (a contract/era
+  // mult). Returned as a factor the engine folds into the score product, so the
+  // grouping matches the old `mult *= …` accumulation exactly.
+  scoreMult?(state: RunState): number;
+  // Scale a card's deck weight (weather recolors the deck; seeded arcs bias
+  // their setup/payoff cards). Returns the new weight.
+  weightDeck?(state: RunState, ev: GameEvent, weight: number): number;
+  // A per-resolution "gain hooks" bag: { statGainMult?, burnoutGainMult?,
+  // burnoutHealMult? } a subsystem (contract, weather) contributes, applied by
+  // the engine's stat/burnout loops in registration order right after the
+  // instrument's own (which is core). Keeps the multiplier MECHANIC in the core
+  // while the SOURCES are plugins.
+  gainHooks?(state: RunState): any;
+  // Whether this subsystem disables the Encore mechanic this run (a contract
+  // clause). OR'd across plugins.
+  blocksEncore?(state: RunState): boolean;
 }
 
 // A burnout-threshold interstitial: crossing the bar interrupts the deck once
