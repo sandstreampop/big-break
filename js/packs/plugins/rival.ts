@@ -8,6 +8,8 @@
 import { randomRival } from '../../data/rivals.js';
 import type { Plugin } from '../../types.js';
 
+const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
 export const rivalPlugin: Plugin = {
   id: 'rival',
   onConstruct(state, rng) {
@@ -22,5 +24,17 @@ export const rivalPlugin: Plugin = {
     rivalIs: (s, arg) => s.rival === arg,
     rivalryMin: (s, arg) => (s.rivalry ?? 0) >= arg,
     rivalryMax: (s, arg) => (s.rivalry ?? 0) <= arg,
+  },
+
+  // Rivalry is a 0–10 feud meter off a default of 3 (WP5) — a music-specific
+  // clamp, extracted from RESOURCE_APPLY. A pack that reuses the generic
+  // rivalry resource without shipping a rival gets the plain additive default.
+  applyResource(res, effects, state) {
+    if (res !== 'rivalry') return undefined;
+    const v = (effects as any).rivalry || 0;
+    if (!v) return 0;
+    const before = state.rivalry ?? 3;
+    state.rivalry = clamp(before + v, 0, 10);
+    return state.rivalry - before;
   },
 };

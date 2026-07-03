@@ -118,51 +118,6 @@ export function gateValue(state, key): number {
   return (key in state.stats) ? state.stats[key] : (state[key] ?? 0);
 }
 
-// Per-resource apply logic (Phase 3.2). applyEffects iterates these in
-// manifest.resources order so deltas — and the RNG-consuming songs block —
-// stay exactly where they were. Each resource keeps its OWN arithmetic (no
-// forced single formula): fame clamps at 0 and honors fameSwing on any sign;
-// money siphons on gains and may go negative; rivalry clamps 0–10 off a
-// default of 3; pathProgress is a raw add. Returns the delta to record (0 =
-// nothing recorded). 'hits' is the songs subsystem — applied inline in
-// applyEffects and extracted in Phase 4.5, so it has no handler here.
-type ResourceCtx = { hooks: Record<string, any>; cMods: Record<string, any>; wHooks: Record<string, any>; accs: any[] };
-const RESOURCE_APPLY: Record<string, (state: any, v: number, ctx: ResourceCtx) => number> = {
-  fame(state, v, { hooks, cMods, wHooks }) {
-    if (v && hooks.fameSwingMult) v = Math.round(v * hooks.fameSwingMult);
-    if (v > 0 && cMods.fameGainMult) v = Math.round(v * cMods.fameGainMult);
-    if (v > 0 && wHooks.fameGainMult) v = Math.round(v * wHooks.fameGainMult);
-    if (!v) return 0;
-    const before = state.fame;
-    state.fame = Math.max(0, state.fame + v);
-    return state.fame - before;
-  },
-  money(state, v, { hooks, cMods, wHooks, accs }) {
-    if (v > 0) {
-      if (hooks.moneyGainMult) v = Math.round(v * hooks.moneyGainMult);
-      if (wHooks.moneyGainMult) v = Math.round(v * wHooks.moneyGainMult);
-      if (cMods.moneyGainMult) v = Math.round(v * cMods.moneyGainMult);
-      for (const acc of accs) {
-        if (acc.moneySiphon) v = Math.round(v * (1 - acc.moneySiphon));
-      }
-    }
-    if (!v) return 0;
-    state.money += v;
-    return v;
-  },
-  pathProgress(state, v) {
-    if (!v) return 0;
-    state.pathProgress += v;
-    return v;
-  },
-  rivalry(state, v) {
-    if (!v) return 0;
-    const before = state.rivalry ?? 3;
-    state.rivalry = clamp(before + v, 0, 10);
-    return state.rivalry - before;
-  },
-};
-
 // ---------- Run lifecycle ----------
 
 export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
@@ -1067,40 +1022,23 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     }
   }
 
-  // Resource pass (Phase 3.2): iterate the pack's declared resources in order.
-  // Each keeps its own arithmetic (RESOURCE_APPLY); 'hits' is the songs
-  // subsystem, applied inline here (extracted in Phase 4.5). Order is the
-  // manifest's, matching the old block order fame → money → hits →
-  // pathProgress → rivalry, so deltas and RNG-consuming draws don't move.
+  // Resource pass (WP5): iterate the pack's declared resources in manifest
+  // order (so the delta order and the RNG-consuming 'hits' slot don't move),
+  // dispatching each to a plugin's applyResource. The core names NO resource and
+  // owns NO bespoke arithmetic — every clamp/multiplier/siphon (fame≥0, money's
+  // mults+siphon, rivalry's 0–10, the songs 'hits' mint) lives in the pack's
+  // plugins. A resource no plugin claims applies as a plain additive default, so
+  // a novel genre resource (the probe's 'points') isn't silently dropped.
   // Per-resolution plugin context (Phase F): the deltas/hooks/accs/mg the
-  // onEffect handlers read, plus a chartTitleHandled handshake between the
-  // engine's hits block and the songs plugin — carried HERE, not on state
-  // (state._chartTitleHandled was a mutable flag smuggled between the two).
+  // handlers read, plus a chartTitleHandled handshake for the songs plugin.
   const pctx: any = { ev, choice, tier, rng, deltas, hooks, accs, mg, chartTitleHandled: false };
-  const rctx: ResourceCtx = { hooks, cMods, wHooks, accs };
   for (const res of PACK.manifest.resources) {
-    // 1. Engine-known resources keep their bespoke arithmetic (fame clamps,
-    //    money siphons, rivalry clamps, pathProgress raw add).
-    const fn = RESOURCE_APPLY[res];
-    if (fn) {
-      const d = fn(state, effects[res] || 0, rctx);
-      if (d) push(res, d);
-      continue;
-    }
-    // 2. A subsystem-owned resource (e.g. the songs plugin's 'hits', which mints
-    //    songs and draws RNG) is applied by a plugin AT THIS ORDINAL SLOT — so
-    //    the RNG stream and the delta order match the old inline block exactly
-    //    (byte-green). This is what let the engine stop importing charts.ts:
-    //    the song-minting code (songName/collabArtistFor) lives with the songs
-    //    subsystem now, not the core.
     let handled = false;
     for (const p of orderedPlugins()) {
       const rd = p.applyResource?.(res, effects, state, pctx);
       if (rd !== undefined && rd !== null) { if (rd) push(res, rd); handled = true; break; }
     }
     if (handled) continue;
-    // 3. Generic default: a resource no handler claims applies as a plain add,
-    //    so a novel genre resource (the probe's 'points') isn't silently dropped.
     const v = effects[res] || 0;
     if (v) { state[res] = (state[res] || 0) + v; push(res, v); }
   }
