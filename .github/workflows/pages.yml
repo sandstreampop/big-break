@@ -1,13 +1,20 @@
-name: Deploy to GitHub Pages
+name: CI + Deploy to GitHub Pages
 
 # Single-path deploy: main -> GitHub Pages, via the official Actions model.
 # No gh-pages branch, no second workflow. `configure-pages` (enablement:true)
 # sets the Pages source to "GitHub Actions" so the deploy runs straight from
 # this workflow. If the token can't flip the source, set it once by hand:
 # Settings -> Pages -> Build and deployment -> Source -> "GitHub Actions".
+#
+# The `check` job is the regression net (Phase 0.4): content lint, the
+# balance/reach --check gate, and the golden-master oracle. `deploy` needs it,
+# so a breach BLOCKS the deploy. No tsc yet — the deploy still ships source
+# verbatim (path: .); Phase 0.5 introduces the build and repoints this at dist/.
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -16,15 +23,32 @@ permissions:
   pages: write
   id-token: write
 
-# Latest push to main wins: a newer deploy cancels an older in-flight one.
-# Safe now that this is the ONLY deployer (Pages source = GitHub Actions);
-# the old wedge was two deployers colliding, not cancellation itself.
+# Per-ref group: main pushes still serialize (latest deploy cancels an older
+# in-flight one — safe now that this is the ONLY deployer), while PR check runs
+# on other refs never cancel each other or a main deploy.
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Content lint
+        run: node tools/lint-content.mjs
+      - name: Balance & reach gate
+        run: node tools/simulate.mjs --check
+      - name: Golden-master regression
+        run: node --test test/golden.test.mjs
+
   deploy:
+    needs: check
+    # Deploy only from main — PR/branch runs stop at the check gate.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
