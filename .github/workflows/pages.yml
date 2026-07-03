@@ -53,7 +53,11 @@ jobs:
       - name: Balance gate (mystery pack, against dist/)
         run: node tools/mystery-sim.mjs --check
       - name: Golden-master regression (music + mystery, against dist/)
-        run: node --test
+        # Scope to the golden/invariant oracles (DOM-free, no browser). Newer
+        # Node test-runner globs otherwise also sweep in test/ui-smoke.mjs, which
+        # needs a browser this job doesn't install; the UI smoke test is run
+        # separately (npm run check / the android+ios harness jobs install browsers).
+        run: node --test test/*.test.mjs
 
   deploy:
     needs: check

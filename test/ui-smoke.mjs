@@ -159,7 +159,18 @@ async function playToFinale(page, label, pathIndex = 0) {
 const PORT = 8199;
 await new Promise((r) => server.listen(PORT, r));
 const base = `http://127.0.0.1:${PORT}`;
-const browser = await chromium.launch({ headless: true });
+// The Playwright PACKAGE can be installed without its browser BINARY (e.g. a CI
+// job that runs `npm ci` but not `npx playwright install`). Honor the same
+// "skip cleanly on browserless CI" contract as the missing-package case above,
+// rather than hard-failing — where a browser exists, the test runs for real.
+let browser;
+try {
+  browser = await chromium.launch({ headless: true });
+} catch (e) {
+  console.log('⚠ Chromium browser binary not installed — skipping UI smoke test (run `npx playwright install chromium` to run it).');
+  server.close();
+  process.exit(0);
+}
 
 const GAMES = [
   { label: 'music', url: `${base}/`, ns: '', paths: 3 },

@@ -9,7 +9,7 @@
     "lint": "npm run build && node tools/lint-content.mjs",
     "smoke": "npm run build && node test/ui-smoke.mjs",
     "check": "npm run build && node tools/lint-content.mjs && node tools/simulate.mjs --check && node tools/mystery-sim.mjs --check && node test/ui-smoke.mjs",
-    "test": "npm run build && node --test",
+    "test": "npm run build && node --test test/*.test.mjs",
     "sim": "npm run build && node tools/simulate.mjs",
     "android": "npm run build && node tools/android/run.mjs",
     "android:quick": "npm run build && node tools/android/run.mjs --quick",
