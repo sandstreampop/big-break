@@ -1,15 +1,13 @@
-// BIG BREAK — the songs / charts subsystem (WP6). Music's flagship win-path
-// machinery, extracted verbatim from the engine so the genre-agnostic core
-// holds no song logic. DOM-free like the engine and charts.ts: it runs in the
-// browser and in the sims. It draws the seeded play RNG through the engine's
-// stateRng (so the stream is unchanged — this is a pure relocation, byte-green),
-// and reads its own weather/contract data directly (the way every other music
-// plugin reads its data module), which retires the last PACK.weatherHooks /
-// contractById calls from the engine.
+// BIG BREAK — the songs / charts subsystem. Music's flagship win-path
+// machinery, kept out of the genre-agnostic core so it holds no song logic.
+// DOM-free like the engine and charts.ts: it runs in the browser and in the
+// sims. It draws the seeded play RNG through the engine's stateRng (so the
+// stream stays shared), and reads its own weather/contract data directly (the
+// way every other music plugin reads its data module).
 //
-// state.hits is incremented in exactly ONE place now — the `crown` helper —
-// called both when a charting song cracks the top 3 (crownCheck) and when an
-// "instant classic" is minted below it (the songs plugin's hits handler).
+// state.hits is incremented in exactly ONE place — the `crown` helper — called
+// both when a charting song cracks the top 3 (crownCheck) and when an "instant
+// classic" is minted below it (the songs plugin's hits handler).
 
 import { CONFIG } from './config.js';
 import { stateRng } from './engine.js';
@@ -87,7 +85,7 @@ function debutSong(state: any, s: any) {
   const rng = stateRng(state);
   s.releasedAct = state.act; // The Deadline contract audits this
   s.pos = positionSong(state, s, rng);
-  // U4: the overnight-viral jackpot — 1 in 20 releases catches the wave.
+  // The overnight-viral jackpot — 1 in 20 releases catches the wave.
   // Charts are the game's natural slot machine; this is the triple-7s.
   if (s.pos && !state.tutorial && rng() < CONFIG.viralChance) {
     s.viral = true;

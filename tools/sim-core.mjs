@@ -2,19 +2,18 @@
 //
 // This is the seeded heart the balance simulator, the --check gate, and the
 // golden-master oracle all share. One run is fully reproducible from its
-// integer `seed`: the seed drives BOTH the engine's play RNG (via
-// state.seed, exactly as the browser does — see ui.js) AND a separate
-// meta-RNG for the sim's own choices (loadout, swipe sides, minigame skill).
+// integer `seed`: the seed drives BOTH the engine's play RNG (via state.seed,
+// exactly as the browser does) AND a separate meta-RNG for the sim's own
+// choices (loadout, swipe sides, minigame skill).
 //
-// Faithful to the browser (ui.js:217-219, 605, 830):
+// The sim mirrors the browser's call sequence exactly:
 //   newRun(inst, packs, mulberry32(seed + 1), perks)   // construction rolls
 //   state.seed = seed + 2                               // play RNG seed
 //   drawNextCard(state, stateRng(state))
 //   resolveSwipe(state, side, stateRng(state), opts)
 // so a simulated career replays byte-identically to a real one on the same
-// seed. The sim's whim (which side, how the minigame went) lives on a
-// distinct meta stream (mulberry32(seed)) so it never perturbs the game's
-// internal draws.
+// seed. The sim's whim (which side, how the minigame went) lives on a distinct
+// meta stream (mulberry32(seed)) so it never perturbs the game's internal draws.
 
 import { CONFIG } from '../dist/js/config.js';
 import { INSTRUMENTS } from '../dist/js/data/instruments.js';
@@ -53,8 +52,8 @@ export function scoreChoice(state, choice) {
   return score;
 }
 
-// A "spike moment" (RUSH §5b): one card that visibly bends the run —
-// a single ±18 stat/fame delta, ±$180, or a ≥30-point total swing.
+// A "spike moment": one card that visibly bends the run — a single ±18
+// stat/fame delta, ±$180, or a ≥30-point total swing.
 export function isSpike(result) {
   let total = 0;
   for (const d of result.deltas) {

@@ -1,10 +1,10 @@
 // Story Seeds subsystem, as a music pack plugin. Each run roots for a couple of
 // hidden story arcs: an unlit arc's SETUP card is dealt on schedule and draws
 // warm; once lit, its PAYOFF cards draw hot. A dud seed re-rolls at the
-// Crossroads. Extracted from the engine so the core names no arc — the plugin
-// draws the seeds, biases the deck (weightDeck), forces the setup slot
-// (refineDeck), and refreshes at act 2 (onActBreak), all reading its arc data
-// directly and evaluating arc-lit conditions through the engine's requiresOk.
+// Crossroads. The core names no arc — the plugin draws the seeds, biases the
+// deck (weightDeck), forces the setup slot (refineDeck), and refreshes at act 2
+// (onActBreak), all reading its arc data directly and evaluating arc-lit
+// conditions through the engine's requiresOk.
 
 import { ARCS, arcById, rollSeeds } from '../../data/arcs.js';
 import { CONFIG } from '../../config.js';
@@ -12,7 +12,7 @@ import { requiresOk, findEvent, actMatches, stateRng } from '../../engine.js';
 import type { Plugin } from '../../types.js';
 
 // Is a seeded arc's lit-condition satisfied? Exported for tools/simulate.mjs's
-// seeds-lit reporting (it used to call engine.arcLit).
+// seeds-lit reporting.
 export function arcLit(state: any, arcId: string): boolean {
   const arc = arcById(arcId);
   return !!arc && requiresOk(arc.lit, state);
@@ -43,12 +43,11 @@ function refresh(state: any) {
 
 export const seedsPlugin: Plugin = {
   id: 'seeds',
-  // The seeds slot (WP7-clean); onConstruct fills it with this run's arcs.
+  // The seeds slot; onConstruct fills it with this run's arcs.
   stateDefaults: { seeds: [] },
 
   // Draw this run's story seeds. Fired at the onConstruct slot right after the
-  // rival draw — the ordinal the old inline rollSeeds sat, so the seeded stream
-  // is unchanged.
+  // rival draw — that ordinal is load-bearing for the seeded stream.
   onConstruct(state, rng) {
     state.seeds = rollSeeds(rng, CONFIG.seedCount);
   },
@@ -77,8 +76,8 @@ export const seedsPlugin: Plugin = {
     return pool;
   },
 
-  // Lit arcs' payoffs draw hot; unlit arcs' setups draw warm. Applied in the
-  // same order as the old inline block (payoff mult before setup mult).
+  // Lit arcs' payoffs draw hot; unlit arcs' setups draw warm. Order is
+  // load-bearing: payoff mult before setup mult (the golden pins it).
   weightDeck(state, ev, weight) {
     let lit = false, warm = false;
     for (const arcId of state.seeds || []) {

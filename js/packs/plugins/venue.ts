@@ -1,8 +1,6 @@
-// Venue subsystem, extracted as a plugin (Phase 4.2 — the canary). Zero RNG:
-// pure state mutation. The engine dispatches modifyEffects (home-venue show
-// bonus), onEffect (adoptVenue / venueLove), and afterResolve (build the room
-// toward an institution). All logic lifted verbatim from the old inline
-// blocks, so the golden stays green.
+// Venue subsystem, as a plugin. Zero RNG: pure state mutation. The engine
+// dispatches modifyEffects (home-venue show bonus), onEffect (adoptVenue /
+// venueLove), and afterResolve (build the room toward an institution).
 
 import { venueById, VENUE_TIERS } from '../../data/venues.js';
 import { tagsIntersect } from '../../engine.js';
@@ -11,10 +9,10 @@ import type { Plugin } from '../../types.js';
 export const venuePlugin: Plugin = {
   id: 'venue',
   effectVerbs: ['adoptVenue', 'venueLove', 'venueLoveStart'],
-  // The venue run-state slots (WP7-clean): adopted room + its level and show count.
+  // The venue run-state slots: adopted room + its level and show count.
   stateDefaults: { venue: null, venueLevel: 0, venueShows: 0 },
 
-  // The venue eligibility predicates (WP1): a card can gate on having adopted a
+  // The venue eligibility predicates: a card can gate on having adopted a
   // room, on a specific room, or on the room's level. Registered here so the
   // shared Requires names no venue.
   requires: {
@@ -29,7 +27,7 @@ export const venuePlugin: Plugin = {
   //
   // The snapshot (venue as it was BEFORE adoptVenue could fire this card, plus
   // whether the room was hosted) lives on the per-card ctx the engine hands to
-  // both modifyEffects and afterResolve (Phase F) — not on module scope, so it
+  // both modifyEffects and afterResolve — not on module scope, so it
   // is correct even if two runs resolve at once.
   modifyEffects(state, effects, ctx) {
     ctx.venueThisCard = venueById(state.venue); // snapshot before adoptVenue can fire

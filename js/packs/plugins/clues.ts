@@ -1,9 +1,9 @@
 // Clues subsystem — the mystery pack's domain plugin, the structural sibling
 // of the music pack's songs plugin. It proves a second genre can add its OWN
-// state and lifecycle against the same hook set the songs extraction validated:
-// onEffect applies a pack-specific effect key (clues), onActBreak narrates the
-// investigation, and the sleuth summit gates on state.clues via the engine's
-// generic gateValue reader — no engine changes.
+// state and lifecycle against the same hook set: onEffect applies a
+// pack-specific effect key (clues), onActBreak narrates the investigation, and
+// the sleuth summit gates on state.clues via the engine's generic gateValue
+// reader — no engine changes.
 
 import type { Plugin } from '../../types.js';
 

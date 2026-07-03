@@ -1,17 +1,15 @@
-// Songs / charts subsystem, extracted behind the plugin interface (Phase 4.5).
-// This is the load-bearing subsystem for the hitfactory win-path, so the
-// extraction is deliberately surgical: the song EFFECT handlers (write, hype,
-// release, album, polish, chartTitle) run in onEffect at the exact spot the
-// old inline block did; the act-break chart tick + deadline audit run in
-// onActBreak (after the band plugin); the finale's last chart week runs in
-// onFinale. All of it calls the engine's existing song machinery (addSong,
-// releaseSong, chartTick, deadlineAudit, crownCheck…), so seeded behavior is
-// unchanged and the golden holds.
+// Songs / charts subsystem, behind the plugin interface. This is the
+// load-bearing subsystem for the hitfactory win-path: the song EFFECT handlers
+// (write, hype, release, album, polish, chartTitle) run in onEffect; the
+// act-break chart tick + deadline audit run in onActBreak (after the band
+// plugin); the finale's last chart week runs in onFinale. All of it calls the
+// song machinery in songs.js (addSong, releaseSong, chartTick, deadlineAudit,
+// crown…).
 //
-// NOTE on hits: the "instant classic" (effects.hits) stays in the engine's
-// resource loop, and crownCheck increments state.hits from chartTick. Both
-// increment sites remain engine-side and untouched — no double-count, no
-// re-baseline. A pack that omits this plugin simply never charts songs.
+// NOTE on hits: the "instant classic" (effects.hits, applyResource below) and
+// crownCheck-from-chartTick both increment state.hits — but both go through the
+// single `crown` helper in songs.js, so there's no double-count. A pack that
+// omits this plugin simply never charts songs.
 
 import { addSong, releaseSong, chartTick, deadlineAudit, crown } from '../../songs.js';
 import { collabArtistFor, songName } from '../../charts.js';
@@ -24,11 +22,11 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 export const songsPlugin: Plugin = {
   id: 'songs',
   effectVerbs: ['hits', 'chartTitle', 'hypeSong', 'albumDrop', 'releaseDemo', 'polishDemo', 'writeSong'],
-  // The legacy chart-titles list (WP7-clean); the songs array itself is created
-  // lazily by ensureSongs.
+  // The legacy chart-titles list; the songs array itself is created lazily by
+  // ensureSongs.
   stateDefaults: { chartTitles: [] },
 
-  // The songs eligibility predicates (WP1): demos in the vault, songs on the
+  // The songs eligibility predicates: demos in the vault, songs on the
   // chart, total written, faded-but-charted. Registered here so the shared
   // Requires names no song machinery.
   requires: {
@@ -39,9 +37,8 @@ export const songsPlugin: Plugin = {
   },
 
   // The Old Notebook perk: every career starts with one demo already taped.
-  // Moved here from the engine (D.2) so song NAMING lives with the songs
-  // subsystem — the last thing that made the core import charts.ts. Fires at
-  // the tail of newRun, so its seeded draw lands exactly where it used to.
+  // Song NAMING lives with the songs subsystem. Fires at the tail of newRun, so
+  // its seeded draw lands at a fixed ordinal.
   onRunStart(state, rng) {
     if (!(state.perks || []).includes('notebook')) return;
     addSong(state, { title: songName(rng), status: 'demo', quality: 46 + Math.floor(rng() * 16) });
@@ -50,9 +47,9 @@ export const songsPlugin: Plugin = {
 
   // #region apply-resource
   // The 'hits' resource is the songs subsystem's (an "instant classic" mints a
-  // charting song). Applied at the resource's ordinal slot in applyEffects, so
-  // the RNG stream and delta order match the old engine-inline block byte-for-
-  // byte. Returns the hits delta; pushes song debuts onto ctx.deltas.
+  // charting song). Applied at the resource's ordinal slot in applyEffects; the
+  // RNG stream and delta order there are load-bearing (the golden pins them).
+  // Returns the hits delta; pushes song debuts onto ctx.deltas.
   applyResource(res, effects, state, ctx) {
     if (res !== 'hits') return undefined; // decline — not ours
     const n = (effects as any).hits || 0;
@@ -153,14 +150,14 @@ export const songsPlugin: Plugin = {
 
   // #region act-break
   // Act break: audit the act that just ended for a shipped release, then run a
-  // chart week. Fires after the band plugin, matching the old inline order.
+  // chart week. Fires after the band plugin (order is load-bearing).
   onActBreak(state, act, notes) {
     notes.push(...deadlineAudit(state, act - 1));
     notes.push(...chartTick(state));
   },
 
   // One last chart week before the career is judged, then the Deadline's final
-  // audit (act 3) — after the chart week, as the old finalePayout did.
+  // audit (act 3) — after the chart week.
   onFinale(state) {
     chartTick(state);
     deadlineAudit(state, 3);

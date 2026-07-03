@@ -1,9 +1,8 @@
 // Contract subsystem, as a music pack plugin. A signed contract (The Deadline,
 // Overnight Success, Analog Only…) bends the run through a bag of mods: shorter
 // acts, tag-matched roll bonuses, a jitter override, gain/heal multipliers, a
-// Legacy Points multiplier, a disabled Encore, a release deadline. Extracted
-// from the engine so the core names no contract — every clause folds in through
-// a neutral hook at the site it used to sit inline.
+// Legacy Points multiplier, a disabled Encore, a release deadline. The core
+// names no contract — every clause folds in through a neutral hook.
 
 import { contractById } from '../../data/contracts.js';
 import { tagsIntersect } from '../../engine.js';
@@ -12,8 +11,7 @@ import type { Plugin } from '../../types.js';
 const mods = (state: any): Record<string, any> => contractById(state.contract)?.mods || {};
 
 // Sign a contract at run setup: record it, apply its walk-in money and any
-// armed flag (The Handshake Loan's debt). Exported for the UI driver — moved
-// out of the engine so the core resolves no contract.
+// armed flag (The Handshake Loan's debt). Exported for the UI driver.
 export function signContract(state: any, contractId: string) {
   state.contract = contractId;
   const m = mods(state);
@@ -23,7 +21,7 @@ export function signContract(state: any, contractId: string) {
 
 export const contractPlugin: Plugin = {
   id: 'contract',
-  stateDefaults: { contract: null }, // signed contract id (WP7-clean)
+  stateDefaults: { contract: null }, // signed contract id
 
   // Tag-matched roll bonuses (Stage Fright, Analog Only…), summed into the roll.
   modifyRoll(state, choice, _ctx) {
@@ -34,8 +32,8 @@ export const contractPlugin: Plugin = {
     return b;
   },
 
-  // A contract can OVERRIDE the jitter band outright (it takes precedence over
-  // the instrument's, as the old `cMods.jitter || inst.jitter` did).
+  // A contract can OVERRIDE the jitter band outright — it takes precedence over
+  // the loadout's.
   modifyJitter(state, jitter, _ctx) {
     return mods(state).jitter || jitter;
   },
@@ -51,7 +49,7 @@ export const contractPlugin: Plugin = {
   },
 
   // Stat-gain and burnout multipliers, applied by the engine's effect loops
-  // right after the instrument's own.
+  // right after the loadout's own.
   gainHooks(state) {
     const m = mods(state);
     return { statGainMult: m.statGainMult, burnoutGainMult: m.burnoutGainMult, burnoutHealMult: m.burnoutHealMult };

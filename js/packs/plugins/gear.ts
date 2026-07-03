@@ -1,9 +1,8 @@
 // Gear (accessories) subsystem, as a music pack plugin. Owns the grantGear /
-// removeGear effect verbs and the random-shelf sampling that used to live in
-// the engine (gearShelf / resolveGearGrant). The pools are music content
-// (accessory ids), imported directly from the data module — the core keeps no
-// gear machinery. Sampling draws ctx.rng at the same ordinal the old inline
-// block did, so the seeded stream is unchanged.
+// removeGear effect verbs and the random-shelf sampling (gearShelf /
+// resolveGearGrant). The pools are music content (accessory ids), imported
+// directly from the data module — the core keeps no gear machinery. Sampling
+// draws ctx.rng, so its position in the seeded stream is load-bearing.
 
 import { accessoryById, ACCESSORIES, gearPool, accessoryActive, equippedActive } from '../../data/accessories.js';
 import { applyEffects, tagsIntersect } from '../../engine.js';
@@ -11,8 +10,7 @@ import { CONFIG } from '../../config.js';
 import type { Plugin } from '../../types.js';
 
 // Equip an accessory (after any UI slot decision). Fires onAcquire effects
-// through the engine's applyEffects. Exported for the UI/sim drivers — moved
-// out of the engine so the core resolves no accessory (WP6-infra / WP7).
+// through the engine's applyEffects. Exported for the UI/sim drivers.
 export function equipAccessory(state: any, accId: string, replaceId: string | null = null) {
   if (replaceId) state.accessories = state.accessories.filter((a: string) => a !== replaceId);
   if (state.accessories.length >= CONFIG.accessorySlots) return null;
@@ -65,7 +63,7 @@ function resolveGearGrant(state: any, grant: string, rng: () => number) {
 export const gearPlugin: Plugin = {
   id: 'gear',
   effectVerbs: ['removeGear', 'grantGear'],
-  stateDefaults: { accessories: [] }, // equipped gear (WP7-clean)
+  stateDefaults: { accessories: [] }, // equipped gear
 
   // Equipped, active gear adds tag-matched roll bonuses (and counter-tag
   // penalties); the accessories whose modifier fires are recorded on
@@ -115,8 +113,7 @@ export const gearPlugin: Plugin = {
     }
   },
 
-  // Per-act upkeep on equipped gear (moved from the engine's startAct). Money-
-  // only, no rng.
+  // Per-act upkeep on equipped gear. Money-only, no rng.
   onActBreak(state, _act, notes) {
     for (const id of state.accessories || []) {
       const acc = accessoryById(id);

@@ -1,11 +1,9 @@
-// Band subsystem — act-break quirks, extracted as a plugin (Phase 4.4). Each
-// bandmate's per-act effect (merch money, morale burnout, word-of-mouth fame,
-// or a fresh demo) runs in onActBreak, dispatched at the exact point the old
-// inline loop occupied. The "notebook" bandmate (Nadia) DRAWS the seeded RNG
-// to name and grade its demo, so its position in the act-break sequence — band
-// quirks BEFORE the deadline audit and chart tick — is load-bearing; the
-// golden pins it. (The passive roll-time band bonus and grant/remove effects
-// stay engine-side for now; this is the act-break-quirk extraction.)
+// Band subsystem — act-break quirks. Each bandmate's per-act effect (merch
+// money, morale burnout, word-of-mouth fame, or a fresh demo) runs in
+// onActBreak. The "notebook" bandmate (Nadia) DRAWS the seeded RNG to name and
+// grade its demo, so its position in the act-break sequence — band quirks
+// BEFORE the deadline audit and chart tick — is load-bearing; the golden pins
+// it.
 
 import { bandmateById, recruitCandidate } from '../../data/band.js';
 import { genreById } from '../../data/genres.js';
@@ -17,9 +15,9 @@ import type { Plugin } from '../../types.js';
 export const bandPlugin: Plugin = {
   id: 'band',
   effectVerbs: ['grantBandmate', 'removeBandmate'],
-  stateDefaults: { band: [] }, // recruited bandmates, max 3 (WP7-clean)
+  stateDefaults: { band: [] }, // recruited bandmates, max 3
 
-  // The band eligibility predicates (WP1): roster size and a specific member.
+  // The band eligibility predicates: roster size and a specific member.
   requires: {
     bandMin: (s, arg) => (s.band || []).length >= arg,
     bandMax: (s, arg) => (s.band || []).length <= arg,
@@ -36,9 +34,8 @@ export const bandPlugin: Plugin = {
     return b;
   },
 
-  // Roster changes (WP4): recruit (a named bandmate or a seeded 'random' draw)
-  // and depart ('first' or a named id). Moved verbatim from the engine's inline
-  // block; the 'random' recruit draws ctx.rng at the same ordinal.
+  // Roster changes: recruit (a named bandmate or a seeded 'random' draw) and
+  // depart ('first' or a named id). The 'random' recruit draws ctx.rng.
   onEffect(state, effects, ctx) {
     if (effects.grantBandmate) {
       state.band = state.band || [];

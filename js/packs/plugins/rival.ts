@@ -1,9 +1,7 @@
-// Rival subsystem, extracted as a plugin (Phase 4.3). Mostly pure; its one
-// construction draw (picking this run's rival) moves into onConstruct, fired
-// by the engine at the exact ordinal slot the old inline draw occupied — so
-// the seeded stream is unchanged and the golden holds. (rivalChartPos and the
-// chart-war logic stay engine-side with the songs/charts subsystem, extracted
-// in Phase 4.5.)
+// Rival subsystem, as a plugin. Mostly pure; its one construction draw (picking
+// this run's rival) runs in onConstruct at a fixed ordinal slot — the seeded
+// stream depends on it, so the golden holds. (rivalChartPos and the chart-war
+// logic live with the songs/charts subsystem.)
 
 import { randomRival } from '../../data/rivals.js';
 import type { Plugin } from '../../types.js';
@@ -12,13 +10,13 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 
 export const rivalPlugin: Plugin = {
   id: 'rival',
-  // The rival slot (WP7-clean); onConstruct fills it with this run's rival.
+  // The rival slot; onConstruct fills it with this run's rival.
   stateDefaults: { rival: null },
   onConstruct(state, rng) {
     state.rival = randomRival(rng).id;
   },
 
-  // The rival eligibility predicates (WP1): a cross-run nemesis, a specific
+  // The rival eligibility predicates: a cross-run nemesis, a specific
   // rival, and the in-run rivalry heat. Registered here so the shared Requires
   // names no rival.
   requires: {
@@ -28,9 +26,9 @@ export const rivalPlugin: Plugin = {
     rivalryMax: (s, arg) => (s.rivalry ?? 0) <= arg,
   },
 
-  // Rivalry is a 0–10 feud meter off a default of 3 (WP5) — a music-specific
-  // clamp, extracted from RESOURCE_APPLY. A pack that reuses the generic
-  // rivalry resource without shipping a rival gets the plain additive default.
+  // Rivalry is a 0–10 feud meter off a default of 3 — a music-specific clamp.
+  // A pack that reuses the generic rivalry resource without shipping a rival
+  // gets the plain additive default.
   applyResource(res, effects, state) {
     if (res !== 'rivalry') return undefined;
     const v = (effects as any).rivalry || 0;

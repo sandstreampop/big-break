@@ -1,12 +1,11 @@
 // Scene Weather subsystem, as a music pack plugin. Weather is a run-start era
 // (Vinyl Revival, Streaming Gold Rush…) that recolors the deck, bends rolls and
-// jitter, tilts gains, and pays a walk-in bonus. Extracted from the engine so
-// the core names no weather: the plugin draws the era at run start and folds
-// its hooks in through the neutral modify-hooks at the sites they used to sit.
+// jitter, tilts gains, and pays a walk-in bonus. The core names no weather: the
+// plugin draws the era at run start and folds its hooks in through the neutral
+// modify-hooks.
 //
-// The draw moves to onRunStart (not onConstruct): in the golden corpus no rng
-// is consumed between the old inline rollWeather and the run-start hook, so the
-// era lands at the same ordinal in the seeded stream — byte-green.
+// The draw is in onRunStart, not onConstruct, so the era lands at a fixed
+// ordinal in the seeded stream (the golden pins it).
 
 import { rollWeather, weatherHooks } from '../../data/weather.js';
 import { tagsIntersect } from '../../engine.js';
@@ -16,17 +15,16 @@ const hooks = (state: any): Record<string, any> => weatherHooks(state);
 
 export const weatherPlugin: Plugin = {
   id: 'weather',
-  // The era slot (WP7-clean); onRunStart draws the actual era.
+  // The era slot; onRunStart draws the actual era.
   stateDefaults: { weather: null },
 
-  // The weather eligibility predicate (WP1): a card can gate on the current era.
+  // The weather eligibility predicate: a card can gate on the current era.
   requires: {
     weatherIs: (s, arg) => s.weather === arg,
   },
 
   // Draw the era and pay its walk-in bonus. startMoney must apply AFTER the era
-  // is drawn, so both live here (the engine no longer sets weather or reads
-  // weatherHooks().startMoney at construction).
+  // is drawn, so both live here.
   onRunStart(state, rng) {
     state.weather = rollWeather(rng);
     state.money += hooks(state).startMoney || 0;

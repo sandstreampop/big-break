@@ -1,10 +1,8 @@
-// Generic, pack-agnostic deterministic run driver. Sibling of sim-core.mjs /
-// mystery-core.mjs, but it reads EVERYTHING from the injected pack's manifest
-// (stats, resources, paths, winGates) and knows nothing about any one genre.
-// This is what lets the cross-pack property invariants and the probe pack's
-// golden run the SAME driver over every registered pack — the executable
-// proof that a run is genre-neutral. (Phase H folds the two bespoke drivers
-// into this one; for now it lives alongside them, additively.)
+// Generic, pack-agnostic deterministic run driver. It reads EVERYTHING from the
+// injected pack's manifest (stats, resources, paths, winGates) and knows nothing
+// about any one genre — which is what lets the cross-pack property invariants and
+// the probe pack's golden run the SAME driver over every registered pack, the
+// executable proof that a run is genre-neutral.
 //
 // One run is fully reproducible from its integer `seed`, exactly as the
 // browser drives it: newRun on mulberry32(seed+1), state.seed = seed+2, then
@@ -14,7 +12,7 @@ import * as engine from '../dist/js/engine.js';
 import { equipAccessory } from '../dist/js/packs/plugins/gear.js';
 
 // Sum of (value / gate target) across a path's winGates, read generically via
-// the engine's gateValue — no fame/hits/clues special-casing.
+// the engine's gateValue — no per-resource special-casing.
 export function pathScore(pack, state, pathId) {
   const g = pack.manifest.winGates[pathId];
   let s = 0;

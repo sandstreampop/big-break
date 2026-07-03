@@ -1,13 +1,12 @@
 // The music pack's magnitude resources — fame, money, pathProgress — as a
 // plugin. These are the "how big" meters (the summits gate on fame; money buys
 // gear; pathProgress is momentum toward the finale clutch). Their bespoke apply
-// arithmetic — fame clamps at 0 and honors the instrument's fame-swing; money
-// multiplies by the instrument/weather/contract and siphons through gear;
-// pathProgress is a raw add — is EXTRACTED from the engine's RESOURCE_APPLY
-// table (WP5). The core resource loop now names no resource: it dispatches to
-// applyResource, else applies a plain additive default. Music opts into these
-// semantics here; a pack that just wants an additive counter (the probe's
-// 'points') declares nothing and gets the default.
+// arithmetic — fame clamps at 0 and honors the loadout's fame-swing; money
+// multiplies by the loadout/weather/contract and siphons through gear;
+// pathProgress is a raw add. The core resource loop names no resource: it
+// dispatches to applyResource, else applies a plain additive default. Music
+// opts into these semantics here; a pack that just wants an additive counter
+// (the probe's 'points') declares nothing and gets the default.
 
 import { contractById } from '../../data/contracts.js';
 import { weatherHooks } from '../../data/weather.js';
@@ -29,10 +28,10 @@ export const economyPlugin: Plugin = {
   },
 
   // Applied at each resource's ordinal slot in the engine's manifest-ordered
-  // loop, so deltas land in the same order as the old RESOURCE_APPLY block
-  // (byte-green). Multiplier sources are read straight from the data modules
-  // (instrument quirk via ctx.hooks, contract/weather here), exactly as the
-  // venue plugin reads its own data — no PACK indirection.
+  // loop; the delta order is load-bearing (the golden pins it). Multiplier
+  // sources are read straight from the data modules (loadout quirk via
+  // ctx.hooks, contract/weather here), exactly as the venue plugin reads its
+  // own data — no PACK indirection.
   applyResource(res, effects, state, ctx) {
     const hooks = (ctx as any).hooks || {};
     const cMods: Record<string, any> = contractById(state.contract)?.mods || {};

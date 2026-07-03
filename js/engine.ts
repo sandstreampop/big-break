@@ -1,24 +1,18 @@
-// BIG BREAK — game engine (spec §4, §7, §8.4). Pure logic, no DOM:
-// the same module runs in the browser and in tools/simulate.mjs.
+// BIG BREAK — the genre-agnostic game engine. Pure logic, no DOM: the same
+// module runs in the browser and in the sims. It imports no content module.
 
 import { CONFIG } from './config.js';
 import type { Pack, RunState, Plugin } from './types.js';
 
-// ---------- Injected content pack (Phase 2: IoC) ----------
-// The engine imports NO content module. All music-specific content arrives as
-// a Pack, set at run start (newRun) and re-affirmed at boot/resume via
-// useContentPack. One game session runs one active pack; a second game is a
-// second Pack against this same engine. Everything below reads PACK.* where it
-// used to import PACK.events / loadouts / venues / arcs / weather / etc.
+// ---------- Injected content pack ----------
+// A genre is a Pack, injected at run start (newRun) and re-affirmed at
+// boot/resume (useContentPack); one session runs one active pack. Every
+// subsystem lives in that pack's plugins, which own their data — the engine
+// never reaches for a genre's content by name, so a genre that omits a
+// subsystem needs no stub. The whole surface the core touches is the Pack:
+// id, manifest, events, tutorialEvents, loadouts, and its optional
+// plugins/presenter/perks/interstitials.
 let PACK: Pack;
-
-// The active pack is used directly (WP7). Every music subsystem the engine used
-// to reach for by name — accessories, arcs, contracts, genres, hustles, band,
-// weather, seeds — now lives in that pack's plugins, which own their data. So
-// the engine no longer needs to inject inert stubs for a genre that omits a
-// subsystem: it never calls a subsystem provider at all. The irreducible Pack
-// (id, manifest, events, tutorialEvents, loadouts) plus its optional plugins/
-// presenter/perks/interstitials is the whole surface the core touches.
 export function useContentPack(pack: Pack): void {
   PACK = pack;
 }
@@ -33,20 +27,17 @@ export function findEvent(id) {
   return PACK.events.find((e) => e.id === id) || PACK.tutorialEvents.find((e) => e.id === id) || null;
 }
 
-// Act length can be shortened by a contract (Overnight Success) or bent
-// by this run's act twist (U5: the tour got cut short / extended)
+// The number of cards an act runs: the per-act default, which a subsystem may
+// bend (modifyActLength), plus this run's act twist.
 export function actLength(state, act) {
   if (state.tutorial) return PACK.tutorialEvents.length;
-  // A subsystem may shorten/lengthen the act (a contract's Overnight Success);
-  // the core owns only the per-act default and the run's act twist.
   const base = foldActLength(state, act, CONFIG.actLengths[act]);
   const twist = state.actTwist && state.actTwist.act === act ? state.actTwist.delta : 0;
   return Math.max(3, base + twist);
 }
 
-// The core stat list is genre taxonomy — read from the injected pack manifest
-// (Phase 3.1), not hardwired. Order is load-bearing (it fixes the order stat
-// deltas are recorded), so a pack must keep it stable.
+// The pack's core stats. Order is load-bearing — it fixes the order stat deltas
+// are recorded, which the goldens pin — so a pack must keep it stable.
 const stats = () => PACK.manifest.stats;
 
 function randInt(rng, min, max) {
@@ -88,10 +79,9 @@ function clamp(v, lo, hi) {
   return Math.max(lo, Math.min(hi, v));
 }
 
-// Read a gate key's value generically, without special-casing 'fame'/'hits'
-// (Phase 3.3): core stats live in state.stats, resources live top-level. Any
-// pack's winGates/requires keys resolve through here, so a genre without
-// "fame" doesn't trip a hardcoded branch.
+// Read any stat- or resource-key's value generically: core stats live in
+// state.stats, resources live top-level. Every winGates/requires key resolves
+// through here, so the core special-cases no key.
 export function gateValue(state, key): number {
   return (key in state.stats) ? state.stats[key] : (state[key] ?? 0);
 }
@@ -111,9 +101,8 @@ export function offerLoadouts(unlockedLoadoutIds, rng = Math.random) {
 export function newRun(pack: Pack, loadoutId, unlockedPacks, rng = Math.random, perks = []) {
   PACK = pack; // this run's content pack; also settable via useContentPack
   const inst = PACK.loadoutById(loadoutId);
-  // Stats are the pack's, not a hardwired list: roll each core stat in manifest
-  // order (music order skill→cred→creativity→network keeps the seeded draws
-  // byte-identical), then burnout. A pack with different stats just works.
+  // Roll each core stat in manifest order, then burnout. Manifest order fixes
+  // the seeded draw order, so a pack must keep it stable (the goldens pin it).
   const stats: Record<string, number> = {};
   for (const s of pack.manifest.stats) stats[s] = randInt(rng, CONFIG.statStartMin, CONFIG.statStartMax);
   stats.burnout = CONFIG.burnoutStart;
@@ -129,9 +118,9 @@ export function newRun(pack: Pack, loadoutId, unlockedPacks, rng = Math.random, 
     encore: 0,
     encoreChained: false,
     copingSeen: [],
-    // A generic per-run entropy seed for a pack's cosmetic/flavor randomness
-    // (music's charts, headlines, epilogue derive from it). Distinct from the
-    // play RNG `seed`; drawn here as the first construction draw.
+    // Per-run entropy for a pack's cosmetic/flavor randomness, distinct from the
+    // play RNG `seed`. Drawn here as the first construction draw — the goldens
+    // pin its ordinal, so it must stay first.
     flavorSeed: Math.floor(rng() * 1e9) + 1,
     seed: null,     // play RNG seed (set by caller; null = legacy Math.random)
     rngUses: 0,
@@ -155,24 +144,22 @@ export function newRun(pack: Pack, loadoutId, unlockedPacks, rng = Math.random, 
     pendingChainId: null,
     ending: null, // { key, result } once ended
   };
-  // Resources are the pack's, initialized generically from the manifest (every
-  // resource to 0, or its declared resourceStart) — so newRun names no genre's
-  // resource. Order follows manifest.resources.
+  // Resources initialized from the manifest (0, or a declared resourceStart),
+  // in manifest order — so the core names no genre's resource.
   for (const r of pack.manifest.resources) state[r] = pack.manifest.resourceStart?.[r] ?? 0;
-  // Subsystem run-state slots are the plugins' (a venue starts null, a band []).
-  // Applied generically from each plugin's stateDefaults, arrays copied per run,
-  // so the core state literal declares no genre's fields. onConstruct (below)
-  // may then overwrite a slot with a seeded draw (rival, seeds).
+  // Each plugin's run-state slots, applied generically from its stateDefaults
+  // (arrays copied per run) so the core state literal declares no genre's field.
+  // onConstruct (below) may then overwrite a slot with a seeded draw.
   for (const p of orderedPlugins()) {
     if (!p.stateDefaults) continue;
     for (const [k, v] of Object.entries(p.stateDefaults)) state[k] = Array.isArray(v) ? v.slice() : v;
   }
-  // Seeded construction draws, in FROZEN order (flavorSeed above, then rival via
-  // onConstruct, seeds, flashpoint, actTwist; the weather draw now lands at the
-  // onRunStart tail). A subsystem's construction draw lands exactly where the
-  // old inline draw did; reordering here invalidates the entire golden corpus.
-  firePlugins('onConstruct', state, rng); // rival draw, then the seeds draw
-  // Rush: ~25% of runs schedule one flashpoint (U2); ~20% bend an act (U5)
+  // Seeded construction draws, in FROZEN order: flavorSeed above, then the
+  // plugins' onConstruct draws, then flashpoint and actTwist here, then the
+  // onRunStart draws at the tail. Reordering any of these invalidates the
+  // entire golden corpus.
+  firePlugins('onConstruct', state, rng);
+  // ~25% of runs schedule one flashpoint; ~20% bend an act by ±actTwistDelta.
   state.flashpointAt = rng() < CONFIG.flashpointChance
     ? randInt(rng, CONFIG.flashpointWindow[0], CONFIG.flashpointWindow[1]) : null;
   state.actTwist = rng() < CONFIG.actTwistChance
@@ -183,41 +170,33 @@ export function newRun(pack: Pack, loadoutId, unlockedPacks, rng = Math.random, 
       if (k in state.stats) state.stats[k] = clamp(state.stats[k] + (v as number), 1, 100);
     }
   }
-  // Career Wall perks: always-on run-start bonuses. Pack-declared (D.1) — the
-  // engine runs each perk's onRunStart; it no longer names any perk. The bumps
-  // touch independent fields, so order is immaterial (byte-green).
+  // Always-on run-start perk bonuses, pack-declared. The bumps touch independent
+  // fields, so their order is immaterial.
   state.perks = perks;
   for (const p of activePerks(state)) p.onRunStart?.(state);
-  // Run-start subsystem hook, fired at the tail of construction. The weather
-  // plugin draws the era here and pays its walk-in bonus (no rng is consumed
-  // between the old inline weather draw and this point in the golden corpus, so
-  // the era lands at the same ordinal); the songs plugin mints the Old
-  // Notebook's opening demo. Seeded draws land where the old inline ones did.
+  // Run-start subsystem hook, fired at the tail of construction — its seeded
+  // draws land after every construction draw above, so the plugins own the tail
+  // of the frozen draw order.
   firePlugins('onRunStart', state, rng);
   return state;
 }
 
-// The First Gig: a scripted 9-card onboarding run. Fixed teaching stats so
-// every risk tell reads exactly as the cards describe it (skill ●,
-// network ●, cred ▲, creativity ■); the deck is one long chain.
+// The scripted onboarding run: a pack-declared teaching setup (fixed stats,
+// persona, resources) played as one long chain. Only a pack that ships
+// tutorialEvents reaches here.
 export function newTutorialRun(pack: Pack, rng = Math.random) {
-  // Teaching stats + starting persona are pack-declared (D.3), not hardcoded
-  // music values. Only a pack that ships tutorialEvents reaches here.
   const t = pack.tutorialStart;
   const state = newRun(pack, t?.loadout ?? pack.loadouts[0].id, [], rng, []);
   state.tutorial = true;
   if (t?.stats) state.stats = { ...t.stats } as RunState['stats'];
-  // Teaching resources are pack-declared by name, applied generically — the
-  // core names no genre's resource here (WP-B).
   if (t?.resources) for (const [k, v] of Object.entries(t.resources)) state[k] = v;
   state.pendingChainId = PACK.tutorialEvents[0].id;
   return state;
 }
 
-// Comeback Mode (unlocked by any Success): start as a faded name. The transform
-// itself hardcodes music stats (cred/network), so it's a pack-provided
-// capability (WP3) — the engine only dispatches to it, naming no stat. A pack
-// without a comeback mode omits it and this is a no-op.
+// A pack-provided run transform applied when the player has unlocked it (music's
+// comeback mode restarts a career as a faded name). It hardcodes the pack's own
+// stats, so the engine only dispatches to it; a pack without one is a no-op.
 export function applyComeback(state) {
   PACK.comeback?.(state);
 }
@@ -230,7 +209,7 @@ export function applyMastery(state, level) {
   for (const k of stats()) state.stats[k] = clamp(state.stats[k] + lv, 1, 100);
 }
 
-// ---------- Deck assembly (spec §8.4) ----------
+// ---------- Deck assembly ----------
 
 export function actMatches(ev, act) {
   return Array.isArray(ev.act) ? ev.act.includes(act) : ev.act === act;
@@ -240,17 +219,15 @@ function meetsRequires(ev, state) {
   return requiresOk(ev.requires, state);
 }
 
-// The neutral keys requiresOk resolves inline; everything else is dispatched to
-// a pack-registered predicate (WP1). Kept in sync with the core Requires type.
+// The neutral keys requiresOk resolves inline; every other key is dispatched to
+// a pack-registered predicate. Kept in sync with the core Requires type.
 const REQUIRES_NEUTRAL = new Set([
   'anyOf', 'flagsAll', 'flagsNone', 'burnoutMin', 'stats', 'min', 'max',
 ]);
 
-// The merged predicate registry for the active pack (WP1 — the sibling of the
-// effectVerbs registry). Each plugin's `requires` map contributes its keys;
-// requiresOk dispatches an unknown key here. Memoized per pack — building it is
-// cheap but this sits in the deck hot path. A key two plugins both claim is an
-// authoring conflict, but last-wins is harmless (packs don't collide).
+// The merged predicate registry for the active pack — each plugin's `requires`
+// map contributes its keys, and requiresOk dispatches a non-neutral key here.
+// Memoized per pack: building it is cheap but this sits in the deck hot path.
 let _reqPredsFor: Pack | null = null;
 let _reqPreds: Record<string, (state: any, arg: any) => boolean> = {};
 function requiresPredicates(): Record<string, (state: any, arg: any) => boolean> {
@@ -265,18 +242,17 @@ function requiresPredicates(): Record<string, (state: any, arg: any) => boolean>
 }
 
 // Evaluate a Requires gate. Exported as a plugin-facing service so a subsystem
-// (seeds) can test its own arc-lit conditions with the same semantics.
+// can test its own conditions with the same semantics.
 export function requiresOk(r, state) {
   if (!r) return true;
-  // anyOf: alternative gates — the card fires if ANY branch is satisfied
-  // (e.g. nemesis_soundcheck accepts a cross-run nemesis OR an in-run feud)
+  // anyOf: alternative gates — the card fires if ANY branch is satisfied.
   if (r.anyOf && !r.anyOf.some((alt) => requiresOk(alt, state))) return false;
   if (r.flagsAll && !r.flagsAll.every((f) => state.flags.includes(f))) return false;
   if (r.flagsNone && r.flagsNone.some((f) => state.flags.includes(f))) return false;
   if (r.burnoutMin !== undefined && state.stats.burnout < r.burnoutMin) return false;
-  // Generic stat/resource gates, resolved through gateValue for ANY manifest
-  // key: `stats` uses the legacy `{ <key>Min: n }` shape; `min`/`max` the plain
-  // `{ <key>: n }` form. No genre's key is named.
+  // Generic stat/resource gates, resolved through gateValue for any manifest
+  // key: `stats` uses the `{ <key>Min: n }` shape; `min`/`max` the plain
+  // `{ <key>: n }` form.
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       if (gateValue(state, key.replace(/Min$/, '')) < (val as number)) return false;
@@ -288,11 +264,10 @@ export function requiresOk(r, state) {
   if (r.max) {
     for (const [key, val] of Object.entries(r.max)) if (gateValue(state, key) > (val as number)) return false;
   }
-  // Every other key is a subsystem predicate the owning plugin registered
-  // (WP1). Consumes no rng, returns a plain boolean — so the gate is a pure
-  // conjunction and evaluation order is immaterial (byte-green). An unregistered
-  // key is a no-op here and is caught structurally by the "requires key owned"
-  // invariant.
+  // Every other key is a subsystem predicate its owning plugin registered. Each
+  // consumes no rng and returns a plain boolean, so the gate is a pure
+  // conjunction whose evaluation order is immaterial. An unregistered key is a
+  // no-op here, caught structurally by the "requires key owned" invariant.
   const preds = requiresPredicates();
   for (const key of Object.keys(r)) {
     if (REQUIRES_NEUTRAL.has(key)) continue;
@@ -337,9 +312,9 @@ export function drawNextCard(state, rng = Math.random) {
   }
   let pool = eligibleEvents(state).filter((e) => !e.finaleCard); // climax is queued by advance()
   if (!pool.length) return null; // act runs dry -> caller advances act
-  // Flashpoints (U2) live outside the normal deck: max one per run, only
-  // in runs that scheduled one, dealt when the window opens — or summoned
-  // early by a hot streak (U3). Unique frame + sting; the story you retell.
+  // Flashpoints live outside the normal deck: max one per run, only in runs that
+  // scheduled one, dealt when the window opens — or summoned early by a hot
+  // streak.
   const streakHot = !state.tutorial && (state.hotStreak || 0) >= CONFIG.hotStreakAt;
   const flashDue = state.flashpointAt != null && !state.flashpointSeen &&
     ((state.cardLog || []).length >= state.flashpointAt || streakHot);
@@ -349,26 +324,25 @@ export function drawNextCard(state, rng = Math.random) {
   if (flashes.length) {
     pool = flashes;
   } else {
-    // Guarantee an opportunity/shop card once per act (spec §8.4.4)
+    // Guarantee an opportunity/shop card once per act.
     const shopDue = state.cardsPlayedInAct >= CONFIG.shopSlot[state.act] && !state.shopPlayedInAct;
     if (shopDue) {
       const shops = pool.filter((e) => e.shop);
       if (shops.length) pool = shops;
     }
-    // Scheduled subsystem forcing (Story Seeds R1): an unlit seeded arc gets its
-    // setup card dealt on schedule, same mechanism as the shop slot above. The
-    // seeds plugin owns the arc data; the engine just gives it the slot.
+    // A plugin may force a scheduled category of card into the pool, the same
+    // way the shop slot above does (the seeds plugin deals an unlit arc's setup).
     pool = foldDeckPool(state, pool, { shopDue });
-    // U3 spotlight: while ON A ROLL, the deck leans all the way into
-    // what this player has never seen — streaks are for discovering.
+    // On a hot streak, lean the deck all the way into cards this player has
+    // never seen — streaks are for discovering.
     if (streakHot && !shopDue && state.seenCards) {
       const seenSet = new Set(state.seenCards);
       const unseen = pool.filter((e) => !seenSet.has(e.id));
       if (unseen.length) pool = unseen;
     }
   }
-  // Personal novelty (R2): cards THIS player has never seen draw heavier.
-  // On a first install everything is unseen, so nothing shifts.
+  // Personal novelty: cards this player has never seen draw heavier. On a first
+  // install everything is unseen, so nothing shifts.
   const seen = state.seenCards ? new Set(state.seenCards) : null;
   let total = 0;
   const weights = pool.map((ev) => {
@@ -376,11 +350,9 @@ export function drawNextCard(state, rng = Math.random) {
     let w = (ev.weight || 1) *
       (affine ? CONFIG.pathWeightMult : 1) *
       (seen && !seen.has(ev.id) ? CONFIG.noveltyWeightMult : 1);
-    // Subsystem deck bias (seeded-arc payoff/setup boost, then the weather
-    // era's recolor), folded in after the core path/novelty factors — the same
-    // slot the inline seed/weather multipliers sat. In the golden corpus the
-    // novelty factor is always 1 (seenCards unset), so the ×1 is a true no-op
-    // and this grouping is byte-exact with the old inline order.
+    // Plugin deck-weight bias, folded in after the core path/novelty factors.
+    // The novelty factor is 1 whenever seenCards is unset (as in the goldens),
+    // so that ×1 is a true no-op and this grouping stays float-exact.
     w = foldDeckWeight(state, ev, w);
     total += w;
     return w;
@@ -395,22 +367,21 @@ export function drawNextCard(state, rng = Math.random) {
   return chosen;
 }
 
-// ---------- Resolution (spec §4.1) ----------
+// ---------- Resolution ----------
 
 export function tagsIntersect(a, b) {
   return a && b && a.some((t) => b.includes(t));
 }
 
-// ---------- Plugin dispatch (Phase 4, hardened in Phase F) ----------
-// The lifecycle hooks a plugin may implement. Typed, so a typo'd hook name is
-// a COMPILE error, not a silent no-op (the old (p as any)[hook] swallowed it).
+// ---------- Plugin dispatch ----------
+// The lifecycle hooks a plugin may implement. Typed, so a typo'd hook name is a
+// COMPILE error rather than a silent no-op.
 type PluginHook = 'onConstruct' | 'onRunStart' | 'modifyEffects' | 'onEffect'
   | 'afterResolve' | 'onActBreak' | 'onTick' | 'onFinale';
 
 // Plugins fire in ascending `priority` (default 0), ties broken by registration
-// order (a stable sort) — so ordering is INTENTIONAL and declared, not pinned
-// by array position alone. With no priorities set it is exactly registration
-// order, so existing packs are byte-green.
+// order (a stable sort) — so a pack declares its ordering intent rather than
+// relying on array position alone.
 function orderedPlugins(): Plugin[] {
   const plugins = PACK.plugins;
   if (!plugins) return [];
@@ -421,7 +392,7 @@ function orderedPlugins(): Plugin[] {
 }
 
 // Fire a lifecycle hook across the active pack's plugins. Empty/absent registry
-// = no-op, so wiring a dispatch point in is byte-green until a plugin uses it.
+// is a no-op, so a dispatch point costs nothing until a plugin uses it.
 function firePlugins(hook: PluginHook, ...args: any[]): void {
   for (const p of orderedPlugins()) {
     const fn = p[hook] as ((...a: any[]) => void) | undefined;
@@ -429,66 +400,66 @@ function firePlugins(hook: PluginHook, ...args: any[]): void {
   }
 }
 
-// ── The neutral modify-hook folds (WP6-infra). Each gathers a subsystem's
-// contribution at the exact site the old inline code sat, in registration
-// order — so a subsystem stops being named by the core without moving any draw. ──
+// ── The modify-hook folds. Each gathers the plugins' contribution to one core
+// mechanic in registration order, so the core keeps the mechanic while the
+// sources stay subsystems it never names. ──
 
-// Additive roll bonus summed across plugins (gear/genre/band/weather/contract).
+// Additive roll bonus, summed across plugins.
 function sumRollBonus(state, choice, ctx): number {
   let bonus = 0;
   for (const p of orderedPlugins()) bonus += p.modifyRoll?.(state, choice, ctx) ?? 0;
   return bonus;
 }
-// Fold each plugin's jitter transform (contract override → weather widen).
+// Fold each plugin's transform of the roll's jitter band.
 function foldJitter(state, jitter: [number, number], ctx): [number, number] {
   for (const p of orderedPlugins()) if (p.modifyJitter) jitter = p.modifyJitter(state, jitter, ctx);
   return jitter;
 }
-// The per-resolution gain-hook bags a subsystem contributes (contract, weather),
-// applied by the stat/burnout loops after the loadout's own (core).
+// The per-resolution gain-multiplier bags plugins contribute, applied by the
+// stat/burnout loops after the loadout's own (core).
 function gainBags(state): any[] {
   const bags: any[] = [];
   for (const p of orderedPlugins()) { const b = p.gainHooks?.(state); if (b) bags.push(b); }
   return bags;
 }
-// Does any subsystem disable the Encore mechanic this run?
+// Does any plugin disable the Encore mechanic this run?
 function encoreDisabled(state): boolean {
   for (const p of orderedPlugins()) if (p.blocksEncore?.(state)) return true;
   return false;
 }
-// Fold each plugin's burnout-delta adjustment (gear tag mults + side effects),
-// between the loadout's own burnout hooks and the contract/weather mults.
+// Fold each plugin's burnout-delta adjustment, between the loadout's own burnout
+// hooks and the gain-multiplier bags.
 function foldBurnout(state, v: number, ctx): number {
   for (const p of orderedPlugins()) if (p.modifyBurnout) v = p.modifyBurnout(state, v, ctx);
   return v;
 }
-// Fold each plugin's deck-weight multiplier (weather recolor, seeded-arc bias).
+// Fold each plugin's deck-weight multiplier.
 function foldDeckWeight(state, ev, weight: number): number {
   for (const p of orderedPlugins()) if (p.weightDeck) weight = p.weightDeck(state, ev, weight);
   return weight;
 }
-// Let each plugin force a scheduled category into the draw pool (seed setup slot).
+// Let each plugin force a scheduled category into the draw pool.
 function foldDeckPool(state, pool, ctx): any[] {
   for (const p of orderedPlugins()) if (p.refineDeck) pool = p.refineDeck(state, pool, ctx);
   return pool;
 }
-// Product of each plugin's Legacy Points multiplier (contract, weather). Starts
-// at 1 (identity), so the accumulation is byte-exact with the old `mult *= …`.
+// Product of each plugin's Legacy Points multiplier. Starts at 1 (identity), so
+// a run with no multipliers scores float-exactly the unmultiplied base.
 function scoreMult(state): number {
   let mult = 1;
   for (const p of orderedPlugins()) mult *= p.scoreMult?.(state) ?? 1;
   return mult;
 }
-// Fold each plugin's act-length override (a contract can shorten an act).
+// Fold each plugin's act-length override.
 function foldActLength(state, act, base: number): number {
   for (const p of orderedPlugins()) if (p.modifyActLength) base = p.modifyActLength(state, act, base);
   return base;
 }
 
-// ---------- Perks (Career-Wall modifiers, pack-declared — D.1) ----------
+// ---------- Perks (pack-declared run modifiers) ----------
 // The active run's perk definitions, looked up from the pack's perk table. The
-// engine no longer knows any perk id; it sums/applies whatever the perks
-// declare at the matching lifecycle point.
+// engine knows no perk id; it sums/applies whatever the perks declare at the
+// matching lifecycle point.
 function activePerks(state): import('./types.js').PerkDef[] {
   const table = PACK.perks || {};
   return (state.perks || []).map((id) => table[id]).filter(Boolean);
@@ -513,14 +484,15 @@ export function rollComponents(state, choice, opts: any = {}) {
   }
   const aptitude = wsum ? sum / wsum : 30;
 
-  // Gear whose roll bonus fired this card (for lose-on-bad + burnout side
-  // effects). The gear plugin's modifyRoll pushes onto this via rollCtx.applied.
+  // Items whose roll bonus fired this card, recorded by a plugin's modifyRoll
+  // via rollCtx.applied; resolution reads them back for lose-on-bad and burnout
+  // side effects.
   const applied = [];
 
   const inst = PACK.loadoutById(state.loadout);
   let quirkBonus = 0;
-  // The loadout's tag bonus is core (the loadout is core); genre and band
-  // tag bonuses fold in via modifyRoll below (genre/band plugins).
+  // The loadout's tag bonus is core; every subsystem tag bonus folds in via
+  // modifyRoll below.
   for (const tb of inst?.quirk?.hooks?.rollTagBonus || []) {
     if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
   }
@@ -528,46 +500,41 @@ export function rollComponents(state, choice, opts: any = {}) {
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
   const pityPer = CONFIG.pityPerBad + perkSum(state, 'pityPerBonus');
   const pityBonus = Math.min((state.badStreak || 0) * pityPer, CONFIG.pityCap + perkSum(state, 'pityCapBonus'));
-  // Subsystem roll bonuses (contract clauses; genre/band/weather/gear follow),
-  // folded in at the old inline slot in registration order. `rollCtx.applied`
-  // is where the gear plugin records the accessories whose bonus fired.
+  // Subsystem roll bonuses, folded in in registration order; rollCtx.applied
+  // collects the items whose bonus fired.
   const rollCtx: any = { applied, tags: choice.tags };
   const pluginRollBonus = sumRollBonus(state, choice, rollCtx);
   const encoreBonus = opts.encore && !encoreDisabled(state) ? CONFIG.encoreBonus : 0;
-  // Performance bonus: a minigame result (UI-side skill) folded into the roll
+  // Performance bonus: a minigame result (UI-side skill) folded into the roll.
   const perfBonus = opts.bonus || 0;
-  // Base jitter is the loadout's or the per-act default; a subsystem may
-  // override it (contract) or widen it (weather) via modifyJitter, in
-  // registration order (contract override before weather widen).
+  // Base jitter is the loadout's or the per-act default; plugins may override or
+  // widen it via modifyJitter, in registration order.
   let jitter: [number, number] = inst?.quirk?.hooks?.jitter ||
     CONFIG.jitterByAct?.[state.act] || [CONFIG.jitterMin, CONFIG.jitterMax];
   jitter = foldJitter(state, jitter, rollCtx);
-  // The loadout's quirk bonus is core; every subsystem bonus (gear, genre,
-  // band, weather, contract) is folded in via pluginRollBonus. All are integers,
-  // so this sums identically to the old gearBonus + quirkBonus regardless of
-  // grouping (byte-green).
+  // The loadout's quirk bonus is core; every subsystem bonus arrives via
+  // pluginRollBonus. All are integers, so the sum is grouping-independent.
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
     quirkBonus + pluginRollBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
   return { aptitude, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
 }
 
-// The keys an INCREDIBLE payload scales (§2E): every core stat the pack
-// declares (symmetric across genres) plus the magnitude resources the manifest
-// designates. Exported so the cross-pack symmetry invariant guards the real
-// engine set, not a copy of it.
+// The keys an INCREDIBLE payload scales: every core stat the pack declares plus
+// the magnitude resources its manifest designates. Exported so the cross-pack
+// symmetry invariant guards the real engine set, not a copy of it.
 export function incredibleTargets(): string[] {
   return [...PACK.manifest.stats, ...(PACK.manifest.incredibleResources || [])];
 }
 
-// U1: rolls compress above the soft cap — a maxed-out build still sweats
-// the jitter instead of auto-clearing the INCREDIBLE bar every card.
+// Rolls compress above the soft cap, so a maxed-out build still sweats the
+// jitter instead of auto-clearing the INCREDIBLE bar every card.
 function softCap(roll) {
   return roll > CONFIG.rollSoftCap
     ? CONFIG.rollSoftCap + (roll - CONFIG.rollSoftCap) * 0.5
     : roll;
 }
 
-// Risk tell (spec §10): probability each tier fires, given uniform jitter.
+// Risk tell: probability each tier fires, given uniform jitter.
 export function choiceOdds(state, choice, opts: any = {}) {
   const c = rollComponents(state, choice, opts);
   const base = c.base;
@@ -588,8 +555,8 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   const useEncore = !!opts.encore && (state.encore || 0) > 0 && !encoreDisabled(state);
   if (useEncore) state.encore -= 1;
 
-  // Shop affordability: a declined card is comedy, not a roll (spec §8 shop
-  // note). The currency is the manifest's cost-resource role, not a named one.
+  // Shop affordability: a declined card is comedy, not a roll. The currency is
+  // the manifest's cost-resource role, not a named one.
   const costResource = PACK.manifest.costResource;
   if (choice.cost && costResource && state[costResource] < choice.cost) {
     (state.tierLog = state.tierLog || []).push('declined');
@@ -616,7 +583,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   const forced = ev.forceTier?.[side];
   if (forced) tier = forced === 'encoreUp' ? (useEncore ? 'incredible' : 'good') : forced;
   state.badStreak = tier === 'bad' ? (state.badStreak || 0) + 1 : 0;
-  // U3: the hot streak — was it already lit when this swipe happened?
+  // Was the hot streak already lit when this swipe happened?
   const streakWasHot = !state.tutorial && (state.hotStreak || 0) >= CONFIG.hotStreakAt;
   state.hotStreak = (tier === 'good' || tier === 'incredible') ? (state.hotStreak || 0) + 1 : 0;
   (state.tierLog = state.tierLog || []).push(tier);
@@ -628,8 +595,8 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     encoreEarned = true;
   }
   if (tier === 'incredible' && useEncore) state.encoreChained = true;
-  // U3: riding the streak — an armed Encore that lands INCREDIBLE while
-  // ON A ROLL refunds its token on top of the normal earn, cap be damned.
+  // Riding the streak: an armed Encore that lands INCREDIBLE while the hot streak
+  // is lit refunds its token on top of the normal earn, cap be damned.
   let encoreRefunded = false;
   if (streakWasHot && useEncore && tier === 'incredible' && !encoreDisabled(state)) {
     state.encore = (state.encore || 0) + 1;
@@ -638,21 +605,17 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
 
   const outcome = choice.outcomes[tier];
   const effects = { ...outcome.effects };
-  // U1: rarer × bigger — INCREDIBLE payloads land ~25% harder. The scaled set
-  // is the MAGNITUDE payloads: every core stat the pack declares (§2E: this is
-  // symmetric across genres — a mystery INCREDIBLE now boosts nerve/charm/
-  // insight/alliance, which the hardcoded music list silently skipped) plus the
-  // two magnitude resources fame & money. STRUCTURAL/story counters —
-  // hits (a hit is a hit), pathProgress (momentum), rivalry (a feud) — stay
-  // authored, exactly as the old list did. For music the set is identical
-  // (skill/cred/creativity/network/fame/money), so music stays byte-green.
+  // Rarer × bigger: INCREDIBLE scales the magnitude payloads — every core stat
+  // plus the manifest's designated magnitude resources (incredibleTargets).
+  // Structural/story counters (a pack's hits, momentum, rivalry) are not in that
+  // set, so they stay exactly as authored.
   if (tier === 'incredible' && CONFIG.incrediblePayloadMult) {
     for (const k of incredibleTargets()) {
       if ((effects[k] || 0) > 0) effects[k] = Math.round(effects[k] * CONFIG.incrediblePayloadMult);
     }
   }
 
-  // Loadout quirk: bonus effects on Incredible (e.g. the Kazoo's Novelty)
+  // Loadout quirk: bonus effects on Incredible.
   const inst = PACK.loadoutById(state.loadout);
   if (tier === 'incredible' && inst?.quirk?.hooks?.onIncredible) {
     for (const [k, v] of Object.entries(inst.quirk.hooks.onIncredible)) {
@@ -660,14 +623,12 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     }
   }
 
-  // One per-card context object (Phase F), shared by modifyEffects and
-  // afterResolve so a subsystem can snapshot state between them WITHOUT
-  // module-level scratch (the venue plugin used to keep `venueThisCard` at
-  // module scope — safe only because runs are single-threaded; this fixes that).
+  // One per-card context object, handed to modifyEffects/onEffect/afterResolve
+  // of this card so a plugin can stash per-card scratch without module-level
+  // state (module scope would be unsafe if runs were ever concurrent).
   const cardCtx: any = { ev, choice, tier, rng };
 
-  // Home-venue show bonus (venue plugin, Phase 4.2): lifts fame/cred on a
-  // Good/Incredible night in your adopted room, before effects land.
+  // Let plugins mutate the effects payload before it lands.
   firePlugins('modifyEffects', state, effects, cardCtx);
 
   const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories, opts.mgDetail || null);
@@ -707,12 +668,12 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     }
   }
 
-  // Build the room (venue plugin, Phase 4.2): venue-tagged shows level it up.
-  // Same cardCtx as modifyEffects, so the venue snapshot survives across them.
+  // Let plugins react after the card resolves, sharing the same cardCtx as
+  // modifyEffects so a per-card snapshot survives across the two hooks.
   firePlugins('afterResolve', state, result, cardCtx);
 
-  // Lucky Pick-style gear: lost when it applied and things went Bad
-  // (the Roadie Insurance perk keeps it bolted down)
+  // An applied item flagged loseOnBad is dropped when the card goes Bad, unless
+  // a perk keeps gear bolted down.
   if (tier === 'bad' && !activePerks(state).some((p) => p.keepGearOnBad)) {
     for (const acc of c.appliedAccessories) {
       if (acc.loseOnBad && state.accessories.includes(acc.id)) {
@@ -726,10 +687,9 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
 
   // Burnout coping interstitials: crossing a threshold interrupts the deck once
   // per run with a forced chain card (unless a chain is already queued). The
-  // rules are PACK-DECLARED (D.3) — ordered high→low priority, first match
-  // wins — so the card ids and any extra condition (music's "you have a hit",
-  // which reads song state) live in the pack, not the core. A pack with no
-  // interstitials (mystery, probe) never triggers this at all.
+  // rules are pack-declared and evaluated high→low, first match wins — so the
+  // card ids and any extra condition live in the pack; the engine knows only the
+  // burnout threshold. A pack that ships none never triggers this.
   const interstitials = PACK.interstitials || [];
   if (!state.pendingChainId && !state.tutorial && !ev.finaleCard &&
       interstitials.length && !interstitials.some((r) => r.id === ev.id)) {
@@ -758,8 +718,7 @@ function finishCard(state, ev) {
 }
 
 // Applies an effects payload; returns display deltas [{key, amount}]. Exported
-// as a plugin-facing service so a subsystem (gear) can apply an accessory's
-// onAcquire payload with the full resolution pipeline.
+// so a plugin can apply its own payload through the full resolution pipeline.
 export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories = [], mg = null) {
   const deltas: any = [];
   const inst = PACK.loadoutById(state.loadout);
@@ -768,16 +727,15 @@ export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAcce
 
   const push = (key, amount) => { if (amount) deltas.push({ key, amount }); };
 
-  // Per-resolution gain-multiplier bags a subsystem contributes (contract, then
-  // weather, in registration order), applied by the stat/burnout loops right
-  // after the loadout's own (which is core — loadouts are core). The core
-  // keeps the multiplier MECHANIC; the SOURCES are plugins (WP6-infra).
+  // The per-resolution gain-multiplier bags plugins contribute, applied by the
+  // stat/burnout loops right after the loadout's own — the core keeps the
+  // multiplier mechanic while the sources stay plugins.
   const bags = gainBags(state);
   for (const stat of stats()) {
     let v = effects[stat] || 0;
     if (!v) continue;
-    // Positive stat gains scale by the loadout (core), then each subsystem's
-    // per-stat multiplier — all generic, no stat named.
+    // Positive stat gains scale by the loadout, then each plugin's per-stat
+    // multiplier — all generic, no stat named.
     if (v > 0 && hooks.statGainMult?.[stat]) v = Math.round(v * hooks.statGainMult[stat]);
     for (const bag of bags) if (v > 0 && bag.statGainMult?.[stat]) v = Math.round(v * bag.statGainMult[stat]);
     const before = state.stats[stat];
@@ -785,10 +743,9 @@ export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAcce
     push(stat, state.stats[stat] - before);
   }
 
-  // Burnout: the loadout's tag multiplier (core), then subsystem adjustments
-  // (gear's tag mults + per-match side effects via modifyBurnout), the
-  // loadout's live-show cost (core), then the contract/weather gain/heal
-  // multipliers (gainHooks), and the perk heal — plus passive act wear.
+  // Burnout, in order: the loadout's tag multiplier, then plugin adjustments
+  // (modifyBurnout), the loadout's live-show cost, the gain-multiplier bags and
+  // the perk heal — plus passive act wear.
   {
     let v = (effects.burnout || 0) + (ev ? (CONFIG.actWear[state.act] || 0) : 0);
     if (v > 0 && hooks.burnoutTagMult && tagsIntersect(hooks.burnoutTagMult.tags, tags)) v *= hooks.burnoutTagMult.mult;
@@ -805,15 +762,12 @@ export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAcce
     }
   }
 
-  // Resource pass (WP5): iterate the pack's declared resources in manifest
-  // order (so the delta order and the RNG-consuming 'hits' slot don't move),
-  // dispatching each to a plugin's applyResource. The core names NO resource and
-  // owns NO bespoke arithmetic — every clamp/multiplier/siphon (fame≥0, money's
-  // mults+siphon, rivalry's 0–10, the songs 'hits' mint) lives in the pack's
-  // plugins. A resource no plugin claims applies as a plain additive default, so
-  // a novel genre resource (the probe's 'points') isn't silently dropped.
-  // Per-resolution plugin context (Phase F): the deltas/hooks/accs/mg the
-  // handlers read, plus a chartTitleHandled handshake for the songs plugin.
+  // Resource pass: iterate the pack's resources in manifest order — so the delta
+  // order and any RNG-consuming resource slot stay put — dispatching each to a
+  // plugin's applyResource. The core names no resource and owns no resource
+  // arithmetic (every clamp/multiplier lives in the owning plugin). A resource
+  // no plugin claims applies as a plain additive default, so a novel resource is
+  // never silently dropped. pctx is the per-resolution context the handlers read.
   const pctx: any = { ev, choice, tier, rng, deltas, hooks, mg, chartTitleHandled: false };
   for (const res of PACK.manifest.resources) {
     let handled = false;
@@ -826,11 +780,9 @@ export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAcce
     if (v) { state[res] = (state[res] || 0) + v; push(res, v); }
   }
 
-  // Subsystem effect handlers, fired at this exact ordinal so their deltas/RNG
-  // land where the old inline blocks did (byte-green): venue (adoptVenue),
-  // songs (write/hype/release/album/polish/chartTitle), loadout (setInstrument),
-  // band roster (grant/removeBandmate), hustle (grantHustle), gear
-  // (grant/removeGear). The core owns only the neutral flag control below (WP4).
+  // Plugin effect handlers, fired at this exact ordinal so their deltas and any
+  // RNG land in the frozen draw order. The core owns only the neutral flag
+  // control below.
   firePlugins('onEffect', state, effects, pctx);
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
@@ -856,8 +808,8 @@ export function advance(state) {
       state.ending = { key: 'tutorial', result: null };
       return { kind: 'tutorialEnd' };
     }
-    // The Last Door: every run's final card is its path's climax event —
-    // queued here so chains/coping can never displace it.
+    // Every run's final card is its path's climax event, queued here so chains
+    // and coping interstitials can never displace it.
     if (state.act === 3 && state.path) {
       const climax = PACK.events.find(
         (e) => e.finaleCard && e.pathAffinity?.includes(state.path) && !state.usedEvents.includes(e.id)
@@ -892,13 +844,12 @@ function startAct(state, act) {
   state.shopPlayedInAct = false;
   state.phase = 'card';
   const notes = [];
-  // Career Wall perks that fire at every act break (pack-declared — D.1).
+  // Pack-declared perks that fire at every act break.
   for (const p of activePerks(state)) p.onActBreak?.(state, notes);
-  // Act-break plugins (Phase 4.4 band quirks, then Phase 4.5 songs: deadline
-  // audit + chart week). Registration order [band, songs] reproduces the old
-  // inline order — band quirks (notebook draws RNG) before the audit/tick.
+  // Act-break plugins, fired in registration order — load-bearing, because a
+  // plugin may draw RNG here and the goldens pin the sequence.
   firePlugins('onActBreak', state, act, notes);
-  // U5: the act twist is telegraphed the moment the act opens
+  // The act twist is telegraphed the moment the act opens.
   if (state.actTwist && state.actTwist.act === act) {
     notes.push(state.actTwist.delta < 0
       ? `✂️ The routing collapses — this leg runs ${-state.actTwist.delta} cards SHORT. Make them count.`
@@ -908,13 +859,11 @@ function startAct(state, act) {
 }
 
 export function checkFailStates(state) {
-  if (state.tutorial) return null; // the first gig cannot end a career
+  if (state.tutorial) return null; // the tutorial can't end a run
   // The one universal fail: the engine owns the burnout slot, so every pack
-  // fails when it maxes out. Everything else is the pack's, declared as
-  // failStates and read generically through gateValue — the core names no
-  // genre's stat (WP3). Rules are evaluated in declared order, after burnout, so
-  // the old burnout → cancelled → debt precedence is preserved by the music
-  // manifest's rule order.
+  // fails when it maxes out. Every other fail is pack-declared (manifest
+  // failStates), read through gateValue, and evaluated in declared order after
+  // burnout — so a pack controls its own fail precedence.
   if (state.stats.burnout >= CONFIG.burnoutFail) return 'burnout';
   for (const rule of PACK.manifest.failStates || []) {
     if (rule.fromAct !== undefined && state.act < rule.fromAct) continue;
@@ -928,13 +877,12 @@ export function checkFailStates(state) {
   return null;
 }
 
-// ---------- Finale (spec §7.1) ----------
+// ---------- Finale ----------
 
 export function evaluateFinale(state) {
   state.phase = 'ended';
-  // Finale subsystem hooks: the songs plugin runs one last chart week and the
-  // Deadline's final audit; the hustle plugin pays its last income. All finale
-  // payout lives in the plugins now — the engine owns none of it.
+  // Fire the finale hook so plugins can run their last-tick payout; the engine
+  // owns none of it.
   firePlugins('onFinale', state);
   const mr = PACK.manifest.momentumResource;
   const gates = PACK.manifest.winGates[state.path] as Record<string, number>;
@@ -963,27 +911,21 @@ export function evaluateFinale(state) {
   return { result, readings, momentum: mr ? (state[mr] ?? 0) : 0 };
 }
 
-// ---------- Legacy Points (spec §9) ----------
+// ---------- Legacy Points ----------
 
 export function legacyPoints(state) {
   const s = state.stats;
-  // Sum the pack's core stats generically (§2E-class fix): the hardcoded
-  // skill+cred+creativity+network read undefined→NaN for any non-music pack,
-  // so a mystery/probe career scored NaN LP (serialized as null). Reading
-  // manifest.stats is identical for music (same four keys) and correct for
-  // every genre.
+  // Sum the pack's core stats generically off manifest.stats, so the score is
+  // correct for any genre's stat set.
   const statSum = PACK.manifest.stats.reduce((n, k) => n + (s[k] || 0), 0);
-  // The resources that count toward Legacy Points are the pack's (music: fame);
-  // the engine names none. A pack that declares no lpResources scores on stats
-  // alone. (Music's set is ['fame'], so this is identical to the old
-  // state.fame + statSum.)
+  // The resources that count toward Legacy Points are the pack's; the engine
+  // names none. A pack with no lpResources scores on stats alone.
   const resSum = (PACK.manifest.lpResources || []).reduce((n, k) => n + (gateValue(state, k) || 0), 0);
   const base = Math.round((resSum + statSum) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
-  // Subsystem score multipliers (contract lpMult, weather lpMult), folded in
-  // registration order — the same order the old `mult *= …` used. The comeback
-  // bonus is flag-based and genre-neutral, so it stays core.
+  // Plugin score multipliers, folded in registration order. The comeback bonus
+  // is flag-based and genre-neutral, so it stays in the core.
   let mult = scoreMult(state);
   if ((state.flags || []).includes('comeback')) mult *= 1.2;
   return Math.max(1, Math.round((base + bonus) * mult));
