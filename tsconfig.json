@@ -6,15 +6,16 @@
   //
   // target es2022 == what the browsers and Node 22 already run, so tsc does
   // NO downleveling and injects NO helpers: the emit is behaviorally
-  // identical to the source. That identity is what the golden master polices
-  // when the build first lands. allowJs is on so today's pure-.js source
-  // passes through unchanged; Phase 1 renames files to .ts one at a time.
+  // identical to the source. That identity is what the golden master polices.
+  // allowJs is now OFF (Phase 1 complete): every module under js/ is .ts.
+  // sw.js is copied verbatim by the build (a standalone service worker with
+  // no imports — no reason to run it through tsc).
   "compilerOptions": {
     "target": "es2022",
     "module": "esnext",
     "moduleResolution": "bundler",
     "lib": ["es2022", "dom", "dom.iterable", "webworker"],
-    "allowJs": true,
+    "allowJs": false,
     "checkJs": false,
     "outDir": "dist",
     "rootDir": ".",
@@ -26,5 +27,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["js/**/*", "sw.js"]
+  "include": ["js/**/*"]
 }

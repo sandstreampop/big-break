@@ -91,6 +91,46 @@ export interface Choice {
   outcomes: Record<Tier, Outcome>;
 }
 
+// ---------- Runtime run state ----------
+// A song, first-class citizen of the charts subsystem.
+export interface Song {
+  id: string;
+  title: string;
+  quality: number;
+  hype: number;
+  status: 'demo' | 'charting' | 'faded';
+  origin: string | null;
+  act: number;
+  pos: number | null;
+  prevPos: number | null;
+  peak: number | null;
+  weeks: number;
+  crowned: boolean;
+  releasedAct?: number;
+  viral?: boolean;
+}
+
+// The mutable per-run state. The engine reads/writes many string-keyed fields
+// across subsystems (songs, venue, band, seeds, weather, flags…). Per the
+// plan, typing here stays LIGHT — the load-bearing types are the authored
+// content boundary above. Known fields are typed; the index signature keeps
+// the many dynamic/subsystem fields ergonomic during the strictness ramp.
+export interface RunState {
+  version: number;
+  phase: string;
+  act: number;
+  stats: Record<StatId | 'burnout', number>;
+  fame: number;
+  money: number;
+  hits: number;
+  flags: string[];
+  songs?: Song[];
+  seed: number | null;
+  rngUses?: number;
+  path: string | null;
+  [key: string]: any;
+}
+
 export interface GameEvent {
   id: string;
   act: number | number[];

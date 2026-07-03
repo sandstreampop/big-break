@@ -228,7 +228,7 @@ export function weatherById(id) {
   return WEATHER.find((w) => w.id === id) || null;
 }
 
-export function weatherHooks(state) {
+export function weatherHooks(state): Record<string, any> {
   return weatherById(state?.weather)?.hooks || {};
 }
 

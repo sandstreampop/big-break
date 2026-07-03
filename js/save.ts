@@ -36,7 +36,10 @@ function write(key, value) {
   } catch (e) { /* storage full or private mode — play on without saving */ }
 }
 
-export function loadMeta() {
+// Meta is deserialized JSON progression, extended dynamically across many
+// subsystems (lifetime.byPath/byInstrument, rivalCounts, minigamesPlayed…),
+// so it's typed as an open record during the strictness ramp.
+export function loadMeta(): any {
   return { ...defaultMeta(), ...(read(META_KEY) || {}) };
 }
 export function saveMeta(meta) {

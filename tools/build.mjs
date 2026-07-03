@@ -20,8 +20,9 @@ rmSync(dist, { recursive: true, force: true });
 // 1. Compile the JS graph (js/**/* + sw.js) to dist/ per the frozen tsconfig.
 execSync('npx tsc', { cwd: root, stdio: 'inherit' });
 
-// 2. Copy static, non-JS deployables verbatim.
-const STATIC = ['index.html', 'manifest.webmanifest', 'css', 'assets'];
+// 2. Copy static deployables verbatim. sw.js is a standalone service worker
+// (no imports) — copied as-is rather than compiled, so it stays byte-exact.
+const STATIC = ['index.html', 'manifest.webmanifest', 'css', 'assets', 'sw.js'];
 for (const p of STATIC) {
   const src = resolve(root, p);
   if (existsSync(src)) cpSync(src, resolve(dist, p), { recursive: true });

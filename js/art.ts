@@ -9,7 +9,7 @@ import { ART2 } from './data/events2.js';
 
 const EMOJI = {
   // act-1 expansion + new arcs + weather + extras (More P5)
-  ev_laundromat: '🧺', ev_camcorder: '📹', ev_prodigy: '🌟', ev_heirloom: '🪕',
+  ev_laundromat: '🧺', ev_camcorder: '📹', ev_heirloom: '🪕',
   ev_bandcamp: '💳', ev_ringtone: '📞', ev_bistro: '🥘', ev_neighbor_kid: '🎸',
   ev_band_photo: '📸', ev_rehearsal_share: '🤘', ev_family_show: '👩‍👩‍👧',
   ev_string_break: '🪗', ev_merch_box: '👕', ev_setlist_panic: '🧶',
@@ -96,7 +96,7 @@ const EMOJI = {
 // Which composed scene each event/ending slot uses
 const SCENE = {
   // act-1 expansion + new arcs + weather + extras (More P5)
-  ev_laundromat: 'home', ev_camcorder: 'street', ev_prodigy: 'stage', ev_heirloom: 'home',
+  ev_laundromat: 'home', ev_camcorder: 'street', ev_heirloom: 'home',
   ev_bandcamp: 'phone', ev_ringtone: 'street', ev_bistro: 'stage', ev_neighbor_kid: 'home',
   ev_band_photo: 'street', ev_rehearsal_share: 'home', ev_family_show: 'stage',
   ev_string_break: 'stage', ev_merch_box: 'home', ev_setlist_panic: 'home',

@@ -29,7 +29,7 @@ let meta = save.loadMeta();
 let run = null;
 
 const $ = (sel) => document.querySelector(sel);
-const el = (tag, cls, html) => {
+const el = (tag, cls?, html?) => {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
   if (html !== undefined) n.innerHTML = html;
@@ -190,7 +190,7 @@ function weekStr() {
   const day = t.getUTCDay() || 7;
   t.setUTCDate(t.getUTCDate() + 4 - day);
   const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
-  const week = Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
+  const week = Math.ceil(((t.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
   return `${t.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
 }
 function hashStr(s) {
@@ -224,8 +224,8 @@ function startNewRun(daily = false, comeback = false) {
     run.venue = chosenVenue;
     if (!daily) {
       // The nemesis returns: bias normal runs toward your most-faced rival
-      const counts = meta.rivalCounts || {};
-      const [topRival, topCount] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0] || [null, 0];
+      const counts: any = meta.rivalCounts || {};
+      const [topRival, topCount] = (Object.entries(counts).sort((a: any, b: any) => b[1] - a[1])[0] || [null, 0]) as [any, number];
       if (topRival && topCount >= 2 && Math.random() < 0.45) run.rival = topRival;
     }
     if (comeback) engine.applyComeback(run);
@@ -241,7 +241,7 @@ function startNewRun(daily = false, comeback = false) {
   };
 
   const buildScreen = () => {
-    const cMods = contractById(chosenContract)?.mods || {};
+    const cMods: any = contractById(chosenContract)?.mods || {};
     const pool = cMods.forceInstrument
       ? [cMods.forceInstrument]
       : save.unlockedInstrumentIds(meta);
@@ -348,7 +348,7 @@ function masteryLevel(instrumentId) {
 
 function modsText(mods) {
   return Object.entries(mods)
-    .map(([k, v]) => `${v > 0 ? '+' : ''}${v} ${STAT_META[k]?.name || k}`)
+    .map(([k, v]: [string, any]) => `${v > 0 ? '+' : ''}${v} ${STAT_META[k]?.name || k}`)
     .join(' · ');
 }
 
@@ -564,7 +564,7 @@ function spawnStatFloaters() {
   if (!prevStats || reducedMotion()) { prevStats = snapshotStats(); return; }
   const cur = snapshotStats();
   document.querySelectorAll('#hud .stat').forEach((item) => {
-    const key = item.dataset.stat;
+    const key = (item as HTMLElement).dataset.stat;
     const d = cur[key] - (prevStats[key] ?? cur[key]);
     if (!d) return;
     const goodDelta = key === 'burnout' ? d < 0 : d > 0;
@@ -710,7 +710,7 @@ function dealCard() {
 
 // Which stats a choice rolls against, as icons (primary bright, secondary dim)
 function govIcons(choice) {
-  const entries = Object.entries(choice.governingStats || {}).sort((a, b) => b[1] - a[1]);
+  const entries = Object.entries<any>(choice.governingStats || {}).sort((a: any, b: any) => b[1] - a[1]);
   return entries.map(([k, w]) =>
     `<span class="gov${w >= 0.8 ? '' : ' gov-dim'}" title="${STAT_META[k]?.name || k}">${STAT_META[k]?.icon || ''}</span>`
   ).join('');
@@ -798,7 +798,7 @@ function commitSwipe(side, dx = 0, dy = 0) {
     const card = currentCard;
     currentCard = null; // freeze the card while the minigame runs
     card.style.transform = ''; // snap back from any drag offset
-    const mgMods = contractById(run.contract)?.mods || {};
+    const mgMods: any = contractById(run.contract)?.mods || {};
     playMinigame(mgId, { run, rivalName: rivalById(run.rival)?.name, noSkip: !!mgMods.forceMinigames, relaxed: meta.settings.relaxedMinigames === true }).then(({ score, verdict, detail }) => {
       // instrument hook: some gear makes performance moments play easier
       const mgHook = score == null ? 0 : (instrumentById(run.instrument)?.quirk?.hooks?.mgBonus || 0);
@@ -1600,7 +1600,7 @@ function actInterstitial(step) {
 
 function pathFit(pathId) {
   const gates = CONFIG.winGates[pathId];
-  const readings = Object.entries(gates).map(([key, target]) => {
+  const readings = Object.entries<number>(gates).map(([key, target]) => {
     const value = key === 'fame' ? run.fame : key === 'hits' ? run.hits : run.stats[key];
     return { key, target, value, ratio: Math.min(1, value / target) };
   });
@@ -1712,9 +1712,9 @@ function finishMeta(summary, lp) {
     daily_3: () => Object.keys(meta.dailyResults || {}).length >= 3,
     wall_5: () => meta.unlockedWall.length >= 5,
     mastery_3: () => Object.values(meta.lifetime?.byInstrument || {})
-      .some((st) => Math.min(3, Math.floor(st.runs / 2) + st.wins) >= 3),
+      .some((st: any) => Math.min(3, Math.floor(st.runs / 2) + st.wins) >= 3),
     exits_3: () => (meta.exitSeen || []).length >= 3,
-    nemesis_3: () => Object.values(meta.rivalCounts || {}).some((n) => n >= 3),
+    nemesis_3: () => Object.values(meta.rivalCounts || {}).some((n: any) => n >= 3),
     mg_6: () => Object.keys(meta.minigamesPlayed || {}).length >= 6,
     mg_12: () => Object.keys(meta.minigamesPlayed || {}).length >= 12,
   };
@@ -1788,7 +1788,7 @@ function renderGameOver(endingKey) {
     return;
   }
   const summary = engine.runSummary(run);
-  summary.exitChoice = run.exitChoice || null;
+  (summary as any).exitChoice = run.exitChoice || null;
   let lp = engine.legacyPoints(run) + (run.exitLpBonus || 0);
   const earned = finishMeta(summary, lp);
   track('run_end', {
@@ -1952,7 +1952,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
           statLine: `★${summary.fame} fame · ${summary.hits} hits · +${lp} LP${summary.chartPeak ? ` · Hot 10 #${summary.chartPeak}` : ''}`,
           footer: 'play: sandstreampop.github.io/big-break',
         });
-        const file = blob ? new File([blob], 'big-break-run.png', { type: 'image/png' }) : null;
+        const file = blob ? new File([blob as BlobPart], 'big-break-run.png', { type: 'image/png' }) : null;
         if (file && navigator.canShare?.({ files: [file] })) {
           await navigator.share({ files: [file], text });
         } else if (navigator.share) {
@@ -2139,16 +2139,16 @@ function renderResume() {
   row('Best fame', `★${meta.best.fame}`);
   row('Legacy earned', `${meta.lpEarnedTotal} LP`);
   row('Dailies played', Object.keys(meta.dailyResults || {}).length);
-  const mgPlays = Object.values(meta.minigamesPlayed || {}).reduce((a, b) => a + b, 0);
+  const mgPlays = Object.values(meta.minigamesPlayed || {}).reduce((a: any, b: any) => a + b, 0);
   if (mgPlays) row('Performances played', `${mgPlays} (${Object.keys(meta.minigamesPlayed).length} kinds)`);
   if (meta.mgGolden) row('GOLDEN moments', meta.mgGolden);
 
   list.append(el('h3', 'wall-tier', 'By path'));
-  for (const [pid, p] of Object.entries(lt.byPath)) {
+  for (const [pid, p] of Object.entries<any>(lt.byPath)) {
     row(`${PATHS[pid]?.icon || ''} ${PATHS[pid]?.name || pid}`,
       `${p.wins}/${p.runs} won (${p.runs ? Math.round((100 * p.wins) / p.runs) : 0}%)`);
   }
-  const instRuns = Object.entries(lt.byInstrument).sort((a, b) => b[1].runs - a[1].runs);
+  const instRuns = Object.entries<any>(lt.byInstrument).sort((a, b) => b[1].runs - a[1].runs);
   if (instRuns.length) {
     list.append(el('h3', 'wall-tier', 'Weapon of choice'));
     for (const [iid, st] of instRuns.slice(0, 3)) {
@@ -2171,7 +2171,7 @@ function renderSettings() {
   const menu = el('div', 'menu');
 
   // A row with a real switch (knob for booleans, labeled pill for tri-state)
-  const toggleRow = (label, value, onTap, pillText) => {
+  const toggleRow = (label, value, onTap, pillText?) => {
     const row = el('button', 'setting-row');
     const sw = pillText !== undefined
       ? `<span class="switch-pill${value ? ' on' : ''}">${pillText}</span>`

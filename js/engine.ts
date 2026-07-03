@@ -15,6 +15,7 @@ import { collabArtistFor, songName } from './charts.js';
 import { TUTORIAL_EVENTS } from './data/tutorial.js';
 import { ARCS, arcById, rollSeeds } from './data/arcs.js';
 import { weatherHooks, rollWeather } from './data/weather.js';
+import type { RunState, Song } from './types.js';
 
 // Tutorial cards live outside EVENTS so they can never enter normal decks;
 // chains and resume still need to find them by id.
@@ -22,7 +23,7 @@ function findEvent(id) {
   return EVENTS.find((e) => e.id === id) || TUTORIAL_EVENTS.find((e) => e.id === id) || null;
 }
 
-function contractMods(state) {
+function contractMods(state): Record<string, any> {
   return contractById(state.contract)?.mods || {};
 }
 
@@ -90,7 +91,7 @@ export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
 
 export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = []) {
   const inst = instrumentById(instrumentId);
-  const state = {
+  const state: RunState = {
     version: 1,
     phase: 'card', // card | crossroads | ended
     act: 1,
@@ -221,10 +222,10 @@ function positionAll(state) {
 
 export function addSong(state, { title, quality, origin = null, status = 'demo', hype = 0 }) {
   ensureSongs(state);
-  const s = {
+  const s: Song = {
     id: 'song_' + (state.songs.length + 1) + '_' + (state.rngUses || 0),
     title, quality: clamp(Math.round(quality), 1, 100), hype: clamp(Math.round(hype), 0, 100),
-    status, origin, act: state.act,
+    status: status as Song['status'], origin, act: state.act,
     pos: null, prevPos: null, peak: null, weeks: 0, crowned: false,
   };
   state.songs.push(s);
@@ -275,7 +276,7 @@ export function deadlineAudit(state, act) {
   return [`📠 The Deadline: nothing shipped in act ${act}. The label notes the silence. −8 Fame, −4 Cred`];
 }
 
-function crownCheck(state, s, notes) {
+function crownCheck(state, s, notes?) {
   if (s.pos && s.pos <= 3 && !s.crowned) {
     s.crowned = true;
     state.hits += 1;
@@ -590,8 +591,8 @@ function tagsIntersect(a, b) {
 
 // Roll components for a choice; used by both resolution and the risk tell.
 // opts.encore adds the armed-Encore bonus so odds and rolls stay in sync.
-export function rollComponents(state, choice, opts = {}) {
-  const gs = choice.governingStats || {};
+export function rollComponents(state, choice, opts: any = {}) {
+  const gs: Record<string, number> = choice.governingStats || {};
   let sum = 0, wsum = 0;
   for (const [stat, w] of Object.entries(gs)) {
     sum += (state.stats[stat] ?? 0) * w;
@@ -658,7 +659,7 @@ function softCap(roll) {
 }
 
 // Risk tell (spec §10): probability each tier fires, given uniform jitter.
-export function choiceOdds(state, choice, opts = {}) {
+export function choiceOdds(state, choice, opts: any = {}) {
   const c = rollComponents(state, choice, opts);
   const base = c.base;
   const [jMin, jMax] = c.jitter;
@@ -672,7 +673,7 @@ export function choiceOdds(state, choice, opts = {}) {
   return { bad: bad / span, good: (span - bad - incredible) / span, incredible: incredible / span };
 }
 
-export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
+export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   const ev = findEvent(state.currentEventId);
   const choice = ev.choices[side];
   const useEncore = !!opts.encore && (state.encore || 0) > 0 && !contractMods(state).disableEncore;
@@ -682,7 +683,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   if (choice.cost && state.money < choice.cost) {
     (state.tierLog = state.tierLog || []).push('declined');
     (state.cardLog = state.cardLog || []).push({ e: ev.id, t: 'declined', a: state.act, s: side });
-    const result = {
+    const result: any = {
       tier: 'declined',
       text: 'Your card declines with an audible, judgmental beep. You pretend you “forgot your other wallet.” Everyone pretends to believe you.',
       deltas: applyEffects(state, { cred: -2 }, ev, choice, rng),
@@ -757,7 +758,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts = {}) {
   }
 
   const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories, opts.mgDetail || null);
-  const result = {
+  const result: any = {
     tier, roll: Math.round(roll), text: outcome.text, deltas, event: ev, side,
     encoreEarned, encoreSpent: useEncore, encoreRefunded,
     hotStreak: state.hotStreak, streakWasHot,
@@ -851,10 +852,10 @@ function finishCard(state, ev) {
 }
 
 // Applies an effects payload; returns display deltas [{key, amount}].
-function applyEffects(state, effects, ev, choice, rng, tier, appliedAccessories = [], mg = null) {
-  const deltas = [];
+function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories = [], mg = null) {
+  const deltas: any = [];
   const inst = instrumentById(state.instrument);
-  const hooks = inst?.quirk?.hooks || {};
+  const hooks: Record<string, any> = inst?.quirk?.hooks || {};
   const accs = equippedAccessories(state).filter((a) => accessoryActive(a, state));
   const tags = choice?.tags || [];
 
@@ -1132,7 +1133,7 @@ export function equipAccessory(state, accId, replaceId = null) {
   if (state.accessories.length >= CONFIG.accessorySlots) return null;
   state.accessories.push(accId);
   const acc = accessoryById(accId);
-  const deltas = [];
+  const deltas: any = [];
   if (acc?.grantsFlag && !state.flags.includes(acc.grantsFlag)) state.flags.push(acc.grantsFlag);
   if (acc?.onAcquire) {
     const d = applyEffects(state, acc.onAcquire, null, null, Math.random);
@@ -1322,7 +1323,7 @@ export function evaluateFinale(state) {
   state.phase = 'ended';
   chartTick(state); // one last chart week before judgment
   finalePayout(state);
-  const gates = CONFIG.winGates[state.path];
+  const gates = CONFIG.winGates[state.path] as Record<string, number>;
   const readings = Object.entries(gates).map(([key, target]) => {
     const value = key === 'fame' ? state.fame : key === 'hits' ? state.hits : state.stats[key];
     return { key, target, value, met: value >= target, ratio: Math.min(1, value / target) };

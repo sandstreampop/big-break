@@ -36,7 +36,7 @@ export function verdictFor(score) {
   return { label: 'GOLDEN', bonus: 24, cls: 'mg-gold' };
 }
 
-const el = (tag, cls, html) => {
+const el = (tag, cls?, html?) => {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
   if (html !== undefined) n.innerHTML = html;
@@ -45,7 +45,7 @@ const el = (tag, cls, html) => {
 
 // Runs the full flow: intro (play/skip) → game → verdict beat.
 // Resolves { score, verdict } — score null when skipped.
-export function playMinigame(id, ctx = {}) {
+export function playMinigame(id, ctx: any = {}) {
   const def = GAMES[id];
   if (!def) return Promise.resolve({ score: null, verdict: verdictFor(null) });
   return new Promise((resolve) => {
@@ -986,7 +986,7 @@ register('mixdown', {
 
     const closeness = (ch) => Math.max(0, 1 - Math.abs(ch.level - ch.target) / 0.45);
     const chans = CHANNELS.map((c) => {
-      const ch = { ...c, level: 0.5 };
+      const ch: any = { ...c, level: 0.5 };
       const track = el('div', 'mg-fader');
       const rail = el('div', 'mg-fader-rail');
       const knob = el('div', 'mg-fader-knob');
