@@ -17,12 +17,13 @@ import { ARCS, arcById, rollSeeds } from '../data/arcs.js';
 import { weatherHooks, rollWeather } from '../data/weather.js';
 import { musicManifest } from './music-manifest.js';
 import { venuePlugin } from './plugins/venue.js';
+import { rivalPlugin } from './plugins/rival.js';
 import type { Pack } from '../types.js';
 
 export const musicPack: Pack = {
   id: 'music',
   manifest: musicManifest,
-  plugins: [venuePlugin],
+  plugins: [venuePlugin, rivalPlugin],
   events: EVENTS,
   tutorialEvents: TUTORIAL_EVENTS,
   instruments: INSTRUMENTS,

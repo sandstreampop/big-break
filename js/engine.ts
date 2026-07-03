@@ -187,23 +187,19 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
     band: [],       // recruited bandmates (see data/band.js), max 3
     promises: [],   // short-horizon objectives [{label,tags,remaining,reward,penalty}]
     hustles: [],    // persistent income sources (see data/hustles.js)
-    rival: PACK.randomRival(rng).id,
-    rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
-    // Story Seeds (R1): this run secretly roots for these arcs — their
-    // setup cards get a guaranteed window, their payoffs draw hot.
-    seeds: PACK.rollSeeds(rng, CONFIG.seedCount),
+    // rival + rivalry: set by the rival plugin's onConstruct (Phase 4.3).
+    // seeds / flashpointAt / actTwist / weather: seeded construction, drawn
+    // in a FROZEN order right after this literal (see below) — the golden
+    // pins that order; reordering shifts every downstream draw.
+    rival: null,
+    rivalry: 3,
+    seeds: [],
     seenCards: null, // per-player seen-card ids (set by the UI from meta)
-    // Rush: ~25% of runs schedule one flashpoint card (U2); ~20% of runs
-    // have one act play short or long (U5); hot streaks tracked live (U3)
-    flashpointAt: rng() < CONFIG.flashpointChance
-      ? randInt(rng, CONFIG.flashpointWindow[0], CONFIG.flashpointWindow[1]) : null,
+    flashpointAt: null,
     flashpointSeen: false,
     hotStreak: 0,
-    actTwist: rng() < CONFIG.actTwistChance
-      ? { act: randInt(rng, 2, 3), delta: rng() < 0.5 ? -CONFIG.actTwistDelta : CONFIG.actTwistDelta }
-      : null,
-    // Scene Weather (M2): one visible modifier recolors the whole run
-    weather: PACK.rollWeather(rng),
+    actTwist: null,
+    weather: null,
     path: null,
     instrument: instrumentId,
     firstInstrument: instrumentId,
@@ -215,6 +211,19 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
     pendingChainId: null,
     ending: null, // { key, result } once ended
   };
+  // Seeded construction draws, in FROZEN order (chartSeed above, then rival,
+  // seeds, flashpoint, actTwist, weather). onConstruct fires at rival's ordinal
+  // slot so a subsystem plugin's construction draw lands exactly where the old
+  // inline draw did. Reordering here invalidates the entire golden corpus.
+  firePlugins('onConstruct', state, rng); // rival plugin (Phase 4.3)
+  state.seeds = PACK.rollSeeds(rng, CONFIG.seedCount); // Story Seeds (R1)
+  // Rush: ~25% of runs schedule one flashpoint (U2); ~20% bend an act (U5)
+  state.flashpointAt = rng() < CONFIG.flashpointChance
+    ? randInt(rng, CONFIG.flashpointWindow[0], CONFIG.flashpointWindow[1]) : null;
+  state.actTwist = rng() < CONFIG.actTwistChance
+    ? { act: randInt(rng, 2, 3), delta: rng() < 0.5 ? -CONFIG.actTwistDelta : CONFIG.actTwistDelta }
+    : null;
+  state.weather = PACK.rollWeather(rng); // Scene Weather (M2)
   if (inst) {
     for (const [k, v] of Object.entries(inst.modifiers || {})) {
       if (k in state.stats) state.stats[k] = clamp(state.stats[k] + v, 1, 100);
