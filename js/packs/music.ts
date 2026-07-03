@@ -18,12 +18,13 @@ import { weatherHooks, rollWeather } from '../data/weather.js';
 import { musicManifest } from './music-manifest.js';
 import { venuePlugin } from './plugins/venue.js';
 import { rivalPlugin } from './plugins/rival.js';
+import { bandPlugin } from './plugins/band.js';
 import type { Pack } from '../types.js';
 
 export const musicPack: Pack = {
   id: 'music',
   manifest: musicManifest,
-  plugins: [venuePlugin, rivalPlugin],
+  plugins: [venuePlugin, rivalPlugin, bandPlugin],
   events: EVENTS,
   tutorialEvents: TUTORIAL_EVENTS,
   instruments: INSTRUMENTS,

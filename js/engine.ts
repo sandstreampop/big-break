@@ -1297,31 +1297,10 @@ function startAct(state, act) {
     for (const d of demos) d.quality = clamp(d.quality + 2, 1, 100);
     if (demos.length) notes.push(`🗃️ The Archivist: ${demos.length} vault demo${demos.length === 1 ? '' : 's'} +2 quality`);
   }
-  for (const bid of state.band || []) {
-    const bm = PACK.bandmateById(bid);
-    if (bm?.actQuirk?.money) {
-      state.money += bm.actQuirk.money;
-      notes.push(`${bm.icon} ${bm.name}: +$${bm.actQuirk.money} merch`);
-    }
-    if (bm?.actQuirk?.burnout) {
-      const before = state.stats.burnout;
-      state.stats.burnout = Math.max(0, before + bm.actQuirk.burnout);
-      if (state.stats.burnout !== before) notes.push(`${bm.icon} ${bm.name}: ${bm.actQuirk.burnout} Burnout`);
-    }
-    if (bm?.actQuirk?.fame) {
-      state.fame += bm.actQuirk.fame;
-      notes.push(`${bm.icon} ${bm.name}: +${bm.actQuirk.fame} Fame (word travels)`);
-    }
-    if (bm?.actQuirk?.demo) { // (deadline audit runs below, after quirks)
-      // Nadia's notebook: a fresh "spare" appears every act break
-      const rng = stateRng(state);
-      const s = addSong(state, {
-        title: songName(rng, PACK.genreById(state.genre)), status: 'demo',
-        quality: 42 + Math.round(rng() * 26),
-      });
-      notes.push(`${bm.icon} ${bm.name}: leaves a demo on your amp — “${s.title}”`);
-    }
-  }
+  // Band act-break quirks (band plugin, Phase 4.4). Fires before the deadline
+  // audit and chart tick, exactly as the old inline loop did — the notebook
+  // bandmate draws the seeded RNG here, so this position is load-bearing.
+  firePlugins('onActBreak', state, act, notes);
   notes.push(...deadlineAudit(state, act - 1));
   notes.push(...chartTick(state));
   // U5: the act twist is telegraphed the moment the act opens
