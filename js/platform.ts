@@ -50,6 +50,13 @@ export function installMobileGuards(): void {
       }, 250);
     });
   }
+
+  // ---- Durable saves: ask to survive storage pressure ----
+  // A roguelike career lives in localStorage. iOS home-screen apps were
+  // effectively exempt from eviction, so this was never needed; Android evicts
+  // best-effort storage under memory pressure (common on budget devices), which
+  // would wipe the career. Requesting persistence makes the origin exempt.
+  try { navigator.storage?.persist?.().catch(() => {}); } catch (e) { /* older browsers */ }
 }
 
 // Register the offline service worker (network-first), post-load so it never

@@ -103,6 +103,35 @@ export function boot(pack = musicPack) {
   });
   renderTitle();
   show('#screen-title');
+  installBackGuard();
+}
+
+// Android Back / gesture guard. iOS has no Back button, so navigation was pure
+// screen-swapping with no history integration — meaning on Android the hardware
+// Back button unloads the whole PWA mid-run (rage-quit / lost screen). We keep a
+// single "trap" history entry so Back never unloads the game: it dismisses an
+// open overlay exactly as a tap would (running that overlay's continue handler),
+// or returns to the title from any in-game screen (the run is saved on every
+// swipe, so nothing is lost). On the title with nothing left to trap, Back is
+// allowed to proceed so the user can still leave.
+function installBackGuard() {
+  try { history.pushState({ bb: 1 }, ''); } catch (e) { /* history unavailable */ }
+  window.addEventListener('popstate', () => {
+    const ov = $('#overlay');
+    if (ov && ov.classList.contains('active')) {
+      try { history.pushState({ bb: 1 }, ''); } catch (e) {}
+      ov.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+      return;
+    }
+    if (!$('#screen-title').classList.contains('active')) {
+      try { history.pushState({ bb: 1 }, ''); } catch (e) {}
+      show('#screen-title');
+      renderTitle();
+      sfx.ui();
+      return;
+    }
+    // On the title with no trap left — let Back exit the app.
+  });
 }
 
 const TAGLINES = [
