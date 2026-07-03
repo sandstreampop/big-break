@@ -98,8 +98,31 @@ export interface Choice {
 // functions are typed loosely here; the load-bearing manifest types (stats,
 // winGates, resource taxonomy) formalize in Phase 3 as the taxonomy is
 // genericized. `charts`/songs stay engine-side until the Phase 4 plugin split.
+// A summit the player commits to; its winGates entry is the finale bar.
+export interface PathDef {
+  id: string;
+  name: string;
+  blurb: string;
+  gateLabel: string;
+  icon: string;
+}
+
+// The pack manifest: the genre's TAXONOMY, split out of the balance knobs in
+// config (Phase 2.2). stats/resources are the stat/resource lists Phase 3
+// genericizes the engine against; paths/winGates/statMeta are the finale and
+// HUD taxonomy. Numbers here are still balance-tuned, but the SHAPE (which
+// stats exist, which gate which path) is what makes a pack a genre.
+export interface PackManifest {
+  stats: string[];
+  resources: string[];
+  paths: Record<string, PathDef>;
+  winGates: Record<string, Record<string, number>>;
+  statMeta: Record<string, StatMeta>;
+}
+
 export interface Pack {
   id: string;
+  manifest: PackManifest;
   events: GameEvent[];
   tutorialEvents: GameEvent[];
   instruments: any[];

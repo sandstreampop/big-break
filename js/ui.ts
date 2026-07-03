@@ -1,6 +1,6 @@
 // BIG BREAK — UI: screens, card swipe physics, result presentation.
 
-import { CONFIG, PATHS, STAT_META } from './config.js';
+import { CONFIG } from './config.js';
 import { ENDINGS, WALL_ITEMS, TROPHIES, EXIT_INTERVIEWS } from './data/meta.js';
 import { instrumentById, INSTRUMENTS } from './data/instruments.js';
 import { rivalById } from './data/rivals.js';
@@ -27,6 +27,9 @@ import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEven
 import { playMinigame, minigameById } from './minigames.js';
 
 let meta = save.loadMeta();
+// Taxonomy from the active pack's manifest (Phase 2.2 split out of config)
+const PATHS = musicPack.manifest.paths;
+const STAT_META = musicPack.manifest.statMeta;
 let run = null;
 
 const $ = (sel) => document.querySelector(sel);
@@ -1379,7 +1382,7 @@ function showBrammies(step) {
 
 // What one closer does to the win gates, in plain language.
 function closerImpact(opt) {
-  const gates = CONFIG.winGates[run.path] || {};
+  const gates = musicPack.manifest.winGates[run.path] || {};
   const pathName = run.path ? PATHS[run.path].name : 'your path';
 
   if (opt.stat === 'pathProgress') {
@@ -1601,7 +1604,7 @@ function actInterstitial(step) {
 // ---------- Crossroads (spec §7.2) ----------
 
 function pathFit(pathId) {
-  const gates = CONFIG.winGates[pathId];
+  const gates = musicPack.manifest.winGates[pathId];
   const readings = Object.entries<number>(gates).map(([key, target]) => {
     const value = key === 'fame' ? run.fame : key === 'hits' ? run.hits : run.stats[key];
     return { key, target, value, ratio: Math.min(1, value / target) };

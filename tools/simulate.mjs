@@ -13,7 +13,7 @@
 // replays the same corpus of careers byte-for-byte, so this report is
 // reproducible and the golden-master oracle can trust it.
 
-import { CONFIG, PATHS } from '../dist/js/config.js';
+import { CONFIG } from '../dist/js/config.js';
 import { EVENTS } from '../dist/js/data/events.js';
 import { ARCS, arcById } from '../dist/js/data/arcs.js';
 import * as engine from '../dist/js/engine.js';

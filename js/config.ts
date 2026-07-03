@@ -1,7 +1,7 @@
-// BIG BREAK — central tuning knobs (spec §4.3).
-// Everything a balancer might touch lives here; content lives in js/data/*.
-
-import type { StatMeta } from './types.js';
+// BIG BREAK — central BALANCE knobs (spec §4.3): pure numeric tuning.
+// The genre TAXONOMY (paths, winGates, stat/resource lists, stat metadata)
+// lives in the pack manifest (js/packs/*-manifest.ts), split out in Phase 2.2
+// so a second genre supplies its own. Content lives in js/data/*.
 
 export const CONFIG = {
   // Run start
@@ -84,18 +84,7 @@ export const CONFIG = {
   nearMissRatio: 0.83,
   momentumForUpgrade: 3,   // R4: gates are meaner, so the clutch is kinder
 
-  // R4 (can-lose pass): gates sit slightly above the old comfortable
-  // ceiling so a cruisy run books a Partial, not an automatic Success —
-  // the finale should be a judgment, not a formality.
-  // Wave-3 (the doubling) re-tune: the expanded deck raised the whole
-  // economy (avg cred/fame/network climbed well past the old gates), so a
-  // cruisy run was booking Success again. Gates nudged back up to re-center
-  // Success in the 25–40% band with twice the content in play.
-  winGates: {
-    megastar:   { fame: 112, network: 83, cred: 46 },
-    studio:     { skill: 76, cred: 68, network: 55 },
-    hitfactory: { creativity: 95, cred: 70, hits: 4 },
-  },
+  // (winGates moved to the pack manifest — see js/packs/music-manifest.ts)
 
   // Passive burnout per card resolved in each act — the grind wears you
   // down even when things go well, so rest stays a real decision.
@@ -107,36 +96,4 @@ export const CONFIG = {
   lpStatDivisor: 10,
   lpEndingBonus: { success: 50, partial: 20, failure: 5, failstate: 5 },
   lpFirstTimeMilestone: 15, // first time reaching each ending kind per path
-};
-
-export const PATHS = {
-  megastar: {
-    id: 'megastar',
-    name: 'Megastar',
-    blurb: 'Worldwide famous frontperson. Stadiums chant a name your mother didn’t give you.',
-    gateLabel: 'Fame 105 · Network 78 · Cred 38',
-    icon: '★',
-  },
-  studio: {
-    id: 'studio',
-    name: 'Studio Legend',
-    blurb: 'The most-called session musician alive. Nobody knows your face. Everybody knows your take.',
-    gateLabel: 'Skill 74 · Cred 65 · Network 50',
-    icon: '♫',
-  },
-  hitfactory: {
-    id: 'hitfactory',
-    name: 'Hit Factory',
-    blurb: 'The producer-songwriter behind everyone’s hits. Your name is in small print on big money.',
-    gateLabel: 'Creativity 92 · Cred 64 · 4 Hits',
-    icon: '✎',
-  },
-};
-
-export const STAT_META: Record<string, StatMeta> = {
-  skill:      { name: 'Skill',      icon: '🎸' },
-  cred:       { name: 'Cred',       icon: '🤟' },
-  creativity: { name: 'Creativity', icon: '💡' },
-  network:    { name: 'Network',    icon: '📱' },
-  burnout:    { name: 'Burnout',    icon: '🔥' },
 };

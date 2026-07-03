@@ -1326,7 +1326,7 @@ export function evaluateFinale(state) {
   state.phase = 'ended';
   chartTick(state); // one last chart week before judgment
   finalePayout(state);
-  const gates = CONFIG.winGates[state.path] as Record<string, number>;
+  const gates = PACK.manifest.winGates[state.path] as Record<string, number>;
   const readings = Object.entries(gates).map(([key, target]) => {
     const value = key === 'fame' ? state.fame : key === 'hits' ? state.hits : state.stats[key];
     return { key, target, value, met: value >= target, ratio: Math.min(1, value / target) };

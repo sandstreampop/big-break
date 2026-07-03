@@ -16,18 +16,19 @@
 // distinct meta stream (mulberry32(seed)) so it never perturbs the game's
 // internal draws.
 
-import { CONFIG, PATHS } from '../dist/js/config.js';
+import { CONFIG } from '../dist/js/config.js';
 import { INSTRUMENTS } from '../dist/js/data/instruments.js';
 import { GENRES } from '../dist/js/data/genres.js';
 import { VENUES } from '../dist/js/data/venues.js';
 import * as engine from '../dist/js/engine.js';
 import { musicPack } from '../dist/js/packs/music.js';
+const PATHS = musicPack.manifest.paths;
 
 export const DEFAULT_INSTRUMENTS = INSTRUMENTS.filter((i) => i.unlockedByDefault).map((i) => i.id);
 export const ALL_PACKS = ['pack_divebar', 'pack_festival', 'pack_wedding', 'pack_cruise'];
 
 export function pathScore(state, pathId) {
-  const g = CONFIG.winGates[pathId];
+  const g = musicPack.manifest.winGates[pathId];
   let s = 0;
   for (const [k, target] of Object.entries(g)) {
     const v = k === 'fame' ? state.fame : k === 'hits' ? state.hits : state.stats[k];
