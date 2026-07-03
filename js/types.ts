@@ -82,7 +82,10 @@ export interface Outcome { text: string; effects: Effect; }
 export interface Choice {
   label: string;
   tags?: string[];
-  governingStats?: Partial<Record<StatId, number>>;
+  // Governed by core stats; a few cards also name 'fame' here — the engine
+  // reads state.stats[key], where fame is absent, so it contributes 0 (a
+  // latent authored no-op preserved as-is). Typed to accept it.
+  governingStats?: Partial<Record<StatId | 'fame', number>>;
   cost?: number;
   minigame?: string;
   outcomes: Record<Tier, Outcome>;

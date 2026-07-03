@@ -5,7 +5,9 @@
 // registry. Content only — no logic. GENERATED: authored as batch files,
 // inlined here. 263 cards, 263 art slots, 13 arcs.
 
-export const EVENTS2 = [
+import type { GameEvent } from '../types.js';
+
+export const EVENTS2: GameEvent[] = [
   {
     "id": "n1_allages",
     "act": 1,

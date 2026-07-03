@@ -9,8 +9,9 @@
 //   (declined-card outcome) instead of rolling.
 
 import { EVENTS2 } from './events2.js';
+import type { GameEvent } from '../types.js';
 
-export const EVENTS = [
+export const EVENTS: GameEvent[] = [
   // ═══════════════════════ ACT 1 — THE GARAGE ═══════════════════════
   {
     id: 'a1_open_mic', act: 1, pathAffinity: [], weight: 12,

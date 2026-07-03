@@ -3,7 +3,20 @@
 // Recruited via grantBandmate effects; they show as HUD chips and get
 // epilogue lines.
 
-export const BANDMATES = [
+export interface Bandmate {
+  id: string;
+  name: string;
+  role: string;
+  icon: string;
+  flavor: string;
+  storyCard?: string;
+  bonus: { tags: string[]; bonus: number };
+  // act-break quirk: income, fame, healing, or a fresh demo
+  actQuirk?: { fame?: number; money?: number; burnout?: number; demo?: boolean };
+  quirkDesc: string;
+}
+
+export const BANDMATES: Bandmate[] = [
   {
     id: 'fish', storyCard: 'bs_fish_van', name: 'Fish', role: 'tour manager / owns the van', icon: '🐟',
     flavor: 'Comes with the van. The van comes with Fish. It’s a package deal.',
@@ -45,7 +58,7 @@ export const BANDMATES = [
   },
 ];
 
-export const BANDMATES_WAVE2 = [
+export const BANDMATES_WAVE2: Bandmate[] = [
   {
     id: 'ludo', storyCard: 'bs_ludo_parade', name: 'Ludo', role: 'horns & hype', icon: '🎺',
     flavor: 'One man, three horns, zero indoor voice. Every room is a stadium to Ludo.',
@@ -76,7 +89,7 @@ export const BANDMATES_WAVE2 = [
 ];
 BANDMATES.push(...BANDMATES_WAVE2);
 
-export const BANDMATES_WAVE3 = [
+export const BANDMATES_WAVE3: Bandmate[] = [
   {
     id: 'ox', storyCard: 'bs_ox_amps', name: 'Ox', role: 'drums, gentle giant', icon: '🐂',
     flavor: 'Carries the full backline in one trip and apologizes for taking up room. The kick drum obeys.',

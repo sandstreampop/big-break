@@ -11,7 +11,9 @@
 // creativity 8, network 35, burnout 5) so the risk tells read exactly:
 // skill ●, network ●, cred ▲, creativity ■.
 
-export const TUTORIAL_EVENTS = [
+import type { GameEvent } from '../types.js';
+
+export const TUTORIAL_EVENTS: GameEvent[] = [
   {
     id: 'tut_load_in', act: 1, pathAffinity: [], weight: 0, chainOnly: true, tutorial: true,
     art: 'ev_tut_loadin', context: 'YOUR FIRST GIG — THE RUBBER ROOM, 6:45 PM',

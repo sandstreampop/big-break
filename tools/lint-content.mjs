@@ -8,13 +8,13 @@
 //   reactive text — a maximal run state exercises every generator branch;
 //            any unfilled {token} or "undefined" leaking into copy fails
 
-import { EVENTS } from '../js/data/events.js';
-import * as engine from '../js/engine.js';
-import { generateDMs } from '../js/dms.js';
-import { generateHeadlines } from '../js/headlines.js';
-import { buildEpilogue } from '../js/epilogue.js';
-import { ARCS } from '../js/data/arcs.js';
-import { WEATHER } from '../js/data/weather.js';
+import { EVENTS } from '../dist/js/data/events.js';
+import * as engine from '../dist/js/engine.js';
+import { generateDMs } from '../dist/js/dms.js';
+import { generateHeadlines } from '../dist/js/headlines.js';
+import { buildEpilogue } from '../dist/js/epilogue.js';
+import { ARCS } from '../dist/js/data/arcs.js';
+import { WEATHER } from '../dist/js/data/weather.js';
 
 const KNOWN_TOKENS = new Set(['song', 'hitSong', 'fadedSong', 'venue', 'rival', 'rivalVibe', 'genre', 'collabArtist']);
 const KNOWN_REQ = new Set(['flagsAll', 'flagsNone', 'moneyMax', 'moneyMin', 'burnoutMin', 'fameMin', 'fameMax',
