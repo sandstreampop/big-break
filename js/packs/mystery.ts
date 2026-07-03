@@ -12,9 +12,12 @@ import type { Pack } from '../types.js';
 // "Instruments" here are the reality-show personas you walk in as. The engine
 // only needs id + unlockedByDefault (+ optional stat modifiers/quirk).
 const PERSONAS = [
-  { id: 'detective', name: 'The Off-Duty Detective', family: 'sleuth', unlockedByDefault: true, modifiers: { insight: 6, nerve: 2 } },
-  { id: 'influencer', name: 'The Influencer', family: 'darling', unlockedByDefault: true, modifiers: { charm: 6, alliance: 2 } },
-  { id: 'operator', name: 'The Operator', family: 'fixer', unlockedByDefault: true, modifiers: { nerve: 4, charm: 2 } },
+  { id: 'detective', name: 'The Off-Duty Detective', family: 'sleuth', unlockedByDefault: true,
+    flavor: 'You notice things. It has never once made you popular.', modifiers: { insight: 6, nerve: 2 } },
+  { id: 'influencer', name: 'The Influencer', family: 'darling', unlockedByDefault: true,
+    flavor: 'The camera loves you. You have made sure of it.', modifiers: { charm: 6, alliance: 2 } },
+  { id: 'operator', name: 'The Operator', family: 'fixer', unlockedByDefault: true,
+    flavor: 'You do not raise your voice. You do not need to.', modifiers: { nerve: 4, charm: 2 } },
 ];
 
 const byId = (list: any[]) => (id: string) => list.find((x) => x.id === id) || null;

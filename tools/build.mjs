@@ -7,7 +7,7 @@
 // Run: node tools/build.mjs   (or: npm run build)
 
 import { execSync } from 'node:child_process';
-import { cpSync, rmSync, existsSync } from 'node:fs';
+import { cpSync, rmSync, existsSync, mkdirSync, copyFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -28,4 +28,10 @@ for (const p of STATIC) {
   if (existsSync(src)) cpSync(src, resolve(dist, p), { recursive: true });
 }
 
-console.log('build ok -> dist/');
+// 3. Both games ship from one build: the music game is the site root above;
+// the mystery game is a sibling entry at dist/mystery/, sharing the compiled
+// js/, css/, and assets/ (its index.html references them with ../).
+mkdirSync(resolve(dist, 'mystery'), { recursive: true });
+copyFileSync(resolve(root, 'mystery.html'), resolve(dist, 'mystery', 'index.html'));
+
+console.log('build ok -> dist/ (music at /, mystery at /mystery/)');

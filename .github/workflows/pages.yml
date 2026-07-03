@@ -7,10 +7,13 @@ name: CI + Deploy to GitHub Pages
 # Settings -> Pages -> Build and deployment -> Source -> "GitHub Actions".
 #
 # The `check` job is the regression net: content lint, the balance/reach
-# --check gate, and the golden-master oracle — all run against the EMITTED
-# dist/ (what actually deploys), so what's tested === what ships. `deploy`
-# needs it, so a breach BLOCKS the deploy. tsc build lands here (Phase 0.5):
-# the deploy now uploads the built dist/, not the source tree.
+# --check gates (music AND mystery), and the golden-master oracles — all run
+# against the EMITTED dist/ (what actually deploys), so what's tested === what
+# ships. `deploy` needs it, so a breach BLOCKS the deploy.
+#
+# BOTH games ship from this one workflow, one artifact, straight from main:
+# the build emits the music game at dist/ (site root) and the mystery game at
+# dist/mystery/, sharing the compiled js/. Push to main → both go live.
 
 on:
   push:

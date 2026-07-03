@@ -2,7 +2,7 @@
 
 import { CONFIG } from './config.js';
 import { ENDINGS, WALL_ITEMS, TROPHIES, EXIT_INTERVIEWS } from './data/meta.js';
-import { instrumentById, INSTRUMENTS } from './data/instruments.js';
+import { INSTRUMENTS } from './data/instruments.js';
 import { rivalById } from './data/rivals.js';
 import { accessoryById } from './data/accessories.js';
 import { EVENTS } from './data/events.js';
@@ -26,10 +26,13 @@ import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from
 import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from './analytics.js';
 import { playMinigame, minigameById } from './minigames.js';
 
+// The game this session is playing. Defaults to music; boot(pack) sets it so
+// the same UI drives either pack. Taxonomy (PATHS/STAT_META) is read from the
+// active pack's manifest, resolved in boot() after the pack is chosen.
+let activePack = musicPack;
+let PATHS = musicPack.manifest.paths;
+let STAT_META = musicPack.manifest.statMeta;
 let meta = save.loadMeta();
-// Taxonomy from the active pack's manifest (Phase 2.2 split out of config)
-const PATHS = musicPack.manifest.paths;
-const STAT_META = musicPack.manifest.statMeta;
 let run = null;
 
 const $ = (sel) => document.querySelector(sel);
@@ -68,8 +71,16 @@ function show(id) {
 
 // ---------- Title ----------
 
-export function boot() {
-  engine.useContentPack(musicPack); // this game's content; set before any engine call
+export function boot(pack = musicPack) {
+  // Select this session's game. Music keeps the original save keys (existing
+  // players' careers survive); other packs get their own namespace so the two
+  // games never clobber each other's meta or in-progress run.
+  activePack = pack;
+  PATHS = pack.manifest.paths;
+  STAT_META = pack.manifest.statMeta;
+  save.setSaveNamespace(pack.id === 'music' ? '' : pack.id);
+  meta = save.loadMeta();
+  engine.useContentPack(pack); // this game's content; set before any engine call
   initAnalytics(meta.settings);
   setSoundEnabled(meta.settings.sound);
   setMusicEnabled(meta.settings.music !== false);
@@ -130,8 +141,9 @@ function renderTitle() {
       save.clearRun();
       startNewRun();
     }));
-  } else if (!meta.tutorialDone && (meta.runs || 0) === 0) {
-    // First install: the game opens with a playable lesson, not a manual
+  } else if (!meta.tutorialDone && (meta.runs || 0) === 0 && activePack.tutorialEvents.length) {
+    // First install: the game opens with a playable lesson, not a manual.
+    // (Only packs that ship a tutorial deck — the music game does.)
     menu.append(btn('▶ Play — Your First Gig', 'primary', startTutorial));
     menu.append(btn('Skip the gig — I know the drill', 'ghost', () => {
       track('tutorial_skip', {});
@@ -215,11 +227,11 @@ function startNewRun(daily = false, comeback = false) {
   // Committing is a separate, explicit act — tapping an instrument only
   // selects it, so the optional pickers below can't be silently skipped.
   const beginRun = () => {
-    const inst = instrumentById(chosenInst);
+    const inst = activePack.instrumentById(chosenInst);
     if (!inst) return;
     sfx.commit();
     const lv = masteryLevel(inst.id);
-    run = engine.newRun(musicPack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+    run = engine.newRun(activePack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
     engine.applyMastery(run, lv);
     run.seed = seed + 2;
     run.daily = daily ? todayStr() : null;
@@ -249,48 +261,55 @@ function startNewRun(daily = false, comeback = false) {
     const cMods: any = contractById(chosenContract)?.mods || {};
     const pool = cMods.forceInstrument
       ? [cMods.forceInstrument]
-      : save.unlockedInstrumentIds(meta);
+      : activePack.id === 'music'
+      ? save.unlockedInstrumentIds(meta) // music: default + Career-Wall unlocks
+      : activePack.instruments.filter((i) => i.unlockedByDefault).map((i) => i.id);
     const offered = engine.offerInstruments(pool, engine.mulberry32(seed));
     if (chosenInst && !offered.some((i) => i.id === chosenInst)) chosenInst = null;
     const keepScroll = s.scrollTop;
     s.innerHTML = '';
-    s.append(el('h2', 'screen-head', comeback ? 'The Second Act' : daily ? `Daily Grind — ${todayStr()}` : 'Choose your weapon'));
+    const isMusic = activePack.id === 'music';
+    s.append(el('h2', 'screen-head', comeback ? 'The Second Act' : daily ? `Daily Grind — ${todayStr()}` : (isMusic ? 'Choose your weapon' : 'Choose your player')));
     s.append(el('p', 'screen-sub', comeback
       ? 'You were somebody. Start famous, bruised, and 25% burned out already — the industry remembers you, which cuts both ways.'
       : daily
       ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
-      : 'Each one is almost useless. That’s the point.'));
+      : (isMusic ? 'Each one is almost useless. That’s the point.' : 'Who are you, when the cameras are always on?')));
     renderInstrumentRow(s, offered, chosenInst, (id) => { chosenInst = id; buildScreen(); });
-    // Home venue picker (Pass 41): adopt a room to build across the run
-    const venues = offerVenues(engine.mulberry32(seed + 13));
-    s.append(el('h3', 'contract-head', 'Optional: adopt a home venue'));
-    const vRow = el('div', 'genre-row');
-    for (const v of venues) {
-      const chip = el('button', 'contract-chip venue-pick-chip' + (chosenVenue === v.id ? ' signed' : ''),
-        `${v.icon} <b>${v.name}</b><br><span>${v.flavor} Build it by playing ${v.tags.join('/')} shows.</span>`);
-      chip.addEventListener('click', () => {
-        sfx.ui();
-        chosenVenue = chosenVenue === v.id ? null : v.id;
-        buildScreen();
-      });
-      vRow.append(chip);
+    // Venue + genre pickers are music subsystems (this pack has neither for
+    // other genres). Contracts self-gate below (a pack with none shows none).
+    if (isMusic) {
+      // Home venue picker (Pass 41): adopt a room to build across the run
+      const venues = offerVenues(engine.mulberry32(seed + 13));
+      s.append(el('h3', 'contract-head', 'Optional: adopt a home venue'));
+      const vRow = el('div', 'genre-row');
+      for (const v of venues) {
+        const chip = el('button', 'contract-chip venue-pick-chip' + (chosenVenue === v.id ? ' signed' : ''),
+          `${v.icon} <b>${v.name}</b><br><span>${v.flavor} Build it by playing ${v.tags.join('/')} shows.</span>`);
+        chip.addEventListener('click', () => {
+          sfx.ui();
+          chosenVenue = chosenVenue === v.id ? null : v.id;
+          buildScreen();
+        });
+        vRow.append(chip);
+      }
+      s.append(vRow);
+      // Genre picker (Pass 21): optional sound identity
+      const genres = offerGenres(engine.mulberry32(seed + 7));
+      s.append(el('h3', 'contract-head', 'Optional: claim a sound'));
+      const gRow = el('div', 'genre-row');
+      for (const g of genres) {
+        const chip = el('button', 'contract-chip genre-chip' + (chosenGenre === g.id ? ' signed' : ''),
+          `${g.icon} <b>${g.name}</b> · ${g.blurb}<br><span>${g.flavor}</span>`);
+        chip.addEventListener('click', () => {
+          sfx.ui();
+          chosenGenre = chosenGenre === g.id ? null : g.id;
+          buildScreen();
+        });
+        gRow.append(chip);
+      }
+      s.append(gRow);
     }
-    s.append(vRow);
-    // Genre picker (Pass 21): optional sound identity
-    const genres = offerGenres(engine.mulberry32(seed + 7));
-    s.append(el('h3', 'contract-head', 'Optional: claim a sound'));
-    const gRow = el('div', 'genre-row');
-    for (const g of genres) {
-      const chip = el('button', 'contract-chip genre-chip' + (chosenGenre === g.id ? ' signed' : ''),
-        `${g.icon} <b>${g.name}</b> · ${g.blurb}<br><span>${g.flavor}</span>`);
-      chip.addEventListener('click', () => {
-        sfx.ui();
-        chosenGenre = chosenGenre === g.id ? null : g.id;
-        buildScreen();
-      });
-      gRow.append(chip);
-    }
-    s.append(gRow);
     // Contract picker (Pass 9): optional clause, at most one
     const contracts = save.unlockedContractIds(meta).map((id) => contractById(id)).filter(Boolean);
     if (contracts.length && !daily) {
@@ -310,7 +329,7 @@ function startNewRun(daily = false, comeback = false) {
     }
 
     // Sticky commit bar: always visible, states the full loadout
-    const inst = chosenInst ? instrumentById(chosenInst) : null;
+    const inst = chosenInst ? activePack.instrumentById(chosenInst) : null;
     const bar = el('div', 'start-bar');
     const extras = [
       chosenVenue ? venueById(chosenVenue)?.icon : null,
@@ -335,9 +354,10 @@ function renderInstrumentRow(s, offered, chosenId, onPick) {
     card.append(artFor(inst.art, 'pick-art'));
     const lv = masteryLevel(inst.id);
     card.append(el('h3', '', inst.name + (lv ? ` <span class="mastery">${'★'.repeat(lv)}</span>` : '')));
-    card.append(el('p', 'pick-flavor', inst.flavor));
+    card.append(el('p', 'pick-flavor', inst.flavor || ''));
     card.append(el('p', 'pick-mods', modsText(inst.modifiers) + (lv ? ` · Mastery +${lv} to all stats` : '')));
-    card.append(el('p', 'pick-quirk', `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`));
+    // A pack's "instruments" may not carry a signature quirk (mystery personas).
+    if (inst.quirk) card.append(el('p', 'pick-quirk', `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`));
     card.addEventListener('click', () => { sfx.ui(); onPick(inst.id); });
     row.append(card);
   }
@@ -390,7 +410,7 @@ function startGauntlet() {
     `${contract.icon} <b>${contract.name}</b> ×${contract.lpMult} LP — ${contract.desc}`));
   card.addEventListener('click', () => {
     sfx.commit();
-    run = engine.newRun(musicPack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+    run = engine.newRun(activePack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
     engine.applyMastery(run, masteryLevel(inst.id));
     run.seed = seed + 2;
     run.gauntlet = week;
@@ -457,7 +477,7 @@ function renderHud() {
   }
 
   const rail = el('div', 'stat-rail');
-  for (const key of ['skill', 'cred', 'creativity', 'network', 'burnout']) {
+  for (const key of [...activePack.manifest.stats, 'burnout']) {
     const v = run.stats[key];
     const item = el('div', 'stat' + (key === 'burnout' ? ' stat-burnout' : ''));
     item.dataset.stat = key;
@@ -483,11 +503,12 @@ function renderHud() {
     c.addEventListener('click', () => { sfx.ui(); showInspect(sheet); });
     gearRow.append(c);
   };
-  const inst = instrumentById(run.instrument);
+  const inst = activePack.instrumentById(run.instrument);
   chip('gear-chip inst-chip', inst.name, {
     art: inst.art, title: inst.name, lines: [
-      inst.flavor, `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`,
-      `Family: ${inst.family} — gear with a family requirement only works when it matches.`,
+      inst.flavor,
+      ...(inst.quirk ? [`<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`] : []),
+      ...(inst.family ? [`Family: ${inst.family} — gear with a family requirement only works when it matches.`] : []),
     ],
   });
   // Scene Weather (M2): the era this career happens inside
@@ -551,7 +572,7 @@ function renderHud() {
 
 function accActive(acc) {
   if (acc.compatibility?.universal) return true;
-  return (acc.compatibility?.families || []).includes(instrumentById(run.instrument).family);
+  return (acc.compatibility?.families || []).includes(activePack.instrumentById(run.instrument).family);
 }
 
 let currentCard = null;
@@ -806,7 +827,7 @@ function commitSwipe(side, dx = 0, dy = 0) {
     const mgMods: any = contractById(run.contract)?.mods || {};
     playMinigame(mgId, { run, rivalName: rivalById(run.rival)?.name, noSkip: !!mgMods.forceMinigames, relaxed: meta.settings.relaxedMinigames === true }).then(({ score, verdict, detail }) => {
       // instrument hook: some gear makes performance moments play easier
-      const mgHook = score == null ? 0 : (instrumentById(run.instrument)?.quirk?.hooks?.mgBonus || 0);
+      const mgHook = score == null ? 0 : (activePack.instrumentById(run.instrument)?.quirk?.hooks?.mgBonus || 0);
       let bonus = verdict.bonus + mgHook;
       // The Showman's Pact: botching on stage, under contract, hurts double
       if (verdict.label === 'BOTCHED' && mgMods.mgBotchDouble) bonus = verdict.bonus * 2;
@@ -1244,7 +1265,7 @@ function routeAdvance(step) {
 
 function startTutorial() {
   const seed = Math.floor(Math.random() * 1e9) + 1;
-  run = engine.newTutorialRun(musicPack, engine.mulberry32(seed));
+  run = engine.newTutorialRun(activePack, engine.mulberry32(seed));
   run.seed = seed + 2;
   save.saveRun(run);
   track('tutorial_start', { replay: !!meta.tutorialDone });
@@ -1382,7 +1403,7 @@ function showBrammies(step) {
 
 // What one closer does to the win gates, in plain language.
 function closerImpact(opt) {
-  const gates = musicPack.manifest.winGates[run.path] || {};
+  const gates = activePack.manifest.winGates[run.path] || {};
   const pathName = run.path ? PATHS[run.path].name : 'your path';
 
   if (opt.stat === 'pathProgress') {
@@ -1604,7 +1625,7 @@ function actInterstitial(step) {
 // ---------- Crossroads (spec §7.2) ----------
 
 function pathFit(pathId) {
-  const gates = musicPack.manifest.winGates[pathId];
+  const gates = activePack.manifest.winGates[pathId];
   const readings = Object.entries<number>(gates).map(([key, target]) => {
     const value = engine.gateValue(run, key);
     return { key, target, value, ratio: Math.min(1, value / target) };
@@ -1838,7 +1859,7 @@ function showExitInterview(endingKey, interview) {
 const TIER_EMOJI = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
 
 function shareTextFor(summary, lp) {
-  const inst = instrumentById(summary.instrument);
+  const inst = activePack.instrumentById(summary.instrument);
   const head = summary.gauntlet ? `BIG BREAK Gauntlet ${summary.gauntlet}`
     : summary.daily ? `BIG BREAK Daily ${summary.daily}` : 'BIG BREAK';
   const genre = summary.genre ? genreById(summary.genre) : null;
@@ -1941,7 +1962,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
       const text = shareTextFor(summary, lp);
       try {
         // Prefer a poster image via the native sheet (Pass 38)
-        const inst = instrumentById(summary.instrument);
+        const inst = activePack.instrumentById(summary.instrument);
         const genre = summary.genre ? genreById(summary.genre) : null;
         const res = summary.result ? summary.result.toUpperCase()
           : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[summary.endingKey] || 'GAME OVER';
@@ -2103,7 +2124,7 @@ function renderTrophies() {
     s.append(el('h3', 'wall-tier', 'Past Lives'));
     const hist = el('div', 'history-list');
     for (const h of meta.runHistory) {
-      const inst = instrumentById(h.instrument);
+      const inst = activePack.instrumentById(h.instrument);
       const res = h.result ? h.result.toUpperCase()
         : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[h.endingKey] || 'DNF';
       const pathName = h.path ? PATHS[h.path].name : '—';
@@ -2157,7 +2178,7 @@ function renderResume() {
   if (instRuns.length) {
     list.append(el('h3', 'wall-tier', 'Weapon of choice'));
     for (const [iid, st] of instRuns.slice(0, 3)) {
-      row(instrumentById(iid)?.name || iid, `${st.runs} run${st.runs === 1 ? '' : 's'}, ${st.wins} win${st.wins === 1 ? '' : 's'}`);
+      row(activePack.instrumentById(iid)?.name || iid, `${st.runs} run${st.runs === 1 ? '' : 's'}, ${st.wins} win${st.wins === 1 ? '' : 's'}`);
     }
   }
   s.append(list);

@@ -4,8 +4,15 @@
 import { INSTRUMENTS } from './data/instruments.js';
 import { WALL_ITEMS } from './data/meta.js';
 
-const META_KEY = 'bigbreak_meta_v1';
-const RUN_KEY = 'bigbreak_run_v1';
+// Per-game storage namespace. The music game keeps the original keys (so
+// existing players' saves survive); a second game (mystery) sets its own
+// suffix at boot so the two never clobber each other's meta or in-progress run.
+let NS = '';
+export function setSaveNamespace(ns: string): void {
+  NS = ns ? `_${ns}` : '';
+}
+const metaKey = () => `bigbreak_meta_v1${NS}`;
+const runKey = () => `bigbreak_run_v1${NS}`;
 
 function defaultMeta() {
   return {
@@ -40,26 +47,26 @@ function write(key, value) {
 // subsystems (lifetime.byPath/byInstrument, rivalCounts, minigamesPlayed…),
 // so it's typed as an open record during the strictness ramp.
 export function loadMeta(): any {
-  return { ...defaultMeta(), ...(read(META_KEY) || {}) };
+  return { ...defaultMeta(), ...(read(metaKey()) || {}) };
 }
 export function saveMeta(meta) {
-  write(META_KEY, meta);
+  write(metaKey(), meta);
 }
 
 export function loadRun() {
-  const run = read(RUN_KEY);
+  const run = read(runKey());
   return run && run.version === 1 && run.phase !== 'ended' ? run : null;
 }
 export function saveRun(state) {
-  write(RUN_KEY, state);
+  write(runKey(), state);
 }
 export function clearRun() {
-  try { localStorage.removeItem(RUN_KEY); } catch (e) {}
+  try { localStorage.removeItem(runKey()); } catch (e) {}
 }
 
 // Save portability: the whole career as a compact code
 export function exportSave() {
-  const payload = { v: 1, meta: read(META_KEY), run: read(RUN_KEY) };
+  const payload = { v: 1, meta: read(metaKey()), run: read(runKey()) };
   return 'BB1.' + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
 }
 
@@ -68,9 +75,9 @@ export function importSave(code) {
     const raw = code.trim().replace(/^BB1\./, '');
     const payload = JSON.parse(decodeURIComponent(escape(atob(raw))));
     if (!payload || payload.v !== 1 || typeof payload.meta !== 'object') return false;
-    if (payload.meta) write(META_KEY, payload.meta);
-    if (payload.run) write(RUN_KEY, payload.run);
-    else localStorage.removeItem(RUN_KEY);
+    if (payload.meta) write(metaKey(), payload.meta);
+    if (payload.run) write(runKey(), payload.run);
+    else localStorage.removeItem(runKey());
     return true;
   } catch (e) {
     return false;
@@ -79,8 +86,8 @@ export function importSave(code) {
 
 export function resetAll() {
   try {
-    localStorage.removeItem(META_KEY);
-    localStorage.removeItem(RUN_KEY);
+    localStorage.removeItem(metaKey());
+    localStorage.removeItem(runKey());
   } catch (e) {}
 }
 

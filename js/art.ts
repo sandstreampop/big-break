@@ -328,6 +328,7 @@ const SCENES = {
 };
 
 export function sceneFor(slot) {
+  if (!slot) return 'stage'; // cards/packs without an art slot get a neutral scene
   if (SCENE[slot]) return SCENE[slot];
   if (slot.startsWith('instrument_') || slot.startsWith('gear_')) return 'pedestal';
   return 'stage';
@@ -360,6 +361,7 @@ function svgFor(slot, vibe) {
 // Returns an element for the art slot (img if a real asset exists,
 // otherwise a generated SVG scene).
 export function artFor(slot, className = 'art', vibe = { fame: 0, network: 0, burnout: 0 }) {
+  slot = slot || 'scene_default'; // packs/cards without an art slot get a neutral tile
   const path = ASSET_MANIFEST[slot]?.path;
   if (path) {
     const img = document.createElement('img');
