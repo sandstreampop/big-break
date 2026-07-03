@@ -13,7 +13,7 @@
 // increment sites remain engine-side and untouched — no double-count, no
 // re-baseline. A pack that omits this plugin simply never charts songs.
 
-import { addSong, releaseSong, chartTick, deadlineAudit } from '../../engine.js';
+import { addSong, releaseSong, chartTick, deadlineAudit, crown } from '../../songs.js';
 import { collabArtistFor, songName } from '../../charts.js';
 import { genreById } from '../../data/genres.js';
 import { equippedActive } from '../../data/accessories.js';
@@ -63,7 +63,7 @@ export const songsPlugin: Plugin = {
         quality: 68 + Math.round((rng ? rng() : 0.5) * 12),
         origin: ev?.id || null, status: 'charting', hype: 60,
       });
-      if (!s.crowned) { s.crowned = true; state.hits += 1; }
+      if (!s.crowned) crown(state, s); // the instant classic always counts — one hits site
       (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true, viral: !!s.viral });
     }
     ctx.chartTitleHandled = !!effects.chartTitle;
@@ -156,9 +156,11 @@ export const songsPlugin: Plugin = {
     notes.push(...chartTick(state));
   },
 
-  // One last chart week before the career is judged.
+  // One last chart week before the career is judged, then the Deadline's final
+  // audit (act 3) — after the chart week, as the old finalePayout did.
   onFinale(state) {
     chartTick(state);
+    deadlineAudit(state, 3);
   },
   // #endregion act-break
 };

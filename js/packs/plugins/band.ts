@@ -10,7 +10,8 @@
 import { bandmateById, recruitCandidate } from '../../data/band.js';
 import { genreById } from '../../data/genres.js';
 import { songName } from '../../charts.js';
-import { addSong, stateRng, tagsIntersect } from '../../engine.js';
+import { addSong } from '../../songs.js';
+import { stateRng, tagsIntersect } from '../../engine.js';
 import type { Plugin } from '../../types.js';
 
 export const bandPlugin: Plugin = {

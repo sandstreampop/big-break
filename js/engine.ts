@@ -2,7 +2,7 @@
 // the same module runs in the browser and in tools/simulate.mjs.
 
 import { CONFIG } from './config.js';
-import type { Pack, RunState, Song, Plugin } from './types.js';
+import type { Pack, RunState, Plugin } from './types.js';
 
 // ---------- Injected content pack (Phase 2: IoC) ----------
 // The engine imports NO content module. All music-specific content arrives as
@@ -52,10 +52,6 @@ export function activePack(): Pack {
 // service so a subsystem (seeds) can inspect the deck without importing it.
 export function findEvent(id) {
   return PACK.events.find((e) => e.id === id) || PACK.tutorialEvents.find((e) => e.id === id) || null;
-}
-
-function contractMods(state): Record<string, any> {
-  return PACK.contractById(state.contract)?.mods || {};
 }
 
 // Act length can be shortened by a contract (Overnight Success) or bent
@@ -226,186 +222,6 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
   // Notebook's opening demo. Seeded draws land where the old inline ones did.
   firePlugins('onRunStart', state, rng);
   return state;
-}
-
-// ---------- Songs (first-class citizens) ----------
-// A song is written (demo), released (charting), climbs or fades. The Hot 10
-// ticks at every act break and the finale: position comes from quality +
-// hype + fame, hype decays, peaks are recorded, and cracking the top 3
-// crowns the song — THAT is what the hits counter counts from now on.
-
-export function ensureSongs(state) {
-  if (!state.songs) state.songs = [];
-  // migrate old saves: chart titles become charting songs
-  if (!state.songs.length && (state.chartTitles || []).length) {
-    for (const title of state.chartTitles) {
-      state.songs.push({
-        id: 'legacy_' + state.songs.length, title, quality: 58, hype: 40,
-        status: 'charting', origin: null, act: state.act,
-        pos: null, prevPos: null, peak: null, weeks: 0, crowned: false,
-      });
-    }
-    positionAll(state);
-  }
-  return state.songs;
-}
-
-function positionSong(state, s, rng) {
-  const power = s.quality * 0.45 + s.hype * 0.35 + Math.min(100, state.fame) * 0.25 + (rng() * 16 - 8);
-  if (power >= 88) return 1;
-  if (power < 30) return null;
-  return Math.max(1, Math.min(10, Math.round(11 - power / 9)));
-}
-
-function positionAll(state) {
-  const rng = stateRng(state);
-  for (const s of state.songs) {
-    if (s.status !== 'charting') continue;
-    s.pos = positionSong(state, s, rng);
-  }
-}
-
-export function addSong(state, { title, quality, origin = null, status = 'demo', hype = 0 }) {
-  ensureSongs(state);
-  const s: Song = {
-    id: 'song_' + (state.songs.length + 1) + '_' + (state.rngUses || 0),
-    title, quality: clamp(Math.round(quality), 1, 100), hype: clamp(Math.round(hype), 0, 100),
-    status: status as Song['status'], origin, act: state.act,
-    pos: null, prevPos: null, peak: null, weeks: 0, crowned: false,
-  };
-  state.songs.push(s);
-  // keep the legacy list in sync (discography, older UI paths)
-  state.chartTitles = state.chartTitles || [];
-  if (!state.chartTitles.includes(title)) state.chartTitles.unshift(title);
-  if (status === 'charting') debutSong(state, s);
-  return s;
-}
-
-export function releaseSong(state, songId, hype = 55) {
-  ensureSongs(state);
-  const s = state.songs.find((x) => x.id === songId);
-  if (!s || s.status === 'charting') return null;
-  s.status = 'charting';
-  // Scene Weather: some eras are kind to release day (Vinyl Revival…)
-  s.hype = clamp(Math.round(hype + (PACK.weatherHooks(state).releaseHype || 0)), 0, 100);
-  debutSong(state, s);
-  return s;
-}
-
-function debutSong(state, s) {
-  const rng = stateRng(state);
-  s.releasedAct = state.act; // The Deadline contract audits this
-  s.pos = positionSong(state, s, rng);
-  // U4: the overnight-viral jackpot — 1 in 20 releases catches the wave.
-  // Charts are the game's natural slot machine; this is the triple-7s.
-  if (s.pos && !state.tutorial && rng() < CONFIG.viralChance) {
-    s.viral = true;
-    s.hype = clamp(s.hype + 30, 0, 100);
-    s.pos = Math.max(1, s.pos - CONFIG.viralPosBoost);
-  }
-  if (s.pos) {
-    s.weeks = 1;
-    s.peak = s.pos;
-    crownCheck(state, s);
-  }
-}
-
-// The Deadline contract: a song must ship every act. Called at each act
-// break (auditing the act that just ended) and once more at the finale.
-export function deadlineAudit(state, act) {
-  const dl = contractMods(state).releaseDeadline;
-  if (!dl) return [];
-  const shipped = (state.songs || []).some((s) => s.releasedAct === act);
-  if (shipped) return [`📠 The Deadline: act ${act} shipped. The label is quiet, which is love.`];
-  // The penalty stat is named by the contract mod, not the engine (WP3): the
-  // 'cred' literal was the last music-stat name in this audit. (The whole audit
-  // moves to the songs subsystem in WP6.)
-  state.fame = Math.max(0, state.fame - dl.fameLoss);
-  state.stats[dl.stat] = clamp(state.stats[dl.stat] - dl.statLoss, 0, 100);
-  return [`📠 The Deadline: nothing shipped in act ${act}. The label notes the silence. −${dl.fameLoss} Fame, −${dl.statLoss} ${dl.statLabel}`];
-}
-
-function crownCheck(state, s, notes?) {
-  if (s.pos && s.pos <= 3 && !s.crowned) {
-    s.crowned = true;
-    state.hits += 1;
-    if (notes) notes.push(`♪ “${s.title}” cracks the top 3 — that’s a HIT`);
-    return true;
-  }
-  return false;
-}
-
-// One chart week passes: act breaks and the finale call this. Returns notes
-// (strings) and records the structured week on state.lastChartWeek so the
-// act interstitial can stage it as a real moment (resume-safe: plain data).
-export function chartTick(state) {
-  ensureSongs(state);
-  const rng = stateRng(state);
-  const notes = [];
-  const moves = [];
-  for (const s of state.songs) {
-    if (s.status !== 'charting') continue;
-    s.prevPos = s.pos ?? null;
-    s.pos = positionSong(state, s, rng);
-    if (s.pos) {
-      s.weeks += 1;
-      if (s.peak == null || s.pos < s.peak) s.peak = s.pos;
-      if (crownCheck(state, s, notes)) {
-        moves.push({ title: s.title, kind: 'crown', from: s.prevPos, to: s.pos, weeks: s.weeks });
-      } else if (!s.prevPos) {
-        notes.push(`♪ “${s.title}” debuts at #${s.pos}`);
-        moves.push({ title: s.title, kind: 'debut', from: null, to: s.pos, weeks: s.weeks });
-      } else if (s.pos < s.prevPos) {
-        notes.push(`♪ “${s.title}” climbs to #${s.pos}`);
-        moves.push({ title: s.title, kind: 'climb', from: s.prevPos, to: s.pos, weeks: s.weeks });
-      } else if (s.pos > s.prevPos) {
-        notes.push(`♪ “${s.title}” slips to #${s.pos}`);
-        moves.push({ title: s.title, kind: 'slip', from: s.prevPos, to: s.pos, weeks: s.weeks });
-      } else {
-        moves.push({ title: s.title, kind: 'hold', from: s.prevPos, to: s.pos, weeks: s.weeks });
-      }
-    } else {
-      if (s.prevPos) {
-        notes.push(`♪ “${s.title}” drops off the Hot 10 after ${s.weeks} week${s.weeks === 1 ? '' : 's'}`);
-        moves.push({ title: s.title, kind: 'drop', from: s.prevPos, to: null, weeks: s.weeks });
-      }
-      s.status = 'faded';
-    }
-    s.hype = Math.round(s.hype * 0.55);
-  }
-  // The chart war: your best song vs the rival's single, same ten slots
-  const best = state.songs.filter((s) => s.status === 'charting' && s.pos)
-    .sort((a, b) => a.pos - b.pos)[0];
-  if (best) {
-    const rp = rivalChartPos(state);
-    if (best.pos < rp && !state.flags.includes('chart_passed_rival')) {
-      state.flags.push('chart_passed_rival');
-      notes.push(`♪ “${best.title}” passes your rival on the chart. First blood.`);
-      moves.push({ title: best.title, kind: 'rivalPassed', from: rp, to: best.pos, weeks: best.weeks });
-    } else if (Math.abs(best.pos - rp) === 1) {
-      moves.push({ title: best.title, kind: 'rivalNeck', from: rp, to: best.pos, weeks: best.weeks });
-    }
-  }
-  state.lastChartWeek = moves.length ? { act: state.act, moves } : null;
-  return notes;
-}
-
-// Where the rival's single sits on the Hot 10 (shared with charts.js so the
-// rendered chart and the chart-war logic never disagree): they start high
-// and sink as your fame grows — but a hot rivalry keeps them sharp.
-export function rivalChartPos(state) {
-  return Math.max(1, Math.min(10,
-    9 - Math.floor(state.fame / 22) - Math.floor((state.rivalry ?? 3) / 3)));
-}
-
-// The song most worth talking about right now (for {song} templating)
-export function flagshipSong(state) {
-  ensureSongs(state);
-  const charting = state.songs.filter((s) => s.status === 'charting' && s.pos);
-  if (charting.length) return charting.sort((a, b) => a.pos - b.pos)[0];
-  const demos = state.songs.filter((s) => s.status === 'demo');
-  if (demos.length) return demos[demos.length - 1];
-  return state.songs[state.songs.length - 1] || null;
 }
 
 // The First Gig: a scripted 9-card onboarding run. Fixed teaching stats so
@@ -1118,14 +934,6 @@ function startAct(state, act) {
   return notes;
 }
 
-// The Deadline contract's final audit when the career is evaluated. Hustle
-// income at the finale now lands via hustlePlugin.onFinale (fired just before
-// this in evaluateFinale); the deadline audit relocates to the songs subsystem
-// in WP6. Notes are collected for parity but evaluateFinale discards them.
-export function finalePayout(state) {
-  return [...deadlineAudit(state, 3)];
-}
-
 export function checkFailStates(state) {
   if (state.tutorial) return null; // the first gig cannot end a career
   // The one universal fail: the engine owns the burnout slot, so every pack
@@ -1151,8 +959,10 @@ export function checkFailStates(state) {
 
 export function evaluateFinale(state) {
   state.phase = 'ended';
-  firePlugins('onFinale', state); // songs plugin: one last chart week (Phase 4.5)
-  finalePayout(state);
+  // Finale subsystem hooks: the songs plugin runs one last chart week and the
+  // Deadline's final audit; the hustle plugin pays its last income. All finale
+  // payout lives in the plugins now — the engine owns none of it.
+  firePlugins('onFinale', state);
   const gates = PACK.manifest.winGates[state.path] as Record<string, number>;
   const readings = Object.entries(gates).map(([key, target]) => {
     const value = gateValue(state, key);

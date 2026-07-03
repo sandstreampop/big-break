@@ -18,6 +18,7 @@
 //            branch; any unfilled {token} or "undefined" leaking into copy fails
 
 import * as engine from '../dist/js/engine.js';
+import { addSong } from '../dist/js/songs.js';
 import { PACKS } from '../dist/js/packs/registry.js';
 import { musicPack } from '../dist/js/packs/music.js';
 import { generateDMs } from '../dist/js/dms.js';
@@ -55,10 +56,10 @@ const DESCRIPTORS = {
       st.band = ['nadia', 'fish', 'ludo'];
       st.flags.push('superfan', 'fan_family', 'room_saved', 'album_out', 'dedication_private',
         'chart_passed_rival', 'someone', 'home_studio', 'song_finished', 'mg_golden', 'constellation');
-      engine.addSong(st, { title: 'Maximal Hit', quality: 92, status: 'charting', hype: 90 });
-      engine.addSong(st, { title: 'Faded One', quality: 50, status: 'charting', hype: 10 });
+      addSong(st, { title: 'Maximal Hit', quality: 92, status: 'charting', hype: 90 });
+      addSong(st, { title: 'Faded One', quality: 50, status: 'charting', hype: 10 });
       st.songs[1].status = 'faded'; st.songs[1].peak = 7; st.songs[1].weeks = 1;
-      engine.addSong(st, { title: 'Vault Best', quality: 75, status: 'demo' });
+      addSong(st, { title: 'Vault Best', quality: 75, status: 'demo' });
       return [
         ...generateDMs(st, 99).map((d) => d.text),
         ...generateHeadlines(st, 99).map((h) => h.text),

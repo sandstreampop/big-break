@@ -4,7 +4,7 @@
 // rival is always lurking somewhere in it.
 
 import { rivalById } from './data/rivals.js';
-import { rivalChartPos } from './engine.js';
+import { rivalChartPos } from './songs.js';
 
 function mulberry32(a) {
   return function () {

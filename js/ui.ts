@@ -6,6 +6,7 @@ import { rivalById } from './data/rivals.js';
 import { accessoryById } from './data/accessories.js';
 import { equipAccessory } from './packs/plugins/gear.js';
 import { signContract } from './packs/plugins/contract.js';
+import { ensureSongs, releaseSong, flagshipSong } from './songs.js';
 import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
 import { musicPack } from './packs/music.js';
@@ -58,7 +59,7 @@ function fillText(s) {
   return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe)
     .replaceAll('{genre}', g ? g.name : 'your genre')
     .replaceAll('{collabArtist}', collabArtistFor(run))
-    .replaceAll('{song}', engine.flagshipSong(run)?.title || 'the song')
+    .replaceAll('{song}', flagshipSong(run)?.title || 'the song')
     .replaceAll('{hitSong}', (run.songs || []).find((x) => x.crowned)?.title || 'the hit')
     .replaceAll('{fadedSong}', (run.songs || []).find((x) => x.status === 'faded' && x.peak)?.title || 'your old single')
     .replaceAll('{venue}', venueById(run.venue)?.name || 'the venue');
@@ -1069,7 +1070,7 @@ function showChart() {
   box.append(list);
 
   // The Songbook: every song you've written, in whatever state it's in
-  const songs = (engine.ensureSongs(run) || []).slice().reverse();
+  const songs = (ensureSongs(run) || []).slice().reverse();
   if (songs.length) {
     box.append(el('div', 'trades-head songbook-head', '♪ YOUR SONGBOOK'));
     const book = el('div', 'songbook');
@@ -1524,7 +1525,7 @@ function renderFinalSet() {
       title: `“${vault.title}” (unreleased)`,
       blurb: 'Debut the vault song. Right now. Live. Careers should end on a first.',
       stat: 'cred', amount: 3, label: '+3 Cred · releases it tonight',
-      apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 3); engine.releaseSong(run, vault.id, 58); },
+      apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 3); releaseSong(run, vault.id, 58); },
     });
   }
   options.push({ title: '“The Deep Cut”', blurb: 'Track 9. The heads nod. The heads matter.', stat: 'cred', amount: 4, label: '+4 Cred', apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 4); } });
