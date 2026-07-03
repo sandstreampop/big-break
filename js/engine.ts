@@ -12,36 +12,15 @@ import type { Pack, RunState, Plugin } from './types.js';
 // used to import PACK.events / instruments / venues / arcs / weather / etc.
 let PACK: Pack;
 
-// Fill absent OPTIONAL capabilities with inert defaults (Phase E — ISP). The
-// engine feature-detects a genre's capabilities by letting a pack omit the ones
-// it doesn't use; normalizing once here means the rest of the engine can call
-// PACK.rollWeather / accessoryById / etc unconditionally without a stub in
-// every pack. A pack that provides a capability is untouched (byte-green); a
-// pack that omits it gets a no-op, so the mystery/probe stubs delete entirely.
-function normalizePack(pack: Pack): Pack {
-  const none = () => null;
-  return {
-    ...pack,
-    instruments: pack.instruments || [],
-    instrumentById: pack.instrumentById || none,
-    accessories: pack.accessories || [],
-    accessoryById: pack.accessoryById || none,
-    gearPool: pack.gearPool || (() => []),
-    arcs: pack.arcs || [],
-    arcById: pack.arcById || none,
-    contractById: pack.contractById || none,
-    genreById: pack.genreById || none,
-    hustleById: pack.hustleById || none,
-    bandmateById: pack.bandmateById || none,
-    recruitCandidate: pack.recruitCandidate || none,
-    rollSeeds: pack.rollSeeds || (() => []),
-    rollWeather: pack.rollWeather || (() => null),
-    weatherHooks: pack.weatherHooks || (() => ({})),
-  };
-}
-
+// The active pack is used directly (WP7). Every music subsystem the engine used
+// to reach for by name — accessories, arcs, contracts, genres, hustles, band,
+// weather, seeds — now lives in that pack's plugins, which own their data. So
+// the engine no longer needs to inject inert stubs for a genre that omits a
+// subsystem: it never calls a subsystem provider at all. The irreducible Pack
+// (id, manifest, events, tutorialEvents, instruments) plus its optional plugins/
+// presenter/perks/interstitials is the whole surface the core touches.
 export function useContentPack(pack: Pack): void {
-  PACK = normalizePack(pack);
+  PACK = pack;
 }
 export function activePack(): Pack {
   return PACK;
@@ -130,7 +109,7 @@ export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
 }
 
 export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.random, perks = []) {
-  PACK = normalizePack(pack); // this run's content pack; also settable via useContentPack
+  PACK = pack; // this run's content pack; also settable via useContentPack
   const inst = PACK.instrumentById(instrumentId);
   // Stats are the pack's, not a hardwired list: roll each core stat in manifest
   // order (music order skill→cred→creativity→network keeps the seeded draws
@@ -207,7 +186,7 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
     : null;
   if (inst) {
     for (const [k, v] of Object.entries(inst.modifiers || {})) {
-      if (k in state.stats) state.stats[k] = clamp(state.stats[k] + v, 1, 100);
+      if (k in state.stats) state.stats[k] = clamp(state.stats[k] + (v as number), 1, 100);
     }
   }
   // Career Wall perks: always-on run-start bonuses. Pack-declared (D.1) — the

@@ -25,6 +25,7 @@ import { generateDMs } from '../dist/js/dms.js';
 import { generateHeadlines } from '../dist/js/headlines.js';
 import { buildEpilogue } from '../dist/js/epilogue.js';
 import { WEATHER } from '../dist/js/data/weather.js';
+import { ARCS as MUSIC_ARCS } from '../dist/js/data/arcs.js';
 
 // Requires keys are the engine's generic deck-eligibility vocabulary (the
 // Requires type), shared by every pack.
@@ -44,6 +45,9 @@ const DESCRIPTORS = {
   music: {
     tokens: ['song', 'hitSong', 'fadedSong', 'venue', 'rival', 'rivalVibe', 'genre', 'collabArtist'],
     weatherIds: WEATHER.map((w) => w.id),
+    // Story-arc data now lives in the music seeds plugin's data module, not on
+    // the Pack (WP7), so the linter reads it from the descriptor.
+    arcs: MUSIC_ARCS,
     // The maximal-state reactive-text exerciser: one run state that lights up
     // every generator branch at once, so an unfilled token or undefined leak
     // in DMs/headlines/epilogue fails the lint.
@@ -78,7 +82,7 @@ let totalReactive = 0;
 for (const pack of PACKS) {
   const desc = DESCRIPTORS[pack.id] || { tokens: [], weatherIds: [] };
   const EVENTS = pack.events;
-  const ARCS = pack.arcs || [];
+  const ARCS = desc.arcs || [];
   const knownTokens = new Set(desc.tokens);
   const weatherIds = new Set(desc.weatherIds);
   const tag = (msg) => issues.push(`[${pack.id}] ${msg}`);

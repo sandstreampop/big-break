@@ -10,11 +10,10 @@
 // manifest actually exists (Phase 2/3); this file types what is real today.
 
 // ---------- Stat / resource taxonomy ----------
-// The four core stats the engine iterates as STATS (burnout is tracked in
-// state.stats too but handled by its own block, not in this list).
-export type StatId = 'skill' | 'cred' | 'creativity' | 'network';
-// Resources with bespoke handlers in applyEffects (Phase 3 genericizes these).
-export type ResourceId = 'fame' | 'money' | 'hits' | 'pathProgress' | 'rivalry';
+// The stat/resource NAMES a run carries are the pack manifest's, not a shared
+// union: a run's stats are Record<string, number> (RunState.stats), read
+// generically off manifest.stats. (The old music-specific StatId/ResourceId
+// unions are gone — WP7 — so the shared types name no genre's stats.)
 export type Tier = 'bad' | 'good' | 'incredible';
 export type Side = 'left' | 'right';
 // forceTier may also script the encore-gated tutorial outcome.
@@ -337,38 +336,21 @@ export interface Pack {
   // run always starts as SOMEONE.
   instruments: any[];
   instrumentById: (id: string) => any;
-  // Optional pack capabilities (Phase E — ISP). The engine feature-detects
-  // each: a genre that doesn't ship a subsystem simply omits its provider and
-  // the engine substitutes an inert default (see normalizePack). Mystery
-  // declares the handful it uses; the probe declares none. (Venue/rival data
-  // are consumed by those plugins via direct import, so they aren't Pack
-  // fields — a pack's plugins own their own content.)
+  // Optional capabilities the engine feature-detects (Phase E — ISP). A genre
+  // that doesn't ship one simply omits it. Every music SUBSYSTEM (accessories,
+  // arcs, contracts, genres, hustles, band, weather, seeds) is GONE from this
+  // type (WP7): those live in the pack's plugins, which own their data by direct
+  // import — exactly as venue/rival always did. Adding a genre edits new files
+  // only; this type names no genre.
   interstitials?: InterstitialRule[];
   tutorialStart?: TutorialStart;
   presenter?: Presenter;
   perks?: Record<string, PerkDef>;
-  // Comeback mode (WP3): an optional pack-provided run transform applied at run
-  // start when the player has unlocked it (a music career restarts as a faded
-  // name). Feature-detected — a pack without a comeback mode omits it. Music's
-  // hardcodes cred/network, so it lives with the pack, not the core.
+  // Comeback mode: an optional pack-provided run transform applied at run start
+  // when the player has unlocked it (a music career restarts as a faded name).
+  // Feature-detected — a pack without one omits it. Music's hardcodes its own
+  // stats, so it lives with the pack, not the core.
   comeback?: (state: RunState) => void;
-  accessories?: any[];
-  accessoryById?: (id: string) => any;
-  // The random-gear shelf pools (WP2): candidate accessory ids for a
-  // random_basic/random_good grant. `forShelf` picks the multi-candidate shop
-  // shelf vs the single-grant fallback list. The engine does the generic
-  // filter/sample; the content (which ids) is the pack's.
-  gearPool?: (grant: string, forShelf: boolean) => string[];
-  arcs?: any[];
-  arcById?: (id: string) => any;
-  contractById?: (id: string) => any;
-  hustleById?: (id: string) => any;
-  genreById?: (id: string) => any;
-  bandmateById?: (id: string) => any;
-  recruitCandidate?: (state: any, rng?: () => number) => any;
-  rollSeeds?: (rng: () => number, count: number) => string[];
-  weatherHooks?: (state: any) => Record<string, any>;
-  rollWeather?: (rng: () => number) => string | null;
 }
 
 // ---------- Runtime run state ----------
@@ -399,7 +381,7 @@ export interface RunState {
   version: number;
   phase: string;
   act: number;
-  stats: Record<StatId | 'burnout', number>;
+  stats: Record<string, number>;
   fame: number;
   money: number;
   hits: number;
@@ -424,7 +406,7 @@ export interface GameEvent {
   flashpoint?: boolean;
   shop?: boolean;
   prompt?: string;
-  promptNemesis?: string;
+  promptAlt?: string;   // an alternate prompt the presenter/UI may show in place of `prompt`
   context?: string;
   art?: string;
   coach?: string;      // tutorial coaching text

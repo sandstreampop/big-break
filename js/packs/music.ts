@@ -6,13 +6,6 @@
 import { EVENTS } from '../data/events.js';
 import { TUTORIAL_EVENTS } from '../data/tutorial.js';
 import { INSTRUMENTS, instrumentById } from '../data/instruments.js';
-import { ACCESSORIES, accessoryById, gearPool } from '../data/accessories.js';
-import { contractById } from '../data/contracts.js';
-import { hustleById } from '../data/hustles.js';
-import { genreById } from '../data/genres.js';
-import { bandmateById, recruitCandidate } from '../data/band.js';
-import { ARCS, arcById, rollSeeds } from '../data/arcs.js';
-import { weatherHooks, rollWeather } from '../data/weather.js';
 import { musicManifest } from './music-manifest.js';
 import { venuePlugin } from './plugins/venue.js';
 import { rivalPlugin } from './plugins/rival.js';
@@ -107,19 +100,10 @@ export const musicPack: Pack = {
   presenter: musicPresenter,
   perks: MUSIC_PERKS,
   comeback: musicComeback,
+  // The loadout is the only content the CORE reads directly (a run always starts
+  // as someone). Every other music subsystem's data — accessories, arcs,
+  // contracts, genres, hustles, band, weather, seeds — lives inside its plugin
+  // (above), imported straight from the data modules. Nothing else on the Pack.
   instruments: INSTRUMENTS,
-  accessories: ACCESSORIES,
-  gearPool,
-  arcs: ARCS,
   instrumentById,
-  accessoryById,
-  contractById,
-  hustleById,
-  genreById,
-  bandmateById,
-  recruitCandidate,
-  arcById,
-  rollSeeds,
-  weatherHooks,
-  rollWeather,
 };

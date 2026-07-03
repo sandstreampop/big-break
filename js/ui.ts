@@ -712,7 +712,7 @@ function dealCard() {
   card.append(el('div', 'card-context', fillText(ev.context)));
   // Some cards carry a richer text variant when the rival is a true
   // cross-run nemesis (3rd+ meeting) rather than an in-run feud.
-  card.append(el('div', 'card-prompt', fillText(run.nemesis && ev.promptNemesis ? ev.promptNemesis : ev.prompt)));
+  card.append(el('div', 'card-prompt', fillText(run.nemesis && ev.promptAlt ? ev.promptAlt : ev.prompt)));
   const hintL = el('div', 'swipe-hint hint-left', '');
   const hintR = el('div', 'swipe-hint hint-right', '');
   card.append(hintL, hintR);
