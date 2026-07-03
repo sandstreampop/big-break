@@ -19,6 +19,7 @@ import { rivalPlugin } from './plugins/rival.js';
 import { bandPlugin } from './plugins/band.js';
 import { songsPlugin } from './plugins/songs.js';
 import { musicPresenter } from './music-presenter.js';
+import { MUSIC_PERKS } from './music-perks.js';
 import type { Pack, RunState } from '../types.js';
 
 // "You have a hit" — the condition on the songs-era coping interstitial. Reads
@@ -59,6 +60,7 @@ export const musicPack: Pack = {
   // The First Gig onboarding run's fixed teaching setup (D.3).
   tutorialStart: { instrument: 'melodica', stats: { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 }, money: 40, fame: 0 },
   presenter: musicPresenter,
+  perks: MUSIC_PERKS,
   instruments: INSTRUMENTS,
   accessories: ACCESSORIES,
   arcs: ARCS,

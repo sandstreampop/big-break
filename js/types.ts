@@ -204,6 +204,23 @@ export interface InterstitialRule {
   cond?: (state: RunState) => boolean; // extra pack-owned condition
 }
 
+// A Career-Wall perk: an always-on run modifier (D.1). Pack-declared, so the
+// engine stops branching on ~14 hardcoded music perk ids. Each perk supplies
+// only the hooks/knobs it needs; the engine sums/applies them generically at
+// the matching lifecycle point. The knobs (pity, encore cap, gear retention,
+// burnout heal, hustle income) are ENGINE mechanics, so a second genre's perks
+// can bend the same dials — the string ids and the arithmetic are the pack's.
+export interface PerkDef {
+  onRunStart?(state: RunState): void;             // run-start bumps (money/stats/flags/encore)
+  onActBreak?(state: RunState, notes: string[]): void; // per-act income/heal, pushes notes
+  pityPerBonus?: number;                          // adds to the per-bad pity step
+  pityCapBonus?: number;                          // adds to the pity ceiling
+  encoreCapBonus?: number;                         // raises the banked-encore cap
+  keepGearOnBad?: boolean;                          // gear survives a Bad outcome
+  burnoutHealMult?: number;                         // scales burnout RELIEF (negative deltas)
+  hustleMult?: number;                              // scales hustle income per act
+}
+
 // The scripted onboarding run's fixed setup (D.3): teaching stats and the
 // starting persona, declared by the pack instead of hardcoded music values.
 export interface TutorialStart {
@@ -253,6 +270,7 @@ export interface Pack {
   interstitials?: InterstitialRule[];
   tutorialStart?: TutorialStart;
   presenter?: Presenter;
+  perks?: Record<string, PerkDef>;
   accessories?: any[];
   accessoryById?: (id: string) => any;
   arcs?: any[];

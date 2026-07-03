@@ -257,16 +257,11 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
       if (k in state.stats) state.stats[k] = clamp(state.stats[k] + v, 1, 100);
     }
   }
-  // Career Wall perks: always-on run-start bonuses
+  // Career Wall perks: always-on run-start bonuses. Pack-declared (D.1) — the
+  // engine runs each perk's onRunStart; it no longer names any perk. The bumps
+  // touch independent fields, so order is immaterial (byte-green).
   state.perks = perks;
-  if (perks.includes('savings')) state.money += 120;
-  if (perks.includes('demo') && !state.flags.includes('demo_in_pocket')) state.flags.push('demo_in_pocket');
-  if (perks.includes('calluses')) state.stats.skill = clamp(state.stats.skill + 6, 1, 100);
-  if (perks.includes('couch')) state.stats.network = clamp(state.stats.network + 6, 1, 100);
-  if (perks.includes('warmup')) state.encore = 1; // walk in with one banked
-  if (perks.includes('perfect_pitch')) state.stats.creativity = clamp(state.stats.creativity + 6, 1, 100);
-  if (perks.includes('stage_legs')) state.stats.cred = clamp(state.stats.cred + 6, 1, 100);
-  if (perks.includes('headliner')) state.fame += 8; // somebody remembers the name
+  for (const p of activePerks(state)) p.onRunStart?.(state);
   state.money += PACK.weatherHooks(state).startMoney || 0; // Scene Weather walk-in
   // Run-start subsystem hook (fired here, at the tail of construction, so any
   // seeded draw lands where the old inline notebook-perk draw did). The songs
@@ -713,6 +708,23 @@ function firePlugins(hook: PluginHook, ...args: any[]): void {
   }
 }
 
+// ---------- Perks (Career-Wall modifiers, pack-declared — D.1) ----------
+// The active run's perk definitions, looked up from the pack's perk table. The
+// engine no longer knows any perk id; it sums/applies whatever the perks
+// declare at the matching lifecycle point.
+function activePerks(state): import('./types.js').PerkDef[] {
+  const table = PACK.perks || {};
+  return (state.perks || []).map((id) => table[id]).filter(Boolean);
+}
+// Product of a numeric perk knob across the active perks (default 1 → identity).
+function perkMult(state, key: string): number {
+  return activePerks(state).reduce((m, p) => m * ((p as any)[key] ?? 1), 1);
+}
+// Sum of a numeric perk knob across the active perks (default 0).
+function perkSum(state, key: string): number {
+  return activePerks(state).reduce((n, p) => n + ((p as any)[key] ?? 0), 0);
+}
+
 // Roll components for a choice; used by both resolution and the risk tell.
 // opts.encore adds the armed-Encore bonus so odds and rolls stay in sync.
 export function rollComponents(state, choice, opts: any = {}) {
@@ -756,8 +768,8 @@ export function rollComponents(state, choice, opts: any = {}) {
   }
 
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
-  const pityPer = CONFIG.pityPerBad + ((state.perks || []).includes('thick_skin') ? 3 : 0);
-  const pityBonus = Math.min((state.badStreak || 0) * pityPer, CONFIG.pityCap + ((state.perks || []).includes('thick_skin') ? 6 : 0));
+  const pityPer = CONFIG.pityPerBad + perkSum(state, 'pityPerBonus');
+  const pityBonus = Math.min((state.badStreak || 0) * pityPer, CONFIG.pityCap + perkSum(state, 'pityCapBonus'));
   const cMods = contractMods(state);
   // Contract clauses can bend tag-matched rolls (Stage Fright, Analog Only…)
   for (const tb of cMods.rollTagBonus || []) {
@@ -843,7 +855,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   (state.tierLog = state.tierLog || []).push(tier);
   (state.cardLog = state.cardLog || []).push({ e: ev.id, t: tier, a: state.act, s: side });
   let encoreEarned = false;
-  const encoreCap = (state.perks || []).includes('crowdwork') ? CONFIG.encoreCap + 1 : CONFIG.encoreCap;
+  const encoreCap = CONFIG.encoreCap + perkSum(state, 'encoreCapBonus');
   if (tier === 'incredible' && (state.encore || 0) < encoreCap && !contractMods(state).disableEncore) {
     state.encore = (state.encore || 0) + 1;
     encoreEarned = true;
@@ -934,7 +946,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
 
   // Lucky Pick-style gear: lost when it applied and things went Bad
   // (the Roadie Insurance perk keeps it bolted down)
-  if (tier === 'bad' && !(state.perks || []).includes('insurance')) {
+  if (tier === 'bad' && !activePerks(state).some((p) => p.keepGearOnBad)) {
     for (const acc of c.appliedAccessories) {
       if (acc.loseOnBad && state.accessories.includes(acc.id)) {
         state.accessories = state.accessories.filter((a) => a !== acc.id);
@@ -1022,7 +1034,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     if (v > 0 && cMods.burnoutGainMult) v *= cMods.burnoutGainMult;
     if (v > 0 && wHooks.burnoutGainMult) v *= wHooks.burnoutGainMult;
     if (v < 0 && cMods.burnoutHealMult) v *= cMods.burnoutHealMult;
-    if (v < 0 && (state.perks || []).includes('therapist')) v *= 1.25;
+    if (v < 0) v *= perkMult(state, 'burnoutHealMult');
     v = Math.round(v);
     if (v) {
       const before = state.stats.burnout;
@@ -1275,31 +1287,13 @@ function startAct(state, act) {
     const h = PACK.hustleById(id);
     if (h) {
       const pay = Math.round(h.moneyPerAct * (PACK.weatherHooks(state).hustleMult || 1) *
-        ((state.perks || []).includes('cheap_rent') ? 1.2 : 1));
+        perkMult(state, 'hustleMult'));
       state.money += pay;
       notes.push(`${h.icon} ${h.name}: +$${pay}`);
     }
   }
-  // Career Wall perks that fire at every act break
-  const perks = state.perks || [];
-  if (perks.includes('merch_table')) {
-    state.money += 45;
-    notes.push('🧺 The Folding Merch Table: +$45');
-  }
-  if (perks.includes('street_team')) {
-    state.fame += 2;
-    notes.push('📣 The Street Team: +2 Fame (the flyers went up overnight)');
-  }
-  if (perks.includes('roadie_friend') && state.stats.burnout > 0) {
-    const before = state.stats.burnout;
-    state.stats.burnout = Math.max(0, before - 3);
-    if (state.stats.burnout !== before) notes.push('🧤 A Friend With A Truck: −3 Burnout');
-  }
-  if (perks.includes('archivist')) {
-    const demos = (state.songs || []).filter((s) => s.status === 'demo');
-    for (const d of demos) d.quality = clamp(d.quality + 2, 1, 100);
-    if (demos.length) notes.push(`🗃️ The Archivist: ${demos.length} vault demo${demos.length === 1 ? '' : 's'} +2 quality`);
-  }
+  // Career Wall perks that fire at every act break (pack-declared — D.1).
+  for (const p of activePerks(state)) p.onActBreak?.(state, notes);
   // Act-break plugins (Phase 4.4 band quirks, then Phase 4.5 songs: deadline
   // audit + chart week). Registration order [band, songs] reproduces the old
   // inline order — band quirks (notebook draws RNG) before the audit/tick.
@@ -1321,7 +1315,7 @@ export function finalePayout(state) {
     const h = PACK.hustleById(id);
     if (h) {
       const pay = Math.round(h.moneyPerAct * (PACK.weatherHooks(state).hustleMult || 1) *
-        ((state.perks || []).includes('cheap_rent') ? 1.2 : 1));
+        perkMult(state, 'hustleMult'));
       state.money += pay;
       notes.push(`${h.icon} ${h.name}: +$${pay}`);
     }
