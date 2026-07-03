@@ -137,7 +137,13 @@ export function simulateRun(seed, policy) {
         }
       }
       const result = engine.resolveSwipe(state, side, play, { encore: armEncore, bonus: mgBonus });
-      cards.push({ id: ev.id, side, tier: result.tier, act, spike: isSpike(result), flashpoint: !!ev.flashpoint });
+      cards.push({
+        id: ev.id, side, tier: result.tier, act,
+        spike: isSpike(result), flashpoint: !!ev.flashpoint,
+        // stat/resource deltas this card moved — the golden master's finest
+        // behavioral grain (a refactor that shifts any number trips here)
+        deltas: result.deltas.map((d) => [d.key, d.amount]),
+      });
       const pend = result.deltas.pendingGear ||
         (result.deltas.pendingGearChoices ? result.deltas.pendingGearChoices[0] : null);
       if (pend) {
@@ -162,3 +168,29 @@ export function simulateRun(seed, policy) {
     state,
   };
 }
+
+// Comprehensive, JSON-serializable snapshot of one run's RUNTIME behavior —
+// the golden-master oracle. Captures the tier/card log with per-card deltas,
+// finale readings, LP, and the full run summary (stats, resources, songs,
+// band, flags, chart peak). A byte-green refactor must reproduce this
+// object exactly; any diff is a behavior change to explain, not accept.
+export function runTrace(seed, policy) {
+  const run = simulateRun(seed, policy);
+  const s = run.state;
+  return {
+    seed, policy,
+    cards: run.cards,
+    dry: run.dry,
+    finale: run.finale
+      ? { path: run.finale.path, result: run.finale.result,
+          readings: run.finale.readings.map((r) => ({
+            key: r.key, target: r.target, value: r.value, met: r.met,
+            ratio: Number(r.ratio.toFixed(6)),
+          })) }
+      : null,
+    gameover: run.gameover,
+    lp: run.lp,
+    summary: engine.runSummary(s),
+  };
+}
+
