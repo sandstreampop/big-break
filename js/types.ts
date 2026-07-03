@@ -32,10 +32,18 @@ export interface PromiseSpec {
   penalty?: Effect;
 }
 
+// Effect keys are partly PACK-DEFINED (core stats/resources are named by each
+// pack's manifest). Rather than open the type with an index signature (which
+// would forfeit hallucinated-key detection), we ENUMERATE every registered
+// pack's numeric keys. Two packs today: music (skill/cred/…) and mystery
+// (nerve/charm/insight/alliance + the clues counter). A third genre adds its
+// keys here — until per-pack generics (Pack<S extends StatSchema>) land.
 export interface Effect {
-  // core stats
+  // music core stats
   skill?: number; cred?: number; creativity?: number; network?: number;
   burnout?: number;
+  // mystery core stats + its clues counter (clues plugin)
+  nerve?: number; charm?: number; insight?: number; alliance?: number; clues?: number;
   // resources
   fame?: number; money?: number; hits?: number; pathProgress?: number; rivalry?: number;
   // flags & chaining
@@ -82,10 +90,11 @@ export interface Outcome { text: string; effects: Effect; }
 export interface Choice {
   label: string;
   tags?: string[];
-  // Governed by core stats; a few cards also name 'fame' here — the engine
-  // reads state.stats[key], where fame is absent, so it contributes 0 (a
-  // latent authored no-op preserved as-is). Typed to accept it.
-  governingStats?: Partial<Record<StatId | 'fame', number>>;
+  // Governed by the pack's stats (looked up dynamically on state.stats), so
+  // keys are open strings. A few music cards name 'fame' here — the engine
+  // reads state.stats['fame'], which is absent, so it contributes 0 (a latent
+  // authored no-op preserved as-is).
+  governingStats?: Record<string, number>;
   cost?: number;
   minigame?: string;
   outcomes: Record<Tier, Outcome>;

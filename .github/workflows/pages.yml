@@ -45,10 +45,12 @@ jobs:
         run: npm run build
       - name: Content lint
         run: node tools/lint-content.mjs
-      - name: Balance & reach gate (against dist/)
+      - name: Balance & reach gate (music, against dist/)
         run: node tools/simulate.mjs --check
-      - name: Golden-master regression (against dist/)
-        run: node --test test/golden.test.mjs
+      - name: Balance gate (mystery pack, against dist/)
+        run: node tools/mystery-sim.mjs --check
+      - name: Golden-master regression (music + mystery, against dist/)
+        run: node --test
 
   deploy:
     needs: check

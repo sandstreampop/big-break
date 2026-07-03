@@ -150,19 +150,19 @@ export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
 export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.random, perks = []) {
   PACK = pack; // this run's content pack; also settable via useContentPack
   const inst = PACK.instrumentById(instrumentId);
+  // Stats are the pack's, not a hardwired list: roll each core stat in manifest
+  // order (music order skill→cred→creativity→network keeps the seeded draws
+  // byte-identical), then burnout. A pack with different stats just works.
+  const stats: Record<string, number> = {};
+  for (const s of pack.manifest.stats) stats[s] = randInt(rng, CONFIG.statStartMin, CONFIG.statStartMax);
+  stats.burnout = CONFIG.burnoutStart;
   const state: RunState = {
     version: 1,
     phase: 'card', // card | crossroads | ended
     act: 1,
     cardsPlayedInAct: 0,
     shopPlayedInAct: false,
-    stats: {
-      skill: randInt(rng, CONFIG.statStartMin, CONFIG.statStartMax),
-      cred: randInt(rng, CONFIG.statStartMin, CONFIG.statStartMax),
-      creativity: randInt(rng, CONFIG.statStartMin, CONFIG.statStartMax),
-      network: randInt(rng, CONFIG.statStartMin, CONFIG.statStartMax),
-      burnout: CONFIG.burnoutStart,
-    },
+    stats,
     fame: 0,
     money: CONFIG.moneyStart,
     hits: 0,
