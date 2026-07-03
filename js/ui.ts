@@ -7,6 +7,7 @@ import { rivalById } from './data/rivals.js';
 import { accessoryById } from './data/accessories.js';
 import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
+import { musicPack } from './packs/music.js';
 import * as save from './save.js';
 import { artFor, sceneFor } from './art.js';
 import { buildChart, buildChartWithMovement, playerChartInfo, collabArtistFor } from './charts.js';
@@ -65,6 +66,7 @@ function show(id) {
 // ---------- Title ----------
 
 export function boot() {
+  engine.useContentPack(musicPack); // this game's content; set before any engine call
   initAnalytics(meta.settings);
   setSoundEnabled(meta.settings.sound);
   setMusicEnabled(meta.settings.music !== false);
@@ -214,7 +216,7 @@ function startNewRun(daily = false, comeback = false) {
     if (!inst) return;
     sfx.commit();
     const lv = masteryLevel(inst.id);
-    run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+    run = engine.newRun(musicPack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
     engine.applyMastery(run, lv);
     run.seed = seed + 2;
     run.daily = daily ? todayStr() : null;
@@ -385,7 +387,7 @@ function startGauntlet() {
     `${contract.icon} <b>${contract.name}</b> ×${contract.lpMult} LP — ${contract.desc}`));
   card.addEventListener('click', () => {
     sfx.commit();
-    run = engine.newRun(inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+    run = engine.newRun(musicPack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
     engine.applyMastery(run, masteryLevel(inst.id));
     run.seed = seed + 2;
     run.gauntlet = week;
@@ -1239,7 +1241,7 @@ function routeAdvance(step) {
 
 function startTutorial() {
   const seed = Math.floor(Math.random() * 1e9) + 1;
-  run = engine.newTutorialRun(engine.mulberry32(seed));
+  run = engine.newTutorialRun(musicPack, engine.mulberry32(seed));
   run.seed = seed + 2;
   save.saveRun(run);
   track('tutorial_start', { replay: !!meta.tutorialDone });

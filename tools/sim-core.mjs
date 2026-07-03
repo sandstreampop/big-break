@@ -21,6 +21,7 @@ import { INSTRUMENTS } from '../dist/js/data/instruments.js';
 import { GENRES } from '../dist/js/data/genres.js';
 import { VENUES } from '../dist/js/data/venues.js';
 import * as engine from '../dist/js/engine.js';
+import { musicPack } from '../dist/js/packs/music.js';
 
 export const DEFAULT_INSTRUMENTS = INSTRUMENTS.filter((i) => i.unlockedByDefault).map((i) => i.id);
 export const ALL_PACKS = ['pack_divebar', 'pack_festival', 'pack_wedding', 'pack_cruise'];
@@ -75,7 +76,7 @@ export function simulateRun(seed, policy) {
   // Human-shaped loadout: veterans have packs; most runs claim a sound
   // and adopt a room; some are comebacks facing an old nemesis.
   const packs = ALL_PACKS.filter(() => meta() < 0.5);
-  const state = engine.newRun(inst, packs, engine.mulberry32(seed + 1), []);
+  const state = engine.newRun(musicPack, inst, packs, engine.mulberry32(seed + 1), []);
   state.seed = seed + 2;
   const play = engine.stateRng(state); // seeded play RNG, exactly like the browser
   if (policy !== 'smart' || meta() < 0.7) {

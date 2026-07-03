@@ -2,35 +2,37 @@
 // the same module runs in the browser and in tools/simulate.mjs.
 
 import { CONFIG } from './config.js';
-import { EVENTS } from './data/events.js';
-import { INSTRUMENTS, instrumentById } from './data/instruments.js';
-import { ACCESSORIES, accessoryById } from './data/accessories.js';
-import { randomRival } from './data/rivals.js';
-import { contractById } from './data/contracts.js';
-import { hustleById } from './data/hustles.js';
-import { genreById } from './data/genres.js';
-import { venueById, VENUE_TIERS } from './data/venues.js';
-import { bandmateById, recruitCandidate } from './data/band.js';
 import { collabArtistFor, songName } from './charts.js';
-import { TUTORIAL_EVENTS } from './data/tutorial.js';
-import { ARCS, arcById, rollSeeds } from './data/arcs.js';
-import { weatherHooks, rollWeather } from './data/weather.js';
-import type { RunState, Song } from './types.js';
+import type { Pack, RunState, Song } from './types.js';
 
-// Tutorial cards live outside EVENTS so they can never enter normal decks;
+// ---------- Injected content pack (Phase 2: IoC) ----------
+// The engine imports NO content module. All music-specific content arrives as
+// a Pack, set at run start (newRun) and re-affirmed at boot/resume via
+// useContentPack. One game session runs one active pack; a second game is a
+// second Pack against this same engine. Everything below reads PACK.* where it
+// used to import PACK.events / instruments / venues / arcs / weather / etc.
+let PACK: Pack;
+export function useContentPack(pack: Pack): void {
+  PACK = pack;
+}
+export function activePack(): Pack {
+  return PACK;
+}
+
+// Tutorial cards live outside PACK.events so they can never enter normal decks;
 // chains and resume still need to find them by id.
 function findEvent(id) {
-  return EVENTS.find((e) => e.id === id) || TUTORIAL_EVENTS.find((e) => e.id === id) || null;
+  return PACK.events.find((e) => e.id === id) || PACK.tutorialEvents.find((e) => e.id === id) || null;
 }
 
 function contractMods(state): Record<string, any> {
-  return contractById(state.contract)?.mods || {};
+  return PACK.contractById(state.contract)?.mods || {};
 }
 
 // Act length can be shortened by a contract (Overnight Success) or bent
 // by this run's act twist (U5: the tour got cut short / extended)
 export function actLength(state, act) {
-  if (state.tutorial) return TUTORIAL_EVENTS.length;
+  if (state.tutorial) return PACK.tutorialEvents.length;
   const base = contractMods(state).actLengths?.[act] ?? CONFIG.actLengths[act];
   const twist = state.actTwist && state.actTwist.act === act ? state.actTwist.delta : 0;
   return Math.max(3, base + twist);
@@ -80,7 +82,7 @@ function clamp(v, lo, hi) {
 // ---------- Run lifecycle ----------
 
 export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
-  const pool = INSTRUMENTS.filter((i) => unlockedInstrumentIds.includes(i.id));
+  const pool = PACK.instruments.filter((i) => unlockedInstrumentIds.includes(i.id));
   const picks = [];
   const bag = [...pool];
   while (picks.length < 3 && bag.length) {
@@ -89,8 +91,9 @@ export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
   return picks;
 }
 
-export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = []) {
-  const inst = instrumentById(instrumentId);
+export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.random, perks = []) {
+  PACK = pack; // this run's content pack; also settable via useContentPack
+  const inst = PACK.instrumentById(instrumentId);
   const state: RunState = {
     version: 1,
     phase: 'card', // card | crossroads | ended
@@ -128,11 +131,11 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
     band: [],       // recruited bandmates (see data/band.js), max 3
     promises: [],   // short-horizon objectives [{label,tags,remaining,reward,penalty}]
     hustles: [],    // persistent income sources (see data/hustles.js)
-    rival: randomRival(rng).id,
+    rival: PACK.randomRival(rng).id,
     rivalry: 3, // 0 = allies, 10 = blood feud; starts ambiguous
     // Story Seeds (R1): this run secretly roots for these arcs — their
     // setup cards get a guaranteed window, their payoffs draw hot.
-    seeds: rollSeeds(rng, CONFIG.seedCount),
+    seeds: PACK.rollSeeds(rng, CONFIG.seedCount),
     seenCards: null, // per-player seen-card ids (set by the UI from meta)
     // Rush: ~25% of runs schedule one flashpoint card (U2); ~20% of runs
     // have one act play short or long (U5); hot streaks tracked live (U3)
@@ -144,7 +147,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
       ? { act: randInt(rng, 2, 3), delta: rng() < 0.5 ? -CONFIG.actTwistDelta : CONFIG.actTwistDelta }
       : null,
     // Scene Weather (M2): one visible modifier recolors the whole run
-    weather: rollWeather(rng),
+    weather: PACK.rollWeather(rng),
     path: null,
     instrument: instrumentId,
     firstInstrument: instrumentId,
@@ -171,7 +174,7 @@ export function newRun(instrumentId, unlockedPacks, rng = Math.random, perks = [
   if (perks.includes('perfect_pitch')) state.stats.creativity = clamp(state.stats.creativity + 6, 1, 100);
   if (perks.includes('stage_legs')) state.stats.cred = clamp(state.stats.cred + 6, 1, 100);
   if (perks.includes('headliner')) state.fame += 8; // somebody remembers the name
-  state.money += weatherHooks(state).startMoney || 0; // Scene Weather walk-in
+  state.money += PACK.weatherHooks(state).startMoney || 0; // Scene Weather walk-in
   if (perks.includes('notebook')) {
     // The Old Notebook: every career starts with one demo already taped
     addSong(state, {
@@ -242,7 +245,7 @@ export function releaseSong(state, songId, hype = 55) {
   if (!s || s.status === 'charting') return null;
   s.status = 'charting';
   // Scene Weather: some eras are kind to release day (Vinyl Revival…)
-  s.hype = clamp(Math.round(hype + (weatherHooks(state).releaseHype || 0)), 0, 100);
+  s.hype = clamp(Math.round(hype + (PACK.weatherHooks(state).releaseHype || 0)), 0, 100);
   debutSong(state, s);
   return s;
 }
@@ -362,13 +365,13 @@ export function flagshipSong(state) {
 // The First Gig: a scripted 9-card onboarding run. Fixed teaching stats so
 // every risk tell reads exactly as the cards describe it (skill ●,
 // network ●, cred ▲, creativity ■); the deck is one long chain.
-export function newTutorialRun(rng = Math.random) {
-  const state = newRun('melodica', [], rng, []);
+export function newTutorialRun(pack: Pack, rng = Math.random) {
+  const state = newRun(pack, 'melodica', [], rng, []);
   state.tutorial = true;
   state.stats = { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 };
   state.money = 40;
   state.fame = 0;
-  state.pendingChainId = TUTORIAL_EVENTS[0].id;
+  state.pendingChainId = PACK.tutorialEvents[0].id;
   return state;
 }
 
@@ -452,7 +455,7 @@ function requiresOk(r, state) {
 
 // Is a story arc's condition satisfied for this run? (sim + UI reporting)
 export function arcLit(state, arcId) {
-  const arc = arcById(arcId);
+  const arc = PACK.arcById(arcId);
   return !!arc && requiresOk(arc.lit, state);
 }
 
@@ -463,7 +466,7 @@ function pathEligible(ev, state) {
 }
 
 export function eligibleEvents(state) {
-  return EVENTS.filter(
+  return PACK.events.filter(
     (ev) =>
       !ev.chainOnly &&
       actMatches(ev, state.act) &&
@@ -516,7 +519,7 @@ export function drawNextCard(state, rng = Math.random) {
         state.cardsPlayedInAct >= (CONFIG.seedSetupSlot[state.act] ?? 99)) {
       const due = [];
       for (const arcId of state.seeds || []) {
-        const arc = arcById(arcId);
+        const arc = PACK.arcById(arcId);
         if (!arc || requiresOk(arc.lit, state)) continue; // already lit
         if (arc.setup.some((id) => state.usedEvents.includes(id))) continue; // setup came & went
         due.push(...arc.setup);
@@ -539,7 +542,7 @@ export function drawNextCard(state, rng = Math.random) {
   const litPayoffs = new Set();
   const warmSetups = new Set();
   for (const arcId of state.seeds || []) {
-    const arc = arcById(arcId);
+    const arc = PACK.arcById(arcId);
     if (!arc) continue;
     if (requiresOk(arc.lit, state)) for (const id of arc.payoffs) litPayoffs.add(id);
     else for (const id of arc.setup) warmSetups.add(id);
@@ -548,7 +551,7 @@ export function drawNextCard(state, rng = Math.random) {
   // On a first install everything is unseen, so nothing shifts.
   const seen = state.seenCards ? new Set(state.seenCards) : null;
   // Scene Weather (M2): the mutator recolors the deck itself
-  const wMults = weatherHooks(state).weightTagMult || [];
+  const wMults = PACK.weatherHooks(state).weightTagMult || [];
   let total = 0;
   const weights = pool.map((ev) => {
     const affine = ev.pathAffinity && ev.pathAffinity.includes(state.path);
@@ -576,12 +579,12 @@ export function drawNextCard(state, rng = Math.random) {
 // ---------- Resolution (spec §4.1) ----------
 
 function equippedAccessories(state) {
-  return state.accessories.map(accessoryById).filter(Boolean);
+  return state.accessories.map(PACK.accessoryById).filter(Boolean);
 }
 
 function accessoryActive(acc, state) {
   if (acc.compatibility?.universal) return true;
-  const inst = instrumentById(state.instrument);
+  const inst = PACK.instrumentById(state.instrument);
   return !!inst && (acc.compatibility?.families || []).includes(inst.family);
 }
 
@@ -613,20 +616,20 @@ export function rollComponents(state, choice, opts: any = {}) {
     }
   }
 
-  const inst = instrumentById(state.instrument);
+  const inst = PACK.instrumentById(state.instrument);
   let quirkBonus = 0;
   for (const tb of inst?.quirk?.hooks?.rollTagBonus || []) {
     if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
   }
-  for (const gb of genreById(state.genre)?.bonuses || []) {
+  for (const gb of PACK.genreById(state.genre)?.bonuses || []) {
     if (tagsIntersect(gb.tags, choice.tags)) quirkBonus += gb.bonus;
   }
   for (const bid of state.band || []) {
-    const bm = bandmateById(bid);
+    const bm = PACK.bandmateById(bid);
     if (bm && tagsIntersect(bm.bonus.tags, choice.tags)) quirkBonus += bm.bonus.bonus;
   }
 
-  const wHooks = weatherHooks(state);
+  const wHooks = PACK.weatherHooks(state);
   for (const tb of wHooks.rollTagBonus || []) {
     if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
   }
@@ -736,7 +739,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   }
 
   // Instrument quirk: bonus effects on Incredible (e.g. Kazoo's Novelty)
-  const inst = instrumentById(state.instrument);
+  const inst = PACK.instrumentById(state.instrument);
   if (tier === 'incredible' && inst?.quirk?.hooks?.onIncredible) {
     for (const [k, v] of Object.entries(inst.quirk.hooks.onIncredible)) {
       effects[k] = (effects[k] || 0) + v;
@@ -746,11 +749,11 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   // Home venue: a show in your adopted room. The home crowd lifts a Good/
   // Incredible night (flat fame+cred by venue level), and every show there
   // builds the room toward a local institution.
-  const venue = venueById(state.venue);
+  const venue = PACK.venueById(state.venue);
   let venueHosted = false;
   if (venue && tier !== 'bad' && tier !== 'declined' && tagsIntersect(venue.tags, choice.tags)) {
     venueHosted = true;
-    const bonus = VENUE_TIERS[state.venueLevel]?.showBonus || 0;
+    const bonus = PACK.VENUE_TIERS[state.venueLevel]?.showBonus || 0;
     if (bonus) {
       effects.fame = (effects.fame || 0) + bonus;
       effects.cred = (effects.cred || 0) + Math.ceil(bonus / 2);
@@ -799,12 +802,12 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   // level 2 by the third show, so venue-gated act-3 cards actually fire.
   if (venue && tagsIntersect(venue.tags, choice.tags)) {
     state.venueShows = (state.venueShows || 0) + 1;
-    const newLevel = Math.min(VENUE_TIERS.length - 1, Math.floor(state.venueShows * 0.75));
+    const newLevel = Math.min(PACK.VENUE_TIERS.length - 1, Math.floor(state.venueShows * 0.75));
     if (newLevel > state.venueLevel) {
       state.venueLevel = newLevel;
-      result.venueLeveled = { venue, level: newLevel, tier: VENUE_TIERS[newLevel] };
-    } else if (venueHosted && (VENUE_TIERS[state.venueLevel]?.showBonus || 0) > 0) {
-      result.venueHosted = { venue, tier: VENUE_TIERS[state.venueLevel] };
+      result.venueLeveled = { venue, level: newLevel, tier: PACK.VENUE_TIERS[newLevel] };
+    } else if (venueHosted && (PACK.VENUE_TIERS[state.venueLevel]?.showBonus || 0) > 0) {
+      result.venueHosted = { venue, tier: PACK.VENUE_TIERS[state.venueLevel] };
     }
   }
 
@@ -854,7 +857,7 @@ function finishCard(state, ev) {
 // Applies an effects payload; returns display deltas [{key, amount}].
 function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories = [], mg = null) {
   const deltas: any = [];
-  const inst = instrumentById(state.instrument);
+  const inst = PACK.instrumentById(state.instrument);
   const hooks: Record<string, any> = inst?.quirk?.hooks || {};
   const accs = equippedAccessories(state).filter((a) => accessoryActive(a, state));
   const tags = choice?.tags || [];
@@ -862,7 +865,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
   const push = (key, amount) => { if (amount) deltas.push({ key, amount }); };
 
   const cMods = contractMods(state);
-  const wHooks = weatherHooks(state);
+  const wHooks = PACK.weatherHooks(state);
   for (const stat of STATS) {
     let v = effects[stat] || 0;
     if (!v) continue;
@@ -931,7 +934,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
       const s = addSong(state, {
         title: effects.chartTitle
           ? effects.chartTitle.replace('{collabArtist}', collabArtistFor(state))
-          : songName(rng, genreById(state.genre)),
+          : songName(rng, PACK.genreById(state.genre)),
         quality: 68 + Math.round((rng ? rng() : 0.5) * 12),
         origin: ev?.id || null, status: 'charting', hype: 60,
       });
@@ -1022,7 +1025,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     const grabbedHooks = mg?.hooks || [];
     const title = grabbedHooks.length
       ? grabbedHooks[Math.floor((rng ? rng() : 0.5) * grabbedHooks.length)].replace(/(^|\s)[a-z]/g, (c) => c.toUpperCase())
-      : songName(rng, genreById(state.genre));
+      : songName(rng, PACK.genreById(state.genre));
     const s = addSong(state, {
       title, quality: base + verdictAdj + creaAdj + instAdj + jit,
       origin: ev?.id || null, status: 'demo',
@@ -1034,7 +1037,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
 
   if (effects.setInstrument) {
-    const newInst = instrumentById(effects.setInstrument);
+    const newInst = PACK.instrumentById(effects.setInstrument);
     if (newInst && state.instrument !== newInst.id) {
       state.instrument = newInst.id;
       state.swappedInstrument = true;
@@ -1045,8 +1048,8 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     state.band = state.band || [];
     if (state.band.length < 3) {
       const bm = effects.grantBandmate === 'random'
-        ? recruitCandidate(state, rng)
-        : (!state.band.includes(effects.grantBandmate) ? bandmateById(effects.grantBandmate) : null);
+        ? PACK.recruitCandidate(state, rng)
+        : (!state.band.includes(effects.grantBandmate) ? PACK.bandmateById(effects.grantBandmate) : null);
       if (bm) {
         state.band.push(bm.id);
         deltas.bandmateJoined = bm;
@@ -1056,7 +1059,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
   if (effects.removeBandmate) {
     state.band = state.band || [];
     if (effects.removeBandmate === 'first') {
-      const gone = bandmateById(state.band[0]);
+      const gone = PACK.bandmateById(state.band[0]);
       state.band = state.band.slice(1);
       if (gone) deltas.bandmateLeft = gone;
     } else {
@@ -1067,7 +1070,7 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     state.hustles = state.hustles || [];
     if (!state.hustles.includes(effects.grantHustle)) {
       state.hustles.push(effects.grantHustle);
-      deltas.hustleGained = hustleById(effects.grantHustle);
+      deltas.hustleGained = PACK.hustleById(effects.grantHustle);
     }
   }
   if (effects.removeGear) state.accessories = state.accessories.filter((a) => a !== effects.removeGear);
@@ -1092,9 +1095,9 @@ function gearShelf(state, grant, rng = Math.random) {
   const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears', 'cursed_8track', 'stage_fan', 'humidifier', 'publicist_rolodex',
     'wireless_rig', 'contact_mic', 'stage_cape', 'projector', 'press_pass', 'mascot_head', 'shoebox_archive', 'green_room_kit', 'rice_cooker'];
   const ids = grant === 'random_basic' ? basics : goods;
-  let pool = ids.filter((id) => !owned.has(id)).map(accessoryById).filter(Boolean);
+  let pool = ids.filter((id) => !owned.has(id)).map(PACK.accessoryById).filter(Boolean);
   if (!pool.length) {
-    pool = ACCESSORIES.filter((a) => a.unlockedByDefault && !owned.has(a.id));
+    pool = PACK.accessories.filter((a) => a.unlockedByDefault && !owned.has(a.id));
   }
   const shelf = [];
   const bag = [...pool];
@@ -1115,12 +1118,12 @@ function resolveGearGrant(state, grant, rng = Math.random) {
     const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'cursed_8track', 'stage_fan', 'in_ears',
       'wireless_rig', 'contact_mic', 'stage_cape', 'projector'];
     const ids = grant === 'random_basic' ? basics : goods;
-    candidates = ids.filter((id) => !owned.has(id)).map(accessoryById).filter(Boolean);
+    candidates = ids.filter((id) => !owned.has(id)).map(PACK.accessoryById).filter(Boolean);
     if (!candidates.length) {
-      candidates = ACCESSORIES.filter((a) => a.unlockedByDefault && !owned.has(a.id));
+      candidates = PACK.accessories.filter((a) => a.unlockedByDefault && !owned.has(a.id));
     }
   } else {
-    const acc = accessoryById(grant);
+    const acc = PACK.accessoryById(grant);
     candidates = acc && !owned.has(acc.id) ? [acc] : [];
   }
   if (!candidates.length) return null;
@@ -1132,7 +1135,7 @@ export function equipAccessory(state, accId, replaceId = null) {
   if (replaceId) state.accessories = state.accessories.filter((a) => a !== replaceId);
   if (state.accessories.length >= CONFIG.accessorySlots) return null;
   state.accessories.push(accId);
-  const acc = accessoryById(accId);
+  const acc = PACK.accessoryById(accId);
   const deltas: any = [];
   if (acc?.grantsFlag && !state.flags.includes(acc.grantsFlag)) state.flags.push(acc.grantsFlag);
   if (acc?.onAcquire) {
@@ -1164,7 +1167,7 @@ export function advance(state) {
     // The Last Door: every run's final card is its path's climax event —
     // queued here so chains/coping can never displace it.
     if (state.act === 3 && state.path) {
-      const climax = EVENTS.find(
+      const climax = PACK.events.find(
         (e) => e.finaleCard && e.pathAffinity?.includes(state.path) && !state.usedEvents.includes(e.id)
       );
       if (climax) {
@@ -1205,9 +1208,9 @@ function refreshSeeds(state) {
     });
   const taken = new Set(state.seeds);
   state.seeds = state.seeds.map((arcId) => {
-    const arc = arcById(arcId);
+    const arc = PACK.arcById(arcId);
     if (arc && alive(arc)) return arcId;
-    const pool = ARCS.filter((a) => !taken.has(a.id) && alive(a));
+    const pool = PACK.arcs.filter((a) => !taken.has(a.id) && alive(a));
     if (!pool.length) return arcId;
     const pick = pool[Math.floor(rng() * pool.length)].id;
     taken.add(pick);
@@ -1229,9 +1232,9 @@ function startAct(state, act) {
     }
   }
   for (const id of state.hustles || []) {
-    const h = hustleById(id);
+    const h = PACK.hustleById(id);
     if (h) {
-      const pay = Math.round(h.moneyPerAct * (weatherHooks(state).hustleMult || 1) *
+      const pay = Math.round(h.moneyPerAct * (PACK.weatherHooks(state).hustleMult || 1) *
         ((state.perks || []).includes('cheap_rent') ? 1.2 : 1));
       state.money += pay;
       notes.push(`${h.icon} ${h.name}: +$${pay}`);
@@ -1258,7 +1261,7 @@ function startAct(state, act) {
     if (demos.length) notes.push(`🗃️ The Archivist: ${demos.length} vault demo${demos.length === 1 ? '' : 's'} +2 quality`);
   }
   for (const bid of state.band || []) {
-    const bm = bandmateById(bid);
+    const bm = PACK.bandmateById(bid);
     if (bm?.actQuirk?.money) {
       state.money += bm.actQuirk.money;
       notes.push(`${bm.icon} ${bm.name}: +$${bm.actQuirk.money} merch`);
@@ -1276,7 +1279,7 @@ function startAct(state, act) {
       // Nadia's notebook: a fresh "spare" appears every act break
       const rng = stateRng(state);
       const s = addSong(state, {
-        title: songName(rng, genreById(state.genre)), status: 'demo',
+        title: songName(rng, PACK.genreById(state.genre)), status: 'demo',
         quality: 42 + Math.round(rng() * 26),
       });
       notes.push(`${bm.icon} ${bm.name}: leaves a demo on your amp — “${s.title}”`);
@@ -1298,9 +1301,9 @@ export function finalePayout(state) {
   const notes = [];
   notes.push(...deadlineAudit(state, 3));
   for (const id of state.hustles || []) {
-    const h = hustleById(id);
+    const h = PACK.hustleById(id);
     if (h) {
-      const pay = Math.round(h.moneyPerAct * (weatherHooks(state).hustleMult || 1) *
+      const pay = Math.round(h.moneyPerAct * (PACK.weatherHooks(state).hustleMult || 1) *
         ((state.perks || []).includes('cheap_rent') ? 1.2 : 1));
       state.money += pay;
       notes.push(`${h.icon} ${h.name}: +$${pay}`);
@@ -1354,8 +1357,8 @@ export function legacyPoints(state) {
   const base = Math.round((state.fame + s.skill + s.cred + s.creativity + s.network) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
-  let mult = contractById(state.contract)?.lpMult || 1;
-  mult *= weatherHooks(state).lpMult || 1;
+  let mult = PACK.contractById(state.contract)?.lpMult || 1;
+  mult *= PACK.weatherHooks(state).lpMult || 1;
   if ((state.flags || []).includes('comeback')) mult *= 1.2;
   return Math.max(1, Math.round((base + bonus) * mult));
 }

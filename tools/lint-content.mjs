@@ -10,6 +10,7 @@
 
 import { EVENTS } from '../dist/js/data/events.js';
 import * as engine from '../dist/js/engine.js';
+import { musicPack } from '../dist/js/packs/music.js';
 import { generateDMs } from '../dist/js/dms.js';
 import { generateHeadlines } from '../dist/js/headlines.js';
 import { buildEpilogue } from '../dist/js/epilogue.js';
@@ -119,7 +120,7 @@ for (const ev of EVENTS) {
 }
 
 // maximal state: light up every reactive-text branch at once
-const st = engine.newRun('kazoo', [], Math.random, ['notebook']);
+const st = engine.newRun(musicPack, 'kazoo', [], Math.random, ['notebook']);
 st.act = 3; st.path = 'hitfactory'; st.fame = 95; st.money = 900; st.rivalry = 8;
 st.contract = 'deadline'; st.genre = 'gothgrass'; st.venue = 'planetarium'; st.venueLevel = 3;
 st.nemesis = true; st.brammy = 'won'; st.stats.burnout = 65;

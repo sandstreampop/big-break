@@ -91,6 +91,36 @@ export interface Choice {
   outcomes: Record<Tier, Outcome>;
 }
 
+// ---------- Content pack (Phase 2: inversion of control) ----------
+// Everything the engine used to import as hardwired music content is now
+// injected as a Pack at run start (newRun) / boot (useContentPack). A second
+// game is a second Pack against the same engine. Content-module helper
+// functions are typed loosely here; the load-bearing manifest types (stats,
+// winGates, resource taxonomy) formalize in Phase 3 as the taxonomy is
+// genericized. `charts`/songs stay engine-side until the Phase 4 plugin split.
+export interface Pack {
+  id: string;
+  events: GameEvent[];
+  tutorialEvents: GameEvent[];
+  instruments: any[];
+  accessories: any[];
+  arcs: any[];
+  VENUE_TIERS: any[];
+  instrumentById: (id: string) => any;
+  accessoryById: (id: string) => any;
+  randomRival: (rng: () => number) => any;
+  contractById: (id: string) => any;
+  hustleById: (id: string) => any;
+  genreById: (id: string) => any;
+  venueById: (id: string) => any;
+  bandmateById: (id: string) => any;
+  recruitCandidate: (state: any, rng?: () => number) => any;
+  arcById: (id: string) => any;
+  rollSeeds: (rng: () => number, count: number) => string[];
+  weatherHooks: (state: any) => Record<string, any>;
+  rollWeather: (rng: () => number) => string;
+}
+
 // ---------- Runtime run state ----------
 // A song, first-class citizen of the charts subsystem.
 export interface Song {
