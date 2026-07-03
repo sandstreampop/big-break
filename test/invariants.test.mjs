@@ -52,12 +52,25 @@ for (const pack of PACKS) {
     }
   });
 
+  // ── §2E symmetry: the INCREDIBLE payload multiplier must scale EVERY core
+  // stat the pack declares — not a hardcoded music list that silently skips a
+  // second genre's stats. Guards against re-coupling the multiplier to one
+  // genre's vocabulary. This is a property per-pack goldens are blind to: each
+  // pack's golden encodes its own (formerly asymmetric) output as "correct". ──
+  test(`[${pack.id}] INCREDIBLE multiplier scales every manifest stat`, () => {
+    engine.useContentPack(pack);
+    const targets = new Set(engine.incredibleTargets());
+    for (const s of pack.manifest.stats) {
+      assert.ok(targets.has(s), `stat '${s}' is not in the INCREDIBLE payload set`);
+    }
+  });
+
   // ── The core can actually RUN this pack: boot, play every act to a terminal
-  // state, judge the finale — no throw, finite readings. This is the property
-  // the probe pack exists to hold with zero stubs (Phase E). (LP finiteness is
-  // asserted in Phase B, alongside the legacyPoints genre-asymmetry fix — today
-  // legacyPoints hardcodes music stats, so a non-music LP is NaN.) ──
-  test(`[${pack.id}] a full run reaches a terminal state with finite readings`, () => {
+  // state, judge the finale — no throw, finite readings, and a finite LP ≥ 1
+  // (the legacyPoints genre-asymmetry fix: hardcoded music stats scored NaN for
+  // any other genre). This is the property the probe pack holds with zero
+  // stubs (Phase E). ──
+  test(`[${pack.id}] a full run reaches a terminal state with finite readings and LP`, () => {
     for (const seed of [11, 424242, 987654321]) {
       const run = simulatePackRun(pack, seed);
       assert.equal(run.state.phase, 'ended', 'run did not terminate');
@@ -68,6 +81,7 @@ for (const pack of PACKS) {
           assert.ok(Number.isFinite(r.ratio), `reading '${r.key}' ratio not finite`);
         }
       }
+      assert.ok(Number.isFinite(run.lp) && run.lp >= 1, `LP=${run.lp} not a finite ≥1 number`);
     }
   });
 }

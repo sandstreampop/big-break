@@ -731,6 +731,14 @@ export function rollComponents(state, choice, opts: any = {}) {
   return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
 }
 
+// The keys an INCREDIBLE payload scales (§2E): every core stat the pack
+// declares (symmetric across genres) plus the two magnitude resources fame &
+// money. Exported so the cross-pack symmetry invariant guards the real engine
+// set, not a copy of it.
+export function incredibleTargets(): string[] {
+  return [...PACK.manifest.stats, 'fame', 'money'];
+}
+
 // U1: rolls compress above the soft cap — a maxed-out build still sweats
 // the jitter instead of auto-clearing the INCREDIBLE bar every card.
 function softCap(roll) {
@@ -808,10 +816,16 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
 
   const outcome = choice.outcomes[tier];
   const effects = { ...outcome.effects };
-  // U1: rarer × bigger — INCREDIBLE payloads land ~25% harder (positive
-  // stat/fame/money gains only; costs and story effects stay authored)
+  // U1: rarer × bigger — INCREDIBLE payloads land ~25% harder. The scaled set
+  // is the MAGNITUDE payloads: every core stat the pack declares (§2E: this is
+  // symmetric across genres — a mystery INCREDIBLE now boosts nerve/charm/
+  // insight/alliance, which the hardcoded music list silently skipped) plus the
+  // two magnitude resources fame & money. STRUCTURAL/story counters —
+  // hits (a hit is a hit), pathProgress (momentum), rivalry (a feud) — stay
+  // authored, exactly as the old list did. For music the set is identical
+  // (skill/cred/creativity/network/fame/money), so music stays byte-green.
   if (tier === 'incredible' && CONFIG.incrediblePayloadMult) {
-    for (const k of ['skill', 'cred', 'creativity', 'network', 'fame', 'money']) {
+    for (const k of incredibleTargets()) {
       if ((effects[k] || 0) > 0) effects[k] = Math.round(effects[k] * CONFIG.incrediblePayloadMult);
     }
   }
@@ -1294,7 +1308,13 @@ export function evaluateFinale(state) {
 
 export function legacyPoints(state) {
   const s = state.stats;
-  const base = Math.round((state.fame + s.skill + s.cred + s.creativity + s.network) / CONFIG.lpStatDivisor);
+  // Sum the pack's core stats generically (§2E-class fix): the hardcoded
+  // skill+cred+creativity+network read undefined→NaN for any non-music pack,
+  // so a mystery/probe career scored NaN LP (serialized as null). Reading
+  // manifest.stats is identical for music (same four keys) and correct for
+  // every genre.
+  const statSum = PACK.manifest.stats.reduce((n, k) => n + (s[k] || 0), 0);
+  const base = Math.round((state.fame + statSum) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
   let mult = PACK.contractById(state.contract)?.lpMult || 1;
