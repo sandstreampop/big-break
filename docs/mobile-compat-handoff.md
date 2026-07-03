@@ -50,7 +50,8 @@ fixes it** ("prove-before-fix").
 1. Apply the cross-platform requirements (§3) and iOS-specific requirements (§4)
    to the (refactored) codebase.
 2. Build the **iOS testing harness** to match the Android one (§5).
-3. Resolve the zoom product decision (R1), which fixes an Android *and* an iOS
+3. ~~Resolve the zoom product decision (R1)~~ **— DONE: APPROVED 2026-07-03
+   (§7). Implementation deferred until scheduled.** Fixes an Android *and* an iOS
    churn bug at once.
 
 ---
@@ -143,7 +144,8 @@ ephemeral storage, no Add-to-Home-Screen). Prioritized by frequency × churn.
   accessibility block. It reverses a *documented deliberate* "game always fills
   the screen" choice, so it needs an explicit product sign-off — **but the
   research shows the current approach is counterproductive on iOS**, so this
-  should be the recommended default. **Decision owner: product.**
+  should be the recommended default. **Product decision: APPROVED (2026-07-03);
+  implementation deferred until scheduled — see §7.**
 - **Acceptance:** on a real iPhone, tapping ~5×/s never zooms; pinch-zoom works;
   no stuck-zoom state exists.
 - **Verify:** T1 can assert `touch-action: manipulation` is present on tappables
@@ -402,13 +404,22 @@ against the *actual target iOS range and current tool versions* during the work:
   removed 2024**; the **Playwright-on-real-iOS-Safari** bridges (BrowserStack Jun
   2025, LambdaTest Jul 2025) are proprietary and 2025-fresh.
 
-## 7. Open product decision (blocking R1, and the Android zoom known-bug)
-Dropping the viewport zoom-lock (`user-scalable=no`/`maximum-scale`) and moving
-zoom-blocking to `touch-action: manipulation` (plus removing the counter-
-productive `visualViewport` "recovery") is the **recommended** default: it fixes
-the iOS double-tap trap *and* the Android accessibility-zoom block in one move,
-and the current lock is ignored by iOS anyway. It does reverse a documented "game
-always fills the screen" intent, so it needs a product yes/no. Everything else in
+## 7. Product decision — RESOLVED: APPROVED (implementation deferred)
+**Status: APPROVED by product (2026-07-03). Implementation intentionally NOT
+started yet — do not begin the code change until the refactor owner schedules
+it.** This section is retained as the decision record.
+
+The approved direction: drop the viewport zoom-lock
+(`user-scalable=no`/`maximum-scale`), move zoom-blocking to
+`touch-action: manipulation`, and remove the counter-productive `visualViewport`
+"zoom recovery." Rationale: it fixes the iOS double-tap trap (R1) *and* the
+Android accessibility-zoom block in one move, and the current lock is ignored by
+iOS anyway. It reverses the documented "game always fills the screen" intent —
+that trade-off was accepted in this approval.
+
+When implementation is scheduled: land the change behind a red `known-bug` probe
+first (prove-before-fix), then flip both the iOS R1 guard and the Android
+`accessibility-zoom-not-blocked` probe green and promote them. Everything else in
 §4 is a bug fix with no such tension.
 
 ---
