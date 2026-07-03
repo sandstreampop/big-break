@@ -1,0 +1,17 @@
+{
+  "name": "big-break",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Big Break — a music-career roguelike (genre-agnostic core in progress).",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "lint": "node tools/lint-content.mjs",
+    "check": "npm run build && node tools/simulate.mjs --check",
+    "test": "npm run build && node --test test/golden.test.mjs",
+    "sim": "npm run build && node tools/simulate.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.7.3"
+  }
+}

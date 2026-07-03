@@ -6,10 +6,11 @@ name: CI + Deploy to GitHub Pages
 # this workflow. If the token can't flip the source, set it once by hand:
 # Settings -> Pages -> Build and deployment -> Source -> "GitHub Actions".
 #
-# The `check` job is the regression net (Phase 0.4): content lint, the
-# balance/reach --check gate, and the golden-master oracle. `deploy` needs it,
-# so a breach BLOCKS the deploy. No tsc yet — the deploy still ships source
-# verbatim (path: .); Phase 0.5 introduces the build and repoints this at dist/.
+# The `check` job is the regression net: content lint, the balance/reach
+# --check gate, and the golden-master oracle — all run against the EMITTED
+# dist/ (what actually deploys), so what's tested === what ships. `deploy`
+# needs it, so a breach BLOCKS the deploy. tsc build lands here (Phase 0.5):
+# the deploy now uploads the built dist/, not the source tree.
 
 on:
   push:
@@ -38,11 +39,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install pinned toolchain
+        run: npm ci
+      - name: Build dist/ (tsc emit + static copy)
+        run: npm run build
       - name: Content lint
         run: node tools/lint-content.mjs
-      - name: Balance & reach gate
+      - name: Balance & reach gate (against dist/)
         run: node tools/simulate.mjs --check
-      - name: Golden-master regression
+      - name: Golden-master regression (against dist/)
         run: node --test test/golden.test.mjs
 
   deploy:
@@ -55,12 +60,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned toolchain
+        run: npm ci
+      - name: Build dist/ (tsc emit + static copy)
+        run: npm run build
       - uses: actions/configure-pages@v5
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          # Ship the built site, not the source tree.
+          path: dist
       - id: deployment
         uses: actions/deploy-pages@v4
         with:

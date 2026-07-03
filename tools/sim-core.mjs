@@ -16,11 +16,11 @@
 // distinct meta stream (mulberry32(seed)) so it never perturbs the game's
 // internal draws.
 
-import { CONFIG, PATHS } from '../js/config.js';
-import { INSTRUMENTS } from '../js/data/instruments.js';
-import { GENRES } from '../js/data/genres.js';
-import { VENUES } from '../js/data/venues.js';
-import * as engine from '../js/engine.js';
+import { CONFIG, PATHS } from '../dist/js/config.js';
+import { INSTRUMENTS } from '../dist/js/data/instruments.js';
+import { GENRES } from '../dist/js/data/genres.js';
+import { VENUES } from '../dist/js/data/venues.js';
+import * as engine from '../dist/js/engine.js';
 
 export const DEFAULT_INSTRUMENTS = INSTRUMENTS.filter((i) => i.unlockedByDefault).map((i) => i.id);
 export const ALL_PACKS = ['pack_divebar', 'pack_festival', 'pack_wedding', 'pack_cruise'];

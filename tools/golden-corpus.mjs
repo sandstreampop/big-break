@@ -9,7 +9,7 @@
 // Bumping GOLDEN_SEED or CORPUS_SIZE changes the corpus and is a deliberate
 // re-baseline (regenerate master.json). Byte-green refactors never touch it.
 
-import * as engine from '../js/engine.js';
+import * as engine from '../dist/js/engine.js';
 
 export const GOLDEN_SEED = 0x60D5EED; // "golden seed"
 export const CORPUS_SIZE = 24;        // distinct careers per policy
