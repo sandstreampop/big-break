@@ -34,6 +34,26 @@ const clampStat = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(h
 // name — fame and contacts pre-loaded, cred and burnout bruised. It hardcodes
 // music stats (cred/network), so it's the pack's, dispatched by the engine's
 // applyComeback. A pack without a comeback mode omits this.
+// The music-specific run-summary fields (WP-C): the core summary carries the
+// neutral spine (ending, stats, resources, logs); music contributes its
+// subsystems' scrapbook data here — rival, chart peak, songs, contract,
+// hustles, the loadout swap, genre/venue/weather/band, and the awards result.
+const musicSummary = (state: RunState) => ({
+  rival: state.rival,
+  chartPeak: (state.songs || []).reduce(
+    (best: number | null, s: any) => (s.peak && (!best || s.peak < best) ? s.peak : best), null),
+  songs: (state.songs || []).map((s: any) => ({ ...s })),
+  contract: state.contract || null,
+  hustles: (state.hustles || []).length,
+  swapped: !!state.swappedLoadout,
+  genre: state.genre || null,
+  venue: state.venue || null,
+  venueLevel: state.venueLevel || 0,
+  weather: state.weather || null,
+  band: [...(state.band || [])],
+  brammy: state.brammy || null, // 'won' | 'lost' | null (Awards night)
+});
+
 const musicComeback = (state: RunState) => {
   state.fame = 45;
   state.money = 300;
@@ -100,6 +120,7 @@ export const musicPack: Pack = {
   presenter: musicPresenter,
   perks: MUSIC_PERKS,
   comeback: musicComeback,
+  summarize: musicSummary,
   // The loadout is the only content the CORE reads directly (a run always starts
   // as someone). Every other music subsystem's data — accessories, arcs,
   // contracts, genres, hustles, band, weather, seeds — lives inside its plugin

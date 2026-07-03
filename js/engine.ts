@@ -989,37 +989,27 @@ export function legacyPoints(state) {
   return Math.max(1, Math.round((base + bonus) * mult));
 }
 
+// The end-of-run snapshot the UI renders and the golden pins. The core emits
+// only the pack-agnostic spine — ending, path, loadout, stats, the manifest's
+// resources by name, the tier/card logs, and the encore/coping mechanics it
+// owns. Every genre-specific field (a rival, a chart peak, a contract, a home
+// venue) is contributed by the pack's summarize capability, so the core names
+// no subsystem.
 export function runSummary(state) {
-  return {
+  const summary: Record<string, any> = {
     endingKey: state.ending?.key ?? null,
     result: state.ending?.result ?? null,
     path: state.path,
-    fame: state.fame,
-    money: state.money,
-    hits: state.hits,
-    burnout: state.stats.burnout,
-    stats: { ...state.stats },
     loadout: state.loadout,
-    pathProgress: state.pathProgress,
-    rivalry: state.rivalry ?? 3,
-    rival: state.rival,
+    stats: { ...state.stats },
     encoreChained: !!state.encoreChained,
     copingCount: (state.copingSeen || []).length,
-    chartPeak: (state.songs || []).reduce((best, s) => (s.peak && (!best || s.peak < best) ? s.peak : best), null),
-    songs: (state.songs || []).map((s) => ({ ...s })),
     tierLog: state.tierLog || [],
     cardLog: state.cardLog || [],
     daily: state.daily || null,
     gauntlet: state.gauntlet || null,
-    contract: state.contract || null,
-    hustles: (state.hustles || []).length,
-    swapped: !!state.swappedLoadout,
     flags: [...(state.flags || [])],
-    genre: state.genre || null,
-    venue: state.venue || null,
-    venueLevel: state.venueLevel || 0,
-    weather: state.weather || null,
-    band: [...(state.band || [])],
-    brammy: state.brammy || null, // 'won' | 'lost' | null (Awards night)
   };
+  for (const r of PACK.manifest.resources) summary[r] = state[r] ?? 0;
+  return Object.assign(summary, PACK.summarize?.(state) || {});
 }

@@ -369,6 +369,10 @@ export interface Pack {
   // Feature-detected — a pack without one omits it. Music's hardcodes its own
   // stats, so it lives with the pack, not the core.
   comeback?: (state: RunState) => void;
+  // The genre-specific fields a pack adds to runSummary (its subsystems'
+  // scrapbook data: a rival, a chart peak, a home venue). The engine merges
+  // these over the neutral core summary; a pack without subsystems omits it.
+  summarize?: (state: RunState) => Record<string, any>;
 }
 
 // ---------- Runtime run state ----------
