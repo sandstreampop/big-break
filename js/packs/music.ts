@@ -31,6 +31,21 @@ import type { Pack, RunState } from '../types.js';
 const hasHit = (s: RunState) =>
   (s.songs || []).some((x: any) => x.crowned || (x.status === 'charting' && x.pos && x.pos <= 5));
 
+const clampStat = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
+// Comeback Mode (WP3): unlocked by any Success, a career restarts as a faded
+// name — fame and contacts pre-loaded, cred and burnout bruised. It hardcodes
+// music stats (cred/network), so it's the pack's, dispatched by the engine's
+// applyComeback. A pack without a comeback mode omits this.
+const musicComeback = (state: RunState) => {
+  state.fame = 45;
+  state.money = 300;
+  state.stats.cred = Math.max(8, state.stats.cred - 8);
+  state.stats.network = clampStat(state.stats.network + 15, 1, 100);
+  state.stats.burnout = 25;
+  if (!state.flags.includes('comeback')) state.flags.push('comeback');
+};
+
 // The music genre's effect vocabulary, declared by the pack rather than baked
 // into the shared Effect union (Phase C). Its four core stats and its venue /
 // songs subsystem verbs — added here, editing no shared type.
@@ -82,6 +97,7 @@ export const musicPack: Pack = {
   tutorialStart: { instrument: 'melodica', stats: { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 }, money: 40, fame: 0 },
   presenter: musicPresenter,
   perks: MUSIC_PERKS,
+  comeback: musicComeback,
   instruments: INSTRUMENTS,
   accessories: ACCESSORIES,
   gearPool,

@@ -357,12 +357,16 @@ function debutSong(state, s) {
 // The Deadline contract: a song must ship every act. Called at each act
 // break (auditing the act that just ended) and once more at the finale.
 export function deadlineAudit(state, act) {
-  if (!contractMods(state).releaseDeadline) return [];
+  const dl = contractMods(state).releaseDeadline;
+  if (!dl) return [];
   const shipped = (state.songs || []).some((s) => s.releasedAct === act);
   if (shipped) return [`📠 The Deadline: act ${act} shipped. The label is quiet, which is love.`];
-  state.fame = Math.max(0, state.fame - 8);
-  state.stats.cred = clamp(state.stats.cred - 4, 0, 100);
-  return [`📠 The Deadline: nothing shipped in act ${act}. The label notes the silence. −8 Fame, −4 Cred`];
+  // The penalty stat is named by the contract mod, not the engine (WP3): the
+  // 'cred' literal was the last music-stat name in this audit. (The whole audit
+  // moves to the songs subsystem in WP6.)
+  state.fame = Math.max(0, state.fame - dl.fameLoss);
+  state.stats[dl.stat] = clamp(state.stats[dl.stat] - dl.statLoss, 0, 100);
+  return [`📠 The Deadline: nothing shipped in act ${act}. The label notes the silence. −${dl.fameLoss} Fame, −${dl.statLoss} ${dl.statLabel}`];
 }
 
 function crownCheck(state, s, notes?) {
@@ -464,15 +468,12 @@ export function newTutorialRun(pack: Pack, rng = Math.random) {
   return state;
 }
 
-// Comeback Mode (unlocked by any Success): start as a faded name.
-// Fame and contacts arrive pre-loaded; cred and burnout arrive bruised.
+// Comeback Mode (unlocked by any Success): start as a faded name. The transform
+// itself hardcodes music stats (cred/network), so it's a pack-provided
+// capability (WP3) — the engine only dispatches to it, naming no stat. A pack
+// without a comeback mode omits it and this is a no-op.
 export function applyComeback(state) {
-  state.fame = 45;
-  state.money = 300;
-  state.stats.cred = Math.max(8, state.stats.cred - 8);
-  state.stats.network = clamp(state.stats.network + 15, 1, 100);
-  state.stats.burnout = 25;
-  if (!state.flags.includes('comeback')) state.flags.push('comeback');
+  PACK.comeback?.(state);
 }
 
 // Instrument mastery (earned across runs): +level to every core stat
@@ -853,7 +854,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     const result: any = {
       tier: 'declined',
       text: 'Your card declines with an audible, judgmental beep. You pretend you “forgot your other wallet.” Everyone pretends to believe you.',
-      deltas: applyEffects(state, { cred: -2 }, ev, choice, rng),
+      deltas: applyEffects(state, PACK.manifest.declinePenalty || {}, ev, choice, rng),
       event: ev, side,
     };
     finishCard(state, ev);
@@ -1340,9 +1341,22 @@ export function finalePayout(state) {
 
 export function checkFailStates(state) {
   if (state.tutorial) return null; // the first gig cannot end a career
+  // The one universal fail: the engine owns the burnout slot, so every pack
+  // fails when it maxes out. Everything else is the pack's, declared as
+  // failStates and read generically through gateValue — the core names no
+  // genre's stat (WP3). Rules are evaluated in declared order, after burnout, so
+  // the old burnout → cancelled → debt precedence is preserved by the music
+  // manifest's rule order.
   if (state.stats.burnout >= CONFIG.burnoutFail) return 'burnout';
-  if (state.act >= CONFIG.credFailFromAct && state.stats.cred <= 0) return 'cancelled';
-  if (state.money <= CONFIG.debtFailMoney && state.flags.includes('debt')) return 'debt';
+  for (const rule of PACK.manifest.failStates || []) {
+    if (rule.fromAct !== undefined && state.act < rule.fromAct) continue;
+    if (rule.flag && !state.flags.includes(rule.flag)) continue;
+    const v = gateValue(state, rule.key);
+    const hit = rule.cmp === '<=' ? v <= rule.value
+      : rule.cmp === '>=' ? v >= rule.value
+      : rule.cmp === '<' ? v < rule.value : v > rule.value;
+    if (hit) return rule.ending;
+  }
   return null;
 }
 

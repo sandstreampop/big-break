@@ -22,6 +22,22 @@ export type ForceTier = Tier | 'encoreUp';
 
 export interface StatMeta { name: string; icon: string; }
 
+// A pack-declared fail-state rule (WP3): a run ends the moment a stat or
+// resource crosses a threshold. Declared in the manifest so checkFailStates
+// names no genre's stats — the engine owns only the universal burnout fail (its
+// own slot); every other fail (a music career cancelled on zero cred, a debt
+// spiral) is the pack's, read generically through gateValue. `key` is any
+// manifest stat/resource; `fromAct` gates the rule to an act onward; `flag`
+// requires a run flag be set; `ending` is the ending key to surface.
+export interface FailStateRule {
+  key: string;
+  cmp: '<=' | '>=' | '<' | '>';
+  value: number;
+  fromAct?: number;
+  flag?: string;
+  ending: string;
+}
+
 // ---------- Effects (the payload a choice outcome applies) ----------
 // A short-horizon objective a card can arm (Promises).
 export interface PromiseSpec {
@@ -133,6 +149,14 @@ export interface PackManifest {
   // so the UI can label ANY winGates/delta key generically instead of
   // special-casing fame/hits. A pack without an entry falls back to the raw key.
   resourceMeta?: Record<string, StatMeta>;
+  // Pack-declared fail states (WP3), evaluated in order after the engine's
+  // universal burnout fail. A pack without any (mystery, probe) can only fail on
+  // burnout.
+  failStates?: FailStateRule[];
+  // The penalty for declining a shop card you can't afford (WP3): music docks a
+  // little cred (the walk-of-shame). Pack-declared so the core names no stat; a
+  // pack that omits it declines for free.
+  declinePenalty?: Effect;
 }
 
 // ---------- Plugin framework (Phase 4) ----------
@@ -284,6 +308,11 @@ export interface Pack {
   tutorialStart?: TutorialStart;
   presenter?: Presenter;
   perks?: Record<string, PerkDef>;
+  // Comeback mode (WP3): an optional pack-provided run transform applied at run
+  // start when the player has unlocked it (a music career restarts as a faded
+  // name). Feature-detected — a pack without a comeback mode omits it. Music's
+  // hardcodes cred/network, so it lives with the pack, not the core.
+  comeback?: (state: RunState) => void;
   accessories?: any[];
   accessoryById?: (id: string) => any;
   // The random-gear shelf pools (WP2): candidate accessory ids for a

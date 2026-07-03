@@ -4,7 +4,7 @@
 // A second genre ships its own manifest; the engine reads whichever is
 // injected. (Numbers stay balance-tuned; the SHAPE is the genre.)
 
-import type { PackManifest, PathDef, StatMeta } from '../types.js';
+import type { PackManifest, PathDef, StatMeta, FailStateRule } from '../types.js';
 
 // The four core stats the engine iterates (burnout is tracked alongside but
 // handled by its own block). Phase 3.1 rewires the engine to read this list.
@@ -64,6 +64,15 @@ export const RESOURCE_META: Record<string, StatMeta> = {
   rivalry:     { name: 'Rivalry',  icon: '⚔️' },
 };
 
+// Fail states beyond the engine's universal burnout fail (WP3). Order matters:
+// evaluated after burnout, so the old burnout → cancelled → debt precedence
+// holds. The cancelled rule carries the act-2 gate that was CONFIG.credFailFromAct;
+// the debt rule carries CONFIG.debtFailMoney — same numbers, now the pack's.
+export const FAIL_STATES: FailStateRule[] = [
+  { key: 'cred', cmp: '<=', value: 0, fromAct: 2, ending: 'cancelled' },
+  { key: 'money', cmp: '<=', value: -300, flag: 'debt', ending: 'debt' },
+];
+
 export const musicManifest: PackManifest = {
   stats: STATS,
   resources: RESOURCES,
@@ -71,4 +80,6 @@ export const musicManifest: PackManifest = {
   winGates: WIN_GATES,
   statMeta: STAT_META,
   resourceMeta: RESOURCE_META,
+  failStates: FAIL_STATES,
+  declinePenalty: { cred: -2 }, // the walk-of-shame when your card declines
 };

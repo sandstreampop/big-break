@@ -71,10 +71,10 @@ export const CONFIG = {
   // Equipment
   accessorySlots: 3,
 
-  // Fail states (spec §7.3)
+  // Fail states (spec §7.3). Only the universal burnout fail is core (the engine
+  // owns the burnout slot); the genre's own fails (music's cancelled-on-zero-cred
+  // and debt spiral) are pack-declared as manifest.failStates (WP3).
   burnoutFail: 100,
-  credFailFromAct: 2,      // cred <= 0 fails only in act 2+
-  debtFailMoney: -300,     // hard fail if money <= this AND 'debt' flag set
 
   // Finale evaluation (spec §7.1)
   // Success: every gate met. Partial: avg satisfaction >= partialRatio.

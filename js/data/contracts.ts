@@ -50,7 +50,7 @@ export const CONTRACTS = [
     id: 'deadline', name: 'The Deadline', icon: '📠', lpMult: 1.6,
     unlockedByDefault: false,
     desc: 'A label single deal: ship a song to the chart EVERY act, or the silence costs you (−8 Fame, −4 Cred at the act break). Write fast. Release faster.',
-    mods: { releaseDeadline: true },
+    mods: { releaseDeadline: { stat: 'cred', statLabel: 'Cred', statLoss: 4, fameLoss: 8 } },
   },
   {
     id: 'kazoo_clause', name: 'The Kazoo Clause', icon: '🎺', lpMult: 2.0,
