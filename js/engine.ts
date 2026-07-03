@@ -644,8 +644,21 @@ function accessoryActive(acc, state) {
   return !!inst && (acc.compatibility?.families || []).includes(inst.family);
 }
 
-function tagsIntersect(a, b) {
+export function tagsIntersect(a, b) {
   return a && b && a.some((t) => b.includes(t));
+}
+
+// ---------- Plugin dispatch (Phase 4) ----------
+// Fire a lifecycle hook across the active pack's plugins, in registration
+// order. Empty/absent registry = no-op, so wiring a dispatch point in is
+// byte-green until a plugin implements it.
+function firePlugins(hook: string, ...args: any[]): void {
+  const plugins = PACK.plugins;
+  if (!plugins) return;
+  for (const p of plugins) {
+    const fn = (p as any)[hook];
+    if (fn) fn.apply(p, args);
+  }
 }
 
 // Roll components for a choice; used by both resolution and the risk tell.
@@ -802,19 +815,9 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     }
   }
 
-  // Home venue: a show in your adopted room. The home crowd lifts a Good/
-  // Incredible night (flat fame+cred by venue level), and every show there
-  // builds the room toward a local institution.
-  const venue = PACK.venueById(state.venue);
-  let venueHosted = false;
-  if (venue && tier !== 'bad' && tier !== 'declined' && tagsIntersect(venue.tags, choice.tags)) {
-    venueHosted = true;
-    const bonus = PACK.VENUE_TIERS[state.venueLevel]?.showBonus || 0;
-    if (bonus) {
-      effects.fame = (effects.fame || 0) + bonus;
-      effects.cred = (effects.cred || 0) + Math.ceil(bonus / 2);
-    }
-  }
+  // Home-venue show bonus (venue plugin, Phase 4.2): lifts fame/cred on a
+  // Good/Incredible night in your adopted room, before effects land.
+  firePlugins('modifyEffects', state, effects, { ev, choice, tier, rng });
 
   const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories, opts.mgDetail || null);
   const result: any = {
@@ -853,19 +856,8 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     }
   }
 
-  // Build the room: venue-tagged shows (any tier — you showed up) level it up.
-  // ×0.75 (was /2): a home room becomes an institution within one career —
-  // level 2 by the third show, so venue-gated act-3 cards actually fire.
-  if (venue && tagsIntersect(venue.tags, choice.tags)) {
-    state.venueShows = (state.venueShows || 0) + 1;
-    const newLevel = Math.min(PACK.VENUE_TIERS.length - 1, Math.floor(state.venueShows * 0.75));
-    if (newLevel > state.venueLevel) {
-      state.venueLevel = newLevel;
-      result.venueLeveled = { venue, level: newLevel, tier: PACK.VENUE_TIERS[newLevel] };
-    } else if (venueHosted && (PACK.VENUE_TIERS[state.venueLevel]?.showBonus || 0) > 0) {
-      result.venueHosted = { venue, tier: PACK.VENUE_TIERS[state.venueLevel] };
-    }
-  }
+  // Build the room (venue plugin, Phase 4.2): venue-tagged shows level it up.
+  firePlugins('afterResolve', state, result, { ev, choice, tier, rng });
 
   // Lucky Pick-style gear: lost when it applied and things went Bad
   // (the Roadie Insurance perk keeps it bolted down)
@@ -991,13 +983,9 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     if (d) push(res, d);
   }
 
-  if (effects.adoptVenue && !state.venue) {
-    state.venue = effects.adoptVenue;
-    state.venueLevel = Math.min(3, effects.venueLoveStart || 0);
-  }
-  if (effects.venueLove && state.venue) {
-    state.venueLevel = Math.min(3, (state.venueLevel || 0) + effects.venueLove);
-  }
+  // Plugin effect handlers (Phase 4.2: venue adoptVenue/venueLove; more
+  // subsystems fold in here through Phase 4.5). No RNG, no deltas pushed.
+  firePlugins('onEffect', state, effects, { ev, choice, tier, rng });
   if (effects.chartTitle && !state._chartTitleHandled) {
     const tierQ = tier === 'incredible' ? 66 : tier === 'good' ? 58 : 50;
     const s = addSong(state, {

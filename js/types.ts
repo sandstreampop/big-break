@@ -120,9 +120,38 @@ export interface PackManifest {
   statMeta: Record<string, StatMeta>;
 }
 
+// ---------- Plugin framework (Phase 4) ----------
+// Subsystems (venue, rival, band, songs) are pack-owned plugins the engine
+// dispatches to at lifecycle points, instead of hardwired inline logic. A
+// second genre supplies its OWN subsystem plugins (a suspicion track, a
+// clue board…) against this same hook set. All hooks are optional.
+export interface PluginContext {
+  ev: GameEvent | null;
+  choice: Choice | null;
+  tier?: Tier | 'declined';
+  rng: () => number;
+}
+export interface Plugin {
+  id: string;
+  // Seeded construction draws at run start (weather, rival). Fired in
+  // registration order, so the pack fixes the draw order.
+  onConstruct?(state: RunState, rng: () => number): void;
+  // Mutate the effects payload before it lands (e.g. a home-venue show bonus).
+  modifyEffects?(state: RunState, effects: Effect, ctx: PluginContext): void;
+  // Apply the plugin's own effect keys (adoptVenue, hits, …).
+  onEffect?(state: RunState, effects: Effect, ctx: PluginContext): void;
+  // React after a card resolves (e.g. level up the home room).
+  afterResolve?(state: RunState, result: any, ctx: PluginContext): void;
+  // Act-break work (income quirks, chart tick, deadline audit); push notes.
+  onActBreak?(state: RunState, act: number, notes: string[]): void;
+  // A chart week / periodic tick; push notes.
+  onTick?(state: RunState, notes: string[]): void;
+}
+
 export interface Pack {
   id: string;
   manifest: PackManifest;
+  plugins?: Plugin[];
   events: GameEvent[];
   tutorialEvents: GameEvent[];
   instruments: any[];
