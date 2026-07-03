@@ -17,6 +17,7 @@ import type { Plugin } from '../../types.js';
 export const bandPlugin: Plugin = {
   id: 'band',
   effectVerbs: ['grantBandmate', 'removeBandmate'],
+  stateDefaults: { band: [] }, // recruited bandmates, max 3 (WP7-clean)
 
   // The band eligibility predicates (WP1): roster size and a specific member.
   requires: {

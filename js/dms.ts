@@ -97,7 +97,7 @@ export function generateDMs(state, count = 2) {
   add(!!charting && charting.pos > 3, 'The sound guy',
     `heard “${charting?.title}” on the radio during load-in. didn’t tell anyone it was you. wanted the room to find out on its own. they did.`);
   add(!!crowned && flags.includes('superfan'), 'Row zero',
-    `“${crowned?.title}” hit and I have RECEIPTS — I posted about it ${3 + ((state.chartSeed || 1) % 9)} months ago. pinned it. no caption. the caption is the timestamp.`);
+    `“${crowned?.title}” hit and I have RECEIPTS — I posted about it ${3 + ((state.flavorSeed || 1) % 9)} months ago. pinned it. no caption. the caption is the timestamp.`);
   add(!!bestDemo && bestDemo.quality >= 60, 'Nadia ✒️',
     `played “${bestDemo?.title}” for exactly one person in the writing room. they went quiet. that’s the good quiet. ship it or I steal it (legally I cannot steal it) (ship it)`);
   add(!!faded, 'Spotify Wrapped (unofficial)',
@@ -107,7 +107,7 @@ export function generateDMs(state, count = 2) {
   add(flags.includes('album_out'), 'The engineer who eats standing up',
     'still think about the album sessions. track 7 hits different at 2am on the bus. that’s all. that’s the text.');
 
-  const rng = mulberry32((state.chartSeed || 1) * 53 + state.act * 613);
+  const rng = mulberry32((state.flavorSeed || 1) * 53 + state.act * 613);
   const picks = [];
   const bag = [...pool];
   while (picks.length < count && bag.length) {

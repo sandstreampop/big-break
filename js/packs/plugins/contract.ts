@@ -23,6 +23,7 @@ export function signContract(state: any, contractId: string) {
 
 export const contractPlugin: Plugin = {
   id: 'contract',
+  stateDefaults: { contract: null }, // signed contract id (WP7-clean)
 
   // Tag-matched roll bonuses (Stage Fright, Analog Only…), summed into the roll.
   modifyRoll(state, choice, _ctx) {

@@ -1,5 +1,5 @@
 // The Big Break Hot 10 — a procedural fake chart the run climbs.
-// Deterministic per (chartSeed, act): stable while you check it mid-act,
+// Deterministic per (flavorSeed, act): stable while you check it mid-act,
 // reshuffles between acts. Your songs enter based on fame + hits; the
 // rival is always lurking somewhere in it.
 
@@ -42,10 +42,10 @@ const ARTISTS = ['The Algorithm', 'Brayden', 'Yacht Arithmetic', 'DJ Mattress Em
 function pick(rng, arr) { return arr[Math.floor(rng() * arr.length)]; }
 
 // The chart artist who slides into your DMs about a feature — fixed per run
-// (derived from chartSeed) so the offer, the song title, and the act-3
+// (derived from flavorSeed) so the offer, the song title, and the act-3
 // callback all name the same person.
 export function collabArtistFor(state) {
-  return ARTISTS[(state.chartSeed || 1) % ARTISTS.length];
+  return ARTISTS[(state.flavorSeed || 1) % ARTISTS.length];
 }
 // Your songs can carry your genre's vocabulary: pass a genre (with
 // titleWords) and roughly two-thirds of titles borrow its adjective,
@@ -64,9 +64,9 @@ export function playerChartInfo(state) {
   return { entries: songs.length, peak };
 }
 
-// The filler rows + the lurking rival (deterministic per chartSeed+act)
+// The filler rows + the lurking rival (deterministic per flavorSeed+act)
 function industryRows(state) {
-  const rng = mulberry32((state.chartSeed || 1) * 7919 + state.act * 104729);
+  const rng = mulberry32((state.flavorSeed || 1) * 7919 + state.act * 104729);
   const rival = rivalById(state.rival);
   const rows = [];
   const artists = [...ARTISTS];

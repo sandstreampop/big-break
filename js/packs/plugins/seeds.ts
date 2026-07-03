@@ -43,6 +43,8 @@ function refresh(state: any) {
 
 export const seedsPlugin: Plugin = {
   id: 'seeds',
+  // The seeds slot (WP7-clean); onConstruct fills it with this run's arcs.
+  stateDefaults: { seeds: [] },
 
   // Draw this run's story seeds. Fired at the onConstruct slot right after the
   // rival draw — the ordinal the old inline rollSeeds sat, so the seeded stream

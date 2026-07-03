@@ -16,6 +16,8 @@ const hooks = (state: any): Record<string, any> => weatherHooks(state);
 
 export const weatherPlugin: Plugin = {
   id: 'weather',
+  // The era slot (WP7-clean); onRunStart draws the actual era.
+  stateDefaults: { weather: null },
 
   // The weather eligibility predicate (WP1): a card can gate on the current era.
   requires: {

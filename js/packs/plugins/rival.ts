@@ -12,6 +12,8 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 
 export const rivalPlugin: Plugin = {
   id: 'rival',
+  // The rival slot (WP7-clean); onConstruct fills it with this run's rival.
+  stateDefaults: { rival: null },
   onConstruct(state, rng) {
     state.rival = randomRival(rng).id;
   },

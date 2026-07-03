@@ -11,6 +11,8 @@ import type { Plugin } from '../../types.js';
 export const venuePlugin: Plugin = {
   id: 'venue',
   effectVerbs: ['adoptVenue', 'venueLove', 'venueLoveStart'],
+  // The venue run-state slots (WP7-clean): adopted room + its level and show count.
+  stateDefaults: { venue: null, venueLevel: 0, venueShows: 0 },
 
   // The venue eligibility predicates (WP1): a card can gate on having adopted a
   // room, on a specific room, or on the room's level. Registered here so the

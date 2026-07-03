@@ -55,7 +55,7 @@ function songFact(s) {
 }
 
 export function buildDiscography(state) {
-  const rng = mulberry32((state.chartSeed || 1) * 211 + 9);
+  const rng = mulberry32((state.flavorSeed || 1) * 211 + 9);
   const flags = state.flags || [];
   const arcCuts = ARC_RECORDS.filter((r) => flags.includes(r.flag));
 

@@ -24,6 +24,9 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 export const songsPlugin: Plugin = {
   id: 'songs',
   effectVerbs: ['hits', 'chartTitle', 'hypeSong', 'albumDrop', 'releaseDemo', 'polishDemo', 'writeSong'],
+  // The legacy chart-titles list (WP7-clean); the songs array itself is created
+  // lazily by ensureSongs.
+  stateDefaults: { chartTitles: [] },
 
   // The songs eligibility predicates (WP1): demos in the vault, songs on the
   // chart, total written, faded-but-charted. Registered here so the shared
