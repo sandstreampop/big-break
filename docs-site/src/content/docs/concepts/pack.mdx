@@ -35,21 +35,26 @@ options would go:
 
 Everything past the required core is a capability you *opt into* by providing a
 field. Omit it and the engine substitutes an inert default — there are **no
-stubs to write**. The optional surface includes:
+stubs to write**. The optional surface is exactly:
 
 - `plugins` — subsystems (see [Subsystems](/big-break/docs/authoring/plugins/));
 - `presenter` — endings and flavor (see [The presenter](/big-break/docs/authoring/presenter/));
 - `perks`, `interstitials`, `tutorialStart` — progression (see
   [Progression](/big-break/docs/authoring/progression/));
-- subsystem providers the music game uses — `accessories`, `arcs`,
-  `contractById`, `hustleById`, `rollWeather`, `recruitCandidate`, and friends.
+- `comeback` — an optional run-start transform for a "comeback" mode.
+
+That's the whole `Pack`. There is **no** long tail of subsystem providers on the
+type: a genre's accessories, arcs, contracts, genres, hustles, band, weather,
+and seeds all live inside its own `plugins`, which import their data directly —
+so the required/optional table above *is* the entire surface.
 
 <Aside type="tip" title="How feature detection works">
-At boot the engine runs `normalizePack`, which fills every absent optional
-provider with a no-op (`() => null`, `() => []`). The rest of the engine then
-calls `PACK.rollWeather()` / `PACK.accessoryById()` unconditionally — a genre
-that ships no weather just gets `null`. This is why the mystery and probe packs
-declare **zero** of the ~14 fields the music pack fills.
+The engine reads the active pack directly — there is no normalization step.
+Optional fields are checked at their use site (`PACK.plugins ?? []`, `PACK.perks
+?? {}`, `PACK.comeback?.(state)`): a genre that ships no plugins fires no
+subsystem hooks; one with no comeback mode skips the transform. The core never
+reaches for a subsystem by name, so there is nothing to stub — the mystery and
+probe packs declare only the required core plus the handful of options they use.
 </Aside>
 
 ## A real second genre
