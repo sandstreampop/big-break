@@ -1,0 +1,58 @@
+name: iOS compat harness
+
+# iOS/WebKit regression net — the mirror of android.yml, and separate from
+# pages.yml ON PURPOSE. The game was built and QA'd iOS-first but the iOS build
+# was NEVER defended by an automated harness (docs/mobile-compat-handoff.md §1),
+# and WebKit has its own high-churn bugs (the double-tap-zoom trap, toolbar
+# clipping, silent-switch muting, ITP save eviction — docs/ios-compat.md). This
+# job drives the emitted dist/ through Playwright's WebKit under iPhone device
+# descriptors and asserts the core verbs survive plus the R1–R10 wiring is in
+# place. It does NOT gate the Pages deploy: a known iOS bug shouldn't block
+# shipping, but a *regression* in a currently-green iOS guard must be loud.
+#
+# Tier note (docs/ios-compat.md): this is Tier 1 (headless WebKit). Playwright's
+# webkit is desktop WebKit, NOT Safari/iOS — good for layout/DOM/CSS/JS-engine
+# fidelity, useless for real zoom/toolbars/GPU/safe-area/audio/standalone/
+# eviction. Those are the `SKIP`s here, owned by Tier 2 (device farm) and Tier 3
+# (manual release checklist).
+#
+# Exit contract (tools/ios/run.mjs):
+#   - a "must-pass" regression guard failing  -> non-zero  -> this job RED
+#   - a "known-bug" probe still reproducing    -> reported, exit 0 (expected)
+#   - a "known-bug" probe now passing          -> flagged "promote to must-pass"
+# See tools/ios/README.md.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ios:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install toolchain
+        run: npm ci
+      - name: Install Playwright WebKit
+        run: npx playwright install --with-deps webkit
+      - name: Build dist/
+        run: npm run build
+      - name: iOS harness (regression guards + prove known bugs)
+        run: node tools/ios/run.mjs
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-report
+          path: tools/ios/report.json
+          if-no-files-found: ignore

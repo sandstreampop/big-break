@@ -1,7 +1,12 @@
 # Mobile compatibility — engineering handoff (Android done, iOS next)
 
-**Status:** Android tier landed on `main` (harness + 3 fixes). iOS parity is the
-open work. **This document is implementation-agnostic on purpose.** A large
+**Status:** Android tier landed on `main` (harness + 3 fixes). **iOS parity now
+landed too** — the WebKit Tier-1 harness (`tools/ios/`, wired into
+`.github/workflows/ios.yml`), the R1–R10 fixes/wiring, and the R1 zoom change
+(which also flipped the Android `accessibility-zoom` guard green) are in. See
+[`docs/ios-compat.md`](./ios-compat.md) and [`tools/ios/README.md`](../tools/ios/README.md).
+The register below is retained as the authoritative record. **This document is
+implementation-agnostic on purpose.** A large
 refactor is in flight, so file names, function names, and module boundaries
 *will* move. What must NOT move is the **goal, the requirements, and the
 acceptance criteria** below. Wherever a concrete symbol is named, it is tagged
@@ -46,13 +51,18 @@ fixes it** ("prove-before-fix").
   disables zoom (`user-scalable=no`). This is *directly entangled with the iOS
   work* — see the headline requirement R1 below.
 
-### What is OPEN (this handoff)
-1. Apply the cross-platform requirements (§3) and iOS-specific requirements (§4)
-   to the (refactored) codebase.
-2. Build the **iOS testing harness** to match the Android one (§5).
-3. ~~Resolve the zoom product decision (R1)~~ **— DONE: APPROVED 2026-07-03
-   (§7). Implementation deferred until scheduled.** Fixes an Android *and* an iOS
-   churn bug at once.
+### What is OPEN (this handoff) — now DONE
+1. ~~Apply the cross-platform requirements (§3) and iOS-specific requirements (§4)
+   to the (refactored) codebase.~~ **DONE** — R1–R10 + X1–X8 fixes/wiring landed
+   (`js/platform.ts`, `js/audio.ts`, `js/ui.ts`, `css/style.css`, both HTML
+   entries). Mapping in [`docs/ios-compat.md`](./ios-compat.md).
+2. ~~Build the **iOS testing harness** to match the Android one (§5).~~ **DONE** —
+   `tools/ios/` (WebKit Tier-1), wired into `.github/workflows/ios.yml`, mirroring
+   the Android `must-pass`/`known-bug`/`manual` contract.
+3. ~~Resolve the zoom product decision (R1)~~ **— DONE: APPROVED 2026-07-03 (§7),
+   and now IMPLEMENTED.** Fixed the iOS double-tap trap *and* the Android
+   accessibility-zoom block at once; the Android `accessibility-zoom-not-blocked`
+   probe was promoted to a must-pass guard.
 
 ---
 

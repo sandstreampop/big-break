@@ -18,7 +18,28 @@ export function initAudio() {
   try {
     ctx = new (window.AudioContext || window.webkitAudioContext)();
   } catch (e) { ctx = null; }
-  if (ctx && musicEnabled) music.start(music.mood || 'title');
+  if (!ctx) return;
+  // R3c: iOS parks the context in 'suspended' and (after a call/Siri/route
+  // change/lock) 'interrupted'; it will not recover on its own. Resume whenever
+  // the context reports it left 'running'.
+  try {
+    ctx.addEventListener?.('statechange', () => {
+      if (ctx && ctx.state !== 'running' && ctx.state !== 'closed') ctx.resume?.().catch(() => {});
+    });
+  } catch (e) { /* no addEventListener on very old context impls */ }
+  if (musicEnabled) music.start(music.mood || 'title');
+}
+
+// R3c/X4: coming back to the foreground is the reliable moment to re-unlock —
+// iOS suspends Web Audio while backgrounded. Registered once; a no-op until a
+// context exists. (`resume()` outside a gesture may stay suspended on iOS; the
+// next tap re-triggers it, and blip()/_schedule() also resume defensively.)
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (ctx && document.visibilityState === 'visible' && ctx.state !== 'running') {
+      ctx.resume?.().catch(() => {});
+    }
+  });
 }
 
 function blip(freq, dur, type = 'triangle', gainPeak = 0.08, when = 0) {

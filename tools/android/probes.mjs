@@ -264,18 +264,28 @@ const dvhFallback = {
 
 const accessibilityZoom = {
   id: 'accessibility-zoom-not-blocked',
-  title: 'Viewport does not hard-disable zoom (user-scalable=no) — an a11y block on Android',
-  risk: 'Risk 5 — iOS Safari IGNORES user-scalable=no (so it was invisible to iOS QA), '
-      + 'but Android Chrome HONORS it: low-vision users cannot pinch-zoom. The '
-      + 'visualViewport "zoom recovery" in js/platform.ts additionally snaps any '
-      + 'accessibility zoom back to 1:1.',
-  expectation: 'known-bug',
+  title: 'Viewport does not hard-disable zoom (user-scalable=no / maximum-scale) — a11y',
+  risk: 'Risk 5, FIXED (product-approved). iOS Safari IGNORED user-scalable=no (so it '
+      + 'was invisible to iOS QA), but Android Chrome HONORED it: low-vision users '
+      + 'could not pinch-zoom, and js/platform.ts snapped any zoom back to 1:1. '
+      + 'FIXED: dropped user-scalable=no/maximum-scale from the viewport meta, moved '
+      + 'double-tap blocking to touch-action: manipulation, and removed the '
+      + 'visualViewport zoom-recovery. This resolves the iOS double-tap-zoom trap '
+      + '(iOS R1) and the Android accessibility block in one move. Promoted to a '
+      + 'must-pass guard so the lock can never come back.',
+  expectation: 'must-pass',
   scope: 'static',
   async run() {
     const html = await readFile(join(DIST, 'index.html'), 'utf8');
     const meta = (html.match(/<meta[^>]*name=["']viewport["'][^>]*>/i) || [''])[0];
     assert(!/user-scalable\s*=\s*no/i.test(meta),
       `viewport meta hard-disables zoom (accessibility block on Android): ${meta.trim()}`);
+    assert(!/maximum-scale\s*=\s*1\b/i.test(meta),
+      `viewport meta clamps maximum-scale=1 (blocks accessibility zoom): ${meta.trim()}`);
+    // The zoom-recovery loop that fought deliberate zoom must stay gone.
+    const platform = await readFile(join(DIST, 'js', 'platform.js'), 'utf8').catch(() => '');
+    assert(!/visualViewport[\s\S]{0,80}addEventListener\(\s*['"]resize/.test(platform),
+      'js/platform.js still has a visualViewport resize "zoom recovery" that fights accessibility zoom');
   },
 };
 

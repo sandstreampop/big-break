@@ -1,28 +1,54 @@
-// Shared mobile/platform guards (spec §12), reused by every game entry so the
-// zoom lockdown lives in one place. Import and call once from an entry module.
+// Shared mobile/platform guards, reused by every game entry so mobile behavior
+// lives in one place. Import and call `installMobileGuards()` once from an entry
+// module. Every guard here is cross-platform (Android + iOS/WebKit); the
+// platform-specific reasoning is in docs/android-compat.md and docs/ios-compat.md.
 
 export function installMobileGuards(): void {
-  // ---- iOS zoom lockdown: the game must always fill the screen ----
-  // Layer 1: kill Safari's non-standard pinch gesture events.
-  for (const type of ['gesturestart', 'gesturechange', 'gestureend']) {
-    document.addEventListener(type, (e) => e.preventDefault(), { passive: false });
-  }
+  installZoomPolicy();
+  installDurableStorage();
+  installKeyboardScrollIntoView();
+  installIosInstallHint();
+}
 
-  // Layer 2: kill double-tap zoom. Preventing default on the second touchend
-  // also suppresses its native click, so re-dispatch a synthetic click when
-  // the tap didn't move — otherwise fast tapping (overlays, minigames) would
-  // silently drop every second tap.
+// ---- R1: zoom policy (fast tapping must not zoom; pinch-zoom must survive) ----
+// The mechanism that actually works cross-platform is `touch-action: manipulation`
+// on tappable/draggable surfaces (css/style.css) — it disables double-tap-zoom
+// while KEEPING accessibility pinch-zoom. We deliberately do NOT:
+//   - lock zoom via the viewport meta (maximum-scale/user-scalable): iOS ignores
+//     it (a11y decision since iOS 10) and Android honors it, blocking low-vision
+//     users. Removed from index.html / mystery.html.
+//   - preventDefault Safari's `gesturestart`/`gesturechange` events: that was an
+//     iOS zoom lockdown that ALSO killed pinch-zoom. Removed.
+//   - "recover" from zoom by rewriting the viewport meta or poking visualViewport:
+//     the Visual Viewport API is read-only (you cannot set zoom), the meta
+//     directive is ignored on iOS anyway, and it fights a user who is
+//     intentionally zooming for accessibility. Removed.
+//
+// What remains is a belt-and-suspenders double-tap guard: a NON-PASSIVE touchend
+// listener that preventDefaults a second single-finger tap inside the ~300ms
+// double-tap window, so a burst of fast taps never registers as double-tap-zoom
+// even on an engine that lags `touch-action`. It is pinch-safe: it ignores any
+// gesture that ever had more than one finger down (a real pinch), so deliberate
+// zoom is untouched. Preventing default on that touchend also suppresses its
+// synthetic click, so we re-dispatch one for a stationary tap — otherwise fast
+// tapping (overlays, minigames) would silently drop every second tap.
+function installZoomPolicy(): void {
   let lastTouchEnd = 0;
   let touchDownX = 0;
   let touchDownY = 0;
+  let maxTouches = 0;
   document.addEventListener('touchstart', (e) => {
+    maxTouches = Math.max(maxTouches, e.touches.length);
     const t = e.changedTouches[0];
     touchDownX = t.clientX;
     touchDownY = t.clientY;
   }, { passive: true });
   document.addEventListener('touchend', (e) => {
     const now = Date.now();
-    if (now - lastTouchEnd < 350 && e.cancelable) {
+    const singleFinger = maxTouches <= 1;
+    if (e.touches.length === 0) maxTouches = 0; // gesture fully lifted — reset
+    if (!singleFinger) { lastTouchEnd = now; return; } // never fight a pinch
+    if (now - lastTouchEnd < 300 && e.cancelable) {
       e.preventDefault();
       const t = e.changedTouches[0];
       const moved = Math.hypot(t.clientX - touchDownX, t.clientY - touchDownY) > 12;
@@ -32,31 +58,75 @@ export function installMobileGuards(): void {
     }
     lastTouchEnd = now;
   }, { passive: false });
+}
 
-  // Layer 3: recovery. iOS's accessibility override can zoom anyway, and once
-  // zoomed the page is stuck. Watch the visual viewport and snap back to 1:1
-  // by re-asserting the viewport meta (rewriting maximum-scale re-clamps).
-  const vpMeta = document.querySelector('meta[name="viewport"]');
-  if (window.visualViewport && vpMeta) {
-    const baseContent = vpMeta.getAttribute('content')!;
-    let unzoomTimer = 0 as any;
-    window.visualViewport.addEventListener('resize', () => {
-      if (window.visualViewport!.scale <= 1.02) return;
-      clearTimeout(unzoomTimer);
-      unzoomTimer = setTimeout(() => {
-        if (window.visualViewport!.scale <= 1.02) return;
-        vpMeta.setAttribute('content', baseContent.replace('maximum-scale=1', 'maximum-scale=1.0001'));
-        requestAnimationFrame(() => vpMeta.setAttribute('content', baseContent));
-      }, 250);
-    });
-  }
-
-  // ---- Durable saves: ask to survive storage pressure ----
-  // A roguelike career lives in localStorage. iOS home-screen apps were
-  // effectively exempt from eviction, so this was never needed; Android evicts
-  // best-effort storage under memory pressure (common on budget devices), which
-  // would wipe the career. Requesting persistence makes the origin exempt.
+// ---- X5/R7: durable saves — ask to survive storage pressure / ITP eviction ----
+// A roguelike career lives in localStorage. Android evicts best-effort storage
+// under memory pressure; WebKit's ITP deletes all script-writable storage after
+// 7 days of no interaction (home-screen-installed apps get a durability
+// exemption). Requesting persistence makes the origin exempt where the browser
+// grants it (writes are already try/catch-wrapped in js/save.ts). Note: on iOS
+// `persist()` is reported non-granting for browser tabs — export/A2HS remain the
+// real durability path for a precious save (see docs/ios-compat.md R7).
+function installDurableStorage(): void {
   try { navigator.storage?.persist?.().catch(() => {}); } catch (e) { /* older browsers */ }
+}
+
+// ---- R10: keyboard / visual viewport (save-code entry) ----
+// When a text input is focused, the iOS keyboard covers it because the layout
+// viewport doesn't resize (only the visual viewport). Nudge the focused field
+// into view. The real behavior is Tier-2 (no soft keyboard in headless); this is
+// the cheap, safe wiring. Normal text inputs (the save-code field) keep their
+// native behavior — this only scrolls, never blocks.
+function installKeyboardScrollIntoView(): void {
+  document.addEventListener('focusin', (e) => {
+    const t = e.target as HTMLElement | null;
+    if (!t || (t.tagName !== 'INPUT' && t.tagName !== 'TEXTAREA')) return;
+    setTimeout(() => { try { t.scrollIntoView({ block: 'center' }); } catch (err) {} }, 250);
+  });
+}
+
+// ---- R7: iOS "Add to Home Screen" coach-mark ----
+// iOS has no `beforeinstallprompt` / install UI — installation is a manual
+// Share → "Add to Home Screen". A tab-scoped save is ephemeral (ITP 7-day
+// eviction), so players who care about their run should install. Show a one-time,
+// dismissible coach-mark ONLY when we're on iOS Safari and NOT already
+// standalone. Never depends on an install event.
+function installIosInstallHint(): void {
+  const ua = navigator.userAgent || '';
+  const isIOS = /iP(hone|od|ad)/.test(ua)
+    || (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1); // iPadOS 13+ reports as Mac
+  if (!isIOS) return;
+  const standalone = (navigator as any).standalone === true
+    || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  if (standalone) return;
+  // In-app WebViews (Instagram/Facebook) can't Add-to-Home-Screen at all — the
+  // right nudge there is "Open in Safari" (see docs/ios-compat.md R7 / Tier-3).
+  const inAppWebView = /(FBAN|FBAV|Instagram|Line|GSA)/i.test(ua);
+  let dismissed = false;
+  try { dismissed = localStorage.getItem('bb_a2hs_hint_v1') === 'dismissed'; } catch (e) {}
+  if (dismissed) return;
+  const build = () => {
+    if (document.querySelector('.ios-install-hint')) return;
+    const hint = document.createElement('div');
+    hint.className = 'ios-install-hint';
+    hint.innerHTML = inAppWebView
+      ? `<span>For a save that lasts, open in <b>Safari</b> — then tap Share and “Add to Home Screen”.</span>`
+      : `<span>Tap Share <b>&#x2191;</b> then <b>“Add to Home Screen”</b> — keeps your run and plays full-screen.</span>`;
+    const close = document.createElement('button');
+    close.className = 'ios-install-x';
+    close.setAttribute('aria-label', 'Dismiss');
+    close.textContent = '✕';
+    const dismiss = () => {
+      hint.remove();
+      try { localStorage.setItem('bb_a2hs_hint_v1', 'dismissed'); } catch (e) {}
+    };
+    close.addEventListener('click', dismiss);
+    hint.appendChild(close);
+    document.body.appendChild(hint);
+  };
+  if (document.body) build();
+  else document.addEventListener('DOMContentLoaded', build, { once: true });
 }
 
 // Register the offline service worker (network-first), post-load so it never

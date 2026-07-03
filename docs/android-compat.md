@@ -75,13 +75,16 @@ on first `pointerdown` and `resume()`s on a suspended context. → **Guarded** b
 
 ### Tier 2 — layout / feel / a meaningful minority
 
-**Risk 5 — `user-scalable=no` blocks accessibility zoom.** iOS Safari *ignores*
-`user-scalable=no` (so it was invisible to iOS QA); **Android Chrome honours
-it**, so low-vision users can't pinch-zoom. Worse, `js/platform.ts`'s
-`visualViewport` recovery actively snaps any zoom back to 1:1 every 250 ms. →
-**Proven** by `accessibility-zoom-not-blocked` (⚠️ static; the live recovery
-loop is 📱). *Fix sketch:* drop `user-scalable=no`; gate the zoom-recovery loop
-so it doesn't fight deliberate accessibility zoom.
+**Risk 5 — `user-scalable=no` blocked accessibility zoom. FIXED.** iOS Safari
+*ignores* `user-scalable=no` (so it was invisible to iOS QA); **Android Chrome
+honoured it**, so low-vision users couldn't pinch-zoom, and `js/platform.ts`'s
+`visualViewport` recovery snapped any zoom back to 1:1. **FIXED (product-approved):**
+dropped `user-scalable=no`/`maximum-scale` from the viewport meta, switched
+zoom-blocking to `touch-action: manipulation` (keeps swipes, restores deliberate
+pinch-zoom), and removed the `visualViewport` recovery. This is the *same* fix as
+the iOS double-tap-zoom trap (R1) — see [`docs/ios-compat.md`](./ios-compat.md). →
+`accessibility-zoom-not-blocked` flipped `PROVEN → FIXED?` and was **promoted to a
+must-pass guard**; the live-zoom feel remains 📱.
 
 **Risk 6 — PWA install / `apple-*` no-ops.** `apple-mobile-web-app-*` tags do
 nothing on Android; there's no `beforeinstallprompt` handling, so Android users
@@ -139,16 +142,15 @@ Android bug shouldn't block shipping the iOS-solid game, but an Android
 
 `node tools/android/run.mjs` — 5-device matrix:
 
-- **37 PASS** regression guards green across all Android devices, **0 regressions**.
-- **3 bugs fixed and promoted to guards** (Risks 2, 3, 8) — the probes that
-  proved them now assert the fix stays in place.
-- **1 known bug still PROVEN**: `accessibility-zoom-not-blocked` (Risk 5),
-  left as a known-bug on purpose — restoring pinch-zoom reverses a *documented
-  deliberate* "game always fills the screen" decision (`js/platform.ts`,
-  `css/style.css`), so it's a product call rather than a bug fix.
+- All regression guards green across all Android devices, **0 regressions**.
+- **4 bugs fixed and promoted to guards** (Risks 2, 3, 8, and now **5**) — the
+  probes that proved them now assert the fix stays in place.
+- **0 known bugs still open.** Risk 5 (`accessibility-zoom-not-blocked`) was the
+  last one; it landed with the iOS work and was promoted to must-pass.
 - **5 documented SKIPs** requiring a real device / farm.
 
-Open item awaiting a product decision: **Risk 5 (accessibility zoom)** — the
-ready fix is to drop `user-scalable=no`/`maximum-scale`, switch body
-`touch-action` to `manipulation` (keeps swipes; allows deliberate pinch-zoom),
-and stop the `visualViewport` recovery from fighting it.
+No open product decisions. Risk 5 (accessibility zoom) was **approved and
+implemented** — `user-scalable=no`/`maximum-scale` dropped, `touch-action:
+manipulation` blocks double-tap-zoom while keeping deliberate pinch-zoom, and the
+`visualViewport` recovery is removed. Same fix as iOS R1
+([`docs/ios-compat.md`](./ios-compat.md)).
