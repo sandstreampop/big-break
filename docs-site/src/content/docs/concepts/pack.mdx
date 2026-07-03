@@ -23,7 +23,7 @@ Five fields make a pack a game. Nothing else is mandatory:
 | `manifest` | [`PackManifest`](/big-break/docs/reference/types/interfaces/packmanifest/) | The genre's taxonomy — stats, resources, summits, gates. |
 | `events` | [`GameEvent`](/big-break/docs/reference/types/interfaces/gameevent/)`[]` | The deck. |
 | `tutorialEvents` | `GameEvent[]` | Onboarding cards (may be empty). |
-| `instruments` + `instrumentById` | personas | The loadout: at least one selectable persona and a lookup. A run always starts as *someone*. |
+| `loadouts` + `loadoutById` | personas | The loadout: at least one selectable persona and a lookup. A run always starts as *someone*. |
 
 The [probe pack](/big-break/docs/quickstart/) supplies exactly these and stops —
 its assembled object is the whole required surface, with a comment where the

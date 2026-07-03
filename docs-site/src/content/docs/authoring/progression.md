@@ -75,16 +75,15 @@ teaching outcome.
 
 ```ts twoslash
 interface TutorialStart {
-  instrument: string;
+  loadout: string;
   stats: Record<string, number>;
-  money?: number;
-  fame?: number;
+  resources?: Record<string, number>;
 }
 // ---cut---
 const tutorialStart: TutorialStart = {
-  instrument: 'detective',
+  loadout: 'detective',
   stats: { insight: 30, nerve: 20 },
-  money: 40,
+  resources: { money: 40 },
 };
 ```
 

@@ -39,10 +39,9 @@ only enters the deck when the run state qualifies. Gates compose:
 interface Requires {
   anyOf?: Requires[];
   flagsAll?: string[]; flagsNone?: string[];
-  moneyMin?: number; moneyMax?: number;
   burnoutMin?: number;
   stats?: Record<string, number>; // { <stat>Min: value }
-  // …plus subsystem-specific keys used by the music pack
+  // …plus subsystem-specific keys (e.g. the music economy's moneyMin/moneyMax)
 }
 // ---cut---
 const requires: Requires = {
