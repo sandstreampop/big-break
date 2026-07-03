@@ -48,8 +48,9 @@ export function activePack(): Pack {
 }
 
 // Tutorial cards live outside PACK.events so they can never enter normal decks;
-// chains and resume still need to find them by id.
-function findEvent(id) {
+// chains and resume still need to find them by id. Exported as a plugin-facing
+// service so a subsystem (seeds) can inspect the deck without importing it.
+export function findEvent(id) {
   return PACK.events.find((e) => e.id === id) || PACK.tutorialEvents.find((e) => e.id === id) || null;
 }
 
@@ -201,8 +202,7 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
   // onConstruct, seeds, flashpoint, actTwist; the weather draw now lands at the
   // onRunStart tail). A subsystem's construction draw lands exactly where the
   // old inline draw did; reordering here invalidates the entire golden corpus.
-  firePlugins('onConstruct', state, rng); // rival plugin (Phase 4.3)
-  state.seeds = PACK.rollSeeds(rng, CONFIG.seedCount); // Story Seeds (R1)
+  firePlugins('onConstruct', state, rng); // rival draw, then the seeds draw
   // Rush: ~25% of runs schedule one flashpoint (U2); ~20% bend an act (U5)
   state.flashpointAt = rng() < CONFIG.flashpointChance
     ? randInt(rng, CONFIG.flashpointWindow[0], CONFIG.flashpointWindow[1]) : null;
@@ -450,7 +450,7 @@ export function signContract(state, contractId) {
 
 // ---------- Deck assembly (spec §8.4) ----------
 
-function actMatches(ev, act) {
+export function actMatches(ev, act) {
   return Array.isArray(ev.act) ? ev.act.includes(act) : ev.act === act;
 }
 
@@ -483,7 +483,9 @@ function requiresPredicates(): Record<string, (state: any, arg: any) => boolean>
   return preds;
 }
 
-function requiresOk(r, state) {
+// Evaluate a Requires gate. Exported as a plugin-facing service so a subsystem
+// (seeds) can test its own arc-lit conditions with the same semantics.
+export function requiresOk(r, state) {
   if (!r) return true;
   // anyOf: alternative gates — the card fires if ANY branch is satisfied
   // (e.g. nemesis_soundcheck accepts a cross-run nemesis OR an in-run feud)
@@ -519,12 +521,6 @@ function requiresOk(r, state) {
     if (pred && !pred(state, (r as any)[key])) return false;
   }
   return true;
-}
-
-// Is a story arc's condition satisfied for this run? (sim + UI reporting)
-export function arcLit(state, arcId) {
-  const arc = PACK.arcById(arcId);
-  return !!arc && requiresOk(arc.lit, state);
 }
 
 function pathEligible(ev, state) {
@@ -580,23 +576,10 @@ export function drawNextCard(state, rng = Math.random) {
       const shops = pool.filter((e) => e.shop);
       if (shops.length) pool = shops;
     }
-    // Story Seeds (R1): an unlit seeded arc gets its setup card dealt on
-    // schedule — same mechanism as the shop slot. Acts 1–2 only (an arc
-    // seeded in act 3 could never pay off).
-    if (!shopDue && !state.tutorial && state.act <= 2 &&
-        state.cardsPlayedInAct >= (CONFIG.seedSetupSlot[state.act] ?? 99)) {
-      const due = [];
-      for (const arcId of state.seeds || []) {
-        const arc = PACK.arcById(arcId);
-        if (!arc || requiresOk(arc.lit, state)) continue; // already lit
-        if (arc.setup.some((id) => state.usedEvents.includes(id))) continue; // setup came & went
-        due.push(...arc.setup);
-      }
-      if (due.length) {
-        const setups = pool.filter((e) => due.includes(e.id));
-        if (setups.length) pool = setups;
-      }
-    }
+    // Scheduled subsystem forcing (Story Seeds R1): an unlit seeded arc gets its
+    // setup card dealt on schedule, same mechanism as the shop slot above. The
+    // seeds plugin owns the arc data; the engine just gives it the slot.
+    pool = foldDeckPool(state, pool, { shopDue });
     // U3 spotlight: while ON A ROLL, the deck leans all the way into
     // what this player has never seen — streaks are for discovering.
     if (streakHot && !shopDue && state.seenCards) {
@@ -604,16 +587,6 @@ export function drawNextCard(state, rng = Math.random) {
       const unseen = pool.filter((e) => !seenSet.has(e.id));
       if (unseen.length) pool = unseen;
     }
-  }
-  // Lit seeded arcs: their payoff cards draw hot for the rest of the run.
-  // Unlit ones: their setups draw warm even before the guaranteed slot.
-  const litPayoffs = new Set();
-  const warmSetups = new Set();
-  for (const arcId of state.seeds || []) {
-    const arc = PACK.arcById(arcId);
-    if (!arc) continue;
-    if (requiresOk(arc.lit, state)) for (const id of arc.payoffs) litPayoffs.add(id);
-    else for (const id of arc.setup) warmSetups.add(id);
   }
   // Personal novelty (R2): cards THIS player has never seen draw heavier.
   // On a first install everything is unseen, so nothing shifts.
@@ -623,11 +596,12 @@ export function drawNextCard(state, rng = Math.random) {
     const affine = ev.pathAffinity && ev.pathAffinity.includes(state.path);
     let w = (ev.weight || 1) *
       (affine ? CONFIG.pathWeightMult : 1) *
-      (litPayoffs.has(ev.id) ? CONFIG.seedPayoffMult : 1) *
-      (warmSetups.has(ev.id) ? CONFIG.seedSetupMult : 1) *
       (seen && !seen.has(ev.id) ? CONFIG.noveltyWeightMult : 1);
-    // Subsystem deck recolor (weather era), folded in after the core factors —
-    // the same slot the inline weightTagMult loop sat.
+    // Subsystem deck bias (seeded-arc payoff/setup boost, then the weather
+    // era's recolor), folded in after the core path/novelty factors — the same
+    // slot the inline seed/weather multipliers sat. In the golden corpus the
+    // novelty factor is always 1 (seenCards unset), so the ×1 is a true no-op
+    // and this grouping is byte-exact with the old inline order.
     w = foldDeckWeight(state, ev, w);
     total += w;
     return w;
@@ -717,6 +691,11 @@ function encoreDisabled(state): boolean {
 function foldDeckWeight(state, ev, weight: number): number {
   for (const p of orderedPlugins()) if (p.weightDeck) weight = p.weightDeck(state, ev, weight);
   return weight;
+}
+// Let each plugin force a scheduled category into the draw pool (seed setup slot).
+function foldDeckPool(state, pool, ctx): any[] {
+  for (const p of orderedPlugins()) if (p.refineDeck) pool = p.refineDeck(state, pool, ctx);
+  return pool;
 }
 // Product of each plugin's Legacy Points multiplier (contract, weather). Starts
 // at 1 (identity), so the accumulation is byte-exact with the old `mult *= …`.
@@ -1154,32 +1133,7 @@ export function commitPath(state, pathId) {
   return startAct(state, 2);
 }
 
-// Story Seeds: a dud seed re-rolls at the Crossroads. If an arc can no
-// longer light (setups spent or act-1-only and gone), the run quietly
-// roots for a different story instead of carrying dead weight into act 2.
-function refreshSeeds(state) {
-  if (!(state.seeds || []).length) return;
-  const rng = stateRng(state);
-  const alive = (arc) =>
-    requiresOk(arc.lit, state) ||
-    arc.setup.some((id) => {
-      const ev = findEvent(id);
-      return ev && !state.usedEvents.includes(id) && actMatches(ev, 2);
-    });
-  const taken = new Set(state.seeds);
-  state.seeds = state.seeds.map((arcId) => {
-    const arc = PACK.arcById(arcId);
-    if (arc && alive(arc)) return arcId;
-    const pool = PACK.arcs.filter((a) => !taken.has(a.id) && alive(a));
-    if (!pool.length) return arcId;
-    const pick = pool[Math.floor(rng() * pool.length)].id;
-    taken.add(pick);
-    return pick;
-  });
-}
-
 function startAct(state, act) {
-  if (act === 2) refreshSeeds(state);
   state.act = act;
   state.cardsPlayedInAct = 0;
   state.shopPlayedInAct = false;

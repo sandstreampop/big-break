@@ -248,6 +248,11 @@ export interface Plugin {
   // Scale a card's deck weight (weather recolors the deck; seeded arcs bias
   // their setup/payoff cards). Returns the new weight.
   weightDeck?(state: RunState, ev: GameEvent, weight: number): number;
+  // Force a category of card into the draw pool at a scheduled slot (the way the
+  // shop slot works) — the seeds plugin deals an unlit arc's setup on schedule.
+  // Returns a narrowed pool, or the pool unchanged. `ctx.shopDue` says a shop
+  // was already forced this draw. Fired after the shop slot, before weighting.
+  refineDeck?(state: RunState, pool: GameEvent[], ctx: any): GameEvent[];
   // A per-resolution "gain hooks" bag: { statGainMult?, burnoutGainMult?,
   // burnoutHealMult? } a subsystem (contract, weather) contributes, applied by
   // the engine's stat/burnout loops in registration order right after the
