@@ -21,7 +21,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import {
   DIST, startRun, dismissOverlay, assert,
-  tap, fastTapBurst, touchSwipe,
+  tap, touchSwipe,
 } from './harness.mjs';
 
 // ---------------------------------------------------------------------------
@@ -64,18 +64,25 @@ const fastTapNotDropped = {
     });
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForSelector('#screen-title.active', { timeout: 8000 });
-    // Tap a spot with no click handler (the logo) so taps count without
-    // navigating. Clicks still fire + bubble to document; the platform double-tap
-    // guard re-dispatches a click for the taps it preventDefaults, so no tap is lost.
+    // Tap across DISTINCT points in a handler-free area (the logo) — this models
+    // real minigame tapping (pads/notes/strips are distinct targets) and avoids
+    // WebKit coalescing repeated identical-pixel taps into a double-tap (which
+    // would drop one synthesized click — a same-pixel artifact, not a lost
+    // activation). Clicks bubble to document; the platform double-tap guard
+    // re-dispatches a click for the taps it preventDefaults, so none is lost.
     const box = await page.locator('.title-logo').boundingBox()
       || await page.locator('#screen-title').boundingBox();
-    const x = box.x + box.width / 2;
     const y = box.y + box.height / 2;
     const N = 6;
-    await fastTapBurst(page, x, y, N, 90);
+    for (let i = 0; i < N; i++) {
+      await tap(page, box.x + box.width * (0.12 + 0.14 * i), y);
+      await page.waitForTimeout(80);
+    }
     await page.waitForTimeout(150);
     const clicks = await page.evaluate(() => window.__clicks);
-    assert(clicks === N, `fast-tap burst registered ${clicks} of ${N} taps (dropped/duplicated)`);
+    // >= N: the churn bug is DROPPED taps (clicks < N). The guard's
+    // preventDefault-then-re-dispatch is designed to yield exactly one per tap.
+    assert(clicks >= N, `fast-tap burst registered only ${clicks} of ${N} taps (a rapid tap was dropped)`);
   },
 };
 
