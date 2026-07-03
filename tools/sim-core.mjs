@@ -31,7 +31,7 @@ export function pathScore(state, pathId) {
   const g = musicPack.manifest.winGates[pathId];
   let s = 0;
   for (const [k, target] of Object.entries(g)) {
-    const v = k === 'fame' ? state.fame : k === 'hits' ? state.hits : state.stats[k];
+    const v = engine.gateValue(state, k);
     s += v / target;
   }
   return s;

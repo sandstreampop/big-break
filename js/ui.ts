@@ -1606,7 +1606,7 @@ function actInterstitial(step) {
 function pathFit(pathId) {
   const gates = musicPack.manifest.winGates[pathId];
   const readings = Object.entries<number>(gates).map(([key, target]) => {
-    const value = key === 'fame' ? run.fame : key === 'hits' ? run.hits : run.stats[key];
+    const value = engine.gateValue(run, key);
     return { key, target, value, ratio: Math.min(1, value / target) };
   });
   const fit = readings.reduce((s, r) => s + r.ratio, 0) / readings.length;

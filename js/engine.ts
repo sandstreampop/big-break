@@ -82,6 +82,14 @@ function clamp(v, lo, hi) {
   return Math.max(lo, Math.min(hi, v));
 }
 
+// Read a gate key's value generically, without special-casing 'fame'/'hits'
+// (Phase 3.3): core stats live in state.stats, resources live top-level. Any
+// pack's winGates/requires keys resolve through here, so a genre without
+// "fame" doesn't trip a hardcoded branch.
+export function gateValue(state, key): number {
+  return (key in state.stats) ? state.stats[key] : (state[key] ?? 0);
+}
+
 // ---------- Run lifecycle ----------
 
 export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
@@ -449,7 +457,7 @@ function requiresOk(r, state) {
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');
-      const cur = stat === 'hits' ? state.hits : (state.stats[stat] ?? 0);
+      const cur = gateValue(state, stat);
       if (cur < val) return false;
     }
   }
@@ -1331,7 +1339,7 @@ export function evaluateFinale(state) {
   finalePayout(state);
   const gates = PACK.manifest.winGates[state.path] as Record<string, number>;
   const readings = Object.entries(gates).map(([key, target]) => {
-    const value = key === 'fame' ? state.fame : key === 'hits' ? state.hits : state.stats[key];
+    const value = gateValue(state, key);
     return { key, target, value, met: value >= target, ratio: Math.min(1, value / target) };
   });
   let result;
