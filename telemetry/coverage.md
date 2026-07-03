@@ -6,181 +6,455 @@ side comes from `telemetry/latest.json`, the catalog side from
 `js/data/*` and `js/minigames.js`. "Never" sections are the cut/fix
 candidates — or the content that needs better signposting.
 
-**Data through:** 2026-07-02T19:19:22.790000Z · 1025 events · 13 players
+**Data through:** 2026-07-03T07:59:14.519000Z · 1636 events · 15 players
 
 | catalog | seen | never | rare |
 |---|---|---|---|
-| Cards | 166/209 | 43 | 102 |
-| Minigames | 14/15 | 1 | 7 |
+| Cards | 259/523 | 264 | 155 |
+| Minigames | 14/15 | 1 | 2 |
 | Finale endings (path × outcome) | 6/9 | 3 | 0 |
 | Game-over endings | 0/3 | 3 | 0 |
 | Exit interviews | 0/6 | 6 | 0 |
-| Trophies | 0/51 | 51 | 0 |
-| Contracts | 6/9 | 3 | 3 |
-| Instruments | 14/16 | 2 | 10 |
-| Genres | 6/9 | 3 | 3 |
-| Home venues | 6/7 | 1 | 3 |
-| Rivals | 0/11 | 11 | 0 |
-| Bandmates | 0/10 | 10 | 0 |
-| Gear | 0/23 | 23 | 0 |
-| Hustles | 0/10 | 10 | 0 |
+| Trophies | 24/112 | 88 | 22 |
+| Contracts | 7/18 | 11 | 3 |
+| Instruments | 16/32 | 16 | 11 |
+| Genres | 11/18 | 7 | 7 |
+| Home venues | 9/14 | 5 | 4 |
+| Rivals | 5/22 | 17 | 3 |
+| Bandmates | 6/20 | 14 | 4 |
+| Gear | 17/46 | 29 | 9 |
+| Hustles | 4/20 | 16 | 4 |
 
-## Cards — 166/209 seen
+## Cards — 259/523 seen
 
-### Never reached (43)
+### Never reached (264)
 
 | id | notes |
 |---|---|
 | sm_birthday | act 2 · gated |
 | cb_nostalgia_fest | act 2 · gated |
-| cl_reprise | act 3 · gated |
 | cl_regret | act 3 · gated |
-| bs_ludo_parade | act 2,3 · gated |
 | bs_greta_archive | act 2,3 · gated |
 | a3_band_ultimatum | act 3 · gated |
 | a3_song_regret | act 3 · gated |
 | debt_collector | act 2,3 · gated |
-| a2_shed_nights | act 2 · gated |
-| a3_shed_album | act 3 · gated |
 | cb_poster_wall | act 2 · gated |
-| cb_old_flame_band | act 2 · gated |
 | a3_tv_taping | act 3 · gated |
-| a2_truce_tour | act 2 · gated |
-| a2_diss_track | act 2 · gated |
 | a2c_ms_quote | act 2 · chain-only |
 | a3_bloom_return | act 3 · gated |
-| a3_bloom_cold | act 3 · gated |
-| a2_docu_moment | act 2 · gated |
-| a3_docu_gold | act 3 · gated |
 | a3_docu_dirt | act 3 · gated |
 | a3_shed_someone | act 3 · gated |
 | a3_shed_doc | act 3 · gated |
 | a3_bloom_festival | act 3 · gated |
 | a3_shed_collab | act 3 · gated |
 | a3_blooper | act 3 · gated |
-| a2_hustle_audit | act 2,3 · gated |
 | a3_hustle_profile | act 3 · gated |
-| a3_nadia_spotlight | act 3 · gated |
-| a3_fan_tattoo | act 3 · gated |
 | a3_fan_wars | act 3 · gated |
 | a3_nadia_deepcut | act 3 · gated |
 | a2_the_sync | act 2,3 · gated |
-| a3_venue_sale | act 3 · gated |
-| a3c_venue_benefit | act 3 · chain-only |
 | a3_dedication | act 3 · gated |
-| a3_nemesis_soundcheck | act 3 · gated |
-| a1_first_review | act 1 · gated |
-| a3_genre_obituary | act 3 · gated |
-| coping_song | act 1,2,3 · chain-only |
 | a2_planetarium_night | act 2,3 · gated |
-| a2_trend_unmask | act 2,3 · gated |
+| fp_prince | act 2,3 |
+| fp_blackout | act 3 |
+| fp_capsule | act 1,2,3 |
+| fp_slot | act 2,3 |
+| fp_masked | act 2,3 |
+| fp_suit | act 2,3 |
+| fp_glitch | act 2,3 |
+| fp_billboard | act 2,3 |
+| a2_prodigy_ghost | act 2 · gated |
+| a3_prodigy_mirror | act 3 · gated |
+| a2_heirloom_call | act 2 · gated |
+| a3_heirloom_home | act 3 · gated |
+| a3_heirloom_glass | act 3 · gated |
+| w_emerging_tent | act 2 · gated |
+| w_flooded_venue | act 2,3 · gated |
+| w_moonlit_set | act 2,3 · gated |
+| w_grant_form | act 2 · gated |
+| w_basement_show | act 2,3 · gated |
+| w_reunion_offer | act 2,3 · gated |
+| w_human_badge | act 2,3 · gated |
+| w_mic_judge | act 2,3 · gated |
+| n1_allages | act 1 |
+| n1_access_tv | act 1 |
+| n1_group_chat | act 1 |
+| n1_chat_fest | act 1,2 · gated |
+| n1_wrong_cover | act 1 |
+| n1_gentle_chord | act 1 |
+| n1_heat_brownout | act 1 · gated |
+| n1_off_season_pier | act 1 · gated |
+| n1_venue_polaroid | act 1 · gated |
+| n1_receipt_song | act 1 |
+| n1_argument_song | act 1 |
+| n1_amp_tech | act 1 |
+| n1_piano_today | act 1 |
+| n1_retirement_home | act 1 |
+| n1_plasma | act 1 · gated |
+| n1_tent_sale | act 1 |
+| n1_unwritten_rules | act 1 |
+| n1_copy_shop | act 1 |
+| n1_scene_photog | act 1 |
+| n1_quiet_night | act 1 |
+| n1_permit_office | act 1 |
+| n1_house_party | act 1 |
+| n1_park_circle | act 1 |
+| n1_car_studio | act 1 |
+| n1_dollar_bin | act 1 |
+| n1_diner_close | act 1 |
+| n1_building_vote | act 1 |
+| n1_weekly_column | act 1 |
+| n1_barter_yard | act 1 |
+| n1_earplug_lecture | act 1,2 · gated |
+| n1_blues_jam | act 1 |
+| n1_student_film | act 1 |
+| n1_own_sale | act 1 |
+| n1_lost_pedal | act 1 |
+| n2_college_radio | act 2 |
+| n2_first_tour | act 2 |
+| n2_pedal_flipping | act 2 |
+| n2_hold_music | act 2 |
+| n2_ringtone_shop | act 2 |
+| n2_opener_slot | act 2 |
+| n2_hometown_return | act 2 |
+| n2_first_press | act 2 |
+| n2_release_single | act 2 · gated |
+| n2_push_the_single | act 2 · gated |
+| n2_rival_split_bill | act 2 |
+| n2_rival_truce_offer | act 2 · gated |
+| n2_weather_dance_craze | act 2 · gated |
+| n2_weather_payola | act 2 · gated |
+| n2_merch_math | act 2 |
+| n2_producer_offer | act 2 |
+| n2_burnout_wall_early | act 2 · gated |
+| n2_write_the_grief | act 2 |
+| n2_scene_politics | act 2 |
+| n2_bs_ox_amps | act 2 · gated |
+| n2_bs_dot_ledger | act 2 · gated |
+| n2_festival_slot | act 2 |
+| n2_old_friend | act 2 |
+| n2_the_algorithm | act 2 |
+| n2_genre_gatekeep | act 2 · gated |
+| n2_broke_stretch | act 2 · gated |
+| n2_music_video | act 2 |
+| n2_the_ask | act 2 |
+| n2_label_sniff | act 2 · gated |
+| n2_cover_gone_big | act 2 |
+| n2_bandmate_doubt | act 2 · gated |
+| n2_hustle_audit_two | act 2 · gated |
+| n2_tighten_the_set | act 2 |
+| n2_streaming_check | act 2 |
+| n2_encore_demand | act 2 |
+| n2_documentary_pitch | act 2 · gated |
+| n2_reissue_offer | act 2 · gated |
+| n2_award_nom | act 2 · gated |
+| n2_two_three_bridge | act 2,3 |
+| n3_body_keeps_score | act 3 · gated |
+| n3_faded_returns | act 3 · gated |
+| n3_hometown_institution | act 3 · gated |
+| n3_famous_and_broke | act 3 · gated |
+| n3_nemesis_toast | act 3 · gated |
+| n3_ghost_sessions | act 3 |
+| n3_sample_packs | act 3 |
+| n3_the_album | act 3 · gated |
+| n3_push_the_hit | act 3 · gated |
+| n3_write_from_the_top | act 3 |
+| n3_polish_the_vault | act 3 · gated |
+| n3_bs_cassette_wall | act 3 · gated |
+| n3_bs_gus_board | act 3 · gated |
+| n3_biopic_offer | act 3 · gated |
+| n3_young_band_furniture | act 3 |
+| n3_coast_temptation | act 3 |
+| n3_legacy_medley | act 3 · gated |
+| n3_streaming_empire | act 3 · gated |
+| n3_fan_generations | act 3 · gated |
+| n3_the_offer_to_quit | act 3 · gated |
+| n3_tribute_night | act 3 |
+| n3_final_collab | act 3 · gated |
+| n3_the_interview_hard | act 3 |
+| n3_off_the_grid_write | act 3 |
+| n3_scene_elder | act 3 |
+| n3_last_van_show | act 3 |
+| n3_definitive_statement | act 3 · gated |
+| n3_royalty_windfall | act 3 · gated |
+| n3_two_three_flag | act 2,3 |
+| n3_greatest_fear | act 3 · gated |
+| n3_comeback_kid | act 3 · gated |
+| n3_the_protege_surpasses | act 3 · gated |
+| n3_genre_pioneer | act 3 · gated |
+| n3_the_reunion_offer | act 3 · gated |
+| n3_teaching_offer | act 3 |
+| n3_one_more_song | act 3 |
+| n3_the_encore_of_encores | act 3 · gated |
+| np_ms2_stylist | act 2 |
+| np_ms2_arena_support | act 2 |
+| np_ms2_first_viral | act 2 |
+| np_ms2_brand_deal | act 2 |
+| np_ms2_stan_army | act 2 · gated |
+| np_ms2_rival_climb | act 2 |
+| np_ms2_late_show | act 2 |
+| np_ms2_paparazzi | act 2 · gated |
+| np_ms2_headline_first | act 2 |
+| np_st2_tone_quest | act 2 |
+| np_st2_ghost_solo | act 2 |
+| np_st2_bandleader | act 2 |
+| np_st2_chart_ghost | act 2 · gated |
+| np_st2_union | act 2 |
+| np_st2_rival_session | act 2 |
+| np_hf2_first_topline | act 2 |
+| np_hf2_splits_meeting | act 2 |
+| np_hf2_write_camp | act 2 |
+| np_hf2_the_placement | act 2 · gated |
+| np_hf2_trend_arb | act 2 |
+| np_hf2_vault_build | act 2 |
+| np_hf2_the_muse | act 2 |
+| np_hf2_instant_classic | act 2 · gated |
+| np_hf2_rival_writer | act 2 |
+| np_ms3_world_tour | act 3 |
+| np_ms3_the_persona | act 3 · gated |
+| np_ms3_stadium_anthem | act 3 |
+| np_ms3_award_show | act 3 · gated |
+| np_ms3_sell_out_show | act 3 |
+| np_ms3_rival_summit | act 3 |
+| np_ms3_legacy_choice | act 3 · gated |
+| np_st3_first_call_king | act 3 |
+| np_st3_signature_sound | act 3 |
+| np_st3_the_masters | act 3 · gated |
+| np_st3_own_studio | act 3 |
+| np_st3_last_session | act 3 |
+| np_hf3_the_machine | act 3 |
+| np_hf3_number_one | act 3 · gated |
+| np_hf3_the_album_hf | act 3 · gated |
+| np_hf3_legacy_catalog | act 3 |
+| np_hf3_write_your_own | act 3 |
+| np_hf3_the_reveal | act 3 · gated |
+| np_hf3_rival_credit | act 3 |
+| np_hf3_final_hit | act 3 · gated |
+| nm_mentor_meet | act 1 |
+| nm_mentor_lesson | act 2 · gated |
+| nm_mentor_favor | act 2 · gated |
+| nm_mentor_last | act 3 · gated |
+| nm_copycat_mirror | act 3 · gated |
+| nm_lost_tape | act 1 |
+| nm_tape_hunt | act 2 · gated |
+| nm_tape_release | act 3 · gated |
+| nm_tape_owner | act 3 · gated |
+| nm_intern_desk | act 3 · gated |
+| nm_van_breakdown | act 2 · gated |
+| nm_van_museum | act 3 · gated |
+| nm_first_letter | act 1 |
+| nm_letter_two | act 2 · gated |
+| nm_letter_town | act 3 · gated |
+| nm_letter_last | act 3 · gated |
+| nm_critic_pan | act 1 |
+| nm_critic_reread | act 2 · gated |
+| nm_critic_book | act 3 · gated |
+| nm_critic_quit | act 3 · gated |
+| nm_jingle_gig | act 1 |
+| nm_jingle_spreads | act 2 · gated |
+| nm_jingle_remix | act 3 · gated |
+| nm_jingle_waterpark | act 3 · gated |
+| nm_ghost_request | act 2 · gated |
+| nm_ghost_encore | act 3 · gated |
+| nm_ghost_settled | act 3 · gated |
+| nm_dog_adopt | act 1,2 |
+| nm_dog_mascot | act 2 · gated |
+| nm_dog_cover | act 3 · gated |
+| nm_dog_vet | act 2,3 · gated |
+| nm_sibling_call | act 1 |
+| nm_sibling_recital | act 2 · gated |
+| nm_sibling_verse | act 3 · gated |
+| nm_sibling_thaw | act 3 · gated |
+| nm_tab_pour | act 3 · gated |
+| nfp_eclipse | act 1,2,3 |
+| nfp_gorefeast | act 2,3 |
+| nfp_anthem | act 2,3 |
+| nfp_wax | act 2,3 |
+| nfp_broadcast | act 2,3 |
+| nfp_yacht | act 2,3 |
+| nfp_sinkhole | act 2,3 |
+| nfp_parade | act 2,3 |
+| nfp_terminal | act 1,2,3 |
+| nfp_lookalike | act 2,3 |
+| nw_first_dance | act 1 · pack:pack_wedding |
+| nw_uncle_bill | act 1,2 · pack:pack_wedding |
+| nw_divorce_party | act 2,3 · pack:pack_wedding |
+| nw_officiant | act 3 · pack:pack_wedding |
+| ncr_buffet | act 2,3 · pack:pack_cruise |
+| ncr_captain | act 2,3 · pack:pack_cruise |
+| ncr_talent_show | act 2,3 · pack:pack_cruise |
+| ncr_intl_waters | act 2,3 · pack:pack_cruise |
+| nr_split_bill | act 1,2 |
+| nr_understudy | act 2,3 · gated |
+| nr_kudzu | act 2,3 · gated |
+| nr_cold_open | act 2,3 · gated |
+| nr_hot_ten | act 3 · gated |
+| nr_nemesis_toast | act 3 · gated |
+| ng_bandcamp_friday | act 1,2 |
+| ng_open_mic_host | act 1 |
+| ng_gear_swap | act 2 |
+| ng_local_news | act 2 |
+| ng_setlist_gamble | act 2,3 |
+| ng_collab_dm | act 2,3 |
 
 ### Rarely reached (< 5 swipes)
 
 | id | swipes | notes |
 |---|---|---|
-| a1_first_drop | 1 | act 1 · gated |
-| a2_fan_account | 1 | act 2 · gated |
-| a2_ghostwrite | 1 | act 2 |
-| a2_morning_zoo | 1 | act 2 · gated |
-| a2_one_person_band | 1 | act 2 · gated |
-| a2_rival_opener | 1 | act 2 · gated |
-| a2_song_grows | 1 | act 2 · gated |
-| a2_tv_scout | 1 | act 2 · gated |
-| a2_woodshed | 1 | act 2 · gated |
-| a2c_trend_part2 | 1 | act 2 · chain-only |
-| a3_album_offer | 1 | act 3 · gated |
+| a1_band_photo | 1 | act 1 |
+| a1_bandcamp_friday | 1 | act 1 |
+| a1_bistro_covers | 1 | act 1 |
+| a1_family_show | 1 | act 1 |
+| a1_first_review | 1 | act 1,2 · gated |
+| a1_heirloom | 1 | act 1 |
+| a1_merch_box | 1 | act 1 |
+| a1_rehearsal_share | 1 | act 1 |
+| a1_ringtone | 1 | act 1 |
+| a1_setlist_panic | 1 | act 1 |
+| a2_diss_track | 1 | act 2 · gated |
+| a2_hustle_audit | 1 | act 2,3 · gated |
+| a2_prodigy_blowup | 1 | act 2 · gated |
+| a2_radio_zoo | 1 | act 2 · gated |
+| a2_shed_nights | 1 | act 2 · gated |
+| a2_soundcheck_feud | 1 | act 2 |
+| a2_support_pick | 1 | act 2 · gated |
+| a2_trend_unmask | 1 | act 2,3 · gated |
+| a3_bloom_cold | 1 | act 3 · gated |
 | a3_chart_war | 1 | act 3 · gated |
-| a3_legend_album | 1 | act 3 |
-| a3_masterclass | 1 | act 3 |
-| a3_masters_buyback | 1 | act 3 · gated |
-| a3_ms_persona | 1 | act 3 |
-| a3_rival_supergroup | 1 | act 3 · gated |
+| a3_docu_gold | 1 | act 3 · gated |
+| a3_encore_debt | 1 | act 3 |
+| a3_fan_tattoo | 1 | act 3 · gated |
+| a3_genre_obituary | 1 | act 3 · gated |
+| a3_nadia_spotlight | 1 | act 3 · gated |
+| a3_prodigy_stage | 1 | act 3 · gated |
+| a3_setlist_leak | 1 | act 3 · gated |
 | a3_song_finale | 1 | act 3 · gated |
-| a3c_album_drop | 1 | act 3 · chain-only |
-| bs_fish_van | 1 | act 2,3 · gated |
+| a3_tribute_band | 1 | act 3 · gated |
+| a3_van_dies | 1 | act 3 |
+| a3_venue_sale | 1 | act 3 · gated |
+| a3c_venue_benefit | 1 | act 3 · chain-only |
+| bs_ludo_parade | 1 | act 2,3 · gated |
 | bs_pearl_checkin | 1 | act 2,3 · gated |
 | bs_saul_clause | 1 | act 2,3 · gated |
-| bs_tanya_empire | 1 | act 2,3 · gated |
 | cb_fan_exec | 1 | act 2 · gated |
+| cb_old_flame_band | 1 | act 2 · gated |
+| cl_reprise | 1 | act 3 · gated |
 | f_headline_clash | 1 | act 3 · pack:pack_festival |
+| fp_cruise | 1 | act 2 |
+| fp_seance | 1 | act 1,2,3 |
+| n1_amp_bus | 1 | act 1 |
+| n1_borrowed_rig | 1 | act 1 |
+| n1_church_gig | 1 | act 1 |
+| n1_corner_notebook | 1 | act 1 |
+| n1_demo_club | 1 | act 1 |
+| n1_last_minute_opener | 1 | act 1 |
+| n1_lesson_flyer | 1 | act 1 |
+| n1_radio_contest | 1 | act 1 · gated |
+| n1_soundboard_lesson | 1 | act 1 |
+| n1_street_piano | 1 | act 1 |
+| n2_gear_theft | 1 | act 2 |
+| n2_karaoke_host | 1 | act 2 |
+| n2_late_night_write | 1 | act 2 |
+| n2_radio_promise | 1 | act 2 |
+| n2_session_call | 1 | act 2 |
+| n2_supper_club | 1 | act 2 |
+| n2_van_upgrade | 1 | act 2 |
+| n2_venue_regular | 1 | act 2 · gated |
+| n3_final_lesson | 1 | act 3 |
+| n3_legacy_act | 1 | act 3 |
+| n3_signature_move | 1 | act 3 |
+| ncr_storm_deck | 1 | act 2,3 · pack:pack_cruise |
+| ng_house_concert | 1 | act 1,2 |
+| ng_the_quiet_win | 1 | act 2,3 |
+| nm_copycat_clip | 1 | act 1,2 |
+| nm_copycat_duet | 1 | act 2 · gated |
+| nm_copycat_rise | 1 | act 3 · gated |
+| nm_ghost_note | 1 | act 1 |
+| nm_intern_fired | 1 | act 3 · gated |
+| nm_intern_leak | 1 | act 2 · gated |
+| nm_intern_meet | 1 | act 2 |
+| nm_open_tab | 1 | act 1 |
+| nm_tab_called | 1 | act 2 · gated |
+| nm_tab_wall | 1 | act 3 · gated |
+| nm_van_named | 1 | act 1 |
+| nm_van_odometer | 1 | act 2,3 · gated |
+| np_st2_first_call | 1 | act 2 |
+| np_st2_masterclass | 1 | act 2 · gated |
+| np_st3_credit_finally | 1 | act 3 · gated |
+| nw_cousins | 1 | act 2 · pack:pack_wedding |
 | sm_question | 1 | act 3 · gated |
-| a1_borrowed_van | 2 | act 1 |
-| a1_first_fan | 2 | act 1 |
-| a1_open_mic | 2 | act 1 |
-| a2_ar_listen | 2 | act 2 · gated |
-| a2_beat_leak | 2 | act 2 |
-| a2_hf_forecaster | 2 | act 2 |
-| a2_ms_junket | 2 | act 2 |
-| a2_press_piece | 2 | act 2 |
-| a2_st_ghost_solo | 2 | act 2 |
-| a3_gala_circuit | 2 | act 3 · gated |
+| w_lathe_cut | 1 | act 2,3 · gated |
+| w_orphan_ar | 1 | act 2,3 · gated |
+| w_paper_zine | 1 | act 2,3 · gated |
+| w_payout_check | 1 | act 2,3 · gated |
+| a1_neighbor_kid | 2 | act 1 |
+| a1_prodigy_kid | 2 | act 1 |
+| a1_string_break | 2 | act 1 |
+| a2_ghostwrite | 2 | act 2 |
+| a2_green_room_legend | 2 | act 2 |
+| a2_morning_zoo | 2 | act 2 · gated |
+| a2_one_person_band | 2 | act 2 · gated |
+| a2_song_grows | 2 | act 2 · gated |
+| a2_truce_tour | 2 | act 2 · gated |
+| a2c_trend_part2 | 2 | act 2 · chain-only |
+| a3_album_offer | 2 | act 3 · gated |
 | a3_genre_face | 2 | act 3 · gated |
-| a3_golden_hands | 2 | act 3 · gated |
-| a3_hf_heir | 2 | act 3 |
-| a3_playlist_guy | 2 | act 3 · gated |
+| a3_masterclass | 2 | act 3 |
+| a3_masters_buyback | 2 | act 3 · gated |
+| a3_nemesis_soundcheck | 2 | act 3 · gated |
 | a3_rival_showdown | 2 | act 3 · gated |
-| a3_st_loyalty | 2 | act 3 |
-| a3_stadium_call | 2 | act 3 · gated |
-| a3_three_peat | 2 | act 3 · gated |
-| a3c_st_credits | 2 | act 3 · chain-only |
-| cb_remembered | 2 | act 1 · gated |
-| cl_dm | 2 | act 2 · gated |
-| cl_session | 2 | act 2 · chain-only |
-| db_tuesday_residency | 2 | act 2 · pack:pack_divebar |
-| a1_algorithm_oracle | 3 | act 1 |
-| a1_craigslist | 3 | act 1 |
-| a1_docu_pitch | 3 | act 1 |
-| a1_noise_cop | 3 | act 1 |
-| a1_opendeck | 3 | act 1 |
-| a1_shower_hook | 3 | act 1 |
-| a1_subway_clip | 3 | act 1 |
-| a2_auditions | 3 | act 2 |
-| a2_hf_camp48 | 3 | act 2 |
-| a2_jingle | 3 | act 2 |
-| a2_manager | 3 | act 2 |
-| a2_opening_slot | 3 | act 2 |
-| a2_pawn_upgrade | 3 | act 2 · gated |
-| a2_st_pit | 3 | act 2 |
-| a2_tiktok_trend | 3 | act 2 |
-| a2_topline_dj | 3 | act 2 |
-| a2_union | 3 | act 2 |
-| a2_writing_camp | 3 | act 2 |
-| a3_biopic_rumor | 3 | act 3 |
+| a3_rival_supergroup | 2 | act 3 · gated |
+| a3_shed_album | 2 | act 3 · gated |
+| a3c_album_drop | 2 | act 3 · chain-only |
+| bs_fish_van | 2 | act 2,3 · gated |
+| bs_tanya_empire | 2 | act 2,3 · gated |
+| n1_estate_sale | 2 | act 1 |
+| n2_sync_ad | 2 | act 2 |
+| n3_gear_indulgence | 2 | act 3 |
+| a1_borrowed_van | 3 | act 1 |
+| a1_camcorder | 3 | act 1 |
+| a1_first_drop | 3 | act 1 · gated |
+| a1_laundromat | 3 | act 1 |
+| a2_beat_leak | 3 | act 2 |
+| a2_docu_moment | 3 | act 2 · gated |
+| a2_fan_account | 3 | act 2 · gated |
+| a2_rival_opener | 3 | act 2 · gated |
+| a2_tv_scout | 3 | act 2 · gated |
+| a2_woodshed | 3 | act 2 · gated |
+| a3_gala_circuit | 3 | act 3 · gated |
+| a3_hf_heir | 3 | act 3 |
 | a3_hf_prodigy | 3 | act 3 |
-| a3_hotel_ballad | 3 | act 3 |
-| a3_music_video | 3 | act 3 · gated |
-| a3_scandal | 3 | act 3 |
-| a3_song_of_summer | 3 | act 3 |
-| a3_voice_coach | 3 | act 3 |
+| a3_legend_album | 3 | act 3 |
+| a3_three_peat | 3 | act 3 · gated |
+| a3c_st_credits | 3 | act 3 · chain-only |
+| cb_remembered | 3 | act 1 · gated |
+| coping_song | 3 | act 1,2,3 · chain-only |
+| db_tuesday_residency | 3 | act 2 · pack:pack_divebar |
 | dc_birthday | 3 | act 2 · chain-only |
 | dc_blizzard | 3 | act 2 · chain-only |
 | dc_lastnight | 3 | act 2 · chain-only |
-| dc_offer | 3 | act 2 · gated |
-| a1_cover_band | 4 | act 1 |
-| a2_afterparty | 4 | act 2 |
-| a2_band_drama | 4 | act 2 |
-| a2_click_track | 4 | act 2 |
-| a2_dance_challenge | 4 | act 2,3 · gated |
-| a2_hf_hook_vault | 4 | act 2 |
-| a2_label_showcase | 4 | act 2 |
-| a2_ms_stan_army | 4 | act 2 |
-| a2_nadia_meet | 4 | act 2 · gated |
-| a2_open_for_hero | 4 | act 2 |
-| a2_rival_collab | 4 | act 2 |
-| a2_rival_leapfrog | 4 | act 2 |
-| a2_st_gear_lord | 4 | act 2 |
-| a2_sync_ad | 4 | act 2 |
-| a3_arena_support | 4 | act 3 |
-| a3_award_perf | 4 | act 3 |
-| a3_exec_notes | 4 | act 3 |
-| a3_hf_placement | 4 | act 3 |
-| a3_ms_worldtour | 4 | act 3 |
-| a3_one_take | 4 | act 3 |
-| a3_secret_album | 4 | act 3 |
+| a1_open_mic | 4 | act 1 |
+| a1_opendeck | 4 | act 1 |
+| a2_auditions | 4 | act 2 |
+| a2_hf_forecaster | 4 | act 2 |
+| a2_ms_junket | 4 | act 2 |
+| a2_press_piece | 4 | act 2 |
+| a2_st_ghost_solo | 4 | act 2 |
+| a2_st_pit | 4 | act 2 |
+| a2_topline_dj | 4 | act 2 |
+| a2_union | 4 | act 2 |
+| a2_writing_camp | 4 | act 2 |
+| a3_golden_hands | 4 | act 3 · gated |
+| a3_hotel_ballad | 4 | act 3 |
+| a3_ms_persona | 4 | act 3 |
+| a3_music_video | 4 | act 3 · gated |
+| a3_playlist_guy | 4 | act 3 · gated |
+| a3_song_of_summer | 4 | act 3 |
+| a3_st_loyalty | 4 | act 3 |
+| a3_stadium_call | 4 | act 3 · gated |
 | a3_tv_band | 4 | act 3 |
-| f_lineup_font | 4 | act 2 · pack:pack_festival |
-| sm_meet | 4 | act 1 |
+| a3_voice_coach | 4 | act 3 |
+| cl_session | 4 | act 2 · chain-only |
+| dc_offer | 4 | act 2 · gated |
 
 ## Minigames — 14/15 seen
 
@@ -195,12 +469,7 @@ candidates — or the content that needs better signposting.
 | id | plays | notes |
 |---|---|---|
 | duel | 1 |  |
-| interview | 1 |  |
-| mixdown | 1 |  |
-| note | 1 |  |
-| room | 1 |  |
-| setlist | 1 |  |
-| hat | 2 |  |
+| room | 2 |  |
 
 ## Finale endings (path × outcome) — 6/9 seen
 
@@ -237,11 +506,11 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | kept_amp | debt / left |
 | clean_slate | debt / right |
 
-## Trophies — 0/51 seen
+## Trophies — 24/112 seen
 
 _tracked since app 2.2 — "never" means "not since tracking began"._
 
-### Never reached (51)
+### Never reached (88)
 
 | id | notes |
 |---|---|
@@ -250,33 +519,27 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | cancelled |  |
 | repo_man |  |
 | win_megastar |  |
-| win_studio |  |
 | win_hitfactory |  |
 | partial_any |  |
 | fame_100 |  |
 | hits_5 |  |
 | the_door |  |
-| glow_up |  |
 | diversified |  |
-| fine_print |  |
 | chart_topper |  |
 | wellness_journey |  |
 | chain_reaction |  |
 | dirt_survivor |  |
 | seen_on_tv |  |
 | room_saver |  |
-| multi_inst |  |
 | full_setlist |  |
 | steady_hands |  |
 | constellation |  |
 | golden_hands |  |
 | featured |  |
-| blood_feud |  |
 | supergroup |  |
 | ding |  |
 | kazoo_win |  |
 | broke_finish |  |
-| zen_master |  |
 | all_paths |  |
 | plus_one |  |
 | always_you |  |
@@ -288,41 +551,133 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | old_faithful |  |
 | gauntlet_runner |  |
 | daily_3 |  |
-| wall_5 |  |
 | number_one |  |
 | one_week_wonder |  |
-| the_vault |  |
-| room_benefit |  |
 | thursday |  |
-| counterexample |  |
 | under_funded_skies |  |
+| ct_bet_win |  |
+| ct_fright_win |  |
+| ct_metronome_win |  |
+| ct_shark_win |  |
+| ct_opening_win |  |
+| ct_dayjob_done |  |
+| ct_diy_win |  |
+| ct_analog_win |  |
+| ct_grindset_win |  |
+| g_yodel_win |  |
+| g_opera_win |  |
+| g_polka_win |  |
+| v_chapel |  |
+| v_arcade |  |
+| v_ferry |  |
+| v_rollercade |  |
+| v_underpass |  |
+| v_union |  |
+| r_understudy_win |  |
+| r_kudzu_peace |  |
+| hustle_5 |  |
+| w_heatwave_win |  |
+| w_payola_win |  |
+| w_offseason_win |  |
+| two_number_ones |  |
+| long_runner |  |
+| went_viral |  |
+| catalog_5 |  |
+| beloved_famous |  |
+| faceless_perfect |  |
+| assembly_line |  |
+| scar_tissue |  |
+| monk_mode |  |
+| i_bagpipes_win |  |
+| i_recorder_win |  |
+| i_spoons_win |  |
+| i_theremin_win |  |
+| i_stylophone_win |  |
+| arc_mentor |  |
+| arc_penpal |  |
+| arc_dog |  |
+| arc_tape |  |
+| arc_jingle |  |
+| arc_sibling |  |
+| arc_critic |  |
+| fp_wave3 |  |
+| fp_lookalike |  |
 
-## Contracts — 6/9 seen
+### Rarely reached (< 2 earns)
 
-### Never reached (3)
+| id | earns | notes |
+|---|---|---|
+| arc_copycat | 1 |  |
+| arc_ghost | 1 |  |
+| arc_intern | 1 |  |
+| arc_tab | 1 |  |
+| arc_van | 1 |  |
+| blood_feud | 1 |  |
+| counterexample | 1 |  |
+| fame_150 | 1 |  |
+| fine_print | 1 |  |
+| glow_up | 1 |  |
+| highlight_reel | 1 |  |
+| i_susan_win | 1 |  |
+| money_2k | 1 |  |
+| multi_inst | 1 |  |
+| pack_cruise_played | 1 |  |
+| pack_wedding_played | 1 |  |
+| room_benefit | 1 |  |
+| the_vault | 1 |  |
+| v_botanica | 1 |  |
+| wall_5 | 1 |  |
+| win_studio | 1 |  |
+| zen_master | 1 |  |
+
+## Contracts — 7/18 seen
+
+### Never reached (11)
 
 | id | notes |
 |---|---|
 | one_take |  |
 | imposter |  |
-| overnight |  |
+| diy_or_die |  |
+| the_bet |  |
+| grindset |  |
+| stage_fright |  |
+| analog_only |  |
+| opening_slot |  |
+| day_job |  |
+| loan_shark |  |
+| metronome |  |
 
 ### Rarely reached (< 3 runs)
 
 | id | runs | notes |
 |---|---|---|
-| deadline | 1 |  |
 | kazoo_clause | 1 |  |
-| nepo_baby | 1 |  |
+| overnight | 1 |  |
+| deadline | 2 |  |
 
-## Instruments — 14/16 seen
+## Instruments — 16/32 seen
 
-### Never reached (2)
+### Never reached (16)
 
 | id | notes |
 |---|---|
 | hurdy_gurdy |  |
-| washboard |  |
+| spoons |  |
+| recorder |  |
+| stylophone |  |
+| washtub |  |
+| accordion |  |
+| banjo |  |
+| saxophone |  |
+| talkbox |  |
+| gig_harp |  |
+| haunted_808 |  |
+| bagpipes |  |
+| steel_pan |  |
+| mellotron |  |
+| autoharp |  |
+| the_laptop |  |
 
 ### Rarely reached (< 3 runs)
 
@@ -331,53 +686,67 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | cigarbox_guitar | 1 |  |
 | kazoo | 1 |  |
 | loop_station | 1 |  |
-| modular_synth | 1 |  |
-| omnichord | 1 |  |
-| sampler | 1 |  |
 | toy_glockenspiel | 1 |  |
 | triangle | 1 |  |
-| workhorse | 1 |  |
+| upright_susan | 1 |  |
+| washboard | 1 |  |
 | bucket_drums | 2 |  |
+| modular_synth | 2 |  |
+| omnichord | 2 |  |
+| workhorse | 2 |  |
 
-## Genres — 6/9 seen
+## Genres — 11/18 seen
 
-### Never reached (3)
+### Never reached (7)
 
 | id | notes |
 |---|---|
-| bedroom_pop |  |
-| yacht_metal |  |
-| gothgrass | wave 2 |
+| ambient_country |  |
+| sludge_disco |  |
+| yodelcore |  |
+| freak_polka |  |
+| cubicle_funk |  |
+| baroque_ska |  |
+| lofi_opera |  |
 
 ### Rarely reached (< 3 runs)
 
 | id | runs | notes |
 |---|---|---|
-| doom_jazz | 1 |  |
+| bedroom_pop | 1 |  |
+| chamber_punk | 1 |  |
+| dialup_soul | 1 |  |
 | stadium_shanty | 1 | wave 2 |
-| folk_punk | 2 |  |
+| yacht_metal | 1 |  |
+| doom_jazz | 2 |  |
+| gothgrass | 2 | wave 2 |
 
-## Home venues — 6/7 seen
+## Home venues — 9/14 seen
 
-### Never reached (1)
+### Never reached (5)
 
 | id | notes |
 |---|---|
-| planetarium |  |
+| rollercade |  |
+| ferry |  |
+| union_hall |  |
+| arcade |  |
+| chapel |  |
 
 ### Rarely reached (< 3 runs)
 
 | id | runs | notes |
 |---|---|---|
-| laundro | 1 |  |
+| botanica | 1 |  |
+| planetarium | 1 |  |
 | ricochet | 1 |  |
-| wkrz | 1 |  |
+| underpass | 1 |  |
 
-## Rivals — 0/11 seen
+## Rivals — 5/22 seen
 
 _tracked since app 2.2 — "never" means "not since tracking began"._
 
-### Never reached (11)
+### Never reached (17)
 
 | id | notes |
 |---|---|
@@ -385,70 +754,117 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | mickey |  |
 | panopticon |  |
 | lasagna |  |
-| petersens |  |
-| juniper_q |  |
-| baron |  |
 | ghostnote |  |
-| brine |  |
 | mothra |  |
-| trend |  |
+| okays |  |
+| gruel |  |
+| tilly |  |
+| brass_tax |  |
+| nocturne |  |
+| crawlspace |  |
+| minivan |  |
+| astrid |  |
+| understudy |  |
+| ferns |  |
+| kudzu |  |
 
-## Bandmates — 0/10 seen
+### Rarely reached (< 2 runs)
+
+| id | runs | notes |
+|---|---|---|
+| brine | 1 |  |
+| juniper_q | 1 |  |
+| petersens | 1 |  |
+
+## Bandmates — 6/20 seen
 
 _tracked since app 2.2 — "never" means "not since tracking began"._
 
-### Never reached (10)
+### Never reached (14)
 
 | id | notes |
 |---|---|
-| fish |  |
 | birdie |  |
 | moss |  |
-| tanya |  |
 | deacon |  |
 | pearl |  |
-| ludo | wave 2 |
-| greta | wave 2 |
-| saul | wave 2 |
-| nadia | wave 2 |
+| ox |  |
+| wren |  |
+| cassette |  |
+| marisol |  |
+| dot |  |
+| reverend |  |
+| kiki |  |
+| gus |  |
+| paloma |  |
+| zed |  |
 
-## Gear — 0/23 seen
+### Rarely reached (< 2 runs)
+
+| id | runs | notes |
+|---|---|---|
+| fish | 1 |  |
+| greta | 1 | wave 2 |
+| ludo | 1 | wave 2 |
+| saul | 1 | wave 2 |
+
+## Gear — 17/46 seen
 
 _tracked since app 2.2 — "never" means "not since tracking began"._
 
-### Never reached (23)
+### Never reached (29)
 
 | id | notes |
 |---|---|
-| four_track |  |
-| publicist_rolodex |  |
-| loud_amp |  |
-| loop_pedal |  |
-| pedalboard |  |
-| lucky_pick |  |
-| in_ears |  |
 | vintage_mic |  |
-| energy_drink |  |
-| managers_card |  |
-| cursed_8track |  |
 | merch_cannon |  |
-| field_recorder |  |
 | stage_fan |  |
 | humidifier |  |
-| setlist_binder |  |
-| cowbell |  |
 | van_bunk |  |
 | fog_machine |  |
 | lucky_cable |  |
 | tour_van |  |
 | ring_light |  |
 | session_rolodex |  |
+| gaff_tape |  |
+| musician_earplugs |  |
+| pocket_metronome |  |
+| wireless_rig |  |
+| rice_cooker |  |
+| contact_mic |  |
+| thermos |  |
+| press_pass |  |
+| union_card |  |
+| demo_trunk |  |
+| lucky_socks |  |
+| pedal_tuner |  |
+| shoebox_archive |  |
+| merch_suitcase |  |
+| projector |  |
+| fake_manager |  |
+| flight_case |  |
+| home_booth |  |
+| monitor_wedge |  |
 
-## Hustles — 0/10 seen
+### Rarely reached (< 2 runs)
+
+| id | runs | notes |
+|---|---|---|
+| cowbell | 1 |  |
+| cursed_8track | 1 |  |
+| energy_drink | 1 |  |
+| green_room_kit | 1 |  |
+| in_ears | 1 |  |
+| lucky_pick | 1 |  |
+| managers_card | 1 |  |
+| mascot_head | 1 |  |
+| tip_qr | 1 |  |
+
+## Hustles — 4/20 seen
 
 _tracked since app 2.2 — "never" means "not since tracking began"._
 
-### Never reached (10)
+### Never reached (16)
 
 | id | notes |
 |---|---|
@@ -462,4 +878,19 @@ _tracked since app 2.2 — "never" means "not since tracking began"._
 | shed_rental |  |
 | wedding_circuit |  |
 | sync_royalties |  |
+| ringtone_shop |  |
+| pedal_flipping |  |
+| hold_music |  |
+| ghost_sessions |  |
+| alarm_app |  |
+| sample_packs |  |
+
+### Rarely reached (< 2 runs)
+
+| id | runs | notes |
+|---|---|---|
+| corner_atlas | 1 |  |
+| karaoke_host | 1 |  |
+| lesson_studio | 1 |  |
+| supper_club | 1 |  |
 
