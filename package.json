@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Big Break — a music-career roguelike (genre-agnostic core in progress).",
+  "description": "Big Break — a swipe-roguelike engine powering two games: a music-career game and a reality-show murder mystery.",
   "scripts": {
     "build": "node tools/build.mjs",
-    "lint": "node tools/lint-content.mjs",
-    "check": "npm run build && node tools/simulate.mjs --check",
-    "test": "npm run build && node --test test/golden.test.mjs",
+    "lint": "npm run build && node tools/lint-content.mjs",
+    "check": "npm run build && node tools/lint-content.mjs && node tools/simulate.mjs --check && node tools/mystery-sim.mjs --check",
+    "test": "npm run build && node --test",
     "sim": "npm run build && node tools/simulate.mjs"
   },
   "devDependencies": {

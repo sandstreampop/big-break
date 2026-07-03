@@ -413,7 +413,7 @@ export const MYSTERY_EVENTS: GameEvent[] = [
   },
   {
     id: 'm_kitchen_alibi', act: [1, 2, 3], pathAffinity: [], weight: 9,
-    context: 'Reconstructing the night', prompt: 'You can quietly test one guest\'s alibi by retracing their story in the kitchen.',
+    context: 'Reconstructing the night', prompt: 'You can quietly test one guest’s alibi by retracing their story in the kitchen.',
     choices: {
       left: {
         label: 'Retrace every step', tags: ['investigate'], governingStats: { insight: 1 },
@@ -493,7 +493,7 @@ export const MYSTERY_EVENTS: GameEvent[] = [
         label: 'Get your cut', tags: ['deal'], governingStats: { nerve: 0.6, charm: 0.5 },
         outcomes: {
           bad: O('You get greedy and get caught skimming.', { money: 60, rivalry: 3, burnout: 5 }),
-          good: O('You broker a quiet finder\'s fee.', { money: 130, nerve: 3 }),
+          good: O('You broker a quiet finder’s fee.', { money: 130, nerve: 3 }),
           incredible: O('You insert yourself into the whole arrangement. Lucrative.', { money: 210, nerve: 5, charm: 3 }),
         },
       },
@@ -538,7 +538,7 @@ export const MYSTERY_EVENTS: GameEvent[] = [
         outcomes: {
           bad: O('You spiral over one mean letter.', { burnout: 5, insight: 2 }),
           good: O('The audience noticed a detail you had not. Useful.', { insight: 6, clues: 1 }),
-          incredible: O('A viewer\'s theory unlocks yours. Crowd-sourced genius.', { insight: 9, clues: 2 }),
+          incredible: O('A viewer’s theory unlocks yours. Crowd-sourced genius.', { insight: 9, clues: 2 }),
         },
       },
     },
