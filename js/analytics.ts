@@ -20,6 +20,9 @@ const APP_VERSION = '2.2';
 
 let enabled = true;
 let loaded = false;
+// Which game this session is playing — rides on every event so the two games'
+// telemetry can be told apart in one stream (Phase H).
+let activePackId = 'music';
 
 // ---- local ring buffer (never depends on network) ----
 function pushRing(rec) {
@@ -95,8 +98,9 @@ function loadPostHog() {
 }
 
 // ---- public API ----
-export function initAnalytics(settings) {
+export function initAnalytics(settings, packId = 'music') {
   enabled = settings?.analytics !== false;
+  activePackId = packId;
   if (enabled) loadPostHog();
 }
 
@@ -111,8 +115,9 @@ export function setAnalyticsEnabled(on) {
 export function analyticsEnabled() { return enabled; }
 
 export function track(event, props = {}) {
-  const rec = { event, props, ts: Date.now() };
+  const tagged = { ...props, pack: activePackId };
+  const rec = { event, props: tagged, ts: Date.now() };
   pushRing(rec);
   if (!enabled) return;
-  try { window.posthog?.capture?.(event, { ...props, app_version: APP_VERSION }); } catch (e) {}
+  try { window.posthog?.capture?.(event, { ...tagged, app_version: APP_VERSION }); } catch (e) {}
 }

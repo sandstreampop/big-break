@@ -53,6 +53,9 @@ export function saveMeta(meta) {
   write(metaKey(), meta);
 }
 
+// A run resumes only if it belongs to THIS namespace's pack. Namespacing keeps
+// packs' localStorage separate already; the packId check is belt-and-suspenders
+// for a run written by an older build (no packId) or a bad import.
 export function loadRun() {
   const run = read(runKey());
   return run && run.version === 1 && run.phase !== 'ended' ? run : null;
@@ -64,9 +67,10 @@ export function clearRun() {
   try { localStorage.removeItem(runKey()); } catch (e) {}
 }
 
-// Save portability: the whole career as a compact code
+// Save portability: the whole career as a compact code. Tagged with the active
+// pack's namespace so a code can't be pasted into the wrong game.
 export function exportSave() {
-  const payload = { v: 1, meta: read(metaKey()), run: read(runKey()) };
+  const payload = { v: 1, ns: NS, meta: read(metaKey()), run: read(runKey()) };
   return 'BB1.' + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
 }
 
@@ -75,6 +79,10 @@ export function importSave(code) {
     const raw = code.trim().replace(/^BB1\./, '');
     const payload = JSON.parse(decodeURIComponent(escape(atob(raw))));
     if (!payload || payload.v !== 1 || typeof payload.meta !== 'object') return false;
+    // Reject a code from another game (§2G: a cross-pack import used to write a
+    // foreign career into the active pack's keys — silent corruption). Codes
+    // predating the tag (ns === undefined) still import, for back-compat.
+    if (payload.ns !== undefined && payload.ns !== NS) return false;
     if (payload.meta) write(metaKey(), payload.meta);
     if (payload.run) write(runKey(), payload.run);
     else localStorage.removeItem(runKey());

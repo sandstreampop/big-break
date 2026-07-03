@@ -9,7 +9,7 @@
 import { execSync } from 'node:child_process';
 import { cpSync, rmSync, existsSync, mkdirSync, copyFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = resolve(root, 'dist');
@@ -28,10 +28,23 @@ for (const p of STATIC) {
   if (existsSync(src)) cpSync(src, resolve(dist, p), { recursive: true });
 }
 
-// 3. Both games ship from one build: the music game is the site root above;
-// the mystery game is a sibling entry at dist/mystery/, sharing the compiled
-// js/, css/, and assets/ (its index.html references them with ../).
-mkdirSync(resolve(dist, 'mystery'), { recursive: true });
-copyFileSync(resolve(root, 'mystery.html'), resolve(dist, 'mystery', 'index.html'));
+// 3. Every game ships from one build, DATA-DRIVEN from the pack registry (no
+// hand-copied per-pack step). The music game is the site root (index.html);
+// every other registered pack is a sibling entry at dist/<id>/, served by its
+// own <id>.html (which references the shared compiled js/css/assets with ../).
+// A third pack is a new registry entry + an <id>.html — not a build edit.
+const { GAME_PACKS } = await import(pathToFileURL(resolve(dist, 'js/packs/registry.js')).href);
+const entries = [];
+for (const pack of GAME_PACKS) {
+  if (pack.id === 'music') continue; // music is the site root
+  const html = resolve(root, `${pack.id}.html`);
+  if (!existsSync(html)) {
+    console.warn(`  (skip) no ${pack.id}.html for pack '${pack.id}'`);
+    continue;
+  }
+  mkdirSync(resolve(dist, pack.id), { recursive: true });
+  copyFileSync(html, resolve(dist, pack.id, 'index.html'));
+  entries.push(`${pack.id} at /${pack.id}/`);
+}
 
-console.log('build ok -> dist/ (music at /, mystery at /mystery/)');
+console.log(`build ok -> dist/ (music at /${entries.length ? ', ' + entries.join(', ') : ''})`);

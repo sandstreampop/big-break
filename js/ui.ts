@@ -88,7 +88,7 @@ export function boot(pack = musicPack) {
   save.setSaveNamespace(pack.id === 'music' ? '' : pack.id);
   meta = save.loadMeta();
   engine.useContentPack(pack); // this game's content; set before any engine call
-  initAnalytics(meta.settings);
+  initAnalytics(meta.settings, pack.id);
   setSoundEnabled(meta.settings.sound);
   setMusicEnabled(meta.settings.music !== false);
   music.setMood('title');

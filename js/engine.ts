@@ -186,6 +186,7 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
   stats.burnout = CONFIG.burnoutStart;
   const state: RunState = {
     version: 1,
+    packId: pack.id, // which genre this run belongs to (save/import guard, analytics)
     phase: 'card', // card | crossroads | ended
     act: 1,
     cardsPlayedInAct: 0,
