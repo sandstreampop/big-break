@@ -2,7 +2,7 @@
 //
 // The game was developed and tested on iOS only (see js/platform.ts — every
 // guard in it is iOS-specific). Telemetry now shows Android players, and their
-// engagement is a fraction of iOS's (see test/android/README.md). This matrix
+// engagement is a fraction of iOS's (see tools/android/README.md). This matrix
 // is deliberately spread across the *shape* of the Android install base that
 // iOS never exercises:
 //   - a modern flagship (baseline: if this is broken, everything is)

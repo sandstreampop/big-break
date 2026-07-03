@@ -9,11 +9,11 @@ name: Android compat harness
 # shipping the iOS-solid game, but a *regression* in a currently-green Android
 # guard must be loud.
 #
-# Exit contract (test/android/run.mjs):
+# Exit contract (tools/android/run.mjs):
 #   - a "must-pass" regression guard failing  -> non-zero  -> this job RED
 #   - a "known-bug" probe still reproducing    -> reported, exit 0 (expected)
 #   - a "known-bug" probe now passing          -> flagged "promote to must-pass"
-# See test/android/README.md.
+# See tools/android/README.md.
 
 on:
   push:
@@ -41,11 +41,11 @@ jobs:
       - name: Build dist/
         run: npm run build
       - name: Android harness (regression guards + prove known bugs)
-        run: node test/android/run.mjs
+        run: node tools/android/run.mjs
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: android-report
-          path: test/android/report.json
+          path: tools/android/report.json
           if-no-files-found: ignore

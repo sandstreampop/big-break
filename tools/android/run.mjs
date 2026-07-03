@@ -1,10 +1,10 @@
 // Android harness runner.
 //
-//   node test/android/run.mjs                 # full matrix × probes
-//   node test/android/run.mjs --quick         # Pixel 7 only (fast PR smoke)
-//   node test/android/run.mjs --device=galaxy-s9
-//   node test/android/run.mjs --probe=back-gesture-does-not-exit-game
-//   node test/android/run.mjs --strict        # also fail if a known-bug is now fixed (promote it)
+//   node tools/android/run.mjs                 # full matrix × probes
+//   node tools/android/run.mjs --quick         # Pixel 7 only (fast PR smoke)
+//   node tools/android/run.mjs --device=galaxy-s9
+//   node tools/android/run.mjs --probe=back-gesture-does-not-exit-game
+//   node tools/android/run.mjs --strict        # also fail if a known-bug is now fixed (promote it)
 //
 // Exit code: non-zero if any REGRESSION GUARD (must-pass) fails — that is the
 // CI gate. Known bugs that still reproduce are reported but do NOT fail the
@@ -136,7 +136,7 @@ async function main() {
     for (const r of regressions) console.log(paint(C.dim, `  • ${r.probe} @${r.device || 'static'} — ${r.error}`));
   }
 
-  await writeFile(join(ROOT, 'test', 'android', 'report.json'),
+  await writeFile(join(ROOT, 'tools', 'android', 'report.json'),
     JSON.stringify({ generatedAgainst: 'dist/', devices: matrix.map((d) => d.id), results }, null, 2));
   console.log(paint(C.dim, `\nreport.json written.`));
 

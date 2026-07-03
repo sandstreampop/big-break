@@ -23,7 +23,7 @@ coming due on Android:
 
 This doc is the prioritized risk register (with citations), the specific gaps
 found in our code, and how each maps to the automated harness in
-[`test/android/`](../test/android/README.md). Nothing in the game has been
+[`tools/android/`](../tools/android/README.md). Nothing in the game has been
 changed yet — the harness **proves** the top bugs first.
 
 > Source-access note: some primary docs (MDN, web.dev, WebKit blog, caniuse)
@@ -127,17 +127,17 @@ yank the layout. Related to Risk 5; 📱.
 
 | Layer | Where | Catches | In this repo |
 |---|---|---|---|
-| **A. Headless emulation** | Playwright Chromium + Android descriptors | Risks 1,2(partial),3,4,5(static),7,8 | **`test/android/` — built, wired into `.github/workflows/android.yml`** |
+| **A. Headless emulation** | Playwright Chromium + Android descriptors | Risks 1,2(partial),3,4,5(static),7,8 | **`tools/android/` — built, wired into `.github/workflows/android.yml`** |
 | **B. Real Chrome-on-Android (AVD)** | `reactivecircus/android-emulator-runner` + Playwright `_android` | live URL-bar resize, real touch, gesture insets | documented; recommended nightly |
 | **C. Device farm** | BrowserStack / Sauce / LambdaTest | GPU/FPS, One-UI gesture nav, Samsung Internet, WebView, fonts/emoji, high-refresh | documented; release gate |
 
 Layer A runs on every push/PR (separate from the Pages deploy gate — a known
 Android bug shouldn't block shipping the iOS-solid game, but an Android
-*regression* is loud). See [`test/android/README.md`](../test/android/README.md).
+*regression* is loud). See [`tools/android/README.md`](../tools/android/README.md).
 
 ## Current harness result (against `dist/`)
 
-`node test/android/run.mjs` — 5-device matrix:
+`node tools/android/run.mjs` — 5-device matrix:
 
 - **37 PASS** regression guards green across all Android devices, **0 regressions**.
 - **3 bugs fixed and promoted to guards** (Risks 2, 3, 8) — the probes that

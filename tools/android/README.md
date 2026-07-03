@@ -23,9 +23,9 @@ CI. Its job is twofold:
 ```bash
 npm run android            # full matrix × probes (builds dist/ first)
 npm run android:quick      # Pixel 7 only — fast local loop
-node test/android/run.mjs --device=galaxy-s9
-node test/android/run.mjs --probe=back-gesture-does-not-exit-game
-node test/android/run.mjs --strict   # also fail if a known-bug now passes
+node tools/android/run.mjs --device=galaxy-s9
+node tools/android/run.mjs --probe=back-gesture-does-not-exit-game
+node tools/android/run.mjs --strict   # also fail if a known-bug now passes
 ```
 
 Requires `npm ci` (pulls `playwright`) and a Chromium: `npx playwright install
