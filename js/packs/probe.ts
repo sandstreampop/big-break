@@ -19,13 +19,16 @@ import type { Pack, PackManifest, GameEvent } from '../types.js';
 // pattern: a genre adds its verbs via module augmentation, editing no shared
 // code. `focus` is the probe's one stat, `points` its one resource; the engine
 // reads both generically off the manifest.
+// #region effect-augmentation
 declare module '../types.js' {
   interface Effect {
     focus?: number;
     points?: number;
   }
 }
+// #endregion effect-augmentation
 
+// #region manifest
 const manifest: PackManifest = {
   stats: ['focus'],
   resources: ['points'],
@@ -49,7 +52,9 @@ const manifest: PackManifest = {
     points: { name: 'Points', icon: '◆' },
   },
 };
+// #endregion manifest
 
+// #region card-factory
 // A generic card: two sides, each a stat/resource swing across the three tiers.
 // No pathAffinity (so every card is always eligible), no requires, no chains —
 // the deck is pure, undecorated core exercise.
@@ -81,7 +86,9 @@ function card(id: string, act: number | number[], focusW: number): GameEvent {
     },
   };
 }
+// #endregion card-factory
 
+// #region pack
 const EVENTS: GameEvent[] = [
   card('p_a1_1', 1, 1), card('p_a1_2', 1, 1), card('p_a1_3', 1, 1),
   card('p_a1_4', 1, 1), card('p_a1_5', 1, 1),
@@ -104,3 +111,4 @@ export const probePack: Pack = {
   // (Phase E). This is the probe's definition of done: a genre that ships one
   // stat, one resource, one summit, and a deck — and runs on the bare core. ──
 };
+// #endregion pack

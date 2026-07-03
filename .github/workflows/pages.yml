@@ -11,9 +11,12 @@ name: CI + Deploy to GitHub Pages
 # against the EMITTED dist/ (what actually deploys), so what's tested === what
 # ships. `deploy` needs it, so a breach BLOCKS the deploy.
 #
-# BOTH games ship from this one workflow, one artifact, straight from main:
-# the build emits the music game at dist/ (site root) and the mystery game at
-# dist/mystery/, sharing the compiled js/. Push to main → both go live.
+# BOTH games AND the docs site ship from this one workflow, one artifact,
+# straight from main: the build emits the music game at dist/ (site root), the
+# mystery game at dist/mystery/, and the docs site at dist/docs/ (built from
+# docs-site/, which keeps its own toolchain isolated from the engine's pinned
+# tsc). Push to main → all three go live. The docs build is also a gate in the
+# check job, so docs drift blocks the deploy like any other regression.
 
 on:
   push:
@@ -58,6 +61,16 @@ jobs:
         # needs a browser this job doesn't install; the UI smoke test is run
         # separately (npm run check / the android+ios harness jobs install browsers).
         run: node --test test/*.test.mjs
+      - name: Install docs toolchain (isolated from the engine's pinned tsc)
+        working-directory: docs-site
+        run: npm ci
+      - name: Build docs site (gate)
+        # The docs site transcludes real pack source and type-checks its samples
+        # with Twoslash; TypeDoc reads js/types.ts + js/engine.ts. A type rename
+        # that breaks a sample, or a deleted snippet region, fails HERE — so docs
+        # drift blocks the deploy exactly like a golden diff does.
+        working-directory: docs-site
+        run: npm run build
 
   deploy:
     needs: check
@@ -76,6 +89,19 @@ jobs:
         run: npm ci
       - name: Build dist/ (tsc emit + static copy)
         run: npm run build
+      - name: Install docs toolchain
+        working-directory: docs-site
+        run: npm ci
+      - name: Build docs site
+        working-directory: docs-site
+        run: npm run build
+      - name: Place docs under dist/docs (sibling of the games)
+        # The engine build wipes and repopulates dist/, so this copy must run
+        # AFTER it. The docs deploy at /big-break/docs/ (astro base), sharing the
+        # one Pages artifact with the games at the root and /mystery/.
+        run: |
+          mkdir -p dist/docs
+          cp -r docs-site/dist/. dist/docs/
       - uses: actions/configure-pages@v5
         with:
           enablement: true

@@ -1,0 +1,98 @@
+---
+title: Effects & the open vocabulary
+description: The core verb set, adding your genre's verbs via declaration merging, and the no-unknown-verb invariant.
+---
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import probeRaw from '@engine/packs/probe.ts?raw';
+import mysteryRaw from '@engine/packs/mystery.ts?raw';
+import { region } from '@snippet';
+
+An [`Effect`](/big-break/docs/reference/types/interfaces/effect/) is the payload
+a choice outcome applies — the *verbs* of your game. This is the most elegant
+seam in the engine, and worth understanding well: the `Effect` type is **open**,
+so every genre adds its own verbs without editing a shared file, yet a
+hallucinated verb is still a compile error.
+
+## The core (closed) vocabulary
+
+The `Effect` interface in `js/types.ts` declares only the **genre-neutral** keys
+the engine resolves itself:
+
+- the `burnout` attrition slot;
+- engine-known resources it applies by name;
+- structural control: `addFlag`, `removeFlag`, `chainEventId`, `addPromise`.
+
+It has **no index signature** — so an unknown key is a type error, which is the
+whole point: a typo in a card's effect fails the build instead of silently doing
+nothing.
+
+## Adding your genre's verbs
+
+Your pack widens `Effect` for its *own* stats, resources, and subsystem verbs
+using TypeScript **declaration merging** — a `declare module` block in your own
+file. The probe adds its one stat and one resource:
+
+<Code code={region(probeRaw, 'effect-augmentation')} lang="ts" title="js/packs/probe.ts" />
+
+The mystery pack adds its four stats plus the `clues` counter its plugin
+maintains:
+
+<Code code={region(mysteryRaw, 'effect-augmentation')} lang="ts" title="js/packs/mystery.ts" />
+
+This is the Open/Closed Principle made literal: the shared type is **closed** to
+modification (you never edit `types.ts` to add a genre) but **open** to
+extension (your `declare module` block adds exactly what you need). Adding a
+genre touches new files only.
+
+<Aside type="note" title="Why not one big union?">
+An earlier design enumerated every genre's keys on one `Effect` union — a
+"god-union" that every new genre had to edit, and that leaked music's vocabulary
+into the mystery game's types. Declaration merging removes the shared edit while
+keeping the compile-time safety. That's the whole refactor in one interface.
+</Aside>
+
+## Who applies a verb
+
+When an outcome lands, the engine routes each effect key:
+
+1. **stat** keys apply to `state.stats` in `manifest.stats` order;
+2. **resource** keys apply in `manifest.resources` order — a plugin may *own* one
+   via [`applyResource`](/big-break/docs/authoring/plugins/#owning-a-resource);
+3. **control** keys (flags, chains, promises) resolve in the core;
+4. every **other** key must be a verb some plugin declares in its `effectVerbs`
+   and handles in `onEffect`.
+
+## The "no unknown verb" invariant
+
+There's a runtime guardrail behind the types. A cross-pack invariant checks that
+**every** effect key any card names is accounted for — it must be in
+`manifest.stats` ∪ `manifest.resources` ∪ the core neutral set ∪ some plugin's
+declared `effectVerbs`. A verb no one owns is a test failure, not a silent no-op.
+
+```ts twoslash
+// (Plugin/Effect shown inline so this sample is self-contained; the real ones
+// live in js/types.ts — see the API reference.)
+interface Effect { clues?: number; }
+interface Plugin {
+  id: string;
+  effectVerbs?: string[];
+  onEffect?(state: any, effects: Effect, ctx: any): void;
+}
+// ---cut---
+// A plugin declares the verbs it owns, so the invariant can account for them:
+const cluesPlugin: Plugin = {
+  id: 'clues',
+  effectVerbs: ['clues'],
+  onEffect(state, effects, ctx) {
+    if (effects.clues) state.clues = (state.clues || 0) + effects.clues;
+  },
+};
+```
+
+So the rule for a pack author is simple: **if a card names a verb, either it's a
+stat/resource in your manifest, or a plugin declares and handles it.** The type
+system catches the typo; the invariant catches the orphan.
+
+Next: [Subsystems (plugins)](/big-break/docs/authoring/plugins/) — where custom
+verbs and state live.

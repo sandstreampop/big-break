@@ -1,6 +1,6 @@
 {
   "name": "big-break",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "Big Break — a swipe-roguelike engine powering two games: a music-career game and a reality-show murder mystery.",

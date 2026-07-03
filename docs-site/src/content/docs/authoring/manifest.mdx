@@ -1,0 +1,97 @@
+---
+title: The manifest
+description: stats, resources, paths, winGates, and the HUD metadata — the object that is your genre.
+---
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import mysteryManifestRaw from '@engine/packs/mystery-manifest.ts?raw';
+import { region } from '@snippet';
+
+The [`PackManifest`](/big-break/docs/reference/types/interfaces/packmanifest/)
+is where your genre's *taxonomy* lives — the shape of the game, separated from
+the numeric feel (which stays in `config.ts`). If two packs differ, they differ
+here first.
+
+## The six fields
+
+```ts twoslash
+interface StatMeta { name: string; icon: string; }
+interface PathDef { id: string; name: string; blurb: string; gateLabel: string; icon: string; }
+// ---cut---
+interface PackManifest {
+  stats: string[];                                  // core stat ids (order matters)
+  resources: string[];                              // resource ids (order matters)
+  paths: Record<string, PathDef>;                   // the summits
+  winGates: Record<string, Record<string, number>>; // per-summit target thresholds
+  statMeta: Record<string, StatMeta>;               // HUD label + icon per stat
+  resourceMeta?: Record<string, StatMeta>;          // HUD label + icon per resource
+}
+```
+
+<Aside type="caution" title="Order is load-bearing">
+`stats` and `resources` are arrays, not sets: the engine applies deltas in list
+order, and that order is part of what the golden masters pin. Reorder them and
+seeded runs change. Add new ones at the end.
+</Aside>
+
+## stats and resources
+
+`stats` are the per-run abilities tracked in `state.stats`; `resources` are the
+top-level currencies (`state.money`, `state.fame`, …). The mystery pack's four
+stats are `nerve / charm / insight / alliance`, and it maps the engine's generic
+resource slots to reality-show currencies via metadata.
+
+The engine reads both **generically** off the manifest — there is no hardcoded
+`fame` or `skill` anywhere in the core. That's what lets a genre with no "fame"
+run without tripping a branch.
+
+## The attrition slot
+
+Every run has one attrition stat under the reserved key `burnout`. You don't
+list it in `stats` — the engine always tracks it — but you *do* reskin it in
+`statMeta`. The mystery pack turns it into **Suspicion**; the probe calls it
+**Strain**. Draw too much and it triggers the burnout fail state.
+
+## paths and winGates — the summits
+
+A [`PathDef`](/big-break/docs/reference/types/interfaces/pathdef/) is a summit the
+player commits to at the crossroads; its `winGates` entry is the bar the finale
+judges. Here are the mystery pack's three, verbatim:
+
+<Code code={region(mysteryManifestRaw, 'paths')} lang="ts" title="js/packs/mystery-manifest.ts" />
+
+<Code code={region(mysteryManifestRaw, 'win-gates')} lang="ts" title="js/packs/mystery-manifest.ts" />
+
+A gate key can be **any** stat or resource — even a pack-specific one a plugin
+maintains. The sleuth summit gates on `clues`, a counter the
+[clues plugin](/big-break/docs/authoring/plugins/) owns; the engine reads it
+through the generic
+[`gateValue`](/big-break/docs/reference/engine/functions/gatevalue/) reader, no
+special-casing.
+
+## How a summit is judged
+
+At the finale the engine computes, per gate, a `ratio = value / target` capped
+at 1, then:
+
+- **Success** if every gate is met (`ratio === 1`);
+- **Partial** if the *average* ratio clears `partialRatio` (0.72 by default);
+- **Failure** otherwise;
+- a **momentum clutch** upgrades a Partial to Success when every gate is a near
+  miss (`ratio ≥ nearMissRatio`) *and* accumulated path progress is high enough.
+
+<Aside type="tip" title="Tuning gates">
+Gate numbers are the difficulty dial. Set them by simulating, not by feel — a
+summit fed by an over-produced stat should gate higher. The mystery gates were
+tuned with `tools/mystery-sim.mjs` so Success stays losable and no single summit
+dominates. See [Balance & the safety net](/big-break/docs/shipping/balance/).
+</Aside>
+
+## HUD metadata
+
+`statMeta` and `resourceMeta` give each key a display `name` and `icon` so the UI
+can label any stat, gate, or delta generically. A key without an entry falls
+back to its raw id — so metadata is polish, not a requirement, but you'll want
+it for anything the player sees.
+
+Next: [Authoring a deck](/big-break/docs/authoring/deck/).

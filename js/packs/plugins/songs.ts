@@ -34,6 +34,7 @@ export const songsPlugin: Plugin = {
     state.flags.push('notebook_demo'); // events/epilogue can reference it
   },
 
+  // #region apply-resource
   // The 'hits' resource is the songs subsystem's (an "instant classic" mints a
   // charting song). Applied at the resource's ordinal slot in applyEffects, so
   // the RNG stream and delta order match the old engine-inline block byte-for-
@@ -57,6 +58,7 @@ export const songsPlugin: Plugin = {
     ctx.chartTitleHandled = !!effects.chartTitle;
     return n;
   },
+  // #endregion apply-resource
 
   onEffect(state, effects, ctx) {
     const { deltas, hooks = {}, accs = [], mg = null, tier, rng, ev } = ctx;
@@ -134,6 +136,7 @@ export const songsPlugin: Plugin = {
     ctx.chartTitleHandled = false; // reset the per-resolution handshake
   },
 
+  // #region act-break
   // Act break: audit the act that just ended for a shipped release, then run a
   // chart week. Fires after the band plugin, matching the old inline order.
   onActBreak(state, act, notes) {
@@ -145,4 +148,5 @@ export const songsPlugin: Plugin = {
   onFinale(state) {
     chartTick(state);
   },
+  // #endregion act-break
 };

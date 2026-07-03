@@ -8,6 +8,7 @@
 import { mulberry32 } from '../engine.js';
 import type { Presenter, RunState } from '../types.js';
 
+// #region endings
 // Ending copy: path id → { success, partial, failure }, plus the engine's
 // fail-state keys (burnout→"unmasked", cancelled→"voted off", debt→"broke").
 const ENDINGS: Record<string, any> = {
@@ -31,6 +32,7 @@ const ENDINGS: Record<string, any> = {
   cancelled: { title: 'Voted Off', text: 'The house turned on you all at once — a unanimous, almost tender vote, the kind reserved for someone who saw too much. You walk the plank of the dock at sunrise. The confessional booth keeps your best theory forever. Nobody will hear it.' },
   debt: { title: 'Bought Out', text: 'You took the production’s buyout — the quiet envelope they offer the ones who become a liability. You sign, you smile, you leave. The NDA is longer than the contract. Somewhere in a vault, footage of what you almost proved gathers dust.' },
 };
+// #endregion endings
 
 const EXIT_INTERVIEWS: Record<string, any> = {
   burnout: {
@@ -59,6 +61,7 @@ const EXIT_INTERVIEWS: Record<string, any> = {
   },
 };
 
+// #region epilogue
 // A vivid, genre-correct epilogue built from the run's own state — no music
 // data lookups (which is exactly what crashed the shared epilogue on mystery).
 function buildEpilogue(state: RunState): string {
@@ -89,6 +92,7 @@ function buildEpilogue(state: RunState): string {
   bits.push(rem[Math.floor(rng() * rem.length)]);
   return bits.join(' ');
 }
+// #endregion epilogue
 
 // Tabloid trades + houseguest DMs for the act interstitial. Seeded, short,
 // state-aware — the mystery analogue of the music headlines/inbox.

@@ -1,0 +1,101 @@
+---
+title: The deck
+description: GameEvent, Choice, Outcome — plus requires gating, path affinity, chains, flashpoints, and forced slots.
+---
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import probeRaw from '@engine/packs/probe.ts?raw';
+import { region } from '@snippet';
+
+The deck is your game's writing. Each card is a
+[`GameEvent`](/big-break/docs/reference/types/interfaces/gameevent/): a moment
+with a left and a right choice, each of which can go three ways.
+
+## The anatomy of a card
+
+The probe's card factory is the whole shape with nothing optional attached —
+two [`Choice`](/big-break/docs/reference/types/interfaces/choice/)s, each with a
+`bad` / `good` / `incredible`
+[`Outcome`](/big-break/docs/reference/types/interfaces/outcome/):
+
+<Code code={region(probeRaw, 'card-factory')} lang="ts" title="js/packs/probe.ts" />
+
+The pieces:
+
+- **`act`** — a number or list of acts the card is eligible in.
+- **`governingStats`** — which stats and weights feed the roll for this choice.
+  Higher aptitude in a governing stat shifts the tier odds upward.
+- **`tags`** — free-form labels used for affinity, chains, and analysis.
+- **`outcomes`** — one [`Effect`](/big-break/docs/reference/types/interfaces/effect/)
+  per tier. See [Effects & the open vocabulary](/big-break/docs/authoring/effects/).
+
+## Gating cards with `requires`
+
+Beyond `act`, a card can carry a
+[`Requires`](/big-break/docs/reference/types/interfaces/requires/) gate so it
+only enters the deck when the run state qualifies. Gates compose:
+
+```ts twoslash
+interface Requires {
+  anyOf?: Requires[];
+  flagsAll?: string[]; flagsNone?: string[];
+  moneyMin?: number; moneyMax?: number;
+  burnoutMin?: number;
+  stats?: Record<string, number>; // { <stat>Min: value }
+  // …plus subsystem-specific keys used by the music pack
+}
+// ---cut---
+const requires: Requires = {
+  flagsAll: ['signed'],       // only after a 'signed' flag is set
+  stats: { insightMin: 40 },  // and insight ≥ 40
+  burnoutMin: 0,
+};
+```
+
+A card whose gate fails is simply never dealt. This is how you stage content:
+early cards ungated, deeper cards behind flags an earlier card set.
+
+<Aside type="caution" title="Don't strand cards">
+The content linter and the balance sim guard against a card that can never be
+drawn (its gate is unsatisfiable, or nothing sets the flag it needs). A dead
+card is a lint failure — see [Balance & the safety net](/big-break/docs/shipping/balance/).
+</Aside>
+
+## Weighting and affinity
+
+- **`weight`** biases how often an eligible card is drawn (default 1).
+- **`pathAffinity`** lists summit ids this card leans toward; once the player
+  commits a summit, matching cards get a `pathWeightMult` boost, so the back half
+  of a run reads as being *about* the chosen path.
+
+## Chains
+
+An outcome can queue a specific follow-up card by id via the `chainEventId`
+effect, and a card marked `chainOnly` never enters the normal deck — it only
+arrives as a chained consequence. This is how you write multi-beat scenes: a
+choice now sets up a card later.
+
+## Special slots
+
+Some cards are structurally special (all optional flags on `GameEvent`):
+
+- **`shop`** — a shop/opportunity card. The engine force-deals one at a fixed
+  slot per act if one is eligible and none has shown yet.
+- **`flashpoint`** — a high-stakes card eligible for the once-per-run flashpoint
+  window.
+- **`finaleCard`** — reserved for the closing beat.
+
+## Tutorial cards
+
+`tutorialEvents` live *outside* the main deck so they can never leak into a
+normal run. A card can also carry `coach` text and a `tutorial` marker. Use
+`forceTier` to script a guaranteed outcome for a teaching beat.
+
+<Aside type="tip" title="Keep the deck bigger than the acts">
+The engine draws 8 / 12 / 8 cards across the three acts. Once cards are gated,
+ship comfortably more than that so no act runs dry — the sim reports the draw
+funnel so you can see how much of your deck actually reaches players.
+</Aside>
+
+Next: [Effects & the open vocabulary](/big-break/docs/authoring/effects/) — what
+those outcomes are allowed to *do*.

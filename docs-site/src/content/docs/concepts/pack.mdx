@@ -1,0 +1,90 @@
+---
+title: The Pack contract
+description: Required fields vs optional capabilities, feature detection, and the registry.
+---
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import mysteryRaw from '@engine/packs/mystery.ts?raw';
+import probeRaw from '@engine/packs/probe.ts?raw';
+import { region } from '@snippet';
+
+A [`Pack`](/big-break/docs/reference/types/interfaces/pack/) is the composition
+root of a genre — one object the engine boots via `useContentPack(pack)` (or
+`newRun(pack, …)`). It has a small **required** core and a long tail of
+**optional capabilities** the engine feature-detects.
+
+## Required: the irreducible minimum
+
+Five fields make a pack a game. Nothing else is mandatory:
+
+| Field | Type | What it is |
+|---|---|---|
+| `id` | `string` | Unique pack id; namespaces saves and telemetry. |
+| `manifest` | [`PackManifest`](/big-break/docs/reference/types/interfaces/packmanifest/) | The genre's taxonomy — stats, resources, summits, gates. |
+| `events` | [`GameEvent`](/big-break/docs/reference/types/interfaces/gameevent/)`[]` | The deck. |
+| `tutorialEvents` | `GameEvent[]` | Onboarding cards (may be empty). |
+| `instruments` + `instrumentById` | personas | The loadout: at least one selectable persona and a lookup. A run always starts as *someone*. |
+
+The [probe pack](/big-break/docs/quickstart/) supplies exactly these and stops —
+its assembled object is the whole required surface, with a comment where the
+options would go:
+
+<Code code={region(probeRaw, 'pack')} lang="ts" title="js/packs/probe.ts" />
+
+## Optional: capabilities the engine feature-detects
+
+Everything past the required core is a capability you *opt into* by providing a
+field. Omit it and the engine substitutes an inert default — there are **no
+stubs to write**. The optional surface includes:
+
+- `plugins` — subsystems (see [Subsystems](/big-break/docs/authoring/plugins/));
+- `presenter` — endings and flavor (see [The presenter](/big-break/docs/authoring/presenter/));
+- `perks`, `interstitials`, `tutorialStart` — progression (see
+  [Progression](/big-break/docs/authoring/progression/));
+- subsystem providers the music game uses — `accessories`, `arcs`,
+  `contractById`, `hustleById`, `rollWeather`, `recruitCandidate`, and friends.
+
+<Aside type="tip" title="How feature detection works">
+At boot the engine runs `normalizePack`, which fills every absent optional
+provider with a no-op (`() => null`, `() => []`). The rest of the engine then
+calls `PACK.rollWeather()` / `PACK.accessoryById()` unconditionally — a genre
+that ships no weather just gets `null`. This is why the mystery and probe packs
+declare **zero** of the ~14 fields the music pack fills.
+</Aside>
+
+## A real second genre
+
+The mystery pack is the "realistic small game": a custom manifest, its own deck,
+one domain plugin (`clues`), a presenter — and only the capabilities it uses.
+Notice what *isn't* here: no accessories, arcs, venues, band, rivals, contracts,
+hustles, or weather.
+
+<Code code={region(mysteryRaw, 'pack')} lang="ts" title="js/packs/mystery.ts" />
+
+The `declare module` block just above it in the same file is how the pack adds
+its own effect verbs without editing a shared type — covered in
+[Effects & the open vocabulary](/big-break/docs/authoring/effects/).
+
+## The registry: one place a genre is declared
+
+A pack becomes a game when it's listed in the registry. This is the single index
+the invariants sweep, the tooling reads, and the build maps over. Adding a genre
+is adding a line here — and touching no engine file:
+
+```ts title="js/packs/registry.ts"
+import { musicPack } from './music.js';
+import { mysteryPack } from './mystery.js';
+import { probePack } from './probe.js';
+
+export const PACKS: Pack[] = [musicPack, mysteryPack, probePack];
+
+// The player-facing packs (the probe is a test fixture, never surfaced).
+export const GAME_PACKS: Pack[] = [musicPack, mysteryPack];
+```
+
+`PACKS` is everything (including test fixtures like the probe); `GAME_PACKS` is
+what ships to players and drives the multi-entry build. Add your pack to both to
+put a real game in front of players.
+
+Next: build the [manifest](/big-break/docs/authoring/manifest/) — the object that
+*is* your genre.

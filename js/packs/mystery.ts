@@ -14,12 +14,14 @@ import type { Pack } from '../types.js';
 // clues counter the clues plugin maintains — declared here, editing no shared
 // type. (fame/money/pathProgress/rivalry are engine-known resources on the
 // core Effect already.)
+// #region effect-augmentation
 declare module '../types.js' {
   interface Effect {
     nerve?: number; charm?: number; insight?: number; alliance?: number;
     clues?: number;
   }
 }
+// #endregion effect-augmentation
 
 // "Instruments" here are the reality-show personas you walk in as. The engine
 // only needs id + unlockedByDefault (+ optional stat modifiers/quirk).
@@ -34,6 +36,7 @@ const PERSONAS = [
 
 const byId = (list: any[]) => (id: string) => list.find((x) => x.id === id) || null;
 
+// #region pack
 export const mysteryPack: Pack = {
   id: 'mystery',
   manifest: mysteryManifest,
@@ -47,3 +50,4 @@ export const mysteryPack: Pack = {
   // seeds, or weather — the engine feature-detects their absence (Phase E).
   // Where the music game stubbed 14 fields, mystery now declares none.
 };
+// #endregion pack

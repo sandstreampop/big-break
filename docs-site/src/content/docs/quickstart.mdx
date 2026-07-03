@@ -1,0 +1,176 @@
+---
+title: Quickstart — your first pack
+description: Build a playable one-summit game in about ten minutes, on the real probe pack.
+---
+
+import { Steps, Aside, Code, LinkCard } from '@astrojs/starlight/components';
+import probeRaw from '@engine/packs/probe.ts?raw';
+import registryRaw from '@engine/packs/registry.ts?raw';
+import { region, whole } from '@snippet';
+
+This gets you from an empty file to a **playable game** in about ten minutes.
+Your end state is a one-stat, one-summit game that boots on the engine, plays
+to a finale, and gets judged — the smallest thing that is still a game.
+
+We build it by reading the **probe pack**: the engine's own executable proof
+that the core needs no genre. It's ~100 lines, ships in the repo, and every
+snippet below is pulled straight from it — so what you read here is what
+actually runs.
+
+<Aside type="tip" title="Everything here is real code">
+Each code block on this page is transcluded from `js/packs/probe.ts` at build
+time. If that file changes, this page changes with it — the docs can't drift.
+</Aside>
+
+<Aside type="note" title="Which version is this?">
+These docs track engine **v0.1.0**. There's no published npm package — you build
+against the repo source, and Pages redeploys the games and these docs on every
+push to `main`.
+</Aside>
+
+## Before you start
+
+<Steps>
+
+1. Clone the repo and install the **pinned** toolchain. The build oracle is
+   emit-sensitive, so use `npm ci`, not a fresh `npm install`:
+
+   ```bash
+   git clone https://github.com/sandstreampop/big-break.git
+   cd big-break
+   npm ci        # pins TypeScript 5.7.3
+   npm run build # tsc → dist/  (tools and tests import the built dist/)
+   ```
+
+2. Confirm the net is green before you touch anything:
+
+   ```bash
+   node --test test/*.test.mjs   # 150 seeded traces + invariants
+   ```
+
+</Steps>
+
+## The whole shape, first
+
+A pack is one object implementing the [`Pack`](/big-break/docs/reference/types/interfaces/pack/)
+interface. The probe supplies the four things every pack **must** have — a
+manifest, a deck (`events`), a persona list, and a lookup — and *nothing* else.
+The engine feature-detects the absence of everything optional.
+
+There are four moving parts, and we'll build them in order:
+
+1. An **effect vocabulary** — the stat/resource verbs your cards may use.
+2. A **manifest** — your genre's taxonomy (stats, resources, the summit).
+3. A **deck** — the cards.
+4. The assembled **`Pack`**, plus one line to register it.
+
+## 1. Declare your effect vocabulary
+
+The engine's [`Effect`](/big-break/docs/reference/types/interfaces/effect/) type
+is **open**: the core declares only genre-neutral keys, and your pack adds its
+own via TypeScript declaration merging — editing no shared file. A truly unknown
+key stays a compile error, so a typo in a card is caught at build.
+
+The probe adds exactly two: `focus` (its one stat) and `points` (its one
+resource).
+
+<Code code={region(probeRaw, 'effect-augmentation')} lang="ts" title="js/packs/probe.ts" />
+
+## 2. Write the manifest
+
+The [`PackManifest`](/big-break/docs/reference/types/interfaces/packmanifest/)
+*is* your genre. It names the stats and resources, defines each summit (a
+[`PathDef`](/big-break/docs/reference/types/interfaces/pathdef/)) and the
+`winGates` that judge it, and gives the HUD its labels and icons.
+
+Note the reused `burnout` slot: the engine always tracks one attrition stat, and
+the probe reskins it to "Strain". A stat you don't want is a stat you don't list.
+
+<Code code={region(probeRaw, 'manifest')} lang="ts" title="js/packs/probe.ts" />
+
+## 3. Author the deck
+
+A card is a [`GameEvent`](/big-break/docs/reference/types/interfaces/gameevent/):
+an `act` it's eligible in, and a `left`/`right`
+[`Choice`](/big-break/docs/reference/types/interfaces/choice/), each with three
+[`Outcome`](/big-break/docs/reference/types/interfaces/outcome/)s — one per
+`bad` / `good` / `incredible` tier. The probe factors card creation into a tiny
+helper so its deck is pure, undecorated core exercise: no `requires`, no
+`pathAffinity`, no chains.
+
+<Code code={region(probeRaw, 'card-factory')} lang="ts" title="js/packs/probe.ts" />
+
+The deck is just fifteen of these — five per act:
+
+```ts
+const EVENTS: GameEvent[] = [
+  card('p_a1_1', 1, 1), card('p_a1_2', 1, 1), /* …five in act 1 */
+  card('p_a2_1', 2, 1), /* …five in act 2 */
+  card('p_a3_1', 3, 1), /* …five in act 3 */
+];
+```
+
+<Aside type="note">
+The engine draws `actLengths` cards per act (8 / 12 / 8 by default). Ship a
+deck comfortably larger than the acts once you add `requires` gating; the probe
+runs thin on purpose to keep itself readable.
+</Aside>
+
+## 4. Assemble the Pack
+
+Four required fields, zero optional ones. This is the whole registration surface
+for a minimal genre:
+
+<Code code={region(probeRaw, 'pack')} lang="ts" title="js/packs/probe.ts" />
+
+That comment is the headline promise made literal: **no capability stubs**.
+Everything the music pack uses — perks, presenter, subsystems, weather — is
+optional, and omitting a provider gives you the engine's inert default.
+
+## 5. Register it
+
+A genre exists when it's in the registry. One `import`, one array entry — no
+engine edit:
+
+<Code code={whole(registryRaw)} lang="ts" title="js/packs/registry.ts" mark={['probePack']} />
+
+## 6. Run it
+
+The repo ships a **genre-agnostic** driver that reads everything from your
+manifest. Play a fully deterministic career from a seed and inspect the finale:
+
+```js
+// scratch/run-probe.mjs  —  node scratch/run-probe.mjs
+import { tracePackRun } from '../tools/pack-core.mjs';
+import { probePack } from '../dist/js/packs/probe.js';
+import { useContentPack } from '../dist/js/engine.js';
+
+useContentPack(probePack);
+const trace = tracePackRun(probePack, 12345);
+console.log('ending:', trace.ending, '\nfinal stats:', trace.stats);
+```
+
+```bash
+npm run build && node scratch/run-probe.mjs
+```
+
+Because the run is seeded, the same seed always produces the same career — which
+is exactly what the golden masters pin. Your new pack can have its own golden
+corpus with the same one-line-per-run diff (see
+[Balance & the safety net](/big-break/docs/shipping/balance/)).
+
+<Aside type="tip" title="Playing it in a browser">
+To swipe it by hand, add a `probe.html` entry (copy `mystery.html`) and the
+data-driven build emits it at `/probe/`. See
+[Building & shipping](/big-break/docs/shipping/build/).
+</Aside>
+
+## You now have a game
+
+One stat, one summit, a deck, and a seed-stable run. That's the floor. From
+here, every chapter adds one capability on top of exactly this shape:
+
+<LinkCard title="The run lifecycle" href="/big-break/docs/concepts/lifecycle/" description="What the engine does between draw and finale — tiers, pity, encores, acts." />
+<LinkCard title="The manifest, in depth" href="/big-break/docs/authoring/manifest/" description="Multiple summits, gate tuning, and how a finale is judged." />
+<LinkCard title="Authoring a deck" href="/big-break/docs/authoring/deck/" description="requires gating, path affinity, chains, flashpoints, and shop slots." />
+<LinkCard title="Subsystems (plugins)" href="/big-break/docs/authoring/plugins/" description="Give your genre its own state and lifecycle, like the clues board." />

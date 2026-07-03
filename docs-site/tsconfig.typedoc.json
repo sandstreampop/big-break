@@ -1,0 +1,19 @@
+{
+  // Mirrors the engine's FROZEN compiler options (../tsconfig.json) so TypeDoc
+  // resolves the engine's bundler-style ".js" import specifiers and DOM libs
+  // exactly as the real build does. This config is for TypeDoc's reader only —
+  // it emits nothing. Kept in sync with the engine tsconfig by hand; the two
+  // are tiny and change rarely.
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["es2022", "dom", "dom.iterable", "webworker"],
+    "allowJs": false,
+    "checkJs": false,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["../js/**/*"]
+}

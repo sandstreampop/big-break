@@ -1,0 +1,100 @@
+---
+title: Subsystems (plugins)
+description: The hook lifecycle, ordering, the per-resolution context, owning a resource, and declaring verbs.
+---
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import cluesRaw from '@engine/packs/plugins/clues.ts?raw';
+import songsRaw from '@engine/packs/plugins/songs.ts?raw';
+import { whole, region } from '@snippet';
+
+A [`Plugin`](/big-break/docs/reference/types/interfaces/plugin/) is how a genre
+adds its **own state and lifecycle** — a clue board, a chart, a suspicion track —
+without the engine knowing about it. The engine dispatches to your plugin at
+fixed lifecycle points; your plugin does whatever your genre needs there.
+
+## The smallest possible subsystem
+
+The mystery pack's `clues` plugin is the whole idea in 28 lines. It owns one
+counter, applies one effect verb, and narrates at act breaks:
+
+<Code code={whole(cluesRaw)} lang="ts" title="js/packs/plugins/clues.ts" />
+
+That's a complete subsystem. It declares the verb it owns (`effectVerbs:
+['clues']`), maintains `state.clues` in `onEffect`, records a delta so the UI can
+show it, and adds a note at each act break. The sleuth summit then gates on
+`clues` — the manifest reads it through `gateValue` with no engine change.
+
+## The hook lifecycle
+
+Every hook is optional. Implement only the ones your subsystem needs. In run
+order:
+
+| Hook | When | Typical use |
+|---|---|---|
+| `onConstruct(state, rng)` | run start, before perks | seeded setup draws (weather, rival) |
+| `onRunStart(state, rng)` | end of `newRun` | starting inventory (the notebook demo) |
+| `modifyEffects(state, effects, ctx)` | before an outcome lands | adjust the payload (home-venue bonus) |
+| `applyResource(res, effects, state, ctx)` | resource apply step | own a manifest resource's arithmetic |
+| `onEffect(state, effects, ctx)` | after resources | handle your own effect verbs |
+| `afterResolve(state, result, ctx)` | after a card resolves | react to the whole resolution |
+| `onActBreak(state, act, notes)` | each act break | periodic ticks, income, audits |
+| `onTick(state, notes)` | a periodic tick | chart weeks and the like |
+| `onFinale(state)` | as the finale is judged | one last tick before scoring |
+
+<Aside type="caution" title="Ordering is deterministic — and load-bearing">
+Plugins fire in ascending `priority` (default 0), ties broken by registration
+order. Because subsystems can consume RNG, their order fixes the seeded draw
+stream — so the golden masters pin it. The music pack registers `[band, songs]`
+specifically so band quirks draw before the chart tick. Set `priority`
+deliberately, and don't reorder casually.
+</Aside>
+
+## The per-resolution context
+
+Hooks that run during a card resolution receive a
+[`PluginContext`](/big-break/docs/reference/types/interfaces/plugincontext/) — the
+resolution's shared scratch space:
+
+- `ev`, `choice`, `tier` — what's being resolved;
+- `rng` — the seeded generator (use this, never `Math.random`, or you break
+  replay);
+- `deltas` — push structured deltas here so the UI can stage them;
+- per-card scratch fields a subsystem stashes for itself across the hooks of one
+  card.
+
+## Owning a resource
+
+If a resource needs bespoke arithmetic, a plugin can *own* it with
+`applyResource`: return the delta to record, `0` to claim it with no delta, or
+`undefined` to decline (the engine tries the next plugin, then a generic add).
+The songs plugin owns `hits` — an "instant classic" mints a charting song:
+
+<Code code={region(songsRaw, 'apply-resource')} lang="ts" title="js/packs/plugins/songs.ts" />
+
+Notice it consumes `ctx.rng` and pushes song debuts onto `ctx.deltas` — exactly
+at the resource's ordinal slot, so the RNG stream stays byte-identical to when
+this logic lived inline in the engine.
+
+## A full subsystem at act breaks
+
+The same plugin runs the chart week at each act break and one final week at the
+finale — reusing the engine's own song machinery:
+
+<Code code={region(songsRaw, 'act-break')} lang="ts" title="js/packs/plugins/songs.ts" />
+
+## The pattern to copy
+
+`clues` and `songs` are the same shape at two sizes. To add a subsystem:
+
+1. Declare the verbs it owns in `effectVerbs`.
+2. Keep its state on `state` (a namespaced key or two).
+3. Handle its verbs in `onEffect`; own a resource with `applyResource` if needed.
+4. Do periodic work in `onActBreak` / `onTick` / `onFinale`, pushing player-facing
+   `notes` and structured `deltas`.
+5. Register it in your pack's `plugins` array, with a deliberate `priority`.
+
+The engine never learns your subsystem exists — it just calls the hooks.
+
+Next: [Progression](/big-break/docs/authoring/progression/) — perks,
+interstitials, and the tutorial.

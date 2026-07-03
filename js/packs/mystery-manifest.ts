@@ -15,6 +15,7 @@ import type { PackManifest, PathDef, StatMeta } from '../types.js';
 export const STATS: string[] = ['nerve', 'charm', 'insight', 'alliance'];
 export const RESOURCES: string[] = ['fame', 'money', 'pathProgress', 'rivalry'];
 
+// #region paths
 export const PATHS: Record<string, PathDef> = {
   sleuth: {
     id: 'sleuth',
@@ -38,7 +39,9 @@ export const PATHS: Record<string, PathDef> = {
     icon: '🎩',
   },
 };
+// #endregion paths
 
+// #region win-gates
 // Tuned via tools/mystery-sim.mjs so Success stays losable AND no single
 // summit dominates. Insight is over-produced by the deck (lots of investigate/
 // observe beats), so the sleuth gate sits high; charm/nerve/fame lag, so those
@@ -48,6 +51,7 @@ export const WIN_GATES: Record<string, Record<string, number>> = {
   darling: { charm: 56, fame: 72, alliance: 46 },
   fixer:   { nerve: 56, charm: 48, money: 230 },
 };
+// #endregion win-gates
 
 export const STAT_META: Record<string, StatMeta> = {
   nerve:    { name: 'Nerve',    icon: '🧊' },

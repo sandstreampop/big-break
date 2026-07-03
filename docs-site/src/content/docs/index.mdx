@@ -1,0 +1,69 @@
+---
+title: Big Break Engine
+description: Build your own 3-act swipe-roguelike. A game is a Pack.
+template: splash
+hero:
+  tagline: A 3-act swipe-roguelike SDK. A game is a <em>Pack</em> — adding a genre edits new files only, no shared type, no engine line.
+  actions:
+    - text: Quickstart — your first pack
+      link: /big-break/docs/quickstart/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/sandstreampop/big-break
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What you're building on
+
+Big Break is a **3-act swipe-roguelike engine**. The core runs one lifecycle —
+deck assembly → draw a card → swipe left or right → roll to a `bad` / `good` /
+`incredible` tier → apply effects → act breaks → crossroads → finale — over a
+seeded, resume-safe RNG. It knows nothing about *your* game.
+
+A game is a **`Pack`**: a manifest, a deck, optional subsystems, and a
+presenter. The whole surface is typed, and a truly unknown key is a compile
+error — so the tier of a swipe outcome is exactly one of three things, and
+nothing else:
+
+```ts twoslash
+type Tier = 'bad' | 'good' | 'incredible';
+const rolled: Tier = 'good';
+//    ^?
+```
+
+<CardGrid stagger>
+  <Card title="Three sizes of example" icon="seti:typescript">
+    The **probe** pack (one stat, one summit, zero subsystems), the **mystery**
+    pack (a real second genre), and the **music** pack (everything the engine
+    can do). Every code sample on this site is pulled from these real files.
+  </Card>
+  <Card title="Add a genre, edit new files only" icon="add-document">
+    No shared type to widen, no engine line to touch. Your stats, your verbs,
+    your subsystems all live in your pack's own files.
+  </Card>
+  <Card title="Reference that can't drift" icon="approve-check">
+    The API reference is generated straight from the engine's typed contract;
+    the prose samples are the real pack source, type-checked at build.
+  </Card>
+  <Card title="Ship with a safety net" icon="rocket">
+    Deterministic sims, golden masters, cross-pack invariants, a content
+    linter, and a headless-browser smoke test. Build the same net for your game.
+  </Card>
+</CardGrid>
+
+## Where to go next
+
+- **New here?** Start with the [Quickstart](/big-break/docs/quickstart/) — a
+  playable pack in about ten minutes, built on the real probe pack.
+- **Want the mental model first?** Read
+  [The run lifecycle](/big-break/docs/concepts/lifecycle/) and
+  [The Pack contract](/big-break/docs/concepts/pack/).
+- **Looking for a type or function?** The
+  [types reference](/big-break/docs/reference/types/readme/) covers the
+  pack-authoring contract; the
+  [engine reference](/big-break/docs/reference/engine/readme/) covers the
+  run-driving functions.
