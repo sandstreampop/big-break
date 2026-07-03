@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+  <!-- No maximum-scale/user-scalable: iOS Safari ignores them anyway (a11y since
+       iOS 10) and honoring them on Android blocks low-vision pinch-zoom. Double-
+       tap-zoom is disabled the reliable way (touch-action: manipulation, css) so
+       fast tapping never zooms while accessibility pinch-zoom stays available. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#12101a">

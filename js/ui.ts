@@ -104,6 +104,26 @@ export function boot(pack = musicPack) {
   renderTitle();
   show('#screen-title');
   installBackGuard();
+  installPersistOnHide();
+}
+
+// X5/R7: iOS aggressively freezes and often COLD-RELOADS a backgrounded tab or
+// standalone app (in-memory state lost). The run is already saved on every swipe,
+// but a minigame in progress or an armed encore between saves could be lost — so
+// flush the run and meta the instant we lose visibility (visibilitychange:hidden
+// is the reliable mobile signal; pagehide is the belt-and-suspenders for older
+// WebKit that doesn't always fire it). Writes are try/catch-wrapped in save.js.
+function installPersistOnHide() {
+  const flush = () => {
+    try {
+      if (run && run.phase !== 'ended') save.saveRun(run);
+      save.saveMeta(meta);
+    } catch (e) { /* storage unavailable — nothing more we can do */ }
+  };
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flush();
+  });
+  window.addEventListener('pagehide', flush);
 }
 
 // Android Back / gesture guard. iOS has no Back button, so navigation was pure
@@ -802,7 +822,10 @@ function attachDrag(card, bL, bR) {
     pid = e.pointerId;
     startX = e.clientX; startY = e.clientY;
     samples = [[performance.now(), e.clientX]];
-    card.setPointerCapture(pid);
+    // Capture can throw (a pointer the browser no longer considers active); the
+    // drag still tracks via the card's own pointermove/up, so never let it break
+    // the gesture.
+    try { card.setPointerCapture(pid); } catch (e2) { /* capture unavailable */ }
     card.classList.add('dragging');
   });
   card.addEventListener('pointermove', (e) => {

@@ -59,11 +59,12 @@ Full risk analysis with citations is in [`docs/android-compat.md`](../../docs/an
 | `back-gesture-does-not-exit-game` | **Risk 3, FIXED.** Android Back closes an overlay / returns to title instead of unloading the PWA — `installBackGuard()` in `js/ui.ts` keeps a trap history entry and intercepts `popstate`. |
 | `dvh-has-vh-fallback` | **Risk 2, FIXED.** `style.css` declares a `100vh` fallback before each `100dvh`, so pre-108 Chrome / old WebView still get a height. |
 | `requests-persistent-storage` | **Risk 8, FIXED.** `installMobileGuards()` calls `navigator.storage.persist()` so saves survive Android storage pressure. |
+| `accessibility-zoom-not-blocked` | **Risk 5, FIXED (product-approved) & PROMOTED to must-pass.** The viewport no longer sets `user-scalable=no`/`maximum-scale=1` (Android Chrome honoured it, blocking low-vision pinch-zoom), and `js/platform.ts`'s `visualViewport` "zoom recovery" that snapped zoom back to 1:1 is gone. Double-tap-zoom is now blocked the a11y-safe way (`touch-action: manipulation`). This is the same fix as iOS R1 — see [`docs/ios-compat.md`](../../docs/ios-compat.md) and [`tools/ios/`](../ios/README.md). Guarded so the lock can't return. |
 
 ### Known bugs (`known-bug` — **failing today = proof**)
-| Probe | The bug it proves |
-|---|---|
-| `accessibility-zoom-not-blocked` | **Risk 5.** `user-scalable=no` in the viewport meta. iOS Safari *ignores* it (invisible to iOS QA); **Android Chrome honours it**, blocking low-vision pinch-zoom — and `js/platform.ts` snaps any zoom back to 1:1. **Left as a known-bug on purpose:** `platform.ts`/`style.css` document the zoom-lock as a deliberate "game always fills the screen" choice, so restoring zoom is a product decision, not a bug fix. |
+None open. Risk 5 was the last one; it landed with the iOS work and was promoted
+to a `must-pass` guard above (prove-before-fix: it flipped `PROVEN → FIXED? →
+must-pass`).
 
 ### Documented `SKIP`s (need a real device / farm — see below)
 `urlbar-live-resize`, `edge-swipe-vs-back-gesture`, `backdrop-filter-fps`,
