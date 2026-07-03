@@ -140,6 +140,10 @@ for (const [k, v] of Object.entries(tally.byPathResult).sort()) {
   rollup[k.split(':')[1]] += v;
 }
 console.log(`  → success ${pct(rollup.success)} | partial ${pct(rollup.partial)} | failure ${pct(rollup.failure)}`);
+// Songs win-path guard (Phase 4.5): hitfactory is the hits-gated summit, so
+// its reachability is the canary that the extracted songs subsystem still
+// mints and crowns songs.
+gates.hitfactorySuccessPct = (100 * (tally.byPathResult['hitfactory:success'] || 0)) / RUNS;
 {
   // R4 gate: careers should be losable — success band 25–40% (narrative)
   const s = (100 * rollup.success) / RUNS;
@@ -149,6 +153,7 @@ console.log(`  → success ${pct(rollup.success)} | partial ${pct(rollup.partial
 }
 if (tally.finaleStats.count) {
   const f = tally.finaleStats, c = f.count;
+  gates.avgHits = f.hits / c;
   console.log(`\navg finale stats: skill ${(f.skill / c).toFixed(0)} cred ${(f.cred / c).toFixed(0)} crea ${(f.creativity / c).toFixed(0)} net ${(f.network / c).toFixed(0)} burn ${(f.burnout / c).toFixed(0)} fame ${(f.fame / c).toFixed(0)} hits ${(f.hits / c).toFixed(1)}`);
 }
 
@@ -271,6 +276,14 @@ if (CHECK) {
     { name: `non-exempt under-1% ≤ ${gates.under1Cap}`,
       ok: gates.under1Count <= gates.under1Cap,
       detail: `${gates.under1Count}` },
+    // Songs win-path (Phase 4.5): the hitfactory summit must stay reachable and
+    // songs must still be minted — guards the extracted subsystem's win-path.
+    { name: 'songs win-path: hitfactory success ≥ 1%',
+      ok: gates.hitfactorySuccessPct >= 1,
+      detail: `${gates.hitfactorySuccessPct.toFixed(1)}%` },
+    { name: 'songs minted: avg finale hits ≥ 0.2',
+      ok: gates.avgHits >= 0.2,
+      detail: `${(gates.avgHits ?? 0).toFixed(2)}` },
   ];
   console.log(`=== --check gates (seed=${BASE_SEED}, ${RUNS} runs, ${POLICY}) ===`);
   let failed = 0;

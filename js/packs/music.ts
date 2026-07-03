@@ -19,12 +19,15 @@ import { musicManifest } from './music-manifest.js';
 import { venuePlugin } from './plugins/venue.js';
 import { rivalPlugin } from './plugins/rival.js';
 import { bandPlugin } from './plugins/band.js';
+import { songsPlugin } from './plugins/songs.js';
 import type { Pack } from '../types.js';
 
 export const musicPack: Pack = {
   id: 'music',
   manifest: musicManifest,
-  plugins: [venuePlugin, rivalPlugin, bandPlugin],
+  // Order matters: onActBreak fires band quirks (notebook draws RNG) before
+  // songs' deadline audit + chart week, matching the old inline order.
+  plugins: [venuePlugin, rivalPlugin, bandPlugin, songsPlugin],
   events: EVENTS,
   tutorialEvents: TUTORIAL_EVENTS,
   instruments: INSTRUMENTS,

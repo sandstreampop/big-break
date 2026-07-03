@@ -992,84 +992,10 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     if (d) push(res, d);
   }
 
-  // Plugin effect handlers (Phase 4.2: venue adoptVenue/venueLove; more
-  // subsystems fold in here through Phase 4.5). No RNG, no deltas pushed.
-  firePlugins('onEffect', state, effects, { ev, choice, tier, rng });
-  if (effects.chartTitle && !state._chartTitleHandled) {
-    const tierQ = tier === 'incredible' ? 66 : tier === 'good' ? 58 : 50;
-    const s = addSong(state, {
-      title: effects.chartTitle.replace('{collabArtist}', collabArtistFor(state)),
-      quality: tierQ, origin: ev?.id || null, status: 'charting', hype: 62,
-    });
-    (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: s.crowned, viral: !!s.viral });
-  }
-  if (effects.hypeSong) {
-    // Promo: pour hype into your best charting song. Hype decays hard every
-    // chart week (×0.55), so this is how a song SURVIVES — the next act
-    // break will show what the push bought.
-    const charting = (state.songs || []).filter((s) => s.status === 'charting' && s.pos);
-    if (charting.length) {
-      const top = charting.slice().sort((a, b) => a.pos - b.pos)[0];
-      top.hype = clamp(top.hype + effects.hypeSong, 0, 100);
-      deltas.songHyped = { title: top.title, hype: top.hype, gain: effects.hypeSong };
-    }
-  }
-  if (effects.albumDrop) {
-    // THE ALBUM: everything ships at once. Every vault demo releases with
-    // the album's hype; every charting song gets the halo bump.
-    const hype = (typeof effects.albumDrop === 'number' ? effects.albumDrop : 60) + (hooks.releaseHype || 0) + accs.reduce((n, a) => n + (a.releaseHype || 0), 0) + ((state.perks || []).includes('promoter') ? 6 : 0);
-    const demos = (state.songs || []).filter((s) => s.status === 'demo');
-    for (const d of demos) {
-      releaseSong(state, d.id, hype);
-      (deltas.songDebuts = deltas.songDebuts || []).push({ title: d.title, pos: d.pos, hit: d.crowned, released: true, viral: !!d.viral });
-    }
-    for (const s of (state.songs || []).filter((x) => x.status === 'charting' && x.pos && !demos.includes(x))) {
-      s.hype = clamp(s.hype + 12, 0, 100);
-    }
-    deltas.albumOut = { tracks: demos.length };
-  }
-  if (effects.releaseDemo) {
-    // Release day: your best demo goes to the chart. The number is the hype
-    // it ships with — the fiction (tier) decides how loud the drop lands.
-    const demos = (state.songs || []).filter((s) => s.status === 'demo');
-    if (demos.length) {
-      const best = demos.slice().sort((a, b) => b.quality - a.quality)[0];
-      const hype = (typeof effects.releaseDemo === 'number' ? effects.releaseDemo : 55) + (hooks.releaseHype || 0) + accs.reduce((n, a) => n + (a.releaseHype || 0), 0) + ((state.perks || []).includes('promoter') ? 6 : 0);
-      releaseSong(state, best.id, hype);
-      (deltas.songDebuts = deltas.songDebuts || []).push({ title: best.title, pos: best.pos, hit: best.crowned, released: true, viral: !!best.viral });
-    }
-  }
-  if (effects.polishDemo) {
-    // The vault appreciates: unreleased material gets better
-    const demos = (state.songs || []).filter((s) => s.status === 'demo');
-    if (demos.length) {
-      const best = demos.slice().sort((a, b) => b.quality - a.quality)[0];
-      best.quality = clamp(best.quality + effects.polishDemo, 1, 100);
-      deltas.songPolished = { title: best.title, quality: best.quality, gain: effects.polishDemo };
-    }
-  }
-  if (effects.writeSong) {
-    // Songwriting writes a REAL song: a demo lands in the notebook. Quality
-    // reads the outcome tier, how the writing minigame went, and who you are
-    // (creativity). A hook you grabbed in Idea Grab becomes the title.
-    const base = tier === 'incredible' ? 64 : tier === 'good' ? 50 : 36;
-    const verdictAdj = { BOTCHED: -10, SCRAPPY: 0, SOLID: 8, GOLDEN: 16 }[mg?.label] || 0;
-    const creaAdj = Math.round(((state.stats.creativity || 0) - 40) * 0.2);
-    const gearAdj = accs.reduce((n, a) => n + (a.demoQuality || 0), 0);
-    const perkAdj = (state.perks || []).includes('golden_ears') ? 6 : 0;
-    const instAdj = (hooks.demoQuality || 0) + gearAdj + perkAdj; // Loop Station / four-track: layers stick
-    const jit = Math.round((rng ? rng() : 0.5) * 10 - 5);
-    const grabbedHooks = mg?.hooks || [];
-    const title = grabbedHooks.length
-      ? grabbedHooks[Math.floor((rng ? rng() : 0.5) * grabbedHooks.length)].replace(/(^|\s)[a-z]/g, (c) => c.toUpperCase())
-      : songName(rng, PACK.genreById(state.genre));
-    const s = addSong(state, {
-      title, quality: base + verdictAdj + creaAdj + instAdj + jit,
-      origin: ev?.id || null, status: 'demo',
-    });
-    deltas.songWritten = { title: s.title, quality: s.quality, fromHook: grabbedHooks.length > 0 };
-  }
-  state._chartTitleHandled = false;
+  // Plugin effect handlers (Phase 4.2 venue; Phase 4.5 songs — write/hype/
+  // release/album/polish/chartTitle). Fires here so the songs plugin lands its
+  // effects at the exact spot the old inline block did; deltas/RNG order held.
+  firePlugins('onEffect', state, effects, { ev, choice, tier, rng, deltas, hooks, accs, mg });
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
 
@@ -1297,12 +1223,10 @@ function startAct(state, act) {
     for (const d of demos) d.quality = clamp(d.quality + 2, 1, 100);
     if (demos.length) notes.push(`🗃️ The Archivist: ${demos.length} vault demo${demos.length === 1 ? '' : 's'} +2 quality`);
   }
-  // Band act-break quirks (band plugin, Phase 4.4). Fires before the deadline
-  // audit and chart tick, exactly as the old inline loop did — the notebook
-  // bandmate draws the seeded RNG here, so this position is load-bearing.
+  // Act-break plugins (Phase 4.4 band quirks, then Phase 4.5 songs: deadline
+  // audit + chart week). Registration order [band, songs] reproduces the old
+  // inline order — band quirks (notebook draws RNG) before the audit/tick.
   firePlugins('onActBreak', state, act, notes);
-  notes.push(...deadlineAudit(state, act - 1));
-  notes.push(...chartTick(state));
   // U5: the act twist is telegraphed the moment the act opens
   if (state.actTwist && state.actTwist.act === act) {
     notes.push(state.actTwist.delta < 0
@@ -1340,7 +1264,7 @@ export function checkFailStates(state) {
 
 export function evaluateFinale(state) {
   state.phase = 'ended';
-  chartTick(state); // one last chart week before judgment
+  firePlugins('onFinale', state); // songs plugin: one last chart week (Phase 4.5)
   finalePayout(state);
   const gates = PACK.manifest.winGates[state.path] as Record<string, number>;
   const readings = Object.entries(gates).map(([key, target]) => {

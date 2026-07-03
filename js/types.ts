@@ -130,6 +130,13 @@ export interface PluginContext {
   choice: Choice | null;
   tier?: Tier | 'declined';
   rng: () => number;
+  // Resolution internals exposed to onEffect so a subsystem can apply its own
+  // effect keys (the songs plugin writes/releases/hypes songs and records the
+  // structured deltas the UI stages). Present on the applyEffects dispatch.
+  deltas?: any;
+  hooks?: Record<string, any>;
+  accs?: any[];
+  mg?: any;
 }
 export interface Plugin {
   id: string;
@@ -146,6 +153,8 @@ export interface Plugin {
   onActBreak?(state: RunState, act: number, notes: string[]): void;
   // A chart week / periodic tick; push notes.
   onTick?(state: RunState, notes: string[]): void;
+  // Fired once as the finale is evaluated (e.g. one last chart week).
+  onFinale?(state: RunState): void;
 }
 
 export interface Pack {
