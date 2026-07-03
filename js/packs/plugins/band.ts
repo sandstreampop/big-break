@@ -10,7 +10,7 @@
 import { bandmateById, recruitCandidate } from '../../data/band.js';
 import { genreById } from '../../data/genres.js';
 import { songName } from '../../charts.js';
-import { addSong, stateRng } from '../../engine.js';
+import { addSong, stateRng, tagsIntersect } from '../../engine.js';
 import type { Plugin } from '../../types.js';
 
 export const bandPlugin: Plugin = {
@@ -22,6 +22,16 @@ export const bandPlugin: Plugin = {
     bandMin: (s, arg) => (s.band || []).length >= arg,
     bandMax: (s, arg) => (s.band || []).length <= arg,
     bandHas: (s, arg) => (s.band || []).includes(arg),
+  },
+
+  // Each bandmate carries a tag-matched roll bonus, folded into the roll.
+  modifyRoll(state, choice, _ctx) {
+    let b = 0;
+    for (const bid of state.band || []) {
+      const bm = bandmateById(bid);
+      if (bm && tagsIntersect(bm.bonus.tags, choice.tags)) b += bm.bonus.bonus;
+    }
+    return b;
   },
 
   // Roster changes (WP4): recruit (a named bandmate or a seeded 'random' draw)

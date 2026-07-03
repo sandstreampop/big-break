@@ -4,7 +4,25 @@
 // hustle: the plugin pays the income at act break and owns the grantHustle verb.
 
 import { hustleById } from '../../data/hustles.js';
+import { weatherHooks } from '../../data/weather.js';
+import { MUSIC_PERKS } from '../music-perks.js';
 import type { Plugin } from '../../types.js';
+
+// Pay every hustle once (an act break, or the finale). Income scales by the
+// era's hustleMult and the cheap_rent perk's hustleMult — sources this plugin
+// reads directly (weather data + the music perk table). No rng.
+function payHustles(state: any, notes: string[]) {
+  const perkMult = (state.perks || []).reduce((m: number, id: string) => m * (MUSIC_PERKS[id]?.hustleMult ?? 1), 1);
+  const weatherMult = weatherHooks(state).hustleMult || 1;
+  for (const id of state.hustles || []) {
+    const h = hustleById(id);
+    if (h) {
+      const pay = Math.round(h.moneyPerAct * weatherMult * perkMult);
+      state.money += pay;
+      notes.push(`${h.icon} ${h.name}: +$${pay}`);
+    }
+  }
+}
 
 export const hustlePlugin: Plugin = {
   id: 'hustle',
@@ -25,5 +43,14 @@ export const hustlePlugin: Plugin = {
       state.hustles.push(effects.grantHustle);
       (ctx as any).deltas.hustleGained = hustleById(effects.grantHustle);
     }
+  },
+
+  // Income at every act break, and one last time at the finale. Money-only and
+  // rng-free, so its position among the act-break/finale plugins is byte-green.
+  onActBreak(state, _act, notes) {
+    payHustles(state, notes);
+  },
+  onFinale(state) {
+    payHustles(state, []);
   },
 };

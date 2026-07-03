@@ -197,10 +197,10 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
     pendingChainId: null,
     ending: null, // { key, result } once ended
   };
-  // Seeded construction draws, in FROZEN order (chartSeed above, then rival,
-  // seeds, flashpoint, actTwist, weather). onConstruct fires at rival's ordinal
-  // slot so a subsystem plugin's construction draw lands exactly where the old
-  // inline draw did. Reordering here invalidates the entire golden corpus.
+  // Seeded construction draws, in FROZEN order (chartSeed above, then rival via
+  // onConstruct, seeds, flashpoint, actTwist; the weather draw now lands at the
+  // onRunStart tail). A subsystem's construction draw lands exactly where the
+  // old inline draw did; reordering here invalidates the entire golden corpus.
   firePlugins('onConstruct', state, rng); // rival plugin (Phase 4.3)
   state.seeds = PACK.rollSeeds(rng, CONFIG.seedCount); // Story Seeds (R1)
   // Rush: ~25% of runs schedule one flashpoint (U2); ~20% bend an act (U5)
@@ -209,7 +209,6 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
   state.actTwist = rng() < CONFIG.actTwistChance
     ? { act: randInt(rng, 2, 3), delta: rng() < 0.5 ? -CONFIG.actTwistDelta : CONFIG.actTwistDelta }
     : null;
-  state.weather = PACK.rollWeather(rng); // Scene Weather (M2)
   if (inst) {
     for (const [k, v] of Object.entries(inst.modifiers || {})) {
       if (k in state.stats) state.stats[k] = clamp(state.stats[k] + v, 1, 100);
@@ -220,11 +219,11 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
   // touch independent fields, so order is immaterial (byte-green).
   state.perks = perks;
   for (const p of activePerks(state)) p.onRunStart?.(state);
-  state.money += PACK.weatherHooks(state).startMoney || 0; // Scene Weather walk-in
-  // Run-start subsystem hook (fired here, at the tail of construction, so any
-  // seeded draw lands where the old inline notebook-perk draw did). The songs
-  // subsystem mints the Old Notebook's opening demo — song naming lives with
-  // the songs plugin now, so the engine no longer imports charts.ts.
+  // Run-start subsystem hook, fired at the tail of construction. The weather
+  // plugin draws the era here and pays its walk-in bonus (no rng is consumed
+  // between the old inline weather draw and this point in the golden corpus, so
+  // the era lands at the same ordinal); the songs plugin mints the Old
+  // Notebook's opening demo. Seeded draws land where the old inline ones did.
   firePlugins('onRunStart', state, rng);
   return state;
 }
@@ -619,8 +618,6 @@ export function drawNextCard(state, rng = Math.random) {
   // Personal novelty (R2): cards THIS player has never seen draw heavier.
   // On a first install everything is unseen, so nothing shifts.
   const seen = state.seenCards ? new Set(state.seenCards) : null;
-  // Scene Weather (M2): the mutator recolors the deck itself
-  const wMults = PACK.weatherHooks(state).weightTagMult || [];
   let total = 0;
   const weights = pool.map((ev) => {
     const affine = ev.pathAffinity && ev.pathAffinity.includes(state.path);
@@ -629,9 +626,9 @@ export function drawNextCard(state, rng = Math.random) {
       (litPayoffs.has(ev.id) ? CONFIG.seedPayoffMult : 1) *
       (warmSetups.has(ev.id) ? CONFIG.seedSetupMult : 1) *
       (seen && !seen.has(ev.id) ? CONFIG.noveltyWeightMult : 1);
-    for (const wm of wMults) {
-      if (tagsIntersect(wm.tags, ev.tags || [])) w *= wm.mult;
-    }
+    // Subsystem deck recolor (weather era), folded in after the core factors —
+    // the same slot the inline weightTagMult loop sat.
+    w = foldDeckWeight(state, ev, w);
     total += w;
     return w;
   });
@@ -777,19 +774,9 @@ export function rollComponents(state, choice, opts: any = {}) {
 
   const inst = PACK.instrumentById(state.instrument);
   let quirkBonus = 0;
+  // The instrument's tag bonus is core (the loadout is core); genre and band
+  // tag bonuses fold in via modifyRoll below (genre/band plugins).
   for (const tb of inst?.quirk?.hooks?.rollTagBonus || []) {
-    if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
-  }
-  for (const gb of PACK.genreById(state.genre)?.bonuses || []) {
-    if (tagsIntersect(gb.tags, choice.tags)) quirkBonus += gb.bonus;
-  }
-  for (const bid of state.band || []) {
-    const bm = PACK.bandmateById(bid);
-    if (bm && tagsIntersect(bm.bonus.tags, choice.tags)) quirkBonus += bm.bonus.bonus;
-  }
-
-  const wHooks = PACK.weatherHooks(state);
-  for (const tb of wHooks.rollTagBonus || []) {
     if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
   }
 
@@ -810,7 +797,6 @@ export function rollComponents(state, choice, opts: any = {}) {
   let jitter: [number, number] = inst?.quirk?.hooks?.jitter ||
     CONFIG.jitterByAct?.[state.act] || [CONFIG.jitterMin, CONFIG.jitterMax];
   jitter = foldJitter(state, jitter, rollCtx);
-  if (wHooks.jitterWiden) jitter = [jitter[0] - wHooks.jitterWiden, jitter[1] + wHooks.jitterWiden];
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
     gearBonus + quirkBonus + pluginRollBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
   return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
@@ -1030,18 +1016,18 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
 
   const push = (key, amount) => { if (amount) deltas.push({ key, amount }); };
 
-  const cMods = contractMods(state);
-  const wHooks = PACK.weatherHooks(state);
+  // Per-resolution gain-multiplier bags a subsystem contributes (contract, then
+  // weather, in registration order), applied by the stat/burnout loops right
+  // after the instrument's own (which is core — instruments are core). The core
+  // keeps the multiplier MECHANIC; the SOURCES are plugins (WP6-infra).
+  const bags = gainBags(state);
   for (const stat of stats()) {
     let v = effects[stat] || 0;
     if (!v) continue;
-    // Positive stat gains scale by instrument, contract, then weather
-    // multipliers — all generic per-stat (D.4: was a hardcoded `cred`
-    // special-case; instruments/contracts now declare statGainMult like
-    // weather already did, so any stat can be bent, not just music's cred).
+    // Positive stat gains scale by the instrument (core), then each subsystem's
+    // per-stat multiplier — all generic, no stat named.
     if (v > 0 && hooks.statGainMult?.[stat]) v = Math.round(v * hooks.statGainMult[stat]);
-    if (v > 0 && cMods.statGainMult?.[stat]) v = Math.round(v * cMods.statGainMult[stat]);
-    if (v > 0 && wHooks.statGainMult?.[stat]) v = Math.round(v * wHooks.statGainMult[stat]);
+    for (const bag of bags) if (v > 0 && bag.statGainMult?.[stat]) v = Math.round(v * bag.statGainMult[stat]);
     const before = state.stats[stat];
     state.stats[stat] = clamp(before + v, 0, 100);
     push(stat, state.stats[stat] - before);
@@ -1061,9 +1047,8 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
       if (acc.sideEffect?.burnoutPerMatch) v += acc.sideEffect.burnoutPerMatch;
     }
     if (hooks.liveBurnout && tags.includes('live')) v += hooks.liveBurnout;
-    if (v > 0 && cMods.burnoutGainMult) v *= cMods.burnoutGainMult;
-    if (v > 0 && wHooks.burnoutGainMult) v *= wHooks.burnoutGainMult;
-    if (v < 0 && cMods.burnoutHealMult) v *= cMods.burnoutHealMult;
+    for (const bag of bags) if (v > 0 && bag.burnoutGainMult) v *= bag.burnoutGainMult;
+    for (const bag of bags) if (v < 0 && bag.burnoutHealMult) v *= bag.burnoutHealMult;
     if (v < 0) v *= perkMult(state, 'burnoutHealMult');
     v = Math.round(v);
     if (v) {
@@ -1200,21 +1185,6 @@ function startAct(state, act) {
   state.shopPlayedInAct = false;
   state.phase = 'card';
   const notes = [];
-  for (const acc of equippedAccessories(state)) {
-    if (acc.upkeep) {
-      state.money -= acc.upkeep;
-      notes.push(`${acc.name}: −$${acc.upkeep} upkeep`);
-    }
-  }
-  for (const id of state.hustles || []) {
-    const h = PACK.hustleById(id);
-    if (h) {
-      const pay = Math.round(h.moneyPerAct * (PACK.weatherHooks(state).hustleMult || 1) *
-        perkMult(state, 'hustleMult'));
-      state.money += pay;
-      notes.push(`${h.icon} ${h.name}: +$${pay}`);
-    }
-  }
   // Career Wall perks that fire at every act break (pack-declared — D.1).
   for (const p of activePerks(state)) p.onActBreak?.(state, notes);
   // Act-break plugins (Phase 4.4 band quirks, then Phase 4.5 songs: deadline
@@ -1230,20 +1200,12 @@ function startAct(state, act) {
   return notes;
 }
 
-// Hustles pay out one final time when the career is evaluated
+// The Deadline contract's final audit when the career is evaluated. Hustle
+// income at the finale now lands via hustlePlugin.onFinale (fired just before
+// this in evaluateFinale); the deadline audit relocates to the songs subsystem
+// in WP6. Notes are collected for parity but evaluateFinale discards them.
 export function finalePayout(state) {
-  const notes = [];
-  notes.push(...deadlineAudit(state, 3));
-  for (const id of state.hustles || []) {
-    const h = PACK.hustleById(id);
-    if (h) {
-      const pay = Math.round(h.moneyPerAct * (PACK.weatherHooks(state).hustleMult || 1) *
-        perkMult(state, 'hustleMult'));
-      state.money += pay;
-      notes.push(`${h.icon} ${h.name}: +$${pay}`);
-    }
-  }
-  return notes;
+  return [...deadlineAudit(state, 3)];
 }
 
 export function checkFailStates(state) {
@@ -1310,11 +1272,10 @@ export function legacyPoints(state) {
   const base = Math.round((state.fame + statSum) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
-  // Subsystem score multipliers (contract lpMult; weather follows), folded in
-  // the same order the old `mult *= …` used. The comeback bonus is flag-based
-  // and genre-neutral, so it stays core.
+  // Subsystem score multipliers (contract lpMult, weather lpMult), folded in
+  // registration order — the same order the old `mult *= …` used. The comeback
+  // bonus is flag-based and genre-neutral, so it stays core.
   let mult = scoreMult(state);
-  mult *= PACK.weatherHooks(state).lpMult || 1;
   if ((state.flags || []).includes('comeback')) mult *= 1.2;
   return Math.max(1, Math.round((base + bonus) * mult));
 }

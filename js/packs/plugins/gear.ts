@@ -62,4 +62,16 @@ export const gearPlugin: Plugin = {
       }
     }
   },
+
+  // Per-act upkeep on equipped gear (moved from the engine's startAct). Money-
+  // only, no rng.
+  onActBreak(state, _act, notes) {
+    for (const id of state.accessories || []) {
+      const acc = accessoryById(id);
+      if (acc?.upkeep) {
+        state.money -= acc.upkeep;
+        notes.push(`${acc.name}: −$${acc.upkeep} upkeep`);
+      }
+    }
+  },
 };
