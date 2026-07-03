@@ -212,8 +212,9 @@ const backButton = {
   title: 'Android Back closes an overlay / returns a screen instead of unloading the game',
   risk: 'Risk 3 — Android\'s hardware/gesture Back has no in-app history to pop, '
       + 'so it navigates the whole PWA away mid-run (extreme rage-quit / lost run). '
-      + 'iOS has no Back button so this was never felt.',
-  expectation: 'known-bug',
+      + 'iOS has no Back button so this was never felt. FIXED: installBackGuard() '
+      + 'in js/ui.ts keeps a trap history entry and intercepts popstate.',
+  expectation: 'must-pass',
   scope: 'device',
   async run(page, ctx, h) {
     await startRun(page);
@@ -241,8 +242,9 @@ const dvhFallback = {
   title: 'Full-height layout has a vh/fill-available fallback for pre-108 Android Chrome',
   risk: 'Risk 2 — the app sets height:100dvh with no fallback. Android Chrome < 108 '
       + '(and old system WebView / Samsung Internet) drop the invalid declaration, '
-      + 'collapsing the layout. Older Chrome is far more common on Android than iOS.',
-  expectation: 'known-bug',
+      + 'collapsing the layout. Older Chrome is far more common on Android than iOS. '
+      + 'FIXED: style.css now declares a 100vh fallback before each 100dvh.',
+  expectation: 'must-pass',
   scope: 'static',
   async run() {
     const css = await readFile(join(DIST, 'css', 'style.css'), 'utf8');
@@ -282,8 +284,9 @@ const persistentStorage = {
   title: 'App requests navigator.storage.persist() so saves survive storage pressure',
   risk: 'Risk 8 — without persistent-storage, Android evicts localStorage under '
       + 'memory pressure (common on budget devices) and wipes the career. iOS home-'
-      + 'screen apps used to be exempt so this gap never bit on iOS.',
-  expectation: 'known-bug',
+      + 'screen apps used to be exempt so this gap never bit on iOS. '
+      + 'FIXED: installMobileGuards() now calls navigator.storage.persist().',
+  expectation: 'must-pass',
   scope: 'static',
   async run() {
     // Scan the emitted JS bundle for a persist() request.
@@ -291,7 +294,8 @@ const persistentStorage = {
     let found = false;
     for (const f of files) {
       const src = await readFile(join(DIST, 'js', f), 'utf8').catch(() => '');
-      if (/storage\s*\.\s*persist\s*\(/.test(src)) { found = true; break; }
+      // Match plain and optional-chained forms: storage.persist( / storage?.persist?.(
+      if (/storage\s*\??\.\s*persist\s*\??\.?\s*\(/.test(src)) { found = true; break; }
     }
     assert(found, 'no navigator.storage.persist() call in the emitted JS — saves are eviction-eligible on Android');
   },

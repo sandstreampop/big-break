@@ -38,6 +38,7 @@ body {
 }
 
 #app {
+  height: 100vh;   /* fallback: Android Chrome < 108 / old WebView ignore dvh */
   height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -528,6 +529,7 @@ body.big-text #app { zoom: 1.18; }
 
 .result-card {
   width: min(100%, 380px);
+  max-height: calc(100vh - 80px);   /* fallback for pre-dvh Android Chrome */
   max-height: calc(100dvh - 80px);
   overflow-y: auto;
   background: var(--card);

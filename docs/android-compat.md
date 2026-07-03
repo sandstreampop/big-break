@@ -51,26 +51,22 @@ Pointer Events with `setPointerCapture`. → **Guarded** by
 `touch-action-not-passive-blocked` (✅, green — keep it green).
 
 **Risk 2 — Viewport height & the Android URL bar.** `100vh`/`dvh` mis-sizing
-pushes the primary controls under Chrome's address bar. **Gap:** `css/style.css`
-uses `height:100dvh` **with no fallback**. Android Chrome < 108 (and old system
-WebView / Samsung Internet, which lag Chrome) drop the invalid declaration and
-`#app` collapses to auto height → broken layout. Older Chrome is far more common
-on Android than old Safari is on iOS. → **Proven** by `dvh-has-vh-fallback`
-(⚠️ static; live URL-bar resize is 📱). Short-viewport clipping is guarded by
-`short-viewport-controls-reachable` (✅).
-*Fix sketch:* add a fallback line — `height:100vh; height:100dvh;` — or an
-`@supports (height:100dvh)` block.
+pushes the primary controls under Chrome's address bar. **Was:** `css/style.css`
+used `height:100dvh` **with no fallback**, so Android Chrome < 108 (and old
+system WebView / Samsung Internet, which lag Chrome) dropped the declaration and
+`#app` collapsed to auto height. **FIXED:** each `100dvh` now has a `100vh`
+fallback line before it. → guarded by `dvh-has-vh-fallback` (✅) +
+`short-viewport-controls-reachable` (✅). Live URL-bar resize is still 📱.
 
-**Risk 3 — Android Back / edge-swipe.** *(highest-value fix)* Two problems iOS
-never has: (a) the hardware/gesture **Back** button, and (b) OS **edge swipes**
-claimed for Back. **Gap:** there is **zero History-API integration** in the
-codebase (no `pushState`/`popstate` anywhere). Empirically confirmed by the
-harness: from an in-progress run, Back navigates the whole PWA away
-(`screen-game` → blank page). An Android player who reflexively taps Back to
-close an overlay instead **exits the game mid-run**. → **Proven** on every
-device by `back-gesture-does-not-exit-game` (✅). Edge-swipe conflict is 📱.
-*Fix sketch:* `history.pushState` on run start / overlay open; a `popstate`
-handler that closes the overlay or returns a screen instead of unloading.
+**Risk 3 — Android Back / edge-swipe.** Two problems iOS never has: (a) the
+hardware/gesture **Back** button, and (b) OS **edge swipes** claimed for Back.
+**Was:** **zero History-API integration** — from an in-progress run, Back
+navigated the whole PWA away (`screen-game` → blank page), so a reflexive Back
+to close an overlay **exited the game mid-run**. **FIXED:** `installBackGuard()`
+in `js/ui.ts` keeps a trap `history` entry and intercepts `popstate` — Back now
+dismisses an open overlay (running its continue handler) or returns to the title
+(the run is saved on every swipe), and only exits from the title. → guarded by
+`back-gesture-does-not-exit-game` (✅, all devices). Edge-swipe conflict is 📱.
 
 **Risk 4 — Web Audio unlock on Android.** Both platforms gate audio behind a
 gesture; Android latency/route differences bite. **Our code is OK**: audio inits
@@ -97,12 +93,12 @@ standalone`, `theme_color`, maskable 512 icon). Lower churn; retention drag.
 offline. **OK today** → guarded by `offline-boot-from-cache` (✅).
 
 **Risk 8 — localStorage eviction / lost runs.** Losing a roguelike run is the
-genre's worst failure. **Gap:** no `navigator.storage.persist()` request, so
-saves are eviction-eligible under Android storage pressure (common on budget
-devices). Writes *are* wrapped in try/catch (good). → save-round-trip
-**guarded** by `run-survives-reload` (✅); the missing persist() is **proven** by
-`requests-persistent-storage` (⚠️ static). *Fix sketch:* call
-`navigator.storage.persist()` at boot; consider IndexedDB for the career.
+genre's worst failure. **Was:** no `navigator.storage.persist()` request, so
+saves were eviction-eligible under Android storage pressure (common on budget
+devices). **FIXED:** `installMobileGuards()` now calls
+`navigator.storage.persist()` at boot (writes were already try/catch-wrapped). →
+guarded by `requests-persistent-storage` (✅) + `run-survives-reload` (✅).
+*Further hardening (not done):* move the career to IndexedDB for a larger quota.
 
 **Risk 9 — CSS/GPU jank (`backdrop-filter`).** `.overlay`/`.mg-box` use
 `backdrop-filter: blur(6px)` (prefixed correctly). It's GPU-bound and janks on
@@ -143,12 +139,16 @@ Android bug shouldn't block shipping the iOS-solid game, but an Android
 
 `node test/android/run.mjs` — 5-device matrix:
 
-- **30 PASS** regression guards green across all Android devices, **0 regressions**.
-- **4 known bugs PROVEN** (repeatably): `back-gesture-does-not-exit-game`,
-  `dvh-has-vh-fallback`, `accessibility-zoom-not-blocked`,
-  `requests-persistent-storage`.
+- **37 PASS** regression guards green across all Android devices, **0 regressions**.
+- **3 bugs fixed and promoted to guards** (Risks 2, 3, 8) — the probes that
+  proved them now assert the fix stays in place.
+- **1 known bug still PROVEN**: `accessibility-zoom-not-blocked` (Risk 5),
+  left as a known-bug on purpose — restoring pinch-zoom reverses a *documented
+  deliberate* "game always fills the screen" decision (`js/platform.ts`,
+  `css/style.css`), so it's a product call rather than a bug fix.
 - **5 documented SKIPs** requiring a real device / farm.
 
-Recommended fix order by ROI: **Risk 3 (Back button)** → **Risk 2 (dvh
-fallback)** → **Risk 8 (persist)** → **Risk 5 (a11y zoom)**. Each has a green
-probe waiting to flip once fixed.
+Open item awaiting a product decision: **Risk 5 (accessibility zoom)** — the
+ready fix is to drop `user-scalable=no`/`maximum-scale`, switch body
+`touch-action` to `manipulation` (keeps swipes; allows deliberate pinch-zoom),
+and stop the `visualViewport` recovery from fighting it.

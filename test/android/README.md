@@ -56,14 +56,14 @@ Full risk analysis with citations is in [`docs/android-compat.md`](../../docs/an
 | `run-survives-reload` | an in-progress run persists to `localStorage` across a reload (Risk 8) |
 | `offline-boot-from-cache` | the PWA cold-starts offline from the service-worker cache (Risk 7) |
 | `short-viewport-controls-reachable` | with the URL bar visible (short viewport), the card + choice buttons stay on-screen and there's no horizontal overflow (Risk 2) |
+| `back-gesture-does-not-exit-game` | **Risk 3, FIXED.** Android Back closes an overlay / returns to title instead of unloading the PWA — `installBackGuard()` in `js/ui.ts` keeps a trap history entry and intercepts `popstate`. |
+| `dvh-has-vh-fallback` | **Risk 2, FIXED.** `style.css` declares a `100vh` fallback before each `100dvh`, so pre-108 Chrome / old WebView still get a height. |
+| `requests-persistent-storage` | **Risk 8, FIXED.** `installMobileGuards()` calls `navigator.storage.persist()` so saves survive Android storage pressure. |
 
 ### Known bugs (`known-bug` — **failing today = proof**)
 | Probe | The bug it proves |
 |---|---|
-| `back-gesture-does-not-exit-game` | **Risk 3.** No History-API integration, so Android **Back unloads the whole PWA mid-run** instead of closing an overlay / returning a screen. Proven on every device in the matrix. |
-| `dvh-has-vh-fallback` | **Risk 2.** `height:100dvh` with no `vh`/`-webkit-fill-available`/`@supports` fallback — Android Chrome < 108 (and old WebView/Samsung Internet) drop the declaration and render no height. |
-| `accessibility-zoom-not-blocked` | **Risk 5.** `user-scalable=no` in the viewport meta. iOS Safari *ignores* it (invisible to iOS QA); **Android Chrome honours it**, blocking low-vision pinch-zoom — and `js/platform.ts` snaps any zoom back to 1:1. |
-| `requests-persistent-storage` | **Risk 8.** No `navigator.storage.persist()` — saves are eviction-eligible under Android storage pressure (common on budget devices). |
+| `accessibility-zoom-not-blocked` | **Risk 5.** `user-scalable=no` in the viewport meta. iOS Safari *ignores* it (invisible to iOS QA); **Android Chrome honours it**, blocking low-vision pinch-zoom — and `js/platform.ts` snaps any zoom back to 1:1. **Left as a known-bug on purpose:** `platform.ts`/`style.css` document the zoom-lock as a deliberate "game always fills the screen" choice, so restoring zoom is a product decision, not a bug fix. |
 
 ### Documented `SKIP`s (need a real device / farm — see below)
 `urlbar-live-resize`, `edge-swipe-vs-back-gesture`, `backdrop-filter-fps`,
