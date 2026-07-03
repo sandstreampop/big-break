@@ -12,7 +12,9 @@
     "test": "npm run build && node --test",
     "sim": "npm run build && node tools/simulate.mjs",
     "android": "npm run build && node tools/android/run.mjs",
-    "android:quick": "npm run build && node tools/android/run.mjs --quick"
+    "android:quick": "npm run build && node tools/android/run.mjs --quick",
+    "ios": "npm run build && node tools/ios/run.mjs",
+    "ios:quick": "npm run build && node tools/ios/run.mjs --quick"
   },
   "devDependencies": {
     "playwright": "^1.56.1",
