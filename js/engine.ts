@@ -90,6 +90,51 @@ export function gateValue(state, key): number {
   return (key in state.stats) ? state.stats[key] : (state[key] ?? 0);
 }
 
+// Per-resource apply logic (Phase 3.2). applyEffects iterates these in
+// manifest.resources order so deltas — and the RNG-consuming songs block —
+// stay exactly where they were. Each resource keeps its OWN arithmetic (no
+// forced single formula): fame clamps at 0 and honors fameSwing on any sign;
+// money siphons on gains and may go negative; rivalry clamps 0–10 off a
+// default of 3; pathProgress is a raw add. Returns the delta to record (0 =
+// nothing recorded). 'hits' is the songs subsystem — applied inline in
+// applyEffects and extracted in Phase 4.5, so it has no handler here.
+type ResourceCtx = { hooks: Record<string, any>; cMods: Record<string, any>; wHooks: Record<string, any>; accs: any[] };
+const RESOURCE_APPLY: Record<string, (state: any, v: number, ctx: ResourceCtx) => number> = {
+  fame(state, v, { hooks, cMods, wHooks }) {
+    if (v && hooks.fameSwingMult) v = Math.round(v * hooks.fameSwingMult);
+    if (v > 0 && cMods.fameGainMult) v = Math.round(v * cMods.fameGainMult);
+    if (v > 0 && wHooks.fameGainMult) v = Math.round(v * wHooks.fameGainMult);
+    if (!v) return 0;
+    const before = state.fame;
+    state.fame = Math.max(0, state.fame + v);
+    return state.fame - before;
+  },
+  money(state, v, { hooks, cMods, wHooks, accs }) {
+    if (v > 0) {
+      if (hooks.moneyGainMult) v = Math.round(v * hooks.moneyGainMult);
+      if (wHooks.moneyGainMult) v = Math.round(v * wHooks.moneyGainMult);
+      if (cMods.moneyGainMult) v = Math.round(v * cMods.moneyGainMult);
+      for (const acc of accs) {
+        if (acc.moneySiphon) v = Math.round(v * (1 - acc.moneySiphon));
+      }
+    }
+    if (!v) return 0;
+    state.money += v;
+    return v;
+  },
+  pathProgress(state, v) {
+    if (!v) return 0;
+    state.pathProgress += v;
+    return v;
+  },
+  rivalry(state, v) {
+    if (!v) return 0;
+    const before = state.rivalry ?? 3;
+    state.rivalry = clamp(before + v, 0, 10);
+    return state.rivalry - before;
+  },
+};
+
 // ---------- Run lifecycle ----------
 
 export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
@@ -458,7 +503,7 @@ function requiresOk(r, state) {
     for (const [key, val] of Object.entries(r.stats)) {
       const stat = key.replace(/Min$/, '');
       const cur = gateValue(state, stat);
-      if (cur < val) return false;
+      if (cur < (val as number)) return false;
     }
   }
   return true;
@@ -914,52 +959,36 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     }
   }
 
-  {
-    let v = effects.fame || 0;
-    if (v && hooks.fameSwingMult) v = Math.round(v * hooks.fameSwingMult);
-    if (v > 0 && cMods.fameGainMult) v = Math.round(v * cMods.fameGainMult);
-    if (v > 0 && wHooks.fameGainMult) v = Math.round(v * wHooks.fameGainMult);
-    if (v) {
-      const before = state.fame;
-      state.fame = Math.max(0, state.fame + v);
-      push('fame', state.fame - before);
-    }
-  }
-
-  {
-    let v = effects.money || 0;
-    if (v > 0) {
-      if (hooks.moneyGainMult) v = Math.round(v * hooks.moneyGainMult);
-      if (wHooks.moneyGainMult) v = Math.round(v * wHooks.moneyGainMult);
-      if (cMods.moneyGainMult) v = Math.round(v * cMods.moneyGainMult);
-      for (const acc of accs) {
-        if (acc.moneySiphon) v = Math.round(v * (1 - acc.moneySiphon));
+  // Resource pass (Phase 3.2): iterate the pack's declared resources in order.
+  // Each keeps its own arithmetic (RESOURCE_APPLY); 'hits' is the songs
+  // subsystem, applied inline here (extracted in Phase 4.5). Order is the
+  // manifest's, matching the old block order fame → money → hits →
+  // pathProgress → rivalry, so deltas and RNG-consuming draws don't move.
+  const rctx: ResourceCtx = { hooks, cMods, wHooks, accs };
+  for (const res of PACK.manifest.resources) {
+    if (res === 'hits') {
+      if (effects.hits) {
+        // an "instant classic": the fiction says this song is a hit — make it one
+        for (let i = 0; i < effects.hits; i++) {
+          const s = addSong(state, {
+            title: effects.chartTitle
+              ? effects.chartTitle.replace('{collabArtist}', collabArtistFor(state))
+              : songName(rng, PACK.genreById(state.genre)),
+            quality: 68 + Math.round((rng ? rng() : 0.5) * 12),
+            origin: ev?.id || null, status: 'charting', hype: 60,
+          });
+          if (!s.crowned) { s.crowned = true; state.hits += 1; } else { /* crowned at debut */ }
+          (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true, viral: !!s.viral });
+        }
+        push('hits', effects.hits);
+        state._chartTitleHandled = !!effects.chartTitle;
       }
+      continue;
     }
-    if (v) { state.money += v; push('money', v); }
-  }
-
-  if (effects.hits) {
-    // an "instant classic": the fiction says this song is a hit — make it one
-    for (let i = 0; i < effects.hits; i++) {
-      const s = addSong(state, {
-        title: effects.chartTitle
-          ? effects.chartTitle.replace('{collabArtist}', collabArtistFor(state))
-          : songName(rng, PACK.genreById(state.genre)),
-        quality: 68 + Math.round((rng ? rng() : 0.5) * 12),
-        origin: ev?.id || null, status: 'charting', hype: 60,
-      });
-      if (!s.crowned) { s.crowned = true; state.hits += 1; } else { /* crowned at debut */ }
-      (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true, viral: !!s.viral });
-    }
-    push('hits', effects.hits);
-    state._chartTitleHandled = !!effects.chartTitle;
-  }
-  if (effects.pathProgress) { state.pathProgress += effects.pathProgress; push('pathProgress', effects.pathProgress); }
-  if (effects.rivalry) {
-    const before = state.rivalry ?? 3;
-    state.rivalry = clamp(before + effects.rivalry, 0, 10);
-    push('rivalry', state.rivalry - before);
+    const fn = RESOURCE_APPLY[res];
+    if (!fn) continue;
+    const d = fn(state, effects[res] || 0, rctx);
+    if (d) push(res, d);
   }
 
   if (effects.adoptVenue && !state.venue) {
