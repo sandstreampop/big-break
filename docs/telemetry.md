@@ -37,7 +37,12 @@ All properties are game state — no PII. `properties.` prefix in HogQL.
 | `tutorial_complete` | `first_time` |
 | `tutorial_skip` | — |
 
-Every event also carries `app_version`. Optional picks (`contract`,
+Every event also carries `app_version` and, since the unique-player pass,
+three non-PII identity super-properties: `install_id` (a random UUID
+pinning one browser install), `env` (`dev`|`prod`, from the hostname), and
+`is_owner` (a self-set `?dev=1` flag). They exist only to count distinct
+players and subtract owner/dev testing — see "Who is playing" below.
+Optional picks (`contract`,
 `genre`, `venue`, `rival`, `exit`) report `'none'` rather than null so
 they group cleanly. `band`, `gear`, and `hustles` are sorted
 comma-joined id strings — split with `splitByChar(',', …)` in HogQL.
@@ -57,6 +62,37 @@ card/ending/rival?"; the machine version lives under `coverage` in
 `telemetry/latest.json`. Cards are annotated with their act and gating
 (`gated`/`chain-only`/`finale`/`pack:*`) so intentionally-rare content
 is easy to tell apart from dead content.
+
+## Who is playing — counting unique players
+
+"How many real players do we have?" has no single honest answer under
+cookieless, login-free analytics, so the pull reports a **range**:
+
+- **Ceiling — `unique_players.distinct_installs`**: distinct `person_id`.
+  Identity lives in `localStorage`, so one human across two browsers or an
+  incognito window counts two or three times. This *over*-counts.
+- **Floor — `unique_players.real_players_est`**: the same count with
+  `env='dev'`, `is_owner`, and `localhost`/`127.0.0.1` traffic removed.
+  This is the number to quote for "reach," knowing it can *under*-count a
+  real player who only ever tried the game in a private window.
+- **`tagged_installs`**: distinct `install_id`. Provider-independent and
+  reads 0 for events captured before the tags shipped.
+
+Supporting cuts (all from properties PostHog attaches automatically —
+`$host`, `$geoip_country_code`, `$browser`, `$device_type` — plus the new
+`env`/`is_owner` tags): `players_by_host`, `players_by_geo`,
+`players_by_device`, `players_by_env`. A spread of countries or devices is
+evidence of genuine reach; a single city on one browser is almost
+certainly just you.
+
+To see whether the run data is really many players or one heavy tester
+(the question that governs how much any win-rate number can be trusted),
+read `runs_per_player_dist` — a histogram of finished runs per player,
+kept identifier-free on purpose.
+
+**Tag your own play once:** open the game with `?dev=1` in any browser you
+test in; it sets `is_owner` in that install's `localStorage` and every
+later event is flagged, dropping you out of `real_players_est` cleanly.
 
 ## Insight 1 — Degenerate choices (fake-choice detector)
 
