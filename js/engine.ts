@@ -207,8 +207,9 @@ export function newTutorialRun(pack: Pack, rng = Math.random) {
   const state = newRun(pack, t?.instrument ?? pack.instruments[0].id, [], rng, []);
   state.tutorial = true;
   if (t?.stats) state.stats = { ...t.stats } as RunState['stats'];
-  if (t?.money !== undefined) state.money = t.money;
-  if (t?.fame !== undefined) state.fame = t.fame;
+  // Teaching resources are pack-declared by name, applied generically — the
+  // core names no genre's resource here (WP-B).
+  if (t?.resources) for (const [k, v] of Object.entries(t.resources)) state[k] = v;
   state.pendingChainId = PACK.tutorialEvents[0].id;
   return state;
 }
@@ -242,8 +243,7 @@ function meetsRequires(ev, state) {
 // The neutral keys requiresOk resolves inline; everything else is dispatched to
 // a pack-registered predicate (WP1). Kept in sync with the core Requires type.
 const REQUIRES_NEUTRAL = new Set([
-  'anyOf', 'flagsAll', 'flagsNone', 'moneyMax', 'moneyMin', 'burnoutMin',
-  'stats', 'min', 'max',
+  'anyOf', 'flagsAll', 'flagsNone', 'burnoutMin', 'stats', 'min', 'max',
 ]);
 
 // The merged predicate registry for the active pack (WP1 — the sibling of the
@@ -273,8 +273,6 @@ export function requiresOk(r, state) {
   if (r.anyOf && !r.anyOf.some((alt) => requiresOk(alt, state))) return false;
   if (r.flagsAll && !r.flagsAll.every((f) => state.flags.includes(f))) return false;
   if (r.flagsNone && r.flagsNone.some((f) => state.flags.includes(f))) return false;
-  if (r.moneyMax !== undefined && state.money > r.moneyMax) return false;
-  if (r.moneyMin !== undefined && state.money < r.moneyMin) return false;
   if (r.burnoutMin !== undefined && state.stats.burnout < r.burnoutMin) return false;
   // Generic stat/resource gates, resolved through gateValue for ANY manifest
   // key: `stats` uses the legacy `{ <key>Min: n }` shape; `min`/`max` the plain
@@ -554,11 +552,11 @@ export function rollComponents(state, choice, opts: any = {}) {
 }
 
 // The keys an INCREDIBLE payload scales (§2E): every core stat the pack
-// declares (symmetric across genres) plus the two magnitude resources fame &
-// money. Exported so the cross-pack symmetry invariant guards the real engine
-// set, not a copy of it.
+// declares (symmetric across genres) plus the magnitude resources the manifest
+// designates. Exported so the cross-pack symmetry invariant guards the real
+// engine set, not a copy of it.
 export function incredibleTargets(): string[] {
-  return [...PACK.manifest.stats, 'fame', 'money'];
+  return [...PACK.manifest.stats, ...(PACK.manifest.incredibleResources || [])];
 }
 
 // U1: rolls compress above the soft cap — a maxed-out build still sweats
@@ -590,8 +588,10 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   const useEncore = !!opts.encore && (state.encore || 0) > 0 && !encoreDisabled(state);
   if (useEncore) state.encore -= 1;
 
-  // Shop affordability: a declined card is comedy, not a roll (spec §8 shop note)
-  if (choice.cost && state.money < choice.cost) {
+  // Shop affordability: a declined card is comedy, not a roll (spec §8 shop
+  // note). The currency is the manifest's cost-resource role, not a named one.
+  const costResource = PACK.manifest.costResource;
+  if (choice.cost && costResource && state[costResource] < choice.cost) {
     (state.tierLog = state.tierLog || []).push('declined');
     (state.cardLog = state.cardLog || []).push({ e: ev.id, t: 'declined', a: state.act, s: side });
     const result: any = {
@@ -936,6 +936,7 @@ export function evaluateFinale(state) {
   // Deadline's final audit; the hustle plugin pays its last income. All finale
   // payout lives in the plugins now — the engine owns none of it.
   firePlugins('onFinale', state);
+  const mr = PACK.manifest.momentumResource;
   const gates = PACK.manifest.winGates[state.path] as Record<string, number>;
   const readings = Object.entries(gates).map(([key, target]) => {
     const value = gateValue(state, key);
@@ -947,17 +948,19 @@ export function evaluateFinale(state) {
   } else {
     const avg = readings.reduce((s, r) => s + r.ratio, 0) / readings.length;
     result = avg >= CONFIG.partialRatio ? 'partial' : 'failure';
-    // Momentum clutch: a near-miss with enough path progress still summits
+    // Momentum clutch: a near-miss with enough of the manifest's momentum
+    // resource still summits. A pack that designates none can't clutch.
+    const momentum = mr ? (state[mr] ?? 0) : 0;
     if (
       result === 'partial' &&
       readings.every((r) => r.ratio >= CONFIG.nearMissRatio) &&
-      state.pathProgress >= CONFIG.momentumForUpgrade
+      momentum >= CONFIG.momentumForUpgrade
     ) {
       result = 'success';
     }
   }
   state.ending = { key: state.path, result };
-  return { result, readings, momentum: state.pathProgress };
+  return { result, readings, momentum: mr ? (state[mr] ?? 0) : 0 };
 }
 
 // ---------- Legacy Points (spec §9) ----------

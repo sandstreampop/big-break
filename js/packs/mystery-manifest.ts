@@ -81,5 +81,9 @@ export const mysteryManifest: PackManifest = {
   // Cash walks in at $25; the Feud idles at 3 (same neutral starts music uses).
   resourceStart: { money: 25, rivalry: 3 },
   lpResources: ['fame'], // Notoriety counts toward Legacy Points
-
+  // Resource roles (WP-B): Cash is the shop currency, Notoriety & Cash are the
+  // magnitude resources an INCREDIBLE scales, Leads are the momentum clutch.
+  costResource: 'money',
+  incredibleResources: ['fame', 'money'],
+  momentumResource: 'pathProgress',
 };

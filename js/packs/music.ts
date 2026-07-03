@@ -66,8 +66,8 @@ declare module '../types.js' {
   // sibling of the Effect augmentation above) so the core Requires names no
   // music subsystem. Each key is backed by a predicate a plugin registers.
   interface Requires {
-    // fame (economy) · rival · weather · genre · hustle · venue · band · songs
-    fameMin?: number; fameMax?: number;
+    // economy · rival · weather · genre · hustle · venue · band · songs
+    fameMin?: number; fameMax?: number; moneyMin?: number; moneyMax?: number;
     nemesis?: boolean; rivalIs?: string; rivalryMin?: number; rivalryMax?: number;
     weatherIs?: string;
     genreAny?: boolean;
@@ -96,7 +96,7 @@ export const musicPack: Pack = {
     { id: 'coping_50', burnoutMin: 50 },
   ],
   // The First Gig onboarding run's fixed teaching setup (D.3).
-  tutorialStart: { instrument: 'melodica', stats: { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 }, money: 40, fame: 0 },
+  tutorialStart: { instrument: 'melodica', stats: { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 }, resources: { money: 40, fame: 0 } },
   presenter: musicPresenter,
   perks: MUSIC_PERKS,
   comeback: musicComeback,

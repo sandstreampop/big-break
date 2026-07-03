@@ -17,12 +17,15 @@ import type { Plugin } from '../../types.js';
 export const economyPlugin: Plugin = {
   id: 'economy',
 
-  // The fame eligibility predicates (WP1): fame is a music resource, so its
-  // gate lives with the pack, not the shared Requires. (Cards author `fameMin`;
-  // a generic pack would use the neutral `min: { fame: n }` instead.)
+  // The economy eligibility predicates: fame and money are music resources, so
+  // their gates live with the pack, not the shared Requires. (Cards author
+  // `fameMin`/`moneyMin`; a generic pack would use the neutral `min: { fame: n }`
+  // instead.)
   requires: {
     fameMin: (s, arg) => (s.fame ?? 0) >= arg,
     fameMax: (s, arg) => (s.fame ?? 0) <= arg,
+    moneyMin: (s, arg) => (s.money ?? 0) >= arg,
+    moneyMax: (s, arg) => (s.money ?? 0) <= arg,
   },
 
   // Applied at each resource's ordinal slot in the engine's manifest-ordered

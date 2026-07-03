@@ -73,21 +73,19 @@ export interface Effect {
 }
 
 // ---------- Requires (deck-eligibility gate) ----------
-// The OPEN eligibility vocabulary (Phase WP1 — the §3.1 fix, the sibling of the
-// open `Effect`). This declares only the GENRE-NEUTRAL predicates the core
-// resolves inline: flag/money/burnout gates plus the generic stat/resource
-// gates (`stats`/`min`/`max`), which resolve ANY manifest key through
-// gateValue. Every subsystem-shaped predicate — a venue's tier, a rival's feud,
-// the weather — is a PLUGIN-REGISTERED predicate (Plugin.requires), added to
-// this type by that pack via declaration merging in its OWN file (see
-// packs/music.ts), so the shared Requires names no genre's subsystems. A key
-// that is neither neutral nor registered is an authoring error, caught by the
-// cross-pack "requires key owned" invariant. requiresOk consumes NO rng and
-// returns the same booleans, so opening the gate is byte-green.
+// The open eligibility vocabulary, sibling of the open `Effect`. It declares
+// only the genre-neutral predicates the core resolves inline — flag and burnout
+// gates plus the generic stat/resource gates (`stats`/`min`/`max`), which
+// resolve ANY manifest key through gateValue. Every subsystem-shaped predicate
+// — a venue's tier, a rival's feud, a money threshold — is a plugin-registered
+// predicate (Plugin.requires), added to this type by the owning pack via
+// declaration merging in its OWN file (see packs/music.ts), so the shared
+// Requires names no genre's subsystems. A key that is neither neutral nor
+// registered is an authoring error, caught by the cross-pack "requires key
+// owned" invariant.
 export interface Requires {
   anyOf?: Requires[];
   flagsAll?: string[]; flagsNone?: string[];
-  moneyMax?: number; moneyMin?: number;
   burnoutMin?: number;
   // Generic stat/resource gates — keys are ANY manifest stat or resource,
   // resolved through gateValue (so a pack without "fame" doesn't trip a
@@ -154,6 +152,13 @@ export interface PackManifest {
   // (music: fame). The engine names none; a pack that omits this scores on
   // stats alone.
   lpResources?: string[];
+  // Resource ROLES the engine asks for by function rather than by name (WP-B):
+  // the shop-cost currency, the resources an INCREDIBLE payload scales, and the
+  // resource the finale's momentum clutch reads. Music designates money/fame/
+  // pathProgress; a pack that omits a role opts out of that mechanic.
+  costResource?: string;
+  incredibleResources?: string[];
+  momentumResource?: string;
   // Pack-declared fail states (WP3), evaluated in order after the engine's
   // universal burnout fail. A pack without any (mystery, probe) can only fail on
   // burnout.
@@ -309,13 +314,13 @@ export interface PerkDef {
   hustleMult?: number;                              // scales hustle income per act
 }
 
-// The scripted onboarding run's fixed setup (D.3): teaching stats and the
-// starting persona, declared by the pack instead of hardcoded music values.
+// The scripted onboarding run's fixed setup: teaching stats, starting persona,
+// and any teaching resources (by name, applied generically), declared by the
+// pack instead of hardcoded genre values.
 export interface TutorialStart {
   instrument: string;
   stats: Record<string, number>;
-  money?: number;
-  fame?: number;
+  resources?: Record<string, number>;
 }
 
 // The Presenter (Phase G): the genre's UI-facing flavor, provided by the pack

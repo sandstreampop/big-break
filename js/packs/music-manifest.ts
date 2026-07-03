@@ -83,6 +83,12 @@ export const musicManifest: PackManifest = {
   // Non-zero resource starts: walk in broke ($25), rivalry idles at 3.
   resourceStart: { money: 25, rivalry: 3 },
   lpResources: ['fame'], // fame counts toward Legacy Points alongside the stats
+  // Resource roles the engine reads by function (WP-B): money is the shop
+  // currency, fame & money are the magnitude resources an INCREDIBLE scales, and
+  // pathProgress is the finale's momentum clutch.
+  costResource: 'money',
+  incredibleResources: ['fame', 'money'],
+  momentumResource: 'pathProgress',
 
   failStates: FAIL_STATES,
   declinePenalty: { cred: -2 }, // the walk-of-shame when your card declines

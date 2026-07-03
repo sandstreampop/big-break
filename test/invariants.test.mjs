@@ -96,8 +96,8 @@ for (const pack of PACKS) {
   // it. Sibling of the effect-verb invariant, and the proof that the core
   // Requires names no genre's subsystems. ──
   test(`[${pack.id}] no eligible card names an unknown requires key`, () => {
-    const NEUTRAL = ['anyOf', 'flagsAll', 'flagsNone', 'moneyMax', 'moneyMin',
-      'burnoutMin', 'stats', 'min', 'max'];
+    const NEUTRAL = ['anyOf', 'flagsAll', 'flagsNone', 'burnoutMin',
+      'stats', 'min', 'max'];
     // Merge every plugin's predicate registry; assert no two plugins claim the
     // same key ("registered by exactly one plugin").
     const owners = new Map();
