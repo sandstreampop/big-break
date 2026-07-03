@@ -63,17 +63,14 @@ export interface PromiseSpec {
 export interface Effect {
   // The engine's universal burnout slot.
   burnout?: number;
-  // Engine-known resources (RESOURCE_APPLY + the songs hits/chartTitle block,
-  // engine-resident until the songs subsystem fully owns them in Phase D).
+  // Engine-known resources: applied in manifest order by the pack's
+  // applyResource plugins, with a generic additive default (WP5). Still
+  // enumerated here as typed keys for the packs that use them; a genre declares
+  // any further resource verbs via declaration merging.
   fame?: number; money?: number; hits?: number; pathProgress?: number; rivalry?: number;
-  chartTitle?: string;
-  // Flag / chain / promise control (genre-neutral).
+  // Flag / chain / promise control — the genuinely genre-neutral control verbs.
   addFlag?: string; removeFlag?: string; chainEventId?: string;
   addPromise?: PromiseSpec;
-  // Content-structural verbs the engine resolves inline today (loadout / roster
-  // / gear). Music-shaped; the keys follow their handlers to a plugin in Phase D.
-  setInstrument?: string; grantBandmate?: string; removeBandmate?: string;
-  grantHustle?: string; removeGear?: string; grantGear?: string;
 }
 
 // ---------- Requires (deck-eligibility gate) ----------

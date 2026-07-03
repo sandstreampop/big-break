@@ -22,6 +22,8 @@ import { weatherPlugin } from './plugins/weather.js';
 import { genrePlugin } from './plugins/genre.js';
 import { hustlePlugin } from './plugins/hustle.js';
 import { economyPlugin } from './plugins/economy.js';
+import { gearPlugin } from './plugins/gear.js';
+import { loadoutPlugin } from './plugins/loadout.js';
 import { musicPresenter } from './music-presenter.js';
 import { MUSIC_PERKS } from './music-perks.js';
 import type { Pack, RunState } from '../types.js';
@@ -58,6 +60,11 @@ declare module '../types.js' {
     // songs subsystem
     hypeSong?: number; polishDemo?: number; writeSong?: boolean;
     albumDrop?: number | boolean; releaseDemo?: number | boolean;
+    chartTitle?: string;
+    // structural verbs (WP4): loadout / roster / hustle / gear — owned by their
+    // plugins, no longer enumerated on the shared Effect.
+    setInstrument?: string; grantBandmate?: string; removeBandmate?: string;
+    grantHustle?: string; removeGear?: string; grantGear?: string;
   }
   // The music genre's eligibility vocabulary (WP1): its subsystem-shaped
   // `requires` keys, added to the shared Requires by declaration merging (the
@@ -83,7 +90,7 @@ export const musicPack: Pack = {
   // weather before songs' notebook demo; onActBreak fires band quirks (notebook
   // draws RNG) before songs' deadline audit + chart week — matching the old
   // inline order so the seeded stream is unchanged.
-  plugins: [venuePlugin, rivalPlugin, weatherPlugin, genrePlugin, hustlePlugin, bandPlugin, songsPlugin, economyPlugin],
+  plugins: [venuePlugin, rivalPlugin, weatherPlugin, genrePlugin, loadoutPlugin, gearPlugin, hustlePlugin, bandPlugin, songsPlugin, economyPlugin],
   events: EVENTS,
   tutorialEvents: TUTORIAL_EVENTS,
   // Burnout coping interstitials, high→low priority (D.3): the ids and the

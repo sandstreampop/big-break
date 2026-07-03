@@ -1105,97 +1105,15 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     if (v) { state[res] = (state[res] || 0) + v; push(res, v); }
   }
 
-  // Plugin effect handlers (Phase 4.2 venue; Phase 4.5 songs — write/hype/
-  // release/album/polish/chartTitle). Fires here so the songs plugin lands its
-  // effects at the exact spot the old inline block did; deltas/RNG order held.
+  // Subsystem effect handlers, fired at this exact ordinal so their deltas/RNG
+  // land where the old inline blocks did (byte-green): venue (adoptVenue),
+  // songs (write/hype/release/album/polish/chartTitle), loadout (setInstrument),
+  // band roster (grant/removeBandmate), hustle (grantHustle), gear
+  // (grant/removeGear). The core owns only the neutral flag control below (WP4).
   firePlugins('onEffect', state, effects, pctx);
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
-
-  if (effects.setInstrument) {
-    const newInst = PACK.instrumentById(effects.setInstrument);
-    if (newInst && state.instrument !== newInst.id) {
-      state.instrument = newInst.id;
-      state.swappedInstrument = true;
-      deltas.instrumentSet = newInst;
-    }
-  }
-  if (effects.grantBandmate) {
-    state.band = state.band || [];
-    if (state.band.length < 3) {
-      const bm = effects.grantBandmate === 'random'
-        ? PACK.recruitCandidate(state, rng)
-        : (!state.band.includes(effects.grantBandmate) ? PACK.bandmateById(effects.grantBandmate) : null);
-      if (bm) {
-        state.band.push(bm.id);
-        deltas.bandmateJoined = bm;
-      }
-    }
-  }
-  if (effects.removeBandmate) {
-    state.band = state.band || [];
-    if (effects.removeBandmate === 'first') {
-      const gone = PACK.bandmateById(state.band[0]);
-      state.band = state.band.slice(1);
-      if (gone) deltas.bandmateLeft = gone;
-    } else {
-      state.band = state.band.filter((b) => b !== effects.removeBandmate);
-    }
-  }
-  if (effects.grantHustle) {
-    state.hustles = state.hustles || [];
-    if (!state.hustles.includes(effects.grantHustle)) {
-      state.hustles.push(effects.grantHustle);
-      deltas.hustleGained = PACK.hustleById(effects.grantHustle);
-    }
-  }
-  if (effects.removeGear) state.accessories = state.accessories.filter((a) => a !== effects.removeGear);
-  if (effects.grantGear) {
-    if (effects.grantGear === 'random_basic' || effects.grantGear === 'random_good') {
-      // Shops have shelves: offer up to 3 candidates, the player chooses
-      const opts = gearShelf(state, effects.grantGear, rng);
-      if (opts.length > 1) deltas.pendingGearChoices = opts;
-      else if (opts.length === 1) deltas.pendingGear = opts[0];
-    } else {
-      const acc = resolveGearGrant(state, effects.grantGear, rng);
-      if (acc) deltas.pendingGear = acc; // UI equips (or swaps) it; sim auto-equips
-    }
-  }
   return deltas;
-}
-
-function gearShelf(state, grant, rng = Math.random) {
-  const owned = new Set(state.accessories);
-  const ids = PACK.gearPool(grant, true);
-  let pool = ids.filter((id) => !owned.has(id)).map(PACK.accessoryById).filter(Boolean);
-  if (!pool.length) {
-    pool = PACK.accessories.filter((a) => a.unlockedByDefault && !owned.has(a.id));
-  }
-  const shelf = [];
-  const bag = [...pool];
-  while (shelf.length < 3 && bag.length) {
-    shelf.push(bag.splice(Math.floor(rng() * bag.length), 1)[0]);
-  }
-  return shelf;
-}
-
-// Resolves 'random_basic'/'random_good' or a concrete accessory id to an
-// accessory the player doesn't already own.
-function resolveGearGrant(state, grant, rng = Math.random) {
-  const owned = new Set(state.accessories);
-  let candidates;
-  if (grant === 'random_basic' || grant === 'random_good') {
-    const ids = PACK.gearPool(grant, false);
-    candidates = ids.filter((id) => !owned.has(id)).map(PACK.accessoryById).filter(Boolean);
-    if (!candidates.length) {
-      candidates = PACK.accessories.filter((a) => a.unlockedByDefault && !owned.has(a.id));
-    }
-  } else {
-    const acc = PACK.accessoryById(grant);
-    candidates = acc && !owned.has(acc.id) ? [acc] : [];
-  }
-  if (!candidates.length) return null;
-  return candidates[Math.floor(rng() * candidates.length)];
 }
 
 // Equip an accessory (after any UI slot decision). Fires onAcquire effects.

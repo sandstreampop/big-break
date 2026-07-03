@@ -7,7 +7,7 @@
 // golden pins it. (The passive roll-time band bonus and grant/remove effects
 // stay engine-side for now; this is the act-break-quirk extraction.)
 
-import { bandmateById } from '../../data/band.js';
+import { bandmateById, recruitCandidate } from '../../data/band.js';
 import { genreById } from '../../data/genres.js';
 import { songName } from '../../charts.js';
 import { addSong, stateRng } from '../../engine.js';
@@ -15,12 +15,41 @@ import type { Plugin } from '../../types.js';
 
 export const bandPlugin: Plugin = {
   id: 'band',
+  effectVerbs: ['grantBandmate', 'removeBandmate'],
 
   // The band eligibility predicates (WP1): roster size and a specific member.
   requires: {
     bandMin: (s, arg) => (s.band || []).length >= arg,
     bandMax: (s, arg) => (s.band || []).length <= arg,
     bandHas: (s, arg) => (s.band || []).includes(arg),
+  },
+
+  // Roster changes (WP4): recruit (a named bandmate or a seeded 'random' draw)
+  // and depart ('first' or a named id). Moved verbatim from the engine's inline
+  // block; the 'random' recruit draws ctx.rng at the same ordinal.
+  onEffect(state, effects, ctx) {
+    if (effects.grantBandmate) {
+      state.band = state.band || [];
+      if (state.band.length < 3) {
+        const bm = effects.grantBandmate === 'random'
+          ? recruitCandidate(state, (ctx as any).rng)
+          : (!state.band.includes(effects.grantBandmate) ? bandmateById(effects.grantBandmate) : null);
+        if (bm) {
+          state.band.push(bm.id);
+          (ctx as any).deltas.bandmateJoined = bm;
+        }
+      }
+    }
+    if (effects.removeBandmate) {
+      state.band = state.band || [];
+      if (effects.removeBandmate === 'first') {
+        const gone = bandmateById(state.band[0]);
+        state.band = state.band.slice(1);
+        if (gone) (ctx as any).deltas.bandmateLeft = gone;
+      } else {
+        state.band = state.band.filter((b: string) => b !== effects.removeBandmate);
+      }
+    }
   },
 
   onActBreak(state, _act, notes) {

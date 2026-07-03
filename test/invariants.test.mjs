@@ -58,9 +58,12 @@ for (const pack of PACKS) {
   // stranded verb (a card that names a subsystem the pack doesn't ship) is a
   // silent no-op the engine would swallow; this catches it. ──
   test(`[${pack.id}] no eligible card names an unknown effect verb`, () => {
-    const CORE_VERBS = ['burnout', 'chartTitle', 'addFlag', 'removeFlag', 'chainEventId',
-      'addPromise', 'setInstrument', 'grantBandmate', 'removeBandmate', 'grantHustle',
-      'removeGear', 'grantGear'];
+    // The genuinely genre-neutral effect verbs — the engine's burnout slot plus
+    // flag/chain/promise control. Every music structural verb (setInstrument,
+    // grant/removeBandmate, grantHustle, removeGear, grantGear) and chartTitle
+    // has left this list for its owning plugin's effectVerbs (WP4); that the
+    // list SHRANK to this is the proof the leak is gone.
+    const CORE_VERBS = ['burnout', 'addFlag', 'removeFlag', 'chainEventId', 'addPromise'];
     const known = new Set([
       ...pack.manifest.stats, ...pack.manifest.resources, ...CORE_VERBS,
       ...(pack.plugins || []).flatMap((p) => p.effectVerbs || []),
