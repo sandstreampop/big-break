@@ -61,24 +61,29 @@ export interface Effect {
 }
 
 // ---------- Requires (deck-eligibility gate) ----------
+// The OPEN eligibility vocabulary (Phase WP1 — the §3.1 fix, the sibling of the
+// open `Effect`). This declares only the GENRE-NEUTRAL predicates the core
+// resolves inline: flag/money/burnout gates plus the generic stat/resource
+// gates (`stats`/`min`/`max`), which resolve ANY manifest key through
+// gateValue. Every subsystem-shaped predicate — a venue's tier, a rival's feud,
+// the weather — is a PLUGIN-REGISTERED predicate (Plugin.requires), added to
+// this type by that pack via declaration merging in its OWN file (see
+// packs/music.ts), so the shared Requires names no genre's subsystems. A key
+// that is neither neutral nor registered is an authoring error, caught by the
+// cross-pack "requires key owned" invariant. requiresOk consumes NO rng and
+// returns the same booleans, so opening the gate is byte-green.
 export interface Requires {
   anyOf?: Requires[];
-  nemesis?: boolean;
-  weatherIs?: string;
   flagsAll?: string[]; flagsNone?: string[];
   moneyMax?: number; moneyMin?: number;
   burnoutMin?: number;
-  fameMin?: number; fameMax?: number;
-  gear?: string[];
-  rivalryMin?: number; rivalryMax?: number;
-  genreAny?: boolean;
-  venueAny?: boolean; venueNone?: boolean; venueIs?: string; venueLevelMin?: number;
-  rivalIs?: string;
-  hustleMin?: number;
-  bandMin?: number; bandMax?: number; bandHas?: string;
-  demoMin?: number; chartingMin?: number; songsMin?: number; fadedMin?: number;
-  // { <stat>Min: number } — keys are dynamic, values numeric.
+  // Generic stat/resource gates — keys are ANY manifest stat or resource,
+  // resolved through gateValue (so a pack without "fame" doesn't trip a
+  // hardcoded branch, and a mystery card can gate on `clues`). `stats` keeps the
+  // legacy `{ <key>Min: n }` shape; `min`/`max` are the plain `{ <key>: n }`
+  // form. Values numeric.
   stats?: Record<string, number>;
+  min?: Record<string, number>; max?: Record<string, number>;
 }
 
 // ---------- Choice / outcome / event ----------
@@ -167,6 +172,14 @@ export interface Plugin {
   // The cross-pack "no unknown verb" invariant checks each card's effect keys
   // against manifest.stats ∪ manifest.resources ∪ core ∪ these.
   effectVerbs?: string[];
+  // The eligibility predicates this subsystem owns (Phase WP1 — the open
+  // Requires registry's declaration half). requiresOk dispatches any `requires`
+  // key outside the neutral core to the predicate registered here — `(state,
+  // arg) => boolean`, where `arg` is the value the card authored for the key
+  // (e.g. `venueIs: 'basement'` calls the `venueIs` predicate with 'basement').
+  // The core owns the neutral set (anyOf/flags/money/burnout + generic
+  // stats/min/max); every other key must be declared by exactly one plugin.
+  requires?: Record<string, (state: RunState, arg: any) => boolean>;
   // Seeded construction draws at run start (weather, rival). Fired in
   // registration order, so the pack fixes the draw order.
   onConstruct?(state: RunState, rng: () => number): void;

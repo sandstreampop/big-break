@@ -24,6 +24,16 @@ export const songsPlugin: Plugin = {
   id: 'songs',
   effectVerbs: ['hits', 'chartTitle', 'hypeSong', 'albumDrop', 'releaseDemo', 'polishDemo', 'writeSong'],
 
+  // The songs eligibility predicates (WP1): demos in the vault, songs on the
+  // chart, total written, faded-but-charted. Registered here so the shared
+  // Requires names no song machinery.
+  requires: {
+    demoMin: (s, arg) => (s.songs || []).filter((x: any) => x.status === 'demo').length >= arg,
+    chartingMin: (s, arg) => (s.songs || []).filter((x: any) => x.status === 'charting' && x.pos).length >= arg,
+    songsMin: (s, arg) => (s.songs || []).length >= arg,
+    fadedMin: (s, arg) => (s.songs || []).filter((x: any) => x.status === 'faded' && x.peak).length >= arg,
+  },
+
   // The Old Notebook perk: every career starts with one demo already taped.
   // Moved here from the engine (D.2) so song NAMING lives with the songs
   // subsystem — the last thing that made the core import charts.ts. Fires at

@@ -18,6 +18,10 @@ import { venuePlugin } from './plugins/venue.js';
 import { rivalPlugin } from './plugins/rival.js';
 import { bandPlugin } from './plugins/band.js';
 import { songsPlugin } from './plugins/songs.js';
+import { weatherPlugin } from './plugins/weather.js';
+import { genrePlugin } from './plugins/genre.js';
+import { hustlePlugin } from './plugins/hustle.js';
+import { economyPlugin } from './plugins/economy.js';
 import { musicPresenter } from './music-presenter.js';
 import { MUSIC_PERKS } from './music-perks.js';
 import type { Pack, RunState } from '../types.js';
@@ -40,14 +44,31 @@ declare module '../types.js' {
     hypeSong?: number; polishDemo?: number; writeSong?: boolean;
     albumDrop?: number | boolean; releaseDemo?: number | boolean;
   }
+  // The music genre's eligibility vocabulary (WP1): its subsystem-shaped
+  // `requires` keys, added to the shared Requires by declaration merging (the
+  // sibling of the Effect augmentation above) so the core Requires names no
+  // music subsystem. Each key is backed by a predicate a plugin registers.
+  interface Requires {
+    // fame (economy) · rival · weather · genre · hustle · venue · band · songs
+    fameMin?: number; fameMax?: number;
+    nemesis?: boolean; rivalIs?: string; rivalryMin?: number; rivalryMax?: number;
+    weatherIs?: string;
+    genreAny?: boolean;
+    hustleMin?: number;
+    venueAny?: boolean; venueNone?: boolean; venueIs?: string; venueLevelMin?: number;
+    bandMin?: number; bandMax?: number; bandHas?: string;
+    demoMin?: number; chartingMin?: number; songsMin?: number; fadedMin?: number;
+  }
 }
 
 export const musicPack: Pack = {
   id: 'music',
   manifest: musicManifest,
-  // Order matters: onActBreak fires band quirks (notebook draws RNG) before
-  // songs' deadline audit + chart week, matching the old inline order.
-  plugins: [venuePlugin, rivalPlugin, bandPlugin, songsPlugin],
+  // Order matters: onConstruct draws rival (then seeds); onRunStart draws
+  // weather before songs' notebook demo; onActBreak fires band quirks (notebook
+  // draws RNG) before songs' deadline audit + chart week — matching the old
+  // inline order so the seeded stream is unchanged.
+  plugins: [venuePlugin, rivalPlugin, weatherPlugin, genrePlugin, hustlePlugin, bandPlugin, songsPlugin, economyPlugin],
   events: EVENTS,
   tutorialEvents: TUTORIAL_EVENTS,
   // Burnout coping interstitials, high→low priority (D.3): the ids and the

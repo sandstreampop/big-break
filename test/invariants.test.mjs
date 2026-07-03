@@ -85,6 +85,36 @@ for (const pack of PACKS) {
     }
   });
 
+  // ── Open eligibility is safe (WP1): every `requires` key an eligible card
+  // names must be OWNED — a genre-neutral core predicate (flags/money/burnout +
+  // the generic stats/min/max gates) or a predicate exactly one plugin
+  // registers (Plugin.requires). A stranded key (a card gating on a subsystem
+  // the pack doesn't ship) is a silent no-op the engine swallows; this catches
+  // it. Sibling of the effect-verb invariant, and the proof that the core
+  // Requires names no genre's subsystems. ──
+  test(`[${pack.id}] no eligible card names an unknown requires key`, () => {
+    const NEUTRAL = ['anyOf', 'flagsAll', 'flagsNone', 'moneyMax', 'moneyMin',
+      'burnoutMin', 'stats', 'min', 'max'];
+    // Merge every plugin's predicate registry; assert no two plugins claim the
+    // same key ("registered by exactly one plugin").
+    const owners = new Map();
+    for (const p of pack.plugins || []) {
+      for (const key of Object.keys(p.requires || {})) {
+        assert.ok(!owners.has(key), `requires key '${key}' registered by both '${owners.get(key)}' and '${p.id}'`);
+        owners.set(key, p.id);
+      }
+    }
+    const known = new Set([...NEUTRAL, ...owners.keys()]);
+    const scan = (r, where) => {
+      if (!r) return;
+      for (const k of Object.keys(r)) {
+        assert.ok(known.has(k), `${where}: unknown requires key '${k}'`);
+      }
+      if (r.anyOf) r.anyOf.forEach((alt, i) => scan(alt, `${where}.anyOf[${i}]`));
+    };
+    for (const ev of [...pack.events, ...pack.tutorialEvents]) scan(ev.requires, `${ev.id}.requires`);
+  });
+
   // ── §2E symmetry: the INCREDIBLE payload multiplier must scale EVERY core
   // stat the pack declares — not a hardcoded music list that silently skips a
   // second genre's stats. Guards against re-coupling the multiplier to one

@@ -500,43 +500,65 @@ function meetsRequires(ev, state) {
   return requiresOk(ev.requires, state);
 }
 
+// The neutral keys requiresOk resolves inline; everything else is dispatched to
+// a pack-registered predicate (WP1). Kept in sync with the core Requires type.
+const REQUIRES_NEUTRAL = new Set([
+  'anyOf', 'flagsAll', 'flagsNone', 'moneyMax', 'moneyMin', 'burnoutMin',
+  'stats', 'min', 'max',
+]);
+
+// The merged predicate registry for the active pack (WP1 — the sibling of the
+// effectVerbs registry). Each plugin's `requires` map contributes its keys;
+// requiresOk dispatches an unknown key here. Memoized per pack — building it is
+// cheap but this sits in the deck hot path. A key two plugins both claim is an
+// authoring conflict, but last-wins is harmless (packs don't collide).
+let _reqPredsFor: Pack | null = null;
+let _reqPreds: Record<string, (state: any, arg: any) => boolean> = {};
+function requiresPredicates(): Record<string, (state: any, arg: any) => boolean> {
+  if (_reqPredsFor === PACK) return _reqPreds;
+  const preds: Record<string, (state: any, arg: any) => boolean> = {};
+  for (const p of orderedPlugins()) {
+    if (p.requires) for (const [k, fn] of Object.entries(p.requires)) preds[k] = fn;
+  }
+  _reqPredsFor = PACK;
+  _reqPreds = preds;
+  return preds;
+}
+
 function requiresOk(r, state) {
   if (!r) return true;
   // anyOf: alternative gates — the card fires if ANY branch is satisfied
   // (e.g. nemesis_soundcheck accepts a cross-run nemesis OR an in-run feud)
   if (r.anyOf && !r.anyOf.some((alt) => requiresOk(alt, state))) return false;
-  if (r.nemesis && !state.nemesis) return false;
-  if (r.weatherIs && state.weather !== r.weatherIs) return false;
   if (r.flagsAll && !r.flagsAll.every((f) => state.flags.includes(f))) return false;
   if (r.flagsNone && r.flagsNone.some((f) => state.flags.includes(f))) return false;
   if (r.moneyMax !== undefined && state.money > r.moneyMax) return false;
   if (r.moneyMin !== undefined && state.money < r.moneyMin) return false;
   if (r.burnoutMin !== undefined && state.stats.burnout < r.burnoutMin) return false;
-  if (r.fameMin !== undefined && state.fame < r.fameMin) return false;
-  if (r.fameMax !== undefined && state.fame > r.fameMax) return false;
-  if (r.gear && !r.gear.every((g) => state.accessories.includes(g))) return false;
-  if (r.rivalryMin !== undefined && (state.rivalry ?? 0) < r.rivalryMin) return false;
-  if (r.rivalryMax !== undefined && (state.rivalry ?? 0) > r.rivalryMax) return false;
-  if (r.genreAny && !state.genre) return false;
-  if (r.venueAny && !state.venue) return false;
-  if (r.venueLevelMin !== undefined && (!state.venue || (state.venueLevel || 0) < r.venueLevelMin)) return false;
-  if (r.venueIs && state.venue !== r.venueIs) return false;
-  if (r.rivalIs && state.rival !== r.rivalIs) return false;
-  if (r.venueNone && state.venue) return false;
-  if (r.hustleMin !== undefined && (state.hustles || []).length < r.hustleMin) return false;
-  if (r.bandMin !== undefined && (state.band || []).length < r.bandMin) return false;
-  if (r.bandMax !== undefined && (state.band || []).length > r.bandMax) return false;
-  if (r.bandHas && !(state.band || []).includes(r.bandHas)) return false;
-  if (r.demoMin !== undefined && (state.songs || []).filter((s) => s.status === 'demo').length < r.demoMin) return false;
-  if (r.chartingMin !== undefined && (state.songs || []).filter((s) => s.status === 'charting' && s.pos).length < r.chartingMin) return false;
-  if (r.songsMin !== undefined && (state.songs || []).length < r.songsMin) return false;
-  if (r.fadedMin !== undefined && (state.songs || []).filter((s) => s.status === 'faded' && s.peak).length < r.fadedMin) return false;
+  // Generic stat/resource gates, resolved through gateValue for ANY manifest
+  // key: `stats` uses the legacy `{ <key>Min: n }` shape; `min`/`max` the plain
+  // `{ <key>: n }` form. No genre's key is named.
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
-      const stat = key.replace(/Min$/, '');
-      const cur = gateValue(state, stat);
-      if (cur < (val as number)) return false;
+      if (gateValue(state, key.replace(/Min$/, '')) < (val as number)) return false;
     }
+  }
+  if (r.min) {
+    for (const [key, val] of Object.entries(r.min)) if (gateValue(state, key) < (val as number)) return false;
+  }
+  if (r.max) {
+    for (const [key, val] of Object.entries(r.max)) if (gateValue(state, key) > (val as number)) return false;
+  }
+  // Every other key is a subsystem predicate the owning plugin registered
+  // (WP1). Consumes no rng, returns a plain boolean — so the gate is a pure
+  // conjunction and evaluation order is immaterial (byte-green). An unregistered
+  // key is a no-op here and is caught structurally by the "requires key owned"
+  // invariant.
+  const preds = requiresPredicates();
+  for (const key of Object.keys(r)) {
+    if (REQUIRES_NEUTRAL.has(key)) continue;
+    const pred = preds[key];
+    if (pred && !pred(state, (r as any)[key])) return false;
   }
   return true;
 }

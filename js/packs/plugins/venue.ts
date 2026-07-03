@@ -12,6 +12,16 @@ export const venuePlugin: Plugin = {
   id: 'venue',
   effectVerbs: ['adoptVenue', 'venueLove', 'venueLoveStart'],
 
+  // The venue eligibility predicates (WP1): a card can gate on having adopted a
+  // room, on a specific room, or on the room's level. Registered here so the
+  // shared Requires names no venue.
+  requires: {
+    venueAny: (s, arg) => !arg || !!s.venue,
+    venueNone: (s, arg) => !arg || !s.venue,
+    venueIs: (s, arg) => s.venue === arg,
+    venueLevelMin: (s, arg) => !!s.venue && (s.venueLevel || 0) >= arg,
+  },
+
   // A show in your adopted room lifts a Good/Incredible night (flat fame+cred
   // by venue level). Applied to the effects payload before it lands.
   //

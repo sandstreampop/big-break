@@ -15,6 +15,14 @@ import type { Plugin } from '../../types.js';
 
 export const bandPlugin: Plugin = {
   id: 'band',
+
+  // The band eligibility predicates (WP1): roster size and a specific member.
+  requires: {
+    bandMin: (s, arg) => (s.band || []).length >= arg,
+    bandMax: (s, arg) => (s.band || []).length <= arg,
+    bandHas: (s, arg) => (s.band || []).includes(arg),
+  },
+
   onActBreak(state, _act, notes) {
     for (const bid of state.band || []) {
       const bm = bandmateById(bid);

@@ -13,4 +13,14 @@ export const rivalPlugin: Plugin = {
   onConstruct(state, rng) {
     state.rival = randomRival(rng).id;
   },
+
+  // The rival eligibility predicates (WP1): a cross-run nemesis, a specific
+  // rival, and the in-run rivalry heat. Registered here so the shared Requires
+  // names no rival.
+  requires: {
+    nemesis: (s, arg) => !arg || !!s.nemesis,
+    rivalIs: (s, arg) => s.rival === arg,
+    rivalryMin: (s, arg) => (s.rivalry ?? 0) >= arg,
+    rivalryMax: (s, arg) => (s.rivalry ?? 0) <= arg,
+  },
 };
