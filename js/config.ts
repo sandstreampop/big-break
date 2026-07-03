@@ -8,7 +8,8 @@ export const CONFIG = {
   statStartMin: 18,
   statStartMax: 28,
   burnoutStart: 0,
-  moneyStart: 25,          // R4: broke means broke — Curtis is content
+  // (starting money moved to the pack manifest's resourceStart — the engine
+  // initializes resources generically and names none.)
 
   // Acts (spec §2): cards drawn per act
   actLengths: { 1: 8, 2: 12, 3: 8 },

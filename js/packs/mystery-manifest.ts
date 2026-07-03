@@ -78,4 +78,8 @@ export const mysteryManifest: PackManifest = {
   winGates: WIN_GATES,
   statMeta: STAT_META,
   resourceMeta: RESOURCE_META,
+  // Cash walks in at $25; the Feud idles at 3 (same neutral starts music uses).
+  resourceStart: { money: 25, rivalry: 3 },
+  lpResources: ['fame'], // Notoriety counts toward Legacy Points
+
 };

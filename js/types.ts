@@ -145,6 +145,15 @@ export interface PackManifest {
   // so the UI can label ANY winGates/delta key generically instead of
   // special-casing fame/hits. A pack without an entry falls back to the raw key.
   resourceMeta?: Record<string, StatMeta>;
+  // Non-zero starting values for the pack's resources (WP7-clean). The engine
+  // initializes every manifest resource to 0 by default; a resource that starts
+  // elsewhere (music's money, the rivalry/feud meter) declares its value here.
+  // Keeps the engine's newRun from naming a single resource.
+  resourceStart?: Record<string, number>;
+  // Resources that count toward Legacy Points, alongside the core stats
+  // (music: fame). The engine names none; a pack that omits this scores on
+  // stats alone.
+  lpResources?: string[];
   // Pack-declared fail states (WP3), evaluated in order after the engine's
   // universal burnout fail. A pack without any (mystery, probe) can only fail on
   // burnout.
@@ -266,6 +275,10 @@ export interface Plugin {
   // hooks (core) and the contract/weather gain multipliers. `ctx.tags` are the
   // choice tags, `ctx.appliedAccessories` the gear whose roll bonus fired.
   modifyBurnout?(state: RunState, v: number, ctx: any): number;
+  // The run-state slots this subsystem owns, with their fresh-run defaults (a
+  // venue starts null, a band starts []). newRun applies these generically so
+  // the engine's state literal names no genre — arrays are copied per run.
+  stateDefaults?: Record<string, any>;
 }
 
 // A burnout-threshold interstitial: crossing the bar interrupts the deck once
@@ -382,9 +395,9 @@ export interface RunState {
   phase: string;
   act: number;
   stats: Record<string, number>;
-  fame: number;
-  money: number;
-  hits: number;
+  // Resources (fame/money/hits/… for music) are pack-defined and initialized
+  // generically from manifest.resources — they live on the index signature, not
+  // as fixed fields, so this type names no genre's resource.
   flags: string[];
   songs?: Song[];
   seed: number | null;

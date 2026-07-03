@@ -125,47 +125,29 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
     cardsPlayedInAct: 0,
     shopPlayedInAct: false,
     stats,
-    fame: 0,
-    money: CONFIG.moneyStart,
-    hits: 0,
-    pathProgress: 0,
     badStreak: 0,
     encore: 0,
     encoreChained: false,
     copingSeen: [],
-    chartSeed: Math.floor(rng() * 1e9) + 1,
-    chartTitles: [],
+    // A generic per-run entropy seed for a pack's cosmetic/flavor randomness
+    // (music's charts, headlines, epilogue derive from it). Distinct from the
+    // play RNG `seed`; drawn here as the first construction draw.
+    flavorSeed: Math.floor(rng() * 1e9) + 1,
     seed: null,     // play RNG seed (set by caller; null = legacy Math.random)
     rngUses: 0,
     daily: null,    // 'YYYY-MM-DD' when this is a Daily Grind run
     gauntlet: null, // 'YYYY-Www' when this is a weekly Gauntlet run
     tierLog: [],
     cardLog: [],    // [{e: eventId, t: tier, a: act, s: side}] — scrapbook
-    contract: null, // signed contract id (see data/contracts.js)
-    genre: null,    // sound identity (see data/genres.js)
-    venue: null,    // adopted home venue (see data/venues.js)
-    venueLevel: 0,
-    venueShows: 0,
-    band: [],       // recruited bandmates (see data/band.js), max 3
     promises: [],   // short-horizon objectives [{label,tags,remaining,reward,penalty}]
-    hustles: [],    // persistent income sources (see data/hustles.js)
-    // rival + rivalry: set by the rival plugin's onConstruct (Phase 4.3).
-    // seeds / flashpointAt / actTwist / weather: seeded construction, drawn
-    // in a FROZEN order right after this literal (see below) — the golden
-    // pins that order; reordering shifts every downstream draw.
-    rival: null,
-    rivalry: 3,
-    seeds: [],
     seenCards: null, // per-player seen-card ids (set by the UI from meta)
     flashpointAt: null,
     flashpointSeen: false,
     hotStreak: 0,
     actTwist: null,
-    weather: null,
     path: null,
     instrument: instrumentId,
     firstInstrument: instrumentId,
-    accessories: [],
     flags: [],
     usedEvents: [],
     unlockedPacks: unlockedPacks || [],
@@ -173,7 +155,19 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
     pendingChainId: null,
     ending: null, // { key, result } once ended
   };
-  // Seeded construction draws, in FROZEN order (chartSeed above, then rival via
+  // Resources are the pack's, initialized generically from the manifest (every
+  // resource to 0, or its declared resourceStart) — so newRun names no genre's
+  // resource. Order follows manifest.resources.
+  for (const r of pack.manifest.resources) state[r] = pack.manifest.resourceStart?.[r] ?? 0;
+  // Subsystem run-state slots are the plugins' (a venue starts null, a band []).
+  // Applied generically from each plugin's stateDefaults, arrays copied per run,
+  // so the core state literal declares no genre's fields. onConstruct (below)
+  // may then overwrite a slot with a seeded draw (rival, seeds).
+  for (const p of orderedPlugins()) {
+    if (!p.stateDefaults) continue;
+    for (const [k, v] of Object.entries(p.stateDefaults)) state[k] = Array.isArray(v) ? v.slice() : v;
+  }
+  // Seeded construction draws, in FROZEN order (flavorSeed above, then rival via
   // onConstruct, seeds, flashpoint, actTwist; the weather draw now lands at the
   // onRunStart tail). A subsystem's construction draw lands exactly where the
   // old inline draw did; reordering here invalidates the entire golden corpus.
@@ -976,7 +970,12 @@ export function legacyPoints(state) {
   // manifest.stats is identical for music (same four keys) and correct for
   // every genre.
   const statSum = PACK.manifest.stats.reduce((n, k) => n + (s[k] || 0), 0);
-  const base = Math.round((state.fame + statSum) / CONFIG.lpStatDivisor);
+  // The resources that count toward Legacy Points are the pack's (music: fame);
+  // the engine names none. A pack that declares no lpResources scores on stats
+  // alone. (Music's set is ['fame'], so this is identical to the old
+  // state.fame + statSum.)
+  const resSum = (PACK.manifest.lpResources || []).reduce((n, k) => n + (gateValue(state, k) || 0), 0);
+  const base = Math.round((resSum + statSum) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
   // Subsystem score multipliers (contract lpMult, weather lpMult), folded in

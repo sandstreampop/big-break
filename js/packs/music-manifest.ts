@@ -80,6 +80,10 @@ export const musicManifest: PackManifest = {
   winGates: WIN_GATES,
   statMeta: STAT_META,
   resourceMeta: RESOURCE_META,
+  // Non-zero resource starts: walk in broke ($25), rivalry idles at 3.
+  resourceStart: { money: 25, rivalry: 3 },
+  lpResources: ['fame'], // fame counts toward Legacy Points alongside the stats
+
   failStates: FAIL_STATES,
   declinePenalty: { cred: -2 }, // the walk-of-shame when your card declines
 };

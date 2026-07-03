@@ -9,6 +9,7 @@ import type { Plugin } from '../../types.js';
 
 export const genrePlugin: Plugin = {
   id: 'genre',
+  stateDefaults: { genre: null }, // committed sound identity (WP7-clean)
 
   // The genre eligibility predicate (WP1): a card can gate on having committed
   // to any sound.

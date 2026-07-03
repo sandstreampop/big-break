@@ -27,6 +27,7 @@ function payHustles(state: any, notes: string[]) {
 export const hustlePlugin: Plugin = {
   id: 'hustle',
   effectVerbs: ['grantHustle'],
+  stateDefaults: { hustles: [] }, // persistent income sources (WP7-clean)
 
   // The hustle eligibility predicate (WP1): a card can gate on how many income
   // sources the run has picked up.

@@ -239,7 +239,7 @@ function renderTitle() {
   s.append(menu);
   // Today in the industry — flavor headline from the evergreen pool
   const fakeState = {
-    chartSeed: dayNum, act: 1, cardLog: [], fame: 0, money: 50, hits: 0,
+    flavorSeed: dayNum, act: 1, cardLog: [], fame: 0, money: 50, hits: 0,
     stats: { burnout: 0, cred: 50, skill: 0 }, rival: 'vanta', instrument: 'kazoo',
     hustles: [], rivalry: 3,
   };
@@ -595,7 +595,7 @@ function renderHud() {
         run.venueLevel < 3 ? 'Play more shows here to build it toward a local institution.' : 'This room is a local institution. It’s yours.'],
     });
   }
-  for (const id of run.accessories) {
+  for (const id of run.accessories || []) {
     const acc = accessoryById(id);
     const active = accActive(acc);
     chip('gear-chip' + (active ? '' : ' inert'), acc.name + (active ? '' : ' 💤'), {
@@ -1207,7 +1207,7 @@ function showResult(result) {
     for (const acc of shelf) {
       list.append(btn(`${acc.name} — ${acc.blurb}`, '', () => {
         ov.classList.remove('active');
-        if (run.accessories.length < CONFIG.accessorySlots) {
+        if ((run.accessories || []).length < CONFIG.accessorySlots) {
           equipAccessory(run, acc.id);
           save.saveRun(run);
           routeAdvance(engine.advance(run));
@@ -1225,7 +1225,7 @@ function showResult(result) {
   // Gear gained?
   const pending = result.deltas.pendingGear;
   if (pending) {
-    if (run.accessories.length < CONFIG.accessorySlots) {
+    if ((run.accessories || []).length < CONFIG.accessorySlots) {
       const extra = equipAccessory(run, pending.id) || [];
       save.saveRun(run);
       for (const d of extra) chips.append(deltaChip(d.key, d.amount));
@@ -1289,7 +1289,7 @@ function gearChooser(newAcc, result) {
   box.append(el('div', 'tier-badge', 'GEAR FULL'));
   box.append(el('p', 'result-text', `Swap something out for the <b>${newAcc.name}</b>?`));
   const list = el('div', 'gear-choices');
-  for (const id of run.accessories) {
+  for (const id of run.accessories || []) {
     const acc = accessoryById(id);
     list.append(btn(`Drop ${acc.name}`, '', () => {
       equipAccessory(run, newAcc.id, id);
@@ -1384,7 +1384,7 @@ function renderTutorialEnd() {
 // against your preparation.
 
 function showBrammies(step) {
-  const rng = engine.mulberry32((run.chartSeed || 1) * 7 + 44);
+  const rng = engine.mulberry32((run.flavorSeed || 1) * 7 + 44);
   const rival = rivalById(run.rival);
   const genre = genreById(run.genre);
   const category = genre

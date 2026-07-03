@@ -129,7 +129,7 @@ export function buildEpilogue(state) {
   add(true,
     'The sound guy at the Ricochet Room claims he always knew. For once, nobody argues with the sound guy.');
 
-  const rng = mulberry32((state.chartSeed || 1) * 101 + 7);
+  const rng = mulberry32((state.flavorSeed || 1) * 101 + 7);
   const picks = [];
   const bag = [...pool];
   while (picks.length < Math.min(4, pool.length) && bag.length) {

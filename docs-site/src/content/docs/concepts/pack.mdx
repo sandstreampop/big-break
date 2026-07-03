@@ -34,8 +34,8 @@ options would go:
 ## Optional: capabilities the engine feature-detects
 
 Everything past the required core is a capability you *opt into* by providing a
-field. Omit it and the engine substitutes an inert default — there are **no
-stubs to write**. The optional surface is exactly:
+field. Omit it and the engine simply never invokes it — there are **no stubs to
+write** and no defaults to override. The optional surface is exactly:
 
 - `plugins` — subsystems (see [Subsystems](/big-break/docs/authoring/plugins/));
 - `presenter` — endings and flavor (see [The presenter](/big-break/docs/authoring/presenter/));

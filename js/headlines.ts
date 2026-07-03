@@ -1,5 +1,5 @@
 // The Trades: procedural industry headlines generated from actual run
-// state, shown on act interstitials and the finale. Seeded off chartSeed
+// state, shown on act interstitials and the finale. Seeded off flavorSeed
 // so a Daily Grind shows everyone the same press.
 
 import { mulberry32 } from './engine.js';
@@ -85,7 +85,7 @@ export function generateHeadlines(state, count = 3) {
   add(true, `VENUE RAISES FEES, BLAMES “THE ECONOMY,” BUYS BOAT`, 'Scene & Herd');
   add(true, `CRAIG (BAGPIPES) ANNOUNCES RESIDENCY, FARMERS MARKET UNEASY`, 'The Local Take');
 
-  const rng = mulberry32((state.chartSeed || 1) * 31 + state.act * 977);
+  const rng = mulberry32((state.flavorSeed || 1) * 31 + state.act * 977);
   const picks = [];
   const bag = [...pool];
   while (picks.length < count && bag.length) {

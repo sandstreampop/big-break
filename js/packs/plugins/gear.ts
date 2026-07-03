@@ -65,6 +65,7 @@ function resolveGearGrant(state: any, grant: string, rng: () => number) {
 export const gearPlugin: Plugin = {
   id: 'gear',
   effectVerbs: ['removeGear', 'grantGear'],
+  stateDefaults: { accessories: [] }, // equipped gear (WP7-clean)
 
   // Equipped, active gear adds tag-matched roll bonuses (and counter-tag
   // penalties); the accessories whose modifier fires are recorded on
