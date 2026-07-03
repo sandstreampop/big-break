@@ -1,13 +1,20 @@
 # Repo conventions
 
-- **Push all work to `main`.** The owner tracks latest there. Do not leave
-  work stranded on feature branches unless asked.
-- **Deploys go straight from `main`.** `.github/workflows/pages.yml` uploads
-  the repo as a Pages artifact and deploys it via `actions/deploy-pages`
-  (Pages Source = "GitHub Actions"). One workflow, one deployer — no
-  `gh-pages` branch. Latest push to `main` wins (`cancel-in-progress: true`).
-- Play URL: https://sandstreampop.github.io/big-break/
-- All balance knobs live in `js/config.js`. Validate any balance change with
-  `node tools/simulate.mjs 4000 narrative` (the `narrative` policy models a
-  human; judge feel by it, not by `smart`).
-- Engine (`js/engine.js`) must stay DOM-free — the simulator imports it in Node.
+- Push work to `main`. CI gates it, then Pages deploys `dist/` (see
+  `.github/workflows/pages.yml`).
+- Source is TypeScript, built to `dist/` with `npm run build`. Tools and tests
+  import the built `dist/` — **build before you test**.
+- `engine.ts` is the genre-agnostic core: keep it DOM-free (sims import it in
+  Node) and content-free (it imports no `data/` or `packs/` module). Content
+  lives in `js/packs/*`, numeric tuning in `js/config.ts`, genre taxonomy in
+  `js/packs/*-manifest.ts`.
+- Seeded behavior is pinned by golden masters. A golden diff is a bug unless
+  intended — then re-baseline deliberately (`tools/gen-golden.mjs`,
+  `tools/gen-mystery-golden.mjs`).
+- Before pushing a balance/content change: `npm run build`, then
+  `node tools/lint-content.mjs && node tools/simulate.mjs --check &&
+  node tools/mystery-sim.mjs --check && node --test`. Judge feel with
+  `node tools/simulate.mjs 4000 narrative`.
+
+Play: [music](https://sandstreampop.github.io/big-break/) ·
+[mystery](https://sandstreampop.github.io/big-break/mystery/)

@@ -22,13 +22,13 @@ It started as one game (Big Break) and has been refactored into a **stable core
 it. The full plan and its guardrails live in
 [`docs/design-engine-generalization.md`](docs/design-engine-generalization.md).
 
-- **The engine** (`js/engine.js` → compiled from `.ts`) is genre-agnostic and
-  DOM-free: it knows *rolls, decks, acts, fail states, finales, and a seeded
-  RNG*, but imports **no** content. Everything genre-specific is injected.
+- **The engine** (`js/engine.ts`) is genre-agnostic and DOM-free: it knows
+  *rolls, decks, acts, fail states, finales, and a seeded RNG*, but imports
+  **no** content. Everything genre-specific is injected.
 - **A pack** supplies the world: its stat/resource taxonomy and finale gates
   (the *manifest*), its event deck, and its subsystem *plugins*. Swap the pack,
   get a different game — no engine edits.
-- **The same UI shell** (`js/ui.js`) drives either pack, reading the taxonomy
+- **The same UI shell** (`js/ui.ts`) drives either pack, reading the taxonomy
   from whichever pack booted.
 
 ```
@@ -75,8 +75,8 @@ summits: **The Sleuth** (name the killer — gated on insight, nerve, and clues)
 charm, and cash). A **clues** subsystem — the structural sibling of the music
 game's songs — tracks what your notebook holds.
 
-It ships **dark-ish**: a standalone beta at `/mystery/`, gated by its own
-balance checks, while the music game is untouched.
+A standalone beta at `/mystery/`, gated by its own balance checks; the music
+game is untouched.
 
 ---
 
