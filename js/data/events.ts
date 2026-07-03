@@ -5864,7 +5864,7 @@ export const EVENTS: GameEvent[] = [
     requires: { anyOf: [{ nemesis: true }, { rivalryMin: 7 }] },
     art: 'ev_nemesis_check', context: 'An empty venue, four hours before doors',
     prompt: 'Festival soundcheck. You walk in as {rival} finishes theirs — the feud made flesh, twenty feet away, unplugging a tuner. They see you across two hundred empty seats. Nobody else in the building knows the whole history. Both of you are the whole history.',
-    promptNemesis: 'Festival soundcheck. You walk in as {rival} finishes theirs — the rival who has already beaten you once, in another life, before the comeback. They see you across two hundred empty seats. Nobody else in the building knows the whole history. Both of you are the whole history.',
+    promptAlt: 'Festival soundcheck. You walk in as {rival} finishes theirs — the rival who has already beaten you once, in another life, before the comeback. They see you across two hundred empty seats. Nobody else in the building knows the whole history. Both of you are the whole history.',
     tags: ['rival', 'live'],
     choices: {
       left: {

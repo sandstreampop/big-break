@@ -17,6 +17,7 @@ import { CONFIG } from '../dist/js/config.js';
 import { EVENTS } from '../dist/js/data/events.js';
 import { ARCS, arcById } from '../dist/js/data/arcs.js';
 import * as engine from '../dist/js/engine.js';
+import { arcLit } from '../dist/js/packs/plugins/seeds.js';
 import { simulateRun } from './sim-core.mjs';
 
 const args = process.argv.slice(2);
@@ -105,7 +106,7 @@ for (let i = 0; i < RUNS; i++) {
     if (!arc) continue;
     tally.seedsRolled++;
     // "lit" = the arc condition held by run end; "paid" = a payoff card landed
-    if (engine.arcLit(state, arcId)) tally.seedsLit++;
+    if (arcLit(state, arcId)) tally.seedsLit++;
     if (arc.payoffs.some((id) => seenThisRun.has(id))) tally.seedsPaid++;
   }
   if (cards >= 10) {

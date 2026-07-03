@@ -374,3 +374,39 @@ export const ACCESSORIES = [
 export function accessoryById(id) {
   return ACCESSORIES.find((a) => a.id === id) || null;
 }
+
+// An accessory is INERT unless it's universal or matches the current
+// instrument's family (the compatibility comedy). Resolved against the
+// instrument roster directly (the loadout is core, but the gear plugin owns
+// this — the engine no longer resolves accessories).
+import { instrumentById } from './instruments.js';
+export function accessoryActive(acc, state): boolean {
+  if (acc.compatibility?.universal) return true;
+  const inst = instrumentById(state.instrument);
+  return !!inst && (acc.compatibility?.families || []).includes(inst.family);
+}
+// The equipped accessories that are currently active, in equip order.
+export function equippedActive(state): any[] {
+  return (state.accessories || []).map(accessoryById).filter(Boolean).filter((a) => accessoryActive(a, state));
+}
+
+// The shop shelves (WP2): which accessory ids a random_basic/random_good grant
+// draws from. The multi-candidate "shelf" (a shop that offers up to 3) and the
+// single-grant fallback use slightly different pools, preserved EXACTLY as they
+// were authored inline in the engine — including that loud_amp/loop_pedal/
+// in_ears intentionally recur across a shelf's basic and good lists. These are
+// music content (accessory ids), so they live here, not in the genre-neutral
+// core; the engine samples from whichever array gearPool returns.
+const SHELF_BASIC = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder', 'merch_cannon', 'cowbell', 'four_track',
+  'gaff_tape', 'tip_qr', 'pocket_metronome', 'lucky_socks', 'thermos', 'demo_trunk'];
+const SHELF_GOOD = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears', 'cursed_8track', 'stage_fan', 'humidifier', 'publicist_rolodex',
+  'wireless_rig', 'contact_mic', 'stage_cape', 'projector', 'press_pass', 'mascot_head', 'shoebox_archive', 'green_room_kit', 'rice_cooker'];
+const GRANT_BASIC = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder',
+  'gaff_tape', 'tip_qr', 'pocket_metronome', 'thermos'];
+const GRANT_GOOD = ['pedalboard', 'vintage_mic', 'loud_amp', 'cursed_8track', 'stage_fan', 'in_ears',
+  'wireless_rig', 'contact_mic', 'stage_cape', 'projector'];
+
+export function gearPool(grant: string, forShelf: boolean): string[] {
+  if (forShelf) return grant === 'random_basic' ? SHELF_BASIC : SHELF_GOOD;
+  return grant === 'random_basic' ? GRANT_BASIC : GRANT_GOOD;
+}

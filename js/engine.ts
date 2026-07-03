@@ -2,7 +2,7 @@
 // the same module runs in the browser and in tools/simulate.mjs.
 
 import { CONFIG } from './config.js';
-import type { Pack, RunState, Song, Plugin } from './types.js';
+import type { Pack, RunState, Plugin } from './types.js';
 
 // ---------- Injected content pack (Phase 2: IoC) ----------
 // The engine imports NO content module. All music-specific content arrives as
@@ -12,55 +12,34 @@ import type { Pack, RunState, Song, Plugin } from './types.js';
 // used to import PACK.events / instruments / venues / arcs / weather / etc.
 let PACK: Pack;
 
-// Fill absent OPTIONAL capabilities with inert defaults (Phase E — ISP). The
-// engine feature-detects a genre's capabilities by letting a pack omit the ones
-// it doesn't use; normalizing once here means the rest of the engine can call
-// PACK.rollWeather / accessoryById / etc unconditionally without a stub in
-// every pack. A pack that provides a capability is untouched (byte-green); a
-// pack that omits it gets a no-op, so the mystery/probe stubs delete entirely.
-function normalizePack(pack: Pack): Pack {
-  const none = () => null;
-  return {
-    ...pack,
-    instruments: pack.instruments || [],
-    instrumentById: pack.instrumentById || none,
-    accessories: pack.accessories || [],
-    accessoryById: pack.accessoryById || none,
-    arcs: pack.arcs || [],
-    arcById: pack.arcById || none,
-    contractById: pack.contractById || none,
-    genreById: pack.genreById || none,
-    hustleById: pack.hustleById || none,
-    bandmateById: pack.bandmateById || none,
-    recruitCandidate: pack.recruitCandidate || none,
-    rollSeeds: pack.rollSeeds || (() => []),
-    rollWeather: pack.rollWeather || (() => null),
-    weatherHooks: pack.weatherHooks || (() => ({})),
-  };
-}
-
+// The active pack is used directly (WP7). Every music subsystem the engine used
+// to reach for by name — accessories, arcs, contracts, genres, hustles, band,
+// weather, seeds — now lives in that pack's plugins, which own their data. So
+// the engine no longer needs to inject inert stubs for a genre that omits a
+// subsystem: it never calls a subsystem provider at all. The irreducible Pack
+// (id, manifest, events, tutorialEvents, instruments) plus its optional plugins/
+// presenter/perks/interstitials is the whole surface the core touches.
 export function useContentPack(pack: Pack): void {
-  PACK = normalizePack(pack);
+  PACK = pack;
 }
 export function activePack(): Pack {
   return PACK;
 }
 
 // Tutorial cards live outside PACK.events so they can never enter normal decks;
-// chains and resume still need to find them by id.
-function findEvent(id) {
+// chains and resume still need to find them by id. Exported as a plugin-facing
+// service so a subsystem (seeds) can inspect the deck without importing it.
+export function findEvent(id) {
   return PACK.events.find((e) => e.id === id) || PACK.tutorialEvents.find((e) => e.id === id) || null;
-}
-
-function contractMods(state): Record<string, any> {
-  return PACK.contractById(state.contract)?.mods || {};
 }
 
 // Act length can be shortened by a contract (Overnight Success) or bent
 // by this run's act twist (U5: the tour got cut short / extended)
 export function actLength(state, act) {
   if (state.tutorial) return PACK.tutorialEvents.length;
-  const base = contractMods(state).actLengths?.[act] ?? CONFIG.actLengths[act];
+  // A subsystem may shorten/lengthen the act (a contract's Overnight Success);
+  // the core owns only the per-act default and the run's act twist.
+  const base = foldActLength(state, act, CONFIG.actLengths[act]);
   const twist = state.actTwist && state.actTwist.act === act ? state.actTwist.delta : 0;
   return Math.max(3, base + twist);
 }
@@ -117,51 +96,6 @@ export function gateValue(state, key): number {
   return (key in state.stats) ? state.stats[key] : (state[key] ?? 0);
 }
 
-// Per-resource apply logic (Phase 3.2). applyEffects iterates these in
-// manifest.resources order so deltas — and the RNG-consuming songs block —
-// stay exactly where they were. Each resource keeps its OWN arithmetic (no
-// forced single formula): fame clamps at 0 and honors fameSwing on any sign;
-// money siphons on gains and may go negative; rivalry clamps 0–10 off a
-// default of 3; pathProgress is a raw add. Returns the delta to record (0 =
-// nothing recorded). 'hits' is the songs subsystem — applied inline in
-// applyEffects and extracted in Phase 4.5, so it has no handler here.
-type ResourceCtx = { hooks: Record<string, any>; cMods: Record<string, any>; wHooks: Record<string, any>; accs: any[] };
-const RESOURCE_APPLY: Record<string, (state: any, v: number, ctx: ResourceCtx) => number> = {
-  fame(state, v, { hooks, cMods, wHooks }) {
-    if (v && hooks.fameSwingMult) v = Math.round(v * hooks.fameSwingMult);
-    if (v > 0 && cMods.fameGainMult) v = Math.round(v * cMods.fameGainMult);
-    if (v > 0 && wHooks.fameGainMult) v = Math.round(v * wHooks.fameGainMult);
-    if (!v) return 0;
-    const before = state.fame;
-    state.fame = Math.max(0, state.fame + v);
-    return state.fame - before;
-  },
-  money(state, v, { hooks, cMods, wHooks, accs }) {
-    if (v > 0) {
-      if (hooks.moneyGainMult) v = Math.round(v * hooks.moneyGainMult);
-      if (wHooks.moneyGainMult) v = Math.round(v * wHooks.moneyGainMult);
-      if (cMods.moneyGainMult) v = Math.round(v * cMods.moneyGainMult);
-      for (const acc of accs) {
-        if (acc.moneySiphon) v = Math.round(v * (1 - acc.moneySiphon));
-      }
-    }
-    if (!v) return 0;
-    state.money += v;
-    return v;
-  },
-  pathProgress(state, v) {
-    if (!v) return 0;
-    state.pathProgress += v;
-    return v;
-  },
-  rivalry(state, v) {
-    if (!v) return 0;
-    const before = state.rivalry ?? 3;
-    state.rivalry = clamp(before + v, 0, 10);
-    return state.rivalry - before;
-  },
-};
-
 // ---------- Run lifecycle ----------
 
 export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
@@ -175,7 +109,7 @@ export function offerInstruments(unlockedInstrumentIds, rng = Math.random) {
 }
 
 export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.random, perks = []) {
-  PACK = normalizePack(pack); // this run's content pack; also settable via useContentPack
+  PACK = pack; // this run's content pack; also settable via useContentPack
   const inst = PACK.instrumentById(instrumentId);
   // Stats are the pack's, not a hardwired list: roll each core stat in manifest
   // order (music order skill→cred→creativity→network keeps the seeded draws
@@ -239,22 +173,20 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
     pendingChainId: null,
     ending: null, // { key, result } once ended
   };
-  // Seeded construction draws, in FROZEN order (chartSeed above, then rival,
-  // seeds, flashpoint, actTwist, weather). onConstruct fires at rival's ordinal
-  // slot so a subsystem plugin's construction draw lands exactly where the old
-  // inline draw did. Reordering here invalidates the entire golden corpus.
-  firePlugins('onConstruct', state, rng); // rival plugin (Phase 4.3)
-  state.seeds = PACK.rollSeeds(rng, CONFIG.seedCount); // Story Seeds (R1)
+  // Seeded construction draws, in FROZEN order (chartSeed above, then rival via
+  // onConstruct, seeds, flashpoint, actTwist; the weather draw now lands at the
+  // onRunStart tail). A subsystem's construction draw lands exactly where the
+  // old inline draw did; reordering here invalidates the entire golden corpus.
+  firePlugins('onConstruct', state, rng); // rival draw, then the seeds draw
   // Rush: ~25% of runs schedule one flashpoint (U2); ~20% bend an act (U5)
   state.flashpointAt = rng() < CONFIG.flashpointChance
     ? randInt(rng, CONFIG.flashpointWindow[0], CONFIG.flashpointWindow[1]) : null;
   state.actTwist = rng() < CONFIG.actTwistChance
     ? { act: randInt(rng, 2, 3), delta: rng() < 0.5 ? -CONFIG.actTwistDelta : CONFIG.actTwistDelta }
     : null;
-  state.weather = PACK.rollWeather(rng); // Scene Weather (M2)
   if (inst) {
     for (const [k, v] of Object.entries(inst.modifiers || {})) {
-      if (k in state.stats) state.stats[k] = clamp(state.stats[k] + v, 1, 100);
+      if (k in state.stats) state.stats[k] = clamp(state.stats[k] + (v as number), 1, 100);
     }
   }
   // Career Wall perks: always-on run-start bonuses. Pack-declared (D.1) — the
@@ -262,189 +194,13 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
   // touch independent fields, so order is immaterial (byte-green).
   state.perks = perks;
   for (const p of activePerks(state)) p.onRunStart?.(state);
-  state.money += PACK.weatherHooks(state).startMoney || 0; // Scene Weather walk-in
-  // Run-start subsystem hook (fired here, at the tail of construction, so any
-  // seeded draw lands where the old inline notebook-perk draw did). The songs
-  // subsystem mints the Old Notebook's opening demo — song naming lives with
-  // the songs plugin now, so the engine no longer imports charts.ts.
+  // Run-start subsystem hook, fired at the tail of construction. The weather
+  // plugin draws the era here and pays its walk-in bonus (no rng is consumed
+  // between the old inline weather draw and this point in the golden corpus, so
+  // the era lands at the same ordinal); the songs plugin mints the Old
+  // Notebook's opening demo. Seeded draws land where the old inline ones did.
   firePlugins('onRunStart', state, rng);
   return state;
-}
-
-// ---------- Songs (first-class citizens) ----------
-// A song is written (demo), released (charting), climbs or fades. The Hot 10
-// ticks at every act break and the finale: position comes from quality +
-// hype + fame, hype decays, peaks are recorded, and cracking the top 3
-// crowns the song — THAT is what the hits counter counts from now on.
-
-export function ensureSongs(state) {
-  if (!state.songs) state.songs = [];
-  // migrate old saves: chart titles become charting songs
-  if (!state.songs.length && (state.chartTitles || []).length) {
-    for (const title of state.chartTitles) {
-      state.songs.push({
-        id: 'legacy_' + state.songs.length, title, quality: 58, hype: 40,
-        status: 'charting', origin: null, act: state.act,
-        pos: null, prevPos: null, peak: null, weeks: 0, crowned: false,
-      });
-    }
-    positionAll(state);
-  }
-  return state.songs;
-}
-
-function positionSong(state, s, rng) {
-  const power = s.quality * 0.45 + s.hype * 0.35 + Math.min(100, state.fame) * 0.25 + (rng() * 16 - 8);
-  if (power >= 88) return 1;
-  if (power < 30) return null;
-  return Math.max(1, Math.min(10, Math.round(11 - power / 9)));
-}
-
-function positionAll(state) {
-  const rng = stateRng(state);
-  for (const s of state.songs) {
-    if (s.status !== 'charting') continue;
-    s.pos = positionSong(state, s, rng);
-  }
-}
-
-export function addSong(state, { title, quality, origin = null, status = 'demo', hype = 0 }) {
-  ensureSongs(state);
-  const s: Song = {
-    id: 'song_' + (state.songs.length + 1) + '_' + (state.rngUses || 0),
-    title, quality: clamp(Math.round(quality), 1, 100), hype: clamp(Math.round(hype), 0, 100),
-    status: status as Song['status'], origin, act: state.act,
-    pos: null, prevPos: null, peak: null, weeks: 0, crowned: false,
-  };
-  state.songs.push(s);
-  // keep the legacy list in sync (discography, older UI paths)
-  state.chartTitles = state.chartTitles || [];
-  if (!state.chartTitles.includes(title)) state.chartTitles.unshift(title);
-  if (status === 'charting') debutSong(state, s);
-  return s;
-}
-
-export function releaseSong(state, songId, hype = 55) {
-  ensureSongs(state);
-  const s = state.songs.find((x) => x.id === songId);
-  if (!s || s.status === 'charting') return null;
-  s.status = 'charting';
-  // Scene Weather: some eras are kind to release day (Vinyl Revival…)
-  s.hype = clamp(Math.round(hype + (PACK.weatherHooks(state).releaseHype || 0)), 0, 100);
-  debutSong(state, s);
-  return s;
-}
-
-function debutSong(state, s) {
-  const rng = stateRng(state);
-  s.releasedAct = state.act; // The Deadline contract audits this
-  s.pos = positionSong(state, s, rng);
-  // U4: the overnight-viral jackpot — 1 in 20 releases catches the wave.
-  // Charts are the game's natural slot machine; this is the triple-7s.
-  if (s.pos && !state.tutorial && rng() < CONFIG.viralChance) {
-    s.viral = true;
-    s.hype = clamp(s.hype + 30, 0, 100);
-    s.pos = Math.max(1, s.pos - CONFIG.viralPosBoost);
-  }
-  if (s.pos) {
-    s.weeks = 1;
-    s.peak = s.pos;
-    crownCheck(state, s);
-  }
-}
-
-// The Deadline contract: a song must ship every act. Called at each act
-// break (auditing the act that just ended) and once more at the finale.
-export function deadlineAudit(state, act) {
-  if (!contractMods(state).releaseDeadline) return [];
-  const shipped = (state.songs || []).some((s) => s.releasedAct === act);
-  if (shipped) return [`📠 The Deadline: act ${act} shipped. The label is quiet, which is love.`];
-  state.fame = Math.max(0, state.fame - 8);
-  state.stats.cred = clamp(state.stats.cred - 4, 0, 100);
-  return [`📠 The Deadline: nothing shipped in act ${act}. The label notes the silence. −8 Fame, −4 Cred`];
-}
-
-function crownCheck(state, s, notes?) {
-  if (s.pos && s.pos <= 3 && !s.crowned) {
-    s.crowned = true;
-    state.hits += 1;
-    if (notes) notes.push(`♪ “${s.title}” cracks the top 3 — that’s a HIT`);
-    return true;
-  }
-  return false;
-}
-
-// One chart week passes: act breaks and the finale call this. Returns notes
-// (strings) and records the structured week on state.lastChartWeek so the
-// act interstitial can stage it as a real moment (resume-safe: plain data).
-export function chartTick(state) {
-  ensureSongs(state);
-  const rng = stateRng(state);
-  const notes = [];
-  const moves = [];
-  for (const s of state.songs) {
-    if (s.status !== 'charting') continue;
-    s.prevPos = s.pos ?? null;
-    s.pos = positionSong(state, s, rng);
-    if (s.pos) {
-      s.weeks += 1;
-      if (s.peak == null || s.pos < s.peak) s.peak = s.pos;
-      if (crownCheck(state, s, notes)) {
-        moves.push({ title: s.title, kind: 'crown', from: s.prevPos, to: s.pos, weeks: s.weeks });
-      } else if (!s.prevPos) {
-        notes.push(`♪ “${s.title}” debuts at #${s.pos}`);
-        moves.push({ title: s.title, kind: 'debut', from: null, to: s.pos, weeks: s.weeks });
-      } else if (s.pos < s.prevPos) {
-        notes.push(`♪ “${s.title}” climbs to #${s.pos}`);
-        moves.push({ title: s.title, kind: 'climb', from: s.prevPos, to: s.pos, weeks: s.weeks });
-      } else if (s.pos > s.prevPos) {
-        notes.push(`♪ “${s.title}” slips to #${s.pos}`);
-        moves.push({ title: s.title, kind: 'slip', from: s.prevPos, to: s.pos, weeks: s.weeks });
-      } else {
-        moves.push({ title: s.title, kind: 'hold', from: s.prevPos, to: s.pos, weeks: s.weeks });
-      }
-    } else {
-      if (s.prevPos) {
-        notes.push(`♪ “${s.title}” drops off the Hot 10 after ${s.weeks} week${s.weeks === 1 ? '' : 's'}`);
-        moves.push({ title: s.title, kind: 'drop', from: s.prevPos, to: null, weeks: s.weeks });
-      }
-      s.status = 'faded';
-    }
-    s.hype = Math.round(s.hype * 0.55);
-  }
-  // The chart war: your best song vs the rival's single, same ten slots
-  const best = state.songs.filter((s) => s.status === 'charting' && s.pos)
-    .sort((a, b) => a.pos - b.pos)[0];
-  if (best) {
-    const rp = rivalChartPos(state);
-    if (best.pos < rp && !state.flags.includes('chart_passed_rival')) {
-      state.flags.push('chart_passed_rival');
-      notes.push(`♪ “${best.title}” passes your rival on the chart. First blood.`);
-      moves.push({ title: best.title, kind: 'rivalPassed', from: rp, to: best.pos, weeks: best.weeks });
-    } else if (Math.abs(best.pos - rp) === 1) {
-      moves.push({ title: best.title, kind: 'rivalNeck', from: rp, to: best.pos, weeks: best.weeks });
-    }
-  }
-  state.lastChartWeek = moves.length ? { act: state.act, moves } : null;
-  return notes;
-}
-
-// Where the rival's single sits on the Hot 10 (shared with charts.js so the
-// rendered chart and the chart-war logic never disagree): they start high
-// and sink as your fame grows — but a hot rivalry keeps them sharp.
-export function rivalChartPos(state) {
-  return Math.max(1, Math.min(10,
-    9 - Math.floor(state.fame / 22) - Math.floor((state.rivalry ?? 3) / 3)));
-}
-
-// The song most worth talking about right now (for {song} templating)
-export function flagshipSong(state) {
-  ensureSongs(state);
-  const charting = state.songs.filter((s) => s.status === 'charting' && s.pos);
-  if (charting.length) return charting.sort((a, b) => a.pos - b.pos)[0];
-  const demos = state.songs.filter((s) => s.status === 'demo');
-  if (demos.length) return demos[demos.length - 1];
-  return state.songs[state.songs.length - 1] || null;
 }
 
 // The First Gig: a scripted 9-card onboarding run. Fixed teaching stats so
@@ -463,15 +219,12 @@ export function newTutorialRun(pack: Pack, rng = Math.random) {
   return state;
 }
 
-// Comeback Mode (unlocked by any Success): start as a faded name.
-// Fame and contacts arrive pre-loaded; cred and burnout arrive bruised.
+// Comeback Mode (unlocked by any Success): start as a faded name. The transform
+// itself hardcodes music stats (cred/network), so it's a pack-provided
+// capability (WP3) — the engine only dispatches to it, naming no stat. A pack
+// without a comeback mode omits it and this is a no-op.
 export function applyComeback(state) {
-  state.fame = 45;
-  state.money = 300;
-  state.stats.cred = Math.max(8, state.stats.cred - 8);
-  state.stats.network = clamp(state.stats.network + 15, 1, 100);
-  state.stats.burnout = 25;
-  if (!state.flags.includes('comeback')) state.flags.push('comeback');
+  PACK.comeback?.(state);
 }
 
 // Instrument mastery (earned across runs): +level to every core stat
@@ -482,17 +235,9 @@ export function applyMastery(state, level) {
   for (const k of stats()) state.stats[k] = clamp(state.stats[k] + lv, 1, 100);
 }
 
-export function signContract(state, contractId) {
-  state.contract = contractId;
-  const mods = contractMods(state);
-  if (mods.startMoney !== undefined) state.money = mods.startMoney;
-  // e.g. The Handshake Loan: walk in flush, walk in owing (debt fail-state armed)
-  if (mods.startFlag && !state.flags.includes(mods.startFlag)) state.flags.push(mods.startFlag);
-}
-
 // ---------- Deck assembly (spec §8.4) ----------
 
-function actMatches(ev, act) {
+export function actMatches(ev, act) {
   return Array.isArray(ev.act) ? ev.act.includes(act) : ev.act === act;
 }
 
@@ -500,51 +245,69 @@ function meetsRequires(ev, state) {
   return requiresOk(ev.requires, state);
 }
 
-function requiresOk(r, state) {
+// The neutral keys requiresOk resolves inline; everything else is dispatched to
+// a pack-registered predicate (WP1). Kept in sync with the core Requires type.
+const REQUIRES_NEUTRAL = new Set([
+  'anyOf', 'flagsAll', 'flagsNone', 'moneyMax', 'moneyMin', 'burnoutMin',
+  'stats', 'min', 'max',
+]);
+
+// The merged predicate registry for the active pack (WP1 — the sibling of the
+// effectVerbs registry). Each plugin's `requires` map contributes its keys;
+// requiresOk dispatches an unknown key here. Memoized per pack — building it is
+// cheap but this sits in the deck hot path. A key two plugins both claim is an
+// authoring conflict, but last-wins is harmless (packs don't collide).
+let _reqPredsFor: Pack | null = null;
+let _reqPreds: Record<string, (state: any, arg: any) => boolean> = {};
+function requiresPredicates(): Record<string, (state: any, arg: any) => boolean> {
+  if (_reqPredsFor === PACK) return _reqPreds;
+  const preds: Record<string, (state: any, arg: any) => boolean> = {};
+  for (const p of orderedPlugins()) {
+    if (p.requires) for (const [k, fn] of Object.entries(p.requires)) preds[k] = fn;
+  }
+  _reqPredsFor = PACK;
+  _reqPreds = preds;
+  return preds;
+}
+
+// Evaluate a Requires gate. Exported as a plugin-facing service so a subsystem
+// (seeds) can test its own arc-lit conditions with the same semantics.
+export function requiresOk(r, state) {
   if (!r) return true;
   // anyOf: alternative gates — the card fires if ANY branch is satisfied
   // (e.g. nemesis_soundcheck accepts a cross-run nemesis OR an in-run feud)
   if (r.anyOf && !r.anyOf.some((alt) => requiresOk(alt, state))) return false;
-  if (r.nemesis && !state.nemesis) return false;
-  if (r.weatherIs && state.weather !== r.weatherIs) return false;
   if (r.flagsAll && !r.flagsAll.every((f) => state.flags.includes(f))) return false;
   if (r.flagsNone && r.flagsNone.some((f) => state.flags.includes(f))) return false;
   if (r.moneyMax !== undefined && state.money > r.moneyMax) return false;
   if (r.moneyMin !== undefined && state.money < r.moneyMin) return false;
   if (r.burnoutMin !== undefined && state.stats.burnout < r.burnoutMin) return false;
-  if (r.fameMin !== undefined && state.fame < r.fameMin) return false;
-  if (r.fameMax !== undefined && state.fame > r.fameMax) return false;
-  if (r.gear && !r.gear.every((g) => state.accessories.includes(g))) return false;
-  if (r.rivalryMin !== undefined && (state.rivalry ?? 0) < r.rivalryMin) return false;
-  if (r.rivalryMax !== undefined && (state.rivalry ?? 0) > r.rivalryMax) return false;
-  if (r.genreAny && !state.genre) return false;
-  if (r.venueAny && !state.venue) return false;
-  if (r.venueLevelMin !== undefined && (!state.venue || (state.venueLevel || 0) < r.venueLevelMin)) return false;
-  if (r.venueIs && state.venue !== r.venueIs) return false;
-  if (r.rivalIs && state.rival !== r.rivalIs) return false;
-  if (r.venueNone && state.venue) return false;
-  if (r.hustleMin !== undefined && (state.hustles || []).length < r.hustleMin) return false;
-  if (r.bandMin !== undefined && (state.band || []).length < r.bandMin) return false;
-  if (r.bandMax !== undefined && (state.band || []).length > r.bandMax) return false;
-  if (r.bandHas && !(state.band || []).includes(r.bandHas)) return false;
-  if (r.demoMin !== undefined && (state.songs || []).filter((s) => s.status === 'demo').length < r.demoMin) return false;
-  if (r.chartingMin !== undefined && (state.songs || []).filter((s) => s.status === 'charting' && s.pos).length < r.chartingMin) return false;
-  if (r.songsMin !== undefined && (state.songs || []).length < r.songsMin) return false;
-  if (r.fadedMin !== undefined && (state.songs || []).filter((s) => s.status === 'faded' && s.peak).length < r.fadedMin) return false;
+  // Generic stat/resource gates, resolved through gateValue for ANY manifest
+  // key: `stats` uses the legacy `{ <key>Min: n }` shape; `min`/`max` the plain
+  // `{ <key>: n }` form. No genre's key is named.
   if (r.stats) {
     for (const [key, val] of Object.entries(r.stats)) {
-      const stat = key.replace(/Min$/, '');
-      const cur = gateValue(state, stat);
-      if (cur < (val as number)) return false;
+      if (gateValue(state, key.replace(/Min$/, '')) < (val as number)) return false;
     }
   }
+  if (r.min) {
+    for (const [key, val] of Object.entries(r.min)) if (gateValue(state, key) < (val as number)) return false;
+  }
+  if (r.max) {
+    for (const [key, val] of Object.entries(r.max)) if (gateValue(state, key) > (val as number)) return false;
+  }
+  // Every other key is a subsystem predicate the owning plugin registered
+  // (WP1). Consumes no rng, returns a plain boolean — so the gate is a pure
+  // conjunction and evaluation order is immaterial (byte-green). An unregistered
+  // key is a no-op here and is caught structurally by the "requires key owned"
+  // invariant.
+  const preds = requiresPredicates();
+  for (const key of Object.keys(r)) {
+    if (REQUIRES_NEUTRAL.has(key)) continue;
+    const pred = preds[key];
+    if (pred && !pred(state, (r as any)[key])) return false;
+  }
   return true;
-}
-
-// Is a story arc's condition satisfied for this run? (sim + UI reporting)
-export function arcLit(state, arcId) {
-  const arc = PACK.arcById(arcId);
-  return !!arc && requiresOk(arc.lit, state);
 }
 
 function pathEligible(ev, state) {
@@ -600,23 +363,10 @@ export function drawNextCard(state, rng = Math.random) {
       const shops = pool.filter((e) => e.shop);
       if (shops.length) pool = shops;
     }
-    // Story Seeds (R1): an unlit seeded arc gets its setup card dealt on
-    // schedule — same mechanism as the shop slot. Acts 1–2 only (an arc
-    // seeded in act 3 could never pay off).
-    if (!shopDue && !state.tutorial && state.act <= 2 &&
-        state.cardsPlayedInAct >= (CONFIG.seedSetupSlot[state.act] ?? 99)) {
-      const due = [];
-      for (const arcId of state.seeds || []) {
-        const arc = PACK.arcById(arcId);
-        if (!arc || requiresOk(arc.lit, state)) continue; // already lit
-        if (arc.setup.some((id) => state.usedEvents.includes(id))) continue; // setup came & went
-        due.push(...arc.setup);
-      }
-      if (due.length) {
-        const setups = pool.filter((e) => due.includes(e.id));
-        if (setups.length) pool = setups;
-      }
-    }
+    // Scheduled subsystem forcing (Story Seeds R1): an unlit seeded arc gets its
+    // setup card dealt on schedule, same mechanism as the shop slot above. The
+    // seeds plugin owns the arc data; the engine just gives it the slot.
+    pool = foldDeckPool(state, pool, { shopDue });
     // U3 spotlight: while ON A ROLL, the deck leans all the way into
     // what this player has never seen — streaks are for discovering.
     if (streakHot && !shopDue && state.seenCards) {
@@ -625,32 +375,21 @@ export function drawNextCard(state, rng = Math.random) {
       if (unseen.length) pool = unseen;
     }
   }
-  // Lit seeded arcs: their payoff cards draw hot for the rest of the run.
-  // Unlit ones: their setups draw warm even before the guaranteed slot.
-  const litPayoffs = new Set();
-  const warmSetups = new Set();
-  for (const arcId of state.seeds || []) {
-    const arc = PACK.arcById(arcId);
-    if (!arc) continue;
-    if (requiresOk(arc.lit, state)) for (const id of arc.payoffs) litPayoffs.add(id);
-    else for (const id of arc.setup) warmSetups.add(id);
-  }
   // Personal novelty (R2): cards THIS player has never seen draw heavier.
   // On a first install everything is unseen, so nothing shifts.
   const seen = state.seenCards ? new Set(state.seenCards) : null;
-  // Scene Weather (M2): the mutator recolors the deck itself
-  const wMults = PACK.weatherHooks(state).weightTagMult || [];
   let total = 0;
   const weights = pool.map((ev) => {
     const affine = ev.pathAffinity && ev.pathAffinity.includes(state.path);
     let w = (ev.weight || 1) *
       (affine ? CONFIG.pathWeightMult : 1) *
-      (litPayoffs.has(ev.id) ? CONFIG.seedPayoffMult : 1) *
-      (warmSetups.has(ev.id) ? CONFIG.seedSetupMult : 1) *
       (seen && !seen.has(ev.id) ? CONFIG.noveltyWeightMult : 1);
-    for (const wm of wMults) {
-      if (tagsIntersect(wm.tags, ev.tags || [])) w *= wm.mult;
-    }
+    // Subsystem deck bias (seeded-arc payoff/setup boost, then the weather
+    // era's recolor), folded in after the core path/novelty factors — the same
+    // slot the inline seed/weather multipliers sat. In the golden corpus the
+    // novelty factor is always 1 (seenCards unset), so the ×1 is a true no-op
+    // and this grouping is byte-exact with the old inline order.
+    w = foldDeckWeight(state, ev, w);
     total += w;
     return w;
   });
@@ -665,16 +404,6 @@ export function drawNextCard(state, rng = Math.random) {
 }
 
 // ---------- Resolution (spec §4.1) ----------
-
-function equippedAccessories(state) {
-  return state.accessories.map(PACK.accessoryById).filter(Boolean);
-}
-
-function accessoryActive(acc, state) {
-  if (acc.compatibility?.universal) return true;
-  const inst = PACK.instrumentById(state.instrument);
-  return !!inst && (acc.compatibility?.families || []).includes(inst.family);
-}
 
 export function tagsIntersect(a, b) {
   return a && b && a.some((t) => b.includes(t));
@@ -708,6 +437,62 @@ function firePlugins(hook: PluginHook, ...args: any[]): void {
   }
 }
 
+// ── The neutral modify-hook folds (WP6-infra). Each gathers a subsystem's
+// contribution at the exact site the old inline code sat, in registration
+// order — so a subsystem stops being named by the core without moving any draw. ──
+
+// Additive roll bonus summed across plugins (gear/genre/band/weather/contract).
+function sumRollBonus(state, choice, ctx): number {
+  let bonus = 0;
+  for (const p of orderedPlugins()) bonus += p.modifyRoll?.(state, choice, ctx) ?? 0;
+  return bonus;
+}
+// Fold each plugin's jitter transform (contract override → weather widen).
+function foldJitter(state, jitter: [number, number], ctx): [number, number] {
+  for (const p of orderedPlugins()) if (p.modifyJitter) jitter = p.modifyJitter(state, jitter, ctx);
+  return jitter;
+}
+// The per-resolution gain-hook bags a subsystem contributes (contract, weather),
+// applied by the stat/burnout loops after the instrument's own (core).
+function gainBags(state): any[] {
+  const bags: any[] = [];
+  for (const p of orderedPlugins()) { const b = p.gainHooks?.(state); if (b) bags.push(b); }
+  return bags;
+}
+// Does any subsystem disable the Encore mechanic this run?
+function encoreDisabled(state): boolean {
+  for (const p of orderedPlugins()) if (p.blocksEncore?.(state)) return true;
+  return false;
+}
+// Fold each plugin's burnout-delta adjustment (gear tag mults + side effects),
+// between the instrument's own burnout hooks and the contract/weather mults.
+function foldBurnout(state, v: number, ctx): number {
+  for (const p of orderedPlugins()) if (p.modifyBurnout) v = p.modifyBurnout(state, v, ctx);
+  return v;
+}
+// Fold each plugin's deck-weight multiplier (weather recolor, seeded-arc bias).
+function foldDeckWeight(state, ev, weight: number): number {
+  for (const p of orderedPlugins()) if (p.weightDeck) weight = p.weightDeck(state, ev, weight);
+  return weight;
+}
+// Let each plugin force a scheduled category into the draw pool (seed setup slot).
+function foldDeckPool(state, pool, ctx): any[] {
+  for (const p of orderedPlugins()) if (p.refineDeck) pool = p.refineDeck(state, pool, ctx);
+  return pool;
+}
+// Product of each plugin's Legacy Points multiplier (contract, weather). Starts
+// at 1 (identity), so the accumulation is byte-exact with the old `mult *= …`.
+function scoreMult(state): number {
+  let mult = 1;
+  for (const p of orderedPlugins()) mult *= p.scoreMult?.(state) ?? 1;
+  return mult;
+}
+// Fold each plugin's act-length override (a contract can shorten an act).
+function foldActLength(state, act, base: number): number {
+  for (const p of orderedPlugins()) if (p.modifyActLength) base = p.modifyActLength(state, act, base);
+  return base;
+}
+
 // ---------- Perks (Career-Wall modifiers, pack-declared — D.1) ----------
 // The active run's perk definitions, looked up from the pack's perk table. The
 // engine no longer knows any perk id; it sums/applies whatever the perks
@@ -736,54 +521,42 @@ export function rollComponents(state, choice, opts: any = {}) {
   }
   const aptitude = wsum ? sum / wsum : 30;
 
-  let gearBonus = 0;
-  const applied = []; // accessories whose modifier fired (for side effects)
-  for (const acc of equippedAccessories(state)) {
-    if (!accessoryActive(acc, state)) continue;
-    if (acc.modifier && (acc.appliesTo?.includes('*') || tagsIntersect(acc.appliesTo, choice.tags))) {
-      gearBonus += acc.modifier;
-      applied.push(acc);
-    }
-    for (const ct of acc.counterTags || []) {
-      if (tagsIntersect(ct.tags, choice.tags)) gearBonus += ct.modifier;
-    }
-  }
+  // Gear whose roll bonus fired this card (for lose-on-bad + burnout side
+  // effects). The gear plugin's modifyRoll pushes onto this via rollCtx.applied.
+  const applied = [];
 
   const inst = PACK.instrumentById(state.instrument);
   let quirkBonus = 0;
+  // The instrument's tag bonus is core (the loadout is core); genre and band
+  // tag bonuses fold in via modifyRoll below (genre/band plugins).
   for (const tb of inst?.quirk?.hooks?.rollTagBonus || []) {
-    if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
-  }
-  for (const gb of PACK.genreById(state.genre)?.bonuses || []) {
-    if (tagsIntersect(gb.tags, choice.tags)) quirkBonus += gb.bonus;
-  }
-  for (const bid of state.band || []) {
-    const bm = PACK.bandmateById(bid);
-    if (bm && tagsIntersect(bm.bonus.tags, choice.tags)) quirkBonus += bm.bonus.bonus;
-  }
-
-  const wHooks = PACK.weatherHooks(state);
-  for (const tb of wHooks.rollTagBonus || []) {
     if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
   }
 
   const burnoutPenalty = -(state.stats.burnout * CONFIG.burnoutCoeff);
   const pityPer = CONFIG.pityPerBad + perkSum(state, 'pityPerBonus');
   const pityBonus = Math.min((state.badStreak || 0) * pityPer, CONFIG.pityCap + perkSum(state, 'pityCapBonus'));
-  const cMods = contractMods(state);
-  // Contract clauses can bend tag-matched rolls (Stage Fright, Analog Only…)
-  for (const tb of cMods.rollTagBonus || []) {
-    if (tagsIntersect(tb.tags, choice.tags)) quirkBonus += tb.bonus;
-  }
-  const encoreBonus = opts.encore && !cMods.disableEncore ? CONFIG.encoreBonus : 0;
+  // Subsystem roll bonuses (contract clauses; genre/band/weather/gear follow),
+  // folded in at the old inline slot in registration order. `rollCtx.applied`
+  // is where the gear plugin records the accessories whose bonus fired.
+  const rollCtx: any = { applied, tags: choice.tags };
+  const pluginRollBonus = sumRollBonus(state, choice, rollCtx);
+  const encoreBonus = opts.encore && !encoreDisabled(state) ? CONFIG.encoreBonus : 0;
   // Performance bonus: a minigame result (UI-side skill) folded into the roll
   const perfBonus = opts.bonus || 0;
-  let jitter = cMods.jitter || inst?.quirk?.hooks?.jitter ||
+  // Base jitter is the instrument's or the per-act default; a subsystem may
+  // override it (contract) or widen it (weather) via modifyJitter, in
+  // registration order (contract override before weather widen).
+  let jitter: [number, number] = inst?.quirk?.hooks?.jitter ||
     CONFIG.jitterByAct?.[state.act] || [CONFIG.jitterMin, CONFIG.jitterMax];
-  if (wHooks.jitterWiden) jitter = [jitter[0] - wHooks.jitterWiden, jitter[1] + wHooks.jitterWiden];
+  jitter = foldJitter(state, jitter, rollCtx);
+  // The instrument's quirk bonus is core; every subsystem bonus (gear, genre,
+  // band, weather, contract) is folded in via pluginRollBonus. All are integers,
+  // so this sums identically to the old gearBonus + quirkBonus regardless of
+  // grouping (byte-green).
   const base = CONFIG.rollBase + aptitude * CONFIG.aptitudeScale +
-    gearBonus + quirkBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
-  return { aptitude, gearBonus, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
+    quirkBonus + pluginRollBonus + burnoutPenalty + pityBonus + encoreBonus + perfBonus;
+  return { aptitude, quirkBonus, burnoutPenalty, pityBonus, encoreBonus, perfBonus, base, jitter, appliedAccessories: applied };
 }
 
 // The keys an INCREDIBLE payload scales (§2E): every core stat the pack
@@ -820,7 +593,7 @@ export function choiceOdds(state, choice, opts: any = {}) {
 export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   const ev = findEvent(state.currentEventId);
   const choice = ev.choices[side];
-  const useEncore = !!opts.encore && (state.encore || 0) > 0 && !contractMods(state).disableEncore;
+  const useEncore = !!opts.encore && (state.encore || 0) > 0 && !encoreDisabled(state);
   if (useEncore) state.encore -= 1;
 
   // Shop affordability: a declined card is comedy, not a roll (spec §8 shop note)
@@ -830,7 +603,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     const result: any = {
       tier: 'declined',
       text: 'Your card declines with an audible, judgmental beep. You pretend you “forgot your other wallet.” Everyone pretends to believe you.',
-      deltas: applyEffects(state, { cred: -2 }, ev, choice, rng),
+      deltas: applyEffects(state, PACK.manifest.declinePenalty || {}, ev, choice, rng),
       event: ev, side,
     };
     finishCard(state, ev);
@@ -856,7 +629,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   (state.cardLog = state.cardLog || []).push({ e: ev.id, t: tier, a: state.act, s: side });
   let encoreEarned = false;
   const encoreCap = CONFIG.encoreCap + perkSum(state, 'encoreCapBonus');
-  if (tier === 'incredible' && (state.encore || 0) < encoreCap && !contractMods(state).disableEncore) {
+  if (tier === 'incredible' && (state.encore || 0) < encoreCap && !encoreDisabled(state)) {
     state.encore = (state.encore || 0) + 1;
     encoreEarned = true;
   }
@@ -864,7 +637,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   // U3: riding the streak — an armed Encore that lands INCREDIBLE while
   // ON A ROLL refunds its token on top of the normal earn, cap be damned.
   let encoreRefunded = false;
-  if (streakWasHot && useEncore && tier === 'incredible' && !contractMods(state).disableEncore) {
+  if (streakWasHot && useEncore && tier === 'incredible' && !encoreDisabled(state)) {
     state.encore = (state.encore || 0) + 1;
     encoreRefunded = true;
   }
@@ -990,50 +763,45 @@ function finishCard(state, ev) {
   state.currentEventId = null;
 }
 
-// Applies an effects payload; returns display deltas [{key, amount}].
-function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories = [], mg = null) {
+// Applies an effects payload; returns display deltas [{key, amount}]. Exported
+// as a plugin-facing service so a subsystem (gear) can apply an accessory's
+// onAcquire payload with the full resolution pipeline.
+export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories = [], mg = null) {
   const deltas: any = [];
   const inst = PACK.instrumentById(state.instrument);
   const hooks: Record<string, any> = inst?.quirk?.hooks || {};
-  const accs = equippedAccessories(state).filter((a) => accessoryActive(a, state));
   const tags = choice?.tags || [];
 
   const push = (key, amount) => { if (amount) deltas.push({ key, amount }); };
 
-  const cMods = contractMods(state);
-  const wHooks = PACK.weatherHooks(state);
+  // Per-resolution gain-multiplier bags a subsystem contributes (contract, then
+  // weather, in registration order), applied by the stat/burnout loops right
+  // after the instrument's own (which is core — instruments are core). The core
+  // keeps the multiplier MECHANIC; the SOURCES are plugins (WP6-infra).
+  const bags = gainBags(state);
   for (const stat of stats()) {
     let v = effects[stat] || 0;
     if (!v) continue;
-    // Positive stat gains scale by instrument, contract, then weather
-    // multipliers — all generic per-stat (D.4: was a hardcoded `cred`
-    // special-case; instruments/contracts now declare statGainMult like
-    // weather already did, so any stat can be bent, not just music's cred).
+    // Positive stat gains scale by the instrument (core), then each subsystem's
+    // per-stat multiplier — all generic, no stat named.
     if (v > 0 && hooks.statGainMult?.[stat]) v = Math.round(v * hooks.statGainMult[stat]);
-    if (v > 0 && cMods.statGainMult?.[stat]) v = Math.round(v * cMods.statGainMult[stat]);
-    if (v > 0 && wHooks.statGainMult?.[stat]) v = Math.round(v * wHooks.statGainMult[stat]);
+    for (const bag of bags) if (v > 0 && bag.statGainMult?.[stat]) v = Math.round(v * bag.statGainMult[stat]);
     const before = state.stats[stat];
     state.stats[stat] = clamp(before + v, 0, 100);
     push(stat, state.stats[stat] - before);
   }
 
-  // Burnout: quirk + accessory multipliers on tag-matched gains, plus per-use
-  // side effects and passive act wear
+  // Burnout: the instrument's tag multiplier (core), then subsystem adjustments
+  // (gear's tag mults + per-match side effects via modifyBurnout), the
+  // instrument's live-show cost (core), then the contract/weather gain/heal
+  // multipliers (gainHooks), and the perk heal — plus passive act wear.
   {
     let v = (effects.burnout || 0) + (ev ? (CONFIG.actWear[state.act] || 0) : 0);
-    if (v > 0) {
-      if (hooks.burnoutTagMult && tagsIntersect(hooks.burnoutTagMult.tags, tags)) v *= hooks.burnoutTagMult.mult;
-      for (const acc of accs) {
-        if (acc.burnoutTagMult && tagsIntersect(acc.burnoutTagMult.tags, tags)) v *= acc.burnoutTagMult.mult;
-      }
-    }
-    for (const acc of appliedAccessories) {
-      if (acc.sideEffect?.burnoutPerMatch) v += acc.sideEffect.burnoutPerMatch;
-    }
+    if (v > 0 && hooks.burnoutTagMult && tagsIntersect(hooks.burnoutTagMult.tags, tags)) v *= hooks.burnoutTagMult.mult;
+    v = foldBurnout(state, v, { tags, appliedAccessories });
     if (hooks.liveBurnout && tags.includes('live')) v += hooks.liveBurnout;
-    if (v > 0 && cMods.burnoutGainMult) v *= cMods.burnoutGainMult;
-    if (v > 0 && wHooks.burnoutGainMult) v *= wHooks.burnoutGainMult;
-    if (v < 0 && cMods.burnoutHealMult) v *= cMods.burnoutHealMult;
+    for (const bag of bags) if (v > 0 && bag.burnoutGainMult) v *= bag.burnoutGainMult;
+    for (const bag of bags) if (v < 0 && bag.burnoutHealMult) v *= bag.burnoutHealMult;
     if (v < 0) v *= perkMult(state, 'burnoutHealMult');
     v = Math.round(v);
     if (v) {
@@ -1043,157 +811,35 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
     }
   }
 
-  // Resource pass (Phase 3.2): iterate the pack's declared resources in order.
-  // Each keeps its own arithmetic (RESOURCE_APPLY); 'hits' is the songs
-  // subsystem, applied inline here (extracted in Phase 4.5). Order is the
-  // manifest's, matching the old block order fame → money → hits →
-  // pathProgress → rivalry, so deltas and RNG-consuming draws don't move.
+  // Resource pass (WP5): iterate the pack's declared resources in manifest
+  // order (so the delta order and the RNG-consuming 'hits' slot don't move),
+  // dispatching each to a plugin's applyResource. The core names NO resource and
+  // owns NO bespoke arithmetic — every clamp/multiplier/siphon (fame≥0, money's
+  // mults+siphon, rivalry's 0–10, the songs 'hits' mint) lives in the pack's
+  // plugins. A resource no plugin claims applies as a plain additive default, so
+  // a novel genre resource (the probe's 'points') isn't silently dropped.
   // Per-resolution plugin context (Phase F): the deltas/hooks/accs/mg the
-  // onEffect handlers read, plus a chartTitleHandled handshake between the
-  // engine's hits block and the songs plugin — carried HERE, not on state
-  // (state._chartTitleHandled was a mutable flag smuggled between the two).
-  const pctx: any = { ev, choice, tier, rng, deltas, hooks, accs, mg, chartTitleHandled: false };
-  const rctx: ResourceCtx = { hooks, cMods, wHooks, accs };
+  // handlers read, plus a chartTitleHandled handshake for the songs plugin.
+  const pctx: any = { ev, choice, tier, rng, deltas, hooks, mg, chartTitleHandled: false };
   for (const res of PACK.manifest.resources) {
-    // 1. Engine-known resources keep their bespoke arithmetic (fame clamps,
-    //    money siphons, rivalry clamps, pathProgress raw add).
-    const fn = RESOURCE_APPLY[res];
-    if (fn) {
-      const d = fn(state, effects[res] || 0, rctx);
-      if (d) push(res, d);
-      continue;
-    }
-    // 2. A subsystem-owned resource (e.g. the songs plugin's 'hits', which mints
-    //    songs and draws RNG) is applied by a plugin AT THIS ORDINAL SLOT — so
-    //    the RNG stream and the delta order match the old inline block exactly
-    //    (byte-green). This is what let the engine stop importing charts.ts:
-    //    the song-minting code (songName/collabArtistFor) lives with the songs
-    //    subsystem now, not the core.
     let handled = false;
     for (const p of orderedPlugins()) {
       const rd = p.applyResource?.(res, effects, state, pctx);
       if (rd !== undefined && rd !== null) { if (rd) push(res, rd); handled = true; break; }
     }
     if (handled) continue;
-    // 3. Generic default: a resource no handler claims applies as a plain add,
-    //    so a novel genre resource (the probe's 'points') isn't silently dropped.
     const v = effects[res] || 0;
     if (v) { state[res] = (state[res] || 0) + v; push(res, v); }
   }
 
-  // Plugin effect handlers (Phase 4.2 venue; Phase 4.5 songs — write/hype/
-  // release/album/polish/chartTitle). Fires here so the songs plugin lands its
-  // effects at the exact spot the old inline block did; deltas/RNG order held.
+  // Subsystem effect handlers, fired at this exact ordinal so their deltas/RNG
+  // land where the old inline blocks did (byte-green): venue (adoptVenue),
+  // songs (write/hype/release/album/polish/chartTitle), loadout (setInstrument),
+  // band roster (grant/removeBandmate), hustle (grantHustle), gear
+  // (grant/removeGear). The core owns only the neutral flag control below (WP4).
   firePlugins('onEffect', state, effects, pctx);
   if (effects.addFlag && !state.flags.includes(effects.addFlag)) state.flags.push(effects.addFlag);
   if (effects.removeFlag) state.flags = state.flags.filter((f) => f !== effects.removeFlag);
-
-  if (effects.setInstrument) {
-    const newInst = PACK.instrumentById(effects.setInstrument);
-    if (newInst && state.instrument !== newInst.id) {
-      state.instrument = newInst.id;
-      state.swappedInstrument = true;
-      deltas.instrumentSet = newInst;
-    }
-  }
-  if (effects.grantBandmate) {
-    state.band = state.band || [];
-    if (state.band.length < 3) {
-      const bm = effects.grantBandmate === 'random'
-        ? PACK.recruitCandidate(state, rng)
-        : (!state.band.includes(effects.grantBandmate) ? PACK.bandmateById(effects.grantBandmate) : null);
-      if (bm) {
-        state.band.push(bm.id);
-        deltas.bandmateJoined = bm;
-      }
-    }
-  }
-  if (effects.removeBandmate) {
-    state.band = state.band || [];
-    if (effects.removeBandmate === 'first') {
-      const gone = PACK.bandmateById(state.band[0]);
-      state.band = state.band.slice(1);
-      if (gone) deltas.bandmateLeft = gone;
-    } else {
-      state.band = state.band.filter((b) => b !== effects.removeBandmate);
-    }
-  }
-  if (effects.grantHustle) {
-    state.hustles = state.hustles || [];
-    if (!state.hustles.includes(effects.grantHustle)) {
-      state.hustles.push(effects.grantHustle);
-      deltas.hustleGained = PACK.hustleById(effects.grantHustle);
-    }
-  }
-  if (effects.removeGear) state.accessories = state.accessories.filter((a) => a !== effects.removeGear);
-  if (effects.grantGear) {
-    if (effects.grantGear === 'random_basic' || effects.grantGear === 'random_good') {
-      // Shops have shelves: offer up to 3 candidates, the player chooses
-      const opts = gearShelf(state, effects.grantGear, rng);
-      if (opts.length > 1) deltas.pendingGearChoices = opts;
-      else if (opts.length === 1) deltas.pendingGear = opts[0];
-    } else {
-      const acc = resolveGearGrant(state, effects.grantGear, rng);
-      if (acc) deltas.pendingGear = acc; // UI equips (or swaps) it; sim auto-equips
-    }
-  }
-  return deltas;
-}
-
-function gearShelf(state, grant, rng = Math.random) {
-  const owned = new Set(state.accessories);
-  const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder', 'merch_cannon', 'cowbell', 'four_track',
-    'gaff_tape', 'tip_qr', 'pocket_metronome', 'lucky_socks', 'thermos', 'demo_trunk'];
-  const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'loop_pedal', 'in_ears', 'cursed_8track', 'stage_fan', 'humidifier', 'publicist_rolodex',
-    'wireless_rig', 'contact_mic', 'stage_cape', 'projector', 'press_pass', 'mascot_head', 'shoebox_archive', 'green_room_kit', 'rice_cooker'];
-  const ids = grant === 'random_basic' ? basics : goods;
-  let pool = ids.filter((id) => !owned.has(id)).map(PACK.accessoryById).filter(Boolean);
-  if (!pool.length) {
-    pool = PACK.accessories.filter((a) => a.unlockedByDefault && !owned.has(a.id));
-  }
-  const shelf = [];
-  const bag = [...pool];
-  while (shelf.length < 3 && bag.length) {
-    shelf.push(bag.splice(Math.floor(rng() * bag.length), 1)[0]);
-  }
-  return shelf;
-}
-
-// Resolves 'random_basic'/'random_good' or a concrete accessory id to an
-// accessory the player doesn't already own.
-function resolveGearGrant(state, grant, rng = Math.random) {
-  const owned = new Set(state.accessories);
-  let candidates;
-  if (grant === 'random_basic' || grant === 'random_good') {
-    const basics = ['lucky_pick', 'loop_pedal', 'in_ears', 'loud_amp', 'field_recorder', 'setlist_binder',
-      'gaff_tape', 'tip_qr', 'pocket_metronome', 'thermos'];
-    const goods = ['pedalboard', 'vintage_mic', 'loud_amp', 'cursed_8track', 'stage_fan', 'in_ears',
-      'wireless_rig', 'contact_mic', 'stage_cape', 'projector'];
-    const ids = grant === 'random_basic' ? basics : goods;
-    candidates = ids.filter((id) => !owned.has(id)).map(PACK.accessoryById).filter(Boolean);
-    if (!candidates.length) {
-      candidates = PACK.accessories.filter((a) => a.unlockedByDefault && !owned.has(a.id));
-    }
-  } else {
-    const acc = PACK.accessoryById(grant);
-    candidates = acc && !owned.has(acc.id) ? [acc] : [];
-  }
-  if (!candidates.length) return null;
-  return candidates[Math.floor(rng() * candidates.length)];
-}
-
-// Equip an accessory (after any UI slot decision). Fires onAcquire effects.
-export function equipAccessory(state, accId, replaceId = null) {
-  if (replaceId) state.accessories = state.accessories.filter((a) => a !== replaceId);
-  if (state.accessories.length >= CONFIG.accessorySlots) return null;
-  state.accessories.push(accId);
-  const acc = PACK.accessoryById(accId);
-  const deltas: any = [];
-  if (acc?.grantsFlag && !state.flags.includes(acc.grantsFlag)) state.flags.push(acc.grantsFlag);
-  if (acc?.onAcquire) {
-    const d = applyEffects(state, acc.onAcquire, null, null, Math.random);
-    deltas.push(...d);
-  }
   return deltas;
 }
 
@@ -1246,52 +892,12 @@ export function commitPath(state, pathId) {
   return startAct(state, 2);
 }
 
-// Story Seeds: a dud seed re-rolls at the Crossroads. If an arc can no
-// longer light (setups spent or act-1-only and gone), the run quietly
-// roots for a different story instead of carrying dead weight into act 2.
-function refreshSeeds(state) {
-  if (!(state.seeds || []).length) return;
-  const rng = stateRng(state);
-  const alive = (arc) =>
-    requiresOk(arc.lit, state) ||
-    arc.setup.some((id) => {
-      const ev = findEvent(id);
-      return ev && !state.usedEvents.includes(id) && actMatches(ev, 2);
-    });
-  const taken = new Set(state.seeds);
-  state.seeds = state.seeds.map((arcId) => {
-    const arc = PACK.arcById(arcId);
-    if (arc && alive(arc)) return arcId;
-    const pool = PACK.arcs.filter((a) => !taken.has(a.id) && alive(a));
-    if (!pool.length) return arcId;
-    const pick = pool[Math.floor(rng() * pool.length)].id;
-    taken.add(pick);
-    return pick;
-  });
-}
-
 function startAct(state, act) {
-  if (act === 2) refreshSeeds(state);
   state.act = act;
   state.cardsPlayedInAct = 0;
   state.shopPlayedInAct = false;
   state.phase = 'card';
   const notes = [];
-  for (const acc of equippedAccessories(state)) {
-    if (acc.upkeep) {
-      state.money -= acc.upkeep;
-      notes.push(`${acc.name}: −$${acc.upkeep} upkeep`);
-    }
-  }
-  for (const id of state.hustles || []) {
-    const h = PACK.hustleById(id);
-    if (h) {
-      const pay = Math.round(h.moneyPerAct * (PACK.weatherHooks(state).hustleMult || 1) *
-        perkMult(state, 'hustleMult'));
-      state.money += pay;
-      notes.push(`${h.icon} ${h.name}: +$${pay}`);
-    }
-  }
   // Career Wall perks that fire at every act break (pack-declared — D.1).
   for (const p of activePerks(state)) p.onActBreak?.(state, notes);
   // Act-break plugins (Phase 4.4 band quirks, then Phase 4.5 songs: deadline
@@ -1307,27 +913,24 @@ function startAct(state, act) {
   return notes;
 }
 
-// Hustles pay out one final time when the career is evaluated
-export function finalePayout(state) {
-  const notes = [];
-  notes.push(...deadlineAudit(state, 3));
-  for (const id of state.hustles || []) {
-    const h = PACK.hustleById(id);
-    if (h) {
-      const pay = Math.round(h.moneyPerAct * (PACK.weatherHooks(state).hustleMult || 1) *
-        perkMult(state, 'hustleMult'));
-      state.money += pay;
-      notes.push(`${h.icon} ${h.name}: +$${pay}`);
-    }
-  }
-  return notes;
-}
-
 export function checkFailStates(state) {
   if (state.tutorial) return null; // the first gig cannot end a career
+  // The one universal fail: the engine owns the burnout slot, so every pack
+  // fails when it maxes out. Everything else is the pack's, declared as
+  // failStates and read generically through gateValue — the core names no
+  // genre's stat (WP3). Rules are evaluated in declared order, after burnout, so
+  // the old burnout → cancelled → debt precedence is preserved by the music
+  // manifest's rule order.
   if (state.stats.burnout >= CONFIG.burnoutFail) return 'burnout';
-  if (state.act >= CONFIG.credFailFromAct && state.stats.cred <= 0) return 'cancelled';
-  if (state.money <= CONFIG.debtFailMoney && state.flags.includes('debt')) return 'debt';
+  for (const rule of PACK.manifest.failStates || []) {
+    if (rule.fromAct !== undefined && state.act < rule.fromAct) continue;
+    if (rule.flag && !state.flags.includes(rule.flag)) continue;
+    const v = gateValue(state, rule.key);
+    const hit = rule.cmp === '<=' ? v <= rule.value
+      : rule.cmp === '>=' ? v >= rule.value
+      : rule.cmp === '<' ? v < rule.value : v > rule.value;
+    if (hit) return rule.ending;
+  }
   return null;
 }
 
@@ -1335,8 +938,10 @@ export function checkFailStates(state) {
 
 export function evaluateFinale(state) {
   state.phase = 'ended';
-  firePlugins('onFinale', state); // songs plugin: one last chart week (Phase 4.5)
-  finalePayout(state);
+  // Finale subsystem hooks: the songs plugin runs one last chart week and the
+  // Deadline's final audit; the hustle plugin pays its last income. All finale
+  // payout lives in the plugins now — the engine owns none of it.
+  firePlugins('onFinale', state);
   const gates = PACK.manifest.winGates[state.path] as Record<string, number>;
   const readings = Object.entries(gates).map(([key, target]) => {
     const value = gateValue(state, key);
@@ -1374,8 +979,10 @@ export function legacyPoints(state) {
   const base = Math.round((state.fame + statSum) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
-  let mult = PACK.contractById(state.contract)?.lpMult || 1;
-  mult *= PACK.weatherHooks(state).lpMult || 1;
+  // Subsystem score multipliers (contract lpMult, weather lpMult), folded in
+  // registration order — the same order the old `mult *= …` used. The comeback
+  // bonus is flag-based and genre-neutral, so it stays core.
+  let mult = scoreMult(state);
   if ((state.flags || []).includes('comeback')) mult *= 1.2;
   return Math.max(1, Math.round((base + bonus) * mult));
 }

@@ -10,17 +10,32 @@
 // manifest actually exists (Phase 2/3); this file types what is real today.
 
 // ---------- Stat / resource taxonomy ----------
-// The four core stats the engine iterates as STATS (burnout is tracked in
-// state.stats too but handled by its own block, not in this list).
-export type StatId = 'skill' | 'cred' | 'creativity' | 'network';
-// Resources with bespoke handlers in applyEffects (Phase 3 genericizes these).
-export type ResourceId = 'fame' | 'money' | 'hits' | 'pathProgress' | 'rivalry';
+// The stat/resource NAMES a run carries are the pack manifest's, not a shared
+// union: a run's stats are Record<string, number> (RunState.stats), read
+// generically off manifest.stats. (The old music-specific StatId/ResourceId
+// unions are gone — WP7 — so the shared types name no genre's stats.)
 export type Tier = 'bad' | 'good' | 'incredible';
 export type Side = 'left' | 'right';
 // forceTier may also script the encore-gated tutorial outcome.
 export type ForceTier = Tier | 'encoreUp';
 
 export interface StatMeta { name: string; icon: string; }
+
+// A pack-declared fail-state rule (WP3): a run ends the moment a stat or
+// resource crosses a threshold. Declared in the manifest so checkFailStates
+// names no genre's stats — the engine owns only the universal burnout fail (its
+// own slot); every other fail (a music career cancelled on zero cred, a debt
+// spiral) is the pack's, read generically through gateValue. `key` is any
+// manifest stat/resource; `fromAct` gates the rule to an act onward; `flag`
+// requires a run flag be set; `ending` is the ending key to surface.
+export interface FailStateRule {
+  key: string;
+  cmp: '<=' | '>=' | '<' | '>';
+  value: number;
+  fromAct?: number;
+  flag?: string;
+  ending: string;
+}
 
 // ---------- Effects (the payload a choice outcome applies) ----------
 // A short-horizon objective a card can arm (Promises).
@@ -47,38 +62,40 @@ export interface PromiseSpec {
 export interface Effect {
   // The engine's universal burnout slot.
   burnout?: number;
-  // Engine-known resources (RESOURCE_APPLY + the songs hits/chartTitle block,
-  // engine-resident until the songs subsystem fully owns them in Phase D).
+  // Engine-known resources: applied in manifest order by the pack's
+  // applyResource plugins, with a generic additive default (WP5). Still
+  // enumerated here as typed keys for the packs that use them; a genre declares
+  // any further resource verbs via declaration merging.
   fame?: number; money?: number; hits?: number; pathProgress?: number; rivalry?: number;
-  chartTitle?: string;
-  // Flag / chain / promise control (genre-neutral).
+  // Flag / chain / promise control — the genuinely genre-neutral control verbs.
   addFlag?: string; removeFlag?: string; chainEventId?: string;
   addPromise?: PromiseSpec;
-  // Content-structural verbs the engine resolves inline today (loadout / roster
-  // / gear). Music-shaped; the keys follow their handlers to a plugin in Phase D.
-  setInstrument?: string; grantBandmate?: string; removeBandmate?: string;
-  grantHustle?: string; removeGear?: string; grantGear?: string;
 }
 
 // ---------- Requires (deck-eligibility gate) ----------
+// The OPEN eligibility vocabulary (Phase WP1 — the §3.1 fix, the sibling of the
+// open `Effect`). This declares only the GENRE-NEUTRAL predicates the core
+// resolves inline: flag/money/burnout gates plus the generic stat/resource
+// gates (`stats`/`min`/`max`), which resolve ANY manifest key through
+// gateValue. Every subsystem-shaped predicate — a venue's tier, a rival's feud,
+// the weather — is a PLUGIN-REGISTERED predicate (Plugin.requires), added to
+// this type by that pack via declaration merging in its OWN file (see
+// packs/music.ts), so the shared Requires names no genre's subsystems. A key
+// that is neither neutral nor registered is an authoring error, caught by the
+// cross-pack "requires key owned" invariant. requiresOk consumes NO rng and
+// returns the same booleans, so opening the gate is byte-green.
 export interface Requires {
   anyOf?: Requires[];
-  nemesis?: boolean;
-  weatherIs?: string;
   flagsAll?: string[]; flagsNone?: string[];
   moneyMax?: number; moneyMin?: number;
   burnoutMin?: number;
-  fameMin?: number; fameMax?: number;
-  gear?: string[];
-  rivalryMin?: number; rivalryMax?: number;
-  genreAny?: boolean;
-  venueAny?: boolean; venueNone?: boolean; venueIs?: string; venueLevelMin?: number;
-  rivalIs?: string;
-  hustleMin?: number;
-  bandMin?: number; bandMax?: number; bandHas?: string;
-  demoMin?: number; chartingMin?: number; songsMin?: number; fadedMin?: number;
-  // { <stat>Min: number } — keys are dynamic, values numeric.
+  // Generic stat/resource gates — keys are ANY manifest stat or resource,
+  // resolved through gateValue (so a pack without "fame" doesn't trip a
+  // hardcoded branch, and a mystery card can gate on `clues`). `stats` keeps the
+  // legacy `{ <key>Min: n }` shape; `min`/`max` are the plain `{ <key>: n }`
+  // form. Values numeric.
   stats?: Record<string, number>;
+  min?: Record<string, number>; max?: Record<string, number>;
 }
 
 // ---------- Choice / outcome / event ----------
@@ -128,6 +145,14 @@ export interface PackManifest {
   // so the UI can label ANY winGates/delta key generically instead of
   // special-casing fame/hits. A pack without an entry falls back to the raw key.
   resourceMeta?: Record<string, StatMeta>;
+  // Pack-declared fail states (WP3), evaluated in order after the engine's
+  // universal burnout fail. A pack without any (mystery, probe) can only fail on
+  // burnout.
+  failStates?: FailStateRule[];
+  // The penalty for declining a shop card you can't afford (WP3): music docks a
+  // little cred (the walk-of-shame). Pack-declared so the core names no stat; a
+  // pack that omits it declines for free.
+  declinePenalty?: Effect;
 }
 
 // ---------- Plugin framework (Phase 4) ----------
@@ -167,6 +192,14 @@ export interface Plugin {
   // The cross-pack "no unknown verb" invariant checks each card's effect keys
   // against manifest.stats ∪ manifest.resources ∪ core ∪ these.
   effectVerbs?: string[];
+  // The eligibility predicates this subsystem owns (Phase WP1 — the open
+  // Requires registry's declaration half). requiresOk dispatches any `requires`
+  // key outside the neutral core to the predicate registered here — `(state,
+  // arg) => boolean`, where `arg` is the value the card authored for the key
+  // (e.g. `venueIs: 'basement'` calls the `venueIs` predicate with 'basement').
+  // The core owns the neutral set (anyOf/flags/money/burnout + generic
+  // stats/min/max); every other key must be declared by exactly one plugin.
+  requires?: Record<string, (state: RunState, arg: any) => boolean>;
   // Seeded construction draws at run start (weather, rival). Fired in
   // registration order, so the pack fixes the draw order.
   onConstruct?(state: RunState, rng: () => number): void;
@@ -191,6 +224,48 @@ export interface Plugin {
   onTick?(state: RunState, notes: string[]): void;
   // Fired once as the finale is evaluated (e.g. one last chart week).
   onFinale?(state: RunState): void;
+
+  // ── The neutral modify-hooks (WP6-infra). The engine fires these at the exact
+  // site of the code they replace, in registration order, so a subsystem folds
+  // its bonus/multiplier in without the core naming it. Each is genre-neutral
+  // and something a second genre would plausibly want. ──
+
+  // Additive roll bonus, summed into rollComponents' base at the gear/genre/
+  // band/weather/contract slot. `ctx.applied` is an array a subsystem pushes the
+  // items whose bonus fired onto (gear reads it back for lose-on-bad and burnout
+  // side-effects). Consumes no rng; called for the risk-tell too, so keep it pure.
+  modifyRoll?(state: RunState, choice: Choice, ctx: any): number;
+  // Transform the roll's jitter band [lo,hi] — a subsystem may override it
+  // (contract) or widen it (weather). Returns the new band.
+  modifyJitter?(state: RunState, jitter: [number, number], ctx: any): [number, number];
+  // Override the number of cards an act runs (a contract can shorten it).
+  modifyActLength?(state: RunState, act: number, base: number): number;
+  // A Legacy Points multiplier this subsystem contributes (a contract/era
+  // mult). Returned as a factor the engine folds into the score product, so the
+  // grouping matches the old `mult *= …` accumulation exactly.
+  scoreMult?(state: RunState): number;
+  // Scale a card's deck weight (weather recolors the deck; seeded arcs bias
+  // their setup/payoff cards). Returns the new weight.
+  weightDeck?(state: RunState, ev: GameEvent, weight: number): number;
+  // Force a category of card into the draw pool at a scheduled slot (the way the
+  // shop slot works) — the seeds plugin deals an unlit arc's setup on schedule.
+  // Returns a narrowed pool, or the pool unchanged. `ctx.shopDue` says a shop
+  // was already forced this draw. Fired after the shop slot, before weighting.
+  refineDeck?(state: RunState, pool: GameEvent[], ctx: any): GameEvent[];
+  // A per-resolution "gain hooks" bag: { statGainMult?, burnoutGainMult?,
+  // burnoutHealMult? } a subsystem (contract, weather) contributes, applied by
+  // the engine's stat/burnout loops in registration order right after the
+  // instrument's own (which is core). Keeps the multiplier MECHANIC in the core
+  // while the SOURCES are plugins.
+  gainHooks?(state: RunState): any;
+  // Whether this subsystem disables the Encore mechanic this run (a contract
+  // clause). OR'd across plugins.
+  blocksEncore?(state: RunState): boolean;
+  // Adjust the burnout delta a card lands — gear's tag-matched multipliers and
+  // per-match side effects fold in here, between the instrument's own burnout
+  // hooks (core) and the contract/weather gain multipliers. `ctx.tags` are the
+  // choice tags, `ctx.appliedAccessories` the gear whose roll bonus fired.
+  modifyBurnout?(state: RunState, v: number, ctx: any): number;
 }
 
 // A burnout-threshold interstitial: crossing the bar interrupts the deck once
@@ -261,28 +336,21 @@ export interface Pack {
   // run always starts as SOMEONE.
   instruments: any[];
   instrumentById: (id: string) => any;
-  // Optional pack capabilities (Phase E — ISP). The engine feature-detects
-  // each: a genre that doesn't ship a subsystem simply omits its provider and
-  // the engine substitutes an inert default (see normalizePack). Mystery
-  // declares the handful it uses; the probe declares none. (Venue/rival data
-  // are consumed by those plugins via direct import, so they aren't Pack
-  // fields — a pack's plugins own their own content.)
+  // Optional capabilities the engine feature-detects (Phase E — ISP). A genre
+  // that doesn't ship one simply omits it. Every music SUBSYSTEM (accessories,
+  // arcs, contracts, genres, hustles, band, weather, seeds) is GONE from this
+  // type (WP7): those live in the pack's plugins, which own their data by direct
+  // import — exactly as venue/rival always did. Adding a genre edits new files
+  // only; this type names no genre.
   interstitials?: InterstitialRule[];
   tutorialStart?: TutorialStart;
   presenter?: Presenter;
   perks?: Record<string, PerkDef>;
-  accessories?: any[];
-  accessoryById?: (id: string) => any;
-  arcs?: any[];
-  arcById?: (id: string) => any;
-  contractById?: (id: string) => any;
-  hustleById?: (id: string) => any;
-  genreById?: (id: string) => any;
-  bandmateById?: (id: string) => any;
-  recruitCandidate?: (state: any, rng?: () => number) => any;
-  rollSeeds?: (rng: () => number, count: number) => string[];
-  weatherHooks?: (state: any) => Record<string, any>;
-  rollWeather?: (rng: () => number) => string | null;
+  // Comeback mode: an optional pack-provided run transform applied at run start
+  // when the player has unlocked it (a music career restarts as a faded name).
+  // Feature-detected — a pack without one omits it. Music's hardcodes its own
+  // stats, so it lives with the pack, not the core.
+  comeback?: (state: RunState) => void;
 }
 
 // ---------- Runtime run state ----------
@@ -313,7 +381,7 @@ export interface RunState {
   version: number;
   phase: string;
   act: number;
-  stats: Record<StatId | 'burnout', number>;
+  stats: Record<string, number>;
   fame: number;
   money: number;
   hits: number;
@@ -338,7 +406,7 @@ export interface GameEvent {
   flashpoint?: boolean;
   shop?: boolean;
   prompt?: string;
-  promptNemesis?: string;
+  promptAlt?: string;   // an alternate prompt the presenter/UI may show in place of `prompt`
   context?: string;
   art?: string;
   coach?: string;      // tutorial coaching text

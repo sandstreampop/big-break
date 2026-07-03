@@ -47,7 +47,8 @@ export const mysteryPack: Pack = {
   instruments: PERSONAS,
   instrumentById: byId(PERSONAS),
   // No accessories, arcs, venues, band, rivals, contracts, hustles, genres,
-  // seeds, or weather — the engine feature-detects their absence (Phase E).
-  // Where the music game stubbed 14 fields, mystery now declares none.
+  // seeds, or weather. Those aren't Pack fields at all any more — every genre's
+  // subsystems live in its own plugins — so there's nothing to omit or stub:
+  // mystery ships the required core plus one clues plugin and a presenter.
 };
 // #endregion pack

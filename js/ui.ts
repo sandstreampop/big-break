@@ -4,6 +4,9 @@ import { CONFIG } from './config.js';
 import { INSTRUMENTS } from './data/instruments.js';
 import { rivalById } from './data/rivals.js';
 import { accessoryById } from './data/accessories.js';
+import { equipAccessory } from './packs/plugins/gear.js';
+import { signContract } from './packs/plugins/contract.js';
+import { ensureSongs, releaseSong, flagshipSong } from './songs.js';
 import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
 import { musicPack } from './packs/music.js';
@@ -56,7 +59,7 @@ function fillText(s) {
   return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe)
     .replaceAll('{genre}', g ? g.name : 'your genre')
     .replaceAll('{collabArtist}', collabArtistFor(run))
-    .replaceAll('{song}', engine.flagshipSong(run)?.title || 'the song')
+    .replaceAll('{song}', flagshipSong(run)?.title || 'the song')
     .replaceAll('{hitSong}', (run.songs || []).find((x) => x.crowned)?.title || 'the hit')
     .replaceAll('{fadedSong}', (run.songs || []).find((x) => x.status === 'faded' && x.peak)?.title || 'your old single')
     .replaceAll('{venue}', venueById(run.venue)?.name || 'the venue');
@@ -292,7 +295,7 @@ function startNewRun(daily = false, comeback = false) {
     run.seed = seed + 2;
     run.daily = daily ? todayStr() : null;
     run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)
-    if (chosenContract) engine.signContract(run, chosenContract);
+    if (chosenContract) signContract(run, chosenContract);
     run.genre = chosenGenre;
     run.venue = chosenVenue;
     if (!daily) {
@@ -472,7 +475,7 @@ function startGauntlet() {
     run.gauntlet = week;
     run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)
     run.genre = genre.id;
-    engine.signContract(run, contract.id);
+    signContract(run, contract.id);
     save.saveRun(run);
     track('run_start', {
       instrument: inst.id, contract: contract.id,
@@ -709,7 +712,7 @@ function dealCard() {
   card.append(el('div', 'card-context', fillText(ev.context)));
   // Some cards carry a richer text variant when the rival is a true
   // cross-run nemesis (3rd+ meeting) rather than an in-run feud.
-  card.append(el('div', 'card-prompt', fillText(run.nemesis && ev.promptNemesis ? ev.promptNemesis : ev.prompt)));
+  card.append(el('div', 'card-prompt', fillText(run.nemesis && ev.promptAlt ? ev.promptAlt : ev.prompt)));
   const hintL = el('div', 'swipe-hint hint-left', '');
   const hintR = el('div', 'swipe-hint hint-right', '');
   card.append(hintL, hintR);
@@ -1067,7 +1070,7 @@ function showChart() {
   box.append(list);
 
   // The Songbook: every song you've written, in whatever state it's in
-  const songs = (engine.ensureSongs(run) || []).slice().reverse();
+  const songs = (ensureSongs(run) || []).slice().reverse();
   if (songs.length) {
     box.append(el('div', 'trades-head songbook-head', '♪ YOUR SONGBOOK'));
     const book = el('div', 'songbook');
@@ -1205,7 +1208,7 @@ function showResult(result) {
       list.append(btn(`${acc.name} — ${acc.blurb}`, '', () => {
         ov.classList.remove('active');
         if (run.accessories.length < CONFIG.accessorySlots) {
-          engine.equipAccessory(run, acc.id);
+          equipAccessory(run, acc.id);
           save.saveRun(run);
           routeAdvance(engine.advance(run));
         } else {
@@ -1223,7 +1226,7 @@ function showResult(result) {
   const pending = result.deltas.pendingGear;
   if (pending) {
     if (run.accessories.length < CONFIG.accessorySlots) {
-      const extra = engine.equipAccessory(run, pending.id) || [];
+      const extra = equipAccessory(run, pending.id) || [];
       save.saveRun(run);
       for (const d of extra) chips.append(deltaChip(d.key, d.amount));
       notice('notice-gear', `🧰 <b>${pending.name}</b> is yours${pending.blurb ? ' — ' + pending.blurb : ''}`);
@@ -1289,7 +1292,7 @@ function gearChooser(newAcc, result) {
   for (const id of run.accessories) {
     const acc = accessoryById(id);
     list.append(btn(`Drop ${acc.name}`, '', () => {
-      engine.equipAccessory(run, newAcc.id, id);
+      equipAccessory(run, newAcc.id, id);
       save.saveRun(run);
       ov.classList.remove('active');
       routeAdvance(engine.advance(run));
@@ -1522,7 +1525,7 @@ function renderFinalSet() {
       title: `“${vault.title}” (unreleased)`,
       blurb: 'Debut the vault song. Right now. Live. Careers should end on a first.',
       stat: 'cred', amount: 3, label: '+3 Cred · releases it tonight',
-      apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 3); engine.releaseSong(run, vault.id, 58); },
+      apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 3); releaseSong(run, vault.id, 58); },
     });
   }
   options.push({ title: '“The Deep Cut”', blurb: 'Track 9. The heads nod. The heads matter.', stat: 'cred', amount: 4, label: '+4 Cred', apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 4); } });

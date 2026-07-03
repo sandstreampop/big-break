@@ -11,6 +11,7 @@
 // drawNextCard / resolveSwipe on the seeded play RNG.
 
 import * as engine from '../dist/js/engine.js';
+import { equipAccessory } from '../dist/js/packs/plugins/gear.js';
 
 // Sum of (value / gate target) across a path's winGates, read generically via
 // the engine's gateValue — no fame/hits/clues special-casing.
@@ -67,7 +68,7 @@ export function simulatePackRun(pack, seed, policy = 'narrative') {
       cards.push({ id: ev.id, side, tier: result.tier, act, deltas: result.deltas.map((d) => [d.key, d.amount]) });
       const pend = result.deltas.pendingGear ||
         (result.deltas.pendingGearChoices ? result.deltas.pendingGearChoices[0] : null);
-      if (pend) engine.equipAccessory(state, pend.id);
+      if (pend) equipAccessory(state, pend.id);
     }
     const step = engine.advance(state);
     if (step.kind === 'finale') {

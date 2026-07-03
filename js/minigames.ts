@@ -16,7 +16,7 @@
 //   .65–.88     → SOLID    (+14)  ≥ .88   → GOLDEN  (+24)
 
 import { sfx } from './audio.js';
-import { flagshipSong } from './engine.js';
+import { flagshipSong } from './songs.js';
 
 // tiny shared feedback: sound + a haptic tick (games call these freely)
 export const fx = {
