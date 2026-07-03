@@ -11,13 +11,12 @@ import { readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { probePack } from '../dist/js/packs/probe.js';
-import { tracePackRun, packCorpus } from '../tools/pack-core.mjs';
-import { GOLDEN_SEED, CORPUS_SIZE } from '../tools/gen-probe-golden.mjs';
+import { tracePackRun, packCorpus, PROBE_GOLDEN_SEED, PROBE_CORPUS_SIZE } from '../tools/pack-core.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const golden = JSON.parse(readFileSync(here + '/../tools/golden/probe.json', 'utf8'));
 const byKey = new Map(golden.traces.map((t) => [t.seed, t]));
-const seeds = packCorpus(GOLDEN_SEED, CORPUS_SIZE);
+const seeds = packCorpus(PROBE_GOLDEN_SEED, PROBE_CORPUS_SIZE);
 
 test('probe golden corpus is present and sized', () => {
   assert.equal(golden.traces.length, seeds.length,

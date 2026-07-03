@@ -22,9 +22,41 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 
 export const songsPlugin: Plugin = {
   id: 'songs',
-  // chartTitle is shared with the engine's hits block (Phase D unifies them);
-  // it is listed on the core Effect, so it isn't re-declared here.
-  effectVerbs: ['hypeSong', 'albumDrop', 'releaseDemo', 'polishDemo', 'writeSong'],
+  effectVerbs: ['hits', 'chartTitle', 'hypeSong', 'albumDrop', 'releaseDemo', 'polishDemo', 'writeSong'],
+
+  // The Old Notebook perk: every career starts with one demo already taped.
+  // Moved here from the engine (D.2) so song NAMING lives with the songs
+  // subsystem — the last thing that made the core import charts.ts. Fires at
+  // the tail of newRun, so its seeded draw lands exactly where it used to.
+  onRunStart(state, rng) {
+    if (!(state.perks || []).includes('notebook')) return;
+    addSong(state, { title: songName(rng), status: 'demo', quality: 46 + Math.floor(rng() * 16) });
+    state.flags.push('notebook_demo'); // events/epilogue can reference it
+  },
+
+  // The 'hits' resource is the songs subsystem's (an "instant classic" mints a
+  // charting song). Applied at the resource's ordinal slot in applyEffects, so
+  // the RNG stream and delta order match the old engine-inline block byte-for-
+  // byte. Returns the hits delta; pushes song debuts onto ctx.deltas.
+  applyResource(res, effects, state, ctx) {
+    if (res !== 'hits') return undefined; // decline — not ours
+    const n = (effects as any).hits || 0;
+    if (!n) return 0; // claim it, nothing to mint
+    const { deltas, rng, ev } = ctx as any;
+    for (let i = 0; i < n; i++) {
+      const s = addSong(state, {
+        title: effects.chartTitle
+          ? effects.chartTitle.replace('{collabArtist}', collabArtistFor(state))
+          : songName(rng, genreById(state.genre)),
+        quality: 68 + Math.round((rng ? rng() : 0.5) * 12),
+        origin: ev?.id || null, status: 'charting', hype: 60,
+      });
+      if (!s.crowned) { s.crowned = true; state.hits += 1; }
+      (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true, viral: !!s.viral });
+    }
+    ctx.chartTitleHandled = !!effects.chartTitle;
+    return n;
+  },
 
   onEffect(state, effects, ctx) {
     const { deltas, hooks = {}, accs = [], mg = null, tier, rng, ev } = ctx;

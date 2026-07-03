@@ -2,7 +2,6 @@
 // the same module runs in the browser and in tools/simulate.mjs.
 
 import { CONFIG } from './config.js';
-import { collabArtistFor, songName } from './charts.js';
 import type { Pack, RunState, Song, Plugin } from './types.js';
 
 // ---------- Injected content pack (Phase 2: IoC) ----------
@@ -269,14 +268,11 @@ export function newRun(pack: Pack, instrumentId, unlockedPacks, rng = Math.rando
   if (perks.includes('stage_legs')) state.stats.cred = clamp(state.stats.cred + 6, 1, 100);
   if (perks.includes('headliner')) state.fame += 8; // somebody remembers the name
   state.money += PACK.weatherHooks(state).startMoney || 0; // Scene Weather walk-in
-  if (perks.includes('notebook')) {
-    // The Old Notebook: every career starts with one demo already taped
-    addSong(state, {
-      title: songName(rng), status: 'demo',
-      quality: 46 + Math.floor(rng() * 16),
-    });
-    state.flags.push('notebook_demo'); // events/epilogue can reference it
-  }
+  // Run-start subsystem hook (fired here, at the tail of construction, so any
+  // seeded draw lands where the old inline notebook-perk draw did). The songs
+  // subsystem mints the Old Notebook's opening demo — song naming lives with
+  // the songs plugin now, so the engine no longer imports charts.ts.
+  firePlugins('onRunStart', state, rng);
   return state;
 }
 
@@ -692,8 +688,8 @@ export function tagsIntersect(a, b) {
 // ---------- Plugin dispatch (Phase 4, hardened in Phase F) ----------
 // The lifecycle hooks a plugin may implement. Typed, so a typo'd hook name is
 // a COMPILE error, not a silent no-op (the old (p as any)[hook] swallowed it).
-type PluginHook = 'onConstruct' | 'modifyEffects' | 'onEffect' | 'afterResolve'
-  | 'onActBreak' | 'onTick' | 'onFinale';
+type PluginHook = 'onConstruct' | 'onRunStart' | 'modifyEffects' | 'onEffect'
+  | 'afterResolve' | 'onActBreak' | 'onTick' | 'onFinale';
 
 // Plugins fire in ascending `priority` (default 0), ties broken by registration
 // order (a stable sort) — so ordering is INTENTIONAL and declared, not pinned
@@ -1047,29 +1043,30 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
   const pctx: any = { ev, choice, tier, rng, deltas, hooks, accs, mg, chartTitleHandled: false };
   const rctx: ResourceCtx = { hooks, cMods, wHooks, accs };
   for (const res of PACK.manifest.resources) {
-    if (res === 'hits') {
-      if (effects.hits) {
-        // an "instant classic": the fiction says this song is a hit — make it one
-        for (let i = 0; i < effects.hits; i++) {
-          const s = addSong(state, {
-            title: effects.chartTitle
-              ? effects.chartTitle.replace('{collabArtist}', collabArtistFor(state))
-              : songName(rng, PACK.genreById(state.genre)),
-            quality: 68 + Math.round((rng ? rng() : 0.5) * 12),
-            origin: ev?.id || null, status: 'charting', hype: 60,
-          });
-          if (!s.crowned) { s.crowned = true; state.hits += 1; } else { /* crowned at debut */ }
-          (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true, viral: !!s.viral });
-        }
-        push('hits', effects.hits);
-        pctx.chartTitleHandled = !!effects.chartTitle;
-      }
+    // 1. Engine-known resources keep their bespoke arithmetic (fame clamps,
+    //    money siphons, rivalry clamps, pathProgress raw add).
+    const fn = RESOURCE_APPLY[res];
+    if (fn) {
+      const d = fn(state, effects[res] || 0, rctx);
+      if (d) push(res, d);
       continue;
     }
-    const fn = RESOURCE_APPLY[res];
-    if (!fn) continue;
-    const d = fn(state, effects[res] || 0, rctx);
-    if (d) push(res, d);
+    // 2. A subsystem-owned resource (e.g. the songs plugin's 'hits', which mints
+    //    songs and draws RNG) is applied by a plugin AT THIS ORDINAL SLOT — so
+    //    the RNG stream and the delta order match the old inline block exactly
+    //    (byte-green). This is what let the engine stop importing charts.ts:
+    //    the song-minting code (songName/collabArtistFor) lives with the songs
+    //    subsystem now, not the core.
+    let handled = false;
+    for (const p of orderedPlugins()) {
+      const rd = p.applyResource?.(res, effects, state, pctx);
+      if (rd !== undefined && rd !== null) { if (rd) push(res, rd); handled = true; break; }
+    }
+    if (handled) continue;
+    // 3. Generic default: a resource no handler claims applies as a plain add,
+    //    so a novel genre resource (the probe's 'points') isn't silently dropped.
+    const v = effects[res] || 0;
+    if (v) { state[res] = (state[res] || 0) + v; push(res, v); }
   }
 
   // Plugin effect handlers (Phase 4.2 venue; Phase 4.5 songs — write/hype/

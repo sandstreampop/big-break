@@ -170,6 +170,15 @@ export interface Plugin {
   // Seeded construction draws at run start (weather, rival). Fired in
   // registration order, so the pack fixes the draw order.
   onConstruct?(state: RunState, rng: () => number): void;
+  // Fired once at the tail of newRun, after perks — a subsystem's run-start
+  // setup (e.g. the songs plugin minting the notebook-perk demo).
+  onRunStart?(state: RunState, rng: () => number): void;
+  // Apply a manifest resource this subsystem OWNS (e.g. songs' 'hits'), at the
+  // resource's ordinal slot in applyEffects. Returns the delta to record, 0 to
+  // claim it with no delta, or undefined/null to decline (the engine then tries
+  // the next plugin, else a generic additive default). May push structured
+  // deltas (song debuts) onto ctx.deltas.
+  applyResource?(res: string, effects: Effect, state: RunState, ctx: PluginContext): number | null | undefined;
   // Mutate the effects payload before it lands (e.g. a home-venue show bonus).
   modifyEffects?(state: RunState, effects: Effect, ctx: PluginContext): void;
   // Apply the plugin's own effect keys (adoptVenue, hits, …).
