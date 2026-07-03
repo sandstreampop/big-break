@@ -1,6 +1,8 @@
 // BIG BREAK — central tuning knobs (spec §4.3).
 // Everything a balancer might touch lives here; content lives in js/data/*.
 
+import type { StatMeta } from './types.js';
+
 export const CONFIG = {
   // Run start
   statStartMin: 18,
@@ -131,7 +133,7 @@ export const PATHS = {
   },
 };
 
-export const STAT_META = {
+export const STAT_META: Record<string, StatMeta> = {
   skill:      { name: 'Skill',      icon: '🎸' },
   cred:       { name: 'Cred',       icon: '🤟' },
   creativity: { name: 'Creativity', icon: '💡' },
