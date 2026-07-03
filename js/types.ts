@@ -170,12 +170,35 @@ export interface Plugin {
   onFinale?(state: RunState): void;
 }
 
+// A burnout-threshold interstitial: crossing the bar interrupts the deck once
+// per run with a forced chain card. Pack-declared (D.3) so the ids and any
+// extra condition (e.g. music's "you have a hit") live in the pack, not the
+// core — the engine only knows the generic burnout threshold.
+export interface InterstitialRule {
+  id: string;           // the chainOnly card to queue
+  burnoutMin: number;   // fires when the engine's burnout slot ≥ this
+  belowFail?: boolean;  // only while still below the burnout fail threshold
+  cond?: (state: RunState) => boolean; // extra pack-owned condition
+}
+
+// The scripted onboarding run's fixed setup (D.3): teaching stats and the
+// starting persona, declared by the pack instead of hardcoded music values.
+export interface TutorialStart {
+  instrument: string;
+  stats: Record<string, number>;
+  money?: number;
+  fame?: number;
+}
+
 export interface Pack {
   id: string;
   manifest: PackManifest;
   plugins?: Plugin[];
   events: GameEvent[];
   tutorialEvents: GameEvent[];
+  // Optional pack capabilities (feature-detected by the engine).
+  interstitials?: InterstitialRule[];
+  tutorialStart?: TutorialStart;
   instruments: any[];
   accessories: any[];
   arcs: any[];

@@ -20,7 +20,12 @@ import { venuePlugin } from './plugins/venue.js';
 import { rivalPlugin } from './plugins/rival.js';
 import { bandPlugin } from './plugins/band.js';
 import { songsPlugin } from './plugins/songs.js';
-import type { Pack } from '../types.js';
+import type { Pack, RunState } from '../types.js';
+
+// "You have a hit" — the condition on the songs-era coping interstitial. Reads
+// song state, so it lives here in music content, not in the core (D.3).
+const hasHit = (s: RunState) =>
+  (s.songs || []).some((x: any) => x.crowned || (x.status === 'charting' && x.pos && x.pos <= 5));
 
 // The music genre's effect vocabulary, declared by the pack rather than baked
 // into the shared Effect union (Phase C). Its four core stats and its venue /
@@ -45,6 +50,15 @@ export const musicPack: Pack = {
   plugins: [venuePlugin, rivalPlugin, bandPlugin, songsPlugin],
   events: EVENTS,
   tutorialEvents: TUTORIAL_EVENTS,
+  // Burnout coping interstitials, high→low priority (D.3): the ids and the
+  // "you have a hit" condition live here, not in the engine.
+  interstitials: [
+    { id: 'coping_75', burnoutMin: 75, belowFail: true },
+    { id: 'coping_song', burnoutMin: 62, cond: hasHit },
+    { id: 'coping_50', burnoutMin: 50 },
+  ],
+  // The First Gig onboarding run's fixed teaching setup (D.3).
+  tutorialStart: { instrument: 'melodica', stats: { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 }, money: 40, fame: 0 },
   instruments: INSTRUMENTS,
   accessories: ACCESSORIES,
   arcs: ARCS,

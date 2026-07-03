@@ -431,11 +431,14 @@ export function flagshipSong(state) {
 // every risk tell reads exactly as the cards describe it (skill ●,
 // network ●, cred ▲, creativity ■); the deck is one long chain.
 export function newTutorialRun(pack: Pack, rng = Math.random) {
-  const state = newRun(pack, 'melodica', [], rng, []);
+  // Teaching stats + starting persona are pack-declared (D.3), not hardcoded
+  // music values. Only a pack that ships tutorialEvents reaches here.
+  const t = pack.tutorialStart;
+  const state = newRun(pack, t?.instrument ?? pack.instruments[0].id, [], rng, []);
   state.tutorial = true;
-  state.stats = { skill: 40, cred: 30, creativity: 8, network: 35, burnout: 5 };
-  state.money = 40;
-  state.fame = 0;
+  if (t?.stats) state.stats = { ...t.stats } as RunState['stats'];
+  if (t?.money !== undefined) state.money = t.money;
+  if (t?.fame !== undefined) state.fame = t.fame;
   state.pendingChainId = PACK.tutorialEvents[0].id;
   return state;
 }
@@ -895,22 +898,25 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
 
   if (effects.chainEventId) state.pendingChainId = effects.chainEventId;
 
-  // Burnout coping interstitials: crossing a threshold interrupts the deck
-  // once per run with a forced coping card (unless a chain is already queued)
-  if (!state.pendingChainId && !state.tutorial && !ev.finaleCard && ev.id !== 'coping_50' && ev.id !== 'coping_75' && ev.id !== 'coping_song') {
+  // Burnout coping interstitials: crossing a threshold interrupts the deck once
+  // per run with a forced chain card (unless a chain is already queued). The
+  // rules are PACK-DECLARED (D.3) — ordered high→low priority, first match
+  // wins — so the card ids and any extra condition (music's "you have a hit",
+  // which reads song state) live in the pack, not the core. A pack with no
+  // interstitials (mystery, probe) never triggers this at all.
+  const interstitials = PACK.interstitials || [];
+  if (!state.pendingChainId && !state.tutorial && !ev.finaleCard &&
+      interstitials.length && !interstitials.some((r) => r.id === ev.id)) {
     state.copingSeen = state.copingSeen || [];
     const b = state.stats.burnout;
-    const hasHit = (state.songs || []).some((x) => x.crowned || (x.status === 'charting' && x.pos && x.pos <= 5));
-    if (b >= 75 && !state.copingSeen.includes('coping_75') && b < CONFIG.burnoutFail) {
-      state.copingSeen.push('coping_75');
-      state.pendingChainId = 'coping_75';
-    } else if (b >= 62 && hasHit && !state.copingSeen.includes('coping_song')) {
-      // the songs-era coping moment: your own hit has become noise
-      state.copingSeen.push('coping_song');
-      state.pendingChainId = 'coping_song';
-    } else if (b >= 50 && !state.copingSeen.includes('coping_50')) {
-      state.copingSeen.push('coping_50');
-      state.pendingChainId = 'coping_50';
+    for (const r of interstitials) {
+      if (state.copingSeen.includes(r.id)) continue;
+      if (b < r.burnoutMin) continue;
+      if (r.belowFail && b >= CONFIG.burnoutFail) continue;
+      if (r.cond && !r.cond(state)) continue;
+      state.copingSeen.push(r.id);
+      state.pendingChainId = r.id;
+      break;
     }
   }
   finishCard(state, ev);
@@ -940,8 +946,12 @@ function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories
   for (const stat of stats()) {
     let v = effects[stat] || 0;
     if (!v) continue;
-    if (stat === 'cred' && v > 0 && hooks.credGainMult) v = Math.round(v * hooks.credGainMult);
-    if (stat === 'cred' && v > 0 && cMods.credGainMult) v = Math.round(v * cMods.credGainMult);
+    // Positive stat gains scale by instrument, contract, then weather
+    // multipliers — all generic per-stat (D.4: was a hardcoded `cred`
+    // special-case; instruments/contracts now declare statGainMult like
+    // weather already did, so any stat can be bent, not just music's cred).
+    if (v > 0 && hooks.statGainMult?.[stat]) v = Math.round(v * hooks.statGainMult[stat]);
+    if (v > 0 && cMods.statGainMult?.[stat]) v = Math.round(v * cMods.statGainMult[stat]);
     if (v > 0 && wHooks.statGainMult?.[stat]) v = Math.round(v * wHooks.statGainMult[stat]);
     const before = state.stats[stat];
     state.stats[stat] = clamp(before + v, 0, 100);

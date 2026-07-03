@@ -2,7 +2,7 @@
 // `quirk.hooks` is a small typed system the engine understands:
 //   rollTagBonus:   [{ tags:[...], bonus:N }]  extra roll on matching choices
 //   jitter:         [min,max]                  overrides luck jitter
-//   credGainMult:   N                          multiplies positive cred deltas
+//   statGainMult:   {stat: N}                  multiplies positive gains of a stat
 //   moneyGainMult:  N                          multiplies positive money deltas
 //   fameSwingMult:  N                          multiplies fame deltas (both signs)
 //   burnoutTagMult: { tags:[...], mult:N }     scales burnout gained on matching choices
@@ -18,7 +18,7 @@ export const INSTRUMENTS = [
     quirk: {
       id: 'novelty', name: 'Novelty',
       desc: 'Incredible outcomes grant bonus Fame, but Cred gains are halved.',
-      hooks: { onIncredible: { fame: 8 }, credGainMult: 0.5 },
+      hooks: { onIncredible: { fame: 8 }, statGainMult: { cred: 0.5 } },
     },
   },
   {

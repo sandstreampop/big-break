@@ -8,7 +8,7 @@ export const CONTRACTS = [
     id: 'nepo_baby', name: 'Nepo Baby', icon: '🍼', lpMult: 1.3,
     unlockedByDefault: true,
     desc: 'Start with $600 of family money. All Cred gains halved — everyone knows.',
-    mods: { startMoney: 600, credGainMult: 0.5 },
+    mods: { startMoney: 600, statGainMult: { cred: 0.5 } },
   },
   {
     id: 'straight_edge', name: 'Straight Edge', icon: '❌', lpMult: 1.5,
@@ -32,7 +32,7 @@ export const CONTRACTS = [
     id: 'ghostwriter', name: 'The Ghostwriter Clause', icon: '👻', lpMult: 1.4,
     unlockedByDefault: false,
     desc: 'Your name appears nowhere. Fame gains halved; Cred gains +25%. The work is the signature.',
-    mods: { fameGainMult: 0.5, credGainMult: 1.25 },
+    mods: { fameGainMult: 0.5, statGainMult: { cred: 1.25 } },
   },
   {
     id: 'imposter', name: 'Imposter Syndrome', icon: '🎭', lpMult: 1.4,
@@ -64,7 +64,7 @@ export const CONTRACTS = [
     id: 'diy_or_die', name: 'DIY or Die', icon: '🩹', lpMult: 1.4,
     unlockedByDefault: false,
     desc: 'No middlemen, no merch firms, no easy money: money gains −40%, Cred gains +25%. The scene sees everything.',
-    mods: { moneyGainMult: 0.6, credGainMult: 1.25 },
+    mods: { moneyGainMult: 0.6, statGainMult: { cred: 1.25 } },
   },
   {
     id: 'the_bet', name: 'The Bet', icon: '🎲', lpMult: 1.5,
@@ -88,7 +88,7 @@ export const CONTRACTS = [
     id: 'analog_only', name: 'Analog Only', icon: '📻', lpMult: 1.4,
     unlockedByDefault: false,
     desc: 'You deleted the accounts. All of them. Social choices roll −8; Cred gains +20%. The feed cannot hurt you now.',
-    mods: { rollTagBonus: [{ tags: ['social'], bonus: -8 }], credGainMult: 1.2 },
+    mods: { rollTagBonus: [{ tags: ['social'], bonus: -8 }], statGainMult: { cred: 1.2 } },
   },
   {
     id: 'opening_slot', name: 'Opening Slot Forever', icon: '🎟️', lpMult: 1.5,
