@@ -1,0 +1,51 @@
+name: Android compat harness
+
+# Android regression net. Separate from pages.yml ON PURPOSE: this drives the
+# emitted dist/ through Playwright's Chromium under real Android device
+# descriptors (Pixel/Galaxy/short-viewport) and asserts the game's core verbs
+# survive on Android — the platform the app was NEVER tested on (js/platform.ts
+# is entirely iOS-specific; telemetry shows Android engagement a fraction of
+# iOS's). It does NOT gate the Pages deploy: a known Android bug shouldn't block
+# shipping the iOS-solid game, but a *regression* in a currently-green Android
+# guard must be loud.
+#
+# Exit contract (test/android/run.mjs):
+#   - a "must-pass" regression guard failing  -> non-zero  -> this job RED
+#   - a "known-bug" probe still reproducing    -> reported, exit 0 (expected)
+#   - a "known-bug" probe now passing          -> flagged "promote to must-pass"
+# See test/android/README.md.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install toolchain
+        run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Build dist/
+        run: npm run build
+      - name: Android harness (regression guards + prove known bugs)
+        run: node test/android/run.mjs
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-report
+          path: test/android/report.json
+          if-no-files-found: ignore
