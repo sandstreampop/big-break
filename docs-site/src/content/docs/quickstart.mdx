@@ -55,7 +55,8 @@ push to `main`.
 A pack is one object implementing the [`Pack`](/big-break/docs/reference/types/interfaces/pack/)
 interface. The probe supplies the four things every pack **must** have — a
 manifest, a deck (`events`), a persona list, and a lookup — and *nothing* else.
-The engine feature-detects the absence of everything optional.
+Everything optional is feature-detected at its use site: omit it and the engine
+never invokes it.
 
 There are four moving parts, and we'll build them in order:
 
@@ -125,7 +126,9 @@ for a minimal genre:
 
 That comment is the headline promise made literal: **no capability stubs**.
 Everything the music pack uses — perks, presenter, subsystems, weather — is
-optional, and omitting a provider gives you the engine's inert default.
+optional, and omitting one just means the engine never invokes it. There are no
+providers to stub and no inert defaults to override; a subsystem's data lives
+inside its own plugin, not on the `Pack`.
 
 ## 5. Register it
 
