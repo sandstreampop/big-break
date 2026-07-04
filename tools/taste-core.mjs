@@ -54,8 +54,14 @@ export function lengthIssue(text, cap) {
 export function tasteIssues(text, taste, { outcome = false } = {}) {
   if (!text) return [];
   const out = [];
-  const b = bangIssue(text);
-  if (b) out.push(b);
+  // A pack may waive the bang rule for its ritual copy via taste.bangExempt
+  // (e.g. Love Island's "I've got a text!" shout, meant to be shrieked). The
+  // waiver is the whole point of a ritual, so it beats the ≤1-'!' house rule.
+  const bangWaived = (taste?.bangExempt || []).some((re) => re.test(text));
+  if (!bangWaived) {
+    const b = bangIssue(text);
+    if (b) out.push(b);
+  }
   if (taste?.cliches) out.push(...clicheIssues(text, taste.cliches));
   if (outcome && taste?.maxOutcomeLen) {
     const l = lengthIssue(text, taste.maxOutcomeLen);

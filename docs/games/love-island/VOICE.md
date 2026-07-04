@@ -25,10 +25,14 @@ Love Island inherits the music pack's **unwritten taste**, retuned for the villa
 4. **Deadpan.** Flat delivery, high stakes underneath. The funnier the situation, the
    straighter the face. We never tell you it's dramatic; the villa supplies the drama and
    we report it like weather.
-5. **No hype punctuation.** One `!` is allowed for the **"I've got a text!"** ritual and
-   for genuine Islander excitement — never two, never `?!`. The Narrator earns zero. If a
-   line needs an exclamation mark to be funny, it isn't funny yet. *(Enforced: ≤1 `!` per
-   string, no `!!`/`!?`.)*
+5. **No hype punctuation — with one loud exception.** Default is ≤1 `!` per line and never
+   `?!`; the Narrator earns zero, and if a line needs an exclamation mark to be funny it
+   isn't funny yet. The exception is the **receiving-a-text ritual**: when an Islander
+   clocks the phone they *shriek* it, so all caps and stacked bangs are wanted, not just
+   tolerated — **“TEXT! I’VE GOT A TEXT!!”** The *body* of the text (the production voice)
+   stays flat, and everywhere else the ≤1 rule holds. *(Enforced: ≤1 `!` per string, no
+   `!!`/`!?` — except copy matching the text-arrival ritual, waived via
+   [`taste.mjs`](./taste.mjs) `bangExempt`.)*
 6. **Affectionate, quietly savage.** We are on the Islander's side even while we roast
    them. Punch across, not down. Cruelty is a seasoning, not the meal.
 7. **Curly apostrophes and quotes** (`’ “ ”`), always. Straight quotes fail lint.
@@ -100,8 +104,10 @@ so its copy should **feel like an instruction from above**, not a character talk
 | “The public have been voting for their favourite couple. The results are in. #judgementday” | “The public have decided who they like best and now you’ll find out the results.” |
 | “One girl will be dumped from the Island. Immediately. #sorrynotsorry” | “Sadly, someone is going to have to leave the villa now.” |
 
-> The *"I've got a text!"* line is spoken by the Islander who holds the phone — that's the
-> one `!` this register is built around. The body of the text is the flat production voice.
+> The *"I've got a text!"* shout belongs to whichever Islander spots the phone — and it's
+> the one place the game gets loud on purpose: **“TEXT! I’VE GOT A TEXT!!”**, all caps,
+> stacked bangs, encouraged. The **body** of the text (everything after the shout) snaps
+> back to the flat production voice: terse, ≤1 `!`, hashtag sign-off. Two gears, one beat.
 
 ### 4. Islander-argot
 
@@ -213,7 +219,9 @@ authored card, activating the moment the pack registers (Phase B1). Logic and te
 [`tools/taste-core.mjs`](../../../tools/taste-core.mjs) +
 [`test/taste-core.test.mjs`](../../../test/taste-core.test.mjs).
 
-- **No hype punctuation** (house rule, every pack): ≤1 `!` per string, no `!!` / `!?` / `?!`.
+- **No hype punctuation** (house rule, every pack): ≤1 `!` per string, no `!!` / `!?` / `?!`
+  — with the text-arrival ritual waived (`taste.mjs` `bangExempt`), because
+  “I’VE GOT A TEXT!!” is supposed to be loud.
 - **Cliché blocklist** (Love Island): the phrases above, scanned over the narrating voice
   with quoted dialogue stripped out.
 - **Outcome-length cap** (Love Island): outcome text ≤ 240 characters — villa outcomes

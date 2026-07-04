@@ -42,6 +42,14 @@ test('clicheIssues: quoted Islander argot is exempt (it is a register)', () => {
   assert.ok(clicheIssues('At the end of the day, she shrugs.', LOVE_ISLAND_CLICHES).length >= 1);
 });
 
+test('bangExempt: the receiving-a-text ritual may shriek (LI taste)', () => {
+  // The shout is waived — all caps, stacked bangs, on-brand.
+  assert.deepEqual(tasteIssues('TEXT! I’VE GOT A TEXT!!', LOVE_ISLAND_TASTE), []);
+  assert.deepEqual(tasteIssues('I’ve got a text!', LOVE_ISLAND_TASTE), []);
+  // ...but ordinary copy is still held to the ≤1 '!' house rule.
+  assert.equal(tasteIssues('So much drama!!', LOVE_ISLAND_TASTE).length, 1);
+});
+
 test('lengthIssue: caps outcome length only when a cap is set', () => {
   assert.equal(lengthIssue('short', 240), null);
   assert.equal(lengthIssue('x'.repeat(300), 240)?.startsWith('outcome too long'), true);

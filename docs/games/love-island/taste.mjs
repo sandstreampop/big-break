@@ -43,4 +43,9 @@ export const LOVE_ISLAND_CLICHES = [
 export const LOVE_ISLAND_TASTE = {
   cliches: LOVE_ISLAND_CLICHES,
   maxOutcomeLen: 240,
+  // The one place exuberance is encouraged: the receiving-a-text shout.
+  // Islanders scream it — all caps and stacked "!" are on-brand HERE (and only
+  // here: the body of the text stays flat). Copy matching this is waived from
+  // the ≤1-"!" house rule. See VOICE.md § The prime directive (rule 5).
+  bangExempt: [/got a text/i],
 };

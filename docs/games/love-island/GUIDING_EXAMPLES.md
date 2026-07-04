@@ -5,6 +5,11 @@ scenes**, not just isolated lines. Every register from [`VOICE.md`](./VOICE.md) 
 where it speaks. These are *reference*, not shipping cards — but they're written to pass the
 lint floor (≤1 `!`, no blocklist cliché in narration, outcomes ≤240 chars, curly quotes).
 
+These are *reference*, not shipping cards — but written to pass the lint floor (≤1 `!`, no
+blocklist cliché in narration, outcomes ≤240 chars, curly quotes). The one loud exception is
+the receiving-a-text shout, which is *meant* to stack bangs (VOICE.md rule 5); its body snaps
+back to the flat voice.
+
 Cards are shown in their engine shape: **Context** (where we are), a **Prompt** (Narrator,
 sometimes wrapped in a Text), two **Choices** (villa-copy labels + the stats they lean on),
 and each choice's three **outcomes** (bad / good / incredible — Narrator, often with quoted
@@ -21,8 +26,8 @@ The soft open: establish Rizz, plant the first Bond, meet the Cast.
 
 > **Context:** Day 2 · the terrace
 >
-> **Text** *(Priya, holding the phone)*: “I’ve got a text!”
-> *“[YOU], it’s time for your first date. Two boys are waiting on the terrace. Pick one. #firstlook”*
+> **Text** *(Priya spots the phone — the shout)*: “TEXT! I’VE GOT A TEXT!!”
+> *(the body — flat production voice)*: “[YOU], it’s time for your first date. Two boys are waiting on the terrace. Pick one. #firstlook”
 >
 > **Prompt** *(Narrator)*: Two chairs, two drinks the colour of a warning label, and a boy at each. Behind the wall, the nation is deciding whether you have a personality. So, apparently, are you.
 
@@ -186,7 +191,7 @@ Fast reference while writing. Full rules in [`VOICE.md`](./VOICE.md).
 |---|---|---|---|
 | **Narrator** | the audience | dry weather report on a heart attack | never |
 | **Host** | the Islanders, by name | poise + lethal timing | rarely, measured |
-| **Text** | the villa (from above) | an instruction with a hashtag | the one on “I’ve got a text!” |
+| **Text** | the villa (from above) | an instruction with a hashtag | the shout stacks them (“I’VE GOT A TEXT!!”); the body earns ≤1 |
 | **Islander-argot** | each other | sincere, self-serious, unknowingly funny | for real excitement |
 | **Villa-copy** | the player | a verb you commit to | never |
 
