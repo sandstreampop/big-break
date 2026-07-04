@@ -95,3 +95,21 @@ Optional pack-owned mechanics (the engine's *plugins*).
 The subsystem modelling who the Islander is partnered with and how strong that
 tie is. Owns the Bond value and drives recouplings. (Design in progress.)
 _Avoid_: relationship, partnership
+
+**Graft**:
+The currency — social/romantic capital banked from good villa moments (being
+fancied, winning a challenge, landing a chat) and spent to invest in your Edit.
+The engine's cost resource, reskinned; no money, no shop.
+_Avoid_: money, currency, effort points
+
+**Edit**:
+Your slot-limited set of Angles — the persistent-modifier layer you invest Graft
+into (the engine's *gear*). The "shop" is not a shop: it's the recurring daybed
+graft beat that offers a shelf of Angles to pick one.
+_Avoid_: gear, loadout, build
+
+**Angle**:
+One reputation trait you're becoming known for (*The Loyal One*, *Comedy Gold*,
+*The Villain*, *Everyone's Type*). A persistent, tag-matched modifier that boosts
+matching villa moments and leans you toward a Summit. The engine's *accessory*.
+_Avoid_: trait, perk, item
