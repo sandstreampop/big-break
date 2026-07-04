@@ -56,6 +56,15 @@ body {
   letter-spacing: 0.04em;
 }
 
+/* Stirling — the voiceover's popover (ADR-0008): a broadcast-booth aside,
+   one layer above the action. Italic, warm-edged, unmistakably not the card. */
+.overlay-note.note-stirling {
+  font-style: italic;
+  background: linear-gradient(160deg, #2a1a2e 0%, #221327 100%);
+  border-color: rgba(255, 179, 92, 0.5);
+  color: #ffe9cf;
+}
+
 /* Relationship-forward HUD (V2): the people chips lead the counter row. */
 .hud-counters .hud-rel {
   background: rgba(255, 92, 138, 0.16);

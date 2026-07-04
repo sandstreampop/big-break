@@ -353,6 +353,11 @@ export interface Presenter {
   twistNote?: (delta: number) => string;
   // Extra class(es) for a dealt card (authority tiers, ceremony framing).
   cardClass?: (ev: GameEvent) => string | null;
+  // The overlay-note channel: a commentary popover one layer above the dealt
+  // card (a pack's narrator/telemetry voice). MUST be pure — same state, same
+  // note — because deals re-render on resume and the sims never render.
+  // Result-side notes ride result.overlayNote (set by a pack plugin) instead.
+  overlayNote?: (state: RunState, ev: GameEvent) => { html: string; cls?: string } | null;
   // The art system's reactive-scene inputs, mapped from this pack's state.
   vibe?: (state: RunState) => { fame: number; network: number; burnout: number };
   // Art slots this pack registers with the generated-scene painter:

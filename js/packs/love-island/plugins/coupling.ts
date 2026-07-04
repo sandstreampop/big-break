@@ -27,6 +27,26 @@ export const COUPLING = {
   stealBase: 0.55, stealScale: 160, stealMin: 0.10,
 };
 
+// The qualitative read of the chosen-side survival check, BEFORE the roll —
+// the same math afterResolve runs, minus the unknowable tier bonus. This is
+// what Stirling's ceremony forecast speaks (ADR-0008's truthfulness
+// constraint: his read must reflect the actual state, so it reads this
+// plugin's own arithmetic rather than paraphrasing it).
+export function ceremonyOutlook(state: RunState) {
+  const floor = state.exclusive ? COUPLING.bondFloor - COUPLING.exclusiveEase : COUPLING.bondFloor;
+  let bondEff = state.partner ? state.bond : 0;
+  if (state.flags.includes('li_rival_active')) {
+    bondEff -= COUPLING.rivalPenalty;
+    if (state.rivalMagnet) bondEff -= COUPLING.rivalMagnetExtra;
+  }
+  return {
+    floor, publicFloor: COUPLING.publicFloor,
+    bondEff, publicEff: state.public,
+    bondSafe: !!state.partner && bondEff >= floor,
+    publicSafe: state.public >= COUPLING.publicFloor,
+  };
+}
+
 // The latent betrayal flags this plugin owns (yours; the Partner's hidden
 // state lives in state.partnerLoyal). The Reveal detonates them.
 const MY_DIRT = ['li_casa_kiss', 'li_head_turned', 'li_strayed_official'];

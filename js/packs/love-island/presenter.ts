@@ -9,6 +9,7 @@ import { castById, couplePool, sameGenderPool, islanderTypeById } from './cast.j
 import { angleById } from './angles.js';
 import { PATHS } from './manifest.js';
 import { characterRead, TIER_LABEL } from './plugins/characters.js';
+import { stirlingDealNote } from './plugins/stirling.js';
 import { mulberry32 } from '../../engine.js';
 import type { Presenter, RunState } from '../../types.js';
 
@@ -373,6 +374,9 @@ export const loveIslandPresenter: Presenter = {
   cardClass: (ev: any) => (ev.tags || []).includes('host') ? 'card-host'
     : (ev.tags || []).includes('text') ? 'card-text'
     : (ev.tags || []).includes('encounter') ? 'card-encounter' : null,
+  // Stirling's deal-time channel: the ceremony forecast, the verdict explain,
+  // the scene stamps (ADR-0008). Pure — see stirlingDealNote.
+  overlayNote: stirlingDealNote,
   vibe: (state: RunState) => ({ fame: state.public ?? 0, network: state.stats?.charisma ?? 0, burnout: state.stats?.burnout ?? 0 }),
 
   encore: {

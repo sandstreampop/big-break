@@ -760,6 +760,10 @@ function dealCard() {
   const hintR = el('div', 'swipe-hint hint-right', '');
   card.append(hintL, hintR);
   area.append(card);
+  // A pack may float a commentary popover one layer above the card (the
+  // overlay-note channel — e.g. a narrator's forecast on a ceremony card).
+  const dealNote = PRES.overlayNote?.(run, ev);
+  if (dealNote) area.append(el('div', 'overlay-note ' + (dealNote.cls || ''), fillText(dealNote.html)));
   currentCard = card;
   currentEvent = ev;
 
@@ -1185,6 +1189,11 @@ function showResult(result) {
   }
   box.append(el('div', 'tier-badge', TIER_LABEL[result.tier]));
   box.append(el('p', 'result-text', fillText(result.text)));
+  // The overlay-note channel, result side: a pack plugin's commentary on how
+  // this card landed (set on the result during resolution — already seeded).
+  if (result.overlayNote) {
+    box.append(el('div', 'overlay-note overlay-note-result ' + (result.overlayNote.cls || ''), fillText(result.overlayNote.html)));
+  }
 
   // Numeric stat deltas: compact uniform chips.
   const chips = el('div', 'delta-chips');

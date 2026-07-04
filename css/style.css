@@ -643,6 +643,27 @@ body.big-text #app { zoom: 1.18; }
 .delta-chips { display: flex; flex-wrap: wrap; gap: 7px; }
 .delta-chips:empty, .result-notices:empty { display: none; }
 
+/* ---------- Overlay note (a pack's commentary popover, one layer above
+   the card or the result — the presenter's overlay-note channel) ---------- */
+#card-area .overlay-note {
+  position: absolute;
+  top: 4px; left: 50%;
+  transform: translateX(-50%);
+  width: min(88%, 352px);
+  z-index: 6;
+  pointer-events: none;
+  animation: chipIn .35s backwards;
+}
+.overlay-note {
+  font-size: 13px; line-height: 1.45; font-weight: 550;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: #241d38;
+  border: 1px solid #48406b;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+}
+.overlay-note-result { margin: 2px 0; }
+
 /* Full-width announcement rows — sentences wrap cleanly inside their
    own row instead of distorting a pill */
 .result-notices { display: flex; flex-direction: column; gap: 6px; }

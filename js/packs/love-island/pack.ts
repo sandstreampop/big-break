@@ -11,6 +11,7 @@ import { couplingPlugin } from './plugins/coupling.js';
 import { profilePlugin } from './plugins/profile.js';
 import { producersPlugin } from './plugins/producers.js';
 import { charactersPlugin } from './plugins/characters.js';
+import { stirlingPlugin } from './plugins/stirling.js';
 import type { Pack, RunState } from '../../types.js';
 import { loveIslandPresenter } from './presenter.js';
 
@@ -68,7 +69,9 @@ export const loveIslandPack: Pack = {
   // Rival draw) is the pack's first construction draw, characters' (the
   // Rival's secret) the second; producers owns the run-start chain queue.
   // The goldens pin this order.
-  plugins: [couplingPlugin, profilePlugin, charactersPlugin, producersPlugin],
+  // Stirling registers LAST: his afterResolve reads what the other plugins
+  // decided this card (verdict queues, secret surfacing) before he speaks.
+  plugins: [couplingPlugin, profilePlugin, charactersPlugin, producersPlugin, stirlingPlugin],
   events: LOVE_ISLAND_EVENTS,
   tutorialEvents: [],
   // In-Your-Head wobbles: the engine's coping-interstitial capability,
