@@ -7,6 +7,7 @@ import { ARRIVAL_EVENTS } from './events-arrival.js';
 import { TURN_EVENTS } from './events-turn.js';
 import { FINAL_EVENTS } from './events-final.js';
 import { ENCOUNTER_EVENTS } from './events-encounters.js';
+import { GOSSIP_EVENTS } from './events-gossip.js';
 import type { GameEvent } from '../../types.js';
 
 export const LOVE_ISLAND_EVENTS: GameEvent[] = [
@@ -15,4 +16,5 @@ export const LOVE_ISLAND_EVENTS: GameEvent[] = [
   ...TURN_EVENTS,
   ...FINAL_EVENTS,
   ...ENCOUNTER_EVENTS,
+  ...GOSSIP_EVENTS,
 ];

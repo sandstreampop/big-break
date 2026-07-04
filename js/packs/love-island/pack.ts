@@ -11,6 +11,7 @@ import { couplingPlugin } from './plugins/coupling.js';
 import { profilePlugin } from './plugins/profile.js';
 import { producersPlugin } from './plugins/producers.js';
 import { charactersPlugin } from './plugins/characters.js';
+import { gossipPlugin } from './plugins/gossip.js';
 import { stirlingPlugin } from './plugins/stirling.js';
 import type { Pack, RunState } from '../../types.js';
 import { loveIslandPresenter } from './presenter.js';
@@ -38,6 +39,8 @@ declare module '../../types.js' {
     rivalOpinion?: number; bombshellOpinion?: number;
     partnerMood?: string; rivalMood?: string; bombshellMood?: string;
     surfaceSecret?: string; bombshellEnters?: boolean | string; rivalFromBombshell?: boolean;
+    // gossip currency verbs (ADR-0007): gather a feeling, spend what you hold
+    gainIntel?: { about: string; label: string }; deployIntel?: string;
   }
   interface Requires {
     singleIs?: boolean; exclusiveIs?: boolean; genderIs?: string;
@@ -45,6 +48,8 @@ declare module '../../types.js' {
     // character-state gates (ADR-0006): opinion tiers gate encounter branches
     opinionAtLeast?: string; opinionBelow?: string;
     secretHeldIs?: string; bombshellActiveIs?: boolean;
+    // gossip gates (ADR-0007)
+    intelMin?: number; intelAboutIs?: string;
   }
 }
 // #endregion effect-augmentation
@@ -59,6 +64,8 @@ const summarize = (state: RunState) => ({
   gender: state.gender || null,
   rival: state.rival || null,
   angles: [...(state.accessories || [])],
+  intelDeployed: state.intelDeployed || 0,
+  secretsKnown: [...(state.secretKnown || [])],
 });
 
 // #region pack
@@ -71,7 +78,7 @@ export const loveIslandPack: Pack = {
   // The goldens pin this order.
   // Stirling registers LAST: his afterResolve reads what the other plugins
   // decided this card (verdict queues, secret surfacing) before he speaks.
-  plugins: [couplingPlugin, profilePlugin, charactersPlugin, producersPlugin, stirlingPlugin],
+  plugins: [couplingPlugin, profilePlugin, charactersPlugin, gossipPlugin, producersPlugin, stirlingPlugin],
   events: LOVE_ISLAND_EVENTS,
   tutorialEvents: [],
   // In-Your-Head wobbles: the engine's coping-interstitial capability,

@@ -9,6 +9,7 @@ import { castById, couplePool, sameGenderPool, islanderTypeById } from './cast.j
 import { angleById } from './angles.js';
 import { PATHS } from './manifest.js';
 import { characterRead, TIER_LABEL } from './plugins/characters.js';
+import { intelCount } from './plugins/gossip.js';
 import { stirlingDealNote } from './plugins/stirling.js';
 import { mulberry32 } from '../../engine.js';
 import type { Presenter, RunState } from '../../types.js';
@@ -313,6 +314,8 @@ function hudCounters(state: RunState) {
   if (r) out.push({ html: `⚔️ ${r.cast.name}${r.moodFace ? ' ' + r.moodFace : ''}`, cls: 'hud-rel hud-rel-rival' });
   const b = characterRead(state, 'bombshell');
   if (b) out.push({ html: `💣 ${b.cast.name}${b.moodFace ? ' ' + b.moodFace : ''}`, cls: 'hud-rel' });
+  const held = intelCount(state);
+  if (held) out.push({ html: `🤫 ${held}`, cls: 'hud-rel' });
   out.push({ html: `🗳️ ${state.public ?? 0}`, cls: 'hud-fame' });
   out.push({ html: `📱 ${state.followers ?? 0}`, cls: 'hud-fame' });
   out.push({ html: `💪 ${state.graft ?? 0}`, cls: 'hud-money' });
