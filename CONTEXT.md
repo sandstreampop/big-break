@@ -20,6 +20,18 @@ The finale — the last night, where the public vote peaks (Public is the
 momentum clutch) and each Summit's win gate is evaluated.
 _Avoid_: finale, ending, the last episode
 
+**The Crossroads**:
+The beat at the end of Arrival (act 1) where you commit your Intention — the
+engine's *crossroads* + *commitPath*. Acts 2–3 then lean toward the chosen
+Summit, and the Final checks its gate.
+_Avoid_: path select, class choice
+
+**Intention**:
+Why you say you're really here — the Summit you declare at the Crossroads (Win
+the Villa / The Real Thing / The Brand). Declared, not emergent: you live with
+the commitment (and the temptation to break it).
+_Avoid_: goal, chosen path
+
 **Casa Amor**:
 The marquee mid-Season set-piece: a bounded forced chain at the Act 1→2 break
 where the villa splits, your couple is separated, and you face a concentrated
