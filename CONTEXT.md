@@ -8,9 +8,25 @@ to "win" the season before the Final.
 ## Language
 
 **Season**:
-One playthrough — the engine's *run*. Spans the show's arc from arrival to the
-Final.
+One playthrough — the engine's *run*. Spans the show's arc across three acts:
+**Arrival** (act 1 — enter, first coupling, establish your Type & Angles),
+**The Turn** (act 2 — Bombshells, drama, Casa Amor, biting recouplings), and
+**Final Week** (act 3 — meet-the-families, final dates, the public-vote surge,
+then the Final where Summit gates are checked).
 _Avoid_: run, game, playthrough
+
+**The Final**:
+The finale — the last night, where the public vote peaks (Public is the
+momentum clutch) and each Summit's win gate is evaluated.
+_Avoid_: finale, ending, the last episode
+
+**Casa Amor**:
+The marquee mid-Season set-piece: a bounded forced chain at the Act 1→2 break
+where the villa splits, your couple is separated, and you face a concentrated
+loyalty gauntlet — stay faithful (Loyalty → The Real Thing) or bring someone
+back (Savvy/drama → Followers) — resolved by a "do you recouple?" beat. A
+first-class citizen of the game, not ambient cards.
+_Avoid_: the other villa, temptation week
 
 **Islander**:
 Any contestant in the villa — the player's or an NPC. The player steers one
