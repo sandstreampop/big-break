@@ -93,8 +93,31 @@ Optional pack-owned mechanics (the engine's *plugins*).
 
 **Coupling**:
 The subsystem modelling who the Islander is partnered with and how strong that
-tie is. Owns the Bond value and drives recouplings. (Design in progress.)
+tie is. The Islander is coupled with exactly ONE partner at a time; Bond is that
+couple's strength. Owns the Bond value and drives recouplings.
 _Avoid_: relationship, partnership
+
+**Partner**:
+The single Islander you are currently coupled with. Bond measures this couple's
+strength. You have one at a time until a Recoupling changes it.
+_Avoid_: match, other half, love interest
+
+**Recoupling**:
+The beat where couples re-form — you may keep your Partner or switch. Lands on
+act breaks. Can transfer or reset Bond.
+_Avoid_: reshuffle, swap
+
+**Bombshell**:
+A new Islander arriving mid-Season, forced into the deck at a scheduled slot
+(reusing the engine's forced-category mechanic). A source of Temptation and
+recoupling threat.
+_Avoid_: new arrival, newbie
+
+**Temptation**:
+A card that tests an existing couple — your head can turn toward someone new
+without you leaving your current couple. The "juggling" flavour, modelled as
+events rather than a second Bond ledger.
+_Avoid_: head turn (as a mechanic name), affair
 
 **Graft**:
 The currency — social/romantic capital banked from good villa moments (being
