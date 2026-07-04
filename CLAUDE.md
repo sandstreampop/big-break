@@ -25,9 +25,10 @@
   game's taste data from that game's folder rather than hard-coding it. Extract
   generic mechanism to a testable `tools/*-core.mjs` (see `pack-core`,
   `sim-core`, `taste-core`) rather than growing a shared file with game specifics.
-- Seeded behavior is pinned by golden masters (music and the zero-subsystem
-  probe). A golden diff is a bug unless intended — then re-baseline deliberately
-  (`tools/gen-golden.mjs`, `tools/gen-probe-golden.mjs`).
+- Seeded behavior is pinned by golden masters (music, love-island, and the
+  zero-subsystem probe). A golden diff is a bug unless intended — then
+  re-baseline deliberately (`tools/gen-golden.mjs`, `tools/gen-li-golden.mjs`,
+  `tools/gen-probe-golden.mjs`).
 - Cross-pack invariants (`test/invariants.test.mjs`) guard the class of bug
   per-pack goldens are blind to (a core that behaves differently per genre).
 - Before pushing a balance/content change: `npm run build`, then
@@ -35,7 +36,8 @@
   node --test && node test/ui-smoke.mjs`
   (`npm run check` runs all but `node --test`). The UI smoke test drives each
   game to its finale in headless Chromium — the only coverage the goldens
-  don't have. Judge feel with `node tools/simulate.mjs 4000 narrative`.
+  don't have. Judge feel with `node tools/simulate.mjs 4000 narrative` (music)
+  or `node tools/simulate-pack.mjs <packId> 3000` (any pack, generic driver).
 - Docs site lives in `docs-site/` (Starlight, isolated toolchain — its own
   `package.json`/`node_modules`, never touches the engine's pinned tsc). It
   deploys as a sibling at `/big-break/docs/` from the same Pages workflow, and
@@ -52,4 +54,5 @@
   source of truth for the number.
 
 Play: [music](https://sandstreampop.github.io/big-break/) ·
+[love island](https://sandstreampop.github.io/big-break/love-island/) ·
 [docs](https://sandstreampop.github.io/big-break/docs/)

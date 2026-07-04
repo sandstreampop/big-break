@@ -1,0 +1,67 @@
+---
+title: "Case study: the villa pack"
+description: How Love Island shipped as pack #2 — new files only, zero engine edits.
+---
+
+import { Aside, Code } from '@astrojs/starlight/components';
+import liPackRaw from '@engine/packs/love-island/pack.ts?raw';
+import { region } from '@snippet';
+
+The engine's whole pitch is that a second genre is *content, not surgery*.
+**Love Island** — a reality-dating-show game — is that pitch, shipped: a villa
+Season with couplings, recouplings, Casa Amor, a public vote, and three ways to
+win, running on the same core as the music game. Its design record lives in the
+repo at `docs/games/love-island/` (vocabulary, ADRs, voice bible); this page is
+the engineering summary.
+
+## The whole registration
+
+Adding the genre touched **no engine line and no shared type**. The pack is a
+folder (`js/packs/love-island/`), one registry entry, and one HTML entry the
+build copies to `/love-island/`:
+
+<Code code={region(liPackRaw, 'pack')} lang="ts" title="js/packs/love-island/pack.ts" />
+
+## Design → mechanic mapping
+
+Every villa concept lands on an existing engine mechanic:
+
+| The show | The engine |
+|---|---|
+| A **Season** across Arrival / The Turn / Final Week | one run · three acts |
+| Your **Islander** (a Type × a gender) | loadout — the persona pick *is* the gender pick |
+| **Rizz / Loyalty / Savvy / Charisma**, **In Your Head** | manifest stats + the universal burnout slot |
+| **Public / Followers / Bond / Graft** | manifest resources (Public doubles as the finale momentum clutch) |
+| Declaring your **Intention** at the Crossroads | `commitPath` + `winGates` |
+| **Bond**, the single Partner, Recoupling survival | the coupling *plugin* — `applyResource('bond')`, its own verbs |
+| **Casa Amor**, the postcard, **Movie Night** | a forced chain + latent flags a `reveal` verb detonates |
+| **Bombshells**, the girls' Recoupling, **Meet the Parents** | `refineDeck` scheduled windows (the shop-slot mechanism) |
+| The **Edit** of **Angles**, bought with Graft on the daybed | the gear mechanic, reskinned — `costResource`, `loseOnBad` = *exposed* |
+| **Walk** and **Dumped** | the burnout fail + pack-declared `failStates` |
+| *"I've got a text!"*, the Host, the Narrator | presenter copy + a `cardClass` styling hook — pure data |
+
+## The two verbs the engine never sees
+
+The pack's subsystem vocabulary — `couple`, `switchPartner`, `stealRoll`,
+`reveal`, `grantAngle`, the `singleIs`/`exclusiveIs` eligibility predicates —
+is declared by **declaration merging in the pack's own file** and owned by the
+plugins that register them (`effectVerbs`, `Plugin.requires`). The cross-pack
+invariants verify every card's keys are owned; the pack's golden corpus
+(`tools/golden/love-island.json`) pins the seeded behavior byte-for-byte.
+
+Two playable-Type quirks touch plugin-owned meters (the Golden Retriever's
+faster Bond, the Influencer's Followers-on-drama). They ride custom keys on the
+loadout's `quirk.hooks` that the owning plugin reads back off `pctx.hooks` —
+the engine names neither key.
+
+<Aside type="note" title="What it proves">
+The probe pack shows the core *boots* without music. The villa pack shows a
+real genre — five subsystems, a scheduled mid-season set-piece, its own fail
+state — ships against the same core with new files only. The one shared-code
+change the port motivated was generic: a set of optional, feature-detected
+presenter hooks (title copy, HUD counters, act names, token filling) that any
+future pack gets for free.
+</Aside>
+
+Play it: [the villa](https://sandstreampop.github.io/big-break/love-island/) ·
+sibling of [the music game](https://sandstreampop.github.io/big-break/).

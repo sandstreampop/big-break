@@ -413,7 +413,7 @@ function startNewRun(daily = false, comeback = false) {
       chosenGenre ? genreById(chosenGenre)?.icon : null,
       chosenContract ? contractById(chosenContract)?.icon : null,
     ].filter(Boolean).join(' ');
-    const sb = btn(inst ? `▶ Start the run — ${inst.name}${extras ? ' · ' + extras : ''}` : 'Pick an instrument to start', inst ? 'primary' : '', beginRun);
+    const sb = btn(inst ? `▶ Start the run — ${inst.name}${extras ? ' · ' + extras : ''}` : (isMusic ? 'Pick an instrument to start' : 'Pick your player to start'), inst ? 'primary' : '', beginRun);
     sb.id = 'start-run-btn';
     if (!inst) sb.disabled = true;
     bar.append(sb);

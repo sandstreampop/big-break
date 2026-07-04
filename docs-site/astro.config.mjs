@@ -111,6 +111,7 @@ export default defineConfig({
           items: [
             { label: 'Balance & the safety net', slug: 'shipping/balance' },
             { label: 'Building & shipping', slug: 'shipping/build' },
+            { label: 'Case study: the villa pack', slug: 'shipping/second-genre' },
           ],
         },
         {
