@@ -21,6 +21,11 @@ export const CHARACTERS = {
   rivalOpinionStart: 34,     // the Rival arrives unimpressed, not hostile
   bombshellOpinionStart: 46, // a bombshell reads you fresh, no history
   moodTtl: 4,                // cards a mood colours before it fades
+  // The nation watches MOMENTS: an encounter beat that lands pulls votes (and
+  // an incredible one trends). Balances the deck share encounters displaced
+  // from the public/followers-paying ambient cards.
+  encounterPublic: { good: 1, incredible: 3 } as Record<string, number>,
+  encounterFollowersIncredible: 2,
 };
 
 // The bounded mood set (the portrait art direction's whole vocabulary — a mood
@@ -123,6 +128,22 @@ const note = (pctx: any, cls: string, html: string) => {
   (d.notices = d.notices || []).push({ cls, html });
 };
 
+// Fill the bombshell seat with a seeded draw from the pool: fresh opinion,
+// fresh secret, no history. Used by the bombshellEnters verb and by the
+// bombshell beat cards resolving (afterResolve below).
+function seatBombshell(state: RunState, rng: () => number, want: string) {
+  const pool = CAST.filter((c) => c.bombshell && c.gender === want && c.id !== state.partner);
+  const pick = pool.length ? pool[Math.floor(rng() * pool.length)] : null;
+  if (!pick) return;
+  state.bombshellId = pick.id;
+  state.charOpinion.bombshell = CHARACTERS.bombshellOpinionStart;
+  state.charMood.bombshell = null;
+  state.charSecret.bombshell = BOMBSHELL_SECRETS[Math.floor(rng() * BOMBSHELL_SECRETS.length)].id;
+  state.secretKnown = (state.secretKnown || []).filter((r: string) => r !== 'bombshell');
+  state.secretSpent = (state.secretSpent || []).filter((r: string) => r !== 'bombshell');
+  if (!state.flags.includes(`li_arrived_${pick.id}`)) state.flags.push(`li_arrived_${pick.id}`);
+}
+
 function moveOpinion(state: RunState, role: 'rival' | 'bombshell', v: number) {
   if (!roleCastId(state, role)) return 0;
   const before = state.charOpinion[role] ?? 0;
@@ -187,6 +208,22 @@ export const charactersPlugin: Plugin = {
     bombshellActiveIs: (s, arg) => !!s.bombshellId === !!arg,
   },
 
+  // The nation watches moments: encounter beats that land pull votes, and a
+  // showy lane (drama/camera/flirt/banter) that lands feeds the following.
+  // Folded into the payload before it applies, so the deltas read as one number.
+  modifyEffects(state, effects, ctx) {
+    const ev = (ctx as any).ev;
+    const tier = (ctx as any).tier as string | undefined;
+    if (!ev || !(ev.tags || []).includes('encounter')) return;
+    if (tier !== 'good' && tier !== 'incredible') return;
+    const pub = CHARACTERS.encounterPublic[tier] || 0;
+    if (pub) (effects as any).public = ((effects as any).public || 0) + pub;
+    const showy = ((ctx as any).choice?.tags || [])
+      .some((t: string) => t === 'drama' || t === 'camera' || t === 'flirt' || t === 'banter');
+    const fol = (tier === 'incredible' ? CHARACTERS.encounterFollowersIncredible : 0) + (showy ? 1 : 0);
+    if (fol) (effects as any).followers = ((effects as any).followers || 0) + fol;
+  },
+
   onEffect(state, effects, pctx) {
     const e = effects as any;
 
@@ -205,19 +242,7 @@ export const charactersPlugin: Plugin = {
     // draws your own gender (a threat aimed at your couple — second-wave
     // rival material).
     if (e.bombshellEnters) {
-      const want = e.bombshellEnters === 'same' ? state.gender : state.gender === 'girl' ? 'boy' : 'girl';
-      const pool = CAST.filter((c) => c.bombshell && c.gender === want && c.id !== state.partner);
-      const pick = pool.length ? pool[Math.floor(pctx.rng() * pool.length)] : null;
-      if (pick) {
-        state.bombshellId = pick.id;
-        state.charOpinion.bombshell = CHARACTERS.bombshellOpinionStart;
-        state.charMood.bombshell = null;
-        const pools = BOMBSHELL_SECRETS;
-        state.charSecret.bombshell = pools[Math.floor(pctx.rng() * pools.length)].id;
-        state.secretKnown = (state.secretKnown || []).filter((r: string) => r !== 'bombshell');
-        state.secretSpent = (state.secretSpent || []).filter((r: string) => r !== 'bombshell');
-        if (!state.flags.includes(`li_arrived_${pick.id}`)) state.flags.push(`li_arrived_${pick.id}`);
-      }
+      seatBombshell(state, pctx.rng, e.bombshellEnters === 'same' ? state.gender : state.gender === 'girl' ? 'boy' : 'girl');
     }
 
     // The bombshell steps up as a second-wave Rival (V2-DESIGN: the villa
@@ -254,8 +279,17 @@ export const charactersPlugin: Plugin = {
 
   // Moods decay card by card — a mood is weather, not a bank balance. A new
   // Partner is a new person: their secret re-draws (seeded) and anything you
-  // held on the old one is history.
+  // held on the old one is history. A bombshell BEAT resolving fills the
+  // seat (the arrival happens whatever you did about it) — the steal variant
+  // excepted, whose bombshell couples up on the spot.
   afterResolve(state, _result, cardCtx) {
+    const beat = (cardCtx.ev?.tags || []).find((t: string) => t.startsWith('beat:'));
+    const landed = cardCtx.tier && cardCtx.tier !== 'declined' && cardCtx.choice
+      ? (cardCtx.choice.outcomes as any)?.[cardCtx.tier]?.effects : null;
+    if ((beat === 'beat:bomb1' || beat === 'beat:bomb2') && cardCtx.ev.id !== 'li_bomb2_steal' &&
+        !state.bombshellId && !landed?.couple && !landed?.switchPartner) {
+      seatBombshell(state, cardCtx.rng, state.gender === 'girl' ? 'boy' : 'girl');
+    }
     if (state.partner !== state.charPartnerWas) {
       state.charPartnerWas = state.partner;
       state.charMood.partner = null;

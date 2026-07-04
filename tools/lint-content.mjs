@@ -96,7 +96,8 @@ const DESCRIPTORS = {
     // Flags set by the pack's PLUGINS (not by a card's addFlag), so the
     // required-flag reachability check knows they exist.
     pluginFlags: ['li_revealed', 'li_partner_revealed', 'li_betrayed', 'li_sympathy',
-      'li_stranded', 'li_came_clean', 'li_dumped_single', 'li_rival_active'],
+      'li_stranded', 'li_came_clean', 'li_dumped_single', 'li_rival_active',
+      'li_fed_the_rival', 'li_secret_detonated'],
     arcs: [{
       id: 'li_scheduled_beats',
       setup: ['li_bomb1', 'li_bomb2', 'li_bomb2_steal', 'li_bomb2_single',
@@ -104,7 +105,9 @@ const DESCRIPTORS = {
         'li_recoup1_choose', 'li_recoup1_choose_single',
         'li_recoup1_exposed', 'li_recoup1_exposed_single',
         'li_parents', 'li_parents_messy',
-        'li_enc_rival_1'],
+        'li_enc_rival_1',
+        'li_enc_rmove_poach', 'li_enc_rmove_rumour',
+        'li_enc_p3_high', 'li_enc_p3_low', 'li_second_wave'],
       payoffs: [],
     }],
   },

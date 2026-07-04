@@ -8,6 +8,7 @@
 // pctx.hooks (`bondGainMult`) — a pack-custom key the engine never sees.
 
 import { castById, couplePool, sameGenderPool } from '../cast.js';
+import { opinionTier } from './characters.js';
 import type { Plugin, RunState } from '../../../types.js';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -18,6 +19,10 @@ export const COUPLING = {
   bondFloor: 30,       // chosen-Recoupling survival: Bond ≥ this holds your Partner
   publicFloor: 28,     // …OR Public ≥ this and somebody picks you anyway
   rivalPenalty: 8,    // active Rival poaches: effective Bond at the check drops
+  // ADR-0006: the Rival's OPINION of you feeds the poach — a rival who rates
+  // you pulls their punches; one who despises you goes in harder. Added to
+  // rivalPenalty by tier (net poach floors at 0).
+  rivalTierMod: { cold: 4, cool: 0, warm: -4, smitten: -8 } as Record<string, number>,
   rivalMagnetExtra: 5, // Head-Turner types attract worse poaching
   exclusiveEase: 15,   // official couples: Partner re-picks at a friendlier floor
   // Casa Amor: the Partner's hidden loyalty draw (regular, not rare — ADR-0002)
@@ -34,17 +39,25 @@ export const COUPLING = {
 // plugin's own arithmetic rather than paraphrasing it).
 export function ceremonyOutlook(state: RunState) {
   const floor = state.exclusive ? COUPLING.bondFloor - COUPLING.exclusiveEase : COUPLING.bondFloor;
-  let bondEff = state.partner ? state.bond : 0;
-  if (state.flags.includes('li_rival_active')) {
-    bondEff -= COUPLING.rivalPenalty;
-    if (state.rivalMagnet) bondEff -= COUPLING.rivalMagnetExtra;
-  }
+  const bondEff = (state.partner ? state.bond : 0) - rivalPoach(state);
   return {
     floor, publicFloor: COUPLING.publicFloor,
     bondEff, publicEff: state.public,
     bondSafe: !!state.partner && bondEff >= floor,
     publicSafe: state.public >= COUPLING.publicFloor,
   };
+}
+
+// The poach an active Rival lands at a ceremony: the base penalty, bent by
+// how they rate you (ADR-0006 — opinion feeds recoupling survival) and by
+// the Head-Turner's magnetism. Never negative: a smitten rival stands down,
+// they don't campaign for you.
+export function rivalPoach(state: RunState): number {
+  if (!state.flags.includes('li_rival_active')) return 0;
+  const tier = opinionTier(state.charOpinion?.rival ?? 0);
+  let p = COUPLING.rivalPenalty + (COUPLING.rivalTierMod[tier] ?? 0);
+  if (state.rivalMagnet) p += COUPLING.rivalMagnetExtra;
+  return Math.max(0, p);
 }
 
 // The latent betrayal flags this plugin owns (yours; the Partner's hidden
@@ -324,13 +337,10 @@ function resolveCeremony(state: RunState) {
   let bondEff = state.partner ? state.bond : 0;
   let publicEff = state.public;
   if (bondLane) bondEff += tierBonus; else publicEff += tierBonus;
-  // An active Rival poaches at the check — unless their secret just went off
-  // at the firepit (the cash-out defuses the poach). Head-Turner types
-  // (rivalMagnet, stamped at run start by the producers plugin) attract worse.
-  if (state.flags.includes('li_rival_active') && !secretPlayed) {
-    bondEff -= COUPLING.rivalPenalty;
-    if (state.rivalMagnet) bondEff -= COUPLING.rivalMagnetExtra;
-  }
+  // An active Rival poaches at the check — bent by their opinion of you
+  // (rivalPoach) — unless their secret just went off at the firepit (the
+  // cash-out defuses the poach).
+  if (!secretPlayed) bondEff -= rivalPoach(state);
   const floor = state.exclusive ? COUPLING.bondFloor - COUPLING.exclusiveEase : COUPLING.bondFloor;
   const verdict = state.partner && bondEff >= floor ? 'held'
     : publicEff >= COUPLING.publicFloor ? 'rescued' : 'dumped';

@@ -279,3 +279,32 @@ authored card, activating the moment the pack registers (Phase B1). Logic and te
 
 The floor is a *floor*, not the ceiling. It catches lapses; it can't make a line good.
 That's what this document and the worked examples are for.
+
+---
+
+## v2 addendum — dialogue-first (the playtest correction)
+
+The 5-run playtest verdict on v1's dominant register: **too much dry omniscient
+narrator**. The v2 shift ([`V2-DESIGN.md`](./V2-DESIGN.md), "dialogue-first voice"):
+
+1. **Beat and outcome text leads with what characters SAY.** Open on a quoted
+   line wherever the scene has a mouth in it; the Narrator drops to brief stage
+   directions between the quotes. The two-mouths rule still governs — Islander
+   dialogue is sincere argot, narration stays deadpan — but the *ratio* flips:
+   dialogue carries the scene, narration frames it.
+   - ✅ `“Right. You and me. Wee chat.” {rival} pours you a drink like it’s a contract signing.`
+   - ❌ `Your rival corners you in the kitchen for a probing conversation about your intentions.`
+2. **Stirling carries the outside wit.** With the bark engine (ADR-0008) as a
+   dedicated channel, card text no longer needs to smuggle the voiceover's
+   commentary into every outcome — his jokes live in the popover, one layer up.
+   Card copy that reads like a Stirling bit is usually copy that belongs to him.
+3. **Encounters are the flagship register** ([ADR-0005](./adr/0005-encounters-branching-dialogue.md)):
+   a beat is a *conversation with a person*, so its prompt should contain that
+   person's actual voice, and its outcome should show their reaction — a face, a
+   reply, a recalibration — not just a scoreboard movement described politely.
+4. Everything above obeys the existing floor (bangs, clichés, length). No new
+   lint rule: dialogue-presence is a craft judgement, not a regex.
+
+The encounter files (`events-encounters.ts`, `events-gossip.ts`, the ceremony
+cash-out) are written to this addendum and double as its worked examples; the
+v1 ambient deck converts opportunistically as cards get touched.

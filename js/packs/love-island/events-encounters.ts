@@ -164,4 +164,360 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
       },
     },
   },
+
+  // ---------- Act 1 · the Partner, actually met (3 beats, ambient-triggered) ----------
+  {
+    id: 'li_enc_partner_1', act: 1, weight: 2, tags: ['encounter', 'chat', 'date'],
+    art: 'li_pool',
+    requires: { singleIs: false },
+    context: 'Mid-morning · the swing seat · the first real one',
+    prompt: '“Okay, no cameras—” {partner} glances at three cameras. “Fine. Pretend. Tell me one true thing about you that isn’t on your poster.” The swing creaks. The question is a door, ajar.',
+    choices: {
+      left: {
+        label: 'Give them a true thing',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You reach for profound and land on “I don’t really like beaches,” on a show that is beaches. {partner} laughs anyway. Mostly at you. It still counts.', effects: { loyalty: 2, bond: 3, burnout: 2, chainEventId: 'li_enc_partner_2_real' } },
+          good: { text: 'You say the true thing, smaller and stranger than you’d planned. “See,” says {partner}, settling in, “THAT person can stay.”', effects: { loyalty: 5, bond: 5, chainEventId: 'li_enc_partner_2_real' } },
+          incredible: { text: 'The true thing lands so cleanly that {partner} goes quiet, then trades you one back — bigger. The swing seat is suddenly the realest place on the island.', effects: { loyalty: 8, bond: 7, public: 3, chainEventId: 'li_enc_partner_2_real' } },
+        },
+      },
+      right: {
+        label: 'Charm past the question',
+        tags: ['flirt', 'banter'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You deflect with a bit, and {partner}’s smile does a small administrative change — front of house stays open, something behind it shuts.', effects: { rizz: 2, bond: 1, partnerMood: 'torn', burnout: 2, chainEventId: 'li_enc_partner_2_show' } },
+          good: { text: 'You flirt your way around the door instead of through it. Great scene. {partner} laughs on cue and files the non-answer for later.', effects: { rizz: 5, followers: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
+          incredible: { text: 'The deflection is so charming it becomes a running joke by lunch — “not on the poster!” — and the villa adopts it. {partner} enjoys the bit. And clocks it.', effects: { rizz: 8, followers: 5, public: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_partner_2_real', act: 1, chainOnly: true, tags: ['encounter', 'chat'],
+    art: 'li_kitchen',
+    context: 'That night · two teas · the follow-up questions',
+    prompt: '“Right, follow-up round.” {partner} slides you a tea made exactly wrong, first attempt, noted for correction. “The thing you said earlier. Does anyone out there know that about you?” Out there. The words do a little weather.',
+    choices: {
+      left: {
+        label: 'Let them all the way in',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You answer honestly for six unbroken minutes. {partner} holds the eye contact like a champion. The tea goes cold in service of the cause.', effects: { loyalty: 2, bond: 4, burnout: 2, chainEventId: 'li_enc_partner_3close' } },
+          good: { text: '“No,” you say. “You’re the first.” {partner} looks at the tea, then at you, and reorganises their whole game around that sentence.', effects: { loyalty: 5, bond: 6, partnerMood: 'buzzing', chainEventId: 'li_enc_partner_3close' } },
+          incredible: { text: 'A follow-up question becomes the villa’s first 2 a.m. kitchen conversation with no agenda at all. The night camera films two people forgetting it exists.', effects: { loyalty: 8, bond: 8, partnerMood: 'buzzing', public: 3, chainEventId: 'li_enc_partner_3close' } },
+        },
+      },
+      right: {
+        label: 'Trade a question back',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: '“What about you, then?” lands more deposition than curiosity. {partner} answers carefully, both of you now negotiators in swimwear.', effects: { savvy: 2, bond: 2, burnout: 2, chainEventId: 'li_enc_partner_3close' } },
+          good: { text: 'You flip it, and {partner} takes the invitation at a run — the story about the nan, the fear about the outside. You’re learning the manual. Lovely, and useful.', effects: { savvy: 5, bond: 4, gainIntel: { about: 'partner', label: 'the thing they fear about the outside' }, chainEventId: 'li_enc_partner_3close' } },
+          incredible: { text: 'The question you ask is so exactly right that {partner} stops mid-sip. “Nobody’s asked me that. Ever.” The answer runs long. You remember all of it.', effects: { savvy: 8, bond: 6, gainIntel: { about: 'partner', label: 'the answer nobody else has heard' }, chainEventId: 'li_enc_partner_3close' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_partner_2_show', act: 1, chainOnly: true, tags: ['encounter', 'camera'],
+    art: 'li_lawn',
+    context: 'Afternoon · the lawn · your couple, performing well',
+    prompt: '“We’re good at this,” {partner} murmurs mid-photogenic-laugh, eyes bright and unreadable. “The couple thing. Everyone thinks so.” A beat. “Is it a thing, though? For you?” Delivered smiling, straight down the middle of the bit.',
+    choices: {
+      left: {
+        label: 'Drop the act, live',
+        tags: ['loyal', 'drama'],
+        governingStats: { loyalty: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: '“It’s a thing. For me. Is that— it’s a thing.” Eloquence: gone. Sincerity: unmissable. {partner} blinks at the sudden weather change and takes your hand anyway.', effects: { loyalty: 2, bond: 4, burnout: 3, chainEventId: 'li_enc_partner_3close' } },
+          good: { text: 'You answer the real question under the smiling one, plainly, mid-lawn. The performance stops. Something unperformed starts.', effects: { loyalty: 5, bond: 6, partnerMood: 'buzzing', chainEventId: 'li_enc_partner_3close' } },
+          incredible: { text: 'You say it so simply the boom operator forgets to breathe. {partner}’s stage face comes off like sunglasses. The villa watches your couple become a couple.', effects: { loyalty: 8, bond: 8, public: 4, partnerMood: 'buzzing', chainEventId: 'li_enc_partner_3close' } },
+        },
+      },
+      right: {
+        label: 'Keep the show running',
+        tags: ['camera', 'strategy'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“Course it’s a thing. We’re the thing.” The line’s fine. The pause before it wasn’t. {partner} nods at the show going on, and does some quiet arithmetic.', effects: { charisma: 2, followers: 3, bond: -2, partnerMood: 'torn', burnout: 2, chainEventId: 'li_enc_partner_3close' } },
+          good: { text: 'You keep it light and let the couple stay a very good show. {partner} matches you beat for beat. Two professionals. The nation loves professionals. Loves. Doesn’t vote for.', effects: { charisma: 5, followers: 5, public: 2, chainEventId: 'li_enc_partner_3close' } },
+          incredible: { text: 'You perform the couple so well that even you briefly believe it — and there, mid-bit, is a flicker of the actual thing, unscripted, alarming, filed by both of you.', effects: { charisma: 8, followers: 7, bond: 3, public: 3, chainEventId: 'li_enc_partner_3close' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_partner_3close', act: 1, chainOnly: true, tags: ['encounter', 'date'],
+    art: 'li_bedroom',
+    context: 'Lights out · the whispered inventory',
+    prompt: 'The room breathes around you. “Honest answer,” whispers {partner}, one duvet-width away. “Day one, would you have picked me? Off the line-up, no context.” The moment arrives quietly, at whisper volume, the way the real ones do.',
+    choices: {
+      left: {
+        label: 'The honest answer',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'The honest answer is “no,” and you say it, and then you explain it beautifully — a beat too late. The dark holds two people recalculating. Honesty banks slow interest.', effects: { loyalty: 3, bond: 2, partnerMood: 'torn', burnout: 3 } },
+          good: { text: '“No. And thank god, because I’d have picked wrong.” The silence after is warm, not cold. {partner} exhales a laugh into the pillow. Vault: opened, jointly.', effects: { loyalty: 5, bond: 7, partnerMood: 'buzzing' } },
+          incredible: { text: 'Your answer is true, specific, and better than a yes. {partner} is quiet a long moment, then: “Right. You’re a problem.” Said like a promotion. The couple is now load-bearing.', effects: { loyalty: 8, bond: 9, partnerMood: 'buzzing', public: 3 } },
+        },
+      },
+      right: {
+        label: 'The charming answer',
+        tags: ['flirt', 'banter'],
+        governingStats: { rizz: 1 },
+        outcomes: {
+          bad: { text: '“Obviously. Look at you.” The compliment lands; the dodge underneath it lands harder. “Mm,” says {partner}, a full sentence, and turns over.', effects: { rizz: 2, bond: 1, partnerMood: 'torn', burnout: 2 } },
+          good: { text: 'You answer with a line so good it gets a real laugh at midnight volume. Not the truth, exactly — but the delivery says enough of it.', effects: { rizz: 5, bond: 4, followers: 2 } },
+          incredible: { text: 'The line is perfect, and then — fatal — you ruin it with the true bit, quietly, right after. “Knew it,” whispers {partner}, delighted, holding the evidence.', effects: { rizz: 8, bond: 7, partnerMood: 'buzzing', followers: 3 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Act 2 · the Rival makes their move (beat window, two variants) ----------
+  // War footing (or a cold read): the poach, in the open.
+  {
+    id: 'li_enc_rmove_poach', act: 2, weight: 1, tags: ['beat:rivalmove', 'encounter', 'drama'],
+    art: 'li_lawn',
+    requires: { singleIs: false, anyOf: [{ flagsAll: ['li_rival_active'] }, { opinionBelow: 'rival:cool' }] },
+    context: 'Midday · the poach · in broad, deliberate daylight',
+    prompt: '“Borrowing this one!” {rival} announces, already steering {partner} towards the daybed by the elbow, sunniest voice on the island. To the villa: banter. To you, over the shoulder, one look: <i>your move</i>.',
+    choices: {
+      left: {
+        label: 'Walk over, smiling',
+        tags: ['drama', 'flirt'],
+        governingStats: { rizz: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You arrive with a grin that needs recasting and a “room for one more?” that dies on the grass. {rival} makes space with theatrical delight. Round one: theirs.', effects: { rizz: 2, bond: -2, burnout: 4, rivalMood: 'smug', chainEventId: 'li_enc_rmove_show' } },
+          good: { text: 'You stroll over, sit down mid-anecdote, and quietly become its best audience. The poach dies of an oxygen shortage. {partner}’s hand finds yours on the way up.', effects: { rizz: 5, bond: 4, rivalOpinion: -3, chainEventId: 'li_enc_rmove_show' } },
+          incredible: { text: 'You join the chat so warmly you hijack it — in two minutes {rival} is somehow third wheel at their own poach. The daybed applauds internally. The clip runs for days.', effects: { rizz: 8, bond: 5, public: 4, followers: 4, rivalMood: 'fuming', chainEventId: 'li_enc_rmove_show' } },
+        },
+      },
+      right: {
+        label: 'Let it play out',
+        tags: ['strategy', 'rest'],
+        governingStats: { savvy: 0.7, loyalty: 0.3 },
+        outcomes: {
+          bad: { text: 'You give it space, and space is what a graft runs on. Forty minutes of it airs in real time while you assassinate a smoothie. {partner} comes back. Eventually.', effects: { savvy: 2, bond: -3, burnout: 5, rivalMood: 'smug', chainEventId: 'li_enc_rmove_show' } },
+          good: { text: 'You clock it, rate it — decent technique, rushed timing — and let {partner} handle their own daybed. They do. The trust airs better than any intervention could.', effects: { savvy: 5, bond: 3, loyalty: 3, chainEventId: 'li_enc_rmove_show' } },
+          incredible: { text: 'You watch the whole attempt like a scout at a trial match, visibly unbothered. {partner} extracts themselves inside five minutes and reports the entire script back to you. Verbatim.', effects: { savvy: 8, bond: 5, gainIntel: { about: 'rival', label: 'their whole poaching script, reported back' }, chainEventId: 'li_enc_rmove_show' } },
+        },
+      },
+    },
+  },
+  // Pact footing: the rumour with familiar fingerprints.
+  {
+    id: 'li_enc_rmove_rumour', act: 2, weight: 1, tags: ['beat:rivalmove', 'encounter', 'strategy'],
+    art: 'li_bedroom',
+    requires: { opinionAtLeast: 'rival:cool', flagsNone: ['li_rival_active'] },
+    context: 'Morning · a rumour in circulation · familiar fingerprints',
+    prompt: 'By breakfast it’s everywhere: your couple is “tactical.” The word is too clean, too placed — a professional’s rumour. And there’s exactly one professional in here who knows your game well enough to price it. The pact, it seems, has small print.',
+    choices: {
+      left: {
+        label: 'Trace it quietly',
+        tags: ['strategy'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You interview the villa one tea at a time and the rumour hears you coming. By noon there’s a rumour about you investigating the rumour. It does better numbers.', effects: { savvy: 2, burnout: 4, followers: 2, chainEventId: 'li_enc_rmove_confront' } },
+          good: { text: 'Three retellings, one common source, familiar phrasing. You don’t confront anyone — you just collect. Evidence is a currency that appreciates.', effects: { savvy: 5, gainIntel: { about: 'rival', label: 'the rumour traces back to them' }, chainEventId: 'li_enc_rmove_confront' } },
+          incredible: { text: 'You map the rumour’s whole supply chain by lunch — courier, embellisher, author. The author is who you thought. You file it, smile at them at dinner, and say nothing. Yet.', effects: { savvy: 8, public: 3, gainIntel: { about: 'rival', label: 'proof they authored the rumour' }, chainEventId: 'li_enc_rmove_confront' } },
+        },
+      },
+      right: {
+        label: 'Go straight to {rival}',
+        tags: ['drama', 'chat'],
+        governingStats: { charisma: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: '“Did you start it?” — “Did you just accuse me?” In four sentences the pact is on fire and you’re holding the matches in front of witnesses.', effects: { charisma: 2, rivalOpinion: -6, rivalMood: 'fuming', burnout: 4, chainEventId: 'li_enc_rmove_confront' } },
+          good: { text: '“Heard a rumour. Sounded like your handwriting.” {rival} doesn’t confirm, doesn’t deny — offers you a grape. That’s a confession, in their dialect.', effects: { charisma: 5, rivalOpinion: -2, chainEventId: 'li_enc_rmove_confront' } },
+          incredible: { text: 'You raise it so lightly — admiring the craft, critiquing one word choice — that {rival} cracks up and owns it. “Had to test the fence,” they shrug. Fence: tested. Noted.', effects: { charisma: 8, rivalOpinion: 3, gainIntel: { about: 'rival', label: 'they admit to testing your fence' }, chainEventId: 'li_enc_rmove_confront' } },
+        },
+      },
+    },
+  },
+  // The move, answered (war footing's payoff — the MOMENT of the Act-2 arc).
+  {
+    id: 'li_enc_rmove_show', act: 2, chainOnly: true, tags: ['encounter', 'drama'],
+    art: 'li_firepit_day',
+    context: 'That evening · the follow-up · {rival} finds you first',
+    prompt: '“That, earlier?” {rival} materialises beside you with two drinks and gives you one, which is how aggression works here. “Nothing personal. Final Week seats are Final Week seats.” A pause. “You’d do the same.” Would you? They’re watching you decide.',
+    choices: {
+      left: {
+        label: '“Try it again. See.”',
+        tags: ['drama', 'loyal'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'The line comes out two sizes too big for the patio. {rival} toasts you with your own drink, delighted. “There they are,” they say, like you’ve finally arrived at their party.', effects: { loyalty: 2, rivalOpinion: -4, rivalMood: 'smug', addFlag: 'li_rival_active', burnout: 3 } },
+          good: { text: 'You say it level, no theatre, and hold their eye until they nod. Terms understood. The Season now has two players who respect each other and a lawn between them.', effects: { loyalty: 5, rivalOpinion: -2, addFlag: 'li_rival_active', public: 3 } },
+          incredible: { text: '“You’d do the same.” — “No,” you say, and mean it, and {rival} sees you mean it — the one answer their model didn’t price. For a second the game blinks off their face.', effects: { loyalty: 8, rivalOpinion: 4, rivalMood: 'torn', public: 4, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Talk terms instead',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You open negotiations and immediately reveal your whole hand, including cards you didn’t know you held. {rival} thanks you for the audit and pays in compliments.', effects: { savvy: 2, rivalOpinion: 2, rivalMood: 'scheming', burnout: 3 } },
+          good: { text: 'Two strategists, one sunset, terms agreed without a single term said aloud. You leave with your couple ringfenced and a professional courtesy neither of you will admit to.', effects: { savvy: 5, rivalOpinion: 4, bond: 2 } },
+          incredible: { text: 'The negotiation is so enjoyable it becomes a friendship-shaped problem. “Ugh,” says {rival}, meaning it. “I liked you better as furniture.” The villa’s two sharpest, allied. Terrifying.', effects: { savvy: 8, rivalOpinion: 8, rivalMood: 'smug', followers: 3, graft: 3, gainIntel: { about: 'rival', label: 'what they’ll trade for a Final seat' } } },
+        },
+      },
+    },
+  },
+  // The rumour, priced (pact footing's payoff).
+  {
+    id: 'li_enc_rmove_confront', act: 2, chainOnly: true, tags: ['encounter', 'strategy'],
+    art: 'li_terrace',
+    context: 'Dusk · the terrace · the rumour, priced',
+    prompt: '“So.” {rival} leans on the rail beside you, watching the villa metabolise their rumour below. “Everyone believes what they already believed. That’s all a rumour is — a mirror.” They turn. “Question is what you do with yours.”',
+    choices: {
+      left: {
+        label: 'Kill it with the couple',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You and {partner} present a united front so rehearsed it briefly proves the rumour’s point. The villa applauds the production values. {rival} mouths “tactical” at you, beaming.', effects: { loyalty: 2, bond: 2, burnout: 3, rivalMood: 'smug' } },
+          good: { text: 'You take it to {partner} first and let your couple be boringly, visibly fine. The rumour starves on schedule. {rival} watches its funeral with professional respect.', effects: { loyalty: 5, bond: 5, rivalOpinion: 2 } },
+          incredible: { text: 'Your couple answers the rumour by having, publicly, the least tactical afternoon in villa history. It airs as pure sunshine. “Fine,” says {rival} at dinner, beaten. “That was good.”', effects: { loyalty: 8, bond: 6, public: 4, rivalOpinion: 4 } },
+        },
+      },
+      right: {
+        label: 'Send one back',
+        tags: ['strategy', 'drama'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'Your counter-rumour leaves the workshop with a wobble and your fingerprints still on it. The villa traces it in an hour. Now there are two rumours, and one culprit: you.', effects: { savvy: 2, public: -2, followers: 3, burnout: 4, addFlag: 'li_code_broke' } },
+          good: { text: 'You place one small, true, inconvenient fact about {rival}’s game into the right ear at the right time. No embellishment — the truth freelances. They feel it by dinner.', effects: { savvy: 5, rivalOpinion: -4, rivalMood: 'fuming', followers: 3 } },
+          incredible: { text: 'Your reply is a masterclass: accurate, deniable, and funny, which makes it travel. By nightfall their rumour is forgotten and yours is a catchphrase. {rival} starts a slow clap. Alone.', effects: { savvy: 8, rivalOpinion: -3, followers: 5, public: 3, rivalMood: 'wounded' } },
+        },
+      },
+    },
+  },
+
+  // ---------- Act 3 · the Partner, at altitude (beat window, two triggers) ----------
+  // The Bond is real: the outside gets discussed.
+  {
+    id: 'li_enc_p3_high', act: 3, weight: 1, tags: ['beat:partnerenc', 'encounter', 'date'],
+    art: 'li_terrace',
+    requires: { singleIs: false, opinionAtLeast: 'partner:warm' },
+    context: 'Final Week · the terrace · the outside, discussed',
+    prompt: '“Real talk.” {partner} pulls a blanket over both your knees like a treaty. “A week from now this is a flat, a commute, and my mum’s opinions. No producers arranging our dates.” They look at you. “What does Tuesday look like? Actual Tuesday.”',
+    choices: {
+      left: {
+        label: 'Build Tuesday, out loud',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'Your Tuesday features two cities, one dog of disputed custody, and a commute that needs an airline. {partner} laughs at the logistics and holds the intent. The intent is what airs.', effects: { loyalty: 2, bond: 4, burnout: 2, chainEventId: 'li_enc_p3_moment' } },
+          good: { text: 'You build it detail by detail — whose kettle, which sofa, the gym schedule truce. Boring, specific, real. {partner} adds the dog. The dog stays in the plan.', effects: { loyalty: 5, bond: 6, partnerMood: 'buzzing', chainEventId: 'li_enc_p3_moment' } },
+          incredible: { text: 'Somewhere between the kettle and the dog, you both realise you’re not hypothesising — you’re planning. The blanket treaty is ratified. The drone films two people who’ve already left the show.', effects: { loyalty: 8, bond: 8, public: 4, partnerMood: 'buzzing', chainEventId: 'li_enc_p3_moment' } },
+        },
+      },
+      right: {
+        label: 'Be honest about the fear',
+        tags: ['chat', 'drama'],
+        governingStats: { loyalty: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You lead with the fear and it arrives bigger than you meant — a list, with subsections. {partner} listens all the way through, which is its own answer, and takes your cold hands at the end.', effects: { savvy: 2, bond: 3, burnout: 4, chainEventId: 'li_enc_p3_moment' } },
+          good: { text: '“I’m scared it’s a bubble.” Said out loud, at last. {partner} nods slowly: “So we test it. Tuesdays are the test.” Fear, met with a protocol. Weirdly, deeply romantic.', effects: { savvy: 4, loyalty: 3, bond: 5, chainEventId: 'li_enc_p3_moment' } },
+          incredible: { text: 'You name the fear so precisely that {partner} goes still — it’s theirs too, word for word. Two people admit the bubble together, which is the only known way to leave one intact.', effects: { loyalty: 6, bond: 8, savvy: 3, partnerMood: 'torn', chainEventId: 'li_enc_p3_moment' } },
+        },
+      },
+    },
+  },
+  // The Bond is cratering: the wobble talk.
+  {
+    id: 'li_enc_p3_low', act: 3, weight: 1, tags: ['beat:partnerenc', 'encounter', 'drama'],
+    art: 'li_daybed',
+    requires: { singleIs: false, opinionBelow: 'partner:warm' },
+    context: 'Final Week · the daybed · the couple, buffering',
+    prompt: '“Are we okay?” {partner} asks it at the worst possible time, which is how you know it’s real. “Because from the outside we look great. And from in here—” they gesture at the six inches between you, “—there’s this.” The six inches say nothing.',
+    choices: {
+      left: {
+        label: 'Fight for it, now',
+        tags: ['loyal', 'drama'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You go all in with a speech that’s 80% right and lands on the 20%. {partner} takes your hand mid-crash anyway. “Okay,” they say. “Effort noted.” It airs as a start. It is one.', effects: { loyalty: 3, bond: 3, burnout: 4, chainEventId: 'li_enc_p3_moment' } },
+          good: { text: '“No, we’re not okay. Yet.” And then you do the unglamorous thing: you ask what’s wrong and you listen to all of it. The six inches close by half. Half is a lot at this altitude.', effects: { loyalty: 5, bond: 6, partnerMood: 'torn', chainEventId: 'li_enc_p3_moment' } },
+          incredible: { text: 'You fight for it the right way — specifics, apologies with line items, one true declaration at the end. {partner} watches you rebuild it in real time. “Right,” they say, unsteady. “Us, then.”', effects: { loyalty: 8, bond: 9, partnerMood: 'buzzing', public: 3, chainEventId: 'li_enc_p3_moment' } },
+        },
+      },
+      right: {
+        label: 'Read the room honestly',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You reach for measured and land on clinical: “satisfaction-wise, trajectory-wise—” {partner}’s eyebrows leave to get help. The chat ends with a handshake neither of you ordered.', effects: { savvy: 2, bond: -2, partnerMood: 'torn', burnout: 3, chainEventId: 'li_enc_p3_moment' } },
+          good: { text: 'You name it plainly: the villa forced the pace, Final Week is the invoice. No blame, no theatre. {partner} exhales like someone let out of a costume. Honesty buys a real conversation.', effects: { savvy: 5, bond: 4, chainEventId: 'li_enc_p3_moment' } },
+          incredible: { text: 'Your read is so clean — what’s real, what’s scaffolding, what needs a week outside to know — that {partner} asks you to say it again, slower. The couple downgrades to honest. Honest can climb.', effects: { savvy: 8, bond: 5, loyalty: 3, chainEventId: 'li_enc_p3_moment' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_p3_moment', act: 3, chainOnly: true, tags: ['encounter', 'date'],
+    art: 'li_hideaway',
+    context: 'Later · the roof terrace · the Season, weighed',
+    prompt: 'The villa sleeps. {partner} finds you on the roof terrace with two mugs and the face of someone who has decided something. “Whatever happens Friday — the envelope, the vote, all of it.” They hand you a mug. “I need you to know where I land.” And they tell you.',
+    choices: {
+      left: {
+        label: 'Land in the same place',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You say it back a heartbeat late and spend ten minutes proving the delay meant nothing. It mostly did mean nothing. The mugs go cold in a warm silence.', effects: { loyalty: 3, bond: 4, burnout: 2 } },
+          good: { text: 'You land in the same place, out loud, no envelope-shaped caveats. The mugs clink. Somewhere below, a camera operator quietly punches the air.', effects: { loyalty: 5, bond: 7, partnerMood: 'buzzing', public: 3 } },
+          incredible: { text: 'You answer with the sentence you’ve been drafting since the swing seat, and it turns out you both drafted the same one. The Final is Friday. It stopped mattering just now, on a roof.', effects: { loyalty: 8, bond: 9, partnerMood: 'buzzing', public: 5 } },
+        },
+      },
+      right: {
+        label: 'Ask for the truth, both ways',
+        tags: ['chat', 'strategy'],
+        governingStats: { savvy: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: 'You ask the follow-up with lawyer energy and the moment files for a recess. {partner} answers everything, patiently, holding the mug like a witness exhibit. The truth survives the tone.', effects: { savvy: 2, bond: 3, burnout: 3 } },
+          good: { text: '“Same question back. No show answer.” The two of you audit the whole Season on a roof — the wobble, the postcard, the pact — and the couple comes out the other side itemised and intact.', effects: { savvy: 5, bond: 5, loyalty: 3 } },
+          incredible: { text: 'The mutual debrief runs till the sky goes grey, and ends with the rarest artefact this show produces: two people who know exactly what they have. The vote can do what it likes.', effects: { savvy: 6, loyalty: 5, bond: 7, public: 4 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Act 3 · the second wave (a bombshell steps up, the villa churns) ----------
+  {
+    id: 'li_second_wave', act: 3, weight: 1, tags: ['beat:wave', 'encounter', 'drama', 'text'],
+    art: 'li_bombshell',
+    requires: { singleIs: false, flagsAll: ['li_secret_detonated'] },
+    context: 'Final Week · “I’VE GOT A TEXT!!” · nature abhors a vacuum',
+    prompt: '“Islanders, please welcome a late arrival. #neverover” — With {rival}’s game in ruins, the villa had a vacancy, and production fills vacancies. The newcomer surveys the lawn, finds the strongest couple, and smiles at it. It’s yours. Congratulations.',
+    choices: {
+      left: {
+        label: 'Meet the threat head on',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You introduce yourself with the energy of a border official. The newcomer clocks the fear instantly, and moves in — not on {partner}. On your Final Week seat.', effects: { savvy: 2, bombshellEnters: 'same', rivalFromBombshell: true, burnout: 4 } },
+          good: { text: 'You give them the tour, the warnings, and precisely nothing to work with. They respect it — and pick a lane anyway. Yours. At least it’s official.', effects: { savvy: 5, bombshellEnters: 'same', rivalFromBombshell: true, public: 3 } },
+          incredible: { text: 'You read their entrance like a scout report and greet them by strategy rather than name. “Word travels,” they grin, hostilities opening on friendly terms. A worthy second act.', effects: { savvy: 8, bombshellEnters: 'same', rivalFromBombshell: true, public: 4, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Stay wrapped in your couple',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You perform serene indifference from the daybed and grip {partner}’s hand like hand luggage. The newcomer reads the lawn, and the grip, and smiles wider.', effects: { loyalty: 2, bombshellEnters: 'same', rivalFromBombshell: true, bond: 2, burnout: 3 } },
+          good: { text: 'Your couple absorbs the arrival the way good couples do: politely, jointly, with no visible seams to work a crowbar into. The newcomer files you under <i>later</i>.', effects: { loyalty: 5, bombshellEnters: 'same', rivalFromBombshell: true, bond: 4 } },
+          incredible: { text: 'You’re so untroubled the newcomer double-checks with production that your couple is real. It is. They pivot to public-vote warfare instead — a cleaner fight, and you’re winning it.', effects: { loyalty: 8, bombshellEnters: 'same', rivalFromBombshell: true, bond: 5, public: 5 } },
+        },
+      },
+    },
+  },
 ];

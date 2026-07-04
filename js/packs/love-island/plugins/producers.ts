@@ -20,9 +20,12 @@ import type { Plugin } from '../../../types.js';
 const BEATS: { key: string; act: number; at: number }[] = [
   { key: 'rivalenc', act: 1, at: 3 },    // early Arrival: the Rival, established (ADR-0005 V1)
   { key: 'bomb1', act: 1, at: 5 },       // late Act 1: the first Bombshell
+  { key: 'rivalmove', act: 2, at: 5 },   // post-Casa: the Rival makes their move (v2 arc)
   { key: 'bomb2', act: 2, at: 6 },       // post-Casa: the Act 2 Bombshell (rarely, the steal)
   { key: 'movienight', act: 2, at: 8 },  // the big Reveal, before anyone chooses
   { key: 'recoup1', act: 2, at: 9 },     // the girls choose (ADR-0003: R1)
+  { key: 'wave', act: 3, at: 1 },        // Final Week: the second-wave rival (if the first fell)
+  { key: 'partnerenc', act: 3, at: 2 },  // Final Week: the Partner, at altitude (v2 arc)
   { key: 'parents', act: 3, at: 4 },     // Meet the Parents, Final Week
 ];
 
@@ -64,7 +67,10 @@ export const producersPlugin: Plugin = {
   // Beat delivery: outside its window a beat card never enters the pool; when
   // a window opens, the pool narrows to that beat's eligible variants. Shop
   // draws keep priority (the daybed already owns its slot); the beat simply
-  // takes the next draw.
+  // takes the next draw. A window with no eligible variant right now yields
+  // to the NEXT beat rather than blocking the schedule — v2 added beats whose
+  // variants are state-gated by design (the rival's move, the second wave),
+  // and a fully-covered beat is unaffected (it always has an eligible hit).
   refineDeck(state, pool, ctx) {
     const beats = pool.filter((e: any) => beatTag(e));
     const rest = pool.filter((e: any) => !beatTag(e));
@@ -75,7 +81,7 @@ export const producersPlugin: Plugin = {
       if ((state.cardsPlayedInAct || 0) < b.at) continue;
       const hit = beats.filter((e: any) => beatTag(e) === `beat:${b.key}`);
       if (hit.length) return hit;
-      break; // window open but no eligible variant — deal ambient, retry next draw
+      // no eligible variant this draw — the next beat may still be due
     }
     return rest.length ? rest : pool;
   },

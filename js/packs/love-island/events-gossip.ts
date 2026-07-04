@@ -8,7 +8,7 @@ import type { GameEvent } from '../../types.js';
 
 export const GOSSIP_EVENTS: GameEvent[] = [
   {
-    id: 'li_hut_confess_1', act: 2, tags: ['camera', 'chat'],
+    id: 'li_hut_confess_1', act: 2, weight: 2, tags: ['camera', 'chat'],
     art: 'li_beachhut',
     context: 'The Beach Hut · a leading question',
     prompt: '“So,” says the producer voice, light as anything. “Tell us about {rival}.” The chair creaks. The Hut knows exactly what it’s doing — it trades. You give it a headline, it gives you tomorrow’s.',
@@ -59,6 +59,38 @@ export const GOSSIP_EVENTS: GameEvent[] = [
           bad: { text: 'Right words, wrong beat — flat delivery airs like a hostage clip. The nation squints at its sofa.', effects: { loyalty: 2, public: -1, burnout: 3 } },
           good: { text: 'Four words, no blink. The Hut loves conviction it can’t dent. So does the vote.', effects: { loyalty: 5, public: 4 } },
           incredible: { text: 'The clip runs uncut under the episode’s title card. Conviction that clean is a campaign ad.', effects: { loyalty: 8, public: 6, followers: 3 } },
+        },
+      },
+    },
+  },
+  // The two-step to a SECRET: held intel about the Rival can be assembled
+  // into the real thing (ADR-0006's surfacing, on a deliberate player path —
+  // the encounter-climax surfaces are the lucky shortcut, this is the graft).
+  {
+    id: 'li_connect_dots', act: [2, 3], weight: 3, tags: ['strategy', 'graft'],
+    art: 'li_bedroom',
+    requires: { intelAboutIs: 'rival:true', secretHeldIs: 'rival:false' },
+    context: 'The dressing room · your notes, assembling themselves',
+    prompt: 'Alone with what you’ve gathered on {rival}: the whisper, the timeline, the one thing they said that never fit. It assembles the way these things do — suddenly, and all at once. There’s a shape here. One more pull and it has a name.',
+    choices: {
+      left: {
+        label: 'Pull the thread',
+        tags: ['strategy'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You pull, and it comes apart in your hand — close, but the last piece lives in somebody else’s head. What you’ve got stays a hunch with good posture.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'It clicks in the mirror light, whole and obvious in hindsight. You sit with {rival}’s actual secret for a long minute, deciding what kind of person you’re going to be about it.', effects: { savvy: 5, surfaceSecret: 'rival' } },
+          incredible: { text: 'The whole picture, assembled from crumbs, timestamped, airtight. Somewhere across the villa {rival} laughs at someone’s joke, unaware their season now has a co-author.', effects: { savvy: 8, surfaceSecret: 'rival', followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Run it past {mate}',
+        tags: ['chat', 'code'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: '{mate} confirms nothing, denies nothing, and immediately develops the face of someone carrying two secrets instead of one. The dig is now a rumour about you digging.', effects: { loyalty: 2, rivalMood: 'scheming', burnout: 3 } },
+          good: { text: '“Oh, THAT,” says {mate}, folding towels. “Everyone half-knows. Nobody’s said it.” Half-known plus your half: whole. Now you know it entire.', effects: { loyalty: 5, surfaceSecret: 'rival' } },
+          incredible: { text: '“I’ll do you one better,” says {mate}, and produces receipts you didn’t ask for. The dressing room falls quiet in respect. The alliance is real; so is the ammunition.', effects: { loyalty: 6, charisma: 2, surfaceSecret: 'rival', public: 2 } },
         },
       },
     },
