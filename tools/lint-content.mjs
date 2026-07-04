@@ -14,6 +14,11 @@
 //   events — unknown {tokens}, unknown requires keys, straight apostrophes,
 //            double spaces, weight-0 events nothing can reach, arc refs,
 //            weather refs, dark-gated deck share, required-flag reachability
+//   taste  — no hype punctuation (house rule, every pack: ≤1 '!', no '!!'/'!?');
+//            plus, for a pack with a taste block, its cliché blocklist and
+//            outcome-length cap. The checker is genre-neutral (taste-core.mjs);
+//            the data is the game's own (docs/games/<game>/taste.mjs, mirroring
+//            that game's VOICE.md)
 //   reactive text (music) — a maximal run state exercises every generator
 //            branch; any unfilled {token} or "undefined" leaking into copy fails
 
@@ -26,6 +31,9 @@ import { generateHeadlines } from '../dist/js/headlines.js';
 import { buildEpilogue } from '../dist/js/epilogue.js';
 import { WEATHER } from '../dist/js/data/weather.js';
 import { ARCS as MUSIC_ARCS } from '../dist/js/data/arcs.js';
+import { bangIssue, tasteIssues } from './taste-core.mjs';
+// Each pack's taste DATA lives with the game; the checker above is genre-neutral.
+import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';
 
 // Requires keys are the engine's generic deck-eligibility vocabulary (the
 // Requires type), shared by every pack.
@@ -72,6 +80,12 @@ const DESCRIPTORS = {
     },
   },
   probe: { tokens: [], weatherIds: [] },
+  // The Love Island taste floor is wired ahead of the pack (Phase A precedes
+  // content, Phase C). tokens/weather are TBD (Phase C tag taxonomy); the taste
+  // block (cliché blocklist + outcome-length cap) is the game's own data, kept in
+  // docs/games/love-island/taste.mjs alongside its VOICE.md, and activates the
+  // moment the pack registers.
+  'love-island': { tokens: [], weatherIds: [], taste: LOVE_ISLAND_TASTE },
 };
 
 const issues = [];
@@ -95,12 +109,19 @@ for (const pack of PACKS) {
   };
 
   for (const ev of EVENTS) {
+    // Outcome texts get the length cap too; keep them tagged so the taste floor
+    // can tell an outcome from a scene-setting prompt.
+    const outcomeTexts = new Set();
     const texts = [ev.prompt, ev.promptNemesis, ev.context];
     for (const side of ['left', 'right']) {
       const c = ev.choices?.[side];
       if (!c) continue;
       texts.push(c.label);
-      for (const t of ['bad', 'good', 'incredible']) texts.push(c.outcomes?.[t]?.text);
+      for (const t of ['bad', 'good', 'incredible']) {
+        const txt = c.outcomes?.[t]?.text;
+        texts.push(txt);
+        if (txt) outcomeTexts.add(txt);
+      }
     }
     for (const t of texts) {
       if (!t) continue;
@@ -109,6 +130,18 @@ for (const pack of PACKS) {
       }
       if (/\w'\w/.test(t)) tag(`${ev.id}: straight apostrophe: ${t.slice(0, 50)}`);
       if (t.includes('  ')) tag(`${ev.id}: double space: ${t.slice(0, 50)}`);
+      // Taste floor: no-hype-punctuation is a house rule (every pack, via
+      // bangIssue); a pack with a taste block also gets its cliché blocklist +
+      // outcome-length cap. tasteIssues bundles the bang check, so packs with a
+      // taste block go through it and everyone else gets the standalone bang.
+      if (desc.taste) {
+        for (const iss of tasteIssues(t, desc.taste, { outcome: outcomeTexts.has(t) })) {
+          tag(`${ev.id}: ${iss}`);
+        }
+      } else {
+        const bang = bangIssue(t);
+        if (bang) tag(`${ev.id}: ${bang}`);
+      }
     }
     checkRequires(ev.id, ev.requires);
     if (ev.weight === 0 && !ev.chainOnly && !ev.finaleCard && !ev.shop) {

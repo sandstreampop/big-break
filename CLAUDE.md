@@ -13,6 +13,18 @@
   manifest + deck + plugins + presenter (+ optional capabilities the engine
   feature-detects). Adding one edits new files only — no shared type, no engine
   line. Content lives in `js/packs/*`, numeric tuning in `js/config.ts`.
+- **Clean generic engine, specific implementations.** The split above is the
+  repo's spine, applied everywhere — not just `engine.ts`. A shared file stays
+  genre-neutral (mechanism, types, generic tools); anything specific to one game
+  lives with that game. Per-game artifacts go under `docs/games/<game>/` (design
+  record, ADRs, `IMPLEMENTATION-PLAN.md`, and the writing-taste layer:
+  `VOICE.md`, `GUIDING_EXAMPLES.md`, and `taste.mjs` — the machine-readable
+  cliché blocklist + caps); per-game runtime code goes under `js/packs/<game>/`.
+  Shared tools follow the same rule: `tools/lint-content.mjs` and
+  `tools/taste-core.mjs` are the genre-neutral checkers; they *import* each
+  game's taste data from that game's folder rather than hard-coding it. Extract
+  generic mechanism to a testable `tools/*-core.mjs` (see `pack-core`,
+  `sim-core`, `taste-core`) rather than growing a shared file with game specifics.
 - Seeded behavior is pinned by golden masters (music and the zero-subsystem
   probe). A golden diff is a bug unless intended — then re-baseline deliberately
   (`tools/gen-golden.mjs`, `tools/gen-probe-golden.mjs`).
