@@ -8,6 +8,7 @@
 import { castById, couplePool, sameGenderPool, islanderTypeById } from './cast.js';
 import { angleById } from './angles.js';
 import { PATHS } from './manifest.js';
+import { characterRead, TIER_LABEL } from './plugins/characters.js';
 import { mulberry32 } from '../../engine.js';
 import type { Presenter, RunState } from '../../types.js';
 
@@ -151,6 +152,10 @@ const TROPHIES = [
 // ---------- Token filling ----------
 
 function bombshellFor(state: RunState) {
+  // The active bombshell (the characters plugin's seat) when one is in the
+  // villa; a flavour pick otherwise, so pre-arrival teasers still have a name.
+  const active = castById(state.bombshellId);
+  if (active) return active;
   const want = state.gender === 'girl' ? 'boy' : 'girl';
   const pool = couplePool(state, { bombshells: true }).filter((c) => c.bombshell && c.gender === want);
   if (!pool.length) return null;
@@ -293,16 +298,23 @@ function finalSet(state: RunState) {
 
 // ---------- HUD counters ----------
 
+// Relationship-forward (V2-DESIGN): the people lead, the meters follow. The
+// Partner is a persistent presence — name, opinion TIER (never the Bond
+// number), mood face, lock; the Rival and any active bombshell ride alongside.
 function hudCounters(state: RunState) {
   const out: { html: string; cls?: string }[] = [];
   if ((state.encore || 0) > 0) out.push({ html: `🌟${state.encore > 1 ? '×' + state.encore : ''}`, cls: 'hud-encore' });
+  const p = characterRead(state, 'partner');
+  out.push(p
+    ? { html: `💘 <b>${p.cast.name}</b> · ${TIER_LABEL[p.tier]}${p.moodFace ? ' ' + p.moodFace : ''}${state.exclusive ? ' 🔒' : ''}`, cls: 'hud-rel hud-rel-partner' }
+    : { html: '💔 single', cls: 'hud-rel hud-rel-partner neg' });
+  const r = characterRead(state, 'rival');
+  if (r) out.push({ html: `⚔️ ${r.cast.name}${r.moodFace ? ' ' + r.moodFace : ''}`, cls: 'hud-rel hud-rel-rival' });
+  const b = characterRead(state, 'bombshell');
+  if (b) out.push({ html: `💣 ${b.cast.name}${b.moodFace ? ' ' + b.moodFace : ''}`, cls: 'hud-rel' });
   out.push({ html: `🗳️ ${state.public ?? 0}`, cls: 'hud-fame' });
   out.push({ html: `📱 ${state.followers ?? 0}`, cls: 'hud-fame' });
   out.push({ html: `💪 ${state.graft ?? 0}`, cls: 'hud-money' });
-  const partner = castById(state.partner);
-  out.push(partner
-    ? { html: `💘 ${state.bond ?? 0} · ${partner.name}${state.exclusive ? ' 🔒' : ''}`, cls: 'hud-fame' }
-    : { html: '💔 single', cls: 'hud-money neg' });
   return out;
 }
 
@@ -358,7 +370,9 @@ export const loveIslandPresenter: Presenter = {
   hudCounters,
   itemById: angleById,
   fillTokens,
-  cardClass: (ev: any) => (ev.tags || []).includes('host') ? 'card-host' : (ev.tags || []).includes('text') ? 'card-text' : null,
+  cardClass: (ev: any) => (ev.tags || []).includes('host') ? 'card-host'
+    : (ev.tags || []).includes('text') ? 'card-text'
+    : (ev.tags || []).includes('encounter') ? 'card-encounter' : null,
   vibe: (state: RunState) => ({ fame: state.public ?? 0, network: state.stats?.charisma ?? 0, burnout: state.stats?.burnout ?? 0 }),
 
   encore: {

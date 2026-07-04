@@ -18,6 +18,7 @@ import type { Plugin } from '../../../types.js';
 // the beat forces itself into the deal (first eligible non-shop draw at or
 // after the slot). Order within an act is priority order.
 const BEATS: { key: string; act: number; at: number }[] = [
+  { key: 'rivalenc', act: 1, at: 3 },    // early Arrival: the Rival, established (ADR-0005 V1)
   { key: 'bomb1', act: 1, at: 5 },       // late Act 1: the first Bombshell
   { key: 'bomb2', act: 2, at: 6 },       // post-Casa: the Act 2 Bombshell (rarely, the steal)
   { key: 'movienight', act: 2, at: 8 },  // the big Reveal, before anyone chooses

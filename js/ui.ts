@@ -1197,6 +1197,9 @@ function showResult(result) {
   // long text wraps inside its own row instead of a distorted pill.
   const notices = el('div', 'result-notices');
   const notice = (cls, html) => notices.append(el('div', `notice ${cls}`, html));
+  // Pack plugins push their own notices onto the deltas ({cls, html}) — the
+  // generic channel for subsystem sentences the shell can't know about.
+  for (const n of result.deltas.notices || []) notice(n.cls || 'notice-gear', fillText(n.html));
   if (result.minigameInfo) {
     const m = result.minigameInfo;
     notice(m.bonus >= 0 ? 'notice-good' : 'notice-bad',

@@ -43,3 +43,29 @@ body {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+
+/* An encounter beat — a character-scoped scene (ADR-0005): the frame goes
+   intimate, violet-edged, so a branching scene reads as one continuous thing
+   across its beats. */
+.card.card-encounter {
+  border: 2px solid rgba(186, 122, 255, 0.65);
+  box-shadow: 0 0 22px rgba(186, 122, 255, 0.22), 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+.card.card-encounter .card-context {
+  color: #d9bfff;
+  letter-spacing: 0.04em;
+}
+
+/* Relationship-forward HUD (V2): the people chips lead the counter row. */
+.hud-counters .hud-rel {
+  background: rgba(255, 92, 138, 0.16);
+  border: 1px solid rgba(255, 92, 138, 0.35);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.hud-counters .hud-rel-partner { font-weight: 600; }
+.hud-counters .hud-rel-partner.neg { opacity: 0.75; }
+.hud-counters .hud-rel-rival {
+  background: rgba(186, 122, 255, 0.14);
+  border-color: rgba(186, 122, 255, 0.35);
+}

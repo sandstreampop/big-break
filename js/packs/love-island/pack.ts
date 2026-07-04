@@ -10,8 +10,9 @@ import { ISLANDER_TYPES, islanderTypeById } from './cast.js';
 import { couplingPlugin } from './plugins/coupling.js';
 import { profilePlugin } from './plugins/profile.js';
 import { producersPlugin } from './plugins/producers.js';
-import { loveIslandPresenter } from './presenter.js';
+import { charactersPlugin } from './plugins/characters.js';
 import type { Pack, RunState } from '../../types.js';
+import { loveIslandPresenter } from './presenter.js';
 
 // The pack's effect/eligibility vocabulary, added by declaration merging in
 // this file only — the shared types name no villa concept (the probe/music
@@ -31,10 +32,18 @@ declare module '../../types.js' {
     reveal?: string; comeClean?: boolean;
     // profile subsystem verbs (the Edit)
     grantAngle?: string; removeAngle?: string;
+    // character-state verbs (ADR-0006): opinion deltas, transient moods, the
+    // secret machinery, and the bombshell seat
+    rivalOpinion?: number; bombshellOpinion?: number;
+    partnerMood?: string; rivalMood?: string; bombshellMood?: string;
+    surfaceSecret?: string; bombshellEnters?: boolean | string; rivalFromBombshell?: boolean;
   }
   interface Requires {
     singleIs?: boolean; exclusiveIs?: boolean; genderIs?: string;
     partnerKissedIs?: boolean; angleHas?: string;
+    // character-state gates (ADR-0006): opinion tiers gate encounter branches
+    opinionAtLeast?: string; opinionBelow?: string;
+    secretHeldIs?: string; bombshellActiveIs?: boolean;
   }
 }
 // #endregion effect-augmentation
@@ -56,9 +65,10 @@ export const loveIslandPack: Pack = {
   id: 'love-island',
   manifest: loveIslandManifest,
   // Order is load-bearing for the seeded stream: coupling's onConstruct (the
-  // Rival draw) is the pack's first construction draw; producers owns the
-  // run-start chain queue. The goldens pin this order.
-  plugins: [couplingPlugin, profilePlugin, producersPlugin],
+  // Rival draw) is the pack's first construction draw, characters' (the
+  // Rival's secret) the second; producers owns the run-start chain queue.
+  // The goldens pin this order.
+  plugins: [couplingPlugin, profilePlugin, charactersPlugin, producersPlugin],
   events: LOVE_ISLAND_EVENTS,
   tutorialEvents: [],
   // In-Your-Head wobbles: the engine's coping-interstitial capability,
