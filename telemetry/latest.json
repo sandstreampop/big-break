@@ -8,48 +8,48 @@
     "results": [
       [
         "swipe",
-        1191,
-        8
+        1321,
+        9
       ],
       [
         "$pageview",
-        123,
-        15
+        144,
+        19
       ],
       [
         "minigame",
-        118,
-        4
-      ],
-      [
-        "$pageleave",
-        102,
+        135,
         5
       ],
       [
+        "$pageleave",
+        114,
+        6
+      ],
+      [
         "run_start",
+        48,
+        5
+      ],
+      [
+        "trophy",
+        45,
+        3
+      ],
+      [
+        "run_end",
         41,
         4
       ],
       [
-        "run_end",
-        38,
-        3
-      ],
-      [
-        "trophy",
-        26,
-        2
-      ],
-      [
         "tutorial_start",
-        6,
-        6
+        7,
+        7
       ],
       [
         "tutorial_complete",
-        3,
-        3
+        4,
+        4
       ]
     ]
   },
@@ -63,9 +63,9 @@
     "results": [
       [
         "2026-07-02T11:11:48.171000Z",
-        "2026-07-03T10:28:36.508000Z",
-        1648,
-        15
+        "2026-07-04T06:34:47.805000Z",
+        1859,
+        19
       ]
     ]
   },
@@ -83,13 +83,13 @@
       ],
       [
         "2.2",
-        494,
-        3
+        672,
+        4
       ],
       [
         null,
-        225,
-        15
+        258,
+        19
       ],
       [
         "2.1",
@@ -116,9 +116,16 @@
       ],
       [
         "2026-07-03",
-        6,
-        4,
-        123,
+        11,
+        7,
+        245,
+        6
+      ],
+      [
+        "2026-07-04",
+        2,
+        0,
+        8,
         3
       ]
     ]
@@ -131,9 +138,9 @@
     ],
     "results": [
       [
-        15,
-        0,
-        15
+        19,
+        6,
+        19
       ]
     ]
   },
@@ -150,6 +157,12 @@
         "(untagged)",
         15,
         1648
+      ],
+      [
+        "prod",
+        "false",
+        5,
+        211
       ]
     ]
   },
@@ -163,9 +176,9 @@
     "results": [
       [
         "sandstreampop.github.io",
-        14,
-        1647,
-        38
+        18,
+        1858,
+        41
       ],
       [
         "raw.githack.com",
@@ -184,8 +197,13 @@
     "results": [
       [
         "SE",
-        15,
-        1648
+        18,
+        1858
+      ],
+      [
+        "NL",
+        1,
+        1
       ]
     ]
   },
@@ -202,8 +220,8 @@
         "Mobile",
         "Mobile Safari",
         "iOS",
-        7,
-        1575
+        10,
+        1785
       ],
       [
         "Mobile",
@@ -218,6 +236,13 @@
         "iOS",
         4,
         24
+      ],
+      [
+        "Desktop",
+        "Chrome",
+        "Windows",
+        1,
+        1
       ]
     ]
   },
@@ -229,14 +254,14 @@
     "results": [
       [
         1,
-        1
+        2
       ],
       [
         3,
         1
       ],
       [
-        34,
+        36,
         1
       ]
     ]
@@ -249,11 +274,11 @@
     "results": [
       [
         1,
-        13
+        15
       ],
       [
         2,
-        2
+        4
       ]
     ]
   },
@@ -269,6 +294,10 @@
       ],
       [
         "2026-07-03",
+        4
+      ],
+      [
+        "2026-07-04",
         1
       ]
     ]
@@ -285,35 +314,35 @@
     "results": [
       [
         "a2_shop_gearhead",
-        39,
-        79,
-        21,
-        79,
-        5
+        41,
+        78,
+        22,
+        78,
+        7
       ],
       [
         "a1_pawn_shop",
-        41,
-        73,
-        27,
-        73,
-        27
+        42,
+        74,
+        26,
+        74,
+        26
       ],
       [
         "a3_shop_last",
-        36,
-        61,
-        39,
-        61,
+        37,
+        62,
+        38,
+        62,
         0
       ],
       [
         "coping_50",
-        28,
+        30,
         43,
         57,
         57,
-        4
+        3
       ]
     ]
   },
@@ -384,14 +413,6 @@
         0
       ],
       [
-        "a1_docu_pitch",
-        5,
-        100,
-        0,
-        100,
-        0
-      ],
-      [
         "a2_open_for_hero",
         5,
         100,
@@ -424,6 +445,14 @@
         0
       ],
       [
+        "a1_docu_pitch",
+        7,
+        86,
+        14,
+        86,
+        0
+      ],
+      [
         "a2_rest",
         7,
         14,
@@ -448,7 +477,7 @@
         0
       ],
       [
-        "a2_label_showcase",
+        "a1_shower_hook",
         6,
         83,
         17,
@@ -456,7 +485,7 @@
         0
       ],
       [
-        "a2_ms_stan_army",
+        "a2_label_showcase",
         6,
         83,
         17,
@@ -472,12 +501,28 @@
         0
       ],
       [
+        "n1_estate_sale",
+        6,
+        83,
+        17,
+        83,
+        0
+      ],
+      [
         "wt_tokyo",
         6,
         83,
         17,
         83,
         17
+      ],
+      [
+        "a1_first_bandmate",
+        17,
+        82,
+        18,
+        82,
+        6
       ],
       [
         "db_chicken_wire",
@@ -496,23 +541,7 @@
         0
       ],
       [
-        "a1_first_bandmate",
-        16,
-        81,
-        19,
-        81,
-        6
-      ],
-      [
         "a1_first_fan",
-        5,
-        80,
-        20,
-        80,
-        0
-      ],
-      [
-        "a1_shower_hook",
         5,
         80,
         20,
@@ -542,6 +571,14 @@
         20,
         80,
         20
+      ],
+      [
+        "a2_press_piece",
+        5,
+        20,
+        80,
+        80,
+        0
       ],
       [
         "a3_arena_support",
@@ -624,6 +661,14 @@
         17
       ],
       [
+        "a1_noise_cop",
+        8,
+        75,
+        25,
+        75,
+        0
+      ],
+      [
         "a2_tour_offer",
         8,
         75,
@@ -648,15 +693,7 @@
         12
       ],
       [
-        "a1_phone_demo",
-        11,
-        27,
-        73,
-        73,
-        9
-      ],
-      [
-        "a1_noise_cop",
+        "a2_ms_stan_army",
         7,
         71,
         29,
@@ -720,11 +757,27 @@
         0
       ],
       [
+        "a2_fan_gift",
+        10,
+        70,
+        30,
+        70,
+        0
+      ],
+      [
         "a2_merch_line",
         13,
         69,
         31,
         69,
+        8
+      ],
+      [
+        "a1_phone_demo",
+        12,
+        33,
+        67,
+        67,
         8
       ],
       [
@@ -734,14 +787,6 @@
         33,
         67,
         44
-      ],
-      [
-        "a2_fan_gift",
-        9,
-        67,
-        33,
-        67,
-        0
       ],
       [
         "a2_soundcheck_hell",
@@ -824,6 +869,14 @@
         0
       ],
       [
+        "a3_scandal",
+        6,
+        67,
+        33,
+        67,
+        0
+      ],
+      [
         "a3_st_supersession",
         6,
         67,
@@ -856,20 +909,20 @@
         0
       ],
       [
-        "finale_label_meeting",
-        14,
-        36,
-        64,
-        64,
-        7
-      ],
-      [
         "a1_rival_intro",
         11,
         64,
         36,
         64,
         9
+      ],
+      [
+        "finale_label_meeting",
+        16,
+        38,
+        62,
+        62,
+        6
       ],
       [
         "a2_shed_offer",
@@ -944,14 +997,6 @@
         0
       ],
       [
-        "a3_scandal",
-        5,
-        60,
-        40,
-        60,
-        0
-      ],
-      [
         "a3_secret_album",
         5,
         60,
@@ -965,6 +1010,14 @@
         40,
         60,
         60,
+        0
+      ],
+      [
+        "finale_the_call",
+        14,
+        43,
+        57,
+        57,
         0
       ],
       [
@@ -1056,14 +1109,6 @@
         11
       ],
       [
-        "finale_the_call",
-        13,
-        46,
-        54,
-        54,
-        0
-      ],
-      [
         "a1_karaoke",
         10,
         50,
@@ -1110,22 +1155,6 @@
         50,
         50,
         17
-      ],
-      [
-        "a2_tiktok_trend",
-        6,
-        50,
-        50,
-        50,
-        17
-      ],
-      [
-        "sm_meet",
-        6,
-        50,
-        50,
-        50,
-        33
       ]
     ]
   },
@@ -1141,26 +1170,26 @@
     "results": [
       [
         1,
-        336,
-        10,
-        82,
-        8,
-        0
+        389,
+        11,
+        81,
+        7,
+        1
       ],
       [
         2,
-        468,
+        507,
         5,
         74,
-        21,
+        20,
         1
       ],
       [
         3,
-        352,
+        381,
         3,
-        54,
-        43,
+        53,
+        44,
         1
       ]
     ]
@@ -1176,16 +1205,16 @@
     "results": [
       [
         "megastar",
-        14,
-        79,
-        21,
+        16,
+        81,
+        19,
         0
       ],
       [
         "studio",
-        13,
-        62,
-        38,
+        14,
+        57,
+        43,
         0
       ],
       [
@@ -1210,21 +1239,21 @@
     "results": [
       [
         "success",
-        26,
+        28,
         29,
-        159,
-        2.8,
-        46,
+        161,
+        2.7,
+        47,
         1.6
       ],
       [
         "partial",
-        12,
+        13,
         30,
-        96,
+        107,
         1.8,
-        56,
-        2.9
+        54,
+        2.7
       ]
     ]
   },
@@ -1242,7 +1271,7 @@
       ],
       [
         "normal",
-        13,
+        16,
         69
       ],
       [
@@ -1284,7 +1313,7 @@
       ],
       [
         29,
-        23
+        25
       ],
       [
         30,
@@ -1292,7 +1321,7 @@
       ],
       [
         31,
-        1
+        2
       ],
       [
         32,
@@ -1312,13 +1341,13 @@
     ],
     "results": [
       [
-        15,
-        6,
-        3,
-        0,
+        19,
+        7,
         4,
-        3,
-        4
+        0,
+        5,
+        4,
+        5
       ]
     ]
   },
@@ -1331,9 +1360,9 @@
     ],
     "results": [
       [
-        4,
-        2,
-        2,
+        5,
+        3,
+        3,
         0
       ]
     ]
@@ -1348,9 +1377,15 @@
     "results": [
       [
         "electric_guitar",
-        10,
+        11,
         28,
-        70
+        73
+      ],
+      [
+        "own_voice",
+        4,
+        29,
+        75
       ],
       [
         "theremin",
@@ -1363,12 +1398,6 @@
         3,
         30,
         33
-      ],
-      [
-        "own_voice",
-        3,
-        29,
-        67
       ],
       [
         "sampler",
@@ -1419,6 +1448,12 @@
         100
       ],
       [
+        "mellotron",
+        1,
+        31,
+        0
+      ],
+      [
         "toy_glockenspiel",
         1,
         30,
@@ -1453,18 +1488,18 @@
     "results": [
       [
         "normal",
-        35,
-        3
+        41,
+        4
+      ],
+      [
+        "daily",
+        4,
+        4
       ],
       [
         "comeback",
         3,
         2
-      ],
-      [
-        "daily",
-        3,
-        3
       ]
     ]
   },
@@ -1477,18 +1512,18 @@
     "results": [
       [
         "showman",
+        10,
+        80
+      ],
+      [
+        "none",
         9,
-        89
+        67
       ],
       [
         null,
         9,
         67
-      ],
-      [
-        "none",
-        7,
-        57
       ],
       [
         "ghostwriter",
@@ -1530,7 +1565,7 @@
     "results": [
       [
         "none",
-        9
+        12
       ],
       [
         null,
@@ -1538,7 +1573,7 @@
       ],
       [
         "chipfolk",
-        4
+        5
       ],
       [
         "folk_punk",
@@ -1551,6 +1586,10 @@
       [
         "hyperpop",
         3
+      ],
+      [
+        "dialup_soul",
+        2
       ],
       [
         "doom_jazz",
@@ -1569,7 +1608,11 @@
         1
       ],
       [
-        "dialup_soul",
+        "cubicle_funk",
+        1
+      ],
+      [
+        "sludge_disco",
         1
       ],
       [
@@ -1597,30 +1640,30 @@
     "results": [
       [
         "ideas",
-        26,
+        31,
         0.9,
-        18,
-        8
+        19,
+        6
       ],
       [
         "crowd",
-        23,
+        27,
         0.9,
-        19.7,
+        18.9,
         4
       ],
       [
         "take",
-        18,
+        23,
         0.7,
         12.2,
         0
       ],
       [
         "tighten",
-        11,
+        12,
         0.9,
-        22,
+        20.5,
         0
       ],
       [
@@ -1638,17 +1681,17 @@
         0
       ],
       [
+        "mixdown",
+        5,
+        1,
+        24,
+        0
+      ],
+      [
         "setlist",
         5,
         0.9,
         20,
-        0
-      ],
-      [
-        "mixdown",
-        4,
-        1,
-        24,
         0
       ],
       [
@@ -1692,6 +1735,13 @@
         1,
         24,
         0
+      ],
+      [
+        "prompter",
+        1,
+        0,
+        -8,
+        0
       ]
     ]
   },
@@ -1719,7 +1769,7 @@
       ],
       [
         "a1_bistro_covers",
-        1
+        2
       ],
       [
         "a1_bloom_amp",
@@ -1735,7 +1785,7 @@
       ],
       [
         "a1_camcorder",
-        3
+        4
       ],
       [
         "a1_clips",
@@ -1759,7 +1809,7 @@
       ],
       [
         "a1_docu_pitch",
-        5
+        7
       ],
       [
         "a1_family_show",
@@ -1767,7 +1817,7 @@
       ],
       [
         "a1_first_bandmate",
-        16
+        17
       ],
       [
         "a1_first_drop",
@@ -1791,7 +1841,7 @@
       ],
       [
         "a1_heirloom",
-        1
+        2
       ],
       [
         "a1_house_show",
@@ -1823,7 +1873,7 @@
       ],
       [
         "a1_noise_cop",
-        7
+        8
       ],
       [
         "a1_open_mic",
@@ -1835,11 +1885,11 @@
       ],
       [
         "a1_pawn_shop",
-        41
+        42
       ],
       [
         "a1_phone_demo",
-        11
+        12
       ],
       [
         "a1_practice_wall",
@@ -1855,7 +1905,7 @@
       ],
       [
         "a1_ringtone",
-        1
+        2
       ],
       [
         "a1_rival_intro",
@@ -1871,7 +1921,7 @@
       ],
       [
         "a1_shower_hook",
-        5
+        6
       ],
       [
         "a1_string_break",
@@ -1931,7 +1981,7 @@
       ],
       [
         "a2_fan_gift",
-        9
+        10
       ],
       [
         "a2_genre_purists",
@@ -1948,6 +1998,10 @@
       [
         "a2_green_room_legend",
         2
+      ],
+      [
+        "a2_heirloom_call",
+        1
       ],
       [
         "a2_hf_ai_demo",
@@ -2007,7 +2061,7 @@
       ],
       [
         "a2_ms_stan_army",
-        6
+        7
       ],
       [
         "a2_nadia_meet",
@@ -2035,7 +2089,7 @@
       ],
       [
         "a2_press_piece",
-        4
+        5
       ],
       [
         "a2_prodigy_blowup",
@@ -2083,7 +2137,7 @@
       ],
       [
         "a2_shop_gearhead",
-        39
+        41
       ],
       [
         "a2_song_grows",
@@ -2323,7 +2377,7 @@
       ],
       [
         "a3_scandal",
-        5
+        6
       ],
       [
         "a3_secret_album",
@@ -2339,7 +2393,7 @@
       ],
       [
         "a3_shop_last",
-        36
+        37
       ],
       [
         "a3_song_finale",
@@ -2443,7 +2497,7 @@
       ],
       [
         "coping_50",
-        28
+        30
       ],
       [
         "coping_75",
@@ -2511,11 +2565,15 @@
       ],
       [
         "finale_label_meeting",
-        14
+        16
       ],
       [
         "finale_the_call",
-        13
+        14
+      ],
+      [
+        "fp_capsule",
+        1
       ],
       [
         "fp_cruise",
@@ -2526,8 +2584,76 @@
         1
       ],
       [
+        "m_alliance_pact",
+        1
+      ],
+      [
+        "m_charm_offensive",
+        1
+      ],
+      [
+        "m_confession_cam",
+        1
+      ],
+      [
+        "m_fan_mail",
+        1
+      ],
+      [
+        "m_kitchen_alibi",
+        1
+      ],
+      [
+        "m_missing_guest",
+        1
+      ],
+      [
+        "m_night_noise",
+        2
+      ],
+      [
+        "m_producer_favor",
+        1
+      ],
+      [
+        "m_service_stairs",
+        1
+      ],
+      [
+        "m_the_letter",
+        1
+      ],
+      [
+        "m_the_wire",
+        1
+      ],
+      [
+        "m_trust_fall",
+        1
+      ],
+      [
+        "m_vote_night",
+        1
+      ],
+      [
+        "m_wardrobe",
+        1
+      ],
+      [
+        "m_welcome_toast",
+        1
+      ],
+      [
+        "n1_allages",
+        1
+      ],
+      [
         "n1_amp_bus",
         1
+      ],
+      [
+        "n1_argument_song",
+        2
       ],
       [
         "n1_borrowed_rig",
@@ -2535,7 +2661,7 @@
       ],
       [
         "n1_church_gig",
-        1
+        2
       ],
       [
         "n1_corner_notebook",
@@ -2546,8 +2672,20 @@
         2
       ],
       [
+        "n1_dollar_bin",
+        1
+      ],
+      [
         "n1_estate_sale",
-        3
+        6
+      ],
+      [
+        "n1_group_chat",
+        1
+      ],
+      [
+        "n1_house_party",
+        2
       ],
       [
         "n1_last_minute_opener",
@@ -2555,11 +2693,15 @@
       ],
       [
         "n1_lesson_flyer",
+        2
+      ],
+      [
+        "n1_lost_pedal",
         1
       ],
       [
         "n1_radio_contest",
-        1
+        2
       ],
       [
         "n1_soundboard_lesson",
@@ -2567,10 +2709,26 @@
       ],
       [
         "n1_street_piano",
+        2
+      ],
+      [
+        "n1_student_film",
+        1
+      ],
+      [
+        "n1_tent_sale",
+        1
+      ],
+      [
+        "n2_first_tour",
         1
       ],
       [
         "n2_gear_theft",
+        1
+      ],
+      [
+        "n2_hold_music",
         1
       ],
       [
@@ -2579,6 +2737,14 @@
       ],
       [
         "n2_late_night_write",
+        2
+      ],
+      [
+        "n2_music_video",
+        1
+      ],
+      [
+        "n2_old_friend",
         1
       ],
       [
@@ -2586,23 +2752,55 @@
         1
       ],
       [
-        "n2_session_call",
+        "n2_ringtone_shop",
         1
       ],
       [
-        "n2_supper_club",
+        "n2_rival_split_bill",
         1
+      ],
+      [
+        "n2_scene_politics",
+        1
+      ],
+      [
+        "n2_session_call",
+        2
+      ],
+      [
+        "n2_supper_club",
+        2
       ],
       [
         "n2_sync_ad",
         2
       ],
       [
-        "n2_van_upgrade",
+        "n2_the_ask",
         1
       ],
       [
+        "n2_van_upgrade",
+        2
+      ],
+      [
         "n2_venue_regular",
+        1
+      ],
+      [
+        "n3_biopic_offer",
+        1
+      ],
+      [
+        "n3_definitive_statement",
+        1
+      ],
+      [
+        "n3_fan_generations",
+        1
+      ],
+      [
+        "n3_final_collab",
         1
       ],
       [
@@ -2611,10 +2809,30 @@
       ],
       [
         "n3_gear_indulgence",
-        2
+        4
+      ],
+      [
+        "n3_last_van_show",
+        1
       ],
       [
         "n3_legacy_act",
+        1
+      ],
+      [
+        "n3_legacy_medley",
+        1
+      ],
+      [
+        "n3_polish_the_vault",
+        1
+      ],
+      [
+        "n3_sample_packs",
+        1
+      ],
+      [
+        "n3_scene_elder",
         1
       ],
       [
@@ -2622,11 +2840,35 @@
         1
       ],
       [
+        "n3_the_interview_hard",
+        1
+      ],
+      [
+        "ncr_captain",
+        1
+      ],
+      [
         "ncr_storm_deck",
         1
       ],
       [
+        "nfp_gorefeast",
+        1
+      ],
+      [
         "ng_house_concert",
+        1
+      ],
+      [
+        "ng_local_news",
+        1
+      ],
+      [
+        "ng_open_mic_host",
+        1
+      ],
+      [
+        "ng_setlist_gamble",
         1
       ],
       [
@@ -2635,22 +2877,46 @@
       ],
       [
         "nm_copycat_clip",
-        1
+        2
       ],
       [
         "nm_copycat_duet",
-        1
+        2
       ],
       [
         "nm_copycat_rise",
-        1
+        2
       ],
       [
         "nm_critic_pan",
+        2
+      ],
+      [
+        "nm_dog_adopt",
+        1
+      ],
+      [
+        "nm_dog_cover",
+        1
+      ],
+      [
+        "nm_dog_mascot",
+        1
+      ],
+      [
+        "nm_first_letter",
         1
       ],
       [
         "nm_ghost_note",
+        2
+      ],
+      [
+        "nm_ghost_request",
+        1
+      ],
+      [
+        "nm_ghost_settled",
         1
       ],
       [
@@ -2659,11 +2925,31 @@
       ],
       [
         "nm_intern_leak",
-        1
+        2
       ],
       [
         "nm_intern_meet",
+        2
+      ],
+      [
+        "nm_jingle_gig",
         1
+      ],
+      [
+        "nm_jingle_remix",
+        1
+      ],
+      [
+        "nm_jingle_spreads",
+        1
+      ],
+      [
+        "nm_jingle_waterpark",
+        1
+      ],
+      [
+        "nm_lost_tape",
+        2
       ],
       [
         "nm_open_tab",
@@ -2686,7 +2972,39 @@
         1
       ],
       [
+        "np_ms2_brand_deal",
+        2
+      ],
+      [
+        "np_ms2_first_viral",
+        1
+      ],
+      [
+        "np_ms2_late_show",
+        1
+      ],
+      [
+        "np_ms2_stylist",
+        2
+      ],
+      [
+        "np_ms3_rival_summit",
+        1
+      ],
+      [
+        "np_ms3_stadium_anthem",
+        1
+      ],
+      [
+        "np_ms3_world_tour",
+        1
+      ],
+      [
         "np_st2_first_call",
+        1
+      ],
+      [
+        "np_st2_ghost_solo",
         1
       ],
       [
@@ -2694,11 +3012,27 @@
         1
       ],
       [
+        "np_st2_rival_session",
+        1
+      ],
+      [
+        "np_st2_tone_quest",
+        1
+      ],
+      [
         "np_st3_credit_finally",
         1
       ],
       [
+        "nr_nemesis_toast",
+        1
+      ],
+      [
         "nw_cousins",
+        1
+      ],
+      [
+        "nw_uncle_bill",
         1
       ],
       [
@@ -2707,6 +3041,10 @@
       ],
       [
         "sm_question",
+        1
+      ],
+      [
+        "w_flooded_venue",
         1
       ],
       [
@@ -2768,12 +3106,12 @@
       [
         "megastar",
         "success",
-        11
+        13
       ],
       [
         "studio",
         "partial",
-        5
+        6
       ],
       [
         "studio",
@@ -2790,7 +3128,7 @@
     "results": [
       [
         "none",
-        10
+        13
       ],
       [
         null,
@@ -2809,12 +3147,16 @@
         4
       ],
       [
+        "wkrz",
+        4
+      ],
+      [
         "laundro",
         3
       ],
       [
-        "wkrz",
-        3
+        "planetarium",
+        2
       ],
       [
         "botanica",
@@ -2825,15 +3167,19 @@
         1
       ],
       [
-        "planetarium",
-        1
-      ],
-      [
         "ricochet",
         1
       ],
       [
+        "rollercade",
+        1
+      ],
+      [
         "underpass",
+        1
+      ],
+      [
+        "union_hall",
         1
       ]
     ]
@@ -2850,11 +3196,11 @@
       ],
       [
         "baron",
-        6
+        7
       ],
       [
         "trend",
-        3
+        4
       ],
       [
         "brine",
@@ -2862,6 +3208,10 @@
       ],
       [
         "juniper_q",
+        1
+      ],
+      [
+        "panopticon",
         1
       ],
       [
@@ -2878,7 +3228,7 @@
     "results": [
       [
         null,
-        38
+        41
       ]
     ]
   },
@@ -2889,15 +3239,43 @@
     ],
     "results": [
       [
+        "rich_and_right",
+        3
+      ],
+      [
+        "arc_copycat",
+        2
+      ],
+      [
+        "arc_intern",
+        2
+      ],
+      [
+        "beloved_famous",
+        2
+      ],
+      [
         "charmed_life",
         2
       ],
       [
-        "rich_and_right",
+        "fame_150",
         2
       ],
       [
-        "arc_copycat",
+        "glow_up",
+        2
+      ],
+      [
+        "money_2k",
+        2
+      ],
+      [
+        "arc_critic",
+        1
+      ],
+      [
+        "arc_dog",
         1
       ],
       [
@@ -2905,7 +3283,7 @@
         1
       ],
       [
-        "arc_intern",
+        "arc_jingle",
         1
       ],
       [
@@ -2921,11 +3299,15 @@
         1
       ],
       [
+        "chain_reaction",
+        1
+      ],
+      [
         "counterexample",
         1
       ],
       [
-        "fame_150",
+        "fame_100",
         1
       ],
       [
@@ -2933,7 +3315,15 @@
         1
       ],
       [
-        "glow_up",
+        "first_run",
+        1
+      ],
+      [
+        "fp_wave3",
+        1
+      ],
+      [
+        "golden_hands",
         1
       ],
       [
@@ -2942,10 +3332,6 @@
       ],
       [
         "i_susan_win",
-        1
-      ],
-      [
-        "money_2k",
         1
       ],
       [
@@ -2965,6 +3351,10 @@
         1
       ],
       [
+        "steady_hands",
+        1
+      ],
+      [
         "the_vault",
         1
       ],
@@ -2973,7 +3363,15 @@
         1
       ],
       [
+        "w_payola_win",
+        1
+      ],
+      [
         "wall_5",
+        1
+      ],
+      [
+        "win_megastar",
         1
       ],
       [
@@ -3041,7 +3439,19 @@
         3
       ],
       [
+        "setlist_binder",
+        3
+      ],
+      [
+        "cowbell",
+        2
+      ],
+      [
         "field_recorder",
+        2
+      ],
+      [
+        "green_room_kit",
         2
       ],
       [
@@ -3049,7 +3459,7 @@
         2
       ],
       [
-        "setlist_binder",
+        "mascot_head",
         2
       ],
       [
@@ -3057,19 +3467,11 @@
         2
       ],
       [
-        "cowbell",
-        1
-      ],
-      [
         "cursed_8track",
         1
       ],
       [
         "energy_drink",
-        1
-      ],
-      [
-        "green_room_kit",
         1
       ],
       [
@@ -3085,7 +3487,11 @@
         1
       ],
       [
-        "mascot_head",
+        "press_pass",
+        1
+      ],
+      [
+        "thermos",
         1
       ],
       [
@@ -3105,11 +3511,19 @@
         1
       ],
       [
+        "hold_music",
+        1
+      ],
+      [
         "karaoke_host",
         1
       ],
       [
         "lesson_studio",
+        1
+      ],
+      [
+        "ringtone_shop",
         1
       ],
       [
