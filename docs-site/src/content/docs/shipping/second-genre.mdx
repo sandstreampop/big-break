@@ -39,15 +39,33 @@ Every villa concept lands on an existing engine mechanic:
 | The **Edit** of **Angles**, bought with Graft on the daybed | the gear mechanic, reskinned — `costResource`, `loseOnBad` = *exposed* |
 | **Walk** and **Dumped** | the burnout fail + pack-declared `failStates` |
 | *"I've got a text!"*, the Host, the Narrator | presenter copy + a `cardClass` styling hook — pure data |
+| **Encounters** — branching dialogue scenes (v2) | the chain mechanism: `chainEventId` per side *and* tier, plus plugin routing |
+| **Opinion / mood / secret** on the Partner, Rival, bombshell (v2) | a characters plugin — tiers over Bond, `stateDefaults`, tier-gated `requires` |
+| **Gossip** — held intel, gathered and deployed (v2) | an inventory plugin: typed items spent by choice, cashing out at the ceremony |
+| **Stirling**, the voiceover (v2) | a bark-engine plugin — seeded, condition-filtered, no-repeat — on the generic overlay-note channel |
 
-## The two verbs the engine never sees
+## The verbs the engine never sees
 
 The pack's subsystem vocabulary — `couple`, `switchPartner`, `stealRoll`,
-`reveal`, `grantAngle`, the `singleIs`/`exclusiveIs` eligibility predicates —
+`reveal`, `grantAngle`, and the v2 layer's `rivalOpinion`, `surfaceSecret`,
+`gainIntel`, `deployIntel`, `playSecret`, plus the `singleIs`/`exclusiveIs`/
+`opinionAtLeast`/`intelMin` eligibility predicates —
 is declared by **declaration merging in the pack's own file** and owned by the
 plugins that register them (`effectVerbs`, `Plugin.requires`). The cross-pack
 invariants verify every card's keys are owned; the pack's golden corpus
 (`tools/golden/love-island.json`) pins the seeded behavior byte-for-byte.
+
+## v2: the villa that feels like Love Island
+
+The v2 redesign (design record: `docs/games/love-island/V2-DESIGN.md`,
+ADRs 0005–0008) promoted the villa's people to run-state and the recoupling to
+a four-beat climax — line-up (the narrator's *truthful* forecast of the real
+`Bond ≥ floor OR Public ≥ floor` check), last stand, a gossip cash-out where a
+held secret defuses the Rival's poach, and an explained verdict. All of it is
+pack-owned: three new plugins (characters, gossip, Stirling), one new *generic*
+shell channel (the overlay note — a popover one layer above the card, which any
+pack may use), and the lean-preview (qualitative magnitude dots as you tilt —
+direction and volatility, never numbers) in the shared shell.
 
 Two playable-Type quirks touch plugin-owned meters (the Golden Retriever's
 faster Bond, the Influencer's Followers-on-drama). They ride custom keys on the
