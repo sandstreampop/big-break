@@ -45,6 +45,14 @@ Any contestant in the villa — the player's or an NPC. The player steers one
 Islander for the whole Season (chosen via a loadout/persona; see Type).
 _Avoid_: contestant, player, character
 
+**Gender**:
+Chosen at Season start and **mechanical**, not cosmetic: it sets the pool you
+couple *from*, your side of the Casa Amor split, and — via the alternating-chooser
+rule — whether you are the chooser (agency, no Dumped risk) or the chosen
+(exposed to the recoupling survival check) at each Recoupling. Launch models the
+traditional heterosexual format; queer/fluid formats are a future Season variant.
+_Avoid_: sex, orientation
+
 **Cast**:
 The named roster of NPC Islanders (roughly 5–8), each embodying a recognizable
 Love Island Type. Your Partner is drawn from the Cast; Bombshells join it;
@@ -168,10 +176,32 @@ quietly savage) that frames villa moments and editorializes on your decisions.
 _Avoid_: VO, commentary
 
 **I've got a text!**:
-The recurring card-arrival ritual: challenges, recouplings, dumpings, and Casa
-Amor news land as texts read aloud to the villa — the diegetic frame for "here
-comes your next Villa moment."
+The recurring card-arrival ritual and the format's steering voice: challenges,
+recouplings, dumpings, and Casa Amor news land as **Texts** read aloud to the
+villa. A Text is the voice of production / the public / the format itself — an
+outside authority imposing a beat. Beyond flavour it carries mechanical weight:
+an **anticipation lock** (never skipped by a hot-streak) and **external
+resolution** (may resolve on Public or the villa, not just your roll).
+Structure-changing beats usually arrive as Texts — a soft convention, not a rule.
 _Avoid_: notification, alert
+
+**The Host**:
+The on-screen presenter who flies into the villa **seldom**, in person, for the
+biggest ceremonies only (the Final, a major dumping/recoupling, the Casa Amor
+return). Distinct from the Narrator (who never enters and speaks to the audience);
+the Host's arrival is itself the maximum-stakes signal — an escalation treatment
+on top Text beats, not a separate mechanic.
+_Avoid_: presenter (ambiguous with the engine term), compère
+
+**Firepit**:
+The gathering place. The villa is summoned to the firepit for the ceremonial
+Text beats — recouplings especially. The diegetic "everyone assemble" location.
+_Avoid_: fire pit (one word), the sofa
+
+**Beach Hut**:
+The confessional: where an Islander speaks privately to camera. A presentation
+device for surfacing your private read of a moment (and your In-Your-Head state).
+_Avoid_: diary room, confessional booth
 
 ## Fail states
 
@@ -205,14 +235,46 @@ strength. You have one at a time until a Recoupling changes it.
 _Avoid_: match, other half, love interest
 
 **Recoupling**:
-The beat where couples re-form — you may keep your Partner or switch. Lands on
-act breaks. Can transfer or reset Bond.
+The beat where couples re-form, alternating who chooses. When *your* gender
+chooses you keep or switch (a switch resets Bond); when the *other* gender chooses
+you are exposed and survive only on `Bond ≥ floor OR Public ≥ floor` — fail both
+and you are single, and Dumped. Lands on act breaks.
 _Avoid_: reshuffle, swap
+
+**The Reveal**:
+The exposure beat: hidden loyalty/betrayal behaviour — yours and your Partner's —
+is played back to the villa, detonating Bonds retroactively. Delivered as the
+Casa Amor **postcard** (a misleading teaser) and **Movie Night** (full footage).
+You know your own dirt; your Partner's stays concealed until the Reveal (dramatic
+irony). A come-clean beat can defuse a bigger exposure for a smaller certain hit.
+_Avoid_: the truth, the tea
+
+**Exclusivity**:
+"Making it official" / "closing off": a Bond-threshold beat where you commit to one
+Partner. Locks and boosts Bond, drops Temptation vulnerability, and lowers Dumped
+risk — but forgoes Followers and raises the fall-height if it later breaks.
+Reversible-but-costly: straying while official is a far heavier betrayal.
+_Avoid_: going official (as the term), boyfriend/girlfriend
+
+**Meet the Parents**:
+The Act 3 authenticity checkpoint: families visit and judge whether the couple is
+real. A choice beat (sell the romance / be honest / play it for the cameras) that
+reads your Reveal history and gates or boosts The Real Thing.
+_Avoid_: family day, the visit
+
+**Girl code / Bro code**:
+The same-gender social contract — loyalty among the girls (or boys). Not a
+subsystem: breaking it sets flags that cost Public, push you toward villain Angles,
+and worsen bloc-decided Text beats (a "girls/boys vote"); honouring it earns villa
+warmth and loyal Angles.
+_Avoid_: girl gang, the group
 
 **Bombshell**:
 A new Islander arriving mid-Season, forced into the deck at a scheduled slot
 (reusing the engine's forced-category mechanic). A source of Temptation and
-recoupling threat.
+recoupling threat. Normally seeds pressure that matures at the next Recoupling; a
+rare **immediate-recouple Bombshell** can steal your Partner and strand you single
+on the spot (never instant Dumped — odds scale inversely with Bond + Public).
 _Avoid_: new arrival, newbie
 
 **Temptation**:
