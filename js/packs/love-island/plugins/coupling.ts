@@ -8,7 +8,7 @@
 // pctx.hooks (`bondGainMult`) — a pack-custom key the engine never sees.
 
 import { castById, couplePool, sameGenderPool } from '../cast.js';
-import { opinionTier } from './characters.js';
+import { opinionTier, setCharMood } from './characters.js';
 import type { Plugin, RunState } from '../../../types.js';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -16,8 +16,8 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 // ---------- Balance knobs (the Coupling subsystem's own numbers) ----------
 export const COUPLING = {
   bondBase: 12,        // a fresh couple's Bond — every switch starts over here
-  bondFloor: 30,       // chosen-Recoupling survival: Bond ≥ this holds your Partner
-  publicFloor: 28,     // …OR Public ≥ this and somebody picks you anyway
+  bondFloor: 34,       // chosen-Recoupling survival: Bond ≥ this holds your Partner
+  publicFloor: 31,     // …OR Public ≥ this and somebody picks you anyway
   rivalPenalty: 8,    // active Rival poaches: effective Bond at the check drops
   // ADR-0006: the Rival's OPINION of you feeds the poach — a rival who rates
   // you pulls their punches; one who despises you goes in harder. Added to
@@ -188,14 +188,17 @@ export const couplingPlugin: Plugin = {
       const before = state.bond;
       state.bond = COUPLING.bondBase;
       pushDelta(pctx, 'bond', state.bond - before);
+      setCharMood(state, 'partner', 'torn');
     }
 
-    // Making it official — or un-making it, expensively.
+    // Making it official — or un-making it, expensively. Faces react.
     if (e.exclusive === 1) {
       state.exclusive = true;
+      setCharMood(state, 'partner', 'buzzing');
       note(pctx, 'notice-encore', '🔒 <b>Exclusive.</b> Closed off, on the record. The fall-height just doubled.');
     } else if (e.exclusive === -1 && state.exclusive) {
       state.exclusive = false;
+      setCharMood(state, 'partner', 'wounded');
       note(pctx, 'notice-bad', '🔓 No longer exclusive. The villa updates its spreadsheets.');
     }
 
@@ -213,9 +216,11 @@ export const couplingPlugin: Plugin = {
         state.bond = 0;
         pushDelta(pctx, 'bond', -before);
         for (const f of ['li_stranded', 'li_rival_active']) if (!state.flags.includes(f)) state.flags.push(f);
+        setCharMood(state, 'rival', 'smug');
         note(pctx, 'notice-bad', `💔 <b>${partner?.name || 'Your partner'} recouples on the spot.</b> You are single, live, at a ceremony. The next recoupling has your name on the list either way.`);
       } else {
         moveBond(state, 2, pctx);
+        setCharMood(state, 'partner', 'buzzing');
         note(pctx, 'notice-good', `💘 The bombshell looks your couple up and down — and moves on. What you two have held, publicly.`);
       }
     }
@@ -229,7 +234,9 @@ export const couplingPlugin: Plugin = {
     }
 
     // The Casa return, faithful branch: the gut-punch fires here or doesn't.
-    // Queues the verdict card; the payoffs live on those cards' effects.
+    // Queues the verdict card; the payoffs live on those cards' effects. The
+    // faces react — and a Partner who kissed comes back reading TORN, the
+    // mood system quietly foreshadowing Movie Night.
     if (e.casaReturn) {
       if (state.partnerLoyal === 'gone') {
         (state.exes = state.exes || []).push(state.partner);
@@ -240,8 +247,10 @@ export const couplingPlugin: Plugin = {
         state.bond = 0;
         pushDelta(pctx, 'bond', -before);
         for (const f of ['li_betrayed', 'li_sympathy', 'li_rival_active']) if (!state.flags.includes(f)) state.flags.push(f);
+        setCharMood(state, 'rival', 'smug');
         state.pendingChainId = 'li_casa_betrayed';
       } else {
+        setCharMood(state, 'partner', state.partnerLoyal === 'kissed' ? 'torn' : 'buzzing');
         state.pendingChainId = 'li_casa_held';
       }
     }
@@ -279,6 +288,7 @@ export const couplingPlugin: Plugin = {
         if (official) dmg = Math.round(dmg * 1.5);
         moveBond(state, dmg, pctx);
         movePublic(state, official ? -4 : -2, pctx);
+        setCharMood(state, 'partner', official ? 'fuming' : 'wounded');
         note(pctx, 'notice-bad', `📼 <b>Your footage plays.</b> In HD. With sound. ${partner ? partner.name : 'The villa'} watches it twice.`);
         clearDirt(state);
         state.flags.push('li_revealed');
@@ -286,6 +296,7 @@ export const couplingPlugin: Plugin = {
       if (state.partnerLoyal === 'kissed' && state.partner) {
         moveBond(state, -10, pctx);
         movePublic(state, 4, pctx);
+        if (!mineOut) setCharMood(state, 'partner', 'torn'); // caught, not cross
         note(pctx, 'notice-bad', `📼 <b>${partner?.name}’s Casa footage plays.</b> You never knew. Everyone watches you find out.`);
         state.partnerLoyal = 'loyal'; // spent
         state.flags.push('li_partner_revealed', 'li_sympathy');
@@ -348,5 +359,15 @@ function resolveCeremony(state: RunState) {
     bondEff, publicEff, floor, publicFloor: COUPLING.publicFloor,
     bondLane, secretPlayed, verdict,
   };
+  // Portraits react (V2-DESIGN beat 4): the verdict moves faces, not just
+  // chains. Rescued's NEW partner's face moves when the rescue card couples.
+  if (verdict === 'held') {
+    setCharMood(state, 'partner', 'buzzing');
+    setCharMood(state, 'rival', 'fuming');
+  } else if (verdict === 'rescued') {
+    setCharMood(state, 'rival', 'scheming');
+  } else {
+    setCharMood(state, 'rival', 'smug');
+  }
   state.pendingChainId = `li_recoup_${verdict}`;
 }

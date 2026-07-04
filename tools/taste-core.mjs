@@ -49,6 +49,16 @@ export function lengthIssue(text, cap) {
   return text.length > cap ? `outcome too long (${text.length} > ${cap}): ${snippet(text)}` : null;
 }
 
+// Dialogue-first floor (a pack's v2-style register shift): does this string
+// contain spoken dialogue (curly double quotes — the house standard for
+// speech)? Consumed two ways by lint-content: per-card (tags a pack lists in
+// taste.dialogue.requireTags MUST speak in their prompt) and corpus-wide
+// (minimum share of prompts/outcomes that speak — a ratchet against sliding
+// back to wall-to-wall narrator).
+export function hasDialogue(text) {
+  return /[“”]/.test(text || '');
+}
+
 // Run the whole floor over one authored string. `outcome` = apply the length
 // cap (outcomes only). Returns a flat list of issue strings.
 export function tasteIssues(text, taste, { outcome = false } = {}) {

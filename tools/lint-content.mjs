@@ -31,7 +31,7 @@ import { generateHeadlines } from '../dist/js/headlines.js';
 import { buildEpilogue } from '../dist/js/epilogue.js';
 import { WEATHER } from '../dist/js/data/weather.js';
 import { ARCS as MUSIC_ARCS } from '../dist/js/data/arcs.js';
-import { bangIssue, tasteIssues } from './taste-core.mjs';
+import { bangIssue, tasteIssues, hasDialogue } from './taste-core.mjs';
 // Each pack's taste DATA lives with the game; the checker above is genre-neutral.
 import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';
 
@@ -105,7 +105,7 @@ const DESCRIPTORS = {
         'li_recoup1_choose', 'li_recoup1_choose_single',
         'li_recoup1_exposed', 'li_recoup1_exposed_single',
         'li_parents', 'li_parents_messy',
-        'li_enc_rival_1',
+        'li_enc_rival_1', 'li_enc_partner_1',
         'li_enc_rmove_poach', 'li_enc_rmove_rumour',
         'li_enc_p3_high', 'li_enc_p3_low', 'li_second_wave'],
       payoffs: [],
@@ -172,6 +172,40 @@ for (const pack of PACKS) {
     checkRequires(ev.id, ev.requires);
     if (ev.weight === 0 && !ev.chainOnly && !ev.finaleCard && !ev.shop) {
       tag(`${ev.id}: weight 0 but not chainOnly`);
+    }
+  }
+
+  // ── Dialogue-first floor (a pack's taste.dialogue) ──
+  // Per-card: tags in requireTags are conversations with a person — their
+  // prompt must contain speech. Corpus-wide: minimum shares of prompts and
+  // outcomes that speak, a ratchet against register drift back to
+  // wall-to-wall narrator (see the pack's VOICE.md v2 addendum).
+  if (desc.taste?.dialogue) {
+    const d = desc.taste.dialogue;
+    let prompts = 0, promptsSpeak = 0, outs = 0, outsSpeak = 0;
+    for (const ev of EVENTS) {
+      prompts++;
+      const speaks = hasDialogue(ev.prompt);
+      if (speaks) promptsSpeak++;
+      if ((d.requireTags || []).some((t) => (ev.tags || []).includes(t)) && !speaks) {
+        tag(`${ev.id}: '${(d.requireTags || []).join('/')}' card whose prompt never speaks — encounters are conversations`);
+      }
+      for (const side of ['left', 'right']) {
+        const c = ev.choices?.[side];
+        if (!c) continue;
+        for (const t of ['bad', 'good', 'incredible']) {
+          const txt = c.outcomes?.[t]?.text;
+          if (!txt) continue;
+          outs++;
+          if (hasDialogue(txt)) outsSpeak++;
+        }
+      }
+    }
+    if (d.promptMinShare && prompts && promptsSpeak / prompts < d.promptMinShare) {
+      tag(`dialogue floor: only ${(100 * promptsSpeak / prompts).toFixed(0)}% of prompts speak (< ${100 * d.promptMinShare}%)`);
+    }
+    if (d.outcomeMinShare && outs && outsSpeak / outs < d.outcomeMinShare) {
+      tag(`dialogue floor: only ${(100 * outsSpeak / outs).toFixed(0)}% of outcomes speak (< ${100 * d.outcomeMinShare}%)`);
     }
   }
 

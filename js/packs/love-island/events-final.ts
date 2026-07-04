@@ -16,8 +16,8 @@ export const FINAL_EVENTS: GameEvent[] = [
         tags: ['loyal', 'challenge'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: 'You take parenting so seriously you and {partner} have your first real argument about a doll’s nap schedule. The doll records everything. Dolls do.', effects: { loyalty: 2, bond: 1, burnout: 4 } },
-          good: { text: 'Feeds logged, shifts split, one 3 a.m. handover executed like a relay team. The villa’s loudest couple watches your rota with naked envy.', effects: { loyalty: 5, bond: 6, public: 4 } },
+          bad: { text: '“He goes DOWN at seven,” you hiss — your couple’s first real argument, about a doll’s nap schedule. The doll records everything. Dolls do.', effects: { loyalty: 2, bond: 1, burnout: 4 } },
+          good: { text: '“Your shift,” you whisper at 3 a.m., executing the handover like a relay team. Feeds logged, shifts split. The villa’s loudest couple watches your rota with naked envy.', effects: { loyalty: 5, bond: 6, public: 4 } },
           incredible: { text: 'Your robot baby is the only one still “alive” by sundown, and {partner} has started saying “our little guy” unironically. The nation melts on schedule.', effects: { bond: 8, public: 6, loyalty: 8 } },
         },
       },
@@ -44,7 +44,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         tags: ['loyal', 'rest'],
         governingStats: { loyalty: 0.6, savvy: 0.4 },
         outcomes: {
-          bad: { text: 'You change absolutely nothing, which unfortunately includes the sat-nav joke. The conversation, wherever it is, moves on slightly.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
+          bad: { text: '“Is that joke still touring?” asks {mate}. You changed absolutely nothing, which unfortunately includes the sat-nav joke. The conversation, wherever it is, moves on slightly.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
           good: { text: 'No campaign, no pivot — just your couple doing its quiet thing while the favourites have a scream-up about a jet-ski. A jet-ski, mate. The vote likes a constant. You’re the constant.', effects: { loyalty: 5, bond: 4, public: 4 } },
           incredible: { text: 'Your total indifference to the standings becomes its own storyline: “they don’t even know they’re winning.” The most electable sentence on television.', effects: { loyalty: 8, bond: 5, public: 7 } },
         },
@@ -73,7 +73,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { charisma: 0.6, loyalty: 0.4 },
         outcomes: {
           bad: { text: 'Your toast starts strong, tours the whole Season, and gets lost around Casa. Somebody coughs “speeeech” at your speech. The lasagne cools in solidarity.', effects: { charisma: 2, burnout: 3, public: 1 } },
-          good: { text: 'You say the true thing about this strange, sunburnt family, and land it before the tears do. Glasses up. Even {rival} drinks to it.', effects: { charisma: 3, public: 5, loyalty: 2, bond: 2 } },
+          good: { text: '“We were strangers with matching water bottles—” You say the true thing about this strange, sunburnt family, and land it before the tears do. Glasses up. Even {rival} drinks to it.', effects: { charisma: 3, public: 5, loyalty: 2, bond: 2 } },
           incredible: { text: 'Your toast makes the villa cry, laugh, and toast the LASAGNE, in that order. The clip becomes how the Season is remembered. No pressure on the Final at all.', effects: { charisma: 8, public: 7, followers: 5, bond: 2 } },
         },
       },
@@ -93,7 +93,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     id: 'li_packing_wobble', act: 3, tags: ['chat', 'rest'],
     art: 'li_bedroom',
     context: 'Afternoon · suitcases have appeared · everyone is weird about it',
-    prompt: 'Production has quietly delivered everyone’s suitcases “for the Final,” and the sight of them has made the villa mortal. Out there: rent, exes, phone bills, daylight that isn’t graded. {partner} is looking at their case like it’s a verdict.',
+    prompt: 'Production has quietly delivered everyone’s suitcases “for the Final,” and the sight of them has made the villa mortal. Out there: rent, exes, daylight that isn’t graded. “Weird, isn’t it,” says {partner}, looking at their case like a verdict, not laughing.',
     choices: {
       left: {
         label: 'Talk about the outside',
@@ -101,7 +101,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'The outside chat gets real so fast you end up comparing commutes. Ninety minutes on trains. The romance survives, but it now knows about Zone 4.', effects: { loyalty: 2, bond: 3, burnout: 3 } },
-          good: { text: 'You do the scary conversation — cities, jobs, whose mates first — with the suitcases right there. It holds. Out loud, with logistics. That’s the realest thing in this villa.', effects: { bond: 6, loyalty: 5 } },
+          good: { text: '“Okay. Whose mates first?” The scary conversation — cities, jobs, logistics — with the suitcases right there. It holds. Out loud, with dates in it. The realest thing in this villa.', effects: { bond: 6, loyalty: 5 } },
           incredible: { text: 'By the end there’s a plan with dates in it. Actual dates. Calendar ones. The Beach Hut cries about it later, and so, quietly, does the nation.', effects: { bond: 8, loyalty: 8, public: 5 } },
         },
       },
@@ -157,7 +157,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.5, savvy: 0.5 },
         outcomes: {
           bad: { text: 'You mediate so evenly that both sides briefly unite against the mediation. There’s a lesson in there and you learn it holding the toast.', effects: { loyalty: 2, burnout: 3, public: 1 } },
-          good: { text: 'Ten minutes, two separate benches, one shared plate of eggs at the end. The villa’s last row dies quietly, and the Final keeps its shine.', effects: { public: 4, loyalty: 5 } },
+          good: { text: '“Sit. Eat. Both of you.” Ten minutes, two separate benches, one shared plate of eggs at the end. The villa’s last row dies quietly, and the Final keeps its shine.', effects: { public: 4, loyalty: 5 } },
           incredible: { text: 'You settle it so completely the two of them walk into the Final arm in arm, crediting you by name on live TV. Peacemaker: confirmed, broadcast, banked.', effects: { public: 7, loyalty: 8, followers: 4 } },
         },
       },
@@ -205,7 +205,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     id: 'li_odd_couple', act: 3, tags: ['banter', 'chat'],
     art: 'li_lawn',
     context: 'Afternoon · an unlikely friendship files its paperwork',
-    prompt: 'Somewhere along the Season, you and {rival} stopped circling and started chatting, and today it tips over: a genuinely nice hour by the pool with your designated antagonist. The villa doesn’t know what to do with it. Neither does the edit.',
+    prompt: 'Somewhere along the Season, you and {rival} stopped circling, and today it tips over. “You’re alright, you know,” they say, one genuinely nice poolside hour deep, to their designated antagonist. The villa doesn’t know what to do with it. Neither does the edit.',
     choices: {
       left: {
         label: 'Make peace official',
@@ -213,7 +213,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.5, charisma: 0.5 },
         outcomes: {
           bad: { text: 'You announce the truce at dinner like a press release and the villa, starved of conflict, immediately investigates it for cracks. Peace has never been so stressful.', effects: { loyalty: 2, public: 2, burnout: 3 } },
-          good: { text: 'You and {rival} bury it properly — specifics named, apologies exchanged, one handshake that turns into a hug. The Season’s longest cold war ends on a Tuesday.', effects: { public: 5, loyalty: 5, removeFlag: 'li_rival_active' } },
+          good: { text: '“I did hate you,” {rival} clarifies, mid-hug. “Massively.” Specifics named, apologies exchanged. The Season’s longest cold war ends on a Tuesday.', effects: { public: 5, loyalty: 5, removeFlag: 'li_rival_active' } },
           incredible: { text: 'The reconciliation is so real it becomes the episode’s emotional peak — two enemies laughing about the exact moments the nation used to scream at. Growth: televised.', effects: { public: 7, followers: 5, loyalty: 8, removeFlag: 'li_rival_active' } },
         },
       },
@@ -243,7 +243,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, rizz: 0.4 },
         outcomes: {
           bad: { text: 'Steady tips into sensible, and sensible gets four minutes of screen time. Reliability, the edit reminds you, is not a genre.', effects: { loyalty: 2, bond: 3, public: 1 } },
-          good: { text: 'While the top couple has a public wobble, yours quietly makes dinner together. The rankings breathe. The sofa points.', effects: { loyalty: 5, bond: 4, public: 5 } },
+          good: { text: '“Them,” says every sofa in the country, pointing. While the top couple wobbles in public, yours quietly makes dinner together. The rankings breathe.', effects: { loyalty: 5, bond: 4, public: 5 } },
           incredible: { text: 'A week without a single crack, on a show engineered to make them. The nation starts using your names as one word. That’s the whole election, won.', effects: { loyalty: 8, bond: 5, public: 8 } },
         },
       },
@@ -271,7 +271,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: 'You answer the hard one honestly and gift the villa a fresh 48 hours of discourse. Honesty scores with the vote and bills the couple.', effects: { loyalty: 2, public: 3, bond: -2, burnout: 3 } },
-          good: { text: 'No dodging, no lawyer answers, one genuinely funny admission about week two. The firepit warms to you. So does the scoreboard.', effects: { loyalty: 5, public: 6, followers: 2 } },
+          good: { text: '“Honestly? Week two, I was a shambles—” No dodging, no lawyer answers, one genuinely funny admission. The firepit warms to you. So does the scoreboard.', effects: { loyalty: 5, public: 6, followers: 2 } },
           incredible: { text: 'Your answers are so disarming the public’s questions turn into compliments by the third envelope. A hostile format, converted live. Vote-winning behaviour.', effects: { loyalty: 8, public: 9, followers: 4 } },
         },
       },
@@ -281,7 +281,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { charisma: 1 },
         outcomes: {
           bad: { text: 'You do bits over the hard questions, and the firepit lets you, and the sofa at home does not. “Evasive,” says the nation, in unison, at 9:47 p.m.', effects: { charisma: 2, followers: 3, public: -2, burnout: 2 } },
-          good: { text: 'You take the spikiest question of the night and return it with topspin. Laughter buys you the room; the room buys you votes.', effects: { charisma: 5, public: 5, followers: 4 } },
+          good: { text: '“Great question. Next one?” You take the spikiest envelope of the night and return it with topspin. Laughter buys you the room; the room buys you votes.', effects: { charisma: 5, public: 5, followers: 4 } },
           incredible: { text: 'Your envelope segment out-rates the argument segment — a first. The public asked for blood and left chanting your name. That’s a finalist.', effects: { charisma: 8, public: 8, followers: 6 } },
         },
       },
@@ -299,7 +299,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You stay so far above it you float out of the episode entirely. Grace, unwitnessed, is a tree falling in a forest of jet-skis.', effects: { loyalty: 2, bond: 3, public: 1 } },
-          good: { text: 'You bring the rowing couple snacks and take no sides. The contrast does your campaigning for you, in HD, all evening.', effects: { loyalty: 5, public: 6, bond: 3 } },
+          good: { text: '“Snacks?” you offer the rowing couple, taking no sides whatsoever. The contrast does your campaigning for you, in HD, all evening.', effects: { loyalty: 5, public: 6, bond: 3 } },
           incredible: { text: 'While the favourites feud, your couple has the quiet, ordinary, devastatingly likeable night that ends up closing the episode. The surge finds you. You never chased it.', effects: { loyalty: 8, public: 9, bond: 3 } },
         },
       },
@@ -319,7 +319,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     id: 'li_rt_deep_end', act: [2, 3], pathAffinity: ['realthing'], tags: ['chat', 'loyal'],
     art: 'li_terrace',
     context: 'Night · the terrace · past the small talk',
-    prompt: 'Somewhere past midnight the conversation with {partner} runs out of shallow water. Family. The thing with the dad. The reason for the wall. This is the chat that decides whether you’re a couple or a coupling.',
+    prompt: 'Somewhere past midnight the conversation with {partner} runs out of shallow water. “Okay,” they say, quieter. “Actual question.” Family. The thing with the dad. The reason for the wall. This is the chat that decides whether you’re a couple or a coupling.',
     choices: {
       left: {
         label: 'Go first',
@@ -327,7 +327,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You open the vault and it all comes out in the wrong order, ending on the hamster. {partner} holds your hand through the whole inventory. That’s data too.', effects: { loyalty: 2, bond: 4, burnout: 3 } },
-          good: { text: 'You say the real thing first, and it costs you, and they meet it with theirs. Two walls down in one night. The mics get none of it. The Bond gets all of it.', effects: { bond: 7, loyalty: 5 } },
+          good: { text: '“Okay. Me first, then.” You say the real thing, and it costs you, and they meet it with theirs. Two walls down in one night. The mics get none of it. The Bond gets all of it.', effects: { bond: 7, loyalty: 5 } },
           incredible: { text: 'What you tell them, you’ve never told anyone with a pulse. They don’t flinch. Around 2 a.m. the villa stops being a set and becomes, briefly, a place where you live.', effects: { bond: 9, loyalty: 8 } },
         },
       },
@@ -366,7 +366,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { charisma: 0.6, rizz: 0.4 },
         outcomes: {
           bad: { text: 'You deploy the full entertainment package at someone who needed a blanket. The juggling was technically proficient. The room was not a juggling room.', effects: { charisma: 2, bond: 1, burnout: 3, followers: 2 } },
-          good: { text: 'You calibrate it right: one stupid bit, exactly their humour, at exactly the right minute. The laugh cracks something open. The chat follows on its own.', effects: { bond: 5, charisma: 5 } },
+          good: { text: '“Absolutely not,” they say, already laughing. One stupid bit, exactly their humour, at exactly the right minute. The laugh cracks something open. The chat follows on its own.', effects: { bond: 5, charisma: 5 } },
           incredible: { text: 'You resurrect their whole day with a bit so specifically THEIRS — the impression, the callback, the thing with the spatula — that they realise, visibly, mid-laugh, that you’ve been paying attention since Day 1.', effects: { bond: 7, charisma: 8, public: 4 } },
         },
       },
@@ -384,7 +384,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You say it, and a bird lands on the wall, and you both jump like it’s a boom mic with feathers. The moment survives. Your dignity negotiates.', effects: { loyalty: 2, bond: 4, burnout: 2 } },
-          good: { text: 'You say the thing you’d never say on camera, in the spot where there might not be one. Whether it airs or not stops mattering halfway through the sentence. That’s how you know.', effects: { bond: 7, loyalty: 5 } },
+          good: { text: 'You say the thing you’d never say on camera, in the spot where there might not be one. “Say it again,” they ask, quietly. Whether it airs stops mattering halfway through. That’s how you know.', effects: { bond: 7, loyalty: 5 } },
           incredible: { text: 'Whatever was said at 5 a.m. in the blind spot, neither of you will ever repeat it, on the show or after it. The nation never finds out. The Bond never forgets.', effects: { bond: 10, loyalty: 8 } },
         },
       },
@@ -422,7 +422,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { charisma: 1 },
         outcomes: {
           bad: { text: 'You lose the challenge AND the bit: your smoothie “review” offends the brand, the villa, and one specific banana. Legal watches the tape twice.', effects: { charisma: 2, followers: 3, public: -2, burnout: 3 } },
-          good: { text: 'You come dead last with a running commentary so good the segment is functionally yours. The winner holds the smoothies. You hold the audience.', effects: { followers: 6, charisma: 5 } },
+          good: { text: '“And the smoothie’s fine too,” you concede, dead last, mid-commentary. The segment is functionally yours. The winner holds the smoothies. You hold the audience.', effects: { followers: 6, charisma: 5 } },
           incredible: { text: 'Your loser’s acceptance speech for a smoothie challenge becomes the episode’s most-clipped moment. Brands take notes. Plural. You can hear the pens.', effects: { followers: 10, charisma: 8, graft: 4 } },
         },
       },
@@ -439,7 +439,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         tags: ['banter', 'strategy'],
         governingStats: { savvy: 0.6, charisma: 0.4 },
         outcomes: {
-          bad: { text: 'You deploy the phrase four times before lunch and {mate} asks why you keep saying that. A catchphrase that gets noticed being planted is a crime scene.', effects: { savvy: 2, followers: 2, burnout: 3 } },
+          bad: { text: '“Why do you keep SAYING that?” asks {mate}, four deployments before lunch. A catchphrase that gets noticed being planted is a crime scene.', effects: { savvy: 2, followers: 2, burnout: 3 } },
           good: { text: 'You drop it once, perfectly, at the height of a group laugh. By dinner two people have repeated it. Organic reach, farmed by hand.', effects: { followers: 5, savvy: 5 } },
           incredible: { text: 'The phrase escapes the villa on the same night’s episode and by morning it has fan art. You built a meme with your bare hands and everyone thinks it was an accident. Correct.', effects: { followers: 9, savvy: 8, public: 4 } },
         },
@@ -468,7 +468,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { charisma: 0.6, savvy: 0.4 },
         outcomes: {
           bad: { text: 'You lean in and pick the wrong scene: your “villain moment” lands on the villa’s most beloved Islander, mid-wobble. Boos you can hear through the walls. Even the edit winces.', effects: { charisma: 2, followers: 4, public: -4, burnout: 4 } },
-          good: { text: 'You say the sharp thing everyone was circling, with a raised eyebrow and perfect posture. The villa gasps; the internet crowns you. Villainy is just honesty with styling.', effects: { followers: 7, public: -2, charisma: 5 } },
+          good: { text: '“Well, someone had to say it.” The sharp thing everyone was circling, delivered with a raised eyebrow and perfect posture. The villa gasps; the internet crowns you. Villainy is just honesty with styling.', effects: { followers: 7, public: -2, charisma: 5 } },
           incredible: { text: 'One firepit monologue and you’re the villain of the Season — quotable, gif-able, unbothered. The nation boos with its whole chest and keeps watching with its whole schedule.', effects: { followers: 11, public: -2, charisma: 8, graft: 4 } },
         },
       },

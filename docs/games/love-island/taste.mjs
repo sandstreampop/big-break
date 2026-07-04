@@ -48,4 +48,14 @@ export const LOVE_ISLAND_TASTE = {
   // here: the body of the text stays flat). Copy matching this is waived from
   // the ≤1-"!" house rule. See VOICE.md § The prime directive (rule 5).
   bangExempt: [/got a text/i],
+  // The v2 dialogue-first floor (VOICE.md v2 addendum): encounter beats are
+  // conversations with a person, so their prompts MUST speak; corpus-wide, at
+  // least these shares of prompts/outcomes carry actual dialogue. Measured at
+  // the v2 conversion: prompts 66%, outcomes 40% — the floors sit just under,
+  // as a ratchet against sliding back to wall-to-wall narrator, not a target.
+  dialogue: {
+    requireTags: ['encounter'],
+    promptMinShare: 0.6,
+    outcomeMinShare: 0.35,
+  },
 };

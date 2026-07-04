@@ -17,7 +17,7 @@ export const TURN_EVENTS: GameEvent[] = [
         tags: ['loyal'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: 'You shut it down with a speech so long it technically counts as a chat. The terrace clock logs forty minutes. Explaining that number takes sixty.', effects: { bond: 2, burnout: 3, loyalty: 2 } },
+          bad: { text: '“So to be clear — and there are several parts to this—” Your shutdown speech runs so long it technically counts as a chat. The clock logs forty minutes. Explaining that number takes sixty.', effects: { bond: 2, burnout: 3, loyalty: 2 } },
           good: { text: '“Flattering. No.” Two sentences, one smile, exit. The Beach Hut replays it approvingly. Loyalty with good footwork.', effects: { bond: 4, loyalty: 5, burnout: -2 } },
           incredible: { text: 'You decline so warmly you turn a head-turn into an ally. {bombshell} tells the boys you’re “annoyingly solid.” The nation embroiders it on a cushion.', effects: { bond: 6, loyalty: 8, public: 5 } },
         },
@@ -27,7 +27,7 @@ export const TURN_EVENTS: GameEvent[] = [
         tags: ['temptation', 'flirt', 'drama'],
         governingStats: { rizz: 1 },
         outcomes: {
-          bad: { text: 'It goes nowhere, slowly, for an hour, on camera. All of the risk, none of the story — the romantic equivalent of queueing. The clip will absolutely be screened later.', effects: { rizz: 2, burnout: 4, followers: 2, bond: -3, addFlag: 'li_head_turned' } },
+          bad: { text: '“Anyway,” you both keep saying, hourly, as it goes nowhere, on camera. All of the risk, none of the story — the romantic equivalent of queueing. The clip will absolutely be screened later.', effects: { rizz: 2, burnout: 4, followers: 2, bond: -3, addFlag: 'li_head_turned' } },
           good: { text: '“I’m not being funny, my head could be turned.” It’s out of your mouth before the edit can save you. The terrace has ears. The duvets have ears.', effects: { followers: 5, rizz: 5, bond: -3, burnout: 2, addFlag: 'li_head_turned' } },
           incredible: { text: 'Nothing happens — technically. But the eye contact alone needs a watershed rating, and tomorrow’s episode is now about your couple. You knew. You stayed.', effects: { followers: 8, rizz: 8, bond: -4, public: 4, addFlag: 'li_head_turned' } },
         },
@@ -46,9 +46,9 @@ export const TURN_EVENTS: GameEvent[] = [
         tags: ['loyal'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: 'You leave so abruptly you take their drink with you by accident. Loyal, yes. Smooth, no. The kitchen cam has the whole heist.', effects: { bond: 3, burnout: 2, loyalty: 2 } },
+          bad: { text: '“Night!” You leave so abruptly you take their drink with you by accident. Loyal, yes. Smooth, no. The kitchen cam has the whole heist.', effects: { bond: 3, burnout: 2, loyalty: 2 } },
           good: { text: '“It’s not married. It’s better. Night.” You’re in bed before the counter’s stopped smirking. Exclusive means the exits are rehearsed.', effects: { bond: 5, loyalty: 5, burnout: -2 } },
-          incredible: { text: 'You narrate the entire attempt to {partner} before breakfast, together, laughing. A couple that debriefs together is bulletproof, and the villa knows it.', effects: { bond: 7, loyalty: 8, public: 5 } },
+          incredible: { text: '“And THEN — ‘official isn’t married, though, is it’ —” You narrate the entire attempt to {partner} before breakfast, together, crying laughing. A couple that debriefs together is bulletproof.', effects: { bond: 7, loyalty: 8, public: 5 } },
         },
       },
       right: {
@@ -76,7 +76,7 @@ export const TURN_EVENTS: GameEvent[] = [
         tags: ['loyal', 'date'],
         governingStats: { loyalty: 0.7, rizz: 0.3 },
         outcomes: {
-          bad: { text: 'You do the speech and a wasp gets involved at the worst possible clause. They say yes between swats. Officially official, with an asterisk shaped like a wasp.', effects: { loyalty: 2, exclusive: 1, bond: 4, burnout: 2 } },
+          bad: { text: '“Will you — GET OFF — will you be—” A wasp attends the speech at the worst possible clause. They say yes between swats. Officially official, with an asterisk shaped like a wasp.', effects: { loyalty: 2, exclusive: 1, bond: 4, burnout: 2 } },
           good: { text: 'You close off, out loud, on the terrace where it started. The villa toasts you with whatever was nearest. No more options. That’s the point.', effects: { loyalty: 5, exclusive: 1, bond: 6, public: 3 } },
           incredible: { text: 'The speech is short, specific, and lands so cleanly the Beach Hut cries about it in three separate confessionals. The Season has its couple.', effects: { loyalty: 8, exclusive: 1, bond: 8, public: 6 } },
         },
@@ -105,7 +105,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You tell {mate} everything, mid-sob, with your usual gift for timing. The confrontation happens wet, loud, and partially in a towel. You’re cited as a source.', effects: { loyalty: 2, public: 2, burnout: 4, addFlag: 'li_code_honour' } },
-          good: { text: 'You say what you saw, plainly, to the person who needed it. The boy calls you a stirrer. The girls call you at every crisis from now on.', effects: { public: 4, loyalty: 5, addFlag: 'li_code_honour' } },
+          good: { text: '“You’re a stirrer,” says the boy. The girls, from now on, call you at every crisis. You said what you saw, plainly, to the person who needed it.', effects: { public: 4, loyalty: 5, addFlag: 'li_code_honour' } },
           incredible: { text: 'You handle it so cleanly — the truth to {mate}, one flat sentence to the boy, no theatre — that the villa quietly re-ranks you. Code isn’t a rule. It’s a reputation.', effects: { public: 6, loyalty: 8, followers: 4, addFlag: 'li_code_honour' } },
         },
       },
@@ -133,7 +133,7 @@ export const TURN_EVENTS: GameEvent[] = [
         tags: ['strategy', 'code'],
         governingStats: { savvy: 1 },
         outcomes: {
-          bad: { text: 'Your “casual” pre-vote chats are so obviously canvassing that {mate} asks if you’re running for something. You are. Everyone is. Still embarrassing.', effects: { savvy: 2, public: 2, burnout: 3 } },
+          bad: { text: '“Are you running for something?” asks {mate}, mid-way through your third “casual” pre-vote chat. You are. Everyone is. Still embarrassing.', effects: { savvy: 2, public: 2, burnout: 3 } },
           good: { text: 'You don’t campaign. You just happen to make four teas in an hour. The vote lands your way, as votes tend to when the kettle’s on your side.', effects: { public: 5, savvy: 5 } },
           incredible: { text: 'You win the trust vote by a margin the Host declines to read out “to spare the others.” The beach dinner has your name on the good chair.', effects: { public: 7, savvy: 8, bond: 3 } },
         },
@@ -190,7 +190,7 @@ export const TURN_EVENTS: GameEvent[] = [
         tags: ['loyal', 'challenge'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: 'You marry your partner and pie the bombshell. The bombshell laughs. It is not the good kind of laugh.', effects: { loyalty: 2, bond: 3, burnout: 2, addFlag: 'li_rival_active' } },
+          bad: { text: '“No — funny. Genuinely funny,” says the bombshell, wearing your pie. It is not the good kind of laugh.', effects: { loyalty: 2, bond: 3, burnout: 2, addFlag: 'li_rival_active' } },
           good: { text: 'You snog your partner in front of everyone. Petty of you, and it works.', effects: { loyalty: 5, bond: 5, public: 4 } },
           incredible: { text: 'You marry your partner and mean it. Someone in the crowd says “aww.” Someone else says nothing, loudly.', effects: { loyalty: 8, bond: 7, public: 6 } },
         },
@@ -202,7 +202,7 @@ export const TURN_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You snog the boy who isn’t yours “for the game.” Your partner accepts this explanation the way one accepts weather.', effects: { charisma: 2, followers: 4, bond: -4, burnout: 3 } },
           good: { text: 'You pie the loudest girl and snog the bombshell. The group chat, later, will need a whole evening.', effects: { charisma: 5, followers: 6, public: 4, bond: -2 } },
-          incredible: { text: 'You turn a party game into a cliffhanger. Three couples now have “a chat” to schedule. You did that.', effects: { charisma: 8, followers: 10, public: 7, bond: -3, graft: 4 } },
+          incredible: { text: '“We need a chat,” say three separate couples, at once, to each other. You turned a party game into a cliffhanger. You did that.', effects: { charisma: 8, followers: 10, public: 7, bond: -3, graft: 4 } },
         },
       },
     },
@@ -219,7 +219,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { savvy: 1 },
         outcomes: {
           bad: { text: 'Your investigation interviews five witnesses and creates two new rumours, both worse, one involving the salad. The salad is now a storyline.', effects: { savvy: 2, burnout: 4, followers: 2 } },
-          good: { text: 'You follow the sentence back through three retellings to its author, who folds instantly. Corrections issued. Villa notified. Case closed by lunch.', effects: { savvy: 5, public: 3 } },
+          good: { text: '“It came from YOU?” The sentence traces back through three retellings to an author who folds instantly. Corrections issued. Villa notified. Case closed by lunch.', effects: { savvy: 5, public: 3 } },
           incredible: { text: 'You expose the whole supply chain at the firepit — who said it, who spiced it, who delivered it — with the calm of a detective who’s already eaten. The villa is terrified. Respectfully.', effects: { savvy: 8, public: 5, followers: 4 } },
         },
       },
@@ -257,7 +257,7 @@ export const TURN_EVENTS: GameEvent[] = [
         tags: ['camera', 'flirt'],
         governingStats: { charisma: 0.6, rizz: 0.4 },
         outcomes: {
-          bad: { text: 'You perform romance at the sea like a perfume advert and {partner} asks, quietly, who you’re doing this for. The sea declines to comment.', effects: { charisma: 2, followers: 3, bond: -2, burnout: 3 } },
+          bad: { text: '“Who’s this for?” asks {partner}, quietly, mid-perfume-advert. The sea declines to comment.', effects: { charisma: 2, followers: 3, bond: -2, burnout: 3 } },
           good: { text: 'Champagne, golden light, one rehearsed-looking kiss that wasn’t. The nation swoons on schedule. The couple banks the montage.', effects: { charisma: 5, followers: 5, public: 4, bond: 2 } },
           incredible: { text: 'The date is so cinematic the episode uses it as the cold open. You are, officially, the couple other couples get compared to. Heavy is the crown; great is the lighting.', effects: { charisma: 8, followers: 8, public: 6, bond: 3 } },
         },
@@ -277,8 +277,8 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, savvy: 0.4 },
         outcomes: {
           bad: { text: 'The quick word takes ninety minutes and relitigates the whole timeline. You return to {partner} with the face of someone back from an audit.', effects: { loyalty: 2, burnout: 4, bond: -2 } },
-          good: { text: 'You give it ten honest minutes, close the loop, and walk back to your couple in full view. Endings, done properly, are just good manners.', effects: { bond: 4, loyalty: 5, public: 3 } },
-          incredible: { text: 'The conversation ends with an actual handshake, which the villa finds more shocking than any row. Closure: the rarest twist in the format.', effects: { bond: 5, loyalty: 8, public: 5 } },
+          good: { text: '“Ten minutes. Then we’re done, properly.” You give it the ten, close the loop, and walk back to your couple in full view. Endings, done properly, are just good manners.', effects: { bond: 4, loyalty: 5, public: 3 } },
+          incredible: { text: '“No hard feelings?” — “None left.” The conversation ends with an actual handshake, which the villa finds more shocking than any row. Closure: the rarest twist in the format.', effects: { bond: 5, loyalty: 8, public: 5 } },
         },
       },
       right: {
@@ -305,7 +305,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: 'Your unity speech is going beautifully until two of your examples turn out to be about the same boy. The summit fractures along entirely new lines. More sighing.', effects: { loyalty: 2, burnout: 3, public: 1 } },
-          good: { text: 'You talk the room off three separate ledges and into one shared eyeliner. The girls leave stronger. The boys, downstairs, sense a change in air pressure.', effects: { loyalty: 5, public: 4, addFlag: 'li_code_honour' } },
+          good: { text: '“Right. One at a time.” You talk the room off three separate ledges and into one shared eyeliner. The girls leave stronger. The boys, downstairs, sense a change in air pressure.', effects: { loyalty: 5, public: 4, addFlag: 'li_code_honour' } },
           incredible: { text: 'By midnight the dressing room has a pact, a plan, and a name (“the coven,” affectionate). You are its unelected chair. The vote doesn’t know it yet, but it just moved.', effects: { loyalty: 8, public: 6, followers: 4, addFlag: 'li_code_honour' } },
         },
       },
@@ -333,7 +333,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, savvy: 0.4 },
         outcomes: {
           bad: { text: 'You write “spiders.” The answer was “abandonment.” The lawn does a group “oof.” There is nowhere to put a whiteboard that says spiders.', effects: { loyalty: 2, bond: -2, burnout: 3, followers: 2 } },
-          good: { text: 'Match after match — the nan’s name, the weird sandwich, the fear. The villa realises, mid-quiz, that your couple has been doing the homework.', effects: { loyalty: 5, bond: 5, public: 4 } },
+          good: { text: '“HOW do you know about the sandwich?” Match after match — the nan’s name, the weird sandwich, the fear. The villa realises, mid-quiz, that your couple has been doing the homework.', effects: { loyalty: 5, bond: 5, public: 4 } },
           incredible: { text: 'Ten for ten, including the question {partner} got wrong about themselves. “That’s actually right,” they admit, to the lawn’s delight. You know them better than they do. It airs twice.', effects: { loyalty: 8, bond: 7, public: 6, followers: 4 } },
         },
       },
@@ -361,7 +361,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: 'You get genuinely emotional defending your couple, which would play beautifully if you hadn’t started with “look, I know how this looks.” The edit keeps the first half.', effects: { loyalty: 2, public: 1, burnout: 4 } },
-          good: { text: 'You answer plainly, no media training, one wobble in your voice you don’t bother hiding. The clip runs uncut. The vote softens by Tuesday.', effects: { loyalty: 5, public: 5, bond: 2 } },
+          good: { text: '“Then they don’t know us. That’s all.” No media training, one wobble in your voice you don’t bother hiding. The clip runs uncut. The vote softens by Tuesday.', effects: { loyalty: 5, public: 5, bond: 2 } },
           incredible: { text: 'Your answer is so unguarded the show builds the episode’s emotional arc around it. Doubters keep doubting — quieter, though. Much quieter.', effects: { loyalty: 8, public: 7, bond: 3, followers: 4 } },
         },
       },
@@ -371,7 +371,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: 'You deliver a flawless non-answer, and the flawlessness is the problem. “Very polished,” says the internet, meaning something else.', effects: { savvy: 2, followers: 2, public: -2, burnout: 2 } },
-          good: { text: 'You thank the doubters for watching. Genuinely elite deflection — engagement is engagement, and you just converted the haters into metrics.', effects: { followers: 5, savvy: 5 } },
+          good: { text: '“Tell them thanks for watching.” Genuinely elite deflection — engagement is engagement, and you just converted the haters into metrics.', effects: { followers: 5, savvy: 5 } },
           incredible: { text: '“If I were playing a game, I’d be winning it, and if I’m not, I’m happy. Pick whichever keeps you watching.” The line escapes the show entirely and gets quoted at bus stops.', effects: { followers: 9, savvy: 8, public: 4 } },
         },
       },
@@ -400,7 +400,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { rizz: 0.5, charisma: 0.5 },
         outcomes: {
           bad: { text: 'You arrive with three drinks nobody asked for and a smile with too many teeth. The chat pauses, politely, until you leave. The daybed grades your entrance a four.', effects: { rizz: 2, bond: 1, burnout: 4, followers: 2 } },
-          good: { text: 'You join the chat, disarm it in ninety seconds, and leave with {partner} and both waters. Clean extraction. The bombshell reviews their notes.', effects: { bond: 4, rizz: 5, followers: 2 } },
+          good: { text: '“Just grabbing these,” you say, and leave with {partner} and both waters, ninety seconds in. Clean extraction. The bombshell reviews their notes.', effects: { bond: 4, rizz: 5, followers: 2 } },
           incredible: { text: 'You sit down, befriend the bombshell, and matchmake them with someone else live in the same conversation. Threat converted to subplot. The producers send champagne.', effects: { rizz: 5, bond: 5, savvy: 3, public: 5, followers: 4 } },
         },
       },

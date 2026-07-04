@@ -80,3 +80,33 @@ body {
 }
 /* The portrait pair: base face + mood face — a character is a face first. */
 .hud-counters .rel-face { margin: 0 3px 0 2px; }
+
+/* Mood-driven portraits (the bounded set: 16 faces × these six moods + level).
+   A mood is worn as the ring colour + glow; the mood face sits on the
+   shoulder of the portrait. */
+.cast-chip.cast-level .cast-face { border-color: #4b4066; }
+.cast-chip.cast-buzzing .cast-face {
+  border-color: #ff5c8a;
+  box-shadow: 0 0 10px rgba(255, 92, 138, 0.55);
+}
+.cast-chip.cast-smug .cast-face {
+  border-color: #ffb35c;
+  box-shadow: 0 0 10px rgba(255, 179, 92, 0.45);
+}
+.cast-chip.cast-fuming .cast-face {
+  border-color: #ff5347;
+  box-shadow: 0 0 12px rgba(255, 83, 71, 0.55);
+}
+.cast-chip.cast-wounded .cast-face {
+  border-color: #6fa8ff;
+  box-shadow: 0 0 10px rgba(111, 168, 255, 0.45);
+}
+.cast-chip.cast-scheming .cast-face {
+  border-color: #ba7aff;
+  box-shadow: 0 0 10px rgba(186, 122, 255, 0.5);
+}
+.cast-chip.cast-torn .cast-face {
+  border-color: #9aa0b0;
+  box-shadow: 0 0 8px rgba(154, 160, 176, 0.4);
+  filter: saturate(0.7);
+}

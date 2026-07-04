@@ -8,7 +8,7 @@
 import { castById, couplePool, sameGenderPool, islanderTypeById } from './cast.js';
 import { angleById } from './angles.js';
 import { PATHS } from './manifest.js';
-import { characterRead, TIER_LABEL } from './plugins/characters.js';
+import { characterRead, TIER_LABEL, MOODS } from './plugins/characters.js';
 import { intelCount } from './plugins/gossip.js';
 import { stirlingDealNote } from './plugins/stirling.js';
 import { mulberry32 } from '../../engine.js';
@@ -298,6 +298,44 @@ function finalSet(state: RunState) {
   };
 }
 
+// ---------- The people in this scene (portraits on the card) ----------
+// The mood-driven portrait system (V2-DESIGN "presentation"): a bounded set —
+// each Cast member's face × the six moods (worn as a mood face + a mood-tinted
+// frame, styled in love-island.css). Persistent across a scene's beats
+// (ADR-0005's framing), and the line-up puts Partner AND Rival on screen.
+// Pure: a read of characterRead only.
+
+const LINEUP_IDS = new Set([
+  'li_recoup1_exposed', 'li_recoup1_exposed_single',
+  'li_recoup2_exposed', 'li_recoup2_exposed_single', 'li_recoup_cashout',
+]);
+const VERDICT_IDS = new Set(['li_recoup_held', 'li_recoup_rescued', 'li_recoup_dumped']);
+
+function cardCast(state: RunState, ev: any) {
+  const out: any[] = [];
+  const seat = (role: 'partner' | 'rival' | 'bombshell') => {
+    const c = characterRead(state, role);
+    if (!c) return;
+    out.push({
+      name: c.cast.name,
+      face: c.face,
+      moodFace: c.moodFace,
+      sub: c.mood ? MOODS[c.mood]?.label : role === 'partner' ? TIER_LABEL[c.tier] : role,
+      cls: 'cast-' + (c.mood || 'level'),
+    });
+  };
+  const id = ev.id || '';
+  const tags: string[] = ev.tags || [];
+  if (LINEUP_IDS.has(id) || VERDICT_IDS.has(id)) { seat('partner'); seat('rival'); }
+  else if (id.startsWith('li_enc_rival') || id.startsWith('li_enc_rmove') || id === 'li_connect_dots') seat('rival');
+  else if (id.startsWith('li_enc_partner') || id.startsWith('li_enc_p3')) seat('partner');
+  else if (id === 'li_second_wave') seat('rival');
+  else if (id === 'li_kitchen_drop') { seat('partner'); seat('rival'); }
+  else if (id === 'li_casa_held' || id === 'li_parents' || id === 'li_parents_messy') seat('partner');
+  else if (tags.includes('temptation')) seat('bombshell');
+  return out.length ? out : null;
+}
+
 // ---------- HUD counters ----------
 
 // Relationship-forward (V2-DESIGN): the people lead, the meters follow. The
@@ -380,6 +418,8 @@ export const loveIslandPresenter: Presenter = {
   // Stirling's deal-time channel: the ceremony forecast, the verdict explain,
   // the scene stamps (ADR-0008). Pure — see stirlingDealNote.
   overlayNote: stirlingDealNote,
+  // The scene's portraits (mood-driven, persistent across encounter beats).
+  cardCast,
   vibe: (state: RunState) => ({ fame: state.public ?? 0, network: state.stats?.charisma ?? 0, burnout: state.stats?.burnout ?? 0 }),
 
   encore: {

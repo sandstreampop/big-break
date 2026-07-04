@@ -167,7 +167,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
 
   // ---------- Act 1 · the Partner, actually met (3 beats, ambient-triggered) ----------
   {
-    id: 'li_enc_partner_1', act: 1, weight: 2, tags: ['encounter', 'chat', 'date'],
+    id: 'li_enc_partner_1', act: 1, weight: 1, tags: ['beat:partnerenc1', 'encounter', 'chat', 'date'],
     art: 'li_pool',
     requires: { singleIs: false },
     context: 'Mid-morning · the swing seat · the first real one',
@@ -494,9 +494,12 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
   {
     id: 'li_second_wave', act: 3, weight: 1, tags: ['beat:wave', 'encounter', 'drama', 'text'],
     art: 'li_bombshell',
-    requires: { singleIs: false, flagsAll: ['li_secret_detonated'] },
+    // The villa churns when the first Rival is NEUTRALISED — their secret
+    // detonated, or won all the way over (a warm rival isn't gunning for
+    // anyone; production ships a replacement).
+    requires: { singleIs: false, anyOf: [{ flagsAll: ['li_secret_detonated'] }, { opinionAtLeast: 'rival:warm' }] },
     context: 'Final Week · “I’VE GOT A TEXT!!” · nature abhors a vacuum',
-    prompt: '“Islanders, please welcome a late arrival. #neverover” — With {rival}’s game in ruins, the villa had a vacancy, and production fills vacancies. The newcomer surveys the lawn, finds the strongest couple, and smiles at it. It’s yours. Congratulations.',
+    prompt: '“Islanders, please welcome a late arrival. #neverover” — With {rival} out of the villain business, the villa had a vacancy, and production fills vacancies. The newcomer surveys the lawn, finds the strongest couple, and smiles at it. It’s yours. Congratulations.',
     choices: {
       left: {
         label: 'Meet the threat head on',

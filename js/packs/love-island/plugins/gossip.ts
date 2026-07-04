@@ -8,7 +8,7 @@
 // see the climax encounter). Pack-owned; the engine names none of this.
 
 import { castById } from '../cast.js';
-import { roleCastId, secretOf, MOODS } from './characters.js';
+import { roleCastId, secretOf, setCharMood } from './characters.js';
 import type { Plugin, RunState } from '../../../types.js';
 
 export const GOSSIP = {
@@ -47,9 +47,7 @@ const moveOpinion = (state: RunState, role: 'rival' | 'bombshell', v: number) =>
   if (!roleCastId(state, role)) return;
   state.charOpinion[role] = clamp((state.charOpinion[role] ?? 0) + v, 0, 100);
 };
-const setMood = (state: RunState, role: string, mood: string) => {
-  if (MOODS[mood] && roleCastId(state, role as any)) state.charMood[role] = { id: mood, ttl: 4 };
-};
+const setMood = setCharMood as (state: RunState, role: string, mood: string) => void;
 
 export const gossipPlugin: Plugin = {
   id: 'gossip',
@@ -89,8 +87,12 @@ export const gossipPlugin: Plugin = {
 
     // DEPLOY: spend what you hold. The target is who you TELL; the cascade
     // runs along the Partner ↔ You ↔ Rival network and stays readable.
+    // A missing target (telling a Partner you don't have) consumes NOTHING —
+    // intel never burns into the void.
     if (e.deployIntel) {
       const to = e.deployIntel as 'partner' | 'rival';
+      if (to === 'partner' && !state.partner) return;
+      if (to === 'rival' && !state.rival) return;
       const h = heldIntel(state);
       // A feeling spends first; with none held, a surfaced secret goes — the
       // big note gets broken only when the small ones are gone.

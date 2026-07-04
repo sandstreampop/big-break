@@ -302,9 +302,16 @@ narrator**. The v2 shift ([`V2-DESIGN.md`](./V2-DESIGN.md), "dialogue-first voic
    a beat is a *conversation with a person*, so its prompt should contain that
    person's actual voice, and its outcome should show their reaction — a face, a
    reply, a recalibration — not just a scoreboard movement described politely.
-4. Everything above obeys the existing floor (bangs, clichés, length). No new
-   lint rule: dialogue-presence is a craft judgement, not a regex.
+4. **The floor enforces it** (`taste.mjs` `dialogue`, checked by
+   `lint-content.mjs` via `taste-core.mjs` `hasDialogue`): every
+   `encounter`-tagged card's prompt must speak, and corpus-wide at least 60% of
+   prompts / 35% of outcomes must carry actual dialogue. The floors sit just
+   under the converted deck's measured level (prompts 66%, outcomes 40%) — a
+   ratchet against register drift, not a target. Whether a *specific* narrator
+   outcome should convert stays a craft judgement: montage and observational
+   beats keep the booth voice on purpose.
 
-The encounter files (`events-encounters.ts`, `events-gossip.ts`, the ceremony
-cash-out) are written to this addendum and double as its worked examples; the
-v1 ambient deck converts opportunistically as cards get touched.
+The whole deck was converted to this addendum (the v2 voice pass): every card
+reviewed, ~100 prompts/outcomes rewritten to lead with speech wherever the
+scene has a mouth. The encounter files (`events-encounters.ts`,
+`events-gossip.ts`, the ceremony cash-out) are the fullest worked examples.

@@ -680,6 +680,35 @@ body.big-text #app { zoom: 1.18; }
 }
 .overlay-note-result { margin: 2px 0; }
 
+/* ---------- Card cast (a pack's portrait strip — the people in this
+   scene, faces first; presenter.cardCast) ---------- */
+.card-cast { display: flex; gap: 10px; flex-wrap: wrap; }
+.cast-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 10px 4px 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #3b3352;
+}
+.cast-face {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px;
+  font-size: 17px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #4b4066; /* the mood tints recolor this ring */
+}
+.cast-moodface {
+  position: absolute;
+  right: -5px; bottom: -5px;
+  font-size: 13px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+.cast-id { display: flex; flex-direction: column; line-height: 1.15; }
+.cast-name { font-size: 12.5px; font-weight: 700; }
+.cast-sub { font-size: 10.5px; opacity: 0.75; }
+
 /* Full-width announcement rows — sentences wrap cleanly inside their
    own row instead of distorting a pill */
 .result-notices { display: flex; flex-direction: column; gap: 6px; }

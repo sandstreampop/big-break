@@ -22,8 +22,8 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['flirt', 'date'],
         governingStats: { rizz: 1 },
         outcomes: {
-          bad: { text: 'You step forward for the smile. The smile was aimed at someone behind you. You couple up anyway, both pretending this is fine, live, forever.', effects: { couple: true, rizz: 2, burnout: 3 } },
-          good: { text: 'You step forward and they don’t look surprised. In here, not-surprised is a love language.', effects: { couple: true, rizz: 5, public: 3 } },
+          bad: { text: '“Oh — hi,” says the smile, which was aimed at someone behind you. You couple up anyway, both pretending this is fine, live, forever.', effects: { couple: true, rizz: 2, burnout: 3 } },
+          good: { text: '“Took you long enough,” they murmur as you step forward — not surprised at all. In here, not-surprised is a love language.', effects: { couple: true, rizz: 5, public: 3 } },
           incredible: { text: 'You step forward and two other people visibly deflate. The nation clocks it. Day one, and you’re already a storyline.', effects: { couple: true, rizz: 8, public: 5, followers: 4 } },
         },
       },
@@ -62,7 +62,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['strategy', 'banter'],
         governingStats: { savvy: 0.7, charisma: 0.3 },
         outcomes: {
-          bad: { text: 'You wave. A wave. Your partner will describe this wave, at length, to six new people, for three days.', effects: { chainEventId: 'li_casa_night', burnout: 4, savvy: 2 } },
+          bad: { text: '“A wave,” your partner will say, at length, to six new people, for three days. You waved. A wave.', effects: { chainEventId: 'li_casa_night', burnout: 4, savvy: 2 } },
           good: { text: 'No tears, no speeches, one raised eyebrow that says <i>behave</i>. Economical. The edit respects economy.', effects: { chainEventId: 'li_casa_night', savvy: 5, public: 3 } },
           incredible: { text: 'You leave them laughing, which is the only exit that survives a highlights reel. Confidence reads as a plan even when it’s a shrug.', effects: { chainEventId: 'li_casa_night', savvy: 8, public: 5, graft: 3 } },
         },
@@ -90,7 +90,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['flirt', 'temptation', 'drama'],
         governingStats: { rizz: 1, savvy: 0.3 },
         outcomes: {
-          bad: { text: 'You kiss the new arrival. It is fine. It is, in fact, so fine that you immediately understand you’ve made a mistake for nothing.', effects: { rizz: 2, chainEventId: 'li_casa_postcard_stray', casaLoyaltyDraw: true, followers: 3, burnout: 4, addFlag: 'li_casa_kiss' } },
+          bad: { text: '“Wow,” you both say, politely, after the kiss. It is fine. It is, in fact, so fine that you immediately understand you’ve made a mistake for nothing.', effects: { rizz: 2, chainEventId: 'li_casa_postcard_stray', casaLoyaltyDraw: true, followers: 3, burnout: 4, addFlag: 'li_casa_kiss' } },
           good: { text: '“I’m not being funny, my head’s proper been turned.” It has. The footage exists. Someone back home is asleep, loyal, and doomed to a slideshow.', effects: { chainEventId: 'li_casa_postcard_stray', casaLoyaltyDraw: true, followers: 5, rizz: 5, addFlag: 'li_casa_kiss' } },
           incredible: { text: 'By midnight you’re the main story in two villas, and you’re only in one of them. The nation cancels its evening plans.', effects: { chainEventId: 'li_casa_postcard_stray', casaLoyaltyDraw: true, followers: 9, public: 4, rizz: 8, addFlag: 'li_casa_kiss' } },
         },
@@ -109,7 +109,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“It’s a crop,” you tell the group, with the conviction of someone who has seen crops before. The group nods the way people nod at conspiracy theories.', effects: { loyalty: 2, chainEventId: 'li_casa_return', bond: 2, burnout: 4 } },
-          good: { text: 'You put the postcard face-down and go make a coffee. It’s the most powerful thing anyone has done in either villa this week.', effects: { loyalty: 5, chainEventId: 'li_casa_return', bond: 4, burnout: -2 } },
+          good: { text: '“Anyone want a coffee?” You put the postcard face-down and put the kettle on. It’s the most powerful thing anyone has done in either villa this week.', effects: { loyalty: 5, chainEventId: 'li_casa_return', bond: 4, burnout: -2 } },
           incredible: { text: 'You laugh at it. Actually laugh. The new arrivals quietly cross you off their lists, which is the point.', effects: { loyalty: 8, chainEventId: 'li_casa_return', bond: 5, public: 5, burnout: -3 } },
         },
       },
@@ -137,7 +137,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You rehearse the confession on the minibus. It comes out in the wrong order, worst part first. Honest, though. Painfully, structurally honest.', effects: { loyalty: 2, chainEventId: 'li_casa_return', comeClean: true, bond: -5, public: 2, burnout: 3 } },
-          good: { text: '“You deserve to hear it from me.” It costs you. It costs you less than a cinema screen would have.', effects: { loyalty: 5, chainEventId: 'li_casa_return', comeClean: true, bond: -4, public: 4 } },
+          good: { text: '“You deserve to hear it from me.” You rehearse it once and mean it twice. It costs you. It costs you less than a cinema screen would have.', effects: { loyalty: 5, chainEventId: 'li_casa_return', comeClean: true, bond: -4, public: 4 } },
           incredible: { text: 'You tell the whole truth, unprompted, before anyone can screen anything. The villa is stunned. Honesty this efficient is basically a twist.', effects: { loyalty: 8, chainEventId: 'li_casa_return', comeClean: true, bond: -3, public: 6, graft: 3 } },
         },
       },
@@ -221,7 +221,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: 'You manage “I’m happy for you” in the voice of someone reading a hostage statement. The nation’s heart breaks on your behalf anyway.', effects: { loyalty: 2, public: 5, graft: 4, burnout: 5 } },
-          good: { text: 'You shake the new arrival’s hand. You wish them well. Somewhere out there, a betting market moves sharply in your favour.', effects: { loyalty: 5, public: 7, graft: 7, burnout: 4, followers: 3 } },
+          good: { text: '“All the best. Genuinely.” You shake the new arrival’s hand and mean at least half of it. Somewhere out there, a betting market moves sharply in your favour.', effects: { loyalty: 5, public: 7, graft: 7, burnout: 4, followers: 3 } },
           incredible: { text: 'Your composure is so gracious it becomes the clip of the Season. Being wronged, it turns out, is prime time — and you just banked it.', effects: { loyalty: 8, public: 10, graft: 8, followers: 6, burnout: 3 } },
         },
       },
@@ -267,7 +267,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { charisma: 1 },
         outcomes: {
           bad: { text: 'You’re out of your seat before the clip ends. The row that follows has structure, movements, an interval. Nobody wins Movie Night.', effects: { charisma: 2, reveal: 'movienight', followers: 4, burnout: 6 } },
-          good: { text: 'You say the thing everyone at the firepit is thinking, at volume, with the remote still in the Host’s hand. Honest chaos. The good kind.', effects: { charisma: 5, reveal: 'movienight', followers: 6, burnout: 4 } },
+          good: { text: '“Pause it. PAUSE IT—” You say the thing everyone at the firepit is thinking, at volume, with the remote still in the Host’s hand. Honest chaos. The good kind.', effects: { charisma: 5, reveal: 'movienight', followers: 6, burnout: 4 } },
           incredible: { text: 'Your reaction shot becomes the Season’s reaction shot. From tonight, every betrayal on this show is measured against your face.', effects: { charisma: 8, reveal: 'movienight', followers: 10, public: 4, burnout: 3 } },
         },
       },
@@ -286,7 +286,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You relax so visibly during someone else’s scandal that the camera cuts to you enjoying it. Smugness, it turns out, is also a clip.', effects: { loyalty: 2, bond: 3, public: -1, burnout: 2 } },
-          good: { text: 'Two couples detonate in front of you while you share a blanket. Nothing bonds two people like other people’s footage.', effects: { loyalty: 5, bond: 5, burnout: -2 } },
+          good: { text: '“We’re fine,” you whisper, twice, as two couples detonate in front of you under one blanket. Nothing bonds two people like other people’s footage.', effects: { loyalty: 5, bond: 5, burnout: -2 } },
           incredible: { text: 'The screen goes dark and you two are the only couple still holding hands. The nation notices. The nation keeps receipts.', effects: { loyalty: 8, bond: 7, public: 6, burnout: -3 } },
         },
       },
@@ -317,7 +317,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You lead the welcome party a beat too enthusiastically. Your partner watches the greeting the way insurance assessors watch dashcam footage.', effects: { rizz: 2, bond: -2, followers: 3, burnout: 3 } },
           good: { text: 'You get in early, friendly and unbothered. Nothing defuses a bombshell like being treated as a colleague.', effects: { rizz: 2, savvy: 3, public: 3 } },
-          incredible: { text: 'Within an hour the bombshell is asking YOU for the lay of the land. New arrivals need allies. You collect them.', effects: { rizz: 4, savvy: 4, public: 5, graft: 4 } },
+          incredible: { text: '“Right — who’s with who, and who’s pretending?” Within an hour the bombshell is asking YOU for the lay of the land. New arrivals need allies. You collect them.', effects: { rizz: 4, savvy: 4, public: 5, graft: 4 } },
         },
       },
       right: {
@@ -356,7 +356,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You flirt “as a test,” fail your own test, and spend the night explaining the methodology to a partner who has stopped nodding.', effects: { rizz: 2, bond: -3, followers: 3, burnout: 4, addFlag: 'li_head_turned' } },
           good: { text: 'You charm the bombshell into an ally and hand them, with a hostess’s smile, a list of the villa’s available options. Not yours.', effects: { rizz: 5, followers: 4, public: 3 } },
-          incredible: { text: 'The bombshell openly declares you their type; you openly decline, live. Being wanted and unavailable is the best television there is.', effects: { rizz: 8, public: 6, followers: 6, bond: 2 } },
+          incredible: { text: '“You’re my type,” the bombshell announces, openly, live. “Flattered. Taken,” you return, just as live. Being wanted and unavailable is the best television there is.', effects: { rizz: 8, public: 6, followers: 6, bond: 2 } },
         },
       },
     },
@@ -403,7 +403,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { rizz: 1 },
         outcomes: {
           bad: { text: 'You open with your full backstory, including the betrayal. The bombshell’s eyes do the thing eyes do when a lift is taking too long.', effects: { burnout: 4, rizz: 2 } },
-          good: { text: 'Twenty minutes on the swing seat and the bombshell has stopped scanning the lawn over your shoulder. In here, undivided attention is a proposal.', effects: { couple: true, rizz: 5, public: 3 } },
+          good: { text: '“You’re the only one who hasn’t pitched me yet,” says the bombshell, twenty minutes into the swing seat, no longer scanning the lawn. In here, undivided attention is a proposal.', effects: { couple: true, rizz: 5, public: 3 } },
           incredible: { text: 'By sundown you and the bombshell are the villa’s newest couple, and the people who left you single are recalculating at volume.', effects: { couple: true, rizz: 8, public: 5, followers: 5 } },
         },
       },
@@ -434,7 +434,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“I’m coupling up with…” — you get the name right, but your speech includes the word “comfortable” twice. Comfortable, twice, is a warning light.', effects: { loyalty: 2, bond: 2, burnout: 3 } },
-          good: { text: 'You keep the speech short and mean every word. Somewhere at home a mum says “oh, I LIKE her,” and that, statistically, is the vote.', effects: { loyalty: 5, bond: 5, public: 3 } },
+          good: { text: '“Him. Every time. Him.” You keep the speech short and mean every word. Somewhere at home a mum says “oh, I LIKE her,” and that, statistically, is the vote.', effects: { loyalty: 5, bond: 5, public: 3 } },
           incredible: { text: 'Your speech gets an actual round of applause and one audible sniffle. The couples that were wobbling look suddenly, visibly, worse.', effects: { loyalty: 8, bond: 7, public: 6 } },
         },
       },
@@ -444,7 +444,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { savvy: 1 },
         outcomes: {
           bad: { text: 'You switch, and your reasons come out backwards, and your ex’s face does something the cameras will replay all week. New start, old debris.', effects: { savvy: 2, switchPartner: true, followers: 4, public: -2, burnout: 5 } },
-          good: { text: 'You say the honest thing — it wasn’t working, everyone knew — and pick fresh. The firepit exhales. Bold, clean, survivable.', effects: { savvy: 5, switchPartner: true, followers: 5, burnout: 3 } },
+          good: { text: '“It wasn’t working. We all knew.” You say the honest thing and pick fresh. The firepit exhales. Bold, clean, survivable.', effects: { savvy: 5, switchPartner: true, followers: 5, burnout: 3 } },
           incredible: { text: 'Your switch is so well-argued the lawn nods along, including, horribly, your ex. A cold move executed warmly is the whole game.', effects: { savvy: 8, switchPartner: true, followers: 8, public: 5, burnout: 2 } },
         },
       },
@@ -463,7 +463,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { rizz: 1 },
         outcomes: {
           bad: { text: 'You pick the connection you felt on Tuesday. He stands up wearing the smile of someone who felt a different Tuesday.', effects: { couple: true, burnout: 3, rizz: 2 } },
-          good: { text: 'You say a name you actually mean, and he crosses the firepit like he’s been waiting for the sentence to end.', effects: { couple: true, rizz: 5, public: 3 } },
+          good: { text: 'You say a name you actually mean, and he crosses the firepit like he’s been waiting for the sentence to end. “Finally,” breathes the lawn.', effects: { couple: true, rizz: 5, public: 3 } },
           incredible: { text: 'Your speech is half a joke and one true sentence, and the true sentence lands on the whole lawn at once. New couple; instant favourites.', effects: { couple: true, rizz: 8, public: 6 } },
         },
       },
@@ -551,7 +551,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You recommit with a speech that peaks at “she’s a great girl,” a phrase last used warmly by a driving instructor. She accepts. The bar was low.', effects: { loyalty: 2, bond: 2, burnout: 3 } },
-          good: { text: 'You say her name first and explain after — the right order. The firepit approves. So, more importantly, does she.', effects: { loyalty: 5, bond: 5, public: 3 } },
+          good: { text: 'Her name first, the explaining after — the right order. “Good speech,” she says, taking your hand, meaning the order.', effects: { loyalty: 5, bond: 5, public: 3 } },
           incredible: { text: 'Your speech is one sentence long and it detonates quietly: the truest thing said at this firepit all Season. The Final just got a favourite.', effects: { loyalty: 8, bond: 7, public: 6 } },
         },
       },
@@ -579,7 +579,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { rizz: 1 },
         outcomes: {
           bad: { text: 'You pick the connection you’ve been nursing since the challenge. Her face says she remembers the challenge differently.', effects: { couple: true, burnout: 3, rizz: 2 } },
-          good: { text: 'You say the name you kept not saying. She stands up before you finish the speech. Late, but not too late — the best kind of late.', effects: { couple: true, rizz: 5, public: 3 } },
+          good: { text: 'You say the name you kept not saying. “Wondered when you’d get there,” she says, standing before the speech is done. Late, but not too late — the best kind of late.', effects: { couple: true, rizz: 5, public: 3 } },
           incredible: { text: 'The pick is so obviously right that the villa collectively mutters “finally.” Finally, at a firepit, is a coronation.', effects: { couple: true, rizz: 8, public: 6 } },
         },
       },
@@ -659,7 +659,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     id: 'li_recoup_cashout', act: [2, 3], chainOnly: true, tags: ['recoupling', 'drama', 'encounter'],
     art: 'li_firepit',
     context: 'The firepit · a beat before the choosing · what you know, burning',
-    prompt: 'The Host lets the pause stretch. In your pocket: everything you know about {rival}. One sentence, said out loud at this fire, and tonight’s board changes. Said sentences don’t come back, mind. {rival} watches you the way you watch weather.',
+    prompt: '“Before anyone says a name—” The Host lets the pause stretch. In your pocket: everything you know about {rival}. One sentence, said out loud at this fire, and tonight’s board changes. Said sentences don’t come back, mind. {rival} watches you the way you watch weather.',
     choices: {
       left: {
         label: 'Say it. Out loud.',
@@ -698,7 +698,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You’re up before your name’s finished, which reads keen. You are keen. The lawn smiles at you being keen. Fine. FINE.', effects: { loyalty: 2, bond: 3, public: 1, burnout: 2 } },
           good: { text: 'You take your place beside them and the firepit does its one good trick: it makes chosen people look lit from inside.', effects: { loyalty: 5, bond: 4, public: 3 } },
-          incredible: { text: 'The speech about you is so specific — the toast thing, the accent you do — that the villa learns your couple has a private world. Private worlds win Finals.', effects: { loyalty: 8, bond: 6, public: 5 } },
+          incredible: { text: '“…because of the toast thing. And the accent she does—” The speech about you is so specific the villa learns your couple has a private world. Private worlds win Finals.', effects: { loyalty: 8, bond: 6, public: 5 } },
         },
       },
       right: {
@@ -707,7 +707,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { charisma: 1 },
         outcomes: {
           bad: { text: 'You pause for effect. The pause outlives the effect. Two producers age visibly before you finally stand up.', effects: { charisma: 2, bond: 2, burnout: 2, followers: 2 } },
-          good: { text: 'You raise one eyebrow — *go on then* — and cross the fire at your own pace. Chosen, and still charging admission.', effects: { charisma: 5, bond: 4, followers: 3 } },
+          good: { text: '“Go on then,” says your one raised eyebrow, and you cross the fire at your own pace. Chosen, and still charging admission.', effects: { charisma: 5, bond: 4, followers: 3 } },
           incredible: { text: 'Your slow walk around the firepit gets its own music cue. Being wanted is good television; knowing it is better.', effects: { charisma: 8, bond: 5, followers: 5, public: 4 } },
         },
       },
@@ -724,9 +724,9 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['strategy', 'recoupling'],
         governingStats: { savvy: 1 },
         outcomes: {
-          bad: { text: 'You join your rescuer with a smile that needs two more drafts. Saved, publicly, by someone you now have to learn from scratch.', effects: { savvy: 2, couple: true, public: 2, burnout: 4 } },
-          good: { text: 'You cross the fire with your chin up. It’s not the couple you built — it’s the one the room built for you. The vote loves a plot twist.', effects: { savvy: 5, couple: true, public: 4, followers: 3 } },
-          incredible: { text: 'Your rescuer’s speech — “I’ve been watching, and I don’t think anyone in here sees it” — lands so well the villa briefly forgets whose ceremony this was.', effects: { savvy: 8, couple: true, public: 6, followers: 5 } },
+          bad: { text: 'You join your rescuer with a smile that needs two more drafts. Saved, publicly, by someone you now have to learn from scratch.', effects: { savvy: 2, couple: true, partnerMood: 'buzzing', public: 2, burnout: 4 } },
+          good: { text: 'You cross the fire with your chin up. It’s not the couple you built — it’s the one the room built for you. The vote loves a plot twist.', effects: { savvy: 5, couple: true, partnerMood: 'buzzing', public: 4, followers: 3 } },
+          incredible: { text: 'Your rescuer’s speech — “I’ve been watching, and I don’t think anyone in here sees it” — lands so well the villa briefly forgets whose ceremony this was.', effects: { savvy: 8, couple: true, partnerMood: 'buzzing', public: 6, followers: 5 } },
         },
       },
       right: {
@@ -734,9 +734,9 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['drama'],
         governingStats: { charisma: 1 },
         outcomes: {
-          bad: { text: 'You aim a look of pure judgement across the fire and hold it slightly too long. The GIF crops out your new partner entirely.', effects: { charisma: 2, couple: true, followers: 4, public: -1, burnout: 3 } },
-          good: { text: 'One glance at the person who didn’t say your name — brief, complete, devastating — and then you take your new seat like a promotion.', effects: { charisma: 5, couple: true, followers: 5, public: 3 } },
-          incredible: { text: 'You thank your ex, sincerely, for “making space for something better,” live, at a firepit. The nation gets up and applauds its television.', effects: { charisma: 8, couple: true, followers: 8, public: 5 } },
+          bad: { text: 'You aim a look of pure judgement across the fire and hold it slightly too long. The GIF crops out your new partner entirely.', effects: { charisma: 2, couple: true, partnerMood: 'buzzing', followers: 4, public: -1, burnout: 3 } },
+          good: { text: 'One glance at the person who didn’t say your name — brief, complete, devastating — and then you take your new seat like a promotion.', effects: { charisma: 5, couple: true, partnerMood: 'buzzing', followers: 5, public: 3 } },
+          incredible: { text: 'You thank your ex, sincerely, for “making space for something better,” live, at a firepit. The nation gets up and applauds its television.', effects: { charisma: 8, couple: true, partnerMood: 'buzzing', followers: 8, public: 5 } },
         },
       },
     },
@@ -814,7 +814,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You own it so thoroughly the table gets a full timeline with corrections. Honesty: excellent. Slideshow energy: unnecessary.', effects: { loyalty: 2, bond: 3, public: 2, burnout: 3 } },
           good: { text: '“You saw what happened. We dealt with it. Here we still are.” Her mum studies you for a long moment, then nods at the here-you-still-are.', effects: { loyalty: 5, bond: 5, public: 4, burnout: -2 } },
-          incredible: { text: 'You answer the rehearsed question before she can ask it, kindly, completely. The mum came for an interrogation and stays for the wedding talk.', effects: { loyalty: 8, bond: 7, public: 6, burnout: -3 } },
+          incredible: { text: '“You were going to ask about the film,” you say, kindly, first, and answer it completely. The mum came for an interrogation and stays for the wedding talk.', effects: { loyalty: 8, bond: 7, public: 6, burnout: -3 } },
         },
       },
       right: {
@@ -932,7 +932,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.5, charisma: 0.5 },
         outcomes: {
           bad: { text: 'You cry in the Hut, properly, snot and all. It helps. It also airs, gently scored with piano, to nine million people.', effects: { loyalty: 2, burnout: -6, followers: 2 } },
-          good: { text: 'One honest wobble, out loud, to a camera that has heard worse. You leave the Hut two kilos lighter in the head.', effects: { loyalty: 5, burnout: -8, public: 3 } },
+          good: { text: '“I just need a minute,” you tell the Hut, and take an hour. One honest wobble, out loud, to a camera that has heard worse. You leave two kilos lighter in the head.', effects: { loyalty: 5, burnout: -8, public: 3 } },
           incredible: { text: 'Your Beach Hut monologue is so raw and so exact that the nation stops scrolling. Being human, it turns out, is your best angle yet.', effects: { loyalty: 8, burnout: -10, public: 5, followers: 4 } },
         },
       },
@@ -959,7 +959,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['chat', 'loyal'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: 'You wake them at 3 a.m. and get comfort delivered at 3 a.m. quality: warm, slurred, and 60% about their own thing. It still counts.', effects: { loyalty: 2, burnout: -8, bond: 2 } },
+          bad: { text: '“You’re fine, babe,” they slur at 3 a.m., warm, half-asleep, 60% about their own thing. It still counts.', effects: { loyalty: 2, burnout: -8, bond: 2 } },
           good: { text: 'Kettle on, blanket out, the whole thing whispered on the kitchen terrace. Some people are load-bearing. You found yours.', effects: { loyalty: 5, burnout: -12, bond: 3 } },
           incredible: { text: 'They listen to the entire spiral and then say the one sentence that unhooks it. You go back to bed a different weight.', effects: { loyalty: 8, burnout: -14, bond: 4, public: 4 } },
         },
@@ -1018,7 +1018,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You say it all — slightly out of order, twice in places, once through a laugh that’s mostly nerves. They kiss you mid-correction. Noted, apparently.', effects: { loyalty: 2, bond: 4, burnout: 2 } },
-          good: { text: 'You say the thing you’ve been carrying since Casa, plainly, no hashtag. They answer with your first name and a plan for Tuesday. Tuesdays are real life.', effects: { bond: 6, loyalty: 5 } },
+          good: { text: 'You say the thing you’ve been carrying since Casa, plainly, no hashtag. “Tuesday,” they answer, using your first name. “Come to mine Tuesday.” Tuesdays are real life.', effects: { bond: 6, loyalty: 5 } },
           incredible: { text: 'You say it, and they say it back before you’ve finished, and for one minute the show around you is just weather. The nation watches two people stop performing.', effects: { bond: 9, loyalty: 8, public: 5 } },
         },
       },

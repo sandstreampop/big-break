@@ -96,17 +96,26 @@ test('guaranteed beats bypass the cooldown (bombshell arrival)', () => {
   assert.ok(result.overlayNote, 'the bombshell beat always gets a line');
 });
 
-test('a surfaced secret gets its authored reaction, once per secret', () => {
+test('a surfaced secret gets its authored reaction, once per surface', () => {
   const s = fresh();
   const ev = loveIslandPack.events.find((e) => !e.chainOnly);
   const choice = { label: 'x', tags: [], outcomes: { good: { text: 'x', effects: {} } } };
   s.secretKnown = ['rival'];
+  s.secretSurfacedCount = 1;
   const r1 = {};
   stirlingPlugin.afterResolve(s, r1, { ev, choice, tier: 'good', rng: engine.mulberry32(4) });
   assert.ok(r1.overlayNote && /know|secret|fifty/i.test(r1.overlayNote.html), 'reacts to new intel');
   const r2 = {};
   stirlingPlugin.afterResolve(s, r2, { ev, choice, tier: 'good', rng: engine.mulberry32(4) });
   assert.equal(r2.overlayNote, undefined, 'no re-react to old intel');
+  // The held list SHRINKING (partner switch) must not eat a later surface's
+  // bark — the trigger is the monotonic counter, not the list length.
+  s.secretKnown = [];
+  s.secretKnown.push('partner');
+  s.secretSurfacedCount = 2;
+  const r3 = {};
+  stirlingPlugin.afterResolve(s, r3, { ev, choice, tier: 'good', rng: engine.mulberry32(5) });
+  assert.ok(r3.overlayNote, 'a fresh surface after churn still gets its line');
 });
 
 test('the ceremony forecast is truthful (family follows the real check)', () => {
@@ -145,6 +154,24 @@ test('verdict cards get the explain line; deal notes are pure', () => {
   stirlingDealNote(s, findEv('li_recoup_held'));
   stirlingDealNote(s, findEv('li_recoup_held'));
   assert.equal(JSON.stringify({ seen: s.stirlingSeen, uses: s.rngUses }), before, 'no state writes, no rng');
+});
+
+test('deal-time lines no-repeat until the pool is dry, recorded at resolve', () => {
+  const s = fresh();
+  const ev = findEv('li_recoup_rescued');
+  // Simulate deal → resolve cycles: the deal reads at cardLog length N, the
+  // resolve-side record (modifyEffects) runs after the log grew to N+1.
+  const cycle = () => {
+    const note = stirlingDealNote(s, ev);
+    s.cardLog.push({ e: ev.id, t: 'good', a: 2, s: 'left' });
+    stirlingPlugin.modifyEffects(s, {}, { ev, tier: 'good' });
+    return note.html;
+  };
+  const heard = [];
+  for (let i = 0; i < BEAT_VERDICT.rescued.length; i++) heard.push(cycle());
+  assert.equal(new Set(heard).size, BEAT_VERDICT.rescued.length, 'every line before any repeat');
+  assert.ok(!BEAT_VERDICT.rescued.some((l) => s.stirlingSeen.includes(l.id)), 'dry pool resets');
+  assert.ok(cycle(), 'and the family keeps speaking after the reset');
 });
 
 test('stance colouring derives from play and filters stanced lines', () => {

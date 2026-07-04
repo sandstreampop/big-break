@@ -19,21 +19,34 @@ import type { Plugin } from '../../../types.js';
 // after the slot). Order within an act is priority order.
 const BEATS: { key: string; act: number; at: number }[] = [
   { key: 'rivalenc', act: 1, at: 3 },    // early Arrival: the Rival, established (ADR-0005 V1)
-  { key: 'bomb1', act: 1, at: 5 },       // late Act 1: the first Bombshell
-  { key: 'rivalmove', act: 2, at: 5 },   // post-Casa: the Rival makes their move (v2 arc)
-  { key: 'bomb2', act: 2, at: 6 },       // post-Casa: the Act 2 Bombshell (rarely, the steal)
-  { key: 'movienight', act: 2, at: 8 },  // the big Reveal, before anyone chooses
-  { key: 'recoup1', act: 2, at: 9 },     // the girls choose (ADR-0003: R1)
+  { key: 'bomb1', act: 1, at: 6 },       // late Act 1: the first Bombshell
+  { key: 'partnerenc1', act: 1, at: 7 }, // late Arrival: the Partner, actually met (v2 arc)
+  { key: 'rivalmove', act: 2, at: 6 },   // post-Casa: the Rival makes their move (v2 arc)
+  { key: 'bomb2', act: 2, at: 7 },       // post-Casa: the Act 2 Bombshell (rarely, the steal)
+  { key: 'movienight', act: 2, at: 9 },  // the big Reveal, before anyone chooses
+  { key: 'recoup1', act: 2, at: 10 },    // the girls choose (ADR-0003: R1)
   { key: 'wave', act: 3, at: 1 },        // Final Week: the second-wave rival (if the first fell)
   { key: 'partnerenc', act: 3, at: 2 },  // Final Week: the Partner, at altitude (v2 arc)
   { key: 'parents', act: 3, at: 4 },     // Meet the Parents, Final Week
 ];
+
+// A villa Season runs longer than a tour: the v2 encounter arcs are EXTRA
+// beats on top of the format's structure (V2-DESIGN accepts the longer run
+// for the ceremony), so the acts stretch to keep the ambient connective
+// tissue between the peaks (ADR-0005's mostly-ambient deck) instead of
+// letting scheduled beats crowd it out.
+const ACT_LENGTHS: Record<number, number> = { 1: 10, 2: 13, 3: 9 };
 
 const beatTag = (ev: any) => (ev.tags || []).find((t: string) => t.startsWith('beat:'));
 
 export const producersPlugin: Plugin = {
   id: 'producers',
   stateDefaults: { rivalMagnet: false },
+
+  // The Season's pacing is the pack's (the engine default fits a tour).
+  modifyActLength(state, act, base) {
+    return state.tutorial ? base : ACT_LENGTHS[act] ?? base;
+  },
 
   // The Season opens on the arrival Text — the first coupling is card one.
   // rivalMagnet (the Heartthrob's poaching exposure) is stamped here so the

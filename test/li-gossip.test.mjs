@@ -76,6 +76,15 @@ test('with no feelings held, a surfaced secret spends as the heavy note', () => 
   assert.equal(intelCount(s), 0);
 });
 
+test('deploying at a missing target consumes nothing (single Islander)', () => {
+  const s = fresh();
+  assert.equal(s.partner, null, 'single');
+  apply(s, { gainIntel: { about: 'rival', label: 'x' } });
+  apply(s, { deployIntel: 'partner' });
+  assert.equal(s.intel.length, 1, 'intel never burns into the void');
+  assert.equal(s.intelDeployed || 0, 0);
+});
+
 test('deploying with an empty pocket is a no-op', () => {
   const s = fresh();
   apply(s, { couple: true });

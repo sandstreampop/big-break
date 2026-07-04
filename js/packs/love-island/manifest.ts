@@ -24,21 +24,21 @@ export const PATHS: Record<string, PathDef> = {
     id: 'winvilla',
     name: 'Win the Villa',
     blurb: 'The public crowns you and whoever you’re holding hands with by then. Fifty grand, split with feeling.',
-    gateLabel: 'Public 68 · Bond 40',
+    gateLabel: 'Public 76 · Bond 44',
     icon: '👑',
   },
   realthing: {
     id: 'realthing',
     name: 'The Real Thing',
     blurb: 'Leave with an actual person who actually knows your middle name. The prize is optional. Allegedly.',
-    gateLabel: 'Bond 72 · Loyalty 68',
+    gateLabel: 'Bond 78 · Loyalty 72',
     icon: '💘',
   },
   brand: {
     id: 'brand',
     name: 'The Brand',
     blurb: 'Win or lose, hero or villain — walk out with a following and a discount code. The villa is a launchpad.',
-    gateLabel: 'Followers 56 · Charisma 58',
+    gateLabel: 'Followers 62 · Charisma 62',
     icon: '📱',
   },
 };
@@ -46,11 +46,12 @@ export const PATHS: Record<string, PathDef> = {
 
 // Gates sit above the comfortable ceiling so a cruisy Season books a Partial,
 // not an automatic win; the Public clutch (momentumResource) can still carry a
-// near-miss over the line — the late vote surge, on-format.
+// near-miss over the line — the late vote surge, on-format. Tuned for the v2
+// Season length (the encounter arcs stretch the acts, so the ceilings rose).
 export const WIN_GATES: Record<string, Record<string, number>> = {
-  winvilla: { public: 68, bond: 40 },
-  realthing: { bond: 72, loyalty: 68 },
-  brand: { followers: 56, charisma: 58 },
+  winvilla: { public: 76, bond: 44 },
+  realthing: { bond: 78, loyalty: 72 },
+  brand: { followers: 62, charisma: 62 },
 };
 
 export const STAT_META: Record<string, StatMeta> = {

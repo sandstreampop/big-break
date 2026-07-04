@@ -58,13 +58,24 @@ function pickBark(state: RunState, pool: BarkDef[], rng: () => number): BarkDef 
 
 const OPPORTUNISTIC_COOLDOWN = 3; // cards between reaction barks — he breathes
 
-// ---------- Deal-time beat lines (pure; the presenter's overlay read) ----------
+// ---------- Deal-time beat lines (pure at render; recorded at resolve) ----------
+// The render side (stirlingDealNote → the presenter's overlay read) must be
+// PURE: deals re-render on resume and the sims never render, so a render-time
+// write or rng draw would fork the seeded stream. No-repeat still lives on
+// run-state (ADR-0008): the same selection is recomputed in this plugin's
+// modifyEffects — pre-effect state, one card later on the log, sim-visible —
+// and THAT is where the shown line is remembered (and a dry pool reset).
 
-// Rotate through a family deterministically: per-run entropy (flavorSeed) ×
-// how far the Season has run. Pure — same state, same line (resume-safe).
-function rotate(state: RunState, pool: BarkDef[]): BarkDef | null {
+// Deterministic pick from a deal pool: skip lines already heard this run,
+// rotate through the unheard remainder by per-run entropy × season progress.
+// `offset` re-aligns the log length between deal (N) and resolve (N+1).
+function dealPick(state: RunState, pool: BarkDef[], offset: number): BarkDef | null {
   if (!pool || !pool.length) return null;
-  return pool[((state.flavorSeed || 1) + (state.cardLog || []).length) % pool.length];
+  const seen: string[] = state.stirlingSeen || [];
+  let fresh = pool.filter((l) => !seen.includes(l.id));
+  if (!fresh.length) fresh = pool; // exhausted — the resolve side resets it
+  const at = (state.flavorSeed || 1) + (state.cardLog || []).length + offset;
+  return fresh[((at % fresh.length) + fresh.length) % fresh.length];
 }
 const asNote = (l: BarkDef | null) => (l ? { html: `🎙️ ${l.text}`, cls: 'note-stirling' } : null);
 
@@ -73,37 +84,45 @@ const asNote = (l: BarkDef | null) => (l ? { html: `🎙️ ${l.text}`, cls: 'no
 const CEREMONY_LINEUP = new Set(['li_recoup1_exposed', 'li_recoup2_exposed']);
 const CEREMONY_LINEUP_SINGLE = new Set(['li_recoup1_exposed_single', 'li_recoup2_exposed_single']);
 
-export function stirlingDealNote(state: RunState, ev: GameEvent) {
+// Route a card to its deal-time pool and pick. Everything read here (ids,
+// lastCeremony, ceremonyOutlook) is identical at deal time and at
+// modifyEffects time (effects have not applied yet), so both sides agree.
+function stirlingDealSelect(state: RunState, ev: GameEvent, offset: number): { line: BarkDef; pool: BarkDef[] } | null {
   if (state.tutorial || !ev) return null;
   const tags = ev.tags || [];
+  const from = (pool: BarkDef[]) => {
+    const line = dealPick(state, pool, offset);
+    return line ? { line, pool } : null;
+  };
 
   // The verdict, explained — so held/rescued/dumped reads as earned, not
   // rolled. Reads the coupling plugin's recorded check (state.lastCeremony),
   // so the explanation matches what actually decided it.
   if (ev.id === 'li_recoup_held') {
-    const c = state.lastCeremony;
-    return asNote(rotate(state, c?.secretPlayed ? BEAT_VERDICT.held_secret : BEAT_VERDICT.held));
+    return from(state.lastCeremony?.secretPlayed ? BEAT_VERDICT.held_secret : BEAT_VERDICT.held);
   }
-  if (ev.id === 'li_recoup_rescued') return asNote(rotate(state, BEAT_VERDICT.rescued));
-  if (ev.id === 'li_recoup_dumped') return asNote(rotate(state, BEAT_VERDICT.dumped));
+  if (ev.id === 'li_recoup_rescued') return from(BEAT_VERDICT.rescued);
+  if (ev.id === 'li_recoup_dumped') return from(BEAT_VERDICT.dumped);
 
   // The line-up forecast: a qualitative, HONEST read of the real check.
   if (CEREMONY_LINEUP.has(ev.id)) {
     const o = ceremonyOutlook(state);
-    const family = o.bondSafe ? 'bondSafe' : o.publicSafe ? 'publicSafe' : 'danger';
-    return asNote(rotate(state, FORECAST[family]));
+    return from(FORECAST[o.bondSafe ? 'bondSafe' : o.publicSafe ? 'publicSafe' : 'danger']);
   }
   if (CEREMONY_LINEUP_SINGLE.has(ev.id)) {
-    const o = ceremonyOutlook(state);
-    return asNote(rotate(state, o.publicSafe ? FORECAST.publicSafe : FORECAST.single));
+    return from(ceremonyOutlook(state).publicSafe ? FORECAST.publicSafe : FORECAST.single);
   }
 
   // Scene stamps on the other watched beats.
-  if (ev.id === 'li_bomb2_steal') return asNote(rotate(state, SCENE_STAMP.steal));
-  if (tags.includes('beat:movienight')) return asNote(rotate(state, SCENE_STAMP.movienight));
-  if (tags.includes('beat:parents')) return asNote(rotate(state, SCENE_STAMP.parents));
-  if (ev.finaleCard) return asNote(rotate(state, SCENE_STAMP.finale));
+  if (ev.id === 'li_bomb2_steal') return from(SCENE_STAMP.steal);
+  if (tags.includes('beat:movienight')) return from(SCENE_STAMP.movienight);
+  if (tags.includes('beat:parents')) return from(SCENE_STAMP.parents);
+  if (ev.finaleCard) return from(SCENE_STAMP.finale);
   return null;
+}
+
+export function stirlingDealNote(state: RunState, ev: GameEvent) {
+  return asNote(stirlingDealSelect(state, ev, 0)?.line || null);
 }
 
 // ---------- The plugin (result-time barks) ----------
@@ -114,6 +133,20 @@ export const stirlingPlugin: Plugin = {
     stirlingSeen: [],       // no-repeat-until-exhausted, per run
     stirlingCool: 0,        // opportunistic rate limit (cards)
     stirlingSecretSeen: 0,  // how many surfaced secrets he's reacted to
+  },
+
+  // The deal-note's no-repeat write, on the resolve path: recompute the exact
+  // line the deal showed (cardLog is one longer here, hence offset -1; the
+  // effects payload has NOT applied yet, so every state read matches the
+  // deal), remember it, and reset the pool once it runs dry.
+  modifyEffects(state, _effects, ctx) {
+    const sel = stirlingDealSelect(state, (ctx as any).ev, -1);
+    if (!sel) return;
+    const seen: string[] = (state.stirlingSeen = state.stirlingSeen || []);
+    if (!seen.includes(sel.line.id)) seen.push(sel.line.id);
+    if (sel.pool.every((l) => seen.includes(l.id))) {
+      state.stirlingSeen = seen.filter((id) => !sel.pool.some((l) => l.id === id));
+    }
   },
 
   afterResolve(state, result, cardCtx) {
@@ -139,10 +172,12 @@ export const stirlingPlugin: Plugin = {
       say(state.partner ? BEAT_REACT.steal_survived : BEAT_REACT.steal_lost);
       return;
     }
-    // A secret was surfaced this card (the characters plugin grew the pile).
-    const known = (state.secretKnown || []).length;
-    if (known > (state.stirlingSecretSeen || 0)) {
-      state.stirlingSecretSeen = known;
+    // A secret was surfaced this card — compared against the characters
+    // plugin's MONOTONIC surface counter (the held list itself can shrink
+    // when a Partner changes, which must not eat a later surface's bark).
+    const surfaced = state.secretSurfacedCount || 0;
+    if (surfaced > (state.stirlingSecretSeen || 0)) {
+      state.stirlingSecretSeen = surfaced;
       say(BEAT_REACT.secret);
       return;
     }

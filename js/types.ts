@@ -358,6 +358,13 @@ export interface Presenter {
   // note — because deals re-render on resume and the sims never render.
   // Result-side notes ride result.overlayNote (set by a pack plugin) instead.
   overlayNote?: (state: RunState, ev: GameEvent) => { html: string; cls?: string } | null;
+  // The people in this scene: a portrait strip rendered on the dealt card
+  // (name + face, an optional mood face and sub-label, an optional class for
+  // mood-driven styling). Same purity rule as overlayNote. A pack without
+  // characters simply omits it.
+  cardCast?: (state: RunState, ev: GameEvent) => {
+    name: string; face: string; moodFace?: string | null; sub?: string | null; cls?: string;
+  }[] | null;
   // The art system's reactive-scene inputs, mapped from this pack's state.
   vibe?: (state: RunState) => { fame: number; network: number; burnout: number };
   // Art slots this pack registers with the generated-scene painter:

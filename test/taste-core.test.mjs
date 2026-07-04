@@ -8,7 +8,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  bangIssue, clicheIssues, lengthIssue, stripQuoted, tasteIssues,
+  bangIssue, clicheIssues, lengthIssue, stripQuoted, tasteIssues, hasDialogue,
 } from '../tools/taste-core.mjs';
 // Genre-neutral checker (tools/) exercised against real game taste data (the
 // game's own folder) — proving the wiring end to end before any card exists.
@@ -48,6 +48,20 @@ test('bangExempt: the receiving-a-text ritual may shriek (LI taste)', () => {
   assert.deepEqual(tasteIssues('I’ve got a text!', LOVE_ISLAND_TASTE), []);
   // ...but ordinary copy is still held to the ≤1 '!' house rule.
   assert.equal(tasteIssues('So much drama!!', LOVE_ISLAND_TASTE).length, 1);
+});
+
+test('hasDialogue: curly double quotes are speech; italics and plain prose are not', () => {
+  assert.equal(hasDialogue('“Right. You and me. Wee chat.” The audit begins.'), true);
+  assert.equal(hasDialogue('The villa watches you watch.'), false);
+  assert.equal(hasDialogue('one raised eyebrow that says <i>behave</i>'), false);
+  assert.equal(hasDialogue(''), false);
+  assert.equal(hasDialogue(null), false);
+});
+
+test('LI dialogue floor config: encounters must speak, shares ratcheted', () => {
+  const d = LOVE_ISLAND_TASTE.dialogue;
+  assert.ok(d.requireTags.includes('encounter'));
+  assert.ok(d.promptMinShare > 0 && d.outcomeMinShare > 0);
 });
 
 test('lengthIssue: caps outcome length only when a cap is set', () => {

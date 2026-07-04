@@ -153,10 +153,14 @@ function moveOpinion(state: RunState, role: 'rival' | 'bombshell', v: number) {
   return state.charOpinion[role] - before;
 }
 
-function setMood(state: RunState, role: CharRole, mood: string) {
-  if (!MOODS[mood] || !roleCastId(state, role)) return;
+// Set a role's transient mood — the shared face-mover every villa subsystem
+// uses (cards via the mood verbs; coupling/gossip react to their own beats).
+// Guarded: unknown moods and empty seats are no-ops.
+export function setCharMood(state: RunState, role: CharRole, mood: string) {
+  if (!MOODS[mood] || !roleCastId(state, role) || !state.charMood) return;
   state.charMood[role] = { id: mood, ttl: CHARACTERS.moodTtl };
 }
+const setMood = setCharMood;
 
 export const charactersPlugin: Plugin = {
   id: 'characters',
@@ -171,6 +175,7 @@ export const charactersPlugin: Plugin = {
     charSecret: {},      // role → secret id (hidden until surfaced)
     secretKnown: [],     // roles whose secret you HOLD (surfaced intel)
     secretSpent: [],     // roles whose secret has been PLAYED (one use)
+    secretSurfacedCount: 0, // monotonic: total surfaces this run (bark trigger)
     bombshellId: null,   // the active bombshell (set by bombshellEnters)
     charPartnerWas: null, // change detector: a new Partner re-draws their secret
   },
@@ -273,6 +278,7 @@ export const charactersPlugin: Plugin = {
       const sec = secretOf(state, role);
       if (sec.def && !sec.known) {
         (state.secretKnown = state.secretKnown || []).push(role);
+        state.secretSurfacedCount = (state.secretSurfacedCount || 0) + 1;
         const who = castById(roleCastId(state, role));
         note(pctx, 'notice-encore', `🤫 <b>You know something now.</b> ${who ? who.name : 'Their'}’s secret: ${sec.def.label}. Yours to keep. Or not.`);
       }

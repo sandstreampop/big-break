@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 import * as engine from '../dist/js/engine.js';
 import { loveIslandPack } from '../dist/js/packs/love-island/pack.js';
 import { couplingPlugin, COUPLING } from '../dist/js/packs/love-island/plugins/coupling.js';
+import { moodOf } from '../dist/js/packs/love-island/plugins/characters.js';
 
 function fresh(seed = 7) {
   const state = engine.newRun(loveIslandPack, 'retriever_girl', [], engine.mulberry32(seed), []);
@@ -108,6 +109,33 @@ test('keeping the secret resolves the held stand with the poach applied', () => 
   assert.equal(s.lastCeremony.verdict, 'dumped', 'the poach still bites');
   assert.ok(s.secretKnown.includes('rival') && !s.secretSpent.includes('rival'),
     'the secret is still yours');
+});
+
+test('portraits react at the verdict (V2-DESIGN beat 4)', () => {
+  const held = fresh();
+  apply(held, { couple: true });
+  held.bond = COUPLING.bondFloor + 10;
+  land(held, { chosenCeremony: true });
+  assert.equal(moodOf(held, 'partner'), 'buzzing', 'held: the Partner beams');
+  assert.equal(moodOf(held, 'rival'), 'fuming', 'held: the Rival missed');
+  const dumped = fresh();
+  apply(dumped, { couple: true });
+  dumped.bond = 0; dumped.public = 0;
+  land(dumped, { chosenCeremony: true }, { tier: 'bad' });
+  assert.equal(moodOf(dumped, 'rival'), 'smug', 'dumped: the Rival savours it');
+});
+
+test('Casa faces foreshadow: a kissed Partner comes back TORN', () => {
+  const s = fresh();
+  apply(s, { couple: true });
+  s.partnerLoyal = 'kissed';
+  apply(s, { casaReturn: true });
+  assert.equal(moodOf(s, 'partner'), 'torn', 'the mood system telegraphs Movie Night');
+  const loyal = fresh();
+  apply(loyal, { couple: true });
+  loyal.partnerLoyal = 'loyal';
+  apply(loyal, { casaReturn: true });
+  assert.equal(moodOf(loyal, 'partner'), 'buzzing');
 });
 
 test('a spent secret does not reopen the cash-out at the next ceremony', () => {

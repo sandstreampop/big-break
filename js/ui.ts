@@ -753,6 +753,18 @@ function dealCard() {
   }
   card.append(artFor(ev.art, 'card-art', vibeFor()));
   card.append(el('div', 'card-context', fillText(ev.context)));
+  // The people in this scene: a pack's portrait strip (presenter.cardCast) —
+  // persistent faces across a multi-beat scene, moods worn on the face.
+  const cast = PRES.cardCast?.(run, ev);
+  if (cast && cast.length) {
+    const strip = el('div', 'card-cast');
+    for (const c of cast) {
+      strip.append(el('div', 'cast-chip' + (c.cls ? ' ' + c.cls : ''),
+        `<span class="cast-face">${c.face}${c.moodFace ? `<span class="cast-moodface">${c.moodFace}</span>` : ''}</span>` +
+        `<span class="cast-id"><span class="cast-name">${c.name}</span>${c.sub ? `<span class="cast-sub">${c.sub}</span>` : ''}</span>`));
+    }
+    card.append(strip);
+  }
   // Some cards carry a richer text variant when the rival is a true
   // cross-run nemesis (3rd+ meeting) rather than an in-run feud.
   card.append(el('div', 'card-prompt', fillText(run.nemesis && ev.promptAlt ? ev.promptAlt : ev.prompt)));

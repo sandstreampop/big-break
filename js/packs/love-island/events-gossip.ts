@@ -98,7 +98,7 @@ export const GOSSIP_EVENTS: GameEvent[] = [
   {
     id: 'li_kitchen_drop', act: [2, 3], tags: ['strategy', 'drama'],
     art: 'li_kitchen',
-    requires: { intelMin: 1 },
+    requires: { intelMin: 1, singleIs: false },
     context: 'The kitchen · low voices · what you know, itching',
     prompt: 'What you know has been doing laps of your head all day. {partner} is on the daybed; {rival} is making a smoothie with meaningful eye contact. Information is only power while it’s moving. Or is it while it’s still? One of those.',
     choices: {
