@@ -158,6 +158,21 @@ resource — owned and moved by the Coupling subsystem (see below), the way
 music's charts subsystem owns "hits".
 _Avoid_: connection, chemistry, love
 
+## Presentation
+
+How the game speaks. The engine's *presenter*.
+
+**The Narrator**:
+The dry, cheeky voiceover (the Iain-Stirling register — deadpan, affectionate,
+quietly savage) that frames villa moments and editorializes on your decisions.
+_Avoid_: VO, commentary
+
+**I've got a text!**:
+The recurring card-arrival ritual: challenges, recouplings, dumpings, and Casa
+Amor news land as texts read aloud to the villa — the diegetic frame for "here
+comes your next Villa moment."
+_Avoid_: notification, alert
+
 ## Fail states
 
 Ways a Season ends badly before or at the Final. The engine's *fail states*.
