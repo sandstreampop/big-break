@@ -25,14 +25,15 @@ Love Island inherits the music pack's **unwritten taste**, retuned for the villa
 4. **Deadpan.** Flat delivery, high stakes underneath. The funnier the situation, the
    straighter the face. We never tell you it's dramatic; the villa supplies the drama and
    we report it like weather.
-5. **No hype punctuation — with one loud exception.** Default is ≤1 `!` per line and never
-   `?!`; the Narrator earns zero, and if a line needs an exclamation mark to be funny it
-   isn't funny yet. The exception is the **receiving-a-text ritual**: when an Islander
-   clocks the phone they *shriek* it, so all caps and stacked bangs are wanted, not just
-   tolerated — **“TEXT! I’VE GOT A TEXT!!”** The *body* of the text (the production voice)
-   stays flat, and everywhere else the ≤1 rule holds. *(Enforced: ≤1 `!` per string, no
-   `!!`/`!?` — except copy matching the text-arrival ritual, waived via
-   [`taste.mjs`](./taste.mjs) `bangExempt`.)*
+5. **No hype punctuation — with two loud exceptions.** Default is ≤1 `!` per line and never
+   `?!`; if a line needs an exclamation mark to be funny it isn't funny yet. Exception one
+   is the **receiving-a-text ritual**: when an Islander clocks the phone they *shriek* it,
+   so all caps and stacked bangs are wanted, not just tolerated — **“TEXT! I’VE GOT A
+   TEXT!!”** The *body* of the text (the production voice) stays flat. Exception two is the
+   **Narrator's mock outrage**: his single sanctioned `!` is spent on incredulity at the
+   villa (“A jet-ski!”), never on hype — see register 1. Everywhere else the ≤1 rule holds.
+   *(Enforced: ≤1 `!` per string, no `!!`/`!?` — except copy matching the text-arrival
+   ritual, waived via [`taste.mjs`](./taste.mjs) `bangExempt`.)*
 6. **Affectionate, quietly savage.** We are on the Islander's side even while we roast
    them. Punch across, not down. Cruelty is a seasoning, not the meal.
 7. **Curly apostrophes and quotes** (`’ “ ”`), always. Straight quotes fail lint.
@@ -52,20 +53,68 @@ with what authority**, not in whether they're allowed to be lazy.
 
 ### 1. The Narrator
 
-The dry voiceover — the Iain-Stirling register. Speaks **to the audience, never to the
-Islanders**, and never enters the villa. Editorialises, sets scenes, twists the knife
-gently. This is the pack's dominant voice: prompts and outcome text are Narrator unless
-they're quoted dialogue.
+The voiceover — the Iain-Stirling register, and the calibration that matters most:
+**he is a stand-up doing bits over the footage, not an essayist observing it.** He
+speaks to the audience, never enters the villa — but he heckles it from the booth:
+mock-incredulous, pun-forward, taking the mick out of the Islanders, the format,
+and occasionally himself. Deadpan is his *delivery*, not his content; under the flat
+face there is an actual joke, every time. This is the pack's dominant voice: prompts
+and outcome text are Narrator unless they're quoted dialogue.
 
-- **Does:** frame the scene with one specific detail; report drama deadpan; land a turn.
-- **Never:** cheerlead, use `!`, speak in cliché, address the player as "you the viewer,"
-  moralise, or feel sorry for anyone out loud.
+**His documented mechanics** (see the research note below — write with these, not
+just "dry wit"):
+
+1. **Punchline, not murmur.** Setup → gag. If a line ends on a wry observation
+   instead of a joke, it isn't finished. The turn should make someone exhale
+   through their nose, not nod.
+2. **The misdirect ellipsis.** Set up one expectation, break it after the beat:
+   *"Time to call in a professional… ballroom dancer."* The pause is the joke's
+   hinge.
+3. **Nickname coinage.** He rebrands Islanders off one trait and keeps the bill
+   running: *"…or as I like to call him, the travel agent — because everyone who
+   hangs around him ends up heading to the airport."* Coin it once, call it back.
+4. **Mock-incredulous repetition.** Repeat the absurd noun until it becomes the
+   joke: "A row about a sun lounger. Not even the good lounger. The wobbly one."
+5. **The scene-stamp opener.** "Day 9. The villa. Someone is crying about hummus."
+   Officialese applied to nonsense — the news-bulletin register as a gag.
+6. **Rhetorical direct address.** He talks *at* Islanders who can't hear him, for
+   the audience's benefit: "Mate. MATE." One word of pub-warmth ("mate," "pal,"
+   a wee Scots seasoning) does more than a paragraph.
+7. **Bites the hand.** Production, the ad break, the challenge budget, his own
+   job — all fair targets. The show mocking itself is the show's love language.
+8. **Job/trait jokes.** His writers' room mines each Islander's one known fact
+   (the job, the tattoo, the catchphrase) for a season of callbacks. Our Cast
+   vibes exist for exactly this.
+
+- **Does:** everything above; frame the scene with one hyper-specific detail; stay
+  affectionate while savage — he roasts because he's a fan.
+- **Never:** cheerlead sincerely, speak in cliché, moralise, feel sorry for anyone
+  out loud, or end a line on tasteful restraint when a punchline was available.
+  Punctuation: at most one `!`, spent on mock outrage ("A jet-ski!"), never on
+  genuine excitement — and never `!!`.
 
 | ✅ good | ❌ bad |
 |---|---|
 | “Two hours of eye contact and a shared opinion about airports. In the villa, that’s a marriage.” | “The chemistry between them was absolutely electric!” |
-| “He calls it a connection. The group chat calls it a warning.” | “Little did he know, drama was on the way…” |
-| “She reapplies her lip gloss. It is a coping mechanism and a weapon.” | “She was feeling really emotional and upset about it.” |
+| “Day 9. There’s a row about a sun lounger. Not the good lounger, either — the wobbly one. The WOBBLY one.” | “There is tension by the pool this afternoon.” *(true, dry, and joke-free — a weather report, not a bit)* |
+| “She’s opened with star signs. He’s a Capricorn. He’ll mention it four more times.” | “He calls it a connection. The group chat calls it a warning.” *(fine — but it murmurs where he’d punch; see the research note)* |
+| “Time to call in a professional… ballroom dancer.” | “An expert was consulted.” |
+
+> **Research note — the real Stirling, on the record.** The register above is
+> distilled from his actual narration and interviews, not vibes: the Danny
+> “travel agent” nickname gag and the “professional… ballroom dancer” misdirect
+> are reported verbatim in press compilations of his best lines
+> ([Grazia](https://graziadaily.co.uk/celebrity/news/love-island-iain-stirling-best-moments/),
+> [Marie Claire](https://www.marieclaire.com/culture/tv-shows/who-narrates-love-island-usa-iain-stirling/));
+> his writers’ room mines contestants’ jobs and one-known-facts for running gags
+> written in advance, and targets the format’s own furniture — duff chat, back
+> tattoos, challenge budgets, mosquitoes
+> ([Hollywood Reporter](https://www.hollywoodreporter.com/tv/tv-features/love-island-usa-narrator-iain-stirling-season-8-interview-1236622784/),
+> [CNN](https://www.cnn.com/2025/08/24/entertainment/love-island-narrator-iain-stirling-cec));
+> and his own summary of the job is “I get to say the thing that nobody should
+> say… say it with my chest… and get a bit naughty with it”
+> ([Marie Claire](https://www.marieclaire.com/culture/tv-shows/who-narrates-love-island-usa-iain-stirling/)).
+> When a line could pass for any tasteful narrator, it has failed this register.
 
 ### 2. The Host
 

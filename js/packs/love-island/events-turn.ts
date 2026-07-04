@@ -10,7 +10,7 @@ export const TURN_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     requires: { singleIs: false, exclusiveIs: false },
     context: 'Late · the terrace · just you and a bombshell',
-    prompt: 'Everyone else has gone to bed, allegedly. {bombshell} is beside you on the terrace saying quiet, dangerous things: “I just think, if you weren’t coupled up…” The sentence hangs there, warming its hands over your whole situation.',
+    prompt: 'Everyone else has gone to bed, allegedly. {bombshell} is beside you on the terrace saying quiet, dangerous things: “I just think, if you weren’t coupled up…” Oh no. Oh no no no. That sentence has never once ended well on this programme, and it knows it — look at it, hanging there, warming its hands over your whole situation.',
     choices: {
       left: {
         label: 'Shut it down',
@@ -27,7 +27,7 @@ export const TURN_EVENTS: GameEvent[] = [
         tags: ['temptation', 'flirt', 'drama'],
         governingStats: { rizz: 1 },
         outcomes: {
-          bad: { text: 'It goes nowhere, slowly, for an hour, on camera. All of the risk, none of the story, and a clip that will absolutely be screened later.', effects: { rizz: 2, burnout: 4, followers: 2, bond: -3, addFlag: 'li_head_turned' } },
+          bad: { text: 'It goes nowhere, slowly, for an hour, on camera. All of the risk, none of the story — the romantic equivalent of queueing. The clip will absolutely be screened later.', effects: { rizz: 2, burnout: 4, followers: 2, bond: -3, addFlag: 'li_head_turned' } },
           good: { text: '“I’m not being funny, my head could be turned.” It’s out of your mouth before the edit can save you. The terrace has ears. The duvets have ears.', effects: { followers: 5, rizz: 5, bond: -3, burnout: 2, addFlag: 'li_head_turned' } },
           incredible: { text: 'Nothing happens — technically. But the eye contact alone needs a watershed rating, and tomorrow’s episode is now about your couple. You knew. You stayed.', effects: { followers: 8, rizz: 8, bond: -4, public: 4, addFlag: 'li_head_turned' } },
         },
@@ -39,7 +39,7 @@ export const TURN_EVENTS: GameEvent[] = [
     art: 'li_hideaway',
     requires: { singleIs: false, exclusiveIs: true },
     context: 'Night · the kitchen · exclusive, and yet',
-    prompt: 'You’re exclusive. It’s official. There was a small speech. And yet {bombshell} is leaning on the counter at 1 a.m. explaining, with troubling eye contact, that “official isn’t married, though, is it.”',
+    prompt: 'You’re exclusive. It’s official. There was a small speech. And yet {bombshell} is leaning on the counter at 1 a.m. explaining, with troubling eye contact, that “official isn’t married, though, is it.” A philosopher. At one in the morning. By the hob.',
     choices: {
       left: {
         label: 'Walk away now',
@@ -69,7 +69,7 @@ export const TURN_EVENTS: GameEvent[] = [
     weight: 2,
     requires: { singleIs: false, exclusiveIs: false, min: { bond: 45 } },
     context: 'Sunset · the roof terrace · a speech in your pocket',
-    prompt: 'It’s going well. Suspiciously well. Well enough that the villa has started asking the question, and the question has started following you around: are you two going to make it official? Closing off means no more options — and a much longer way down.',
+    prompt: 'It’s going well. Suspiciously well. Well enough that the villa keeps asking The Question, and The Question has started following you around with a wee notebook: are you two going to make it official? Closing off means no more options — and a much longer way down.',
     choices: {
       left: {
         label: 'Ask them to be exclusive',
@@ -240,7 +240,7 @@ export const TURN_EVENTS: GameEvent[] = [
     art: 'li_beach',
     requires: { singleIs: false },
     context: '“I’VE GOT A TEXT!!” · a date off-site · an actual beach',
-    prompt: '“{partner} and you are going on a date. Please get ready to leave the villa. #offgrid” — A car, a coastline, a table set for two by people you’ll never meet. Off-site dates are the show saying: convince us. Convince each other, while you’re at it.',
+    prompt: '“{partner} and you are going on a date. Please get ready to leave the villa. #offgrid” — A car, a coastline, a table set for two by people you’ll never meet. Off-site dates are the show saying: convince us. There’s even a drone, circling the bay so romantically it should have a chaperone.',
     choices: {
       left: {
         label: 'Go all in on them',

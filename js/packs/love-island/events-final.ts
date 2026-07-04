@@ -45,7 +45,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, savvy: 0.4 },
         outcomes: {
           bad: { text: 'You change absolutely nothing, which unfortunately includes the sat-nav joke. The conversation, wherever it is, moves on slightly.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
-          good: { text: 'No campaign, no pivot — just your couple, doing its quiet thing while louder ones combust around you. The vote likes a constant. You’re the constant.', effects: { loyalty: 5, bond: 4, public: 4 } },
+          good: { text: 'No campaign, no pivot — just your couple doing its quiet thing while the favourites have a scream-up about a jet-ski. A jet-ski, mate. The vote likes a constant. You’re the constant.', effects: { loyalty: 5, bond: 4, public: 4 } },
           incredible: { text: 'Your total indifference to the standings becomes its own storyline: “they don’t even know they’re winning.” The most electable sentence on television.', effects: { loyalty: 8, bond: 5, public: 7 } },
         },
       },
@@ -149,7 +149,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     id: 'li_morning_after_drama', act: 3, tags: ['drama', 'code'],
     art: 'li_lawn',
     context: 'Morning · Final Week nerves · a spark near the petrol',
-    prompt: 'Final Week pressure does strange chemistry: two Islanders who’ve been fine for weeks are suddenly not fine, loudly, over toast. Alliances are being audited in real time. Yours included. Neutrality has three days left to live.',
+    prompt: 'Final Week pressure does strange chemistry: two Islanders who’ve been fine for weeks are suddenly not fine, loudly, over toast. Toast, mate. It’s the wobbly lounger all over again. Alliances are being audited in real time — yours included — and neutrality has three days left to live.',
     choices: {
       left: {
         label: 'Defuse it',
@@ -235,7 +235,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     id: 'li_wv_publicity', act: [2, 3], pathAffinity: ['winvilla'], tags: ['camera', 'loyal'],
     art: 'li_lawn',
     context: 'The couple audit · the nation is grading',
-    prompt: 'A challenge leaks the couples’ approval rankings, and yours is close enough to the top to taste it. Winning the villa isn’t a montage: it’s weeks of being the couple the sofa points at and says “them.” Consistency is the campaign.',
+    prompt: 'A challenge leaks the couples’ approval rankings, and yours is close enough to the top to taste it. Winning the villa is not a montage, mate — it’s three straight weeks of being the couple the sofa points at and says “them.” Consistency is the campaign.',
     choices: {
       left: {
         label: 'Be the steady couple',
@@ -291,7 +291,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     id: 'li_wv_underdogs', act: 3, pathAffinity: ['winvilla'], tags: ['loyal', 'camera'],
     art: 'li_firepit_day',
     context: 'Final stretch · the favourites stumble',
-    prompt: 'The bookies’ favourite couple just had a firepit row about, of all things, a jet-ski. The lane to the front is suddenly open. The nation loves a late surge almost as much as it loves the couple that doesn’t chase one.',
+    prompt: 'The bookies’ favourite couple just had a firepit row about, of all things, a jet-ski. A JET-SKI. The lane to the front is suddenly open. The nation loves a late surge almost as much as it loves the couple that doesn’t chase one.',
     choices: {
       left: {
         label: 'Stay above it',

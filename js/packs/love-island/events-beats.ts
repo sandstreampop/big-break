@@ -45,7 +45,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     id: 'li_casa_text', act: 2, chainOnly: true, tags: ['text', 'casa'],
     art: 'li_casa_text',
     context: 'Dawn · the villa · “I’VE GOT A TEXT!!”',
-    prompt: '“Islanders, the villa is splitting. One group will spend the next few days at Casa Amor — with six brand-new arrivals. Pack a bag. #outofsightoutofmind” — Your couple gets ninety seconds to say goodbye. Somebody’s already crying, and nothing has happened yet.',
+    prompt: '“Islanders, the villa is splitting. One group will spend the next few days at Casa Amor — with six brand-new arrivals. Pack a bag. #outofsightoutofmind” — Your couple gets ninety seconds to say goodbye. Somebody’s already crying. Nothing has happened yet. Nothing ever needs to.',
     choices: {
       left: {
         label: 'Say a proper goodbye',
@@ -164,7 +164,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['loyal', 'recoupling'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: 'You walk in alone, heart first. The walk from the gate to the firepit has never been longer, and you built it a lane of your own.', effects: { casaReturn: true, loyalty: 2, burnout: 3 } },
+          bad: { text: 'You walk in alone, heart first. It’s a forty-metre walk. By metre ten the villa knows. By metre thirty, the nation. The last ten are purely for the drone.', effects: { casaReturn: true, loyalty: 2, burnout: 3 } },
           good: { text: 'You walk in alone and the Host says, “Alone?” and you say, “I know what I have.” The firepit crackles supportively.', effects: { casaReturn: true, loyalty: 5, public: 3 } },
           incredible: { text: 'You walk in alone to an audible “aww” from people who were betting against you an hour ago. The nation adjusts its favourites.', effects: { casaReturn: true, loyalty: 8, public: 6 } },
         },
@@ -203,7 +203,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: '“Alright?” you say, casually, to the person you’ve thought about hourly for three days. They say “alright” back. Two romantics, flattened by cool.', effects: { savvy: 2, bond: 3, burnout: 3 } },
-          good: { text: 'One nod, one smirk, hands finding hands without looking. Understatement, performed correctly, is the loudest thing on this lawn.', effects: { savvy: 5, bond: 5, public: 4 } },
+          good: { text: '“Alright?” “Alright.” Hands find hands without looking. The most understated reunion in villa history, and the mics still pick up two heart rates going like castanets.', effects: { savvy: 5, bond: 5, public: 4 } },
           incredible: { text: 'You both underplay it so perfectly the villa assumes you planned it. “Couple goals,” says someone who pied their partner yesterday.', effects: { savvy: 8, bond: 6, public: 6, followers: 4 } },
         },
       },
@@ -249,7 +249,7 @@ export const BEAT_EVENTS: GameEvent[] = [
       { partnerKissedIs: true },
     ] },
     context: 'The lawn · a cinema screen that wasn’t there this morning',
-    prompt: '“Islanders. Grab a drink. Tonight, you’re watching a film. It’s about all of you.” — The Host has a remote. The screen is enormous. Somewhere on it is footage somebody at this firepit has been praying doesn’t exist.',
+    prompt: '“Islanders. Grab a drink. Tonight, you’re watching a film. It’s about all of you.” — The Host has a remote. The screen is enormous. The villa has a cinema now; nobody asked for a cinema. Somewhere on that screen is footage somebody at this firepit has been praying doesn’t exist.',
     choices: {
       left: {
         label: 'Front it out',
@@ -326,7 +326,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You perform elaborate indifference from the daybed, which reads, on camera, as fear arranged decoratively.', effects: { burnout: 3, loyalty: 2 } },
-          good: { text: 'You stay wrapped around your partner through the whole entrance. Some statements don’t need dialogue.', effects: { bond: 4, loyalty: 5 } },
+          good: { text: 'You stay wrapped around {partner} for the entire entrance, like a scarf with a point to make. Some statements don’t need dialogue.', effects: { bond: 4, loyalty: 5 } },
           incredible: { text: 'The bombshell scans the lawn, reaches your couple, and visibly re-plans. Solid reads as solid from across a garden.', effects: { bond: 6, public: 4, loyalty: 8 } },
         },
       },
@@ -434,7 +434,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“I’m coupling up with…” — you get the name right, but your speech includes the word “comfortable” twice. Comfortable, twice, is a warning light.', effects: { loyalty: 2, bond: 2, burnout: 3 } },
-          good: { text: 'You keep your speech short and mean every word. Recommitting at a firepit, out loud, is worth more than any date card.', effects: { loyalty: 5, bond: 5, public: 3 } },
+          good: { text: 'You keep the speech short and mean every word. Somewhere at home a mum says “oh, I LIKE her,” and that, statistically, is the vote.', effects: { loyalty: 5, bond: 5, public: 3 } },
           incredible: { text: 'Your speech gets an actual round of applause and one audible sniffle. The couples that were wobbling look suddenly, visibly, worse.', effects: { loyalty: 8, bond: 7, public: 6 } },
         },
       },
@@ -484,7 +484,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     requires: { genderIs: 'boy', singleIs: false },
     context: 'The firepit · night · “I’VE GOT A TEXT!!”',
-    prompt: '“Tonight, there will be a recoupling. The girls will choose. The boy not chosen will be dumped from the Island. #decisiontime” — You don’t pick tonight. You stand there, with everything you’ve built, and find out what it was worth.',
+    prompt: '“Tonight, there will be a recoupling. The girls will choose. The boy not chosen will be dumped from the Island. #decisiontime” — You don’t pick tonight. You stand there, with everything you’ve built, and find out what it was worth. The fire crackles. It would.',
     choices: {
       left: {
         label: 'Trust the graft',
@@ -543,7 +543,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     id: 'li_recoup2_choose', act: 3, chainOnly: true, tags: ['text', 'recoupling'],
     art: 'li_firepit',
     context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
-    prompt: '“Tonight, there will be a recoupling. The boys will choose. #judgementweek” — Final Week, and the power lands in your hands. Whoever you’re standing with at the end of tonight is who you’re standing with at the Final.',
+    prompt: '“Tonight, there will be a recoupling. The boys will choose. #judgementweek” — Final Week, and the power lands in your hands. No pressure, but whoever you’re holding at the end of tonight is who you’re holding at the Final. In the photos. Forever. Laminated.',
     choices: {
       left: {
         label: 'Stick with {partner}',
@@ -599,7 +599,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     id: 'li_recoup2_exposed', act: 3, chainOnly: true, tags: ['text', 'recoupling'],
     art: 'li_firepit',
     context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
-    prompt: '“Tonight, there will be a recoupling. The boys will choose. The girl not chosen will be dumped from the Island. #judgementweek” — There are more girls than places. You have no move tonight — only everything you’ve already built: the Bond, or the vote. It needs to be one of them.',
+    prompt: '“Tonight, there will be a recoupling. The boys will choose. The girl not chosen will be dumped from the Island. #judgementweek” — There are more girls than places, which is a maths problem with feelings. You have no move tonight — only everything you’ve already built: the Bond, or the vote. It needs to be one of them.',
     choices: {
       left: {
         label: 'Trust the graft',
@@ -950,7 +950,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     id: 'li_final_winvilla', act: 3, finaleCard: true, pathAffinity: ['winvilla'], tags: ['host', 'camera'],
     art: 'li_final',
     context: 'The Final · the villa in fairy lights · the Host in evening wear',
-    prompt: '“Islanders. Tonight, the public decide.” — The lawn has a stage on it now. Somewhere out there, millions of thumbs hover over two names, and one of the names is yours. One last look. Make it count.',
+    prompt: '“Islanders. Tonight, the public decide.” — The lawn has a stage on it now; the stage has fairy lights; the fairy lights, somehow, have a sponsor. Millions of thumbs are hovering over two names, and one of the names is yours. One last look. Make it count.',
     choices: {
       left: {
         label: 'Speak to the nation',

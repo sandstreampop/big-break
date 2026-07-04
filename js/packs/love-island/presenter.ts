@@ -327,6 +327,7 @@ export const loveIslandPresenter: Presenter = {
       'Somewhere between the firepit and the daybed, there is a boy named Kai.',
       'It’s not a game. It’s three games, and everyone is losing at least one.',
       'The cameras are always on. Especially the ones you forgot about.',
+      'Day one: everyone’s here for the right reasons. Day nine: a row about the wobbly lounger.',
     ],
     glyphs: ['💘', '🌴', '☀️', '💋', '🍸'],
     foot: (meta: any) => `Seasons: ${meta.runs} · Best: ${meta.best?.lp || 0} LP · Legacy: ${meta.lpEarnedTotal} LP`,
@@ -343,7 +344,7 @@ export const loveIslandPresenter: Presenter = {
 
   actNames: ['', 'Arrival', 'The Turn', 'Final Week'],
   actIntro: {
-    2: { name: 'THE TURN', text: 'The soft launch is over. Bombshells land, heads turn, and everything you do from here has a consequence with your name on it.' },
+    2: { name: 'THE TURN', text: 'The soft launch is over, mate. From here it’s bombshells, postcards, and a cinema screen nobody asked for. Everything you do now has a consequence with your name on it — usually in HD.' },
     3: { name: 'FINAL WEEK', text: 'Families, final dates, and a public vote climbing like a fever. The envelope is printed. Your name is on it, or it isn’t.' },
   },
   crossroads: {

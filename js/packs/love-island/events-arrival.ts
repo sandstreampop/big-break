@@ -26,7 +26,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         tags: ['flirt'],
         governingStats: { rizz: 1 },
         outcomes: {
-          bad: { text: 'You open with a line about star signs. They are a Capricorn and, it emerges, a critic.', effects: { rizz: 2, burnout: 3 } },
+          bad: { text: 'You open with star signs. Star signs, mate. He’s a Capricorn and — it emerges over the longest four minutes of your life — a critic.', effects: { rizz: 2, burnout: 3 } },
           good: { text: 'You do the airport story. They lean in; the camera leans in with them.', effects: { rizz: 5, public: 3, graft: 3 } },
           incredible: { text: 'By the second drink they’ve forgotten what they were nervous about. So, live on air, has the nation.', effects: { rizz: 8, public: 5, followers: 4, bond: 2 } },
         },
@@ -45,7 +45,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { rizz: 1 },
         outcomes: {
           bad: { text: 'You get ambitious and draw a smiley face in sunscreen. It doesn’t rub in. They spend the day with a faint grin between their shoulder blades, and not the good kind.', effects: { rizz: 2, burnout: 2 } },
-          good: { text: 'Slow, unhurried, no commentary. The pool goes quiet in a way that means everyone heard it anyway.', effects: { bond: 3, rizz: 5 } },
+          good: { text: 'Slow, unhurried, professional. The pool goes so quiet a boom operator gets emotional. Textbook. TEXTBOOK.', effects: { bond: 3, rizz: 5 } },
           incredible: { text: 'A masterclass. Someone across the pool says “oh my days” into a cushion. Production marks the clip before you’ve finished a shoulder.', effects: { bond: 4, rizz: 8, followers: 4 } },
         },
       },
@@ -73,7 +73,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You go one confession too deep, too early. {mate} pats your arm the way people pat unfamiliar dogs.', effects: { loyalty: 2, burnout: 3 } },
-          good: { text: 'You say a true thing and get a true thing back. Somewhere in the exchange, an alliance quietly signs itself.', effects: { loyalty: 5, public: 3, addFlag: 'li_code_honour' } },
+          good: { text: 'You swap one true thing for another, like conkers. No angles, no cameras played-to — genuinely the strangest thing to happen in this villa all week.', effects: { loyalty: 5, public: 3, addFlag: 'li_code_honour' } },
           incredible: { text: 'By 2 a.m. you know about the ex, the mum, the plan. In a game of angles you just acquired the villa’s rarest asset: an actual friend.', effects: { loyalty: 8, public: 5, graft: 3, addFlag: 'li_code_honour' } },
         },
       },
@@ -177,7 +177,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     id: 'li_gossip_daybed', act: 1, tags: ['strategy', 'code'],
     art: 'li_daybed',
     context: 'The daybed · four girls · lowered voices',
-    prompt: 'The daybed summit is in session and today’s agenda is a couple that isn’t yours. {mate} wants your read. Whatever you say next will be quoted, misquoted, and eventually read aloud at a firepit.',
+    prompt: 'The daybed summit is in session and today’s agenda is a couple that isn’t yours. Yet. {mate} wants your read, and whatever you say next will be quoted, misquoted, and eventually read back to you at a firepit, with sources.',
     choices: {
       left: {
         label: 'Keep it kind',
@@ -205,7 +205,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     id: 'li_hideaway_key', act: 1, tags: ['date', 'flirt'],
     art: 'li_hideaway',
     context: 'Evening · “I’VE GOT A TEXT!!” · the Hideaway is open',
-    prompt: '“Tonight, one couple will spend the night in the Hideaway. The villa must decide who. #privacyplease” — The villa, a democracy of stirrers, votes for your couple with indecent speed. The door is red. The candles are lit. The mics stay on.',
+    prompt: '“Tonight, one couple will spend the night in the Hideaway. The villa must decide who. #privacyplease” — The villa, a democracy of stirrers, votes for your couple with indecent speed. The door is red. The candles are lit. The mics — and this is the bit everyone forgets — stay on.',
     choices: {
       left: {
         label: 'Take the night',
@@ -233,7 +233,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     id: 'li_snakewatch', act: 1, tags: ['strategy', 'drama'],
     art: 'li_terrace',
     context: 'The terrace · {rival} is being friendly',
-    prompt: '{rival} has started laughing at {partner}’s jokes. All of them. Including the one about the sat-nav, which has never once been funny. You know grafting when you see it. You invented half these moves.',
+    prompt: '{rival} has started laughing at {partner}’s jokes. All of them. Including the sat-nav joke — the sat-nav joke, mate, currently nil-for-eleven this season and still touring. You know grafting when you see it. You invented half these moves.',
     choices: {
       left: {
         label: 'Mark your territory',
@@ -345,7 +345,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     id: 'li_dry_spell', act: 1, tags: ['rest', 'chat'],
     art: 'li_lawn',
     context: 'A slow day · nothing is happening · NOTHING',
-    prompt: 'Day six and the villa has run out of plot. People are napping competitively. Somebody has organised the condiments. Days like this are when the nation drifts — or when the smart money quietly reloads.',
+    prompt: 'Day six. Nothing is happening. NOTHING. People are napping competitively. Somebody has organised the condiments by emotional significance. Days like this are when the nation drifts — or when the smart money quietly reloads.',
     choices: {
       left: {
         label: 'Manufacture a moment',
@@ -373,7 +373,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     id: 'li_first_row', act: 1, tags: ['drama', 'chat'],
     art: 'li_firepit_day',
     context: 'Evening · raised voices by the pool · it’s 7 p.m.',
-    prompt: 'There is shouting by the pool. It is about a sun lounger, then suddenly it is about “energy,” then it is about night two. Your name hasn’t come up yet. The word “yet” is doing a lot of work.',
+    prompt: 'There is shouting by the pool. It’s about a sun lounger — not even the good one, the wobbly one, the WOBBLY one — then about “energy,” then, somehow, night two. Your name hasn’t come up. Yet. That “yet” is load-bearing.',
     choices: {
       left: {
         label: 'Step in and settle it',
