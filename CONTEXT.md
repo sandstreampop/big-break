@@ -52,6 +52,30 @@ The Cast member who recurs as your antagonist — trying to steal your Partner o
 out-shine you. The engine's *rival subsystem*, reskinned.
 _Avoid_: nemesis, enemy
 
+## Playable Types
+
+The four personas you can start a Season as (the engine's *loadouts*). Each is a
+Type with a starting stat lean and a signature quirk; each leans toward a Summit
+without being locked to it. More can ship as unlocks later (e.g. The Bombshell).
+
+**The Golden Retriever**:
+Sweet, loyal, heart on sleeve. +Loyalty, −Savvy. Genuine/loyal moments hit
+harder and build Bond faster. Leans → The Real Thing.
+
+**The Game-Player**:
+Here to win, reads the room. +Savvy, −Loyalty. Better on strategic/recoupling
+choices and shrugs off drama (less In Your Head). Leans → survival & Win the
+Villa.
+
+**The Influencer**:
+Here for the 'gram, camera-aware. +Charisma, −Loyalty. Dramatic/charismatic
+moments throw off bonus Followers. Leans → The Brand.
+
+**The Heartthrob**:
+Pure Rizz, everyone fancies them. +Rizz, −composure. Flirt/pull choices hit
+harder, but they're a head-turn magnet (a Rival guns for them). Leans → coupling
+& Win the Villa.
+
 **Villa moment**:
 A single card the player is dealt: a date, a challenge, a recoupling, a text.
 The engine's *GameEvent*.
