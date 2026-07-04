@@ -118,6 +118,11 @@ export const BEAT_VERDICT: Record<string, BarkDef[]> = {
     { id: 'vd_maths', text: 'No name, no seat, taxi. The maths was the maths: the Bond wasn’t there, and the vote never arrived.', priority: 10 },
     { id: 'vd_legends', text: 'Dumped. Brutal. For what it’s worth, exit interviews are where legends start. Usually. Sometimes.', priority: 10 },
   ],
+  // The cash-out landed and the check passed with the poach defused.
+  held_secret: [
+    { id: 'vs_lifting', text: 'Held — and let the record show the secret did the heavy lifting. Scandal: also a love language.', priority: 10 },
+    { id: 'vs_detonate', text: 'Safe. You didn’t plead your case; you detonated theirs. The firepit approves. Nervously.', priority: 10 },
+  ],
 };
 
 // Other guaranteed beats, keyed by trigger.

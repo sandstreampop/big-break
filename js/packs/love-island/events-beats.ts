@@ -652,6 +652,38 @@ export const BEAT_EVENTS: GameEvent[] = [
     },
   },
 
+  // ---------- The gossip cash-out (the climax encounter's third beat) ----------
+  // Chained between the last stand and the verdict when you hold the Rival's
+  // surfaced, unspent secret (ADR-0007's ceremony sink — coupling routes it).
+  {
+    id: 'li_recoup_cashout', act: [2, 3], chainOnly: true, tags: ['recoupling', 'drama', 'encounter'],
+    art: 'li_firepit',
+    context: 'The firepit · a beat before the choosing · what you know, burning',
+    prompt: 'The Host lets the pause stretch. In your pocket: everything you know about {rival}. One sentence, said out loud at this fire, and tonight’s board changes. Said sentences don’t come back, mind. {rival} watches you the way you watch weather.',
+    choices: {
+      left: {
+        label: 'Say it. Out loud.',
+        tags: ['drama', 'camera'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“Since we’re all being honest tonight—” Your voice shakes on the way in and steadies on the landing. The secret hits the fire and burns blue. {rival}’s face does the whole season in four seconds.', effects: { charisma: 2, playSecret: 'rival', chosenCeremony: true, public: 3, followers: 3, burnout: 3 } },
+          good: { text: 'You say it plainly, once, no garnish. The firepit goes so quiet you can hear the ring light. {rival} has no move, because there is no move.', effects: { charisma: 5, playSecret: 'rival', chosenCeremony: true, public: 5, followers: 5, burnout: 2 } },
+          incredible: { text: 'One sentence, perfectly weighted, dropped at the exact moment the Host inhales. Production will study the timing for years. {rival} is, officially, done poaching.', effects: { charisma: 8, playSecret: 'rival', chosenCeremony: true, public: 7, followers: 8, burnout: 2 } },
+        },
+      },
+      right: {
+        label: 'Keep it in your pocket',
+        tags: ['strategy', 'loyal'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You hold it, and holding it holds you — you spend the ceremony doing sums about mercy. The fire pops. Your pocket weighs a kilo.', effects: { savvy: 2, chosenCeremony: true, burnout: 3 } },
+          good: { text: 'Not tonight. Power kept is power compounding, and mercy — visibly chosen — photographs well at a firepit.', effects: { savvy: 5, chosenCeremony: true, public: 2 } },
+          incredible: { text: 'You catch {rival}’s eye across the fire and let them watch you decide. They know. You know. The debt is now the leverage.', effects: { savvy: 8, chosenCeremony: true, rivalOpinion: 8 } },
+        },
+      },
+    },
+  },
+
   // ---------- Recoupling verdicts (chained by the Coupling plugin) ----------
   {
     id: 'li_recoup_held', act: [2, 3], chainOnly: true, tags: ['recoupling', 'loyal'],

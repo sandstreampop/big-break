@@ -77,8 +77,13 @@ export function stirlingDealNote(state: RunState, ev: GameEvent) {
   if (state.tutorial || !ev) return null;
   const tags = ev.tags || [];
 
-  // The verdict, explained — so held/rescued/dumped reads as earned, not rolled.
-  if (ev.id === 'li_recoup_held') return asNote(rotate(state, BEAT_VERDICT.held));
+  // The verdict, explained — so held/rescued/dumped reads as earned, not
+  // rolled. Reads the coupling plugin's recorded check (state.lastCeremony),
+  // so the explanation matches what actually decided it.
+  if (ev.id === 'li_recoup_held') {
+    const c = state.lastCeremony;
+    return asNote(rotate(state, c?.secretPlayed ? BEAT_VERDICT.held_secret : BEAT_VERDICT.held));
+  }
   if (ev.id === 'li_recoup_rescued') return asNote(rotate(state, BEAT_VERDICT.rescued));
   if (ev.id === 'li_recoup_dumped') return asNote(rotate(state, BEAT_VERDICT.dumped));
 

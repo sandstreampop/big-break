@@ -109,7 +109,7 @@ export const couplingPlugin: Plugin = {
   effectVerbs: [
     'couple', 'switchPartner', 'bondReset', 'exclusive',
     'stealRoll', 'casaLoyaltyDraw', 'casaReturn', 'chosenCeremony',
-    'reveal', 'comeClean',
+    'reveal', 'comeClean', 'playSecret',
   ],
   stateDefaults: {
     partner: null,       // the one Islander you're coupled with (cast id)
@@ -118,6 +118,8 @@ export const couplingPlugin: Plugin = {
     exes: [],            // former Partners (re-pick pool of last resort, Rival fuel)
     partnerLoyal: null,  // hidden: null | 'loyal' | 'kissed' | 'gone' (seeded at Casa)
     rival: null,         // same-gender Cast member gunning for your spot
+    ceremonyPending: null, // the last stand, held while the cash-out beat plays
+    lastCeremony: null,    // the resolved check's readings (Stirling's explain)
   },
 
   // Construction draws, frozen order: gender is derived (no rng), the Rival is
@@ -238,6 +240,21 @@ export const couplingPlugin: Plugin = {
       state.flags.push('li_came_clean');
     }
 
+    // The ceremony cash-out (ADR-0007's sink): the Rival's secret, said out
+    // loud at the firepit. One use — it spends the secret, defuses the poach
+    // at tonight's check, and breaks the Rival's standing.
+    if (e.playSecret === 'rival' && state.rival &&
+        (state.secretKnown || []).includes('rival') && !(state.secretSpent || []).includes('rival')) {
+      (state.secretSpent = state.secretSpent || []).push('rival');
+      if (state.ceremonyPending) state.ceremonyPending.secretPlayed = true;
+      state.flags = state.flags.filter((f: string) => f !== 'li_rival_active');
+      if (!state.flags.includes('li_secret_detonated')) state.flags.push('li_secret_detonated');
+      if (state.charOpinion) state.charOpinion.rival = Math.max(0, (state.charOpinion.rival ?? 0) - 20);
+      if (state.charMood) state.charMood.rival = { id: 'wounded', ttl: 4 };
+      const r = castById(state.rival);
+      note(pctx, 'notice-viral', `💥 <b>${r ? r.name : 'The rival'}’s secret hits the firepit.</b> Said sentences don’t come back. The poach is off; so are the gloves.`);
+    }
+
     // The Reveal (postcard teaser / Movie Night full footage): read the latent
     // flags — yours and the Partner's hidden state — and detonate.
     if (e.reveal === 'movienight') {
@@ -269,34 +286,57 @@ export const couplingPlugin: Plugin = {
     }
   },
 
-  // The chosen-side Recoupling (the other gender picks): the survival check is
-  // `Bond ≥ floor OR Public ≥ floor` (ADR-0002); an active Rival poaches. The
-  // ceremony card resolves normally, then this queues the verdict card.
+  // The chosen-side Recoupling as the v2 climax encounter (four beats):
+  // line-up (the forecast rides the deal) → LAST STAND (this card's swipe —
+  // the tier buffs whichever lane you chose to trust) → the gossip CASH-OUT
+  // (a held Rival secret opens one extra beat before the names are read) →
+  // the verdict, explained. The survival check itself is unchanged ADR-0002:
+  // `Bond ≥ floor OR Public ≥ floor`, an active Rival poaching at the check.
   afterResolve(state, _result, cardCtx) {
     const tier = cardCtx.tier as 'bad' | 'good' | 'incredible' | undefined;
     const e = tier && cardCtx.choice ? (cardCtx.choice.outcomes?.[tier]?.effects as any) : null;
     if (!e?.chosenCeremony) return;
-    // How your last stand LANDS matters: the tier buffs whichever lane you
-    // chose to trust (a loyal/chat choice pleads the Bond; a strategy/camera
-    // choice works the room).
-    const bondLane = (cardCtx.choice.tags || []).some((t: string) => t === 'loyal' || t === 'chat');
-    const tierBonus = tier === 'incredible' ? 12 : tier === 'good' ? 6 : 0;
-    let bondEff = state.partner ? state.bond : 0;
-    let publicEff = state.public;
-    if (bondLane) bondEff += tierBonus; else publicEff += tierBonus;
-    // An active Rival poaches at the check; Head-Turner types (rivalMagnet,
-    // stamped on state at run start by the producers plugin) attract worse.
-    if (state.flags.includes('li_rival_active')) {
-      bondEff -= COUPLING.rivalPenalty;
-      if (state.rivalMagnet) bondEff -= COUPLING.rivalMagnetExtra;
+    if (!state.ceremonyPending) {
+      // First pass — the last stand. Hold HOW it landed (lane + tier), so the
+      // cash-out beat can sit between the stand and the verdict.
+      const bondLane = (cardCtx.choice.tags || []).some((t: string) => t === 'loyal' || t === 'chat');
+      const tierBonus = tier === 'incredible' ? 12 : tier === 'good' ? 6 : 0;
+      state.ceremonyPending = { bondLane, tierBonus, secretPlayed: false };
+      // Holding the Rival's surfaced, unspent secret opens the cash-out beat
+      // (ADR-0007's natural sink) — one more card before the names.
+      const holdsRivalSecret = state.rival &&
+        (state.secretKnown || []).includes('rival') && !(state.secretSpent || []).includes('rival');
+      if (holdsRivalSecret) {
+        state.pendingChainId = 'li_recoup_cashout';
+        return;
+      }
     }
-    const floor = state.exclusive ? COUPLING.bondFloor - COUPLING.exclusiveEase : COUPLING.bondFloor;
-    if (state.partner && bondEff >= floor) {
-      state.pendingChainId = 'li_recoup_held';
-    } else if (publicEff >= COUPLING.publicFloor) {
-      state.pendingChainId = 'li_recoup_rescued';
-    } else {
-      state.pendingChainId = 'li_recoup_dumped';
-    }
+    resolveCeremony(state);
   },
 };
+
+// Run the ADR-0002 survival check from the held last-stand, record the
+// readings (state.lastCeremony — what Stirling's verdict explain speaks),
+// and queue the verdict card.
+function resolveCeremony(state: RunState) {
+  const { bondLane, tierBonus, secretPlayed } = state.ceremonyPending;
+  state.ceremonyPending = null;
+  let bondEff = state.partner ? state.bond : 0;
+  let publicEff = state.public;
+  if (bondLane) bondEff += tierBonus; else publicEff += tierBonus;
+  // An active Rival poaches at the check — unless their secret just went off
+  // at the firepit (the cash-out defuses the poach). Head-Turner types
+  // (rivalMagnet, stamped at run start by the producers plugin) attract worse.
+  if (state.flags.includes('li_rival_active') && !secretPlayed) {
+    bondEff -= COUPLING.rivalPenalty;
+    if (state.rivalMagnet) bondEff -= COUPLING.rivalMagnetExtra;
+  }
+  const floor = state.exclusive ? COUPLING.bondFloor - COUPLING.exclusiveEase : COUPLING.bondFloor;
+  const verdict = state.partner && bondEff >= floor ? 'held'
+    : publicEff >= COUPLING.publicFloor ? 'rescued' : 'dumped';
+  state.lastCeremony = {
+    bondEff, publicEff, floor, publicFloor: COUPLING.publicFloor,
+    bondLane, secretPlayed, verdict,
+  };
+  state.pendingChainId = `li_recoup_${verdict}`;
+}

@@ -31,7 +31,7 @@ declare module '../../types.js' {
     couple?: boolean; switchPartner?: boolean; bondReset?: boolean;
     exclusive?: number; stealRoll?: boolean;
     casaLoyaltyDraw?: boolean; casaReturn?: boolean; chosenCeremony?: boolean;
-    reveal?: string; comeClean?: boolean;
+    reveal?: string; comeClean?: boolean; playSecret?: string;
     // profile subsystem verbs (the Edit)
     grantAngle?: string; removeAngle?: string;
     // character-state verbs (ADR-0006): opinion deltas, transient moods, the
