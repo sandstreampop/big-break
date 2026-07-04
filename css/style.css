@@ -430,6 +430,22 @@ body {
 .hint-left { left: 12px; }
 .hint-right { right: 12px; }
 
+/* Lean-preview: qualitative stakes as you tilt — magnitude dots (small/big)
+   tinted by direction, ◇ where the sign isn't fixed. Never numbers. */
+.swipe-hint { flex-wrap: wrap; }
+.lean-row {
+  flex-basis: 100%;
+  display: flex; gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 500;
+}
+.lean-chip { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; }
+.lean-dot { font-size: 11px; line-height: 1; }
+.lean-dot.up { color: var(--good); }
+.lean-dot.down { color: var(--bad); }
+.lean-dot.vol { color: #ffb35c; }
+
 /* risk tell: color + shape (colorblind-safe) */
 .risk {
   display: inline-flex; align-items: center; justify-content: center;

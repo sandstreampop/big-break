@@ -784,8 +784,12 @@ function dealCard() {
     const opts = { encore: encoreArmed };
     const oL = engine.choiceOdds(run, ev.choices.left, opts);
     const oR = engine.choiceOdds(run, ev.choices.right, opts);
-    hintL.innerHTML = `${dot(oL)}${fillText(ev.choices.left.label)}`;
-    hintR.innerHTML = `${fillText(ev.choices.right.label)}${dot(oR)}`;
+    // The lean-preview rides the tilt-reactive hints; a contract that hides
+    // the risk tell hides this stakes read too.
+    const leanL = hideRisk ? '' : leanPreview(ev.choices.left);
+    const leanR = hideRisk ? '' : leanPreview(ev.choices.right);
+    hintL.innerHTML = `${dot(oL)}${fillText(ev.choices.left.label)}${leanL}`;
+    hintR.innerHTML = `${fillText(ev.choices.right.label)}${dot(oR)}${leanR}`;
     // Structured two-tier layout: a compact meta strip (direction, risk
     // tell, governing stats), then the label — long labels wrap cleanly
     // instead of scattering icons across lines.
@@ -838,6 +842,37 @@ function dealCard() {
     save.saveMeta(meta);
     coachMark('Drag the card left/right — or tap a button below. The colored dot is your <b>risk tell</b>. Tap ❓ up top anytime.');
   }
+}
+
+// Lean-preview (qualitative, Reigns-form): for each stat/resource a side's
+// outcomes touch, a magnitude dot (small • / big ●) tinted by direction —
+// plus a volatility mark (◇) when the sign depends on how it lands.
+// Direction and volatility, never numbers.
+function leanPreview(choice) {
+  const touched = new Map(); // key -> {pos, neg, maxAbs}
+  for (const t of ['bad', 'good', 'incredible']) {
+    const eff = choice.outcomes?.[t]?.effects || {};
+    for (const [k, v] of Object.entries(eff)) {
+      if (typeof v !== 'number' || !v) continue;
+      // Only the pack's visible meters: core stats, burnout, and resources.
+      if (!(k in run.stats) && !activePack.manifest.resources.includes(k)) continue;
+      const rec = touched.get(k) || { pos: false, neg: false, maxAbs: 0 };
+      if (v > 0) rec.pos = true; else rec.neg = true;
+      rec.maxAbs = Math.max(rec.maxAbs, Math.abs(v));
+      touched.set(k, rec);
+    }
+  }
+  const chips = [];
+  for (const [k, r] of touched) {
+    const m = metaFor(k);
+    // Burnout runs inverse: more of it is the bad direction.
+    const goodDir = k === 'burnout' ? r.neg && !r.pos : r.pos && !r.neg;
+    const volatile = r.pos && r.neg;
+    const dotCls = volatile ? 'vol' : goodDir ? 'up' : 'down';
+    const dot = volatile ? '◇' : r.maxAbs >= 6 ? '●' : '•';
+    chips.push(`<span class="lean-chip" title="${m.name}">${m.icon}<span class="lean-dot ${dotCls}">${dot}</span></span>`);
+  }
+  return chips.length ? `<span class="lean-row">${chips.join('')}</span>` : '';
 }
 
 // Which stats a choice rolls against, as icons (primary bright, secondary dim)
