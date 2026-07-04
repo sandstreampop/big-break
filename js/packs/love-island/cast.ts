@@ -87,29 +87,30 @@ export interface CastMember {
   name: string;
   gender: 'girl' | 'boy';
   vibe: string;       // one-phrase identity, used by presenter flavor
+  face: string;        // portrait glyph — the base of the mood-driven portrait
   bombshell?: boolean; // arrives mid-Season, not in the day-one pool
 }
 
 export const CAST: CastMember[] = [
   // day-one boys
-  { id: 'kai', name: 'Kai', gender: 'boy', vibe: 'golden-retriever scaffolder' },
-  { id: 'tyler', name: 'Tyler', gender: 'boy', vibe: 'semi-pro winker' },
-  { id: 'reece', name: 'Reece', gender: 'boy', vibe: 'protein-first romantic' },
-  { id: 'dev', name: 'Dev', gender: 'boy', vibe: 'nicest man in any postcode' },
-  { id: 'marco', name: 'Marco', gender: 'boy', vibe: 'villain with a skincare routine' },
-  { id: 'jamal', name: 'Jamal', gender: 'boy', vibe: 'aspiring podcast' },
+  { id: 'kai', name: 'Kai', gender: 'boy', vibe: 'golden-retriever scaffolder', face: '🐶' },
+  { id: 'tyler', name: 'Tyler', gender: 'boy', vibe: 'semi-pro winker', face: '😉' },
+  { id: 'reece', name: 'Reece', gender: 'boy', vibe: 'protein-first romantic', face: '💪' },
+  { id: 'dev', name: 'Dev', gender: 'boy', vibe: 'nicest man in any postcode', face: '🫶' },
+  { id: 'marco', name: 'Marco', gender: 'boy', vibe: 'villain with a skincare routine', face: '🧴' },
+  { id: 'jamal', name: 'Jamal', gender: 'boy', vibe: 'aspiring podcast', face: '🎙️' },
   // day-one girls
-  { id: 'priya', name: 'Priya', gender: 'girl', vibe: 'girl-next-door, next door is Surrey' },
-  { id: 'chloe', name: 'Chloe', gender: 'girl', vibe: 'savage in gel nails' },
-  { id: 'amber', name: 'Amber', gender: 'girl', vibe: 'main character, self-cast' },
-  { id: 'sophia', name: 'Sophia', gender: 'girl', vibe: 'brand deal in human form' },
-  { id: 'meg', name: 'Meg', gender: 'girl', vibe: 'funny on purpose, chaotic by accident' },
-  { id: 'tash', name: 'Tash', gender: 'girl', vibe: 'everyone’s type on paper' },
+  { id: 'priya', name: 'Priya', gender: 'girl', vibe: 'girl-next-door, next door is Surrey', face: '🌷' },
+  { id: 'chloe', name: 'Chloe', gender: 'girl', vibe: 'savage in gel nails', face: '💅' },
+  { id: 'amber', name: 'Amber', gender: 'girl', vibe: 'main character, self-cast', face: '👑' },
+  { id: 'sophia', name: 'Sophia', gender: 'girl', vibe: 'brand deal in human form', face: '🛍️' },
+  { id: 'meg', name: 'Meg', gender: 'girl', vibe: 'funny on purpose, chaotic by accident', face: '🤸' },
+  { id: 'tash', name: 'Tash', gender: 'girl', vibe: 'everyone’s type on paper', face: '📋' },
   // bombshells
-  { id: 'luca', name: 'Luca', gender: 'boy', vibe: 'abs with a boat licence', bombshell: true },
-  { id: 'ollie', name: 'Ollie', gender: 'boy', vibe: 'rugby lad, feelings pending', bombshell: true },
-  { id: 'bella', name: 'Bella', gender: 'girl', vibe: 'arrives mid-sentence, stays mid-drama', bombshell: true },
-  { id: 'zara', name: 'Zara', gender: 'girl', vibe: 'model, knows your partner from home', bombshell: true },
+  { id: 'luca', name: 'Luca', gender: 'boy', vibe: 'abs with a boat licence', face: '🛥️', bombshell: true },
+  { id: 'ollie', name: 'Ollie', gender: 'boy', vibe: 'rugby lad, feelings pending', face: '🏉', bombshell: true },
+  { id: 'bella', name: 'Bella', gender: 'girl', vibe: 'arrives mid-sentence, stays mid-drama', face: '🌪️', bombshell: true },
+  { id: 'zara', name: 'Zara', gender: 'girl', vibe: 'model, knows your partner from home', face: '📸', bombshell: true },
 ];
 
 export function castById(id: string | null | undefined): CastMember | null {

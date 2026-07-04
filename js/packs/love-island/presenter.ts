@@ -308,12 +308,12 @@ function hudCounters(state: RunState) {
   if ((state.encore || 0) > 0) out.push({ html: `🌟${state.encore > 1 ? '×' + state.encore : ''}`, cls: 'hud-encore' });
   const p = characterRead(state, 'partner');
   out.push(p
-    ? { html: `💘 <b>${p.cast.name}</b> · ${TIER_LABEL[p.tier]}${p.moodFace ? ' ' + p.moodFace : ''}${state.exclusive ? ' 🔒' : ''}`, cls: 'hud-rel hud-rel-partner' }
+    ? { html: `<span class="rel-face">${p.face}</span><b>${p.cast.name}</b> · ${TIER_LABEL[p.tier]}${p.moodFace ? ' ' + p.moodFace : ''}${state.exclusive ? ' 🔒' : ''}`, cls: 'hud-rel hud-rel-partner' }
     : { html: '💔 single', cls: 'hud-rel hud-rel-partner neg' });
   const r = characterRead(state, 'rival');
-  if (r) out.push({ html: `⚔️ ${r.cast.name}${r.moodFace ? ' ' + r.moodFace : ''}`, cls: 'hud-rel hud-rel-rival' });
+  if (r) out.push({ html: `⚔️<span class="rel-face">${r.face}</span>${r.cast.name}${r.moodFace ? ' ' + r.moodFace : ''}`, cls: 'hud-rel hud-rel-rival' });
   const b = characterRead(state, 'bombshell');
-  if (b) out.push({ html: `💣 ${b.cast.name}${b.moodFace ? ' ' + b.moodFace : ''}`, cls: 'hud-rel' });
+  if (b) out.push({ html: `💣<span class="rel-face">${b.face}</span>${b.cast.name}${b.moodFace ? ' ' + b.moodFace : ''}`, cls: 'hud-rel' });
   const held = intelCount(state);
   if (held) out.push({ html: `🤫 ${held}`, cls: 'hud-rel' });
   out.push({ html: `🗳️ ${state.public ?? 0}`, cls: 'hud-fame' });

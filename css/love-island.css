@@ -78,3 +78,5 @@ body {
   background: rgba(186, 122, 255, 0.14);
   border-color: rgba(186, 122, 255, 0.35);
 }
+/* The portrait pair: base face + mood face — a character is a face first. */
+.hud-counters .rel-face { margin: 0 3px 0 2px; }

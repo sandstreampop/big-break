@@ -110,14 +110,16 @@ export function secretOf(state: RunState, role: CharRole) {
   };
 }
 
-// The full presenter read for one role: castmember + tier + mood, or null when
-// the seat is empty. This is the ONLY shape the HUD/portrait layer consumes.
+// The full presenter read for one role: castmember + tier + mood + the
+// portrait pair (base face, mood face), or null when the seat is empty. This
+// is the ONLY shape the HUD/portrait layer consumes.
 export function characterRead(state: RunState, role: CharRole) {
   const cast = castById(roleCastId(state, role));
   if (!cast) return null;
   const mood = moodOf(state, role);
   return {
     role, cast,
+    face: (cast as any).face || '',
     tier: opinionTier(opinionOf(state, role)),
     mood, moodFace: mood ? MOODS[mood]?.face || null : null,
   };
