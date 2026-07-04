@@ -122,6 +122,22 @@ resource — owned and moved by the Coupling subsystem (see below), the way
 music's charts subsystem owns "hits".
 _Avoid_: connection, chemistry, love
 
+## Fail states
+
+Ways a Season ends badly before or at the Final. The engine's *fail states*.
+
+**Walk**:
+The emotional, self-inflicted exit — In Your Head maxes out and you leave in
+tears. The engine's universal burnout fail, reskinned.
+_Avoid_: quit, breakdown
+
+**Dumped**:
+The external elimination, live from Act 2 onward (Act 1 is a grace period).
+Triggered by either the public dropping you (Public craters) or being single at
+a Recoupling (nobody picks you). Whether it's the public or the villa, you go
+home.
+_Avoid_: eliminated, voted off, sent home
+
 ## Subsystems
 
 Optional pack-owned mechanics (the engine's *plugins*).
