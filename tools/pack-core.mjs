@@ -103,10 +103,12 @@ export function tracePackRun(pack, seed) {
   };
 }
 
-// Probe golden corpus constants — kept HERE (a side-effect-free module) so the
-// checker and the generator import them without triggering a golden rewrite.
+// Golden corpus constants — kept HERE (a side-effect-free module) so each
+// checker and generator import them without triggering a golden rewrite.
 export const PROBE_GOLDEN_SEED = 0x9403B;
 export const PROBE_CORPUS_SIZE = 20;
+export const LI_GOLDEN_SEED = 0x10A11D;
+export const LI_CORPUS_SIZE = 24;
 
 // A small pinned corpus for a pack, seeds drawn from one generator so the
 // generator and checker always agree.

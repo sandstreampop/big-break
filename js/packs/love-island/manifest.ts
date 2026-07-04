@@ -24,21 +24,21 @@ export const PATHS: Record<string, PathDef> = {
     id: 'winvilla',
     name: 'Win the Villa',
     blurb: 'The public crowns you and whoever you’re holding hands with by then. Fifty grand, split with feeling.',
-    gateLabel: 'Public 58 · Bond 34',
+    gateLabel: 'Public 68 · Bond 40',
     icon: '👑',
   },
   realthing: {
     id: 'realthing',
     name: 'The Real Thing',
     blurb: 'Leave with an actual person who actually knows your middle name. The prize is optional. Allegedly.',
-    gateLabel: 'Bond 66 · Loyalty 58',
+    gateLabel: 'Bond 72 · Loyalty 68',
     icon: '💘',
   },
   brand: {
     id: 'brand',
     name: 'The Brand',
     blurb: 'Win or lose, hero or villain — walk out with a following and a discount code. The villa is a launchpad.',
-    gateLabel: 'Followers 48 · Charisma 62',
+    gateLabel: 'Followers 56 · Charisma 58',
     icon: '📱',
   },
 };
@@ -48,9 +48,9 @@ export const PATHS: Record<string, PathDef> = {
 // not an automatic win; the Public clutch (momentumResource) can still carry a
 // near-miss over the line — the late vote surge, on-format.
 export const WIN_GATES: Record<string, Record<string, number>> = {
-  winvilla: { public: 58, bond: 34 },
-  realthing: { bond: 66, loyalty: 58 },
-  brand: { followers: 48, charisma: 62 },
+  winvilla: { public: 68, bond: 40 },
+  realthing: { bond: 72, loyalty: 68 },
+  brand: { followers: 56, charisma: 58 },
 };
 
 export const STAT_META: Record<string, StatMeta> = {

@@ -15,13 +15,13 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 // ---------- Balance knobs (the Coupling subsystem's own numbers) ----------
 export const COUPLING = {
   bondBase: 12,        // a fresh couple's Bond — every switch starts over here
-  bondFloor: 42,       // chosen-Recoupling survival: Bond ≥ this holds your Partner
-  publicFloor: 38,     // …OR Public ≥ this and somebody picks you anyway
-  rivalPenalty: 10,    // active Rival poaches: effective Bond at the check drops
+  bondFloor: 30,       // chosen-Recoupling survival: Bond ≥ this holds your Partner
+  publicFloor: 28,     // …OR Public ≥ this and somebody picks you anyway
+  rivalPenalty: 8,    // active Rival poaches: effective Bond at the check drops
   rivalMagnetExtra: 5, // Head-Turner types attract worse poaching
   exclusiveEase: 15,   // official couples: Partner re-picks at a friendlier floor
   // Casa Amor: the Partner's hidden loyalty draw (regular, not rare — ADR-0002)
-  casaOdds: { gone: 0.28, kissed: 0.34 },            // rest = loyal
+  casaOdds: { gone: 0.22, kissed: 0.34 },            // rest = loyal
   casaOddsExclusive: { gone: 0.10, kissed: 0.25 },
   // Immediate-recouple Bombshell: odds scale inversely with Bond + Public
   stealBase: 0.55, stealScale: 160, stealMin: 0.10,
@@ -141,7 +141,11 @@ export const couplingPlugin: Plugin = {
     if (e.switchPartner) {
       const hadPartner = !!state.partner;
       newCouple(state, rng, pctx);
-      if (hadPartner) state.flags.push('li_rival_active'); // a discarded ex is Rival fuel
+      // A discarded ex is Rival fuel.
+      if (hadPartner && !state.flags.includes('li_rival_active')) state.flags.push('li_rival_active');
+      // Walking in with someone new is not loyal-through-Casa, whatever the
+      // nights before said.
+      if (e.addFlag === 'li_casa_recouple') state.flags = state.flags.filter((f: string) => f !== 'li_loyal_casa');
     }
 
     // External betrayal: the Bond resets, the couple technically survives.
@@ -173,7 +177,7 @@ export const couplingPlugin: Plugin = {
         const before = state.bond;
         state.bond = 0;
         pushDelta(pctx, 'bond', -before);
-        state.flags.push('li_stranded', 'li_rival_active');
+        for (const f of ['li_stranded', 'li_rival_active']) if (!state.flags.includes(f)) state.flags.push(f);
         note(pctx, 'notice-bad', `💔 <b>${partner?.name || 'Your partner'} recouples on the spot.</b> You are single, live, at a ceremony. The next recoupling has your name on the list either way.`);
       } else {
         moveBond(state, 2, pctx);
@@ -200,7 +204,7 @@ export const couplingPlugin: Plugin = {
         const before = state.bond;
         state.bond = 0;
         pushDelta(pctx, 'bond', -before);
-        state.flags.push('li_betrayed', 'li_sympathy', 'li_rival_active');
+        for (const f of ['li_betrayed', 'li_sympathy', 'li_rival_active']) if (!state.flags.includes(f)) state.flags.push(f);
         state.pendingChainId = 'li_casa_betrayed';
       } else {
         state.pendingChainId = 'li_casa_held';
@@ -252,7 +256,14 @@ export const couplingPlugin: Plugin = {
     const tier = cardCtx.tier as 'bad' | 'good' | 'incredible' | undefined;
     const e = tier && cardCtx.choice ? (cardCtx.choice.outcomes?.[tier]?.effects as any) : null;
     if (!e?.chosenCeremony) return;
+    // How your last stand LANDS matters: the tier buffs whichever lane you
+    // chose to trust (a loyal/chat choice pleads the Bond; a strategy/camera
+    // choice works the room).
+    const bondLane = (cardCtx.choice.tags || []).some((t: string) => t === 'loyal' || t === 'chat');
+    const tierBonus = tier === 'incredible' ? 12 : tier === 'good' ? 6 : 0;
     let bondEff = state.partner ? state.bond : 0;
+    let publicEff = state.public;
+    if (bondLane) bondEff += tierBonus; else publicEff += tierBonus;
     // An active Rival poaches at the check; Head-Turner types (rivalMagnet,
     // stamped on state at run start by the producers plugin) attract worse.
     if (state.flags.includes('li_rival_active')) {
@@ -261,11 +272,11 @@ export const couplingPlugin: Plugin = {
     }
     const floor = state.exclusive ? COUPLING.bondFloor - COUPLING.exclusiveEase : COUPLING.bondFloor;
     if (state.partner && bondEff >= floor) {
-      state.pendingChainId = 'li_recoup2_held';
-    } else if (state.public >= COUPLING.publicFloor) {
-      state.pendingChainId = 'li_recoup2_rescued';
+      state.pendingChainId = 'li_recoup_held';
+    } else if (publicEff >= COUPLING.publicFloor) {
+      state.pendingChainId = 'li_recoup_rescued';
     } else {
-      state.pendingChainId = 'li_recoup2_dumped';
+      state.pendingChainId = 'li_recoup_dumped';
     }
   },
 };
