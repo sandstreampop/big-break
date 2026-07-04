@@ -45,7 +45,7 @@ export interface PromiseSpec {
 // the engine's burnout slot, the resources the engine applies by name, and
 // flag/chain/promise control. Every pack's OWN vocabulary — its core stats and
 // its subsystem verbs — is added by that pack via declaration merging in its own
-// file (see packs/music.ts, packs/mystery.ts, packs/probe.ts), so adding a genre
+// file (see packs/music.ts, packs/probe.ts), so adding a genre
 // edits no shared type. There is no index signature, so a truly unknown key is
 // still a compile error (hallucinated-key detection); the runtime guard that a
 // card names no verb outside its pack's declared set is the cross-pack "no
@@ -79,7 +79,8 @@ export interface Requires {
   burnoutMin?: number;
   // Generic stat/resource gates — keys are ANY manifest stat or resource,
   // resolved through gateValue (so a pack without "fame" doesn't trip a
-  // hardcoded branch, and a mystery card can gate on `clues`). `stats` keeps the
+  // hardcoded branch, and a pack can gate on a subsystem counter its plugin
+  // maintains). `stats` keeps the
   // legacy `{ <key>Min: n }` shape; `min`/`max` are the plain `{ <key>: n }`
   // form. Values numeric.
   stats?: Record<string, number>;

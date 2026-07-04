@@ -33,7 +33,7 @@ let STAT_META = musicPack.manifest.statMeta;
 let RESOURCE_META = musicPack.manifest.resourceMeta || {};
 // The active pack's Presenter: endings, exit interviews, wall, trophies, and
 // flavor generators. The UI reads this instead of importing music's meta and
-// flavor modules, so a mystery run renders mystery endings (Phase G).
+// flavor modules, so any pack renders its own endings (Phase G).
 let PRES = musicPack.presenter;
 let meta = save.loadMeta();
 let run = null;
@@ -42,7 +42,7 @@ const $ = (sel) => document.querySelector(sel);
 
 // Display name/icon for ANY taxonomy key — stat, burnout, or resource — read
 // from the pack manifest (Phase G.4). Replaces the old fame/hits label
-// special-cases so a genre whose gates name money/clues/points renders them.
+// special-cases so a genre whose gates name any stat or resource renders them.
 const metaFor = (key) => STAT_META[key] || RESOURCE_META[key] || { name: key, icon: '' };
 const el = (tag, cls?, html?) => {
   const n = document.createElement(tag);
@@ -415,7 +415,7 @@ function renderInstrumentRow(s, offered, chosenId, onPick) {
     card.append(el('h3', '', inst.name + (lv ? ` <span class="mastery">${'★'.repeat(lv)}</span>` : '')));
     card.append(el('p', 'pick-flavor', inst.flavor || ''));
     card.append(el('p', 'pick-mods', modsText(inst.modifiers) + (lv ? ` · Mastery +${lv} to all stats` : '')));
-    // A pack's "instruments" may not carry a signature quirk (mystery personas).
+    // A pack's loadouts may not carry a signature quirk.
     if (inst.quirk) card.append(el('p', 'pick-quirk', `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`));
     card.addEventListener('click', () => { sfx.ui(); onPick(inst.id); });
     row.append(card);
@@ -1274,7 +1274,7 @@ function deltaChip(key, amount) {
       `${amount > 0 ? '+' : '−'}$${Math.abs(amount)}`);
   }
   // 'Hit!' keeps its exclamation flourish; everything else reads the manifest
-  // (metaFor covers any pack's stats + resources — money/clues/points included).
+  // (metaFor covers any pack's stats + resources).
   const label = key === 'hits' ? 'Hit!' : metaFor(key).name;
   const icon = metaFor(key).icon;
   return el('span', 'chip ' + (goodDelta ? 'chip-good' : 'chip-bad'),

@@ -3,9 +3,7 @@ title: The presenter
 description: How a genre owns its finale — endings, exit interviews, epilogue, headlines, DMs, and trophies.
 ---
 
-import { Aside, Code } from '@astrojs/starlight/components';
-import mysteryPresenterRaw from '@engine/packs/mystery-presenter.ts?raw';
-import { region } from '@snippet';
+import { Aside } from '@astrojs/starlight/components';
 
 The [`Presenter`](/big-break/docs/reference/types/interfaces/presenter/) is your
 genre's UI-facing voice. The engine produces a neutral `runSummary`; the
@@ -14,11 +12,10 @@ room. Without one, a run reaches a generic finale; with one, it reaches *your*
 game's finale.
 
 <Aside type="note" title="Why this exists">
-Before the presenter, a second genre literally crashed at its finale — the UI
-indexed the music pack's endings by a mystery path key and called music's
-epilogue, which does music-data lookups. The presenter is the seam that lets each
-genre render its own ending. It's optional, and the UI falls back to neutral
-behavior for anything a pack omits.
+The presenter is the seam that lets each genre render its own ending from the
+engine's neutral summary, instead of the UI reaching for one genre's ending copy
+and flavor lookups. It's optional, and the UI falls back to neutral behavior for
+anything a pack omits.
 </Aside>
 
 ## The shape
@@ -39,45 +36,70 @@ interface Presenter {
 ```
 
 `endings` is the one field you'll always fill: a map from each summit id (and the
-engine's fail-state keys — `burnout`, `cancelled`, `debt`) to `success` /
-`partial` / `failure` copy. Everything else is optional flavor.
+engine's fail-state keys — `burnout`, plus any your manifest declares) to
+`success` / `partial` / `failure` copy. Everything else is optional flavor.
 
 ## Endings, keyed by summit and fail state
 
-The mystery pack's endings map covers its three summits plus the reskinned fail
-states (`burnout` → "Medically Withdrawn", `cancelled` → "Voted Off", `debt` →
-"Bought Out"):
+The `endings` map has one entry per summit id, plus one per fail-state key. Each
+entry is a small object of `success` / `partial` / `failure` copy the ending
+screen renders. A pack reskins the engine's fail states here too — the label a
+`burnout` or `debt` ending shows is just copy:
 
-<Code code={region(mysteryPresenterRaw, 'endings')} lang="ts" title="js/packs/mystery-presenter.ts" mark={['sleuth:', 'burnout:', 'cancelled:', 'debt:']} />
+```ts
+export const endings = {
+  // one entry per summit id from the manifest…
+  megastar: {
+    success: { title: 'Megastar', body: 'Stadiums chant a name your mother didn’t give you.' },
+    partial: { title: 'Almost', body: 'The arena tour becomes a theatre tour. Still a tour.' },
+    failure: { title: 'The Long Way', body: 'Fame is a door that opened a crack, then a draft closed it.' },
+  },
+  // …plus one per fail-state key (burnout is universal; the rest are your manifest's):
+  burnout:   { title: 'Burned Out', body: 'You gave it everything, and everything took it.' },
+  cancelled: { title: 'Cancelled',  body: 'The scene moved on without an RSVP.' },
+  debt:      { title: 'In the Red', body: 'The math finally caught up with the dream.' },
+};
+```
 
 ## Flavor generators are pure functions of state
 
 `epilogue`, `headlines`, and `dms` are **pure** `state → copy` functions, seeded
 off the run so they're reproducible. Because they read the run's actual state, an
-ending describes what really happened — the mystery epilogue branches on the
-committed path, the clue count, and the money left on the table:
+ending describes what really happened — an epilogue can branch on the committed
+path, a subsystem counter, or the money left on the table:
 
-<Code code={region(mysteryPresenterRaw, 'epilogue')} lang="ts" title="js/packs/mystery-presenter.ts" />
+```ts
+import { mulberry32 } from '../engine.js';
+
+export function buildEpilogue(state) {
+  const rng = mulberry32(state.seed ?? 0); // seed off the run, never the clock
+  const lines = [];
+  if (state.path === 'megastar' && state.fame > 100) {
+    lines.push('The comeback documentary writes itself.');
+  }
+  if ((state.money ?? 0) < 0) lines.push('You left money on the table. On purpose, you tell people.');
+  return lines[Math.floor(rng() * lines.length)] ?? 'The story keeps going after the credits.';
+}
+```
 
 <Aside type="caution" title="Seed off the run, not the clock">
-These generators must be deterministic — seed the RNG from `state.seed` (as the
-mystery epilogue does with `mulberry32`), never from wall-clock time. A run's
-ending screen should be identical on replay, and the UI smoke test drives exactly
-this path to the finale.
+These generators must be deterministic — seed the RNG from `state.seed` (with
+`mulberry32`), never from wall-clock time. A run's ending screen should be
+identical on replay, and the UI smoke test drives exactly this path to the finale.
 </Aside>
 
 ## Trophies
 
 `trophies` are checked against the `runSummary`. Each has a `check(summary) =>
 boolean` predicate, so awards describe real feats — winning a specific summit,
-reaching the finale under a suspicion threshold, hitting a partial ending. This
+reaching the finale under an attrition threshold, hitting a partial ending. This
 is how the trophy room feels like *your* game rather than a generic checklist.
 
 ## The division of labor
 
 The engine decides *what happened* (the summary); the presenter decides *how it's
 told*. Keep game logic out of the presenter — it should read state and return
-copy, nothing more. That separation is what lets the same UI shell render either
+copy, nothing more. That separation is what lets the same UI shell render any
 genre.
 
 Next: ship it — [Balance & the safety net](/big-break/docs/shipping/balance/).

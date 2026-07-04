@@ -13,15 +13,14 @@
   manifest + deck + plugins + presenter (+ optional capabilities the engine
   feature-detects). Adding one edits new files only — no shared type, no engine
   line. Content lives in `js/packs/*`, numeric tuning in `js/config.ts`.
-- Seeded behavior is pinned by golden masters (music, mystery, and the
-  zero-subsystem probe). A golden diff is a bug unless intended — then
-  re-baseline deliberately (`tools/gen-golden.mjs`,
-  `tools/gen-mystery-golden.mjs`, `tools/gen-probe-golden.mjs`).
+- Seeded behavior is pinned by golden masters (music and the zero-subsystem
+  probe). A golden diff is a bug unless intended — then re-baseline deliberately
+  (`tools/gen-golden.mjs`, `tools/gen-probe-golden.mjs`).
 - Cross-pack invariants (`test/invariants.test.mjs`) guard the class of bug
   per-pack goldens are blind to (a core that behaves differently per genre).
 - Before pushing a balance/content change: `npm run build`, then
   `node tools/lint-content.mjs && node tools/simulate.mjs --check &&
-  node tools/mystery-sim.mjs --check && node --test && node test/ui-smoke.mjs`
+  node --test && node test/ui-smoke.mjs`
   (`npm run check` runs all but `node --test`). The UI smoke test drives each
   game to its finale in headless Chromium — the only coverage the goldens
   don't have. Judge feel with `node tools/simulate.mjs 4000 narrative`.
@@ -41,5 +40,4 @@
   source of truth for the number.
 
 Play: [music](https://sandstreampop.github.io/big-break/) ·
-[mystery](https://sandstreampop.github.io/big-break/mystery/) ·
 [docs](https://sandstreampop.github.io/big-break/docs/)

@@ -5,7 +5,7 @@ description: The core verb set, adding your genre's verbs via declaration mergin
 
 import { Aside, Code } from '@astrojs/starlight/components';
 import probeRaw from '@engine/packs/probe.ts?raw';
-import mysteryRaw from '@engine/packs/mystery.ts?raw';
+import musicRaw from '@engine/packs/music.ts?raw';
 import { region } from '@snippet';
 
 An [`Effect`](/big-break/docs/reference/types/interfaces/effect/) is the payload
@@ -35,10 +35,10 @@ file. The probe adds its one stat and one resource:
 
 <Code code={region(probeRaw, 'effect-augmentation')} lang="ts" title="js/packs/probe.ts" />
 
-The mystery pack adds its four stats plus the `clues` counter its plugin
-maintains:
+The music pack adds its four core stats and the subsystem verbs its plugins
+handle the same way:
 
-<Code code={region(mysteryRaw, 'effect-augmentation')} lang="ts" title="js/packs/mystery.ts" />
+<Code code={region(musicRaw, 'effect-augmentation')} lang="ts" title="js/packs/music.ts" />
 
 This is the Open/Closed Principle made literal: the shared type is **closed** to
 modification (you never edit `types.ts` to add a genre) but **open** to
@@ -47,9 +47,9 @@ genre touches new files only.
 
 <Aside type="note" title="Why not one big union?">
 An earlier design enumerated every genre's keys on one `Effect` union — a
-"god-union" that every new genre had to edit, and that leaked music's vocabulary
-into the mystery game's types. Declaration merging removes the shared edit while
-keeping the compile-time safety. That's the whole refactor in one interface.
+"god-union" that every new genre had to edit, and that leaked one genre's
+vocabulary into another's types. Declaration merging removes the shared edit
+while keeping the compile-time safety. That's the whole idea in one interface.
 </Aside>
 
 ## Who applies a verb
@@ -73,7 +73,7 @@ declared `effectVerbs`. A verb no one owns is a test failure, not a silent no-op
 ```ts twoslash
 // (Plugin/Effect shown inline so this sample is self-contained; the real ones
 // live in js/types.ts — see the API reference.)
-interface Effect { clues?: number; }
+interface Effect { favor?: number; }
 interface Plugin {
   id: string;
   effectVerbs?: string[];
@@ -81,11 +81,11 @@ interface Plugin {
 }
 // ---cut---
 // A plugin declares the verbs it owns, so the invariant can account for them:
-const cluesPlugin: Plugin = {
-  id: 'clues',
-  effectVerbs: ['clues'],
+const favorPlugin: Plugin = {
+  id: 'favor',
+  effectVerbs: ['favor'],
   onEffect(state, effects, ctx) {
-    if (effects.clues) state.clues = (state.clues || 0) + effects.clues;
+    if (effects.favor) state.favor = (state.favor || 0) + effects.favor;
   },
 };
 ```

@@ -4,7 +4,7 @@ description: Required fields vs optional capabilities, feature detection, and th
 ---
 
 import { Aside, Code } from '@astrojs/starlight/components';
-import mysteryRaw from '@engine/packs/mystery.ts?raw';
+import musicRaw from '@engine/packs/music.ts?raw';
 import probeRaw from '@engine/packs/probe.ts?raw';
 import { region } from '@snippet';
 
@@ -53,18 +53,19 @@ The engine reads the active pack directly — there is no normalization step.
 Optional fields are checked at their use site (`PACK.plugins ?? []`, `PACK.perks
 ?? {}`, `PACK.comeback?.(state)`): a genre that ships no plugins fires no
 subsystem hooks; one with no comeback mode skips the transform. The core never
-reaches for a subsystem by name, so there is nothing to stub — the mystery and
-probe packs declare only the required core plus the handful of options they use.
+reaches for a subsystem by name, so there is nothing to stub — a pack declares
+only the required core plus the handful of options it actually uses.
 </Aside>
 
-## A real second genre
+## A full-featured genre
 
-The mystery pack is the "realistic small game": a custom manifest, its own deck,
-one domain plugin (`clues`), a presenter — and only the capabilities it uses.
-Notice what *isn't* here: no accessories, arcs, venues, band, rivals, contracts,
-hustles, or weather.
+The music pack sits at the other end from the probe: a custom manifest, its own
+deck, a dozen domain plugins, a presenter, perks, interstitials, a comeback
+transform, and a run summarizer. It opts into nearly every optional capability —
+yet the required core is still just the five fields above; everything past them
+is a field it chose to provide:
 
-<Code code={region(mysteryRaw, 'pack')} lang="ts" title="js/packs/mystery.ts" />
+<Code code={region(musicRaw, 'pack')} lang="ts" title="js/packs/music.ts" />
 
 The `declare module` block just above it in the same file is how the pack adds
 its own effect verbs without editing a shared type — covered in
@@ -78,13 +79,12 @@ is adding a line here — and touching no engine file:
 
 ```ts title="js/packs/registry.ts"
 import { musicPack } from './music.js';
-import { mysteryPack } from './mystery.js';
 import { probePack } from './probe.js';
 
-export const PACKS: Pack[] = [musicPack, mysteryPack, probePack];
+export const PACKS: Pack[] = [musicPack, probePack];
 
 // The player-facing packs (the probe is a test fixture, never surfaced).
-export const GAME_PACKS: Pack[] = [musicPack, mysteryPack];
+export const GAME_PACKS: Pack[] = [musicPack];
 ```
 
 `PACKS` is everything (including test fixtures like the probe); `GAME_PACKS` is

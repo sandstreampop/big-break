@@ -98,7 +98,7 @@ in a fixed order so deltas (and any RNG a subsystem consumes) stay reproducible:
 2. **stat** deltas apply in `manifest.stats` order;
 3. **resource** deltas apply in `manifest.resources` order — each resource keeps
    its own arithmetic, and a plugin may *own* one via `applyResource`;
-4. plugins' `onEffect` handle their own verbs (the clues counter, song writes);
+4. plugins' `onEffect` handle their own verbs (e.g. song writes);
 5. flags, chains, and promises resolve;
 6. passive **act wear** adds a little burnout per card in later acts.
 

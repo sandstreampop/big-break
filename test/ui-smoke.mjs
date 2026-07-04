@@ -2,8 +2,8 @@
 // Boots EACH game in a real headless Chromium, plays a scripted run all the way
 // to the finale by clicking, and fails on ANY uncaught page error or console
 // error. This is what catches the class of bug the engine goldens are blind to:
-// a genre-neutral engine that still crashes in a music-shaped UI (the mystery
-// finale threw on ENDINGS['sleuth'] before the Presenter landed).
+// a genre-neutral engine that still crashes in a genre-shaped UI (e.g. a finale
+// that threw on a missing ending key before the Presenter landed).
 //
 // Playwright + Chromium are provided by the environment (global install). Run:
 //   npm run build && node test/ui-smoke.mjs
@@ -174,7 +174,6 @@ try {
 
 const GAMES = [
   { label: 'music', url: `${base}/`, ns: '', paths: 3 },
-  { label: 'mystery', url: `${base}/mystery/`, ns: '_mystery', paths: 3 },
 ];
 
 let failed = 0;

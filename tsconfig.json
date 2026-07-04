@@ -2,7 +2,7 @@
   // FROZEN toolchain config (Phase 0.5). Any change to target / module /
   // moduleResolution / lib — or the pinned typescript version in
   // package.json — can shift the emitted JS and is a deliberate RE-BASELINE
-  // event (see docs/design-engine-generalization.md, re-baseline register).
+  // event (regenerate the golden masters afterward).
   //
   // target es2022 == what the browsers and Node 22 already run, so tsc does
   // NO downleveling and injects NO helpers: the emit is behaviorally

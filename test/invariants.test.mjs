@@ -39,7 +39,7 @@ for (const pack of PACKS) {
   });
 
   // ── Generic readers: every winGates key must resolve through the engine's
-  // gateValue (§3.3), with no fame/hits/clues special-case. A key that can't
+  // gateValue (§3.3), with no fame/hits special-case. A key that can't
   // be read is a summit that can never be judged. ──
   test(`[${pack.id}] every winGates key resolves via gateValue`, () => {
     const state = freshRun(pack);

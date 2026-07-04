@@ -13,6 +13,7 @@ export const STATS: string[] = ['skill', 'cred', 'creativity', 'network'];
 // Resources with bespoke handlers in the engine (Phase 3.2 genericizes them).
 export const RESOURCES: string[] = ['fame', 'money', 'hits', 'pathProgress', 'rivalry'];
 
+// #region paths
 export const PATHS: Record<string, PathDef> = {
   megastar: {
     id: 'megastar',
@@ -36,15 +37,18 @@ export const PATHS: Record<string, PathDef> = {
     icon: '✎',
   },
 };
+// #endregion paths
 
 // R4 (can-lose pass) + wave-3 re-tune: gates sit above the comfortable ceiling
 // so a cruisy run books a Partial, not an automatic Success — re-centered to
 // keep Success in the 25–40% band with the doubled deck in play.
+// #region win-gates
 export const WIN_GATES: Record<string, Record<string, number>> = {
   megastar:   { fame: 112, network: 83, cred: 46 },
   studio:     { skill: 76, cred: 68, network: 55 },
   hitfactory: { creativity: 95, cred: 70, hits: 4 },
 };
+// #endregion win-gates
 
 export const STAT_META: Record<string, StatMeta> = {
   skill:      { name: 'Skill',      icon: '🎸' },

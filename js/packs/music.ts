@@ -1,7 +1,7 @@
 // The music pack (pack #1). Assembles everything the engine used to import
 // as hardwired content into a single injectable Pack. This is the only place
 // that knows the music game's content modules; the engine imports none of
-// them. A second game (mystery, pack #2) is a sibling of this file.
+// them. A second game would be a sibling of this file.
 
 import { EVENTS } from '../data/events.js';
 import { TUTORIAL_EVENTS } from '../data/tutorial.js';
@@ -66,6 +66,7 @@ const musicComeback = (state: RunState) => {
 // The music genre's effect vocabulary, declared by the pack rather than baked
 // into the shared Effect union (Phase C). Its four core stats and its venue /
 // songs subsystem verbs — added here, editing no shared type.
+// #region effect-augmentation
 declare module '../types.js' {
   interface Effect {
     // music core stats
@@ -97,7 +98,9 @@ declare module '../types.js' {
     demoMin?: number; chartingMin?: number; songsMin?: number; fadedMin?: number;
   }
 }
+// #endregion effect-augmentation
 
+// #region pack
 export const musicPack: Pack = {
   id: 'music',
   manifest: musicManifest,
@@ -128,3 +131,4 @@ export const musicPack: Pack = {
   loadouts: INSTRUMENTS,
   loadoutById: instrumentById,
 };
+// #endregion pack

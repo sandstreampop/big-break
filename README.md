@@ -1,14 +1,13 @@
 # BIG BREAK
 
-**Two games, one engine.** A swipe-left/right roguelike *core* — seeded,
-DOM-free, genre-agnostic — with swappable **content packs**. Pack #1 is a
-satirical music-career game; pack #2 is a reality-show murder mystery. Same
-engine, same UI shell, entirely different worlds.
+**An engine, and a game built on it.** A swipe-left/right roguelike *core* —
+seeded, DOM-free, genre-agnostic — with swappable **content packs**. Pack #1 is
+a satirical music-career game. The core carries no genre shape, so another game
+can ride the same engine and the same UI shell without forking either.
 
 **Play (no install; phone Safari/Chrome, works offline as a PWA):**
 
 - 🎸 **Big Break** — the music game: https://sandstreampop.github.io/big-break/
-- 🔍 **The Guest List** — the mystery (beta): https://sandstreampop.github.io/big-break/mystery/
 
 **Build a game on the engine:** 📚 **Docs** — https://sandstreampop.github.io/big-break/docs/
 
@@ -20,9 +19,8 @@ one of three summits while the world does its best to grind you into content.
 ## What this repo is
 
 It started as one game (Big Break) and has been refactored into a **stable core
-+ content packs**, so a second game rides the same engine instead of forking
-it. The full plan and its guardrails live in
-[`docs/design-engine-generalization.md`](docs/design-engine-generalization.md).
++ content packs**, so a second game can ride the same engine instead of forking
+it.
 
 - **The engine** (`js/engine.ts`) is genre-agnostic and DOM-free: it knows
   *rolls, decks, acts, fail states, finales, and a seeded RNG*, but imports
@@ -40,10 +38,10 @@ it. The full plan and its guardrails live in
             └───────────────▲───────────────────────────▲────────────────┘
                             │ injects                    │ injects
                  ┌──────────┴──────────┐      ┌──────────┴──────────┐
-                 │  music pack (#1)    │      │  mystery pack (#2)  │
+                 │  music pack (#1)    │      │  your pack (#2)     │
                  │  manifest + deck +  │      │  manifest + deck +  │
-                 │  venue/rival/band/  │      │  clues plugin       │
-                 │  songs plugins      │      │                     │
+                 │  venue/rival/band/  │      │  your own plugins   │
+                 │  songs plugins      │      │  (no engine edits)  │
                  └─────────────────────┘      └─────────────────────┘
 ```
 
@@ -67,19 +65,6 @@ Daily Grind, the Gauntlet, Mastery**; fifteen one-thumb **performance
 minigames**; procedural **headlines, DMs, epilogues, and a discography**
 generated from what actually happened in your run.
 
-## Pack #2 — The Guest List (mystery, beta)
-
-"Paradise hotel × murder mystery." Reality-show survival with an amateur-
-detective streak. Your stats are **Nerve, Charm, Insight, Alliance** (and
-**Suspicion** — draw too much and the house turns on you). Chase one of three
-summits: **The Sleuth** (name the killer — gated on insight, nerve, and clues),
-**The Darling** (win the audience), or **The Fixer** (run the house on nerve,
-charm, and cash). A **clues** subsystem — the structural sibling of the music
-game's songs — tracks what your notebook holds.
-
-A standalone beta at `/mystery/`, gated by its own balance checks; the music
-game is untouched.
-
 ---
 
 ## Architecture
@@ -90,11 +75,11 @@ game is untouched.
 | Boundary types | `js/types.ts` | `Pack`, `PackManifest`, `GameEvent`, `Effect`, `Plugin`, `RunState` — the typed seams between engine and packs. |
 | Balance knobs | `js/config.ts` | Pure numeric tuning (roll shape, thresholds, wear, pity, LP…). No taxonomy. |
 | Pack manifest | `js/packs/*-manifest.ts` | The genre's taxonomy: stat/resource lists, paths, `winGates`, stat metadata. |
-| Packs | `js/packs/music.ts`, `js/packs/mystery.ts` | Bundle a manifest + event deck + plugins + content helpers. |
-| Plugins | `js/packs/plugins/*` | Subsystems dispatched by the engine at lifecycle hooks (`onConstruct`, `modifyEffects`, `onEffect`, `afterResolve`, `onActBreak`, `onFinale`). Music: venue, rival, band, songs. Mystery: clues. |
+| Packs | `js/packs/music.ts` | Bundle a manifest + event deck + plugins + content helpers. |
+| Plugins | `js/packs/plugins/*` | Subsystems dispatched by the engine at lifecycle hooks (`onConstruct`, `modifyEffects`, `onEffect`, `afterResolve`, `onActBreak`, `onFinale`). Music: venue, rival, band, songs. |
 | Content | `js/data/*.ts` | Event decks and the music game's instruments/accessories/etc. |
 | UI shell | `js/ui.ts` | Screens + swipe physics; pack-driven via `boot(pack)`. |
-| Entries | `js/main.ts` (music), `js/mystery-main.ts` (mystery) | Thin per-game boots; shared guards in `js/platform.ts`. |
+| Entries | `js/main.ts` (music) | Thin per-game boot; shared guards in `js/platform.ts`. |
 
 ---
 
@@ -105,11 +90,9 @@ The source is **TypeScript**, compiled with a pinned `tsc` to `dist/` (ESM,
 
 ```bash
 npm ci            # install the pinned toolchain
-npm run build     # tsc → dist/ + copy static assets; emits BOTH games:
-                  #   dist/index.html         → music  (site root)
-                  #   dist/mystery/index.html → mystery (/mystery/)
+npm run build     # tsc → dist/ + copy static assets; emits the game:
+                  #   dist/index.html → music (site root)
 python3 -m http.server 8000 --directory dist   # → http://localhost:8000/
-                                               #   and http://localhost:8000/mystery/
 ```
 
 ## The safety net
@@ -120,18 +103,17 @@ identical seeded output on a fixed corpus. Everything below gates the deploy
 what's tested is what ships.
 
 ```bash
-node --test                         # golden masters: music (72 traces) + mystery (40).
-                                    # A diff means seeded behavior changed.
+node --test                         # golden masters: music (72 traces) + the
+                                    # zero-subsystem probe. A diff means seeded
+                                    # behavior changed.
 node tools/simulate.mjs --check     # music balance/reach gates (success band,
                                     # 0 dead cards, seed funnel, songs win-path)
-node tools/mystery-sim.mjs --check  # mystery gates (success band, deck not dry,
-                                    # all three summits winnable)
 node tools/lint-content.mjs         # content template/style/gating audit
 ```
 
 Re-baseline the goldens *only* when you deliberately change seeded behavior:
-`node tools/gen-golden.mjs` (music) / `node tools/gen-mystery-golden.mjs`
-(mystery), then eyeball the one-line-per-run diff.
+`node tools/gen-golden.mjs` (music) / `node tools/gen-probe-golden.mjs` (probe),
+then eyeball the one-line-per-run diff.
 
 For **feel** (not a gate), run the Monte-Carlo report — judge by `narrative`,
 which models a human following the story:
@@ -142,11 +124,12 @@ node tools/simulate.mjs 4000 narrative   # reach report, variance, seeds funnel
 
 ## Deploy
 
-**Both games AND the docs site ship from `main`, one workflow, one artifact.**
+**The game AND the docs site ship from `main`, one workflow, one artifact.**
 Push to `main` → CI builds `dist/`, runs every gate above (plus the docs build),
 and (only if green) deploys the whole `dist/` to GitHub Pages. The music game
-lands at the root, the mystery game at `/mystery/`, the docs at `/docs/`, all
-sharing one deploy. No `gh-pages` branch, no second deployer.
+lands at the root, the docs at `/docs/`, sharing one deploy. No `gh-pages`
+branch, no second deployer. A second game would deploy as a sibling at
+`/<pack-id>/` from the same artifact.
 
 ## Docs
 
@@ -165,15 +148,17 @@ inputs `tag` + full-40-char `sha`). It runs `release.yml` with the built-in
 credentials can push branches but not tag refs. Bump `version` in
 `package.json` to match.
 
-## Adding a third game
+## Adding a second game
 
 1. Write a manifest (`js/packs/yourgame-manifest.ts`): stat list, resource
    list, `paths`, `winGates`, stat metadata.
 2. Write an event deck (`js/data/yourgame-events.ts`) against `GameEvent`.
 3. Assemble a `Pack` (`js/packs/yourgame.ts`): manifest + deck + any subsystem
-   plugins; stub the helpers your genre doesn't use.
-4. Add a thin entry (`js/yourgame-main.ts` → `boot(yourgamePack)`) and an HTML
-   entry the build copies to `dist/yourgame/`.
+   plugins. Provide only the capabilities your genre uses — the engine
+   feature-detects the rest, so there's nothing to stub.
+4. Register it in `js/packs/registry.ts`, add a thin entry
+   (`js/yourgame-main.ts` → `boot(yourgamePack)`) and an HTML entry the build
+   copies to `dist/yourgame/`.
 5. Give it a `--check` gate and a golden corpus; wire both into CI.
 
 The engine doesn't change.

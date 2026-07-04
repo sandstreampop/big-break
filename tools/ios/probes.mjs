@@ -277,7 +277,7 @@ const zoomDefenseWired = {
   expectation: 'must-pass',
   scope: 'static',
   async run() {
-    for (const entry of ['index.html', 'mystery/index.html']) {
+    for (const entry of ['index.html']) {
       const meta = viewportMeta(await readDist(entry));
       assert(meta, `${entry} has no viewport meta`);
       assert(!/user-scalable\s*=\s*no/i.test(meta), `${entry} viewport hard-disables zoom: ${meta.trim()}`);

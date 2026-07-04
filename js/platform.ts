@@ -16,7 +16,7 @@ export function installMobileGuards(): void {
 // while KEEPING accessibility pinch-zoom. We deliberately do NOT:
 //   - lock zoom via the viewport meta (maximum-scale/user-scalable): iOS ignores
 //     it (a11y decision since iOS 10) and Android honors it, blocking low-vision
-//     users. Removed from index.html / mystery.html.
+//     users. Removed from index.html.
 //   - preventDefault Safari's `gesturestart`/`gesturechange` events: that was an
 //     iOS zoom lockdown that ALSO killed pinch-zoom. Removed.
 //   - "recover" from zoom by rewriting the viewport meta or poking visualViewport:

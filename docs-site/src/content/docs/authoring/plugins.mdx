@@ -4,26 +4,51 @@ description: The hook lifecycle, ordering, the per-resolution context, owning a 
 ---
 
 import { Aside, Code } from '@astrojs/starlight/components';
-import cluesRaw from '@engine/packs/plugins/clues.ts?raw';
 import songsRaw from '@engine/packs/plugins/songs.ts?raw';
-import { whole, region } from '@snippet';
+import { region } from '@snippet';
 
 A [`Plugin`](/big-break/docs/reference/types/interfaces/plugin/) is how a genre
-adds its **own state and lifecycle** — a clue board, a chart, a suspicion track —
+adds its **own state and lifecycle** — a chart, a reputation track, an inventory —
 without the engine knowing about it. The engine dispatches to your plugin at
 fixed lifecycle points; your plugin does whatever your genre needs there.
 
 ## The smallest possible subsystem
 
-The mystery pack's `clues` plugin is the whole idea in 28 lines. It owns one
-counter, applies one effect verb, and narrates at act breaks:
+A subsystem can be tiny. Here is the whole idea in a dozen lines: a plugin that
+owns one counter, applies one effect verb, and narrates at act breaks.
 
-<Code code={whole(cluesRaw)} lang="ts" title="js/packs/plugins/clues.ts" />
+```ts twoslash
+interface Plugin {
+  id: string;
+  effectVerbs?: string[];
+  onEffect?(state: any, effects: any, ctx: any): void;
+  onActBreak?(state: any, act: number, notes: string[]): void;
+}
+// ---cut---
+const favorPlugin: Plugin = {
+  id: 'favor',
+  effectVerbs: ['favor'],
+
+  onEffect(state, effects, ctx) {
+    const gained = effects.favor || 0;
+    if (gained) {
+      state.favor = (state.favor || 0) + gained;
+      // record the delta so the trace/UI shows it (same shape as resources)
+      ctx.deltas?.push({ key: 'favor', amount: gained });
+    }
+  },
+
+  onActBreak(state, _act, notes) {
+    const n = state.favor || 0;
+    if (n > 0) notes.push(`You've banked ${n} favor.`);
+  },
+};
+```
 
 That's a complete subsystem. It declares the verb it owns (`effectVerbs:
-['clues']`), maintains `state.clues` in `onEffect`, records a delta so the UI can
-show it, and adds a note at each act break. The sleuth summit then gates on
-`clues` — the manifest reads it through `gateValue` with no engine change.
+['favor']`), maintains `state.favor` in `onEffect`, records a delta so the UI can
+show it, and adds a note at each act break. A summit can then gate on `favor` —
+the manifest reads it through `gateValue` with no engine change.
 
 ## The hook lifecycle
 
@@ -85,7 +110,7 @@ finale — reusing the engine's own song machinery:
 
 ## The pattern to copy
 
-`clues` and `songs` are the same shape at two sizes. To add a subsystem:
+`favor` above and `songs` are the same shape at two sizes. To add a subsystem:
 
 1. Declare the verbs it owns in `effectVerbs`.
 2. Keep its state on `state` (a namespaced key or two).

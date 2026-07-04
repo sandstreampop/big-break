@@ -31,7 +31,6 @@ cards, every summit winnable. These are hard gates: they fail the build.
 
 ```bash
 node tools/simulate.mjs --check      # music balance/reach gates
-node tools/mystery-sim.mjs --check   # mystery gates
 ```
 
 The music gates, for example: success 25–40%, zero never-drawn ungated cards, a
@@ -42,8 +41,8 @@ pack should assert the equivalent for its own summits.
 
 A golden master pins **seeded runtime behavior**: a fixed corpus of seeds, each
 producing a one-line-per-run trace. A diff means seeded behavior changed — a bug
-unless you meant it. The shipping corpus is 72 music traces + 40 mystery + the
-probe.
+unless you meant it. The shipping corpus is 72 music traces plus the
+zero-subsystem probe.
 
 ```bash
 node --test test/*.test.mjs   # golden masters + invariants
@@ -54,7 +53,6 @@ diff:
 
 ```bash
 node tools/gen-golden.mjs          # music
-node tools/gen-mystery-golden.mjs  # mystery
 node tools/gen-probe-golden.mjs    # the zero-subsystem probe
 ```
 
@@ -96,7 +94,6 @@ Before pushing a balance or content change, run the full net:
 npm run build
 node tools/lint-content.mjs \
   && node tools/simulate.mjs --check \
-  && node tools/mystery-sim.mjs --check \
   && node --test \
   && node test/ui-smoke.mjs
 ```

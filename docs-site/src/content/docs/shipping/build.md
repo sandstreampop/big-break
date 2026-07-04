@@ -33,7 +33,7 @@ and emits an entry for **every** game pack — no hand-copied per-pack step:
   its own `<id>.html`, which references the shared compiled `js/`/`css/`/`assets`
   with `../`.
 
-So the mystery game lives at `/mystery/` and shares the exact same compiled
+So a second game would live at `/<its-id>/` and share the exact same compiled
 engine as the root game.
 
 ## Adding a game entry
@@ -42,7 +42,8 @@ To put your pack in front of players:
 
 1. Register it in `GAME_PACKS` (see [The Pack contract](/big-break/docs/concepts/pack/)).
 2. Add a thin entry module — `js/yourgame-main.ts` that calls `boot(yourgamePack)`.
-3. Add an HTML entry `yourgame.html` (copy `mystery.html`). The build copies it to
+3. Add an HTML entry `yourgame.html` (copy `index.html` and point its module
+   script at `js/yourgame-main.js`). The build copies it to
    `dist/yourgame/index.html` automatically.
 
 That's it — the build maps over the registry, so there's no build file to edit.
@@ -53,7 +54,7 @@ A pack in `GAME_PACKS` without a matching `<id>.html` is skipped with a warning.
 Because multiple games share one origin, per-pack isolation matters:
 
 - **Saves** are namespaced by pack id, and share/replay codes are pack-tagged, so
-  a music save never loads into the mystery game.
+  one game's save never loads into another.
 - **Telemetry** events carry a `pack` dimension, so analytics slice cleanly per
   genre. If you wire analytics, keep that dimension — it's what makes a shared
   build measurable per game. (See the engine's analytics schema in the repo.)

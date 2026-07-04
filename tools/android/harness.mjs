@@ -32,7 +32,7 @@ const MIME = {
 };
 
 // A minimal static file server rooted at `dir`. Directory requests resolve to
-// index.html so /mystery/ works exactly like the deployed site.
+// index.html so sub-path entries work exactly like the deployed site.
 export async function serve(dir = DIST) {
   if (!existsSync(dir)) {
     throw new Error(`dist not found at ${dir} — run "npm run build" first (the harness tests the emitted site, not source).`);

@@ -5,8 +5,8 @@ import { INSTRUMENTS } from './data/instruments.js';
 import { WALL_ITEMS } from './data/meta.js';
 
 // Per-game storage namespace. The music game keeps the original keys (so
-// existing players' saves survive); a second game (mystery) sets its own
-// suffix at boot so the two never clobber each other's meta or in-progress run.
+// existing players' saves survive); a second game sets its own suffix at boot
+// so the two never clobber each other's meta or in-progress run.
 let NS = '';
 export function setSaveNamespace(ns: string): void {
   NS = ns ? `_${ns}` : '';

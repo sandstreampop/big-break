@@ -1,7 +1,7 @@
-// Content linter: audits EVERY registered pack's event corpus (Phase A.3 —
-// closing the "mystery deck is unlinted" hole) plus the music pack's reactive-
-// text generators (DMs, headlines, epilogue) for template mistakes, style
-// drift, and unreachable gating. Run: node tools/lint-content.mjs
+// Content linter: audits EVERY registered pack's event corpus (Phase A.3 — so
+// no pack's deck ships unlinted) plus the music pack's reactive-text generators
+// (DMs, headlines, epilogue) for template mistakes, style drift, and
+// unreachable gating. Run: node tools/lint-content.mjs
 //
 // Structural checks run over every pack, reading the pack itself (events, arcs)
 // so a new genre is linted for free. The genre-specific inputs a check needs —
@@ -71,7 +71,6 @@ const DESCRIPTORS = {
       ];
     },
   },
-  mystery: { tokens: [], weatherIds: [] },
   probe: { tokens: [], weatherIds: [] },
 };
 

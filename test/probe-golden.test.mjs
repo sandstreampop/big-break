@@ -1,7 +1,7 @@
 // Probe-pack golden net. The probe has zero subsystems, so this snapshot pins
 // the engine's PURE genre-neutral core: a phase that re-couples the spine to a
-// genre trips here even when both real packs stay green. Same discipline as the
-// music/mystery goldens; regenerate with: node tools/gen-probe-golden.mjs
+// genre trips here even when the real pack stays green. Same discipline as the
+// music golden; regenerate with: node tools/gen-probe-golden.mjs
 //
 // Run: node --test test/probe-golden.test.mjs
 

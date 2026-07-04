@@ -7,16 +7,16 @@ name: CI + Deploy to GitHub Pages
 # Settings -> Pages -> Build and deployment -> Source -> "GitHub Actions".
 #
 # The `check` job is the regression net: content lint, the balance/reach
-# --check gates (music AND mystery), and the golden-master oracles — all run
-# against the EMITTED dist/ (what actually deploys), so what's tested === what
-# ships. `deploy` needs it, so a breach BLOCKS the deploy.
+# --check gate, and the golden-master oracles — all run against the EMITTED
+# dist/ (what actually deploys), so what's tested === what ships. `deploy`
+# needs it, so a breach BLOCKS the deploy.
 #
-# BOTH games AND the docs site ship from this one workflow, one artifact,
-# straight from main: the build emits the music game at dist/ (site root), the
-# mystery game at dist/mystery/, and the docs site at dist/docs/ (built from
-# docs-site/, which keeps its own toolchain isolated from the engine's pinned
-# tsc). Push to main → all three go live. The docs build is also a gate in the
-# check job, so docs drift blocks the deploy like any other regression.
+# The game AND the docs site ship from this one workflow, one artifact,
+# straight from main: the build emits the music game at dist/ (site root) and
+# the docs site at dist/docs/ (built from docs-site/, which keeps its own
+# toolchain isolated from the engine's pinned tsc). Push to main → both go
+# live. The docs build is also a gate in the check job, so docs drift blocks
+# the deploy like any other regression.
 
 on:
   push:
@@ -53,9 +53,7 @@ jobs:
         run: node tools/lint-content.mjs
       - name: Balance & reach gate (music, against dist/)
         run: node tools/simulate.mjs --check
-      - name: Balance gate (mystery pack, against dist/)
-        run: node tools/mystery-sim.mjs --check
-      - name: Golden-master regression (music + mystery, against dist/)
+      - name: Golden-master regression (music + probe, against dist/)
         # Scope to the golden/invariant oracles (DOM-free, no browser). Newer
         # Node test-runner globs otherwise also sweep in test/ui-smoke.mjs, which
         # needs a browser this job doesn't install; the UI smoke test is run
@@ -98,7 +96,7 @@ jobs:
       - name: Place docs under dist/docs (sibling of the games)
         # The engine build wipes and repopulates dist/, so this copy must run
         # AFTER it. The docs deploy at /big-break/docs/ (astro base), sharing the
-        # one Pages artifact with the games at the root and /mystery/.
+        # one Pages artifact with the game at the root.
         run: |
           mkdir -p dist/docs
           cp -r docs-site/dist/. dist/docs/

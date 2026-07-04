@@ -29,7 +29,7 @@ full story.
 
 ## Add a subsystem
 
-1. Write a `Plugin` (copy `js/packs/plugins/clues.ts` as the template).
+1. Write a `Plugin` (a small one like `js/packs/plugins/genre.ts` is a good template).
 2. Declare the verbs it owns in `effectVerbs` and handle them in `onEffect`.
 3. Keep its state on `state`; push `deltas` and `notes` for the UI.
 4. Register it in your pack's `plugins` array with a deliberate `priority`.
@@ -94,7 +94,6 @@ the change is intended, then regenerate and **eyeball the one-line-per-run diff*
 ```bash
 npm run build
 node tools/gen-golden.mjs          # music
-node tools/gen-mystery-golden.mjs  # mystery
 node tools/gen-probe-golden.mjs    # probe
 ```
 
@@ -107,6 +106,7 @@ reviewable, minimal record of exactly what your change moved.
 
 1. Add the pack to `GAME_PACKS` in the registry.
 2. Add `js/yourgame-main.ts` → `boot(yourgamePack)`.
-3. Add `yourgame.html` (copy `mystery.html`); the build emits `/yourgame/`.
+3. Add `yourgame.html` (copy `index.html` and point its module script at
+   `js/yourgame-main.js`); the build emits `/yourgame/`.
 
 → [Building & shipping](/big-break/docs/shipping/build/)

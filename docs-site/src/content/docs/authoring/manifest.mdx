@@ -4,7 +4,7 @@ description: stats, resources, paths, winGates, and the HUD metadata — the obj
 ---
 
 import { Aside, Code } from '@astrojs/starlight/components';
-import mysteryManifestRaw from '@engine/packs/mystery-manifest.ts?raw';
+import musicManifestRaw from '@engine/packs/music-manifest.ts?raw';
 import { region } from '@snippet';
 
 The [`PackManifest`](/big-break/docs/reference/types/interfaces/packmanifest/)
@@ -37,9 +37,9 @@ seeded runs change. Add new ones at the end.
 ## stats and resources
 
 `stats` are the per-run abilities tracked in `state.stats`; `resources` are the
-top-level currencies (`state.money`, `state.fame`, …). The mystery pack's four
-stats are `nerve / charm / insight / alliance`, and it maps the engine's generic
-resource slots to reality-show currencies via metadata.
+top-level currencies (`state.money`, `state.fame`, …). The music pack's four
+stats are `skill / cred / creativity / network`, and it maps the engine's
+generic resource slots to its currencies (fame, money, hits, …) via metadata.
 
 The engine reads both **generically** off the manifest — there is no hardcoded
 `fame` or `skill` anywhere in the core. That's what lets a genre with no "fame"
@@ -49,23 +49,23 @@ run without tripping a branch.
 
 Every run has one attrition stat under the reserved key `burnout`. You don't
 list it in `stats` — the engine always tracks it — but you *do* reskin it in
-`statMeta`. The mystery pack turns it into **Suspicion**; the probe calls it
+`statMeta`. The music pack keeps it as **Burnout**; the probe calls it
 **Strain**. Draw too much and it triggers the burnout fail state.
 
 ## paths and winGates — the summits
 
 A [`PathDef`](/big-break/docs/reference/types/interfaces/pathdef/) is a summit the
 player commits to at the crossroads; its `winGates` entry is the bar the finale
-judges. Here are the mystery pack's three, verbatim:
+judges. Here are the music pack's three, verbatim:
 
-<Code code={region(mysteryManifestRaw, 'paths')} lang="ts" title="js/packs/mystery-manifest.ts" />
+<Code code={region(musicManifestRaw, 'paths')} lang="ts" title="js/packs/music-manifest.ts" />
 
-<Code code={region(mysteryManifestRaw, 'win-gates')} lang="ts" title="js/packs/mystery-manifest.ts" />
+<Code code={region(musicManifestRaw, 'win-gates')} lang="ts" title="js/packs/music-manifest.ts" />
 
 A gate key can be **any** stat or resource — even a pack-specific one a plugin
-maintains. The sleuth summit gates on `clues`, a counter the
-[clues plugin](/big-break/docs/authoring/plugins/) owns; the engine reads it
-through the generic
+maintains. The Hit Factory summit gates on `hits`, a resource the
+[songs plugin](/big-break/docs/authoring/plugins/#owning-a-resource) mints and
+owns; the engine reads it through the generic
 [`gateValue`](/big-break/docs/reference/engine/functions/gatevalue/) reader, no
 special-casing.
 
@@ -82,9 +82,9 @@ at 1, then:
 
 <Aside type="tip" title="Tuning gates">
 Gate numbers are the difficulty dial. Set them by simulating, not by feel — a
-summit fed by an over-produced stat should gate higher. The mystery gates were
-tuned with `tools/mystery-sim.mjs` so Success stays losable and no single summit
-dominates. See [Balance & the safety net](/big-break/docs/shipping/balance/).
+summit fed by an over-produced stat should gate higher. The music gates were
+tuned with `tools/simulate.mjs --check` so Success stays losable and no single
+summit dominates. See [Balance & the safety net](/big-break/docs/shipping/balance/).
 </Aside>
 
 ## HUD metadata

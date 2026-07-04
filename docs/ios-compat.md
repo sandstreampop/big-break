@@ -49,7 +49,7 @@ manual only.
   accessibility decision since iOS 10), so the Android-style meta zoom-lock does
   nothing on iOS. Double-tap-zoom is native unless the element opts out.
 - **Fix (product-approved, handoff §7):** dropped `user-scalable=no`/`maximum-scale`
-  from the viewport meta (`index.html`, `mystery.html`); moved zoom-blocking to
+  from the viewport meta (`index.html`); moved zoom-blocking to
   **`touch-action: manipulation`** on tappable/draggable surfaces (`css/style.css`),
   which disables double-tap-zoom while **keeping accessibility pinch-zoom**; added
   a belt-and-suspenders **non-passive `touchend`** guard that `preventDefault`s a
