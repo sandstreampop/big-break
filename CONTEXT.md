@@ -13,9 +13,28 @@ Final.
 _Avoid_: run, game, playthrough
 
 **Islander**:
-The single contestant the player steers for the whole Season — the engine's
-player character.
+Any contestant in the villa — the player's or an NPC. The player steers one
+Islander for the whole Season (chosen via a loadout/persona; see Type).
 _Avoid_: contestant, player, character
+
+**Cast**:
+The named roster of NPC Islanders (roughly 5–8), each embodying a recognizable
+Love Island Type. Your Partner is drawn from the Cast; Bombshells join it;
+recouplings pick from it.
+_Avoid_: roster, NPCs, other islanders
+
+**Type**:
+The recognizable Love Island stereotype an Islander embodies, signalled by their
+name (the loyal girl-next-door, the savage game-player, the golden-retriever
+boy, the villain). The shared archetype vocabulary: NPC Cast members ARE Types,
+and the player's selectable personas (the engine's *loadouts*) are playable
+Types.
+_Avoid_: archetype, stereotype, class
+
+**Rival**:
+The Cast member who recurs as your antagonist — trying to steal your Partner or
+out-shine you. The engine's *rival subsystem*, reskinned.
+_Avoid_: nemesis, enemy
 
 **Villa moment**:
 A single card the player is dealt: a date, a challenge, a recoupling, a text.
