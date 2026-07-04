@@ -66,3 +66,32 @@ The emotional-toll meter — spiralling, overthinking, villa anxiety. The engine
 *burnout* slot, reskinned. Rises from drama, betrayal, and grafting too hard;
 maxing it ends the Season as a tearful voluntary exit ("you walk").
 _Avoid_: burnout, stress, meltdown
+
+## Resources
+
+Accumulating quantities that carry the Summit gates. The engine's *resources*.
+
+**Public**:
+Your share of the public's favour / vote. Anchors the *Win the Villa* gate and
+doubles as the finale momentum clutch (the late-season vote surge).
+_Avoid_: votes, popularity, fame
+
+**Followers**:
+Post-show clout. Anchors *The Brand*. Drama and screen-time feed Followers
+rather than being a resource of their own.
+_Avoid_: clout, fans, social
+
+**Bond**:
+The strength of your strongest connection. Anchors *The Real Thing*. Not a flat
+resource — owned and moved by the Coupling subsystem (see below), the way
+music's charts subsystem owns "hits".
+_Avoid_: connection, chemistry, love
+
+## Subsystems
+
+Optional pack-owned mechanics (the engine's *plugins*).
+
+**Coupling**:
+The subsystem modelling who the Islander is partnered with and how strong that
+tie is. Owns the Bond value and drives recouplings. (Design in progress.)
+_Avoid_: relationship, partnership
