@@ -4,8 +4,9 @@ Output of a `grill-with-docs` session. This is a **design record, not a spec and
 not built code** — it captures the shared understanding reached by interviewing,
 so a later `to-prd` pass can synthesise a PRD without re-interviewing.
 
-Canonical vocabulary lives in [`/CONTEXT.md`](../CONTEXT.md). Hard decisions live
-in [`docs/adr/`](./adr/). This doc is the map that ties them together.
+Canonical vocabulary lives in [`CONTEXT.md`](./CONTEXT.md) (this folder). Hard
+decisions live in [`adr/`](./adr/) (this folder). This doc is the map that ties
+them together.
 
 ## The idea
 
