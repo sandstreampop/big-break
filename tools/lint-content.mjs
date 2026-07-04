@@ -35,12 +35,14 @@ import { bangIssue, tasteIssues } from './taste-core.mjs';
 // Each pack's taste DATA lives with the game; the checker above is genre-neutral.
 import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';
 
-// Requires keys are the engine's generic deck-eligibility vocabulary (the
-// Requires type), shared by every pack.
-const KNOWN_REQ = new Set(['flagsAll', 'flagsNone', 'moneyMax', 'moneyMin', 'burnoutMin', 'fameMin', 'fameMax',
-  'gear', 'rivalryMin', 'rivalryMax', 'genreAny', 'venueAny', 'venueNone', 'venueLevelMin', 'venueIs', 'rivalIs',
-  'hustleMin', 'bandMin', 'bandMax', 'bandHas', 'demoMin', 'chartingMin', 'songsMin', 'fadedMin', 'nemesis', 'stats',
-  'anyOf', 'weatherIs']);
+// The engine's NEUTRAL deck-eligibility vocabulary (the core Requires type);
+// each pack adds the predicate keys its own plugins register (Plugin.requires),
+// mirroring how requiresOk actually dispatches. 'gear' is a legacy music key.
+const NEUTRAL_REQ = ['anyOf', 'flagsAll', 'flagsNone', 'burnoutMin', 'stats', 'min', 'max', 'gear'];
+const knownReqFor = (pack) => new Set([
+  ...NEUTRAL_REQ,
+  ...(pack.plugins || []).flatMap((p) => Object.keys(p.requires || {})),
+]);
 
 // Engine/UI-set flags every pack can rely on existing (fail states, minigame
 // echoes, comeback). Pack-specific flags are discovered from the deck's addFlag.
@@ -80,12 +82,31 @@ const DESCRIPTORS = {
     },
   },
   probe: { tokens: [], weatherIds: [] },
-  // The Love Island taste floor is wired ahead of the pack (Phase A precedes
-  // content, Phase C). tokens/weather are TBD (Phase C tag taxonomy); the taste
-  // block (cliché blocklist + outcome-length cap) is the game's own data, kept in
-  // docs/games/love-island/taste.mjs alongside its VOICE.md, and activates the
-  // moment the pack registers.
-  'love-island': { tokens: [], weatherIds: [], taste: LOVE_ISLAND_TASTE },
+  // Love Island: the taste block (cliché blocklist + outcome-length cap) is the
+  // game's own data (docs/games/love-island/taste.mjs, mirroring VOICE.md).
+  // Tokens are the pack's presenter-filled identities. The "arc" here is the
+  // producers plugin's scheduled-beat delivery (Bombshells, Movie Night, the
+  // girls' Recoupling, Meet the Parents): those cards are requires-gated
+  // VARIANTS with their own forced delivery window, exactly the class the
+  // dark-gated exemption exists for.
+  'love-island': {
+    tokens: ['partner', 'rival', 'ex', 'mate', 'bombshell'],
+    weatherIds: [],
+    taste: LOVE_ISLAND_TASTE,
+    // Flags set by the pack's PLUGINS (not by a card's addFlag), so the
+    // required-flag reachability check knows they exist.
+    pluginFlags: ['li_revealed', 'li_partner_revealed', 'li_betrayed', 'li_sympathy',
+      'li_stranded', 'li_came_clean', 'li_dumped_single', 'li_rival_active'],
+    arcs: [{
+      id: 'li_scheduled_beats',
+      setup: ['li_bomb1', 'li_bomb2', 'li_bomb2_steal', 'li_bomb2_single',
+        'li_movienight_reveal', 'li_movienight_clean',
+        'li_recoup1_choose', 'li_recoup1_choose_single',
+        'li_recoup1_exposed', 'li_recoup1_exposed_single',
+        'li_parents', 'li_parents_messy'],
+      payoffs: [],
+    }],
+  },
 };
 
 const issues = [];
@@ -101,6 +122,7 @@ for (const pack of PACKS) {
   const tag = (msg) => issues.push(`[${pack.id}] ${msg}`);
   totalEvents += EVENTS.length;
 
+  const KNOWN_REQ = knownReqFor(pack);
   const checkRequires = (evId, r) => {
     for (const k of Object.keys(r || {})) {
       if (!KNOWN_REQ.has(k)) tag(`${evId}: unknown requires key ${k}`);
@@ -151,9 +173,10 @@ for (const pack of PACKS) {
 
   // ── M3 authoring rules (Reach & Rush §3) ──
 
-  // 1. Every flag a card requires must be set somewhere (or by the engine/UI)
+  // 1. Every flag a card requires must be set somewhere (or by the engine/UI,
+  //    or by one of the pack's own plugins — descriptor.pluginFlags)
   {
-    const setFlags = new Set(ENGINE_FLAGS);
+    const setFlags = new Set([...ENGINE_FLAGS, ...(desc.pluginFlags || [])]);
     const addFrom = (effects) => { if (effects?.addFlag) setFlags.add(effects.addFlag); };
     for (const ev of EVENTS) {
       for (const side of ['left', 'right']) {

@@ -11,7 +11,7 @@ import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
 import { musicPack } from './packs/music.js';
 import * as save from './save.js';
-import { artFor, sceneFor } from './art.js';
+import { artFor, sceneFor, registerArt } from './art.js';
 import { buildChart, buildChartWithMovement, playerChartInfo, collabArtistFor } from './charts.js';
 import { CONTRACTS, contractById } from './data/contracts.js';
 import { hustleById } from './data/hustles.js';
@@ -51,9 +51,12 @@ const el = (tag, cls?, html?) => {
   return n;
 };
 
-// Fill {rival}/{rivalVibe}/{genre}/{collabArtist} placeholders with this run's identities
+// Fill {token} placeholders with this run's identities. A pack that ships its
+// own token vocabulary provides presenter.fillTokens; the default resolves the
+// music tokens ({rival}/{genre}/{song}/{venue}…) exactly as before.
 function fillText(s) {
   if (!s || !run) return s;
+  if (PRES.fillTokens) return PRES.fillTokens(run, s);
   const r = rivalById(run.rival);
   const g = genreById(run.genre);
   return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe)
@@ -88,6 +91,7 @@ export function boot(pack = musicPack) {
   STAT_META = pack.manifest.statMeta;
   RESOURCE_META = pack.manifest.resourceMeta || {};
   PRES = pack.presenter || musicPack.presenter;
+  registerArt(PRES.art); // a pack's own art slots join the scene painter
   save.setSaveNamespace(pack.id === 'music' ? '' : pack.id);
   meta = save.loadMeta();
   engine.useContentPack(pack); // this game's content; set before any engine call
@@ -174,7 +178,7 @@ function renderTitle() {
   // floating notes (attract mode)
   if (!reducedMotion()) {
     const notes = el('div', 'title-notes');
-    const glyphs = ['♪', '♫', '♩', '♬'];
+    const glyphs = PRES.title?.glyphs || ['♪', '♫', '♩', '♬'];
     for (let i = 0; i < 9; i++) {
       const n = el('span', 'title-note', glyphs[i % glyphs.length]);
       n.style.left = (5 + (i * 37) % 90) + '%';
@@ -185,9 +189,10 @@ function renderTitle() {
     }
     s.append(notes);
   }
-  s.append(el('div', 'title-logo', 'BIG<br>BREAK'));
+  s.append(el('div', 'title-logo', PRES.title?.logo || 'BIG<br>BREAK'));
   const dayNum = hashStr(todayStr());
-  s.append(el('p', 'title-tag', TAGLINES[dayNum % TAGLINES.length]));
+  const taglines = PRES.title?.taglines || TAGLINES;
+  s.append(el('p', 'title-tag', taglines[dayNum % taglines.length]));
 
   const saved = save.loadRun();
   const menu = el('div', 'menu');
@@ -220,10 +225,13 @@ function renderTitle() {
       ? `📅 Daily Grind ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
       : `📅 Daily Grind — ${today}`,
     '', () => { save.clearRun(); startNewRun(true); }));
-  if (meta.successPaths?.length > 0) {
+  // Comeback mode exists only for packs that ship the transform.
+  if (meta.successPaths?.length > 0 && activePack.comeback) {
     menu.append(btn('🦅 Comeback Run (×1.2 LP)', '', () => { save.clearRun(); startNewRun(false, true); }));
   }
-  if (meta.runs > 0) {
+  // The Gauntlet builds its weekly loadout from pack data; only packs that
+  // declare the mode offer it.
+  if (meta.runs > 0 && PRES.gauntlet) {
     const week = weekStr();
     const gDone = meta.gauntletResults?.[week];
     menu.append(btn(
@@ -232,20 +240,25 @@ function renderTitle() {
         : `⚔️ The Gauntlet — ${week}`,
       '', () => { save.clearRun(); startGauntlet(); }));
   }
-  menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', renderWall));
+  if ((PRES.wallItems || []).length) menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', renderWall));
   menu.append(btn('🎖 Trophy Room', '', renderTrophies));
   if (meta.runs > 0) menu.append(btn('📊 The Résumé', '', renderResume));
   menu.append(btn('⚙ Settings', '', renderSettings));
   s.append(menu);
-  // Today in the industry — flavor headline from the evergreen pool
+  // Today's flavor headline: pack-provided title news, else the evergreen
+  // generator pool exercised with the music-shaped fake state (music default).
   const fakeState = {
     flavorSeed: dayNum, act: 1, cardLog: [], fame: 0, money: 50, hits: 0,
     stats: { burnout: 0, cred: 50, skill: 0 }, rival: 'vanta', loadout: 'kazoo',
     hustles: [], rivalry: 3,
   };
-  const news = (PRES.headlines?.(fakeState as any, 1) || [])[0];
+  const news = PRES.title?.news
+    ? PRES.title.news(dayNum)
+    : (PRES.headlines?.(fakeState as any, 1) || [])[0];
   if (news) s.append(el('p', 'title-news', `📰 ${news.text} <span>— ${news.src}</span>`));
-  s.append(el('p', 'title-foot', `Runs: ${meta.runs} · Best fame: ${meta.best.fame} · Legacy: ${meta.lpEarnedTotal} LP`));
+  s.append(el('p', 'title-foot', PRES.title?.foot
+    ? PRES.title.foot(meta)
+    : `Runs: ${meta.runs} · Best fame: ${meta.best.fame} · Legacy: ${meta.lpEarnedTotal} LP`));
 }
 
 function btn(label, cls, onTap) {
@@ -323,7 +336,11 @@ function startNewRun(daily = false, comeback = false) {
       : activePack.id === 'music'
       ? save.unlockedInstrumentIds(meta) // music: default + Career-Wall unlocks
       : activePack.loadouts.filter((i) => i.unlockedByDefault).map((i) => i.id);
-    const offered = engine.offerLoadouts(pool, engine.mulberry32(seed));
+    // A pack may offer its whole roster (e.g. persona × gender picks) instead
+    // of the seeded three.
+    const offered = PRES.offerAllLoadouts
+      ? pool.map((id) => activePack.loadoutById(id)).filter(Boolean)
+      : engine.offerLoadouts(pool, engine.mulberry32(seed));
     if (chosenInst && !offered.some((i) => i.id === chosenInst)) chosenInst = null;
     const keepScroll = s.scrollTop;
     s.innerHTML = '';
@@ -369,8 +386,9 @@ function startNewRun(daily = false, comeback = false) {
       }
       s.append(gRow);
     }
-    // Contract picker (Pass 9): optional clause, at most one
-    const contracts = save.unlockedContractIds(meta).map((id) => contractById(id)).filter(Boolean);
+    // Contract picker (Pass 9): optional clause, at most one — a music
+    // subsystem, like the venue/genre pickers above.
+    const contracts = isMusic ? save.unlockedContractIds(meta).map((id) => contractById(id)).filter(Boolean) : [];
     if (contracts.length && !daily) {
       s.append(el('h3', 'contract-head', 'Optional: sign a contract'));
       const row = el('div', 'contract-row');
@@ -412,7 +430,9 @@ function renderInstrumentRow(s, offered, chosenId, onPick) {
     const card = el('div', 'pick-card' + (inst.id === chosenId ? ' selected' : ''));
     card.append(artFor(inst.art, 'pick-art'));
     const lv = masteryLevel(inst.id);
-    card.append(el('h3', '', inst.name + (lv ? ` <span class="mastery">${'★'.repeat(lv)}</span>` : '')));
+    // A persona may carry a gender tag (packs where the pick is persona × gender).
+    const genderTag = inst.genderLabel ? ` <span class="mastery">${inst.genderLabel}</span>` : '';
+    card.append(el('h3', '', inst.name + genderTag + (lv ? ` <span class="mastery">${'★'.repeat(lv)}</span>` : '')));
     card.append(el('p', 'pick-flavor', inst.flavor || ''));
     card.append(el('p', 'pick-mods', modsText(inst.modifiers) + (lv ? ` · Mastery +${lv} to all stats` : '')));
     // A pack's loadouts may not carry a signature quirk.
@@ -507,10 +527,13 @@ function renderHud() {
   game.classList.toggle('burnout-hot', run.stats.burnout >= 72);
   const top = el('div', 'hud-top');
   const actWrap = el('span', 'hud-act-wrap');
+  const actNames = PRES.actNames || ['', 'The Garage', 'The Grind', 'The Reckoning'];
   actWrap.append(el('span', 'hud-act', run.tutorial
     ? 'FIRST GIG · The Rubber Room'
-    : `ACT ${run.act} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][run.act]}`));
-  if (!run.tutorial) {
+    : `ACT ${run.act} · ${actNames[run.act]}`));
+  // The Hot 10 belongs to the songs subsystem — only runs that carry it get
+  // the chart button.
+  if (!run.tutorial && run.songs) {
     const chartingN = (run.songs || []).filter((s) => s.status === 'charting' && s.pos).length;
     const chartBtn = el('button', 'chart-btn', chartingN ? `📈<span class="chart-badge">${chartingN}</span>` : '📈');
     chartBtn.addEventListener('click', () => { sfx.ui(); showChart(); });
@@ -521,11 +544,15 @@ function renderHud() {
   actWrap.append(helpBtn);
   top.append(actWrap);
   const counters = el('span', 'hud-counters');
-  if (run.encore > 0) counters.append(el('span', 'hud-encore', `🎇${run.encore > 1 ? '×' + run.encore : ''}`));
-  if (run.pathProgress > 0 && run.path) counters.append(el('span', 'hud-momentum', `▲${run.pathProgress}`));
-  counters.append(el('span', 'hud-fame', `★ ${run.fame}`));
-  counters.append(el('span', 'hud-money' + (run.money < 0 ? ' neg' : ''), `$${run.money}`));
-  if (run.path === 'hitfactory' || run.hits > 0) counters.append(el('span', 'hud-hits', `♪ ${run.hits} hit${run.hits === 1 ? '' : 's'}`));
+  if (PRES.hudCounters) {
+    for (const c of PRES.hudCounters(run)) counters.append(el('span', c.cls || 'hud-fame', c.html));
+  } else {
+    if (run.encore > 0) counters.append(el('span', 'hud-encore', `🎇${run.encore > 1 ? '×' + run.encore : ''}`));
+    if (run.pathProgress > 0 && run.path) counters.append(el('span', 'hud-momentum', `▲${run.pathProgress}`));
+    counters.append(el('span', 'hud-fame', `★ ${run.fame}`));
+    counters.append(el('span', 'hud-money' + (run.money < 0 ? ' neg' : ''), `$${run.money}`));
+    if (run.path === 'hitfactory' || run.hits > 0) counters.append(el('span', 'hud-hits', `♪ ${run.hits} hit${run.hits === 1 ? '' : 's'}`));
+  }
   top.append(counters);
   hud.append(top);
 
@@ -596,7 +623,8 @@ function renderHud() {
     });
   }
   for (const id of run.accessories || []) {
-    const acc = accessoryById(id);
+    const acc = itemById(id);
+    if (!acc) continue;
     const active = accActive(acc);
     chip('gear-chip' + (active ? '' : ' inert'), acc.name + (active ? '' : ' 💤'), {
       art: acc.art, title: acc.name, lines: [
@@ -629,6 +657,12 @@ function renderHud() {
   hud.append(gearRow);
 }
 
+// Resolve an equipped-item id through the active pack's catalog (presenter
+// hook), else music's accessories — the original static default.
+function itemById(id) {
+  return PRES.itemById?.(id) || accessoryById(id);
+}
+
 function accActive(acc) {
   if (acc.compatibility?.universal) return true;
   return (acc.compatibility?.families || []).includes(activePack.loadoutById(run.loadout).family);
@@ -642,6 +676,15 @@ let prevStats = null; // for stat-rail delta floaters
 function vibrate(pattern) {
   if (meta.settings.haptics === false) return;
   try { navigator.vibrate?.(pattern); } catch (e) {}
+}
+
+// The art system's reactive-scene inputs for this run — a pack maps its own
+// meters onto them (presenter.vibe); the default is music's trio.
+function vibeFor() {
+  if (run && PRES.vibe) return PRES.vibe(run);
+  return run
+    ? { fame: run.fame, network: run.stats.network, burnout: run.stats.burnout }
+    : { fame: 0, network: 0, burnout: 0 };
 }
 
 // Floating +N/−N chips over the stat rail when values changed since last card
@@ -698,7 +741,9 @@ function dealCard() {
   const area = $('#card-area');
   area.innerHTML = '';
 
-  const card = el('div', 'card' + (ev.flashpoint ? ' flashpoint' : ''));
+  // A pack may class up a card for its own framing tiers (e.g. a ceremony).
+  const packCls = PRES.cardClass?.(ev);
+  const card = el('div', 'card' + (ev.flashpoint ? ' flashpoint' : '') + (packCls ? ' ' + packCls : ''));
   ambient(sceneFor(ev.art));
   if (ev.flashpoint) {
     // U2: the moment must be LEGIBLE — foil frame, sting, badge
@@ -706,9 +751,7 @@ function dealCard() {
     vibrate([20, 30, 20, 30, 60]);
     card.append(el('div', 'flashpoint-badge', '⚡ FLASHPOINT'));
   }
-  card.append(artFor(ev.art, 'card-art', {
-    fame: run.fame, network: run.stats.network, burnout: run.stats.burnout,
-  }));
+  card.append(artFor(ev.art, 'card-art', vibeFor()));
   card.append(el('div', 'card-context', fillText(ev.context)));
   // Some cards carry a richer text variant when the rival is a true
   // cross-run nemesis (3rd+ meeting) rather than an in-run feud.
@@ -752,14 +795,14 @@ function dealCard() {
   const encoreBar = $('#encore-bar');
   encoreBar.innerHTML = '';
   if ((run.encore || 0) > 0 && !contractById(run.contract)?.mods?.disableEncore) {
-    const eb = el('button', 'encore-btn', `🎇 Encore ready — spend for a boosted roll`);
+    const encoreReady = PRES.encore?.ready || '🎇 Encore ready — spend for a boosted roll';
+    const encoreArmedLabel = PRES.encore?.armed || '🎇 ENCORE ARMED — this swipe rolls hot';
+    const eb = el('button', 'encore-btn', encoreReady);
     eb.addEventListener('click', () => {
       encoreArmed = !encoreArmed;
       eb.classList.toggle('armed', encoreArmed);
       currentCard?.classList.toggle('encore-glow', encoreArmed);
-      eb.textContent = encoreArmed
-        ? '🎇 ENCORE ARMED — this swipe rolls hot'
-        : '🎇 Encore ready — spend for a boosted roll';
+      eb.textContent = encoreArmed ? encoreArmedLabel : encoreReady;
       sfx.ui();
       paintOdds();
     });
@@ -991,7 +1034,7 @@ function showInspectStat(key) {
   showInspect({
     emoji: STAT_META[key].icon,
     title: `${STAT_META[key].name}: ${run.stats[key]}`,
-    lines: [STAT_INFO[key]],
+    lines: [(PRES.statInfo || STAT_INFO)[key]].filter(Boolean),
   });
 }
 
@@ -1017,12 +1060,14 @@ function showHelp() {
     'The small stat icons on each button show <b>what the choice rolls against</b> — bright is the main stat, faded is secondary. Build the stats your path needs, then pick fights you can win.'));
   box.append(el('p', 'help-block', 'The dot next to each choice is your <b>risk tell</b>:'));
   box.append(legend);
-  box.append(el('p', 'help-block',
-    '🔥 <b>Burnout</b> is the danger stat: it drags every roll down and ends your career at 100. Rest is a real decision.'));
-  box.append(el('p', 'help-block',
-    '🎇 Rolling an INCREDIBLE banks an <b>Encore</b> — arm it later to boost the swipe that matters.'));
-  box.append(el('p', 'help-block',
-    '▲ <b>Momentum</b> from big wins can push a near-miss finale over the line. ★ Fame and $ money are score and fuel, not stats.'));
+  // The subsystem cheat-sheet is the pack's (its meters, its banked-bonus
+  // flavor); the music trio is the default.
+  const helpBlocks = PRES.helpBlocks || [
+    '🔥 <b>Burnout</b> is the danger stat: it drags every roll down and ends your career at 100. Rest is a real decision.',
+    '🎇 Rolling an INCREDIBLE banks an <b>Encore</b> — arm it later to boost the swipe that matters.',
+    '▲ <b>Momentum</b> from big wins can push a near-miss finale over the line. ★ Fame and $ money are score and fuel, not stats.',
+  ];
+  for (const b of helpBlocks) box.append(el('p', 'help-block', b));
   box.append(el('p', 'tap-hint', 'tap to close'));
   ov.append(box);
   const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
@@ -1290,7 +1335,8 @@ function gearChooser(newAcc, result) {
   box.append(el('p', 'result-text', `Swap something out for the <b>${newAcc.name}</b>?`));
   const list = el('div', 'gear-choices');
   for (const id of run.accessories || []) {
-    const acc = accessoryById(id);
+    const acc = itemById(id);
+    if (!acc) continue;
     list.append(btn(`Drop ${acc.name}`, '', () => {
       equipAccessory(run, newAcc.id, id);
       save.saveRun(run);
@@ -1463,31 +1509,35 @@ function showBrammies(step) {
 // them — otherwise this is a blind choice. So we render the committed
 // path's gate readout up top and annotate every closer against it.
 
-// What one closer does to the win gates, in plain language.
+// What one closer does to the win gates, in plain language. Reads everything
+// through the manifest (gateValue, the momentum/cost resource roles), so any
+// pack's closers get an honest readout.
 function closerImpact(opt) {
   const gates = activePack.manifest.winGates[run.path] || {};
   const pathName = run.path ? PATHS[run.path].name : 'your path';
+  const statName = metaFor(opt.stat).name;
 
-  if (opt.stat === 'pathProgress') {
-    const cur = run.pathProgress || 0;
+  // A momentum-resource closer that isn't itself a gate: the clutch readout.
+  if (opt.stat === activePack.manifest.momentumResource && gates[opt.stat] === undefined) {
+    const cur = engine.gateValue(run, opt.stat) || 0;
     const after = cur + opt.amount;
     const allNear = pathFit(run.path).readings.every((r) => r.ratio >= CONFIG.nearMissRatio);
     if (after >= CONFIG.momentumForUpgrade && allNear) {
-      return { text: `Momentum ${cur}→${after}. Every gate is near-met — this can upgrade a Partial to a SUCCESS.`, clutch: true };
+      return { text: `${statName} ${cur}→${after}. Every gate is near-met — this can upgrade a Partial to a SUCCESS.`, clutch: true };
     }
     if (allNear) {
-      return { text: `Momentum ${cur}→${after}. Gates are close, but you need ${CONFIG.momentumForUpgrade}+ Momentum to force the upgrade.`, clutch: false };
+      return { text: `${statName} ${cur}→${after}. Gates are close, but you need ${CONFIG.momentumForUpgrade}+ ${statName} to force the upgrade.`, clutch: false };
     }
-    return { text: `Momentum ${cur}→${after}. Only clutches a win when EVERY gate is ≥85% — some aren't yet.`, clutch: false };
+    return { text: `${statName} ${cur}→${after}. Only clutches a win when EVERY gate is ≥85% — some aren't yet.`, clutch: false };
   }
 
-  if (opt.stat === 'money') {
+  if (opt.stat === 'money' && activePack.manifest.costResource === 'money') {
     return { text: `Money isn't a win gate — but it clears debt (no Curtis ending) and pads your Legacy Points.`, clutch: false };
   }
 
-  const statName = metaFor(opt.stat).name;
-  const cur = opt.stat === 'fame' ? run.fame : run.stats[opt.stat];
-  const after = opt.stat === 'fame' ? cur + opt.amount : Math.min(100, cur + opt.amount);
+  const isCoreStat = opt.stat in run.stats;
+  const cur = engine.gateValue(run, opt.stat) || 0;
+  const after = isCoreStat ? Math.min(100, cur + opt.amount) : cur + opt.amount;
   const target = gates[opt.stat];
   if (target === undefined) {
     return { text: `${statName} ${cur}→${after}. Not part of the ${pathName} gate — helps your Legacy, not your ending.`, clutch: false };
@@ -1502,6 +1552,13 @@ function closerImpact(opt) {
 }
 
 function renderFinalSet() {
+  // A pack may bring its own pre-finale set piece (head/sub/options); the
+  // music Final Set below is the default.
+  if (PRES.finalSet) {
+    const fs = PRES.finalSet(run);
+    renderFinalSetScreen(fs.head, fs.sub, fs.options);
+    return;
+  }
   const flags = run.flags || [];
   const options = [];
   if (flags.includes('song_finished')) {
@@ -1537,11 +1594,19 @@ function renderFinalSet() {
     options.push({ title: '“The Instrumental”', blurb: 'No words. Just proof.', stat: 'skill', amount: 4, label: '+4 Skill', apply: () => { run.stats.skill = Math.min(100, run.stats.skill + 4); } });
   }
 
+  const pathName = run.path ? PATHS[run.path].name : 'your path';
+  renderFinalSetScreen('The Final Set',
+    `Last night of the run — your <b>${pathName}</b> career gets judged after this. Pick the closer that pushes you over a gate.`,
+    options);
+}
+
+// The pre-finale choice screen shell: gate readout + up to three closers.
+function renderFinalSetScreen(head, sub, options) {
   const s = $('#screen-crossroads'); // reuse the 3-option screen
   s.innerHTML = '';
-  s.append(el('h2', 'screen-head', 'The Final Set'));
+  s.append(el('h2', 'screen-head', head));
   const pathName = run.path ? PATHS[run.path].name : 'your path';
-  s.append(el('p', 'screen-sub', `Last night of the run — your <b>${pathName}</b> career gets judged after this. Pick the closer that pushes you over a gate.`));
+  s.append(el('p', 'screen-sub', sub));
 
   // Gate readout for the committed path, so the choice is informed
   const { readings } = pathFit(run.path);
@@ -1568,16 +1633,16 @@ function renderFinalSet() {
   for (const opt of options.slice(0, 3)) {
     const impact = closerImpact(opt);
     const card = el('div', 'pick-card path-card' + (impact.clutch ? ' clutch' : ''));
-    card.append(el('div', 'path-icon', impact.clutch ? '🏆' : '🎵'));
-    const head = el('h3', '', opt.title);
-    if (impact.clutch) head.innerHTML += ' <span class="clutch-badge">clutch</span>';
-    card.append(head);
+    card.append(el('div', 'path-icon', impact.clutch ? '🏆' : (PATHS[run.path]?.icon || '🎵')));
+    const optHead = el('h3', '', opt.title);
+    if (impact.clutch) optHead.innerHTML += ' <span class="clutch-badge">clutch</span>';
+    card.append(optHead);
     card.append(el('p', 'pick-flavor', opt.blurb));
     card.append(el('p', 'pick-mods', opt.label));
     card.append(el('p', 'closer-impact' + (impact.clutch ? ' clutch' : ''), impact.text));
     card.addEventListener('click', () => {
       sfx.commit();
-      opt.apply();
+      opt.apply(run);
       renderFinale();
     });
     row.append(card);
@@ -1592,18 +1657,21 @@ function actInterstitial(step) {
   ov.classList.add('active');
   const box = el('div', 'result-card act-card');
   box.append(el('div', 'tier-badge', `ACT ${step.act}`));
-  box.append(el('p', 'result-text act-name', step.act === 2 ? 'THE GRIND' : 'THE RECKONING'));
-  box.append(el('p', 'result-text', step.act === 2
-    ? 'The garage is behind you. Everything now costs something.'
-    : 'Higher stakes, fewer excuses. The summit is visible. So is the drop.'));
+  const intro = PRES.actIntro?.[step.act] || (step.act === 2
+    ? { name: 'THE GRIND', text: 'The garage is behind you. Everything now costs something.' }
+    : { name: 'THE RECKONING', text: 'Higher stakes, fewer excuses. The summit is visible. So is the drop.' });
+  box.append(el('p', 'result-text act-name', intro.name));
+  box.append(el('p', 'result-text', intro.text));
   for (const n of step.notes || []) {
     if (n.startsWith('♪')) continue; // chart news gets its own stage below
     if (n.startsWith('✂️') || n.startsWith('➕')) {
-      // U5: the act twist is a headline, not a line item
-      box.append(el('p', 'act-twist-note', n));
+      // U5: the act twist is a headline, not a line item. A pack may reword
+      // the engine's neutral note in its own voice.
+      const twist = PRES.twistNote && run.actTwist ? PRES.twistNote(run.actTwist.delta) : n;
+      box.append(el('p', 'act-twist-note', twist));
       continue;
     }
-    box.append(el('p', 'upkeep-note', `💸 ${n}`));
+    box.append(el('p', 'upkeep-note', n.startsWith('🧳') || n.startsWith('🔥') ? n : `💸 ${n}`));
   }
 
   // This week on the Hot 10: your songs move while you weren't looking
@@ -1701,8 +1769,9 @@ function renderCrossroads() {
   save.saveRun(run);
   const s = $('#screen-crossroads');
   s.innerHTML = '';
-  s.append(el('h2', 'screen-head', 'The Crossroads'));
-  s.append(el('p', 'screen-sub', 'Act 1 is over. Pick a summit — the deck follows your choice. No refunds. The bars show how your build lines up with each gate <i>right now</i>.'));
+  s.append(el('h2', 'screen-head', PRES.crossroads?.head || 'The Crossroads'));
+  s.append(el('p', 'screen-sub', PRES.crossroads?.sub ||
+    'Act 1 is over. Pick a summit — the deck follows your choice. No refunds. The bars show how your build lines up with each gate <i>right now</i>.'));
   const fits = Object.keys(PATHS).map((id) => ({ id, ...pathFit(id) }));
   const bestFit = fits.reduce((a, b) => (b.fit > a.fit ? b : a));
   const row = el('div', 'pick-row');
@@ -1747,18 +1816,18 @@ function finishMeta(summary, lp) {
   meta.runs += 1;
   meta.lp += lp;
   meta.lpEarnedTotal += lp;
-  meta.best.fame = Math.max(meta.best.fame, summary.fame);
+  meta.best.fame = Math.max(meta.best.fame, summary.fame || 0);
   meta.best.lp = Math.max(meta.best.lp, lp);
   if (summary.daily) {
     meta.dailyResults = meta.dailyResults || {};
     if (!meta.dailyResults[summary.daily]) {
-      meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path, fame: summary.fame };
+      meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path, fame: summary.fame || 0 };
     }
   }
   if (summary.gauntlet) {
     meta.gauntletResults = meta.gauntletResults || {};
     if (!meta.gauntletResults[summary.gauntlet]) {
-      meta.gauntletResults[summary.gauntlet] = { result: summary.result, path: summary.path, fame: summary.fame };
+      meta.gauntletResults[summary.gauntlet] = { result: summary.result, path: summary.path, fame: summary.fame || 0 };
     }
   }
   // Lifetime aggregates (Pass 25)
@@ -1767,7 +1836,7 @@ function finishMeta(summary, lp) {
   lt.incredibles += (summary.tierLog || []).filter((t) => t === 'incredible').length;
   lt.bads += (summary.tierLog || []).filter((t) => t === 'bad').length;
   lt.hits += summary.hits || 0;
-  lt.moneyBest = Math.max(lt.moneyBest, summary.money);
+  lt.moneyBest = Math.max(lt.moneyBest, summary.money || 0);
   const bi = lt.byInstrument[summary.loadout] = lt.byInstrument[summary.loadout] || { runs: 0, wins: 0 };
   bi.runs += 1;
   if (summary.result === 'success') bi.wins += 1;
@@ -1789,7 +1858,7 @@ function finishMeta(summary, lp) {
     path: summary.path,
     result: summary.result,
     endingKey: summary.endingKey,
-    fame: summary.fame,
+    fame: summary.fame || 0,
     daily: !!summary.daily,
   });
   meta.runHistory = meta.runHistory.slice(0, 10);
@@ -1920,14 +1989,23 @@ function showExitInterview(endingKey, interview) {
 
 const TIER_EMOJI = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
 
+// Short verdict labels for the pack's fail-state endings (ribbon, history,
+// share). Music's trio is the default; a pack overrides via presenter.
+function failLabelFor(endingKey) {
+  const labels = PRES.failLabels ||
+    { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' };
+  return labels[endingKey];
+}
+
 function shareTextFor(summary, lp) {
+  if (PRES.shareText) return PRES.shareText(summary, lp);
   const inst = activePack.loadoutById(summary.loadout);
   const head = summary.gauntlet ? `BIG BREAK Gauntlet ${summary.gauntlet}`
     : summary.daily ? `BIG BREAK Daily ${summary.daily}` : 'BIG BREAK';
   const genre = summary.genre ? genreById(summary.genre) : null;
   const pathName = (genre ? genre.name + ' ' : '') + (summary.path ? PATHS[summary.path].name : 'the void');
   const res = summary.result ? summary.result.toUpperCase()
-    : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[summary.endingKey] || 'GAME OVER';
+    : failLabelFor(summary.endingKey) || 'GAME OVER';
   const line = (summary.tierLog || []).map((t) => TIER_EMOJI[t] || '⬜').join('');
   const peak = summary.chartPeak ? ` · Hot 10 #${summary.chartPeak}` : '';
   return `${head}\n${inst ? inst.name : '?'} → ${pathName} → ${res}\n${line}\n★${summary.fame}${peak} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/`;
@@ -1938,14 +2016,12 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   const s = $('#screen-ending');
   s.innerHTML = '';
   const wrap = el('div', 'ending-wrap');
-  wrap.append(artFor(ending.art, 'ending-art', {
-    fame: run.fame, network: run.stats.network, burnout: run.stats.burnout,
-  }));
+  wrap.append(artFor(ending.art, 'ending-art', vibeFor()));
   // Verdict ribbon: outcome legible before a single line of prose
   const resKey = summary?.result || null;
   const resLabel = resKey
     ? { success: 'SUCCESS', partial: 'PARTIAL CREDIT', failure: 'FAILURE' }[resKey]
-    : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[summary?.endingKey] || 'THE END';
+    : failLabelFor(summary?.endingKey) || 'THE END';
   const pathLabel = summary?.path ? PATHS[summary.path].name.toUpperCase() + ' · ' : '';
   wrap.append(el('div', `verdict verdict-${resKey || 'over'}`, `${pathLabel}${resLabel}`));
   wrap.append(el('h2', 'ending-title', ending.title));
@@ -1984,8 +2060,10 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
       row.append(el('span', 'gate-nums', `${r.value}/${r.target}`));
       gates.append(row);
     }
-    if (evalr.momentum >= CONFIG.momentumForUpgrade) {
-      gates.append(el('p', 'momentum-note', `▲ Momentum ×${evalr.momentum} carried you.`));
+    if (evalr.momentum >= CONFIG.momentumForUpgrade &&
+        summary?.result === 'success' && !evalr.readings.every((r) => r.met)) {
+      const mr = activePack.manifest.momentumResource;
+      gates.append(el('p', 'momentum-note', `${metaFor(mr).icon} ${metaFor(mr).name} carried you over the line.`));
     }
     wrap.append(gates);
   }
@@ -2023,11 +2101,17 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     const shareBtn = btn('📣 Share this run', '', async () => {
       const text = shareTextFor(summary, lp);
       try {
-        // Prefer a poster image via the native sheet (Pass 38)
+        // Prefer a poster image via the native sheet (Pass 38). The poster
+        // composer is music-shaped; a pack with its own shareText shares text.
+        if (PRES.shareText) {
+          if (navigator.share) await navigator.share({ text });
+          else { await navigator.clipboard.writeText(text); shareBtn.textContent = '📋 Copied!'; }
+          return;
+        }
         const inst = activePack.loadoutById(summary.loadout);
         const genre = summary.genre ? genreById(summary.genre) : null;
         const res = summary.result ? summary.result.toUpperCase()
-          : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[summary.endingKey] || 'GAME OVER';
+          : failLabelFor(summary.endingKey) || 'GAME OVER';
         const blob = await renderShareImage({
           headline: `${ending.title}`,
           subline: `${inst ? inst.name : '?'} → ${genre ? genre.name + ' ' : ''}${summary.path ? PATHS[summary.path].name : 'the void'} → ${res}`,
@@ -2073,9 +2157,10 @@ function showScrapbook(summary) {
   for (const entry of summary.cardLog) {
     if (entry.a !== lastAct) {
       lastAct = entry.a;
-      box.append(el('h3', 'scrap-act', `ACT ${entry.a} · ${['', 'The Garage', 'The Grind', 'The Reckoning'][entry.a]}`));
+      const actNames = PRES.actNames || ['', 'The Garage', 'The Grind', 'The Reckoning'];
+      box.append(el('h3', 'scrap-act', `ACT ${entry.a} · ${actNames[entry.a]}`));
     }
-    const ev = EVENTS.find((e) => e.id === entry.e);
+    const ev = activePack.events.find((e) => e.id === entry.e);
     if (!ev) continue;
     const choice = ev.choices[entry.s];
     const row = el('div', 'scrap-row t-' + entry.t);
@@ -2189,7 +2274,7 @@ function renderTrophies() {
     for (const h of meta.runHistory) {
       const inst = activePack.loadoutById(h.instrument);
       const res = h.result ? h.result.toUpperCase()
-        : { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' }[h.endingKey] || 'DNF';
+        : failLabelFor(h.endingKey) || 'DNF';
       const pathName = h.path ? PATHS[h.path].name : '—';
       hist.append(el('div', 'history-row res-' + (h.result || 'fail'),
         `<span>${h.daily ? '📅 ' : ''}${inst ? inst.name : '?'} → ${pathName}</span>` +
@@ -2304,7 +2389,7 @@ function renderSettings() {
 
   menu.append(el('h3', 'contract-head', 'Career data'));
   menu.append(btn('❓ How to play', '', showHelp));
-  menu.append(btn('🎓 Replay the first gig', '', () => { save.clearRun(); startTutorial(); }));
+  if (activePack.tutorialEvents.length) menu.append(btn('🎓 Replay the first gig', '', () => { save.clearRun(); startTutorial(); }));
   const exportBtn = btn('📤 Export save (backup code)', '', async () => {
     const code = save.exportSave();
     try {
@@ -2347,6 +2432,6 @@ function renderSettings() {
   }));
   menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
   s.append(menu);
-  s.append(el('p', 'title-foot', 'BIG BREAK v5 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.'));
+  if (activePack.id === 'music') s.append(el('p', 'title-foot', 'BIG BREAK v5 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.'));
   show('#screen-settings');
 }

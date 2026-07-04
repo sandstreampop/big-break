@@ -1,0 +1,45 @@
+/* Love Island — villa palette + the three-tier authority styling, layered
+   over the shared css/style.css. Only this page loads it, so the music game
+   is untouched. */
+
+:root {
+  --bg: #1a1016;
+  --bg2: #241019;
+  --accent: #ff5c8a;
+  --accent2: #ffb35c;
+}
+
+body {
+  background:
+    radial-gradient(120% 90% at 80% -10%, #3a1526 0%, transparent 60%),
+    radial-gradient(100% 80% at 10% 110%, #2a1030 0%, transparent 55%),
+    var(--bg);
+}
+
+.title-logo {
+  background: linear-gradient(135deg, #ff5c8a 0%, #ffb35c 60%, #ffe38a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* “I’ve got a text!” — a Text beat is the format speaking: gold-edged,
+   anticipation-locked, unmistakably not an ambient moment. */
+.card.card-text {
+  border: 2px solid rgba(255, 179, 92, 0.75);
+  box-shadow: 0 0 22px rgba(255, 179, 92, 0.25), 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+.card.card-text .card-context {
+  color: #ffd9a1;
+  letter-spacing: 0.04em;
+}
+
+/* The Host in person — maximum stakes: the frame goes ceremonial. */
+.card.card-host {
+  border: 2px solid rgba(255, 92, 138, 0.85);
+  box-shadow: 0 0 26px rgba(255, 92, 138, 0.3), 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.card.card-host .card-context {
+  color: #ffc0d2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

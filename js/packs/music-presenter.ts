@@ -20,4 +20,7 @@ export const musicPresenter: Presenter = {
   headlines: generateHeadlines,
   dms: generateDMs,
   discography: buildDiscography,
+  // The weekly Gauntlet builds its fixed loadout from music data (contracts,
+  // genres), so the mode is this pack's to declare.
+  gauntlet: true,
 };

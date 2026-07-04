@@ -147,6 +147,10 @@ export interface PackManifest {
   // The penalty for declining a shop card you can't afford. Pack-declared so the
   // core names no stat; a pack that omits it declines for free.
   declinePenalty?: Effect;
+  // The copy shown when a costed choice is declined for lack of the cost
+  // resource. Pack-declared so the core ships no genre's joke; a pack that
+  // omits it gets the engine's default line.
+  declineText?: string;
 }
 
 // ---------- Plugin framework ----------
@@ -307,6 +311,57 @@ export interface Presenter {
   headlines?: (state: RunState, seed: number) => { text: string; src: string }[];
   dms?: (state: RunState, seed: number) => { from: string; text: string }[];
   discography?: (state: RunState) => any[];
+
+  // ── Generic shell hooks (all optional). Every field below is a mechanism
+  // slot the UI feature-detects; when absent, the shell renders its original
+  // (music-era) defaults, so pack #1 is byte-identical without declaring any
+  // of them. No hook names a genre; each pack brings its own copy/data. ──
+
+  // Title screen: logo html, rotating taglines, attract-mode glyphs, the
+  // footer line, and the flavor-news item.
+  title?: {
+    logo: string;
+    taglines: string[];
+    glyphs?: string[];
+    foot?: (meta: any) => string;
+    news?: (dayNum: number) => { text: string; src: string } | null;
+  };
+  // 1-indexed act names (HUD strip, scrapbook) + act-break interstitial copy.
+  actNames?: string[];
+  actIntro?: Record<number, { name: string; text: string }>;
+  // The HUD's counter chips (top-right), replacing the default resource row.
+  hudCounters?: (state: RunState) => { html: string; cls?: string }[];
+  // Resolve an equipped-item id (the gear mechanic's per-pack catalog) for
+  // HUD chips and swap flows.
+  itemById?: (id: string) => any;
+  // Fill a card's {tokens} with this run's identities.
+  fillTokens?: (state: RunState, text: string) => string;
+  // Per-stat inspector blurbs and the help sheet's body.
+  statInfo?: Record<string, string>;
+  helpBlocks?: string[];
+  // Copy for the banked-bonus (encore) mechanic's arm toggle.
+  encore?: { ready: string; armed: string };
+  // Crossroads copy, and the pre-finale choice screen (head/sub/options; an
+  // option is { title, blurb, stat, amount, label, apply(state) }).
+  crossroads?: { head: string; sub: string };
+  finalSet?: (state: RunState) => { head: string; sub: string; options: any[] };
+  // Share text for a finished run.
+  shareText?: (summary: any, lp: number) => string;
+  // Short verdict labels for the pack's fail-state endings (ribbon/history).
+  failLabels?: Record<string, string>;
+  // The act-twist note (engine pushes a neutral marker; packs word it).
+  twistNote?: (delta: number) => string;
+  // Extra class(es) for a dealt card (authority tiers, ceremony framing).
+  cardClass?: (ev: GameEvent) => string | null;
+  // The art system's reactive-scene inputs, mapped from this pack's state.
+  vibe?: (state: RunState) => { fame: number; network: number; burnout: number };
+  // Art slots this pack registers with the generated-scene painter:
+  // slot id → { e: emoji badge, s: scene id }.
+  art?: Record<string, { e: string; s: string }>;
+  // Offer every unlocked persona at run start instead of a random 3.
+  offerAllLoadouts?: boolean;
+  // This pack ships the weekly Gauntlet mode (its build draws on pack data).
+  gauntlet?: boolean;
 }
 
 export interface Pack {

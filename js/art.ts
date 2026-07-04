@@ -175,6 +175,17 @@ for (const [slot, v] of Object.entries(ART2)) {
   if (!(slot in SCENE)) SCENE[slot] = v.s;
 }
 
+// Generic pack registration: a pack's presenter may bring its own art slots
+// (slot id → { e: emoji badge, s: scene id }), registered at boot the same way
+// the wave-3 table self-registers above — so this shared file holds mechanism
+// and the music tables, never another genre's data.
+export function registerArt(slots?: Record<string, { e: string; s: string }>): void {
+  for (const [slot, v] of Object.entries(slots || {})) {
+    if (!(slot in EMOJI)) EMOJI[slot] = v.e;
+    if (!(slot in SCENE)) SCENE[slot] = v.s;
+  }
+}
+
 function hueFor(slot) {
   let h = 0;
   for (let i = 0; i < slot.length; i++) h = (h * 31 + slot.charCodeAt(i)) % 360;

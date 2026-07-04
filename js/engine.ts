@@ -563,7 +563,8 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
     (state.cardLog = state.cardLog || []).push({ e: ev.id, t: 'declined', a: state.act, s: side });
     const result: any = {
       tier: 'declined',
-      text: 'Your card declines with an audible, judgmental beep. You pretend you “forgot your other wallet.” Everyone pretends to believe you.',
+      text: PACK.manifest.declineText ||
+        'Your card declines with an audible, judgmental beep. You pretend you “forgot your other wallet.” Everyone pretends to believe you.',
       deltas: applyEffects(state, PACK.manifest.declinePenalty || {}, ev, choice, rng),
       event: ev, side,
     };

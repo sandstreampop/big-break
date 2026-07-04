@@ -1,0 +1,487 @@
+// Love Island — Act 3 ambient deck (Final Week) + the Summit-affinity cards
+// (Acts 2–3, weighted toward your declared Intention). The vote surges, the
+// couples calcify, and everyone starts practising their reunion face.
+
+import type { GameEvent } from '../../types.js';
+
+export const FINAL_EVENTS: GameEvent[] = [
+  {
+    id: 'li_baby_challenge', act: 3, tags: ['challenge', 'loyal'],
+    art: 'li_challenge',
+    context: 'Morning · “I’VE GOT A TEXT!!” · the baby challenge',
+    prompt: '“Islanders, today you become parents. Your babies arrive in one hour. They cry. #familyplanning” — Robot infants, distributed one per couple, each programmed with the sleep schedule of a car alarm. Final Week always does this, and Final Week is never sorry.',
+    choices: {
+      left: {
+        label: 'Take it seriously',
+        tags: ['loyal', 'challenge'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You take parenting so seriously you and {partner} have your first real argument about a doll’s nap schedule. The doll records everything. Dolls do.', effects: { bond: 1, burnout: 4 } },
+          good: { text: 'Feeds logged, shifts split, one 3 a.m. handover executed like a relay team. The villa’s loudest couple watches your rota with naked envy.', effects: { bond: 6, public: 3 } },
+          incredible: { text: 'Your robot baby is the only one still “alive” by sundown, and {partner} has started saying “our little guy” unironically. The nation melts on schedule.', effects: { bond: 8, public: 4, loyalty: 2 } },
+        },
+      },
+      right: {
+        label: 'Make it content',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You give the baby a villain arc and a tiny pair of sunglasses. Funny for an hour. Then the battery dies mid-bit and the metaphor writes itself, publicly.', effects: { followers: 3, bond: -2, burnout: 3 } },
+          good: { text: 'Your baby gets a name, a backstory, and a small business. The lawn is in bits. Somewhere a producer prints “BABY’S FIRST BRAND DEAL” on a card.', effects: { followers: 6, charisma: 2 } },
+          incredible: { text: 'The baby bit escalates into a full villa mockumentary with talking heads. It’s the best episode of the Season and everyone in it knows.', effects: { followers: 9, public: 3, charisma: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_vote_surge', act: 3, tags: ['camera', 'strategy'],
+    art: 'li_phone',
+    context: 'Evening · the outside world leaks in',
+    prompt: 'A dumped Islander’s exit interview has aired, and with it, a rumour of the standings: your couple is “in the conversation.” The villa pretends not to care about the vote the way cats pretend not to care about the fridge.',
+    choices: {
+      left: {
+        label: 'Keep doing what works',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You change absolutely nothing, which unfortunately includes the sat-nav joke. The conversation, wherever it is, moves on slightly.', effects: { bond: 2, burnout: 2 } },
+          good: { text: 'No campaign, no pivot — just your couple, doing its quiet thing while louder ones combust around you. The vote likes a constant. You’re the constant.', effects: { bond: 4, public: 3 } },
+          incredible: { text: 'Your total indifference to the standings becomes its own storyline: “they don’t even know they’re winning.” The most electable sentence on television.', effects: { bond: 5, public: 5 } },
+        },
+      },
+      right: {
+        label: 'Court the vote',
+        tags: ['camera', 'strategy'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You start playing to the fixed cameras like a weather presenter. The villa notices in one afternoon. The nation noticed before lunch.', effects: { public: -2, followers: 3, burnout: 3 } },
+          good: { text: 'A little more Beach Hut, a little more banter at the fixed cams, one strategic heart-to-heart on the good sofa. Subtle. Effective. Deniable.', effects: { public: 4, followers: 3 } },
+          incredible: { text: 'You engineer a week of perfect television without one visible seam. If this is a campaign, it’s the best-run one the villa has ever hosted.', effects: { public: 6, followers: 4, savvy: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_last_supper', act: 3, tags: ['chat', 'loyal'],
+    art: 'li_kitchen',
+    context: 'Night · the villa cooks for itself · last proper dinner',
+    prompt: 'One long table, everyone still standing, and a lasagne with structural issues. It’s the last dinner before the Final and the villa knows it: the banter keeps snagging on sincerity. Somebody clinks a glass. Speeches are coming.',
+    choices: {
+      left: {
+        label: 'Give the speech',
+        tags: ['chat', 'camera'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'Your toast starts strong, tours the whole Season, and gets lost around Casa. Somebody coughs “speeeech” at your speech. The lasagne cools in solidarity.', effects: { burnout: 3, public: 1 } },
+          good: { text: 'You say the true thing about this strange, sunburnt family, and land it before the tears do. Glasses up. Even {rival} drinks to it.', effects: { public: 4, loyalty: 2, bond: 2 } },
+          incredible: { text: 'Your toast makes the villa cry, laugh, and toast the LASAGNE, in that order. The clip becomes how the Season is remembered. No pressure on the Final at all.', effects: { public: 5, followers: 4, bond: 2 } },
+        },
+      },
+      right: {
+        label: 'Stay off the mic',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You dodge the toast and get voluntold anyway — “what about YOU?” — with a mouth full of garlic bread. You gesture with it. The gesture trends, mildly.', effects: { followers: 2, burnout: 2 } },
+          good: { text: 'You skip the speeches and do the washing-up with {partner}, hip to hip, while the table gets misty. The wide shot finds you anyway. Wide shots always do.', effects: { bond: 5, public: 2, burnout: -2 } },
+          incredible: { text: 'No speech — just you, quietly topping up every glass at the exact right moments. The villa only realises at the end who hosted the whole night. The nation realised first.', effects: { bond: 5, public: 4, loyalty: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_packing_wobble', act: 3, tags: ['chat', 'rest'],
+    art: 'li_bedroom',
+    context: 'Afternoon · suitcases have appeared · everyone is weird about it',
+    prompt: 'Production has quietly delivered everyone’s suitcases “for the Final,” and the sight of them has made the villa mortal. Out there: rent, exes, phone bills, daylight that isn’t graded. {partner} is looking at their case like it’s a verdict.',
+    choices: {
+      left: {
+        label: 'Talk about the outside',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'The outside chat gets real so fast you end up comparing commutes. Ninety minutes on trains. The romance survives, but it now knows about Zone 4.', effects: { bond: 3, burnout: 3 } },
+          good: { text: 'You do the scary conversation — cities, jobs, whose mates first — with the suitcases right there. It holds. Out loud, with logistics. That’s the realest thing in this villa.', effects: { bond: 6, loyalty: 2 } },
+          incredible: { text: 'By the end there’s a plan with dates in it. Actual dates. Calendar ones. The Beach Hut cries about it later, and so, quietly, does the nation.', effects: { bond: 8, loyalty: 3, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Keep the bubble sealed',
+        tags: ['rest', 'flirt'],
+        governingStats: { rizz: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You hide the suitcases behind the daybed. Production returns them by dinner, with a note. The bubble has a landlord and it isn’t you.', effects: { burnout: 3, bond: 1 } },
+          good: { text: '“Outside doesn’t exist till Friday.” You declare a bubble amnesty and spend the day at the pool like it’s week one. Sometimes denial is self-care with sunglasses.', effects: { bond: 4, burnout: -4 } },
+          incredible: { text: 'You turn suitcase day into a fashion show of everyone’s arrival outfits — who they were, versus who they are. Nostalgia, laughter, one meaningful look. Television.', effects: { bond: 4, followers: 4, public: 3, burnout: -3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_final_dressup', act: 3, tags: ['camera', 'banter'],
+    art: 'li_bedroom',
+    context: 'The last day · outfits · war paint',
+    prompt: 'Final prep. The dressing room is a Formula 1 pit lane of steamers and setting spray. Your outfit for tonight is either “timeless” or “a lot,” depending which mirror you ask. The mirrors are split. The nation will not be.',
+    choices: {
+      left: {
+        label: 'Timeless',
+        tags: ['strategy', 'camera'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You go classic and vanish slightly into the fairy lights. Elegant, said nobody’s group chat, is a synonym for beige.', effects: { public: 1, burnout: 2 } },
+          good: { text: 'Clean lines, no gimmicks, nothing for the memes to grab. Tonight the story is your face and what it does when the votes are read. Correct.', effects: { public: 3, savvy: 2 } },
+          incredible: { text: 'The understatement is so complete it becomes the statement. “Everyone else dressed for the party,” writes a fashion desk at midnight. “They dressed for the win.”', effects: { public: 4, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'A lot',
+        tags: ['camera', 'drama'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'The sequins have opinions and the opinions catch on the daybed at the worst moment. You enter the Final with a hem situation and a story to tell.', effects: { followers: 3, burnout: 3 } },
+          good: { text: 'You commit to the full spectacle and the spectacle commits back. Three gasps at the top of the stairs. Tonight’s screenshots are pre-sold.', effects: { followers: 5, public: 2, charisma: 2 } },
+          incredible: { text: 'The outfit gets its own trending topic before you’ve reached the lawn. Win or lose, the reunion invite is now a formality.', effects: { followers: 8, public: 3, charisma: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_morning_after_drama', act: 3, tags: ['drama', 'code'],
+    art: 'li_lawn',
+    context: 'Morning · Final Week nerves · a spark near the petrol',
+    prompt: 'Final Week pressure does strange chemistry: two Islanders who’ve been fine for weeks are suddenly not fine, loudly, over toast. Alliances are being audited in real time. Yours included. Neutrality has three days left to live.',
+    choices: {
+      left: {
+        label: 'Defuse it',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You mediate so evenly that both sides briefly unite against the mediation. There’s a lesson in there and you learn it holding the toast.', effects: { burnout: 3, public: 1 } },
+          good: { text: 'Ten minutes, two separate benches, one shared plate of eggs at the end. The villa’s last row dies quietly, and the Final keeps its shine.', effects: { public: 3, loyalty: 3 } },
+          incredible: { text: 'You settle it so completely the two of them walk into the Final arm in arm, crediting you by name on live TV. Peacemaker: confirmed, broadcast, banked.', effects: { public: 5, loyalty: 3, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Let it burn',
+        tags: ['strategy', 'drama'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You watch from the kitchen and someone clocks you enjoying it. “You could’ve said something.” You could have. The toast was excellent, though.', effects: { burnout: 3, public: -2, followers: 2 } },
+          good: { text: 'You stay out of the blast radius and let Final Week do its own pruning. Cold? The word is “strategic.” The vote can’t punish what it finds relatable.', effects: { savvy: 3, followers: 3 } },
+          incredible: { text: 'The row eliminates two rivals’ goodwill in one morning while you were visibly elsewhere, doing yoga. Impeccable alibi. Immaculate timing. Suspiciously immaculate.', effects: { savvy: 4, followers: 4, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_legacy_chat', act: 3, tags: ['chat', 'camera'],
+    art: 'li_beachhut',
+    context: 'The Beach Hut · the retrospective question',
+    prompt: 'The Beach Hut wants the retrospective: “Looking back at your Season — the coupling, the drama, all of it — what would you tell the person who walked in on Day 1?” The chair creaks. Somewhere in the question is the version of you the nation will keep.',
+    choices: {
+      left: {
+        label: 'Be honest about it',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You’re so honest you fact-check your own arc, twice, out loud. The edit keeps the corrections. Authenticity: confirmed. Elegance: pending.', effects: { public: 2, burnout: 2 } },
+          good: { text: '“I’d tell her she’s going to embarrass herself, and it’s going to be worth it.” The Hut gets the sentence the whole Season was building to.', effects: { public: 4, loyalty: 2, followers: 2 } },
+          incredible: { text: 'Your retrospective is so generous — to your exes, your rivals, your own worst week — that the show closes an episode on it. That’s the edit deciding you’re the heart of the Season.', effects: { public: 5, followers: 4, bond: 2 } },
+        },
+      },
+      right: {
+        label: 'Write the legend',
+        tags: ['camera', 'strategy'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You attempt mythology — “the villa doesn’t change you, it reveals you” — and the Hut camera holds the silence one beat too long. Even the chair is unconvinced.', effects: { followers: 2, burnout: 2 } },
+          good: { text: 'You deliver a tight, quotable arc of yourself: the entrance, the wobble, the comeback. Podcast-ready. The clips desk cuts it before you’ve left the Hut.', effects: { followers: 5, savvy: 2 } },
+          incredible: { text: 'You narrate your Season so well the actual edit adopts your framing. From tonight, the show tells your story in your words. That’s not screen time. That’s authorship.', effects: { followers: 7, public: 3, savvy: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_odd_couple', act: 3, tags: ['banter', 'chat'],
+    art: 'li_lawn',
+    context: 'Afternoon · an unlikely friendship files its paperwork',
+    prompt: 'Somewhere along the Season, you and {rival} stopped circling and started chatting, and today it tips over: a genuinely nice hour by the pool with your designated antagonist. The villa doesn’t know what to do with it. Neither does the edit.',
+    choices: {
+      left: {
+        label: 'Make peace official',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You announce the truce at dinner like a press release and the villa, starved of conflict, immediately investigates it for cracks. Peace has never been so stressful.', effects: { public: 2, burnout: 3 } },
+          good: { text: 'You and {rival} bury it properly — specifics named, apologies exchanged, one handshake that turns into a hug. The Season’s longest cold war ends on a Tuesday.', effects: { public: 4, loyalty: 2, removeFlag: 'li_rival_active' } },
+          incredible: { text: 'The reconciliation is so real it becomes the episode’s emotional peak — two enemies laughing about the exact moments the nation used to scream at. Growth: televised.', effects: { public: 5, followers: 4, loyalty: 2, removeFlag: 'li_rival_active' } },
+        },
+      },
+      right: {
+        label: 'Keep the storyline',
+        tags: ['strategy', 'camera'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You keep the feud alive for the cameras and {rival}, hurt, makes it real again. Careful what you perform; the villa has no rehearsal space.', effects: { followers: 3, public: -2, burnout: 3 } },
+          good: { text: 'You two agree, privately, to stay “rivals” on camera — the villa’s first scripted enemies-to-frenemies deal. The content flows; the friendship stays off-books.', effects: { followers: 5, savvy: 3 } },
+          incredible: { text: 'Your fake feud is so entertaining it carries the pre-Final episode, and only you two know it’s a bit. A double act the reunion will eventually expose, to universal delight.', effects: { followers: 8, savvy: 3, public: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Summit-affinity cards (Acts 2–3, weighted to your Intention) ----------
+  {
+    id: 'li_wv_publicity', act: [2, 3], pathAffinity: ['winvilla'], tags: ['camera', 'loyal'],
+    art: 'li_lawn',
+    context: 'The couple audit · the nation is grading',
+    prompt: 'A challenge leaks the couples’ approval rankings, and yours is close enough to the top to taste it. Winning the villa isn’t a montage: it’s weeks of being the couple the sofa points at and says “them.” Consistency is the campaign.',
+    choices: {
+      left: {
+        label: 'Be the steady couple',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'Steady tips into sensible, and sensible gets four minutes of screen time. Reliability, the edit reminds you, is not a genre.', effects: { bond: 3, public: 1 } },
+          good: { text: 'While the top couple has a public wobble, yours quietly makes dinner together. The rankings breathe. The sofa points.', effects: { bond: 4, public: 4 } },
+          incredible: { text: 'A week without a single crack, on a show engineered to make them. The nation starts using your names as one word. That’s the whole election, won.', effects: { bond: 5, public: 6 } },
+        },
+      },
+      right: {
+        label: 'Give them a moment',
+        tags: ['camera', 'flirt'],
+        governingStats: { charisma: 0.5, rizz: 0.5 },
+        outcomes: {
+          bad: { text: 'The staged “spontaneous” slow dance hits the exact wrong song and the wrong sprinkler. Romance: damp. Clip: viral, for the sprinkler.', effects: { followers: 3, public: 1, burnout: 2 } },
+          good: { text: 'One unscripted-looking gesture — the jacket, the rain, the run across the lawn — lands on the night’s promo. The vote loves a poster.', effects: { public: 5, followers: 3 } },
+          incredible: { text: 'You produce a moment so cinematic the show rebuilds the episode around it. Other couples have storylines. Yours has a trailer.', effects: { public: 6, followers: 4, bond: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_wv_nation_darling', act: [2, 3], pathAffinity: ['winvilla'], tags: ['camera', 'chat'],
+    art: 'li_phone',
+    context: 'A twist · questions from the public',
+    prompt: '“Islanders, tonight the public have sent in questions. You will answer them at the firepit. #askthemanything” — The envelope with your name is thick. The public asks what it actually wants to know, which is never what you rehearsed.',
+    choices: {
+      left: {
+        label: 'Answer everything straight',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You answer the hard one honestly and gift the villa a fresh 48 hours of discourse. Honesty scores with the vote and bills the couple.', effects: { public: 3, bond: -2, burnout: 3 } },
+          good: { text: 'No dodging, no lawyer answers, one genuinely funny admission about week two. The firepit warms to you. So does the scoreboard.', effects: { public: 5, followers: 2 } },
+          incredible: { text: 'Your answers are so disarming the public’s questions turn into compliments by the third envelope. A hostile format, converted live. Vote-winning behaviour.', effects: { public: 7, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Charm the envelope',
+        tags: ['camera', 'banter'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You do bits over the hard questions, and the firepit lets you, and the sofa at home does not. “Evasive,” says the nation, in unison, at 9:47 p.m.', effects: { followers: 3, public: -2, burnout: 2 } },
+          good: { text: 'You take the spikiest question of the night and return it with topspin. Laughter buys you the room; the room buys you votes.', effects: { public: 4, followers: 4 } },
+          incredible: { text: 'Your envelope segment out-rates the argument segment — a first. The public asked for blood and left chanting your name. That’s a finalist.', effects: { public: 6, followers: 5 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_wv_underdogs', act: 3, pathAffinity: ['winvilla'], tags: ['loyal', 'camera'],
+    art: 'li_firepit_day',
+    context: 'Final stretch · the favourites stumble',
+    prompt: 'The bookies’ favourite couple just had a firepit row about, of all things, a jet-ski. The lane to the front is suddenly open. The nation loves a late surge almost as much as it loves the couple that doesn’t chase one.',
+    choices: {
+      left: {
+        label: 'Stay above it',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You stay so far above it you float out of the episode entirely. Grace, unwitnessed, is a tree falling in a forest of jet-skis.', effects: { bond: 3, public: 1 } },
+          good: { text: 'You bring the rowing couple snacks and take no sides. The contrast does your campaigning for you, in HD, all evening.', effects: { public: 5, bond: 3 } },
+          incredible: { text: 'While the favourites feud, your couple has the quiet, ordinary, devastatingly likeable night that ends up closing the episode. The surge finds you. You never chased it.', effects: { public: 7, bond: 3 } },
+        },
+      },
+      right: {
+        label: 'Seize the lane',
+        tags: ['strategy', 'camera'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'Your surge is visible from space: suddenly you’re everywhere, agreeing with everyone, holding a guitar at one point. The nation smells campaign. Deductions applied.', effects: { public: -2, followers: 3, burnout: 3 } },
+          good: { text: 'You spend the evening being exactly where the cameras needed someone likeable. Opportunism, executed warmly, is indistinguishable from charisma.', effects: { public: 4, followers: 3, savvy: 2 } },
+          incredible: { text: 'You read the villa’s mood, the edit’s needs, and the vote’s appetite in one glance, and serve all three in one night. The bookies quietly reprice you by morning.', effects: { public: 6, followers: 4, savvy: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_rt_deep_end', act: [2, 3], pathAffinity: ['realthing'], tags: ['chat', 'loyal'],
+    art: 'li_terrace',
+    context: 'Night · the terrace · past the small talk',
+    prompt: 'Somewhere past midnight the conversation with {partner} runs out of shallow water. Family. The thing with the dad. The reason for the wall. This is the chat that decides whether you’re a couple or a coupling.',
+    choices: {
+      left: {
+        label: 'Go first',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You open the vault and it all comes out in the wrong order, ending on the hamster. {partner} holds your hand through the whole inventory. That’s data too.', effects: { bond: 4, burnout: 3 } },
+          good: { text: 'You say the real thing first, and it costs you, and they meet it with theirs. Two walls down in one night. The mics get none of it. The Bond gets all of it.', effects: { bond: 7, loyalty: 2 } },
+          incredible: { text: 'What you tell them, you’ve never told anyone with a pulse. They don’t flinch. Around 2 a.m. the villa stops being a set and becomes, briefly, a place where you live.', effects: { bond: 9, loyalty: 3 } },
+        },
+      },
+      right: {
+        label: 'Draw them out',
+        tags: ['chat', 'strategy'],
+        governingStats: { loyalty: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'Your gentle questions land like a podcast interview, and {partner} notices the format. “Are you doing a technique on me?” You were. It was working.', effects: { bond: 2, burnout: 3 } },
+          good: { text: 'You ask the one question nobody else has bothered to, and then just wait. The answer takes ten minutes and changes the couple’s temperature permanently.', effects: { bond: 6, savvy: 2 } },
+          incredible: { text: 'They talk until sunrise. At the end they look at you like you found a door in a house they’d lived in for years. You didn’t say fifty words. You didn’t need to.', effects: { bond: 8, loyalty: 2, savvy: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_rt_bad_day', act: [2, 3], pathAffinity: ['realthing'], tags: ['loyal', 'chat'],
+    art: 'li_bedroom',
+    requires: { singleIs: false },
+    context: 'A grey day · {partner} is off · properly off',
+    prompt: '{partner} has been quiet since breakfast — not sulking, just somewhere else, behind their own eyes. The villa’s official toolkit for this is “a chat on the swing seat.” The real test is whether you can be useful to someone at their worst on a show that only films bests.',
+    choices: {
+      left: {
+        label: 'Sit with it',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You hover so supportively that {partner} ends up comforting you about how worried you are. A classic reversal. The swing seat has seen it all before.', effects: { bond: 2, burnout: 3 } },
+          good: { text: 'No fixing, no fetching people, no speech. Just you, next to them, for as long as it takes. When they finally talk, it’s because the silence was safe. You built that.', effects: { bond: 6, loyalty: 3 } },
+          incredible: { text: 'You spend a whole unfilmable afternoon being quietly essential, and the show, with nothing to cut to, airs four minutes of two people on a swing seat. It’s the realest thing this format has shown all year.', effects: { bond: 8, loyalty: 3, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Lift the mood',
+        tags: ['banter', 'date'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You deploy the full entertainment package at someone who needed a blanket. The juggling was technically proficient. The room was not a juggling room.', effects: { bond: 1, burnout: 3, followers: 2 } },
+          good: { text: 'You calibrate it right: one stupid bit, exactly their humour, at exactly the right minute. The laugh cracks something open. The chat follows on its own.', effects: { bond: 5, charisma: 2 } },
+          incredible: { text: 'You resurrect their whole day with a bit so specifically THEIRS — the impression, the callback, the thing with the spatula — that they realise, visibly, mid-laugh, that you’ve been paying attention since Day 1.', effects: { bond: 7, charisma: 2, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_rt_no_cameras', act: 3, pathAffinity: ['realthing'], tags: ['loyal', 'date'],
+    art: 'li_lawn',
+    context: 'Dawn · a camera blind spot · allegedly',
+    prompt: 'There’s a corner of the garden the Islanders swear the cameras can’t see. It can’t possibly be true. But at 5 a.m., with {partner} and two mugs of tea, you’re both willing to believe in it — one conversation with no audience, real or imagined.',
+    choices: {
+      left: {
+        label: 'Say the unbroadcastable thing',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You say it, and a bird lands on the wall, and you both jump like it’s a boom mic with feathers. The moment survives. Your dignity negotiates.', effects: { bond: 4, burnout: 2 } },
+          good: { text: 'You say the thing you’d never say on camera, in the spot where there might not be one. Whether it airs or not stops mattering halfway through the sentence. That’s how you know.', effects: { bond: 7, loyalty: 3 } },
+          incredible: { text: 'Whatever was said at 5 a.m. in the blind spot, neither of you will ever repeat it, on the show or after it. The nation never finds out. The Bond never forgets.', effects: { bond: 10, loyalty: 3 } },
+        },
+      },
+      right: {
+        label: 'Just watch the sunrise',
+        tags: ['rest', 'date'],
+        governingStats: { loyalty: 0.5, rizz: 0.5 },
+        outcomes: {
+          bad: { text: 'You share a horizon in silence until the sprinklers, on their 5:15 schedule, editorialise. Romance on this lawn has always been on a timer.', effects: { bond: 3, burnout: -2 } },
+          good: { text: 'No chat, no game, two teas going cold at the exact same rate. The best conversation your couple has had contains zero words.', effects: { bond: 6, burnout: -4 } },
+          incredible: { text: 'The sun comes up on two people who don’t need the villa anymore, sitting in it anyway. If the cameras did see it, even the gallery kept quiet.', effects: { bond: 8, burnout: -5, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_br_sponsor_bait', act: [2, 3], pathAffinity: ['brand'], tags: ['camera', 'graft'],
+    art: 'li_phone',
+    context: 'A challenge with a logo on it',
+    prompt: 'Today’s challenge is transparently sponsored — a smoothie brand has bought the morning, and the winner gets “a year’s supply.” Nobody needs a year of smoothies. Everybody needs what you can do with a branded segment and thirty seconds of camera.',
+    choices: {
+      left: {
+        label: 'Win it properly',
+        tags: ['challenge', 'graft'],
+        governingStats: { savvy: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You want it too visibly and take out {mate}’s knee rounding the blender station. The smoothies are secured. The apology tour takes longer.', effects: { graft: 3, public: -2, burnout: 3 } },
+          good: { text: 'You win the branded gauntlet with a competence that borders on concerning. The brand’s social team clips you before the villa’s finished clapping.', effects: { graft: 4, followers: 5 } },
+          incredible: { text: 'You win it, name-check the product with a wink so precise it can’t be cut, and mime a sponsorship handshake at the fixed cam. The brand reposts you within the hour. Invoice energy.', effects: { graft: 5, followers: 8, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Steal it anyway',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You lose the challenge AND the bit: your smoothie “review” offends the brand, the villa, and one specific banana. Legal watches the tape twice.', effects: { followers: 3, public: -2, burnout: 3 } },
+          good: { text: 'You come dead last with a running commentary so good the segment is functionally yours. The winner holds the smoothies. You hold the audience.', effects: { followers: 6, charisma: 2 } },
+          incredible: { text: 'Your loser’s acceptance speech for a smoothie challenge becomes the episode’s most-clipped moment. Brands take notes. Plural. You can hear the pens.', effects: { followers: 9, charisma: 2, graft: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_br_catchphrase', act: [2, 3], pathAffinity: ['brand'], tags: ['banter', 'camera'],
+    art: 'li_lawn',
+    context: 'An ordinary Tuesday · a star is workshopping',
+    prompt: 'Every Islander who ever built an empire left this place with a catchphrase, and you don’t have one yet. You’ve got a shortlist. The villa is your focus group, whether it knows it or not. (It must never know it.)',
+    choices: {
+      left: {
+        label: 'Seed it naturally',
+        tags: ['banter', 'strategy'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You deploy the phrase four times before lunch and {mate} asks why you keep saying that. A catchphrase that gets noticed being planted is a crime scene.', effects: { followers: 2, burnout: 3 } },
+          good: { text: 'You drop it once, perfectly, at the height of a group laugh. By dinner two people have repeated it. Organic reach, farmed by hand.', effects: { followers: 5, savvy: 2 } },
+          incredible: { text: 'The phrase escapes the villa on the same night’s episode and by morning it has fan art. You built a meme with your bare hands and everyone thinks it was an accident. Correct.', effects: { followers: 8, savvy: 3, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Go big at the firepit',
+        tags: ['camera', 'drama'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You engineer a firepit moment for the line and the line arrives DOA — too rehearsed, wrong crowd, someone sneezes in the pause. The sneeze gets the clip.', effects: { followers: 2, public: -1, burnout: 3 } },
+          good: { text: 'The moment comes, you say the thing, the firepit erupts. Cameras don’t catch lightning; they catch people who scheduled it.', effects: { followers: 6, charisma: 2 } },
+          incredible: { text: 'The line lands so hard the Host quotes it back at the next ceremony. When the format starts doing your marketing, the brand isn’t coming — it’s here.', effects: { followers: 9, public: 3, charisma: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_br_villain_turn', act: [2, 3], pathAffinity: ['brand'], tags: ['drama', 'camera'],
+    art: 'li_firepit_day',
+    context: 'The edit is knocking · villain hours',
+    prompt: 'The show has started cutting to you whenever anything spicy happens — the edit is auditioning you for villain, and villains, historically, out-earn winners. The role is right there. It just costs the thing roles always cost.',
+    choices: {
+      left: {
+        label: 'Take the role',
+        tags: ['drama', 'camera'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You lean in and pick the wrong scene: your “villain moment” lands on the villa’s most beloved Islander, mid-wobble. Boos you can hear through the walls. Even the edit winces.', effects: { followers: 4, public: -4, burnout: 4 } },
+          good: { text: 'You say the sharp thing everyone was circling, with a raised eyebrow and perfect posture. The villa gasps; the internet crowns you. Villainy is just honesty with styling.', effects: { followers: 7, public: -2, charisma: 2 } },
+          incredible: { text: 'One firepit monologue and you’re the villain of the Season — quotable, gif-able, unbothered. The nation boos with its whole chest and keeps watching with its whole schedule.', effects: { followers: 10, public: -2, charisma: 3, graft: 3 } },
+        },
+      },
+      right: {
+        label: 'Refuse the edit',
+        tags: ['loyal', 'strategy'],
+        governingStats: { loyalty: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You dodge the villain edit by being aggressively pleasant for a week, and vanish from three consecutive episodes. The moral high ground has terrible reception.', effects: { public: 2, followers: -2, burnout: 2 } },
+          good: { text: 'You sidestep every trap the edit lays and stay stubbornly, watchably decent. The slower brand. The one with a longer shelf life.', effects: { public: 3, loyalty: 2, followers: 2 } },
+          incredible: { text: 'You call the edit out IN the Beach Hut — “I know what you’re doing, and I’m boring, deal with it” — and the show, delighted, airs it. Anti-villain: somehow the freshest brand of all.', effects: { public: 4, followers: 6, savvy: 2 } },
+        },
+      },
+    },
+  },
+];

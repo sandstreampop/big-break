@@ -1,0 +1,1033 @@
+// Love Island — the structural beats: everything production forces into the
+// Season. Chains (arrival, Casa Amor, the exposed Recoupling and its verdicts,
+// the wobbles) plus the scheduled windows (Bombshells, Movie Night, the girls’
+// Recoupling, Meet the Parents), the daybed graft beats, and the three Final
+// cards. Voice per docs/games/love-island/VOICE.md; whole-scene reference in
+// GUIDING_EXAMPLES.md. Tags `text`/`host` drive the presenter’s authority
+// styling; `beat:<key>` tags are the producers plugin’s delivery windows.
+
+import type { GameEvent } from '../../types.js';
+
+export const BEAT_EVENTS: GameEvent[] = [
+
+  // ---------- The arrival: first coupling, card one ----------
+  {
+    id: 'li_arrival', act: 1, chainOnly: true, tags: ['text'],
+    art: 'li_arrival',
+    context: 'Day 1 · the lawn · “TEXT! I’VE GOT A TEXT!!”',
+    prompt: '“Islanders, it’s time to couple up. Step forward for the person you want. #shootyourshot” — Six strangers in swimwear are arranged like a menu. The nation is already deciding what you are. So, in the next thirty seconds, are you.',
+    choices: {
+      left: {
+        label: 'Go with your gut',
+        tags: ['flirt', 'date'],
+        governingStats: { rizz: 1 },
+        outcomes: {
+          bad: { text: 'You step forward for the smile. The smile was aimed at someone behind you. You couple up anyway, both pretending this is fine, live, forever.', effects: { couple: true, rizz: 2, burnout: 3 } },
+          good: { text: 'You step forward and they don’t look surprised. In here, not-surprised is a love language.', effects: { couple: true, rizz: 3, public: 2 } },
+          incredible: { text: 'You step forward and two other people visibly deflate. The nation clocks it. Day one, and you’re already a storyline.', effects: { couple: true, rizz: 4, public: 3, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Pick with your head',
+        tags: ['strategy'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You pick the safe option. The safe option immediately describes you to camera as “a slow burner,” which is villa for furniture.', effects: { couple: true, savvy: 2, burnout: 3 } },
+          good: { text: 'You pick the one nobody will fight you for. Boring is underrated. Boring survives week one.', effects: { couple: true, savvy: 3, public: 2 } },
+          incredible: { text: 'You read the whole lawn in one pass and pick the exact couple-shaped gap in it. A producer, somewhere, updates a whiteboard.', effects: { couple: true, savvy: 4, public: 2, graft: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Casa Amor (the Act 1→2 chain, ADR-0002) ----------
+  {
+    id: 'li_casa_text', act: 2, chainOnly: true, tags: ['text', 'casa'],
+    art: 'li_casa_text',
+    context: 'Dawn · the villa · “I’VE GOT A TEXT!!”',
+    prompt: '“Islanders, the villa is splitting. One group will spend the next few days at Casa Amor — with six brand-new arrivals. Pack a bag. #outofsightoutofmind” — Your couple gets ninety seconds to say goodbye. Somebody’s already crying, and nothing has happened yet.',
+    choices: {
+      left: {
+        label: 'Say a proper goodbye',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You go for meaningful eye contact and deliver, instead, the face of someone remembering they left straighteners on. It airs.', effects: { chainEventId: 'li_casa_night', loyalty: 2, burnout: 3 } },
+          good: { text: '“Don’t do anything I wouldn’t,” you say, and mean it as a joke, and don’t mean it as a joke at all.', effects: { chainEventId: 'li_casa_night', bond: 3, loyalty: 2 } },
+          incredible: { text: 'The goodbye is so solid the other couples look away, embarrassed by their own. The nation makes a compilation of it by lunch.', effects: { chainEventId: 'li_casa_night', bond: 5, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Keep it breezy',
+        tags: ['strategy', 'banter'],
+        governingStats: { savvy: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You wave. A wave. Your partner will describe this wave, at length, to six new people, for three days.', effects: { chainEventId: 'li_casa_night', burnout: 4, savvy: 2 } },
+          good: { text: 'No tears, no speeches, one raised eyebrow that says <i>behave</i>. Economical. The edit respects economy.', effects: { chainEventId: 'li_casa_night', savvy: 3, public: 2 } },
+          incredible: { text: 'You leave them laughing, which is the only exit that survives a highlights reel. Confidence reads as a plan even when it’s a shrug.', effects: { chainEventId: 'li_casa_night', savvy: 3, public: 3, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_casa_night', act: 2, chainOnly: true, tags: ['casa', 'temptation'],
+    art: 'li_casa_night',
+    context: 'Casa Amor · night 2 · six new faces',
+    prompt: 'Six new arrivals, one duvet each, and a partner one postcode and one production decision away. Everything you do here, they’ll find out about. Not tonight. But they will.',
+    choices: {
+      left: {
+        label: 'Stay loyal',
+        tags: ['loyal'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You sleep on the daybed to be safe. You wake up stiff, righteous, and quietly furious at no one in particular.', effects: { chainEventId: 'li_casa_postcard_loyal', casaLoyaltyDraw: true, bond: 3, burnout: 3, addFlag: 'li_loyal_casa' } },
+          good: { text: 'You talk about your other half until the new arrivals give up. One calls you “boring.” You take it as a compliment, because it is one.', effects: { chainEventId: 'li_casa_postcard_loyal', casaLoyaltyDraw: true, bond: 5, public: 3, addFlag: 'li_loyal_casa' } },
+          incredible: { text: 'You don’t waver, and on camera it reads as strength, not fear. The public falls a little in love with you, which was not the plan, and helps enormously.', effects: { chainEventId: 'li_casa_postcard_loyal', casaLoyaltyDraw: true, bond: 6, public: 4, graft: 3, addFlag: 'li_loyal_casa' } },
+        },
+      },
+      right: {
+        label: 'Let your head turn',
+        tags: ['flirt', 'temptation', 'drama'],
+        governingStats: { rizz: 1, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You kiss the new arrival. It is fine. It is, in fact, so fine that you immediately understand you’ve made a mistake for nothing.', effects: { chainEventId: 'li_casa_postcard_stray', casaLoyaltyDraw: true, followers: 3, burnout: 4, addFlag: 'li_casa_kiss' } },
+          good: { text: '“I’m not being funny, my head’s proper been turned.” It has. The footage exists. Someone back home is asleep, loyal, and doomed to a slideshow.', effects: { chainEventId: 'li_casa_postcard_stray', casaLoyaltyDraw: true, followers: 5, rizz: 2, addFlag: 'li_casa_kiss' } },
+          incredible: { text: 'By midnight you’re the main story in two villas, and you’re only in one of them. The nation cancels its evening plans.', effects: { chainEventId: 'li_casa_postcard_stray', casaLoyaltyDraw: true, followers: 8, public: 2, rizz: 2, addFlag: 'li_casa_kiss' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_casa_postcard_loyal', act: 2, chainOnly: true, tags: ['text', 'casa'],
+    art: 'li_casa_postcard',
+    context: 'Casa Amor · morning · “I’ve got a text! A postcard from the villa…”',
+    prompt: 'One photo. Your partner, mid-laugh, somebody’s hand somewhere ambiguous, cropped by a producer who knows exactly what they’re doing. You stayed loyal. This is what you stayed loyal to. Probably. The crop makes it hard to say.',
+    choices: {
+      left: {
+        label: 'Trust them',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: '“It’s a crop,” you tell the group, with the conviction of someone who has seen crops before. The group nods the way people nod at conspiracy theories.', effects: { chainEventId: 'li_casa_return', bond: 2, burnout: 4 } },
+          good: { text: 'You put the postcard face-down and go make a coffee. It’s the most powerful thing anyone has done in either villa this week.', effects: { chainEventId: 'li_casa_return', bond: 4, burnout: -2 } },
+          incredible: { text: 'You laugh at it. Actually laugh. The new arrivals quietly cross you off their lists, which is the point.', effects: { chainEventId: 'li_casa_return', bond: 5, public: 3, burnout: -3 } },
+        },
+      },
+      right: {
+        label: 'Spiral about it',
+        tags: ['drama'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You analyse the hand. You bring the postcard to dinner. By sunset you have a theory involving three people who haven’t met.', effects: { chainEventId: 'li_casa_return', burnout: 6, followers: 2 } },
+          good: { text: 'You have one loud, cathartic rant in the Beach Hut and emerge fine. The Hut absorbs. That’s what the Hut is for.', effects: { chainEventId: 'li_casa_return', followers: 4, burnout: 2 } },
+          incredible: { text: 'Your postcard monologue is so quotable the show uses it in the intro for the rest of the Season. Pain, but make it a font.', effects: { chainEventId: 'li_casa_return', followers: 7, public: 3, burnout: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_casa_postcard_stray', act: 2, chainOnly: true, tags: ['text', 'casa'],
+    art: 'li_casa_postcard',
+    context: 'Casa Amor · morning · “I’ve got a text! The villa got a postcard…”',
+    prompt: 'The postcard went the other way too. Somewhere across the island, your partner is holding a photo of your night. You know exactly what the crop shows, because you did it. The only question left is who tells them — you, or Movie Night.',
+    choices: {
+      left: {
+        label: 'Come clean at the return',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You rehearse the confession on the minibus. It comes out in the wrong order, worst part first. Honest, though. Painfully, structurally honest.', effects: { chainEventId: 'li_casa_return', comeClean: true, bond: -5, public: 2, burnout: 3 } },
+          good: { text: '“You deserve to hear it from me.” It costs you. It costs you less than a cinema screen would have.', effects: { chainEventId: 'li_casa_return', comeClean: true, bond: -4, public: 3 } },
+          incredible: { text: 'You tell the whole truth, unprompted, before anyone can screen anything. The villa is stunned. Honesty this efficient is basically a twist.', effects: { chainEventId: 'li_casa_return', comeClean: true, bond: -3, public: 4, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Bury it',
+        tags: ['strategy'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You practise your innocent face in a teaspoon. The teaspoon is not convinced. Movie Night exists, and it has your name in the credits.', effects: { chainEventId: 'li_casa_return', burnout: 5, savvy: 2 } },
+          good: { text: 'You say nothing, calmly, like a professional. The footage also says nothing. For now. Footage is patient.', effects: { chainEventId: 'li_casa_return', savvy: 3, burnout: 3 } },
+          incredible: { text: 'You construct a version of events so watertight you briefly believe it yourself. The producers, reviewing the tape, applaud quietly.', effects: { chainEventId: 'li_casa_return', savvy: 4, followers: 3, burnout: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_casa_return', act: 2, chainOnly: true, tags: ['host', 'casa', 'recoupling'],
+    art: 'li_casa_return',
+    context: 'The firepit · the return · the Host is here in person',
+    prompt: '“Islanders. Welcome home. Those of you at Casa Amor had a decision to make — and so did the ones who stayed. Stand by the firepit. Let’s see who did what.” — The gate opens in ten seconds. Whoever you walk in holding hands with is the answer.',
+    choices: {
+      left: {
+        label: 'Stand alone, faithful',
+        tags: ['loyal', 'recoupling'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You walk in alone, heart first. The walk from the gate to the firepit has never been longer, and you built it a lane of your own.', effects: { casaReturn: true, loyalty: 2, burnout: 3 } },
+          good: { text: 'You walk in alone and the Host says, “Alone?” and you say, “I know what I have.” The firepit crackles supportively.', effects: { casaReturn: true, loyalty: 3, public: 2 } },
+          incredible: { text: 'You walk in alone to an audible “aww” from people who were betting against you an hour ago. The nation adjusts its favourites.', effects: { casaReturn: true, loyalty: 3, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Bring someone back',
+        tags: ['drama', 'recoupling', 'strategy'],
+        governingStats: { savvy: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You walk in with someone new and immediately clock, from one face, that you have miscalculated on national television. The someone new clocks it too.', effects: { switchPartner: true, followers: 4, public: -2, burnout: 5, addFlag: 'li_casa_recouple', removeFlag: 'li_casa_kiss' } },
+          good: { text: 'You walk in hand-in-hand with your Casa arrival. Gasps. A dropped drink. It’s a betrayal, a power move, and content — all three at once.', effects: { switchPartner: true, followers: 7, burnout: 3, addFlag: 'li_casa_recouple', removeFlag: 'li_casa_kiss' } },
+          incredible: { text: 'Your entrance restructures three couples and one friendship before you reach the firepit. The episode gets a “PART ONE” title card.', effects: { switchPartner: true, followers: 10, public: 3, burnout: 3, addFlag: 'li_casa_recouple', removeFlag: 'li_casa_kiss' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_casa_held', act: 2, chainOnly: true, tags: ['casa', 'loyal'],
+    art: 'li_casa_held',
+    context: 'The firepit · the gate opens',
+    prompt: 'The gate opens and your partner walks in alone. Alone. Three days, six strangers, one narrow single bed of temptation — and they held. The look you exchange does more for the vote than any speech could.',
+    choices: {
+      left: {
+        label: 'Run to them',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You run. Sliders were the wrong footwear for running. You arrive at the reunion slightly later than your dignity.', effects: { bond: 5, public: 2, burnout: 2 } },
+          good: { text: 'The hug lasts long enough that the Host checks a watch. “We held,” you say, into a shoulder. The couples who didn’t look at the floor.', effects: { bond: 7, public: 3 } },
+          incredible: { text: 'The reunion is so complete the show cuts the ad break early to keep it. What you two have just became the Season’s bar.', effects: { bond: 9, public: 4, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Play it cool',
+        tags: ['banter', 'strategy'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: '“Alright?” you say, casually, to the person you’ve thought about hourly for three days. They say “alright” back. Two romantics, flattened by cool.', effects: { bond: 3, burnout: 3 } },
+          good: { text: 'One nod, one smirk, hands finding hands without looking. Understatement, performed correctly, is the loudest thing on this lawn.', effects: { bond: 5, public: 3 } },
+          incredible: { text: 'You both underplay it so perfectly the villa assumes you planned it. “Couple goals,” says someone who pied their partner yesterday.', effects: { bond: 6, public: 4, followers: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_casa_betrayed', act: 2, chainOnly: true, tags: ['casa', 'drama'],
+    art: 'li_casa_betrayed',
+    context: 'The firepit · the gate opens',
+    prompt: 'The gate opens and your partner walks in holding somebody else’s hand. You stayed loyal for this. The camera finds your face and stays there, because your face is now the show.',
+    choices: {
+      left: {
+        label: 'Take it with grace',
+        tags: ['loyal', 'camera'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You manage “I’m happy for you” in the voice of someone reading a hostage statement. The nation’s heart breaks on your behalf anyway.', effects: { public: 5, graft: 4, burnout: 5 } },
+          good: { text: 'You shake the new arrival’s hand. You wish them well. Somewhere out there, a betting market moves sharply in your favour.', effects: { public: 6, graft: 6, burnout: 4, followers: 3 } },
+          incredible: { text: 'Your composure is so gracious it becomes the clip of the Season. Being wronged, it turns out, is prime time — and you just banked it.', effects: { public: 8, graft: 7, followers: 5, burnout: 3 } },
+        },
+      },
+      right: {
+        label: 'Let them have it',
+        tags: ['drama'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You go for a devastating speech and land on “you’ve got mugs, the pair of you,” which means nothing and trends for a week as a mug meme.', effects: { followers: 5, public: -2, burnout: 5 } },
+          good: { text: '“You could’ve texted.” Four words, ice-flat, at a firepit. The new couple’s honeymoon period dies at the age of forty seconds.', effects: { followers: 6, public: 2, burnout: 4 } },
+          incredible: { text: 'You deliver one perfect, surgical read and walk off before the response. The exit is so clean the show replays it from three angles.', effects: { followers: 9, public: 3, graft: 4, burnout: 3 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Movie Night (the big Reveal — beat window, late Act 2) ----------
+  {
+    id: 'li_movienight_reveal', act: 2, weight: 1, tags: ['beat:movienight', 'host', 'drama'],
+    art: 'li_movienight',
+    requires: { anyOf: [
+      { flagsAll: ['li_casa_kiss'] },
+      { flagsAll: ['li_head_turned'] },
+      { flagsAll: ['li_strayed_official'] },
+      { partnerKissedIs: true },
+    ] },
+    context: 'The lawn · a cinema screen that wasn’t there this morning',
+    prompt: '“Islanders. Grab a drink. Tonight, you’re watching a film. It’s about all of you.” — The Host has a remote. The screen is enormous. Somewhere on it is footage somebody at this firepit has been praying doesn’t exist.',
+    choices: {
+      left: {
+        label: 'Front it out',
+        tags: ['strategy', 'camera'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You keep your face neutral through the whole reel. Your knee, under the blanket, does not. The knee gets its own close-up.', effects: { reveal: 'movienight', burnout: 5 } },
+          good: { text: 'You watch it like a critic. No gasps, no denials, one measured “well.” Whatever just aired, you’ve already moved past it, publicly.', effects: { reveal: 'movienight', savvy: 3, burnout: 3 } },
+          incredible: { text: 'You commentate your own worst clip before anyone else can. Owning it lands better than the footage did. The villa is disarmed; the edit is furious.', effects: { reveal: 'movienight', savvy: 4, public: 3, burnout: 2 } },
+        },
+      },
+      right: {
+        label: 'React with your whole chest',
+        tags: ['drama'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You’re out of your seat before the clip ends. The row that follows has structure, movements, an interval. Nobody wins Movie Night.', effects: { reveal: 'movienight', followers: 4, burnout: 6 } },
+          good: { text: 'You say the thing everyone at the firepit is thinking, at volume, with the remote still in the Host’s hand. Honest chaos. The good kind.', effects: { reveal: 'movienight', followers: 6, burnout: 4 } },
+          incredible: { text: 'Your reaction shot becomes the Season’s reaction shot. From tonight, every betrayal on this show is measured against your face.', effects: { reveal: 'movienight', followers: 9, public: 2, burnout: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_movienight_clean', act: 2, weight: 1, tags: ['beat:movienight', 'host', 'banter'],
+    art: 'li_movienight',
+    requires: { flagsNone: ['li_casa_kiss', 'li_head_turned', 'li_strayed_official'], partnerKissedIs: false },
+    context: 'The lawn · a cinema screen that wasn’t there this morning',
+    prompt: '“Islanders. Grab a drink. Tonight, you’re watching a film. It’s about all of you.” — The reel starts. Clip after clip, it’s everyone else. You check twice. Nothing with your name on it. Movie Night, for once, is a spectator sport.',
+    choices: {
+      left: {
+        label: 'Hold hands and watch',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You relax so visibly during someone else’s scandal that the camera cuts to you enjoying it. Smugness, it turns out, is also a clip.', effects: { bond: 3, public: -1, burnout: 2 } },
+          good: { text: 'Two couples detonate in front of you while you share a blanket. Nothing bonds two people like other people’s footage.', effects: { bond: 5, burnout: -2 } },
+          incredible: { text: 'The screen goes dark and you two are the only couple still holding hands. The nation notices. The nation keeps receipts.', effects: { bond: 7, public: 4, burnout: -3 } },
+        },
+      },
+      right: {
+        label: 'Live-commentate',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'Your running commentary lands one joke too close to the wrong couple’s open wound. The blanket you’re offered afterwards is not friendly.', effects: { followers: 3, public: -2, burnout: 3 } },
+          good: { text: 'You narrate the carnage like snooker. Quiet, precise, devastating. Half the firepit is fighting; the other half is trying not to laugh at you.', effects: { followers: 5, charisma: 2 } },
+          incredible: { text: 'Your popcorn commentary out-rates the actual scandal. The show cuts to you for reactions it hasn’t aired yet. You are now infrastructure.', effects: { followers: 8, public: 3, charisma: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Bombshells ----------
+  {
+    id: 'li_bomb1', act: 1, weight: 1, tags: ['beat:bomb1', 'text', 'drama'],
+    art: 'li_bombshell',
+    context: 'Golden hour · “I’VE GOT A TEXT!!”',
+    prompt: '“Islanders, please welcome your first bombshell. {bombshell} arrives tonight — and will be taking one of you on a date. #newenergy” — A newcomer walks in like the villa is theirs and everyone else is subletting. Your couple suddenly has an audience.',
+    choices: {
+      left: {
+        label: 'Say hi first',
+        tags: ['flirt', 'strategy'],
+        governingStats: { rizz: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You lead the welcome party a beat too enthusiastically. Your partner watches the greeting the way insurance assessors watch dashcam footage.', effects: { bond: -2, followers: 3, burnout: 3 } },
+          good: { text: 'You get in early, friendly and unbothered. Nothing defuses a bombshell like being treated as a colleague.', effects: { savvy: 3, public: 2 } },
+          incredible: { text: 'Within an hour the bombshell is asking YOU for the lay of the land. New arrivals need allies. You collect them.', effects: { savvy: 4, public: 3, graft: 3 } },
+        },
+      },
+      right: {
+        label: 'Hold your ground',
+        tags: ['loyal'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You perform elaborate indifference from the daybed, which reads, on camera, as fear arranged decoratively.', effects: { burnout: 3, loyalty: 2 } },
+          good: { text: 'You stay wrapped around your partner through the whole entrance. Some statements don’t need dialogue.', effects: { bond: 4, loyalty: 2 } },
+          incredible: { text: 'The bombshell scans the lawn, reaches your couple, and visibly re-plans. Solid reads as solid from across a garden.', effects: { bond: 6, public: 2, loyalty: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_bomb2', act: 2, weight: 3, tags: ['beat:bomb2', 'text', 'drama', 'temptation'],
+    art: 'li_bombshell',
+    requires: { singleIs: false },
+    context: 'Afternoon · “I’VE GOT A TEXT!!”',
+    prompt: '“Islanders, {bombshell} enters the villa tonight — and gets to steal one Islander for a private date. #spicy” — The new arrival reads the lawn like a wine list. Your partner is on it. So, to be fair, are you.',
+    choices: {
+      left: {
+        label: 'Make your couple boring',
+        tags: ['loyal', 'strategy'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You spend the evening demonstratively coupled. The bombshell finds the performance “sweet,” which lands like a slap in cashmere.', effects: { bond: 2, burnout: 3, addFlag: 'li_rival_active' } },
+          good: { text: 'You give the bombshell nothing to work with: no gap, no glance, no in. Predators pick the easy grass. You are not the easy grass.', effects: { bond: 4, savvy: 2 } },
+          incredible: { text: 'You’re so unbothered the bombshell recruits you as a confidant and targets somebody else’s couple. You now have intel and immunity.', effects: { bond: 5, savvy: 3, graft: 3 } },
+        },
+      },
+      right: {
+        label: 'Size them up yourself',
+        tags: ['flirt', 'temptation'],
+        governingStats: { rizz: 1 },
+        outcomes: {
+          bad: { text: 'You flirt “as a test,” fail your own test, and spend the night explaining the methodology to a partner who has stopped nodding.', effects: { bond: -3, followers: 3, burnout: 4, addFlag: 'li_head_turned' } },
+          good: { text: 'You charm the bombshell into an ally and hand them, with a hostess’s smile, a list of the villa’s available options. Not yours.', effects: { rizz: 3, followers: 4, public: 2 } },
+          incredible: { text: 'The bombshell openly declares you their type; you openly decline, live. Being wanted and unavailable is the best television there is.', effects: { rizz: 3, public: 4, followers: 5, bond: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_bomb2_steal', act: 2, weight: 1, tags: ['beat:bomb2', 'host', 'drama', 'recoupling'],
+    art: 'li_bombshell_steal',
+    requires: { singleIs: false },
+    context: 'The firepit · night · the Host walks in unannounced',
+    prompt: '“Islanders. Tonight, our new arrival doesn’t get a date. They get a choice. In sixty seconds, {bombshell} will couple up with one of you — and whoever’s left over is single. Immediately.” — Sixty seconds. Every couple on this lawn is doing the same maths.',
+    choices: {
+      left: {
+        label: 'Close ranks',
+        tags: ['loyal', 'recoupling'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You grip your partner’s hand like a car door in a flood. Fear, the bombshell knows, is just interest wearing a disguise.', effects: { stealRoll: true, burnout: 4 } },
+          good: { text: 'You stand with your partner and watch the sixty seconds tick. What you’ve built either holds now, or it was never built.', effects: { stealRoll: true, loyalty: 2 } },
+          incredible: { text: 'You don’t even stand up. Whatever happens next, the lawn just learned which couple isn’t scared.', effects: { stealRoll: true, loyalty: 2, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Work the odds',
+        tags: ['strategy', 'recoupling'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You spend the sixty seconds loudly recommending other couples, which everyone hears, including the other couples.', effects: { stealRoll: true, public: -2, burnout: 4 } },
+          good: { text: 'You angle your couple out of the eyeline, casually, like furniture being rearranged. Sometimes savvy is just geometry.', effects: { stealRoll: true, savvy: 3 } },
+          incredible: { text: 'You read the bombshell’s type off their entrance outfit and reposition accordingly. If this works, no one will ever know it was a move.', effects: { stealRoll: true, savvy: 4, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_bomb2_single', act: 2, weight: 2, tags: ['beat:bomb2', 'text', 'flirt'],
+    art: 'li_bombshell',
+    requires: { singleIs: true },
+    context: 'Afternoon · “I’VE GOT A TEXT!!”',
+    prompt: '“Islanders, {bombshell} enters the villa tonight. #newenergy” — A new arrival, and you’re the only single person at the welcome drinks. The villa watches you approach the situation the way nature documentaries watch anything.',
+    choices: {
+      left: {
+        label: 'Shoot your shot',
+        tags: ['flirt', 'date'],
+        governingStats: { rizz: 1 },
+        outcomes: {
+          bad: { text: 'You open with your full backstory, including the betrayal. The bombshell’s eyes do the thing eyes do when a lift is taking too long.', effects: { burnout: 4, rizz: 2 } },
+          good: { text: 'Twenty minutes on the swing seat and the bombshell has stopped scanning the lawn over your shoulder. In here, undivided attention is a proposal.', effects: { couple: true, rizz: 3, public: 2 } },
+          incredible: { text: 'By sundown you and the bombshell are the villa’s newest couple, and the people who left you single are recalculating at volume.', effects: { couple: true, rizz: 4, public: 3, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Let them come to you',
+        tags: ['strategy', 'rest'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You play hard-to-get so successfully you are not got. The bombshell couples with someone easier to find.', effects: { burnout: 3, savvy: 2 } },
+          good: { text: 'You hold court at the kitchen counter and let gravity work. New arrivals always end up at the kitchen counter.', effects: { savvy: 3, public: 2 } },
+          incredible: { text: 'The bombshell crosses the whole lawn to introduce themselves to you, on camera, past four better-lit options. Leverage.', effects: { couple: true, savvy: 3, public: 4 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Recoupling 1 (the girls choose — beat window, late Act 2) ----------
+  {
+    id: 'li_recoup1_choose', act: 2, weight: 1, tags: ['beat:recoup1', 'text', 'recoupling'],
+    art: 'li_firepit',
+    requires: { genderIs: 'girl', singleIs: false },
+    context: 'The firepit · night · “I’VE GOT A TEXT!!”',
+    prompt: '“Tonight, there will be a recoupling. The girls will choose. #ladiesfirst” — The power is yours, which sounds better than it feels. Keep what you have, or reset everything for a fresh face — with the whole lawn, and the nation, taking notes.',
+    choices: {
+      left: {
+        label: 'Stick with {partner}',
+        tags: ['loyal', 'recoupling'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: '“I’m coupling up with…” — you get the name right, but your speech includes the word “comfortable” twice. Comfortable, twice, is a warning light.', effects: { bond: 2, burnout: 3 } },
+          good: { text: 'You keep your speech short and mean every word. Recommitting at a firepit, out loud, is worth more than any date card.', effects: { bond: 5, public: 2 } },
+          incredible: { text: 'Your speech gets an actual round of applause and one audible sniffle. The couples that were wobbling look suddenly, visibly, worse.', effects: { bond: 7, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Switch it up',
+        tags: ['strategy', 'recoupling', 'drama'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You switch, and your reasons come out backwards, and your ex’s face does something the cameras will replay all week. New start, old debris.', effects: { switchPartner: true, followers: 4, public: -2, burnout: 5 } },
+          good: { text: 'You say the honest thing — it wasn’t working, everyone knew — and pick fresh. The firepit exhales. Bold, clean, survivable.', effects: { switchPartner: true, followers: 5, burnout: 3 } },
+          incredible: { text: 'Your switch is so well-argued the lawn nods along, including, horribly, your ex. A cold move executed warmly is the whole game.', effects: { switchPartner: true, followers: 7, public: 3, burnout: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_recoup1_choose_single', act: 2, weight: 1, tags: ['beat:recoup1', 'text', 'recoupling'],
+    art: 'li_firepit',
+    requires: { genderIs: 'girl', singleIs: true },
+    context: 'The firepit · night · “I’VE GOT A TEXT!!”',
+    prompt: '“Tonight, there will be a recoupling. The girls will choose. #ladiesfirst” — You’re single, and you pick first. The boys arrange themselves around the firepit like options. One of them has been practising his surprised face.',
+    choices: {
+      left: {
+        label: 'Pick with your heart',
+        tags: ['flirt', 'recoupling'],
+        governingStats: { rizz: 1 },
+        outcomes: {
+          bad: { text: 'You pick the connection you felt on Tuesday. He stands up wearing the smile of someone who felt a different Tuesday.', effects: { couple: true, burnout: 3, rizz: 2 } },
+          good: { text: 'You say a name you actually mean, and he crosses the firepit like he’s been waiting for the sentence to end.', effects: { couple: true, rizz: 3, public: 2 } },
+          incredible: { text: 'Your speech is half a joke and one true sentence, and the true sentence lands on the whole lawn at once. New couple; instant favourites.', effects: { couple: true, rizz: 4, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Pick for survival',
+        tags: ['strategy', 'recoupling'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You pick the safest boy on the bench, and your speech accidentally includes the word “logistically.” The nation winces as one.', effects: { couple: true, savvy: 2, public: -1, burnout: 3 } },
+          good: { text: 'You pick the steady one. Not fireworks — scaffolding. This villa eats fireworks for breakfast.', effects: { couple: true, savvy: 3, public: 2 } },
+          incredible: { text: 'You pick the exact boy the vote wanted you to pick, without knowing the vote wanted it. Instinct or algorithm, it plays beautifully.', effects: { couple: true, savvy: 4, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_recoup1_exposed', act: 2, weight: 1, tags: ['beat:recoup1', 'text', 'recoupling'],
+    art: 'li_firepit',
+    requires: { genderIs: 'boy', singleIs: false },
+    context: 'The firepit · night · “I’VE GOT A TEXT!!”',
+    prompt: '“Tonight, there will be a recoupling. The girls will choose. The boy not chosen will be dumped from the Island. #decisiontime” — You don’t pick tonight. You stand there, with everything you’ve built, and find out what it was worth.',
+    choices: {
+      left: {
+        label: 'Trust the graft',
+        tags: ['loyal', 'recoupling'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You stand at the firepit doing sums about your own relationship. The maths keeps coming out different depending on which memory you use.', effects: { chosenCeremony: true, burnout: 4 } },
+          good: { text: 'You catch your partner’s eye across the fire and hold it. Whatever happens in the next minute, you didn’t blink first.', effects: { chosenCeremony: true, loyalty: 2 } },
+          incredible: { text: 'You stand there so calmly the other boys start glancing at you for reassurance. You have none to give. You look like you do. That’s leadership.', effects: { chosenCeremony: true, loyalty: 2, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Count your votes',
+        tags: ['strategy', 'recoupling'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You run the numbers: who owes you, who likes you, who laughed at the pie thing. The numbers are inconclusive. The fire is very warm.', effects: { chosenCeremony: true, burnout: 4 } },
+          good: { text: 'You’ve been decent to every girl at this firepit for weeks. Tonight that’s not niceness. Tonight that’s a portfolio.', effects: { chosenCeremony: true, savvy: 2 } },
+          incredible: { text: 'You know exactly who’s picking whom before a word is said — you can read a firepit like a departures board. The only unknown is your own name.', effects: { chosenCeremony: true, savvy: 3, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_recoup1_exposed_single', act: 2, weight: 1, tags: ['beat:recoup1', 'text', 'recoupling'],
+    art: 'li_firepit',
+    requires: { genderIs: 'boy', singleIs: true },
+    context: 'The firepit · night · “I’VE GOT A TEXT!!”',
+    prompt: '“Tonight, there will be a recoupling. The girls will choose. The boy not chosen will be dumped from the Island. #decisiontime” — You’re single going in. No Bond to protect you tonight — only whatever the last few weeks bought you with the girls, and with the nation.',
+    choices: {
+      left: {
+        label: 'Trust the friendships',
+        tags: ['chat', 'recoupling'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You review every kitchen-counter heart-to-heart for evidence somebody here would save you. It’s a lot of tea. It might just have been tea.', effects: { chosenCeremony: true, burnout: 4 } },
+          good: { text: 'You’ve been the villa’s shoulder for weeks. Somewhere around this firepit, that has to be worth one name.', effects: { chosenCeremony: true, public: 2 } },
+          incredible: { text: 'Three girls glance at you before the choosing starts. Three. You spend the ceremony doing very calm arithmetic.', effects: { chosenCeremony: true, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Trust the edit',
+        tags: ['camera', 'recoupling'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You give the camera your best profile for the whole ceremony. If you’re going, you’re going in focus.', effects: { chosenCeremony: true, burnout: 3 } },
+          good: { text: 'The nation has watched you be funny, decent, and single for a week. Somewhere on a sofa, someone is willing a girl to say your name.', effects: { chosenCeremony: true, followers: 2 } },
+          incredible: { text: 'You are, objectively, the story tonight — the single boy at the firepit. Stories don’t usually get sent home mid-arc. Usually.', effects: { chosenCeremony: true, followers: 3, public: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Recoupling 2 (the boys choose — chained at the Act 2→3 break) ----------
+  {
+    id: 'li_recoup2_choose', act: 3, chainOnly: true, tags: ['text', 'recoupling'],
+    art: 'li_firepit',
+    context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
+    prompt: '“Tonight, there will be a recoupling. The boys will choose. #judgementweek” — Final Week, and the power lands in your hands. Whoever you’re standing with at the end of tonight is who you’re standing with at the Final.',
+    choices: {
+      left: {
+        label: 'Stick with {partner}',
+        tags: ['loyal', 'recoupling'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You recommit with a speech that peaks at “she’s a great girl,” a phrase last used warmly by a driving instructor. She accepts. The bar was low.', effects: { bond: 2, burnout: 3 } },
+          good: { text: 'You say her name first and explain after — the right order. The firepit approves. So, more importantly, does she.', effects: { bond: 5, public: 2 } },
+          incredible: { text: 'Your speech is one sentence long and it detonates quietly: the truest thing said at this firepit all Season. The Final just got a favourite.', effects: { bond: 7, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Make the late switch',
+        tags: ['strategy', 'recoupling', 'drama'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'A Final Week switch with a wobbly rationale: the villa hears “gut feeling,” the nation hears “panic,” your new partner hears both.', effects: { switchPartner: true, followers: 4, public: -3, burnout: 5 } },
+          good: { text: 'You make the coldest move of the Season sound like the most reasonable. Half this game is timing. The other half is delivery.', effects: { switchPartner: true, followers: 6, burnout: 3 } },
+          incredible: { text: 'The switch nobody saw coming, executed so cleanly even your ex applauds. The Final Week board resets around you.', effects: { switchPartner: true, followers: 8, public: 2, burnout: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_recoup2_choose_single', act: 3, chainOnly: true, tags: ['text', 'recoupling'],
+    art: 'li_firepit',
+    context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
+    prompt: '“Tonight, there will be a recoupling. The boys will choose. #judgementweek” — You walk into Final Week single, and you pick first. One good sentence between you and a place at the Final.',
+    choices: {
+      left: {
+        label: 'Pick with your heart',
+        tags: ['flirt', 'recoupling'],
+        governingStats: { rizz: 1 },
+        outcomes: {
+          bad: { text: 'You pick the connection you’ve been nursing since the challenge. Her face says she remembers the challenge differently.', effects: { couple: true, burnout: 3, rizz: 2 } },
+          good: { text: 'You say the name you kept not saying. She stands up before you finish the speech. Late, but not too late — the best kind of late.', effects: { couple: true, rizz: 3, public: 2 } },
+          incredible: { text: 'The pick is so obviously right that the villa collectively mutters “finally.” Finally, at a firepit, is a coronation.', effects: { couple: true, rizz: 4, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Pick the strongest hand',
+        tags: ['strategy', 'recoupling'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You pick for the Final, and everyone can tell, including her, including the vote, including you around 3 a.m.', effects: { couple: true, savvy: 2, public: -2, burnout: 3 } },
+          good: { text: 'You pick the partnership that works on paper and might, given a quiet week, work off it. Final Week has been built on worse.', effects: { couple: true, savvy: 3, public: 2 } },
+          incredible: { text: 'You pick the one person in this villa whose game you actually respect. The nation, which respects respect, moves you both up a tier.', effects: { couple: true, savvy: 4, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_recoup2_exposed', act: 3, chainOnly: true, tags: ['text', 'recoupling'],
+    art: 'li_firepit',
+    context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
+    prompt: '“Tonight, there will be a recoupling. The boys will choose. The girl not chosen will be dumped from the Island. #judgementweek” — There are more girls than places. You have no move tonight — only everything you’ve already built: the Bond, or the vote. It needs to be one of them.',
+    choices: {
+      left: {
+        label: 'Trust the graft',
+        tags: ['loyal', 'recoupling'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You replay every private moment for load-bearing sincerity. The firepit is warm. Your hands are freezing.', effects: { chosenCeremony: true, burnout: 4 } },
+          good: { text: 'What you two have is real, and real usually stands up at a firepit. Usually. The fire pops. Someone clears their throat.', effects: { chosenCeremony: true, loyalty: 2 } },
+          incredible: { text: 'You’re so sure of your couple you spend the ceremony comforting the girl next to you. The nation files that away for the vote.', effects: { chosenCeremony: true, loyalty: 2, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Work the room first',
+        tags: ['strategy', 'recoupling'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You spent the week being liked by everyone. Tonight you find out whether “liked by everyone” has ever once said a name at a firepit.', effects: { chosenCeremony: true, burnout: 4 } },
+          good: { text: 'You’re not the strongest couple on this lawn — but you might be the one the nation texts about, and the boys can count.', effects: { chosenCeremony: true, public: 2 } },
+          incredible: { text: 'You catch two boys checking your reaction before they’ve chosen. Whatever your couple is worth, your presence is worth more. Tonight that might be enough.', effects: { chosenCeremony: true, public: 3, followers: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_recoup2_exposed_single', act: 3, chainOnly: true, tags: ['text', 'recoupling'],
+    art: 'li_firepit',
+    context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
+    prompt: '“Tonight, there will be a recoupling. The boys will choose. The girl not chosen will be dumped from the Island. #judgementweek” — You’re single, in Final Week, at a ceremony where somebody goes home. No partner to protect you. Only the last three weeks, and the nation.',
+    choices: {
+      left: {
+        label: 'Stand on what you built',
+        tags: ['chat', 'recoupling'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You inventory your villa friendships at speed. Strong portfolio. Wrong market — friendship has never once been recoupled with.', effects: { chosenCeremony: true, burnout: 4 } },
+          good: { text: 'Every girl at this firepit has cried on you at least once. If the boys have been paying any attention at all, that counts for something.', effects: { chosenCeremony: true, public: 2 } },
+          incredible: { text: 'You stand alone with absolute calm, and the calm is the argument: this is not a person whose story ends tonight.', effects: { chosenCeremony: true, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Trust the nation',
+        tags: ['camera', 'recoupling'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You aim your best face at the nearest camera. The camera, a professional, does not blink. Neither, for one very long minute, do you.', effects: { chosenCeremony: true, burnout: 3 } },
+          good: { text: 'The vote has watched you survive a betrayal and a bombshell in one Season. Sofas across the country are shouting a name. It might be yours.', effects: { chosenCeremony: true, followers: 2 } },
+          incredible: { text: 'You are the single girl at a Final Week firepit — the exact person this show builds finales around. The boys know it too.', effects: { chosenCeremony: true, followers: 3, public: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Recoupling verdicts (chained by the Coupling plugin) ----------
+  {
+    id: 'li_recoup_held', act: [2, 3], chainOnly: true, tags: ['recoupling', 'loyal'],
+    art: 'li_firepit',
+    context: 'The firepit · the choosing',
+    prompt: '“I want to couple up with this person because…” — and it’s your name, first, before the because. The Bond held. Across the fire, somebody who worked the room all week is discovering what rooms are worth.',
+    choices: {
+      left: {
+        label: 'Cross the fire to them',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You’re up before your name’s finished, which reads keen. You are keen. The lawn smiles at you being keen. Fine. FINE.', effects: { bond: 3, public: 1, burnout: 2 } },
+          good: { text: 'You take your place beside them and the firepit does its one good trick: it makes chosen people look lit from inside.', effects: { bond: 4, public: 2 } },
+          incredible: { text: 'The speech about you is so specific — the toast thing, the accent you do — that the villa learns your couple has a private world. Private worlds win Finals.', effects: { bond: 6, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Make them work for it',
+        tags: ['banter'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You pause for effect. The pause outlives the effect. Two producers age visibly before you finally stand up.', effects: { bond: 2, burnout: 2, followers: 2 } },
+          good: { text: 'You raise one eyebrow — *go on then* — and cross the fire at your own pace. Chosen, and still charging admission.', effects: { bond: 4, followers: 3 } },
+          incredible: { text: 'Your slow walk around the firepit gets its own music cue. Being wanted is good television; knowing it is better.', effects: { bond: 5, followers: 4, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_recoup_rescued', act: [2, 3], chainOnly: true, tags: ['recoupling', 'drama'],
+    art: 'li_firepit',
+    context: 'The firepit · the choosing',
+    prompt: 'The names go round the fire and none of them is your partner’s voice saying yours. Then — a beat before the Host moves on — someone else says it. Someone you weren’t building with. The nation’s favourite gets caught, not dropped. New couple. New everything.',
+    choices: {
+      left: {
+        label: 'Take the hand offered',
+        tags: ['strategy', 'recoupling'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You join your rescuer with a smile that needs two more drafts. Saved, publicly, by someone you now have to learn from scratch.', effects: { couple: true, public: 2, burnout: 4 } },
+          good: { text: 'You cross the fire with your chin up. It’s not the couple you built — it’s the one the room built for you. The vote loves a plot twist.', effects: { couple: true, public: 3, followers: 3 } },
+          incredible: { text: 'Your rescuer’s speech — “I’ve been watching, and I don’t think anyone in here sees it” — lands so well the villa briefly forgets whose ceremony this was.', effects: { couple: true, public: 4, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Let the old one see your face',
+        tags: ['drama'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You aim a look of pure judgement across the fire and hold it slightly too long. The GIF crops out your new partner entirely.', effects: { couple: true, followers: 4, public: -1, burnout: 3 } },
+          good: { text: 'One glance at the person who didn’t say your name — brief, complete, devastating — and then you take your new seat like a promotion.', effects: { couple: true, followers: 5, public: 2 } },
+          incredible: { text: 'You thank your ex, sincerely, for “making space for something better,” live, at a firepit. The nation gets up and applauds its television.', effects: { couple: true, followers: 7, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_recoup_dumped', act: [2, 3], chainOnly: true, tags: ['host', 'recoupling'],
+    art: 'li_dumped',
+    context: 'The firepit · after the choosing · the Host, gently',
+    prompt: '“I’m sorry. You haven’t been chosen — which means, tonight, you’ve been dumped from the Island. Say your goodbyes.” — You already knew. You knew at the second name. The others do the thing where they hold your hand harder to feel better about themselves.',
+    choices: {
+      left: {
+        label: 'Leave with grace',
+        tags: ['camera', 'loyal'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: '“No, honestly, I’ve had the best time,” you say, honestly. It’s the honesty that gets the sofa at home. Your season ends here.', effects: { followers: 4, burnout: -3, addFlag: 'li_dumped_single' } },
+          good: { text: 'You hug every single person, twice, and leave the villa better than you found it. She means it, which is the part that gets you.', effects: { followers: 5, public: 2, burnout: -4, addFlag: 'li_dumped_single' } },
+          incredible: { text: 'Your goodbye speech is so gracious the public immediately regrets everything. The clip does numbers you never did in the villa. Some careers start at the exit.', effects: { followers: 9, public: 3, burnout: -5, addFlag: 'li_dumped_single' } },
+        },
+      },
+      right: {
+        label: 'Say the quiet part',
+        tags: ['drama'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: '“Some people in here know exactly what they did.” A sentence that will follow four separate people to the reunion. You leave in a spectacular mood.', effects: { followers: 6, public: -3, addFlag: 'li_dumped_single' } },
+          good: { text: 'You name no names and somehow indict everyone. The taxi door shuts on a villa already arguing about it. Exit: chef’s kiss.', effects: { followers: 7, public: -2, addFlag: 'li_dumped_single' } },
+          incredible: { text: 'Your exit interview detonates three storylines on your way past the pool. Dumped, technically. Main character, permanently.', effects: { followers: 10, public: -2, addFlag: 'li_dumped_single' } },
+        },
+      },
+    },
+  },
+
+  // ---------- Meet the Parents (beat window, Act 3) ----------
+  {
+    id: 'li_parents', act: 3, weight: 1, tags: ['beat:parents', 'chat', 'loyal'],
+    art: 'li_parents',
+    requires: { singleIs: false, flagsNone: ['li_revealed', 'li_partner_revealed'] },
+    context: 'Final Week · the families arrive',
+    prompt: 'Prosecco on the lawn and your partner’s mum walking towards you with the smile of a woman who has watched every episode. The families are the last gate before the Final. They have opinions. They have watched you sleep.',
+    choices: {
+      left: {
+        label: 'Be exactly yourselves',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You are so yourselves that you have a small domestic about sun-lounger etiquette in front of both mothers. They exchange a look older than the show.', effects: { bond: 2, burnout: 3 } },
+          good: { text: 'No performance, no rebrand — just the couple they’ve been watching, in person, slightly sunburnt. Her mum squeezes your hand on the way out. That’s the gate, passed.', effects: { bond: 6, public: 3 } },
+          incredible: { text: 'His dad — a man who has said nine words all Season — pulls you in and says, “Look after him.” The nation hears it through the mic. The Final just tilted.', effects: { bond: 8, public: 4, loyalty: 2 } },
+        },
+      },
+      right: {
+        label: 'Charm the whole table',
+        tags: ['camera', 'banter'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You deploy the full charm offensive and her mum, mid-anecdote, asks if you’re “always on.” The table waits, with interest, for your answer.', effects: { public: 2, burnout: 4 } },
+          good: { text: 'You have the dads laughing and the mums topped up inside ten minutes. Charm at a family table is a trade skill, and you came certified.', effects: { public: 4, followers: 3 } },
+          incredible: { text: 'By the end of lunch her mum follows you on everything and calls you “my favourite this year” to a boom mic. The families have voted early.', effects: { public: 5, followers: 5, charisma: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_parents_messy', act: 3, weight: 1, tags: ['beat:parents', 'chat', 'drama'],
+    art: 'li_parents',
+    requires: { singleIs: false, anyOf: [{ flagsAll: ['li_revealed'] }, { flagsAll: ['li_partner_revealed'] }] },
+    context: 'Final Week · the families arrive · they’ve seen the footage',
+    prompt: 'The families arrive smiling, and the smiles have footnotes. They watched Movie Night from their sofas. Somebody’s mum has the exact clip queued on her phone, and a question she has been rehearsing on the plane.',
+    choices: {
+      left: {
+        label: 'Own all of it',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You own it so thoroughly the table gets a full timeline with corrections. Honesty: excellent. Slideshow energy: unnecessary.', effects: { bond: 3, public: 2, burnout: 3 } },
+          good: { text: '“You saw what happened. We dealt with it. Here we still are.” Her mum studies you for a long moment, then nods at the here-you-still-are.', effects: { bond: 5, public: 3, burnout: -2 } },
+          incredible: { text: 'You answer the rehearsed question before she can ask it, kindly, completely. The mum came for an interrogation and stays for the wedding talk.', effects: { bond: 7, public: 4, burnout: -3 } },
+        },
+      },
+      right: {
+        label: 'Charm your way past it',
+        tags: ['camera', 'banter'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You steer every question towards the weather. Her mum, a season-ticket holder in deflection, lets you finish and then plays the clip.', effects: { bond: -3, public: -2, burnout: 5 } },
+          good: { text: 'You charm the table into a truce: nobody mentions the film, everybody has a lovely lunch, one mum keeps a single eyebrow raised for ninety minutes.', effects: { public: 3, followers: 3, burnout: 2 } },
+          incredible: { text: 'You turn the scandal into the table’s best anecdote, at your own expense, perfectly weighted. Even the raised eyebrow comes down. Star quality is star quality.', effects: { public: 4, followers: 5, charisma: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- The daybed (the Edit / Angles shop — one per act) ----------
+  {
+    id: 'li_daybed_1', act: 1, shop: true, tags: ['graft', 'camera'],
+    art: 'li_daybed',
+    context: 'The daybed · afternoon lull',
+    prompt: 'Sun’s out. Half the villa is asleep and the other half is deciding your reputation for you. You’ve banked a little goodwill — enough, maybe, to start becoming a <i>thing</i>. Every reality show is really about becoming a thing.',
+    choices: {
+      left: {
+        label: 'Invest in the edit',
+        tags: ['graft', 'camera'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        cost: 4,
+        outcomes: {
+          bad: { text: 'You spend the afternoon workshopping a persona and mostly develop a tan line shaped like doubt. Still — the cameras noticed you trying.', effects: { grantAngle: 'shelf', burnout: 2 } },
+          good: { text: 'A well-placed chat here, a confessional there — by dinner, the villa has started describing you in shorthand. Shorthand is the whole economy.', effects: { grantAngle: 'shelf', public: 2 } },
+          incredible: { text: 'You assemble a reputation in one afternoon the way other people assemble flat-pack: quietly, correctly, with no parts left over.', effects: { grantAngle: 'shelf', public: 3, followers: 2 } },
+        },
+      },
+      right: {
+        label: 'Save your graft',
+        tags: ['rest'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You nap through a small scandal and wake up two storylines behind. The daybed gives, and the daybed takes.', effects: { burnout: -3, public: -1 } },
+          good: { text: 'You bank the goodwill and doze. Sometimes the strongest move on this show is visibly not needing it.', effects: { burnout: -5, graft: 1 } },
+          incredible: { text: 'You sleep like someone with nothing to hide, which — as of today — is somehow your reputation now. Free. FREE.', effects: { burnout: -6, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_daybed_2', act: 2, shop: true, tags: ['graft', 'camera'],
+    art: 'li_daybed',
+    context: 'The daybed · The Turn · reputations hardening',
+    prompt: 'Week three. The nation has sorted the villa into characters, and the characters are hardening like cement. If you want a say in what you set as, this is the window. The daybed is where edits are negotiated.',
+    choices: {
+      left: {
+        label: 'Invest in the edit',
+        tags: ['graft', 'camera'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        cost: 6,
+        outcomes: {
+          bad: { text: 'You push the new angle hard and one Islander says, kindly, “you’ve been different lately.” A rebrand should be seamless. Yours has a visible seam.', effects: { grantAngle: 'shelf', burnout: 3 } },
+          good: { text: 'You put in a shift: the right chat, the right joke, the right shoulder at the right cry. The week’s edit bends your way.', effects: { grantAngle: 'shelf', public: 2 } },
+          incredible: { text: 'You spend one afternoon doing exactly the right things in front of exactly the right lenses. Somewhere in a gallery, an editor renames your folder.', effects: { grantAngle: 'shelf', public: 3, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Keep your powder dry',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You sit out the reputation race for a day and the race, rudely, continues without you.', effects: { burnout: -3, followers: -1 } },
+          good: { text: 'You watch two Islanders exhaust themselves performing and quietly bank your energy for the beats that matter. The Turn rewards patience.', effects: { burnout: -5, savvy: 2 } },
+          incredible: { text: 'Your day of doing nothing reads, on camera, as serene confidence. The nation decides you know something. You do: naps.', effects: { burnout: -6, public: 2, savvy: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_daybed_3', act: 3, shop: true, tags: ['graft', 'camera'],
+    art: 'li_daybed',
+    context: 'The daybed · Final Week · last chance to be a thing',
+    prompt: 'Final Week. Whatever you are by Friday is what you’ll be at the reunion, on the podcasts, in the headlines under your engagement announcement or your gym launch. One more push, or make peace with the edit you’ve got.',
+    choices: {
+      left: {
+        label: 'One last push',
+        tags: ['graft', 'camera'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        cost: 7,
+        outcomes: {
+          bad: { text: 'A Final Week rebrand is a risky flight to book. Yours boards late and lands in “trying too hard,” a destination with no connections.', effects: { grantAngle: 'shelf', burnout: 3, public: -1 } },
+          good: { text: 'You sharpen the persona for the run-in: cleaner lines, better timing, one signature move. The finale edit takes the note.', effects: { grantAngle: 'shelf', public: 2 } },
+          incredible: { text: 'You walk into the last weekend as the finished version of yourself — the one the intro sequence will use for years.', effects: { grantAngle: 'shelf', public: 3, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Ride what you built',
+        tags: ['rest', 'loyal'],
+        governingStats: { loyalty: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You coast the last week and the edit, sensing slack, gives your screen time to a couple having a lovely time on a swan float.', effects: { burnout: -3, public: -1 } },
+          good: { text: 'No more moves. You spend the graft window on the daybed with your favourite people, and it airs, because peace this late is rare footage.', effects: { burnout: -5, bond: 3 } },
+          incredible: { text: 'You end the Season exactly as yourself, on a daybed, laughing at nothing. Twelve edits were available. You chose “person.” It plays beautifully.', effects: { burnout: -6, bond: 4, public: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- The wobbles (In-Your-Head coping interstitials) ----------
+  {
+    id: 'li_wobble_50', act: [1, 2, 3], chainOnly: true, tags: ['rest', 'chat'],
+    art: 'li_beachhut',
+    context: 'The Beach Hut · door closed',
+    prompt: 'It’s all got a bit loud in there — the villa, the vote, the voice doing laps in your head at 4 a.m. The Beach Hut door shuts and, for one camera-shaped moment, it’s just you and the truth.',
+    choices: {
+      left: {
+        label: 'Let it all out',
+        tags: ['rest', 'chat'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You cry in the Hut, properly, snot and all. It helps. It also airs, gently scored with piano, to nine million people.', effects: { burnout: -6, followers: 2 } },
+          good: { text: 'One honest wobble, out loud, to a camera that has heard worse. You leave the Hut two kilos lighter in the head.', effects: { burnout: -8, public: 2 } },
+          incredible: { text: 'Your Beach Hut monologue is so raw and so exact that the nation stops scrolling. Being human, it turns out, is your best angle yet.', effects: { burnout: -10, public: 3, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Laugh it off',
+        tags: ['banter', 'rest'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You do jokes at the camera until the jokes run out, and then sit in the silence you were joking over. The Hut waits. The Hut always waits.', effects: { burnout: -3 } },
+          good: { text: 'You roast your own week to the Hut camera — the pie, the postcard, the face you made — and walk out lighter. Comedy is load-bearing.', effects: { burnout: -5, followers: 3 } },
+          incredible: { text: 'Your self-roast is so good the edit runs it uncut. You’ve turned your worst week into your best segment, which is alchemy.', effects: { burnout: -7, followers: 5, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_wobble_75', act: [2, 3], chainOnly: true, tags: ['rest', 'chat'],
+    art: 'li_beachhut',
+    context: 'The bedroom · 3 a.m. · everyone asleep but you',
+    prompt: 'You’re lying in a room of sleeping people, wide awake, doing the maths on whether you can actually do this. The voice in your head has stopped doing laps and started doing commentary. One more bad day and you’ll walk. You can feel it.',
+    choices: {
+      left: {
+        label: 'Wake your favourite',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You wake them at 3 a.m. and get comfort delivered at 3 a.m. quality: warm, slurred, and 60% about their own thing. It still counts.', effects: { burnout: -8, bond: 2 } },
+          good: { text: 'Kettle on, blanket out, the whole thing whispered on the kitchen terrace. Some people are load-bearing. You found yours.', effects: { burnout: -12, bond: 3 } },
+          incredible: { text: 'They listen to the entire spiral and then say the one sentence that unhooks it. You go back to bed a different weight.', effects: { burnout: -14, bond: 4, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Take the morning off',
+        tags: ['rest'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You hide by the pool till noon, and it mostly works, except the show frames it as “tension” and now everyone’s asking if you’re okay, which — fair.', effects: { burnout: -8, public: -1 } },
+          good: { text: 'Headphones, sun, water, no chat. You give the villa nothing for a morning and the villa, miraculously, survives. So do you.', effects: { burnout: -11 } },
+          incredible: { text: 'You take a whole morning for yourself and come back so restored that two people ask what you’ve had done. Rest. You’ve had rest done.', effects: { burnout: -13, public: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- The Final (per-Summit climax cards) ----------
+  {
+    id: 'li_final_winvilla', act: 3, finaleCard: true, pathAffinity: ['winvilla'], tags: ['host', 'camera'],
+    art: 'li_final',
+    context: 'The Final · the villa in fairy lights · the Host in evening wear',
+    prompt: '“Islanders. Tonight, the public decide.” — The lawn has a stage on it now. Somewhere out there, millions of thumbs hover over two names, and one of the names is yours. One last look. Make it count.',
+    choices: {
+      left: {
+        label: 'Speak to the nation',
+        tags: ['camera'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'Your final speech aims for statesmanlike and arrives at best-man-after-four-proseccos. The nation votes with its heart anyway. Hearts are unpredictable.', effects: { public: 2, burnout: 3 } },
+          good: { text: 'You thank the villa, the nation, and one specific sofa in one specific living room. Direct address, correctly deployed, is a heat-seeking missile.', effects: { public: 4, followers: 3 } },
+          incredible: { text: 'Your last thirty seconds to camera are so clean the live audience makes a sound usually reserved for fireworks. The vote spikes visibly.', effects: { public: 6, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Let the couple speak',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'Your joint speech has a hand-hold, a laugh, and one visible moment of “you go — no you.” Endearing. Chaotic. Very you two, apparently.', effects: { bond: 3, public: 2 } },
+          good: { text: 'You let your partner talk and just look at them while they do. The camera holds the look. The look is the campaign.', effects: { bond: 5, public: 3 } },
+          incredible: { text: 'The two of you finish each other’s speech without planning it, live. The Host mouths “wow” off-mic. That’s the winner’s edit, airing in real time.', effects: { bond: 6, public: 5 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_final_realthing', act: 3, finaleCard: true, pathAffinity: ['realthing'], tags: ['host', 'loyal'],
+    art: 'li_final',
+    context: 'The Final · the terrace · one quiet minute before the ceremony',
+    prompt: 'In an hour there’ll be a stage, a cheque, and a decision that isn’t yours. But right now it’s just the two of you on the terrace where it started, and one question that is: is this real out there, where the cameras aren’t?',
+    choices: {
+      left: {
+        label: 'Say the whole thing',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You say it all — slightly out of order, twice in places, once through a laugh that’s mostly nerves. They kiss you mid-correction. Noted, apparently.', effects: { bond: 4, burnout: 2 } },
+          good: { text: 'You say the thing you’ve been carrying since Casa, plainly, no hashtag. They answer with your first name and a plan for Tuesday. Tuesdays are real life.', effects: { bond: 6, loyalty: 2 } },
+          incredible: { text: 'You say it, and they say it back before you’ve finished, and for one minute the show around you is just weather. The nation watches two people stop performing.', effects: { bond: 9, loyalty: 3, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Ask the hard question',
+        tags: ['chat', 'strategy'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“What happens out there?” gets an answer with a pause in front of it. The pause is honest. You did ask for honest.', effects: { bond: 2, burnout: 4 } },
+          good: { text: 'You ask about the flat, the distance, the mates, the Monday version of this. They have answers. Prepared ones. They’ve been thinking about Mondays too.', effects: { bond: 5, savvy: 2 } },
+          incredible: { text: 'You ask the question the reunion host would ask, and get the answer the reunion audience would scream at. Real, stress-tested, on record.', effects: { bond: 7, savvy: 2, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_final_brand', act: 3, finaleCard: true, pathAffinity: ['brand'], tags: ['host', 'camera'],
+    art: 'li_final',
+    context: 'The Final · backstage · your phone returned for one supervised hour',
+    prompt: 'They hand your phone back for the finale, warm from a producer’s pocket. Four hundred thousand people you’ve never met have opinions, offers, and one very keen energy-drink brand. The villa was the audition. This hour is the career.',
+    choices: {
+      left: {
+        label: 'Post the perfect goodbye',
+        tags: ['camera', 'graft'],
+        governingStats: { charisma: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You draft the farewell post nine times and accidentally publish draft three, the one with the typo and too much heart. It performs… fine. Hearts do fine.', effects: { followers: 4, burnout: 3 } },
+          good: { text: 'One photo, one line, no hashtag desperation. The comments fill with the exact sentence you wanted strangers to type. You’re a brand with taste now.', effects: { followers: 7, public: 2 } },
+          incredible: { text: 'The goodbye post is so precisely judged it gets screenshotted into three group chats a second. The energy-drink offer doubles by midnight.', effects: { followers: 10, public: 3, graft: 3 } },
+        },
+      },
+      right: {
+        label: 'Work the press line',
+        tags: ['camera', 'banter'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You give seven interviews and one of them, fatally, is honest about a castmate. The quote will orbit you for a month. Orbits are also exposure.', effects: { followers: 5, public: -2, burnout: 3 } },
+          good: { text: 'You do the press line like a pro: warm, quotable, nothing actionable. Three journalists write “star quality” independently. That’s the phrase. It’s stuck now.', effects: { followers: 7, charisma: 2 } },
+          incredible: { text: 'You coin the Season’s catchphrase live on the press line, on purpose, and watch it leave your mouth and enter the culture. The villa made you; you made it back.', effects: { followers: 11, public: 3, charisma: 2 } },
+        },
+      },
+    },
+  },
+];

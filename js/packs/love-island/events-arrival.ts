@@ -1,0 +1,456 @@
+// Love Island — Act 1 ambient deck (Arrival): enter, establish your Type,
+// plant the first Bond, learn who everyone is pretending to be. Soft-open
+// stakes; the knives arrive in Act 2. Voice per VOICE.md.
+
+import type { GameEvent } from '../../types.js';
+
+export const ARRIVAL_EVENTS: GameEvent[] = [
+  {
+    id: 'li_first_date', act: 1, tags: ['date', 'flirt'],
+    art: 'li_terrace',
+    context: 'Day 2 · the terrace · your first date',
+    prompt: 'Two chairs, two drinks the colour of a warning label, and {partner} looking at you like a question. Behind the wall, the nation is deciding whether you have a personality. So, apparently, are you.',
+    choices: {
+      left: {
+        label: 'Keep it light',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You ask three questions about his job. He answers all three. It is the most anyone has learned about pipe fitting on this network.', effects: { bond: 1, burnout: 2 } },
+          good: { text: 'Easy, warm, no fireworks. “I could actually talk to you,” they say. In here, that’s a diamond ring.', effects: { bond: 4, public: 2 } },
+          incredible: { text: 'You don’t perform. They notice. “You’re not what I expected,” they say, meaning it. The Bond does the loud part for you.', effects: { bond: 6, public: 3, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Turn it on',
+        tags: ['flirt'],
+        governingStats: { rizz: 1 },
+        outcomes: {
+          bad: { text: 'You open with a line about star signs. They are a Capricorn and, it emerges, a critic.', effects: { rizz: 2, burnout: 3 } },
+          good: { text: 'You do the airport story. They lean in; the camera leans in with them.', effects: { rizz: 3, public: 2, graft: 2 } },
+          incredible: { text: 'By the second drink they’ve forgotten what they were nervous about. So, live on air, has the nation.', effects: { rizz: 5, public: 3, followers: 3, bond: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_factor50', act: 1, tags: ['flirt', 'banter'],
+    art: 'li_pool',
+    context: 'Midday · the pool · thirty-one degrees',
+    prompt: '{partner} holds up the factor 50 and turns around. It’s the villa’s oldest ritual: part sunscreen, part territory, all broadcast. Four people are pretending not to watch. One of them is holding her breath.',
+    choices: {
+      left: {
+        label: 'Do it properly',
+        tags: ['flirt', 'date'],
+        governingStats: { rizz: 1 },
+        outcomes: {
+          bad: { text: 'You get ambitious and draw a smiley face in sunscreen. It doesn’t rub in. They spend the day with a faint grin between their shoulder blades, and not the good kind.', effects: { rizz: 1, burnout: 2 } },
+          good: { text: 'Slow, unhurried, no commentary. The pool goes quiet in a way that means everyone heard it anyway.', effects: { bond: 3, rizz: 2 } },
+          incredible: { text: 'A masterclass. Someone across the pool says “oh my days” into a cushion. Production marks the clip before you’ve finished a shoulder.', effects: { bond: 4, rizz: 3, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Make it a bit',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You announce yourself “a trained professional” and immediately get sunscreen in their eye. The lifeguard bit dies mid-scene, in front of everyone.', effects: { burnout: 3, charisma: 1 } },
+          good: { text: 'You do the full spa-receptionist voice, towel over one arm. The pool cackles. {partner} rates the service “three stars, would book again.”', effects: { charisma: 3, followers: 3, bond: 2 } },
+          incredible: { text: 'The bit escalates until half the villa is queueing with imaginary appointment slips. You accidentally invented today’s entire episode.', effects: { charisma: 4, followers: 5, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_kitchen_counter', act: 1, tags: ['chat', 'loyal'],
+    art: 'li_kitchen',
+    context: 'Late · the kitchen counter · two mugs',
+    prompt: 'Past midnight, the villa’s one honest location: the kitchen counter. {mate} can’t sleep either. What starts as “do you want a tea” is turning into the kind of conversation the day never allows.',
+    choices: {
+      left: {
+        label: 'Open up first',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You go one confession too deep, too early. {mate} pats your arm the way people pat unfamiliar dogs.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You say a true thing and get a true thing back. Somewhere in the exchange, an alliance quietly signs itself.', effects: { loyalty: 3, public: 2, addFlag: 'li_code_honour' } },
+          incredible: { text: 'By 2 a.m. you know about the ex, the mum, the plan. In a game of angles you just acquired the villa’s rarest asset: an actual friend.', effects: { loyalty: 4, public: 3, graft: 2, addFlag: 'li_code_honour' } },
+        },
+      },
+      right: {
+        label: 'Collect the intel',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You steer the chat towards other couples one time too many. {mate} clocks it, finishes the tea, and files you under “games.”', effects: { savvy: 2, burnout: 2 } },
+          good: { text: 'You listen like a friend and remember like an analyst. Both things are true. This show runs on both things being true.', effects: { savvy: 3, graft: 2 } },
+          incredible: { text: 'One tea, forty minutes, and you now hold the villa’s full emotional map: who’s wobbling, who’s pretending, who cried in the toilet at four. Knowledge is Graft.', effects: { savvy: 4, graft: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_challenge_heartrate', act: 1, tags: ['challenge', 'drama'],
+    art: 'li_challenge',
+    context: 'The lawn · challenge o’clock · “I’VE GOT A TEXT!!”',
+    prompt: '“Islanders, tonight you’ll each perform for the villa — while everyone wears a heart-rate monitor. The results will be read out. #pulsecheck” — A dance-off where the scoreboard is everyone’s actual heart. Science, weaponised for chaos.',
+    choices: {
+      left: {
+        label: 'Perform for your partner',
+        tags: ['loyal', 'challenge'],
+        governingStats: { loyalty: 0.5, rizz: 0.5 },
+        outcomes: {
+          bad: { text: 'You keep it strictly for {partner}, which is sweet, and their heart rate comes back “resting.” The villa says “awww” in the wrong tone.', effects: { bond: 2, burnout: 3 } },
+          good: { text: 'You dance for one person in a room of twelve, and their monitor betrays them beautifully. Loyalty, with receipts.', effects: { bond: 5, public: 2 } },
+          incredible: { text: 'Their heart rate spikes so hard the reading gets a replay. You have never looked smugger. You have earned every pixel of it.', effects: { bond: 6, public: 3, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Raise the whole room',
+        tags: ['challenge', 'drama', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You go big for everyone and spike exactly one monitor: your own partner’s — with the wrong emotion. The debrief is scheduled for immediately.', effects: { followers: 3, bond: -3, burnout: 3 } },
+          good: { text: 'Three spikes, two gasps, one “I’m actually shook.” Your partner’s face is doing diplomacy. The group chat at home is doing none.', effects: { followers: 5, public: 2, bond: -1 } },
+          incredible: { text: 'You spike every monitor on the lawn including, faintly, the medic’s. Tomorrow’s headlines are already typing themselves.', effects: { followers: 8, public: 4, bond: -2, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_swanfloat', act: 1, tags: ['date', 'banter'],
+    art: 'li_pool',
+    context: 'Afternoon · the pool · one (1) inflatable swan',
+    prompt: 'There is one swan float and eleven Islanders. {partner} is holding it and looking at you. This is not about the swan. Nothing in this villa is ever about the swan.',
+    choices: {
+      left: {
+        label: 'Claim the swan together',
+        tags: ['date', 'loyal'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'Two adults, one swan, zero core strength. You both go in. The swan sails on, alone, vindicated.', effects: { bond: 2, burnout: 2 } },
+          good: { text: 'You achieve swan equilibrium and drift for an hour, talking about nothing. The nation coos. The swan, historically neutral, approves.', effects: { bond: 4, burnout: -2 } },
+          incredible: { text: 'Golden hour finds your couple mid-pool on a swan, laughing at a joke no mic caught. That shot opens the episode. That shot IS the episode.', effects: { bond: 6, public: 3, burnout: -3 } },
+        },
+      },
+      right: {
+        label: 'Start a swan economy',
+        tags: ['banter', 'strategy'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You institute a booking system for the swan. The villa, a lawless nation, ignores it by lunch. The clipboard was laminated. You made a clipboard.', effects: { savvy: 1, burnout: 2 } },
+          good: { text: 'Swan slots are now traded for kitchen shifts and gossip. You take a broker’s cut of both. The daybed respects a hustler.', effects: { savvy: 3, graft: 3 } },
+          incredible: { text: 'By sunset the swan has a waiting list, a dress code, and you at the centre of villa logistics. Power looks like many things. Today it’s inflatable.', effects: { savvy: 4, graft: 4, followers: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_breakfast_duty', act: 1, tags: ['loyal', 'chat'],
+    art: 'li_kitchen',
+    context: 'Morning · the kitchen · someone has to',
+    prompt: 'Eggs for twelve. Nobody asked you to, which is exactly why it counts. In the villa, breakfast is never breakfast: it’s a campaign stop with toast.',
+    choices: {
+      left: {
+        label: 'Feed the villa',
+        tags: ['loyal', 'graft'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You burn the halloumi and set off the alarm, and eleven people in eye masks learn your name for the wrong reason.', effects: { burnout: 3, public: -1 } },
+          good: { text: 'Eggs land, tea flows, and two separate people call you “an actual angel” with their mouths full. Cheap goodwill is still goodwill.', effects: { loyalty: 2, public: 2, graft: 2 } },
+          incredible: { text: 'You quietly plate the exact order everyone mentioned once, days ago. The villa goes silent doing the maths on how you knew. You listened. Nobody listens.', effects: { loyalty: 3, public: 3, graft: 3, bond: 2 } },
+        },
+      },
+      right: {
+        label: 'Breakfast for two',
+        tags: ['date', 'flirt'],
+        governingStats: { rizz: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You bring {partner} breakfast in bed in front of ten unfed witnesses. Romantic, yes. Politically? A scandal with orange juice.', effects: { bond: 3, public: -2 } },
+          good: { text: 'Two plates, the good spot on the terrace, phones-down eye contact. The villa fake-gags with envy, which is the highest compliment it has.', effects: { bond: 4, rizz: 2 } },
+          incredible: { text: 'You recreate their “perfect breakfast” from a throwaway comment on night one. They go quiet. The nation does not.', effects: { bond: 6, public: 3, rizz: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_gossip_daybed', act: 1, tags: ['strategy', 'code'],
+    art: 'li_daybed',
+    context: 'The daybed · four girls · lowered voices',
+    prompt: 'The daybed summit is in session and today’s agenda is a couple that isn’t yours. {mate} wants your read. Whatever you say next will be quoted, misquoted, and eventually read aloud at a firepit.',
+    choices: {
+      left: {
+        label: 'Keep it kind',
+        tags: ['loyal', 'code', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You’re so diplomatic the summit rules you “no fun” and moves on without you. Neutrality has a price and it’s screen time.', effects: { loyalty: 2, followers: -1 } },
+          good: { text: 'You defend the absent couple with one kind, fair read. It gets back to them by dinner, word-for-word. Kindness travels faster than shade here, twice as far.', effects: { loyalty: 3, public: 2, addFlag: 'li_code_honour' } },
+          incredible: { text: 'You shut the pile-on down so gently nobody notices being shut down. The villa recalibrates around you. The nation files you under “keeper.”', effects: { loyalty: 4, public: 3, addFlag: 'li_code_honour' } },
+        },
+      },
+      right: {
+        label: 'Serve the tea',
+        tags: ['drama', 'strategy'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'Your hottest take does one full lap of the villa and comes home wearing your name. The couple in question is at the door. Both of them.', effects: { followers: 3, public: -2, burnout: 4, addFlag: 'li_code_broke' } },
+          good: { text: 'You serve one immaculate observation and let the daybed do the rest. Plausible deniability with a garnish.', effects: { followers: 4, savvy: 2 } },
+          incredible: { text: 'Your read is so precise the summit goes quiet, then feral. Tonight’s episode is subtitled with your sentence. Anonymous, for now.', effects: { followers: 6, savvy: 3, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_hideaway_key', act: 1, tags: ['date', 'flirt'],
+    art: 'li_hideaway',
+    context: 'Evening · “I’VE GOT A TEXT!!” · the Hideaway is open',
+    prompt: '“Tonight, one couple will spend the night in the Hideaway. The villa must decide who. #privacyplease” — The villa, a democracy of stirrers, votes for your couple with indecent speed. The door is red. The candles are lit. The mics stay on.',
+    choices: {
+      left: {
+        label: 'Take the night',
+        tags: ['date', 'flirt'],
+        governingStats: { rizz: 1 },
+        outcomes: {
+          bad: { text: 'The Hideaway is 90% cushions and 10% performance anxiety. You spend the evening arranging both. Lovely chat, though.', effects: { bond: 2, burnout: 3 } },
+          good: { text: 'A night off from the villa’s surround-sound opinions. You come back at breakfast wearing matching smugness.', effects: { bond: 5, rizz: 2 } },
+          incredible: { text: 'You return at dawn and tell the breakfast interrogation absolutely nothing. In this villa the scandal isn’t the night — it’s the discretion.', effects: { bond: 7, public: 3, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Gift it to another couple',
+        tags: ['strategy', 'loyal'],
+        governingStats: { savvy: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You nobly hand the key away and {partner}’s face does a thing it has never done before. The word “we” is used at you, pointedly, for days.', effects: { bond: -2, public: 2, burnout: 2 } },
+          good: { text: 'You pass the key to the couple who needed it. Two allies, banked. The villa calls you classy, and means it, mostly.', effects: { savvy: 3, public: 3, graft: 2 } },
+          incredible: { text: 'The gifted couple comes back engaged-adjacent and credits you at breakfast. You now hold favours in three duvets. Kingmaker behaviour.', effects: { savvy: 4, public: 4, graft: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_snakewatch', act: 1, tags: ['strategy', 'drama'],
+    art: 'li_terrace',
+    context: 'The terrace · {rival} is being friendly',
+    prompt: '{rival} has started laughing at {partner}’s jokes. All of them. Including the one about the sat-nav, which has never once been funny. You know grafting when you see it. You invented half these moves.',
+    choices: {
+      left: {
+        label: 'Mark your territory',
+        tags: ['flirt', 'drama'],
+        governingStats: { rizz: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'Your counter-charm offensive is so visible it gets its own camera. {rival} watches you perform with the serenity of someone winning.', effects: { burnout: 4, followers: 2, addFlag: 'li_rival_active' } },
+          good: { text: 'You drift over, join the chat, and re-centre the gravity without one hostile syllable. {rival} smiles. You smile. Somewhere, a producer smiles widest.', effects: { rizz: 3, bond: 3 } },
+          incredible: { text: 'You’re so effortlessly magnetic that {rival}’s campaign dissolves mid-laugh. The sat-nav joke returns to its natural state: unfunny.', effects: { rizz: 4, bond: 4, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Let it play out',
+        tags: ['strategy', 'rest'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You give it space and the space gets furnished. By evening {rival} has an in-joke with your partner and you have a knot in your stomach.', effects: { burnout: 4, bond: -2, addFlag: 'li_rival_active' } },
+          good: { text: 'You watch, log every move, and say nothing. If it’s real it’ll survive a rival; if it isn’t, better to know in week one.', effects: { savvy: 3, graft: 2 } },
+          incredible: { text: 'Your total non-reaction unnerves {rival} into overplaying it, publicly, badly. You didn’t lift a finger. You never had to.', effects: { savvy: 4, public: 3, bond: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_talent_night', act: 1, tags: ['challenge', 'camera'],
+    art: 'li_challenge',
+    context: 'Night · the stage by the pool · talent show',
+    prompt: 'The villa talent show: a sacred format where confidence outnumbers talent nine to one. {mate} has a whistle routine. {rival} is doing “spoken word.” The bar is on the floor and the cameras are ravenous.',
+    choices: {
+      left: {
+        label: 'Do the sincere thing',
+        tags: ['loyal', 'camera'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'Your heartfelt acoustic moment is undermined by a moth with main-character energy. The moth trends. You do not.', effects: { burnout: 3, followers: 1 } },
+          good: { text: 'You do the one true thing you’re actually good at, unironically, and the villa forgets to heckle. Sincerity: the rarest act on the bill.', effects: { public: 3, bond: 2, charisma: 2 } },
+          incredible: { text: 'It goes so well it becomes uncomfortable — the villa wanted comedy and got feelings. {partner} looks at you like furniture just sang.', effects: { public: 4, bond: 4, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Commit to the bit',
+        tags: ['banter', 'camera', 'challenge'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'Your bit requires audience participation and the audience declines to participate. You die on stage six metres from where you sleep.', effects: { burnout: 4, charisma: 1 } },
+          good: { text: 'Fully committed, zero dignity retained, standing ovation from people in dressing gowns. The villa loves a casualty of comedy.', effects: { charisma: 3, followers: 4, public: 2 } },
+          incredible: { text: 'The bit lands so hard it becomes villa canon. From tomorrow, nobody can say the word “artisanal” without the whole lawn corpsing.', effects: { charisma: 4, followers: 6, public: 3, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_ick_watch', act: 1, tags: ['chat', 'drama'],
+    art: 'li_bedroom',
+    context: 'The dressing room · an ick has been declared',
+    prompt: 'Emergency session in the dressing room: somebody’s caught the ick, and the ick is contagious once named. “He claps when the food arrives,” says {mate}, in the tone of a war crimes tribunal. All eyes turn to you for a verdict.',
+    choices: {
+      left: {
+        label: 'Talk her down',
+        tags: ['chat', 'loyal', 'code'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You defend food-clapping a beat too warmly and the tribunal turns, briefly, on you. Do YOU clap when food arrives? You do now, apparently.', effects: { burnout: 3, followers: 1 } },
+          good: { text: '“It’s not an ick, it’s enthusiasm.” The tribunal considers this. The couple survives the night. You did that, quietly.', effects: { loyalty: 3, public: 2, addFlag: 'li_code_honour' } },
+          incredible: { text: 'You reverse a fully-declared ick with one two-minute speech about joy. The dressing room applauds. The ick, clinically dead, is buried at sea.', effects: { loyalty: 4, public: 3, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Feed the ick',
+        tags: ['drama', 'banter'],
+        governingStats: { charisma: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You add three examples and one impression. It’s devastating. It’s also, everyone suddenly remembers, YOUR partner’s best mate you’re describing.', effects: { followers: 3, public: -2, burnout: 3, addFlag: 'li_code_broke' } },
+          good: { text: 'Your impression of the food clap is anatomically perfect. The dressing room goes down like bowling pins. The ick is now permanent and so is the clip.', effects: { followers: 5, charisma: 2 } },
+          incredible: { text: 'You name the sub-icks. You establish taxonomy. Scientists of the ick will cite this dressing room for seasons to come.', effects: { followers: 7, charisma: 3, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_workout_audience', act: 1, tags: ['flirt', 'camera'],
+    art: 'li_lawn',
+    context: 'Morning · the outdoor gym · an audience assembles',
+    prompt: 'You’re mid-workout when you notice the daybed has rotated, as one, to watch. In the villa, exercising is never exercising: it’s a press conference with dumbbells.',
+    choices: {
+      left: {
+        label: 'Put on a show',
+        tags: ['flirt', 'camera'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You add ten kilos for the audience and your face does something private in public. The daybed replays it all afternoon.', effects: { burnout: 3, followers: 2 } },
+          good: { text: 'You find a rhythm that says effortless and hold it for exactly as long as anyone’s watching. Cardio, but make it PR.', effects: { rizz: 3, followers: 3 } },
+          incredible: { text: 'Somebody drops a smoothie. Somebody else forgets a whole sentence. Your workout has casualties. The nation logs the timestamp.', effects: { rizz: 4, followers: 5, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Invite {partner} to train',
+        tags: ['date', 'banter'],
+        governingStats: { loyalty: 0.5, rizz: 0.5 },
+        outcomes: {
+          bad: { text: 'Couples’ workout: you demonstrate a partner squat, misjudge the physics, and become a cautionary tale with a lovely view of the sky.', effects: { bond: 2, burnout: 2 } },
+          good: { text: 'You spot each other, badly, laughing, for forty minutes. Fitness outcome: zero. Couple outcome: significant.', effects: { bond: 4, rizz: 2 } },
+          incredible: { text: 'Your couple’s gym bit is so charming the daybed audience starts a slow clap. Even {rival} joins in, with the face of someone chewing a wasp.', effects: { bond: 5, public: 3, followers: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_dry_spell', act: 1, tags: ['rest', 'chat'],
+    art: 'li_lawn',
+    context: 'A slow day · nothing is happening · NOTHING',
+    prompt: 'Day six and the villa has run out of plot. People are napping competitively. Somebody has organised the condiments. Days like this are when the nation drifts — or when the smart money quietly reloads.',
+    choices: {
+      left: {
+        label: 'Manufacture a moment',
+        tags: ['camera', 'drama'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You launch a villa-wide game of hide and seek and lose the villa’s tallest man for two hours. Production is not amused. Production counts as amused on TV, though.', effects: { followers: 2, burnout: 3 } },
+          good: { text: 'You invent “terrace court” and put the sat-nav joke on trial. The verdict takes an hour and the whole villa testifies. Content from thin air.', effects: { charisma: 3, followers: 4 } },
+          incredible: { text: 'Your dead-day bit is so good the episode needs no drama at all — a first in format history. The producers send down a cheese board, which is how they say thank you.', effects: { charisma: 4, followers: 6, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Actually rest',
+        tags: ['rest'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You nap so hard you miss the one thing that did happen. You will be hearing the phrase “you had to be there” until Friday.', effects: { burnout: -4, public: -1 } },
+          good: { text: 'Sun, water, silence. Your head empties out for the first time since the gate. Whatever’s coming — and something’s always coming — you’ll meet it level.', effects: { burnout: -6 } },
+          incredible: { text: 'You spend the day so visibly at peace that the villa starts treating you as senior management. Calm is a currency and you just printed some.', effects: { burnout: -8, public: 2, savvy: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_first_row', act: 1, tags: ['drama', 'chat'],
+    art: 'li_firepit_day',
+    context: 'Evening · raised voices by the pool · it’s 7 p.m.',
+    prompt: 'There is shouting by the pool. It is about a sun lounger, then suddenly it is about “energy,” then it is about night two. Your name hasn’t come up yet. The word “yet” is doing a lot of work.',
+    choices: {
+      left: {
+        label: 'Step in and settle it',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You go in as a peacekeeper and come out as a combatant. Nobody remembers the lounger. Everyone remembers you were there.', effects: { burnout: 4, public: -1 } },
+          good: { text: 'You separate, hydrate, and translate. Both sides end up apologising to you, somehow. Fine. It airs as maturity.', effects: { loyalty: 3, public: 3 } },
+          incredible: { text: 'You resolve the row with one question so precise both parties stop mid-shout to think. The villa now brings you disputes like a small-claims court.', effects: { loyalty: 4, public: 4, savvy: 2 } },
+        },
+      },
+      right: {
+        label: 'Grab a front-row seat',
+        tags: ['banter', 'strategy'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You’re caught mid-popcorn-face by the exact person shouting. Congratulations: you are now “and ANOTHER thing.”', effects: { burnout: 4, followers: 2 } },
+          good: { text: 'You watch from the kitchen with a beverage and perfect neutrality. Report drama like weather; never be weather.', effects: { savvy: 3, followers: 3 } },
+          incredible: { text: 'Your reaction shots are so good the edit intercuts you like a Greek chorus. You said nothing all night and got the most screen time.', effects: { savvy: 3, followers: 6, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_minimilk', act: 1, tags: ['date', 'loyal'],
+    art: 'li_lawn',
+    context: 'Hottest day yet · the freezer has been raided',
+    prompt: 'The ice-lolly supply is down to one Mini Milk, and {partner} just handed it to you without a word. Eleven people watched it happen. In this villa, that’s not a lolly — that’s a declaration with a wrapper.',
+    choices: {
+      left: {
+        label: 'Split it, obviously',
+        tags: ['date', 'loyal'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You attempt a romantic 50/50 split and the whole thing sheers off into the grass. Two people, zero lolly, one metaphor nobody requests.', effects: { bond: 2, burnout: 2 } },
+          good: { text: 'Half each, elbows on knees, in comfortable silence. He brought you a Mini Milk. In this villa, that’s a diamond ring.', effects: { bond: 5, public: 2 } },
+          incredible: { text: 'The Mini Milk moment airs uncut, forty seconds, no music. The nation, feral for drama all week, votes it the best scene of the Season so far.', effects: { bond: 6, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Auction it to the villa',
+        tags: ['banter', 'strategy'],
+        governingStats: { savvy: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'The auction gets competitive, then personal, then somehow about night two again. The lolly melts mid-bidding. Everyone loses. Mostly you.', effects: { burnout: 3, bond: -2 } },
+          good: { text: 'Bidding reaches two kitchen shifts and a foot rub. You split the proceeds with {partner} like a tiny crime family. The villa applauds the grift.', effects: { graft: 4, followers: 3 } },
+          incredible: { text: 'The Mini Milk sells for three favours and a secret, and the secret is genuinely useful. Never has dairy moved a season’s plot so far.', effects: { graft: 5, savvy: 3, followers: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_terrace_debrief', act: 1, tags: ['chat', 'code'],
+    art: 'li_terrace',
+    context: 'The terrace · post-date debrief · mandatory',
+    prompt: 'You’re barely through the door before the terrace summons you: full debrief, no detail spared. The girls arrange themselves like a panel show. Refusal is not on the menu. It never has been.',
+    choices: {
+      left: {
+        label: 'Give them everything',
+        tags: ['chat', 'code', 'banter'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You re-enact the date so thoroughly you include the bit you swore to keep private. It’s out. It’s got legs. It’s doing laps.', effects: { followers: 3, bond: -2, burnout: 2 } },
+          good: { text: 'Full debrief, excellent pacing, one strategic omission. The terrace is fed; the couple is protected. Broadcasting with editorial standards.', effects: { charisma: 2, public: 2, addFlag: 'li_code_honour' } },
+          incredible: { text: 'Your debrief is better than the date. The terrace howls. Somewhere a producer requests the raw footage and finds your version was tighter.', effects: { charisma: 3, followers: 4, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Keep it vague',
+        tags: ['strategy', 'loyal'],
+        governingStats: { savvy: 0.7, loyalty: 0.3 },
+        outcomes: {
+          bad: { text: '“It was nice,” you say. NICE. The terrace treats this as obstruction of justice and opens an independent inquiry.', effects: { burnout: 3, followers: -1 } },
+          good: { text: 'You give them just enough: a smile, one detail, a drawbridge. Mystery keeps a couple interesting, and the terrace guessing.', effects: { savvy: 3, bond: 2 } },
+          incredible: { text: 'Your non-answers are so elegant they become the story. “She said NOTHING,” the terrace reports, thrilled, to everyone. Intrigue: manufactured.', effects: { savvy: 4, bond: 3, followers: 3 } },
+        },
+      },
+    },
+  },
+];
