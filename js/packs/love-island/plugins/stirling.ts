@@ -19,7 +19,7 @@
 
 import {
   BarkDef, REACT_INCREDIBLE, REACT_BAD, REACT_TAGGED,
-  BEAT_VERDICT, BEAT_REACT, FORECAST, SCENE_STAMP,
+  BEAT_VERDICT, BEAT_REACT, FORECAST, SCENE_STAMP, TUTOR,
 } from '../stirling-lines.js';
 import { ceremonyOutlook } from './coupling.js';
 import type { Plugin, RunState, GameEvent } from '../../../types.js';
@@ -94,6 +94,34 @@ function stirlingDealSelect(state: RunState, ev: GameEvent, offset: number): { l
     const line = dealPick(state, pool, offset);
     return line ? { line, pool } : null;
   };
+
+  // Stirling as the tutor (R2/B1): on a player's FIRST real Season
+  // (state.firstRun — shell-stamped, never set in sims, so the seeded
+  // goldens never see these), each format beat gets one teaching line, in
+  // his voice. No-repeat state retires each teach after it lands; every
+  // other card falls through to the normal pools.
+  if (state.firstRun) {
+    const heard = (pool: BarkDef[]) => pool.every((l) => (state.stirlingSeen || []).includes(l.id));
+    const tutor = (pool: BarkDef[]) => (heard(pool) ? null : from(pool));
+    const t =
+      ev.id === 'li_arrival' ? tutor(TUTOR.arrival)
+      : ev.shop ? tutor(TUTOR.daybed)
+      : ev.id === 'li_wobble_50' || ev.id === 'li_wobble_75' ? tutor(TUTOR.wobble)
+      : tags.includes('temptation') ? tutor(TUTOR.temptation)
+      : CEREMONY_LINEUP.has(ev.id) || CEREMONY_LINEUP_SINGLE.has(ev.id)
+        ? (() => {
+            const o = ceremonyOutlook(state);
+            return tutor(TUTOR[o.bondSafe ? 'lineup_bondSafe' : o.publicSafe ? 'lineup_publicSafe' : 'lineup_danger']);
+          })()
+      : (tags.includes('beat:bomb1') || tags.includes('beat:bomb2')) && ev.id !== 'li_bomb2_steal' ? tutor(TUTOR.bombshell)
+      : ev.id === 'li_casa_text' ? tutor(TUTOR.casa)
+      : tags.includes('beat:movienight') ? tutor(TUTOR.movienight)
+      : tags.includes('gossip') ? tutor(TUTOR.gossip)
+      : ev.id === 'li_exclusive' ? tutor(TUTOR.exclusive)
+      : ev.finaleCard ? tutor(TUTOR.finale)
+      : null;
+    if (t) return t;
+  }
 
   // The verdict, explained — so held/rescued/dumped reads as earned, not
   // rolled. Reads the coupling plugin's recorded check (state.lastCeremony),

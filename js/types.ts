@@ -341,6 +341,19 @@ export interface Presenter {
   helpBlocks?: string[];
   // Copy for the banked-bonus (encore) mechanic's arm toggle.
   encore?: { ready: string; armed: string };
+  // Tutorial copy: the title-screen offer/skip/replay labels and the wrap-up
+  // screen (verdict ribbon, title, art slot, closing text, lesson recap).
+  // The tutorial MECHANISM (tutorialEvents/tutorialStart, coach marks,
+  // forceTier) is engine/shell-generic; only the words are the pack's.
+  tutorial?: {
+    offer: string; skip: string; replay: string;
+    hud?: string; // the HUD act-strip label while the tutorial runs
+    end: {
+      verdict: string; title: string; art?: string; text: string;
+      lessons: { cls: string; html: string }[];
+      next?: string; // the "start the real thing" button label
+    };
+  };
   // Crossroads copy, and the pre-finale choice screen (head/sub/options; an
   // option is { title, blurb, stat, amount, label, apply(state) }).
   crossroads?: { head: string; sub: string };

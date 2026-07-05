@@ -382,6 +382,27 @@ export const loveIslandPresenter: Presenter = {
   setPiece: villaSetPiece,
   vibe: (state: RunState) => ({ fame: state.public ?? 0, network: state.stats?.charisma ?? 0, burnout: state.stats?.burnout ?? 0 }),
 
+  tutorial: {
+    offer: '▶ Play — Your First Morning',
+    skip: 'Skip it — I know the format',
+    replay: '🎓 Replay the first morning',
+    hud: 'THE FIRST MORNING · day one',
+    end: {
+      verdict: 'FIRST NIGHT SURVIVED',
+      title: 'Welcome to the Villa',
+      art: 'li_arrival',
+      text: 'One morning, one text, one firepit — and nobody’s gone home yet. That’s the whole rehearsal. The real Season has recouplings, bombshells, a cinema screen with your name on it, and a nation holding the remote. Sleep well.',
+      lessons: [
+        { cls: 'notice-gear', html: '👆 <b>Swipe or tap</b> — every villa moment is one decision.' },
+        { cls: 'notice-gear', html: '😏 <b>Stat icons</b> show what a choice rolls on; the shape is the risk tell: ● safe · ▲ dicey · ■ likely bad · ✦ big upside.' },
+        { cls: 'notice-bad', html: '🌀 <b>In Your Head</b> ends Seasons at the top — and Final Week’s line is lower. Rest is a real move.' },
+        { cls: 'notice-good', html: '💘 <b>Recouplings</b> check the Bond OR the public. Hold one and you stay.' },
+        { cls: 'notice-encore', html: '📱 <b>Texts run the villa.</b> When the phone screams, everything stops.' },
+      ],
+      next: '▶ Start your Season',
+    },
+  },
+
   encore: {
     ready: '🌟 Main-character moment banked — spend it for a boosted roll',
     armed: '🌟 MOMENT ARMED — this one’s going in the promo',

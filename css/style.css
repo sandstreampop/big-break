@@ -668,8 +668,11 @@ body.big-text #app { zoom: 1.18; }
   width: min(88%, 352px);
   z-index: 6;
   pointer-events: none;
-  animation: chipIn .35s backwards;
+  /* chipIn's from-frame would drop the centering translate mid-flight */
+  animation: noteIn .35s backwards;
 }
+@keyframes noteIn { from { transform: translateX(-50%) scale(.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { #card-area .overlay-note { animation: none; } }
 .overlay-note {
   font-size: 13px; line-height: 1.45; font-weight: 550;
   padding: 9px 12px;

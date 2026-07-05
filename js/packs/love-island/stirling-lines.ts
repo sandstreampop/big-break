@@ -208,3 +208,25 @@ export const SCENE_STAMP: Record<string, BarkDef[]> = {
     { id: 'sp_watched', text: 'The families are in. They’ve seen every episode, including the ones you’d rather they hadn’t. Smile.' },
   ],
 };
+
+// ---------- The tutor pool (R2: Stirling teaches the villa) ----------
+// First-season-only deal-time lines (state.firstRun — stamped by the shell on
+// a player's first real run, never set in sims/goldens). One teach per format
+// beat, diegetic: he onboards you the way the voiceover onboards new viewers.
+// The three lineup lines are per-outlook so the honest-forecast contract
+// (ADR-0008) holds even while he's teaching.
+export const TUTOR: Record<string, BarkDef[]> = {
+  arrival: [{ id: 'tu_arrival', text: 'New to the villa? Three rules: couple up, stay coupled, and never trust a quiet producer. The nation’s watching from sofa one — and the nation gets a vote. Several, actually.', priority: 10 }],
+  daybed: [{ id: 'tu_daybed', text: 'The daybed shelf, for the newcomers: Graft in, reputation out. An Angle is who the edit says you are — and the edit is rarely wrong and never kind.', priority: 10 }],
+  wobble: [{ id: 'tu_wobble', text: 'See the spiral up top, babes? That’s your head. Top it out and you walk — no envelope, no slow-mo montage. Rest is a move. The pros nap.', priority: 10 }],
+  temptation: [{ id: 'tu_tempt', text: 'A word for the new viewers: a head-turn dents the Bond, it doesn’t break the couple. Officially. The duvets keep their own records.', priority: 10 }],
+  lineup_bondSafe: [{ id: 'tu_line_bond', text: 'Recoupling rules, quickly: the Bond keeps you, or the nation does. Tonight your Bond’s doing the heavy lifting — as it should.', priority: 10 }],
+  lineup_publicSafe: [{ id: 'tu_line_public', text: 'Recoupling rules, quickly: Bond or nation, either keeps you in. Tonight, babes, it’s the nation carrying you. Wave.', priority: 10 }],
+  lineup_danger: [{ id: 'tu_line_danger', text: 'Recoupling rules, quickly: the Bond holds you or the nation saves you. Tonight neither is promising. I’d stand near the fire — it’s warmer.', priority: 10 }],
+  bombshell: [{ id: 'tu_bomb', text: 'First bombshell of your Season. They look like a person; they function as a countdown. It goes off at the next recoupling.', priority: 10 }],
+  casa: [{ id: 'tu_casa', text: 'Casa Amor, for the uninitiated: the villa splits, loyalty gets audited, and everything comes home on a postcard. Pack honesty. Or don’t — it’s telly either way.', priority: 10 }],
+  movienight: [{ id: 'tu_movie', text: 'Movie Night, new viewers: everything anyone did, in HD, with sound. Footage outranks feelings. Enjoy.', priority: 10 }],
+  gossip: [{ id: 'tu_gossip', text: 'Intel, babes: gather it in the quiet chats, hold three pieces at most, and spend it at a ceremony — that’s where words become results.', priority: 10 }],
+  exclusive: [{ id: 'tu_excl', text: 'Going exclusive: the Bond locks in higher, the temptations back off, and the drop — should it come — doubles. This show is a mortgage with cameras.', priority: 10 }],
+  finale: [{ id: 'tu_final', text: 'The Final. Your declared Intention gets judged, the vote peaks, and the envelope has no memory of your excuses. Good luck, babes. Genuinely.', priority: 10 }],
+};

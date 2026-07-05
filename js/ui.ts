@@ -207,9 +207,9 @@ function renderTitle() {
     }));
   } else if (!meta.tutorialDone && (meta.runs || 0) === 0 && activePack.tutorialEvents.length) {
     // First install: the game opens with a playable lesson, not a manual.
-    // (Only packs that ship a tutorial deck — the music game does.)
-    menu.append(btn('▶ Play — Your First Gig', 'primary', startTutorial));
-    menu.append(btn('Skip the gig — I know the drill', 'ghost', () => {
+    // (Only packs that ship a tutorial deck; labels are the pack's.)
+    menu.append(btn(PRES.tutorial?.offer || '▶ Play — Your First Gig', 'primary', startTutorial));
+    menu.append(btn(PRES.tutorial?.skip || 'Skip the gig — I know the drill', 'ghost', () => {
       track('tutorial_skip', {});
       meta.tutorialDone = true;
       save.saveMeta(meta);
@@ -319,6 +319,7 @@ function startNewRun(daily = false, comeback = false) {
     }
     if (comeback) engine.applyComeback(run);
     run.nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 2; // 3rd+ meeting
+    run.firstRun = (meta.runs || 0) === 0; // a pack may key onboarding off this
     save.saveRun(run);
     track('run_start', {
       instrument: inst.id, contract: chosenContract || 'none',
@@ -529,7 +530,7 @@ function renderHud() {
   const actWrap = el('span', 'hud-act-wrap');
   const actNames = PRES.actNames || ['', 'The Garage', 'The Grind', 'The Reckoning'];
   actWrap.append(el('span', 'hud-act', run.tutorial
-    ? 'FIRST GIG · The Rubber Room'
+    ? (PRES.tutorial?.hud || 'FIRST GIG · The Rubber Room')
     : `ACT ${run.act} · ${actNames[run.act]}`));
   // The Hot 10 belongs to the songs subsystem — only runs that carry it get
   // the chart button.
@@ -1523,24 +1524,29 @@ function renderTutorialEnd() {
   const s = $('#screen-ending');
   s.innerHTML = '';
   const wrap = el('div', 'ending-wrap');
-  wrap.append(artFor('ev_tut_set', 'ending-art', { fame: 12, network: 40, burnout: 10 }));
-  wrap.append(el('div', 'verdict verdict-success', 'SOUNDCHECK COMPLETE'));
-  wrap.append(el('h2', 'ending-title', 'The First Gig'));
-  wrap.append(el('p', 'ending-text',
-    'Nineteen people, four of them on purpose, and nobody left. Dee flips the clipboard shut: “Tuesday’s yours if you want it.” That’s the whole tutorial — the career ahead is longer, meaner, and much funnier.'));
+  // The wrap-up copy is the pack's (presenter.tutorial.end); the music game's
+  // First Gig is the built-in default.
+  const tend = PRES.tutorial?.end || {
+    verdict: 'SOUNDCHECK COMPLETE', title: 'The First Gig', art: 'ev_tut_set',
+    text: 'Nineteen people, four of them on purpose, and nobody left. Dee flips the clipboard shut: “Tuesday’s yours if you want it.” That’s the whole tutorial — the career ahead is longer, meaner, and much funnier.',
+    lessons: [
+      { cls: 'notice-gear', html: '👆 <b>Swipe or tap</b> — every card is one decision, left or right.' },
+      { cls: 'notice-gear', html: '🎸 <b>Stat icons</b> on a choice show what it rolls against. Build what your path needs.' },
+      { cls: 'notice-gear', html: '<b>The risk tell</b> — ● safe · ▲ dicey · ■ likely bad · ✦ big upside. Read it before you leap.' },
+      { cls: 'notice-bad', html: '🔥 <b>Burnout</b> drags every roll and ends careers at 100. Rest is a real move.' },
+      { cls: 'notice-encore', html: '🎇 <b>Encores</b> — an INCREDIBLE banks one; arm it on the card that matters.' },
+    ],
+  };
+  wrap.append(artFor(tend.art || 'ev_tut_set', 'ending-art', { fame: 12, network: 40, burnout: 10 }));
+  wrap.append(el('div', 'verdict verdict-success', tend.verdict));
+  wrap.append(el('h2', 'ending-title', tend.title));
+  wrap.append(el('p', 'ending-text', tend.text));
   const list = el('div', 'result-notices');
-  const lessons = [
-    ['notice-gear', '👆 <b>Swipe or tap</b> — every card is one decision, left or right.'],
-    ['notice-gear', '🎸 <b>Stat icons</b> on a choice show what it rolls against. Build what your path needs.'],
-    ['notice-gear', '<b>The risk tell</b> — ● safe · ▲ dicey · ■ likely bad · ✦ big upside. Read it before you leap.'],
-    ['notice-bad', '🔥 <b>Burnout</b> drags every roll and ends careers at 100. Rest is a real move.'],
-    ['notice-encore', '🎇 <b>Encores</b> — an INCREDIBLE banks one; arm it on the card that matters.'],
-  ];
-  for (const [cls, html] of lessons) list.append(el('div', 'notice ' + cls, html));
+  for (const l of tend.lessons) list.append(el('div', 'notice ' + l.cls, l.html));
   wrap.append(list);
   if (firstTime) wrap.append(el('p', 'lp-award', '+15 Legacy Points — walk-in money for the Career Wall'));
   const menu = el('div', 'menu');
-  menu.append(btn('▶ Start your real career', 'primary', () => startNewRun()));
+  menu.append(btn(PRES.tutorial?.end.next || '▶ Start your real career', 'primary', () => startNewRun()));
   menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title'); }));
   wrap.append(menu);
   s.append(wrap);
@@ -2528,7 +2534,7 @@ function renderSettings() {
 
   menu.append(el('h3', 'contract-head', 'Career data'));
   menu.append(btn('❓ How to play', '', showHelp));
-  if (activePack.tutorialEvents.length) menu.append(btn('🎓 Replay the first gig', '', () => { save.clearRun(); startTutorial(); }));
+  if (activePack.tutorialEvents.length) menu.append(btn(PRES.tutorial?.replay || '🎓 Replay the first gig', '', () => { save.clearRun(); startTutorial(); }));
   const exportBtn = btn('📤 Export save (backup code)', '', async () => {
     const code = save.exportSave();
     try {

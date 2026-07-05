@@ -5,6 +5,7 @@
 // Design record: docs/games/love-island/ (grill.md, CONTEXT.md, adr/).
 
 import { loveIslandManifest } from './manifest.js';
+import { LI_TUTORIAL_EVENTS } from './events-tutorial.js';
 import { LOVE_ISLAND_EVENTS } from './events.js';
 import { ISLANDER_TYPES, islanderTypeById } from './cast.js';
 import { couplingPlugin } from './plugins/coupling.js';
@@ -80,7 +81,14 @@ export const loveIslandPack: Pack = {
   // decided this card (verdict queues, secret surfacing) before he speaks.
   plugins: [couplingPlugin, profilePlugin, charactersPlugin, gossipPlugin, producersPlugin, stirlingPlugin],
   events: LOVE_ISLAND_EVENTS,
-  tutorialEvents: [],
+  // THE FIRST MORNING (R2): the 3-card gesture ramp. Stirling carries the
+  // format teaching in-season (his first-season tutor pool, stirling.ts).
+  tutorialEvents: LI_TUTORIAL_EVENTS,
+  tutorialStart: {
+    loadout: 'retriever_girl',
+    stats: { rizz: 38, loyalty: 46, savvy: 18, charisma: 34, burnout: 8 },
+    resources: { public: 8, graft: 3 },
+  },
   // The In-Your-Head ladder (R1/A2): the soft wobble at 50, the real one at
   // 75, and — if the head climbs back after that relief — the break at 76,
   // where a botched "tough it out" IS the Walk. Order is load-bearing: rules

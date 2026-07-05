@@ -119,7 +119,8 @@ let totalReactive = 0;
 
 for (const pack of PACKS) {
   const desc = DESCRIPTORS[pack.id] || { tokens: [], weatherIds: [] };
-  const EVENTS = pack.events;
+  // Tutorial decks are player-facing copy too — same floor, no exceptions.
+  const EVENTS = [...pack.events, ...(pack.tutorialEvents || [])];
   const ARCS = desc.arcs || [];
   const knownTokens = new Set(desc.tokens);
   const weatherIds = new Set(desc.weatherIds);
