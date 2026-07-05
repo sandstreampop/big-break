@@ -19,6 +19,11 @@ the villa *legible* (the Clarity Layer, [`V3-NOTES.md`](./V3-NOTES.md)). v4 is
 about making it *true* — the relationships, the social physics, and the reasons
 the nation falls for a couple.
 
+> **Build-ready.** The decisions needed to build v4 autonomously are settled in
+> [`V4-BUILD-CHARTER.md`](./V4-BUILD-CHARTER.md) (positioning, session plan,
+> merge/autonomy rules, faction/cast specifics, the taste gate, deferrals). Read
+> the charter first for *what to do*; this document is the *why*.
+
 ---
 
 ## The one-sentence problem
