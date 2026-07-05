@@ -121,6 +121,15 @@ middle; or — most on-theme — introduce a light **week/day structure** so the
 season has a real weekly rhythm, with quiet daily beats between the tentpoles.
 The right answer is likely structural (a rhythm), not just a bigger number.
 
+> **Theory guard (peak-end rule).** The research is emphatic that *duration is
+> not what's remembered* — the memory of an experience is dominated by its
+> emotional **peak** and its **ending**, and how long it lasted is nearly
+> ignored ("duration neglect", Kahneman). So "longer" is a **trap** if read as
+> "more minutes": a longer season with a flat middle scores *worse* in memory
+> than today's short one. Read Pillar 0 as **"buy more and bigger peaks, and
+> protect the Final"**, not "add runtime." Every added stretch must earn a peak
+> or feed one. See [`V4-THEORY-REVIEW.md`](./V4-THEORY-REVIEW.md).
+
 ---
 
 ## The design pillars
@@ -277,6 +286,15 @@ The same action pleases one faction and angers another. **You can never satisfy
 everyone** — which is the truest thing the show teaches, and on its own could
 carry the whole overhaul. (This tasteful abstraction was Hillevi's explicit
 preference over modelling the real-world split directly.)
+
+> **Proven blueprint (Reigns) + a legibility requirement.** This is not an
+> unproven system: *Reigns* ships exactly this — four faction meters, with the
+> card "bag" recompiled against faction state on every swipe. So the mechanic is
+> derisked. The catch, from Sid Meier's *interesting decisions*: a faction
+> tradeoff is only a real choice if the player can *read which faction a card
+> serves* — otherwise it collapses to guesswork (a common Reigns complaint).
+> Telegraph faction leanings the way v3's set-piece "stakes-in" rows telegraph
+> survival math. See [`V4-THEORY-REVIEW.md`](./V4-THEORY-REVIEW.md).
 
 ### 6. The ick — love's internal lie-detector
 
@@ -448,6 +466,40 @@ for where the soul is: **fewer new personas, more truthful villa.**
    moment set the stakes. This runs through kisses, chats, the Hideaway, gestures.
 4. **Authenticity above all.** Every other mechanic hangs under it. Consistency is
    rewarded; performing for the cameras is punished — twice (the nation and the ick).
+5. **Telegraph the tradeoff (interesting-decisions contract).** A choice is only
+   *interesting* if the player can make it informed and foresee its consequence
+   (Sid Meier). Faction leanings, consistency risks, and ick triggers must be
+   *readable* before the swipe — reuse v3's "stakes-in" pattern. Invisible
+   consequence reads as a gotcha, not a decision.
+6. **Hook in the first five minutes (FTUE contract).** ~80% of retention is set
+   by the opening minutes; a longer run makes the *front* more critical, not
+   less. The first session must hook fast, tutorialised through the fiction
+   (build on v3's 3-card gesture ramp + Stirling tutor).
+
+---
+
+## Grounded in game-design research
+
+The whole plan has been pressure-tested against established, cited research in
+[`V4-THEORY-REVIEW.md`](./V4-THEORY-REVIEW.md). The load-bearing takeaways folded
+back into this doc:
+
+- **What the game is *for* (MDA target aesthetics):** Narrative, Fellowship,
+  Fantasy, Expression — *not* mastery-Challenge or Competition. Players
+  experience aesthetics-first; every mechanic is checked against these four, and
+  cut if it serves none.
+- **Relatedness is a real engine (Self-Determination Theory):** feeling connected
+  to others independently drives enjoyment and retention — the motivational
+  foundation under the living web and the connection/friendship pillars.
+- **Peak-end, not duration (Pillar 0):** memory is dominated by the emotional
+  peak and the ending; longer-with-a-flat-middle scores *worse*. Budget peaks,
+  protect the Final.
+- **The couple-graph is a drama manager:** hold it to the four interactive-drama
+  QA axes — pacing, coherence, autonomy, dramatic arc — and cap foregrounded
+  threads at ~2–3 (working-memory limit, Miller 7±2), with the Clarity Layer
+  chunking the cast.
+- **The factional public is proven (Reigns)** and the ick/consistency systems
+  must stay *legible-cause*, never arbitrary.
 
 ---
 
@@ -480,6 +532,14 @@ Everything else (grafting-as-daily-gesture with memory, the context-scaled
 intimacy ladder, the two coupling axes, the ick, betrayal-repair, story-gated
 Win the Villa, the Casa↔Movie-Night reckoning, the content set) is pack-local and
 golden-managed.
+
+**Sequencing (see [`V4-THEORY-REVIEW.md`](./V4-THEORY-REVIEW.md) → readiness
+checklist):** ADR-0010 = the positioning fork (run length); ADR-0011 = the
+factional public (N factions, win-gate reads, the `momentumResource` question),
+modelled on Reigns' four-meter design; ADR-0012 = the couple-graph as a
+*scripted drama manager* (thread cap, the four QA axes, the weighted-bag
+surfacing that also *removes* resolved threads' cards). Each of these forces a
+deliberate golden re-baseline.
 
 ---
 

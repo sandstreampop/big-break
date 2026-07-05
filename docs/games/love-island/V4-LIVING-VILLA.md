@@ -67,6 +67,29 @@ partnership is the whole answer.
    either; you watch, gossip, react, and get dragged in. The swipe expresses your
    *relationship to* the living world, not command over it.
 
+## Grounding in the research
+
+Pressure-tested in [`V4-THEORY-REVIEW.md`](./V4-THEORY-REVIEW.md); the parts that
+bear directly on the swipe-card medium:
+
+- **Reigns is the reference implementation.** It runs a whole living kingdom on a
+  two-way swipe by recompiling a card **"bag" against global state** every turn:
+  event chains weight follow-up cards *into* the bag, and resolved threads are
+  *removed* from it. That is exactly our witness/consequence/foreground-a-few-
+  threads model — proven, in our medium. (Design note: **remove a resolved
+  thread's cards** so a long deck doesn't silt up.)
+- **The background couple-graph is a *drama manager*** (Mateas & Stern). Hold it
+  to the four interactive-drama QA axes — **pacing, coherence, autonomy,
+  dramatic arc** — and heed the field's hard lesson: *fully emergent* social sim
+  rarely reads as coherent story, which is why "mostly scripted" is correct.
+- **The ~2–3 thread cap is a cognitive-load ceiling, not a taste call.** Working
+  memory holds ~7±2 items total (Miller), shared with your own couple, the
+  factions, and your stats. The v3 Clarity Layer earns its keep by **chunking**
+  the cast so the whole villa isn't in working memory at once.
+- **Consequence cards must feed back visibly** (Sid Meier's interesting
+  decisions): a move you didn't make can *find* you via a card, but the card
+  should let the player trace the "why", or it reads as arbitrary.
+
 ## Where the cost actually is
 
 Not the medium — the medium is sufficient. The cost is **authoring**:

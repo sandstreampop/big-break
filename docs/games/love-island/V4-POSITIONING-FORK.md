@@ -70,6 +70,26 @@ A season is several weeks; the arc lives across them.
 - **Pacing guards:** B and C must scale novelty weighting and daily-beat variety;
   C's week boundary is a natural place to vary tone and reset attention.
 
+## Theory check (why C is the researched pick)
+
+Pressure-tested in [`V4-THEORY-REVIEW.md`](./V4-THEORY-REVIEW.md):
+
+- **Peak-end rule (Kahneman)** is the sharpest warning against a naïve Option B:
+  memory is dominated by the emotional *peak* and the *ending*, and *duration is
+  nearly ignored*. A longer run with a flat middle is remembered as **worse**
+  than today's short one. Option C's weekly rhythm is a built-in **peak cadence**
+  (each week ends on a tentpole), which is exactly what turns length into memory.
+- **Slay the Spire** is the roguelike proof-point: it paces a long climb as a
+  *rhythm* (encounters → rest → elite → boss) with full-information decisions and
+  "doesn't waste a single mechanic." Option C is that rhythm in our fiction
+  (quiet days → one weekly tentpole).
+- **FTUE / retention:** ~80% of retention is set in the first five minutes, so a
+  *longer* run makes a strong opening **more** critical, not less — a hard
+  constraint on any option that adds length.
+
+None of this *decides* the fork — that's Viktor's call — but it says: if we go
+long, go long as a **rhythm of peaks**, not as raw runtime.
+
 ## The ask
 
 Pick A / B / C (or reshape). My recommendation is **C** — it's the only one that
