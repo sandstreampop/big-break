@@ -16,8 +16,12 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 // ---------- Balance knobs (the Coupling subsystem's own numbers) ----------
 export const COUPLING = {
   bondBase: 12,        // a fresh couple's Bond — every switch starts over here
-  bondFloor: 34,       // chosen-Recoupling survival: Bond ≥ this holds your Partner
-  publicFloor: 31,     // …OR Public ≥ this and somebody picks you anyway
+  // Survival floors, tuned for the v4 six-week season (ADR-0011): the
+  // ceremonies land in weeks 5–6 of a ~47-card run, so both meters arrive
+  // much higher than they did at the v2 acts' checks — the floors rose to
+  // keep a recoupling a real question instead of a formality.
+  bondFloor: 42,       // chosen-Recoupling survival: Bond ≥ this holds your Partner
+  publicFloor: 56,     // …OR Public ≥ this and somebody picks you anyway
   rivalPenalty: 8,    // active Rival poaches: effective Bond at the check drops
   // ADR-0006: the Rival's OPINION of you feeds the poach — a rival who rates
   // you pulls their punches; one who despises you goes in harder. Added to
@@ -114,7 +118,7 @@ function newCouple(state: RunState, rng: () => number, pctx: any) {
   state.bond = COUPLING.bondBase;
   pushDelta(pctx, 'bond', state.bond - before);
   const p = castById(state.partner);
-  if (p) note(pctx, 'notice-gear', `💘 Coupled up: <b>${p.name}</b> — ${p.vibe}. The Bond starts where all Bonds start.`);
+  if (p) note(pctx, 'notice-gear', `💘 Coupled up: <b>${p.name}</b> — ${p.vibe}. The Connection starts where all Connections start.`);
 }
 
 export const couplingPlugin: Plugin = {

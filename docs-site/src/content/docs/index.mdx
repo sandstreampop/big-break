@@ -1,9 +1,9 @@
 ---
 title: Big Break Engine
-description: Build your own 3-act swipe-roguelike. A game is a Pack.
+description: Build your own swipe-roguelike season. A game is a Pack.
 template: splash
 hero:
-  tagline: A 3-act swipe-roguelike SDK. A game is a <em>Pack</em> — adding a genre edits new files only, no shared type, no engine line.
+  tagline: A swipe-roguelike SDK. A game is a <em>Pack</em> — adding a genre edits new files only, no shared type, no engine line.
   actions:
     - text: Quickstart — your first pack
       link: /big-break/docs/quickstart/
@@ -19,10 +19,11 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## What you're building on
 
-Big Break is a **3-act swipe-roguelike engine**. The core runs one lifecycle —
+Big Break is a **swipe-roguelike engine**. The core runs one lifecycle —
 deck assembly → draw a card → swipe left or right → roll to a `bad` / `good` /
-`incredible` tier → apply effects → act breaks → crossroads → finale — over a
-seeded, resume-safe RNG. It knows nothing about *your* game.
+`incredible` tier → apply effects → segment breaks → crossroads → finale — over
+a seeded, resume-safe RNG, across a manifest-declared list of run segments
+(three acts, six weeks — the pack's call). It knows nothing about *your* game.
 
 A game is a **`Pack`**: a manifest, a deck, optional subsystems, and a
 presenter. The whole surface is typed, and a truly unknown key is a compile

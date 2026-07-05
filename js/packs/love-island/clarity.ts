@@ -78,7 +78,7 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
           `💘 How it’s going: <b>${PARTNER_TIER[p.tier]}</b>${state.exclusive ? ' — and it’s official. Higher floor, longer drop.' : ''}`,
           ...(p.mood ? [`${MOODS[p.mood].face} Right now: <b>${MOODS[p.mood].label}</b>. Moods pass. Usually.`] : []),
           ...(sec.known && sec.def ? [`🤫 You know their secret: ${sec.def.label}.`] : []),
-          'A recoupling checks the Bond OR the public — hold one of them and you stay.',
+          'A recoupling checks the Connection OR the public — hold one of them and you stay.',
         ],
       },
     });
@@ -89,7 +89,7 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
       sheet: {
         title: 'Single',
         lines: [
-          '💔 No Partner, no Bond — at a recoupling only the public can save you.',
+          '💔 No Partner, no Connection — at a recoupling only the public can save you.',
           'Couple up at the next ceremony, or make the nation love you fast.',
         ],
       },
@@ -144,12 +144,12 @@ function bondRead(state: RunState, d: number): string {
   const name = castById(state.partner)?.name || 'your partner';
   const abs = Math.abs(d);
   const lines = d > 0
-    ? abs >= 8 ? ['💘 The Bond surges. Other couples take it personally.', '💘 A jump in the Bond you could see from the beach.']
-    : abs >= 4 ? ['💘 The Bond builds, properly.', '💘 Real Bond, banked.', '💘 The Bond climbs. The daybed approves.']
-    : ['💘 The Bond warms a notch.', '💘 A little more Bond in the bank.', '💘 The Bond ticks up. Slow is a strategy.']
-    : abs >= 8 ? ['💘 The Bond craters. The duvet has a border now.', '💘 A Bond demolition, live on air.']
-    : abs >= 4 ? ['💘 The Bond takes a real hit.', '💘 That cost you Bond you’d actually built.']
-    : ['💘 The Bond cools a touch.', '💘 A scuff on the Bond. Buffable.'];
+    ? abs >= 8 ? ['💘 The Connection surges. Other couples take it personally.', '💘 A jump in the Connection you could see from the beach.']
+    : abs >= 4 ? ['💘 The Connection builds, properly.', '💘 Real Connection, banked.', '💘 The Connection grows. The daybed approves.']
+    : ['💘 The Connection warms a notch.', '💘 A little more Connection in the bank.', '💘 The Connection ticks up. Slow is a strategy.']
+    : abs >= 8 ? ['💘 The Connection craters. The duvet has a border now.', '💘 A Connection demolition, live on air.']
+    : abs >= 4 ? ['💘 The Connection takes a real hit.', '💘 That cost you Connection you’d actually built.']
+    : ['💘 The Connection cools a touch.', '💘 A scuff on the Connection. Buffable.'];
   let read = pick(state, lines, 3);
   // A tier crossing is the legible moment — say it plainly.
   const before = opinionTier((state.bond ?? 0) - d);
@@ -273,52 +273,85 @@ function coupleRead(state: RunState): string {
   return `💘 <b>${p.cast.name}</b> — ${PARTNER_TIER[p.tier]}.${lock}${mood}`;
 }
 
-function storySoFar(state: RunState, act: number): string {
+// v4 S2 (ADR-0011): the recap fires at every WEEK turn (weeks 2–6). Each
+// week's story covers the week just played; THIS WEEK is the honest forecast
+// of the tentpole the producers schedule actually delivers (the ADR-0008
+// truthfulness contract at campaign level).
+const WEEK_TITLE: Record<number, string> = {
+  2: 'THE GRAFT', 3: 'CASA AMOR', 4: 'MOVIE NIGHT', 5: 'THE RECOUPLING', 6: 'FINAL WEEK',
+};
+
+function storySoFar(state: RunState, week: number): string {
   const p = castById(state.partner)?.name;
   const r = castById(state.rival)?.name || 'someone';
-  const acted = (state.cardLog || []).filter((c: any) => c.a === act - 1);
+  const bomb = castById(state.bombshellId)?.name;
+  const acted = (state.cardLog || []).filter((c: any) => c.a === week - 1);
   const rough = acted.filter((c: any) => c.t === 'bad').length >= Math.max(3, acted.length * 0.4);
-  if (act === 2) {
-    const open = pick(state, [
+  const wobble = rough ? ' It has, frankly, been a bumpy week. The nation respects a comeback arc.' : '';
+  const bits: string[] = [];
+
+  if (week === 2) {
+    bits.push(pick(state, [
       'Week one: sun cream, first dates, and eye contact with consequences.',
       'One week down. Everyone said “vibes” a minimum of forty times.',
-      'Arrival week is over. The airport tans have faded; the agendas haven’t.',
-      'Half-time in paradise. The couples think they’re settled. Production disagrees, and production has a budget.',
+      'Week one is over. The airport tans have faded; the agendas haven’t.',
       'One week down. Feelings have been caught. Some were even meant.',
-    ], 7);
-    const couple = p
-      ? ` You coupled up with <b>${p}</b>, and the nation started having opinions in group chats. ${r} started having them out loud.`
-      : ` You are, at time of broadcast, single — which in here is a weather warning. ${r} noticed first.`;
-    const wobble = rough ? ' It has, frankly, been a bumpy start. The nation respects a comeback arc.' : '';
-    return `🎙️ ${open}${couple}${wobble}`;
+    ], 7));
+    bits.push(p
+      ? `You coupled up with <b>${p}</b>, and the nation started having opinions in group chats. ${r} started having them out loud.`
+      : `You are, at time of broadcast, single — which in here is a weather warning. ${r} noticed first.`);
+    if (bomb) bits.push(`And last night the doors opened: <b>${bomb}</b> unpacked a suitcase and a plan.`);
+  } else if (week === 3) {
+    bits.push(pick(state, [
+      'Week two was the graft: iced coffees, terrace debriefs, and a challenge with a scoreboard nobody asked for.',
+      'Week two: the couples stopped auditioning and started existing. Production made a note to fix that.',
+      'The grafting week is done — favours banked, orders memorised, a challenge survived on camera.',
+    ], 11));
+    bits.push('At the Crossroads you said the quiet part into a microphone.');
+  } else if (week === 4) {
+    if (state.flags.includes('li_betrayed')) bits.push(`Casa Amor happened, and it happened <i>to you</i>: your head stayed loyal, your other half didn’t.`);
+    else if (state.flags.includes('li_casa_recouple')) bits.push('You went to Casa Amor and came back with a different person. Bold television.');
+    else if (state.flags.includes('li_casa_kiss')) bits.push('Casa Amor happened. So did a kiss. The footage is filed under “pending.”');
+    else if (state.flags.includes('li_loyal_casa')) bits.push('You did Casa Amor the boring way: loyal, asleep by eleven. The nation quietly loved it.');
+    else bits.push('Casa Amor came and went — new faces, old feelings, a postcard nobody framed.');
+  } else if (week === 5) {
+    if (state.flags.includes('li_partner_revealed')) bits.push('Movie Night rolled the tape, and the tape had a co-star.');
+    else if (state.flags.includes('li_revealed')) bits.push('Movie Night rolled your tape. The villa watched it twice.');
+    else bits.push('Movie Night came for everyone’s receipts and left yours, remarkably, alone.');
+    if (state.flags.includes('li_bestie')) bits.push('Somewhere in the wreckage you acquired a ride-or-die — two spoons, one tub, terms binding.');
+    if (state.flags.includes('li_done_rivalmove')) bits.push(`${r} stopped watching and made their move. You noticed. So did the nation.`);
+  } else {
+    const verdict = state.lastCeremony?.verdict;
+    if (verdict === 'held') bits.push('At the firepit, the couple held.');
+    else if (verdict === 'rescued') bits.push('At the firepit the Connection blinked — the public didn’t. Rescued.');
+    else if (verdict === 'dumped') bits.push('The firepit took a body. It nearly took yours.');
+    else bits.push('The recoupling came and went, and you’re still holding a drink on the lawn.');
+    bits.push('Which brings us here: the last week there is.');
   }
-  // Act 3: the Turn just happened — Casa, the footage, the ceremony.
-  const bits: string[] = [];
-  if (state.flags.includes('li_betrayed')) bits.push(`Casa Amor happened, and it happened <i>to you</i>: your head stayed loyal, your other half didn’t.`);
-  else if (state.flags.includes('li_casa_recouple')) bits.push('You went to Casa Amor and came back with a different person. Bold television.');
-  else if (state.flags.includes('li_casa_kiss')) bits.push('Casa Amor happened. So did a kiss. The footage is filed under “pending.”');
-  else if (state.flags.includes('li_loyal_casa')) bits.push('You did Casa Amor the boring way: loyal, asleep by eleven. The nation quietly loved it.');
-  else bits.push('The Turn did what the Turn does — new faces, old feelings, a postcard nobody framed.');
-  if (state.flags.includes('li_partner_revealed')) bits.push('Movie Night rolled the tape, and the tape had a co-star.');
-  else if (state.flags.includes('li_revealed')) bits.push('Movie Night rolled your tape. The villa watched it twice.');
-  const verdict = state.lastCeremony?.verdict;
-  if (verdict === 'held') bits.push('At the firepit, the couple held.');
-  else if (verdict === 'rescued') bits.push('At the firepit the Bond blinked — the public didn’t. Rescued.');
-  return `🎙️ ${bits.join(' ')}`;
+  return `🎙️ ${bits.join(' ')}${wobble}`;
 }
 
-function whatsComing(state: RunState, act: number): string {
-  if (act === 2) {
+function whatsComing(state: RunState, week: number): string {
+  if (week === 2) {
+    return '⚠️ The graft gets graded: a <b>challenge</b> at the end of the week, played for laughs and scored for keeps. And after it, the <b>Crossroads</b> — you declare why you’re really here, out loud, on the record.';
+  }
+  if (week === 3) {
+    return '⚠️ <b>Casa Amor.</b> At the end of this week the villa splits, strangers unpack, and loyalty gets a camera pointed at it. Whatever happens over there comes home on a postcard.';
+  }
+  if (week === 4) {
+    return '⚠️ <b>Movie Night.</b> The footage exists, and this week production presses play — footage outranks feelings, every time. New allies help. So does a clean reel, if yours is one.';
+  }
+  if (week === 5) {
     const chooser = state.gender === 'girl'; // recoup1: the girls choose
     const recoup = chooser
-      ? 'Then a recoupling where <b>the girls choose</b> — that’s you, holding the pen.'
-      : 'Then a recoupling where <b>the girls choose</b> — and you find out what your week was worth.';
-    return `⚠️ <b>Casa Amor.</b> The villa splits, strangers unpack, and loyalty gets a camera pointed at it. Movie Night follows — footage outranks feelings. ${recoup}`;
+      ? 'This week ends at the firepit: a recoupling where <b>the girls choose</b> — that’s you, holding the pen.'
+      : 'This week ends at the firepit: a recoupling where <b>the girls choose</b> — and you find out what your season is worth.';
+    return `⚠️ ${recoup} Before that: one more bombshell, and everyone recalculating.`;
   }
   const chooser = state.gender === 'boy'; // recoup2: the boys choose
   const recoup = chooser
     ? 'First: a recoupling. <b>The boys choose.</b> You are the boys.'
-    : 'First: a recoupling. <b>The boys choose.</b> You are not the boys — you survive on the Bond or the nation, and nothing else.';
+    : 'First: a recoupling. <b>The boys choose.</b> You are not the boys — you survive on the Connection or the nation, and nothing else.';
   const hot = (state.stats?.burnout ?? 0) >= 62
     ? ' And you’re carrying a loud head into a week that eats loud heads — <b>get it quiet or you’ll walk</b>. The Beach Hut counts as a move.'
     : '';
@@ -326,10 +359,10 @@ function whatsComing(state: RunState, act: number): string {
 }
 
 export function villaRecap(state: RunState, act: number, _seed: number) {
-  if (state.tutorial || (act !== 2 && act !== 3)) return null;
+  if (state.tutorial || act < 2 || act > 6) return null;
   return {
-    kicker: 'PREVIOUSLY, IN THE VILLA',
-    title: act === 2 ? 'THE TURN' : 'FINAL WEEK',
+    kicker: `PREVIOUSLY, IN THE VILLA · WEEK ${act - 1}`,
+    title: WEEK_TITLE[act],
     blocks: [
       { html: storySoFar(state, act), cls: 'recap-story' },
       { label: 'YOUR COUPLE', html: coupleRead(state), cls: 'recap-couple' },
@@ -351,9 +384,9 @@ function ceremonyStakes(state: RunState) {
   const rival = castById(state.rival)?.name;
   const out = [];
   out.push(partner
-    ? (o.bondSafe ? stake(`💘 The Bond: enough to hold ${partner}`, 'sp-safe')
-      : stake('💘 The Bond: not enough on its own tonight', 'sp-risk'))
-    : stake('💘 No Partner, no Bond — the public is the whole plan', 'sp-risk'));
+    ? (o.bondSafe ? stake(`💘 The Connection: enough to hold ${partner}`, 'sp-safe')
+      : stake('💘 The Connection: not enough on its own tonight', 'sp-risk'))
+    : stake('💘 No Partner, no Connection — the public is the whole plan', 'sp-risk'));
   out.push(o.publicSafe ? stake('🗳️ The public: they’d keep you', 'sp-safe')
     : stake('🗳️ The public: undecided at best', 'sp-risk'));
   if (state.flags.includes('li_rival_active') && rival) {
@@ -420,7 +453,7 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
       key: 'arc-graft', banner: 'THE GRAFT', cls: 'sp-date',
       sub: `Time to find out whether ${partner} is a person or a plotline.`,
       stakes: [
-        stake('💘 The Bond grows when you feed it — this is the feeding'),
+        stake('💘 The Connection grows when you feed it — this is the feeding'),
         stake('📺 Half the villa is pretending not to listen', 'sp-risk'),
       ],
     };
@@ -446,7 +479,7 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
         sec.known && !sec.spent
           ? stake('🤫 You’re holding their secret — remember that', 'sp-safe')
           : stake(state.partner
-            ? `💘 A poach tests the Bond — yours reads ${PARTNER_TIER[opinionTier(state.bond ?? 0)]}`
+            ? `💘 A poach tests the Connection — yours reads ${PARTNER_TIER[opinionTier(state.bond ?? 0)]}`
             : '💘 Nothing to poach. That’s its own problem'),
       ],
     };
@@ -596,8 +629,8 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
       banner: 'THE RECOUPLING', cls: 'sp-ceremony',
       sub: 'Tonight, you hold the pen.',
       stakes: [
-        stake(`💘 Keep ${partner}: the Bond carries over`, 'sp-safe'),
-        stake('🔁 Switch: a new face, and the Bond starts from scratch', 'sp-risk'),
+        stake(`💘 Keep ${partner}: the Connection carries over`, 'sp-safe'),
+        stake('🔁 Switch: a new face, and the Connection starts from scratch', 'sp-risk'),
       ],
     };
   }
@@ -605,12 +638,12 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
     return {
       banner: 'THE RECOUPLING', cls: 'sp-ceremony',
       sub: 'You’re single, and tonight that’s power: you choose.',
-      stakes: [stake('💘 Whoever you pick, the Bond starts where all Bonds start', '')],
+      stakes: [stake('💘 Whoever you pick, the Connection starts where all Connections start', '')],
     };
   }
   // The verdicts: out the other side, framed.
   if (id === 'li_recoup_held') return { banner: 'THE VERDICT', cls: 'sp-ceremony sp-held', sub: 'The couple holds.', mood: 'triumph' as const };
-  if (id === 'li_recoup_rescued') return { banner: 'THE VERDICT', cls: 'sp-ceremony sp-rescued', sub: 'The Bond blinked. The public didn’t.' };
+  if (id === 'li_recoup_rescued') return { banner: 'THE VERDICT', cls: 'sp-ceremony sp-rescued', sub: 'The Connection blinked. The public didn’t.' };
   if (id === 'li_recoup_dumped') return { banner: 'THE VERDICT', cls: 'sp-ceremony sp-dumped', sub: 'Nobody said your name.', mood: 'blow' as const };
 
   // Casa Amor, framed end to end.

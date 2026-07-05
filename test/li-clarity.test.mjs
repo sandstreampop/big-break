@@ -137,7 +137,7 @@ test('ceremony stakes tell the truth about the survival check', () => {
     state.bond = bond; state.public = pub;
     const o = ceremonyOutlook(state);
     const sp = villaSetPiece(state, lineup);
-    const bondStake = sp.stakes.find((s) => strip(s.html).includes('Bond'));
+    const bondStake = sp.stakes.find((s) => strip(s.html).includes('Connection'));
     const pubStake = sp.stakes.find((s) => strip(s.html).includes('public'));
     assert.equal(bondStake.cls === 'sp-safe', o.bondSafe, `bond stake lies at bond=${bond}`);
     assert.equal(pubStake.cls === 'sp-safe', o.publicSafe, `public stake lies at public=${pub}`);

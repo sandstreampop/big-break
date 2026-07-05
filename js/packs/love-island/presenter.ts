@@ -147,7 +147,7 @@ const TROPHIES = [
     desc: 'End a Season with 60+ Followers. The brands can hear your pen from here.',
     check: (s: any) => (s.followers || 0) >= 60 },
   { id: 'li_bond_80', cat: 'feats', name: 'Disgustingly Happy', icon: '🥂',
-    desc: 'End a Season with a Bond of 80+. The other couples are pretending to be pleased.',
+    desc: 'End a Season with a Connection of 80+. The other couples are pretending to be pleased.',
     check: (s: any) => (s.bond || 0) >= 80 },
   // ---- R8/C3c: trophy mass — the state was already tracked; now it pays ----
   { id: 'li_bestie_pact', cat: 'feats', name: 'The Two-Person Institution', icon: '🍦',
@@ -338,7 +338,7 @@ function finalSet(state: RunState) {
     {
       title: 'The declaration',
       blurb: `Stand up at the fire and say what ${partner} actually is to you. No hashtag. No net.`,
-      stat: 'bond', amount: 6, label: '+6 Bond',
+      stat: 'bond', amount: 6, label: '+6 Connection',
       apply: (s: RunState) => { if (s.partner) s.bond = Math.min(100, (s.bond || 0) + 6); },
     },
     {
@@ -417,10 +417,18 @@ export const loveIslandPresenter: Presenter = {
     },
   },
 
-  actNames: ['', 'Arrival', 'The Turn', 'Final Week'],
+  // v4 S2 (ADR-0011): the season is SIX WEEKS; the HUD counts them in the
+  // villa's own word. Each week is named for the tentpole it builds to.
+  actWord: 'WEEK',
+  actNames: ['', 'Arrival', 'The Graft', 'Casa Amor', 'Movie Night', 'The Recoupling', 'Final Week'],
+  // Fallback week intros (the recap — clarity.ts villaRecap — normally
+  // replaces these; they render only if it ever returns null).
   actIntro: {
-    2: { name: 'THE TURN', text: 'The soft launch is over, mate. From here it’s bombshells, postcards, and a cinema screen nobody asked for. Everything you do now has a consequence with your name on it — usually in HD.' },
-    3: { name: 'FINAL WEEK', text: 'Families, final dates, and a public vote climbing like a fever. The envelope is printed. Your name is on it, or it isn’t.' },
+    2: { name: 'THE GRAFT', text: 'Week two. The couples stop auditioning and start existing — coffees get memorised, favours get banked. At the end of the week: a challenge, and then the Crossroads.' },
+    3: { name: 'CASA AMOR', text: 'Week three. It’s quiet. It’s lovely. It ends with a text, a suitcase, and six strangers unpacking aftershave. Nothing survives this week unchanged.' },
+    4: { name: 'MOVIE NIGHT', text: 'Week four. The fallout settles, new alliances form — and at the end of it, production presses play on everything the cameras saw. Footage outranks feelings.' },
+    5: { name: 'THE RECOUPLING', text: 'Week five. One more bombshell, one more recalculation, and a firepit ceremony where the girls hold the pen. The week ends with everyone standing up.' },
+    6: { name: 'FINAL WEEK', text: 'Families, final dates, and a public vote climbing like a fever. The envelope is printed. Your name is on it, or it isn’t.' },
   },
   crossroads: {
     head: 'The Crossroads',
@@ -462,7 +470,7 @@ export const loveIslandPresenter: Presenter = {
         { cls: 'notice-gear', html: '👆 <b>Swipe or tap</b> — every villa moment is one decision.' },
         { cls: 'notice-gear', html: '😏 <b>Stat icons</b> show what a choice rolls on; the shape is the risk tell: ● safe · ▲ dicey · ■ likely bad · ✦ big upside.' },
         { cls: 'notice-bad', html: '🌀 <b>In Your Head</b> ends Seasons at the top — and Final Week’s line is lower. Rest is a real move.' },
-        { cls: 'notice-good', html: '💘 <b>Recouplings</b> check the Bond OR the public. Hold one and you stay.' },
+        { cls: 'notice-good', html: '💘 <b>Recouplings</b> check the Connection OR the public. Hold one and you stay.' },
         { cls: 'notice-encore', html: '📱 <b>Texts run the villa.</b> When the phone screams, everything stops.' },
       ],
       next: '▶ Start your Season',
@@ -476,17 +484,17 @@ export const loveIslandPresenter: Presenter = {
 
   statInfo: {
     rizz: 'One-on-one romantic pull. Feeds <b>Win the Villa</b> and every flirt, date, and head-turn.',
-    loyalty: 'Being genuine — the anti-game stat. Feeds <b>The Real Thing</b> and holds your Bond together.',
+    loyalty: 'Being genuine — the anti-game stat. Feeds <b>The Real Thing</b> and holds your Connection together.',
     savvy: 'Villa game-sense: strategy, recouplings, reading the lawn. Keeps you alive when you’re the chosen, not the chooser.',
     charisma: 'On-camera magnetism. Feeds <b>The Brand</b> and turns villa moments into screen time.',
     burnout: 'The spiral meter. Drama, betrayal, and grafting too hard push it up; at 100 you walk out of the villa in tears — and once Final Week starts, 79 is the line. Rest is a real move.',
   },
   helpBlocks: [
     '<b>Swipe</b> left or right on every villa moment. The stats on each choice tilt the roll.',
-    '🗳️ <b>Public</b> is the nation’s vote — it anchors <b>Win the Villa</b>, rescues you at recouplings, and surges at the Final. 📱 <b>Followers</b> build <b>The Brand</b>. 💘 <b>Bond</b> is your couple’s strength — <b>The Real Thing</b> runs on it, and it RESETS when you switch partners.',
+    '🗳️ <b>Public</b> is the nation’s vote — it anchors <b>Win the Villa</b>, rescues you at recouplings, and surges at the Final. 📱 <b>Followers</b> build <b>The Brand</b>. 💘 <b>Connection</b> is your couple’s strength — <b>The Real Thing</b> runs on it, and it RESETS when you switch partners.',
     '💪 <b>Graft</b> is banked social capital — spend it on the daybed to buy an <b>Angle</b> (the reputation you’re building). Angles boost matching choices; fragile ones fall off on a botched scene.',
     '🌀 <b>In Your Head</b> drags every roll down and ends your Season at 100 — you walk. In <b>Final Week</b> the line drops to 79: arrive loud and you’re gone. Beach Hut time and rest bring it back.',
-    '📜 <b>Recouplings</b>: when your gender chooses, you have the power. When the other gender chooses, you survive on Bond OR Public — fail both and you’re dumped.',
+    '📜 <b>Recouplings</b>: when your gender chooses, you have the power. When the other gender chooses, you survive on Connection OR Public — fail both and you’re dumped.',
     '🌟 An INCREDIBLE moment banks a <b>main-character moment</b> — arm it later to boost the swipe that matters.',
   ],
 

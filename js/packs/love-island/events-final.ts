@@ -327,7 +327,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You open the vault and it all comes out in the wrong order, ending on the hamster. {partner} holds your hand through the whole inventory. That’s data too.', effects: { loyalty: 2, bond: 4, burnout: 3 } },
-          good: { text: '“Okay. Me first, then.” You say the real thing, and it costs you, and they meet it with theirs. Two walls down in one night. The mics get none of it. The Bond gets all of it.', effects: { bond: 7, loyalty: 5 } },
+          good: { text: '“Okay. Me first, then.” You say the real thing, and it costs you, and they meet it with theirs. Two walls down in one night. The mics get none of it. The Connection gets all of it.', effects: { bond: 7, loyalty: 5 } },
           incredible: { text: 'What you tell them, you’ve never told anyone with a pulse. They don’t flinch. Around 2 a.m. the villa stops being a set and becomes, briefly, a place where you live.', effects: { bond: 9, loyalty: 8 } },
         },
       },
@@ -385,7 +385,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You say it, and a bird lands on the wall, and you both jump like it’s a boom mic with feathers. The moment survives. Your dignity negotiates.', effects: { loyalty: 2, bond: 4, burnout: 2 } },
           good: { text: 'You say the thing you’d never say on camera, in the spot where there might not be one. “Say it again,” they ask, quietly. Whether it airs stops mattering halfway through. That’s how you know.', effects: { bond: 7, loyalty: 5 } },
-          incredible: { text: 'Whatever was said at 5 a.m. in the blind spot, neither of you will ever repeat it, on the show or after it. The nation never finds out. The Bond never forgets.', effects: { bond: 10, loyalty: 8 } },
+          incredible: { text: 'Whatever was said at 5 a.m. in the blind spot, neither of you will ever repeat it, on the show or after it. The nation never finds out. The Connection never forgets.', effects: { bond: 10, loyalty: 8 } },
         },
       },
       right: {

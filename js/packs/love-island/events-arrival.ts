@@ -48,7 +48,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“So what do you actually do?” Three questions about his job; he answers all three. It is the most anyone has learned about pipe fitting on this network.', effects: { loyalty: 2, bond: 2, public: 1 } },
           good: { text: 'Easy, warm, no fireworks. “I could actually talk to you,” they say. In here, that’s a diamond ring.', effects: { loyalty: 3, bond: 4, public: 3 } },
-          incredible: { text: 'You don’t perform. They notice. “You’re not what I expected,” they say, meaning it. The Bond does the loud part for you.', effects: { loyalty: 5, bond: 6, public: 5, graft: 3 } },
+          incredible: { text: 'You don’t perform. They notice. “You’re not what I expected,” they say, meaning it. The Connection does the loud part for you.', effects: { loyalty: 5, bond: 6, public: 5, graft: 3 } },
         },
       },
       right: {
@@ -120,7 +120,9 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     },
   },
   {
-    id: 'li_challenge_heartrate', act: 1, tags: ['challenge', 'drama'],
+    // v4 S2: a beat:challenge1 variant — the first big Challenge is week 2's
+    // end-of-week tentpole (delivered by the producers window, never ambient).
+    id: 'li_challenge_heartrate', act: 1, tags: ['beat:challenge1', 'challenge', 'drama'],
     art: 'li_challenge',
     context: 'The lawn · challenge o’clock · “I’VE GOT A TEXT!!”',
     prompt: '“Islanders, tonight you’ll each perform for the villa — while everyone wears a heart-rate monitor. The results will be read out. #pulsecheck” — A dance-off where the scoreboard is everyone’s actual heart. Science, weaponised for chaos.',
@@ -288,7 +290,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     },
   },
   {
-    id: 'li_talent_night', act: 1, tags: ['challenge', 'camera'],
+    // v4 S2: the other beat:challenge1 variant (see li_challenge_heartrate).
+    id: 'li_talent_night', act: 1, tags: ['beat:challenge1', 'challenge', 'camera'],
     art: 'li_challenge',
     context: 'Night · the stage by the pool · talent show',
     prompt: 'The villa talent show: a sacred format where confidence outnumbers talent nine to one. {mate} has a whistle routine. {rival} is doing “spoken word.” The bar is on the floor and the cameras are ravenous.',

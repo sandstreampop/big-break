@@ -71,9 +71,11 @@ export const BEAT_EVENTS: GameEvent[] = [
     },
   },
 
-  // ---------- Casa Amor (the Act 1→2 chain, ADR-0002) ----------
+  // ---------- Casa Amor (ADR-0002; v4 S2: week 3's end-of-week tentpole —
+  // the beat window fires this Text on the week's last slot and the 5-card
+  // arc overruns the nominal length, so the week CLOSES on the return) ----------
   {
-    id: 'li_casa_text', act: 2, chainOnly: true, tags: ['text', 'casa'],
+    id: 'li_casa_text', act: 2, weight: 1, tags: ['beat:casa', 'text', 'casa'],
     art: 'li_casa_text',
     context: 'Dawn · the villa · “I’VE GOT A TEXT!!”',
     prompt: '“Islanders, the villa is splitting. One group will spend the next few days at Casa Amor — with six brand-new arrivals. Pack a bag. #outofsightoutofmind” — Your couple gets ninety seconds to say goodbye. Somebody’s already crying. Nothing has happened yet. Nothing ever needs to.',
@@ -544,7 +546,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     requires: { genderIs: 'boy', singleIs: true },
     context: 'The firepit · night · “I’VE GOT A TEXT!!”',
-    prompt: '“Tonight, there will be a recoupling. The girls will choose. The boy not chosen will be dumped from the Island. #decisiontime” — You’re single going in. No Bond to protect you tonight — only whatever the last few weeks bought you with the girls, and with the nation.',
+    prompt: '“Tonight, there will be a recoupling. The girls will choose. The boy not chosen will be dumped from the Island. #decisiontime” — You’re single going in. No Connection to protect you tonight — only whatever the last few weeks bought you with the girls, and with the nation.',
     choices: {
       left: {
         label: 'Trust the friendships',
@@ -633,7 +635,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     id: 'li_recoup2_exposed', act: 3, chainOnly: true, tags: ['text', 'recoupling'],
     art: 'li_firepit',
     context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
-    prompt: '“Tonight, there will be a recoupling. The boys will choose. The girl not chosen will be dumped from the Island. #judgementweek” — There are more girls than places, which is a maths problem with feelings. You have no move tonight — only everything you’ve already built: the Bond, or the vote. It needs to be one of them.',
+    prompt: '“Tonight, there will be a recoupling. The boys will choose. The girl not chosen will be dumped from the Island. #judgementweek” — More girls than places: a maths problem with feelings. No move left tonight. Only what you’ve built — the Connection, or the vote.',
     choices: {
       left: {
         label: 'Trust the graft',
@@ -725,7 +727,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     id: 'li_recoup_held', act: [2, 3], chainOnly: true, tags: ['recoupling', 'loyal'],
     art: 'li_firepit',
     context: 'The firepit · the choosing',
-    prompt: '“I want to couple up with this person because…” — and it’s your name, first, before the because. The Bond held. Across the fire, somebody who worked the room all week is discovering what rooms are worth.',
+    prompt: '“I want to couple up with this person because…” — and it’s your name, first, before the because. The Connection held. Across the fire, somebody who worked the room all week is discovering what rooms are worth.',
     choices: {
       left: {
         label: 'Cross the fire to them',
@@ -1050,7 +1052,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     id: 'li_final_winvilla', act: 3, finaleCard: true, pathAffinity: ['winvilla'], tags: ['host', 'camera'],
     art: 'li_final',
     context: 'The Final · the villa in fairy lights · the Host in evening wear',
-    prompt: '“Islanders. Tonight, the public decide.” — The lawn has a stage on it now; the stage has fairy lights; the fairy lights, somehow, have a sponsor. Millions of thumbs are hovering over two names, and one of the names is yours. One last look. Make it count.',
+    prompt: '“Islanders. Tonight, the public decide.” — The lawn has a stage now; the stage has fairy lights; the lights, somehow, have a sponsor. Millions of thumbs hover over two names. One is yours. Make the last look count.',
     choices: {
       left: {
         label: 'Speak to the nation',

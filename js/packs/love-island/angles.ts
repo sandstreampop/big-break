@@ -19,9 +19,10 @@ export interface Angle {
   modifier: number;
   appliesTo: string[];
   loseOnBad?: boolean;
-  // R1/A3: a per-act stat payout — the build-crafting layer (pick charisma
-  // Angles early, cash the compounding). Applied at act breaks by the
-  // profile plugin.
+  // R1/A3: a per-week stat payout — the build-crafting layer (pick charisma
+  // Angles early, cash the compounding). Applied at week breaks by the
+  // profile plugin. v4 S2: a season has 5 breaks (was 2), so the per-break
+  // grant halved to keep the season total in the same band.
   perAct?: Record<string, number>;
   compatibility: { universal: true };
 }
@@ -44,15 +45,15 @@ export const ANGLES: Angle[] = [
   {
     id: 'angle_comedy', name: 'Comedy Gold', art: 'li_angle_comedy',
     flavor: 'Not the best-looking. The most quotable. It’s a longer game.',
-    blurb: '+8 on challenge and banter choices. Compounds: +2 Charisma every act.',
-    modifier: 8, appliesTo: ['challenge', 'banter'], perAct: { charisma: 2 },
+    blurb: '+8 on challenge and banter choices. Compounds: +1 Charisma every week.',
+    modifier: 8, appliesTo: ['challenge', 'banter'], perAct: { charisma: 1 },
     compatibility: { universal: true },
   },
   {
     id: 'angle_type', name: 'Everyone’s Type', art: 'li_angle_type',
     flavor: 'Three Islanders have called you “dangerous.” They meant it nicely.',
-    blurb: '+8 on flirt and date choices. Compounds: +2 Charisma every act.',
-    modifier: 8, appliesTo: ['flirt', 'date'], perAct: { charisma: 2 },
+    blurb: '+8 on flirt and date choices. Compounds: +1 Charisma every week.',
+    modifier: 8, appliesTo: ['flirt', 'date'], perAct: { charisma: 1 },
     compatibility: { universal: true },
   },
   {
