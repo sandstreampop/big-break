@@ -334,6 +334,24 @@ him.** Dry, omniscient commentary *about* the player, not a character in the roo
 acts of service, showing interest) · *doing bits* · *the ick* · *OG* · *Casa* /
 *Casa girl* / *Casa boy* · *the Hideaway*.
 
+**The idiom of "the head"** — a whole vocabulary Hillevi flagged, and one the
+pack should lean into because it already half-speaks it (the burnout meter is
+reskinned as **In Your Head**, see [`manifest.ts`](../../../js/packs/love-island/manifest.ts)):
+
+- ***"Where's your head at?"*** — the check-in question Islanders ask each other.
+  The honest answer is how you're reading your couple *right now*, or who you're
+  actually interested in. A natural verb for a **relationship-state confessional**
+  (to a friend, to camera) — and a prime place to accrue an authenticity receipt
+  if your head-at answer contradicts what you say to your partner (Pillar 4).
+- ***"turning heads" / "my head's been turned" / "it'll take a lot to turn my
+  head"*** — the language of temptation and loyalty. *"Will my head turn at Casa
+  or not?"* is **the** Casa Amor question. A head that won't turn is loyalty
+  demonstrated (Pillar 4's "choosing your partner when tempted"); a head that
+  turns is the pivot that moves the web. This is the natural surface verb for the
+  loyalty/temptation test — and it rhymes with the existing In-Your-Head meter, so
+  the villa's talk of *the head* (where's your head at → head turned → in your
+  head) can read as one coherent idiom rather than three unrelated systems.
+
 ### Playable Types
 
 Held at **four** for v4 (Golden Retriever / Game-Player / Influencer / Heartthrob).
