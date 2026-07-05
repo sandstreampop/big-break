@@ -562,7 +562,7 @@ function renderHud() {
   const actNames = PRES.actNames || ['', 'The Garage', 'The Grind', 'The Reckoning'];
   actWrap.append(el('span', 'hud-act', run.tutorial
     ? (PRES.tutorial?.hud || 'FIRST GIG · The Rubber Room')
-    : `ACT ${run.act} · ${actNames[run.act]}`));
+    : `${PRES.actWord || 'ACT'} ${run.act} · ${actNames[run.act]}`));
   // The Hot 10 belongs to the songs subsystem — only runs that carry it get
   // the chart button.
   if (!run.tutorial && run.songs) {
@@ -1948,7 +1948,7 @@ function actInterstitial(step) {
       box.append(blk);
     }
   } else {
-    box.append(el('div', 'tier-badge', `ACT ${step.act}`));
+    box.append(el('div', 'tier-badge', `${PRES.actWord || 'ACT'} ${step.act}`));
     const intro = PRES.actIntro?.[step.act] || (step.act === 2
       ? { name: 'THE GRIND', text: 'The garage is behind you. Everything now costs something.' }
       : { name: 'THE RECKONING', text: 'Higher stakes, fewer excuses. The summit is visible. So is the drop.' });
@@ -2499,7 +2499,7 @@ function showScrapbook(summary) {
     if (entry.a !== lastAct) {
       lastAct = entry.a;
       const actNames = PRES.actNames || ['', 'The Garage', 'The Grind', 'The Reckoning'];
-      box.append(el('h3', 'scrap-act', `ACT ${entry.a} · ${actNames[entry.a]}`));
+      box.append(el('h3', 'scrap-act', `${PRES.actWord || 'ACT'} ${entry.a} · ${actNames[entry.a]}`));
     }
     const ev = activePack.events.find((e) => e.id === entry.e);
     if (!ev) continue;

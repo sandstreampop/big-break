@@ -421,8 +421,12 @@ body {
 @media (max-height: 700px) {
   .card-prompt { font-size: 14.5px; line-height: 1.4; }
   /* Short phones: the art yields before the prompt does (ADR-0009 Tier 1 —
-     the prompt is never clipped; ui-crowding.mjs enforces it at 375×667). */
-  .card-art { max-height: 22vh; }
+     the prompt is never clipped; ui-crowding.mjs enforces it at 375×667).
+     The art's 40px sliver floor is waived here too (not just the 320px
+     class): on a 360×640 with a set-piece + full stage up, those pixels are
+     exactly the difference between a scrolling prompt and a read one — the
+     words are the game (pinned by ui-mobile-matrix at 360×640). */
+  .card-art { max-height: 22vh; min-height: 0; }
 }
 
 .swipe-hint {

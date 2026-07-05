@@ -1,56 +1,80 @@
 // Producers — the format's scheduler, as a plugin. The villa doesn't drift:
-// production imposes the beats. This plugin queues the forced chains (the
-// arrival, Casa Amor at the Act 1→2 break, the exposed Recoupling at the Act
-// 2→3 break) and runs the scheduled deck windows (Bombshell arrivals, Movie
-// Night, the mid-act Recoupling, Meet the Parents) through refineDeck — the
-// same mechanism as the engine's shop slot, so a Text beat can never be
-// skipped by a hot streak (the "anticipation lock" is delivery-by-force).
+// production imposes the beats. v4 S2 (ADR-0011): the season is SIX WEEKS
+// (manifest SEGMENTS), and a week is a run of quiet daily beats that ENDS on
+// a tentpole — the peak-end rule as a schedule. This plugin places the
+// tentpoles with the same delivery-by-force machinery as before (refineDeck
+// windows, the engine's shop-slot mechanism generalized), queues the forced
+// chains (the arrival on card one, the boys' Recoupling opening Final Week),
+// and owns the villa's per-week feel ladders (jitter, wear, the late-week
+// daybed slot) that used to ride the shared per-act CONFIG tables — ADR-0010
+// left those keyed 1–3, and weeks 4–6 get theirs from here instead.
 //
 // A beat card carries a `beat:<key>` tag; when its window opens the pool
 // narrows to that beat's eligible variants, and outside its window a beat
 // card never enters the pool at all. Resolving any variant marks the beat
-// done (a li_done_<key> flag).
+// done (a li_done_<key> flag). A window that reaches the end of its week
+// unfired (a wobble interstitial or an encounter chain ate the last slot)
+// ROLLS FORWARD: it stays due at the top of the next week, so a tentpole is
+// delayed a day at worst, never lost — events.ts gives beat cards one week
+// of act slack for exactly this.
 
+import { actLength } from '../../../engine.js';
 import { islanderTypeById } from '../cast.js';
+import { CONFIG } from '../../../config.js';
 import type { Plugin } from '../../../types.js';
 
-// The Season's scheduled windows: 0-indexed card slot within the act where
-// the beat forces itself into the deal (first eligible non-shop draw at or
-// after the slot). Order within an act is priority order.
-const BEATS: { key: string; act: number; at: number }[] = [
-  { key: 'rivalenc', act: 1, at: 3 },    // early Arrival: the Rival, established (ADR-0005 V1)
-  { key: 'bomb1', act: 1, at: 6 },       // late Act 1: the first Bombshell
-  { key: 'partnerenc1', act: 1, at: 7 }, // late Arrival: the Partner, actually met (v2 arc)
-  { key: 'bestieenc', act: 2, at: 3 },   // post-Casa: the ride-or-die forms (R7/D2)
-  { key: 'rivalmove', act: 2, at: 6 },   // post-Casa: the Rival makes their move (v2 arc)
-  { key: 'bomb2', act: 2, at: 7 },       // post-Casa: the Act 2 Bombshell (rarely, the steal)
-  { key: 'movienight', act: 2, at: 9 },  // the big Reveal, before anyone chooses
-  { key: 'recoup1', act: 2, at: 10 },    // the girls choose (ADR-0003: R1)
-  { key: 'wave', act: 3, at: 1 },        // Final Week: the second-wave rival (if the first fell)
-  { key: 'partnerenc', act: 3, at: 2 },  // Final Week: the Partner, at altitude (v2 arc)
-  { key: 'parents', act: 3, at: 4 },     // Meet the Parents, Final Week
+// The season's schedule. `at` is the 0-indexed card slot within the week
+// where the window opens ('end' = the week's LAST draw, resolved against the
+// live actLength so act twists keep the tentpole on the final card;
+// 'end-1' = one earlier, for tentpoles whose verdict chains one more card and
+// should still close the week). Order is chronological = priority order.
+const BEATS: { key: string; act: number; at: number | 'end' | 'end-1' }[] = [
+  // W1 — Arrival: the Rival established early, the week peaks on a Bombshell.
+  { key: 'rivalenc', act: 1, at: 1 },
+  { key: 'bomb1', act: 1, at: 'end' },
+  // W2 — The Graft: the Partner actually met; the week peaks on the first
+  // big Challenge, and the Crossroads (the commit slot) follows it.
+  { key: 'partnerenc1', act: 2, at: 1 },
+  { key: 'challenge1', act: 2, at: 'end' },
+  // W3 — Casa Amor: the split lands late and the 5-card arc overruns the
+  // nominal length, so the week closes on the return verdict.
+  { key: 'casa', act: 3, at: 'end' },
+  // W4 — fallout week: the ride-or-die forms, the Rival makes their move,
+  // and the week peaks on Movie Night.
+  { key: 'bestieenc', act: 4, at: 1 },
+  { key: 'rivalmove', act: 4, at: 3 },
+  { key: 'movienight', act: 4, at: 'end' },
+  // W5 — the girls' Recoupling closes the week (its verdict chains one card).
+  { key: 'bomb2', act: 5, at: 2 },
+  { key: 'recoup1', act: 5, at: 'end-1' },
+  // W6 — Final Week: the second-wave rival (if the first fell), the Partner
+  // at altitude, Meet the Parents. The week opens on the boys' Recoupling
+  // (onActBreak) and ends on the Final itself — the engine queues the climax
+  // card and nothing here may displace it.
+  { key: 'wave', act: 6, at: 1 },
+  { key: 'partnerenc', act: 6, at: 2 },
+  { key: 'parents', act: 6, at: 4 },
 ];
 
-// A villa Season runs longer than a tour: the v2 encounter arcs are EXTRA
-// beats on top of the format's structure (V2-DESIGN accepts the longer run
-// for the ceremony), so the acts stretch to keep the ambient connective
-// tissue between the peaks (ADR-0005's mostly-ambient deck) instead of
-// letting scheduled beats crowd it out.
-// R7/D2: the Bestie arc joins act 2's schedule, and earns its days — The
-// Turn runs 15 so the ambient connective tissue keeps its v2 share
-// (ADR-0005's mostly-ambient rule) instead of being eaten by beats.
-const ACT_LENGTHS: Record<number, number> = { 1: 10, 2: 15, 3: 9 };
+// Per-week feel ladders (the villa's own — weeks 4–6 sit past the shared
+// CONFIG tables' 1–3 keys, and weeks 2–3 need villa values, not tour values).
+// Jitter REPLACES the engine's per-act band (no LI persona carries a jitter
+// quirk, so overriding is safe); wear is a DELTA on top of whatever
+// CONFIG.actWear already added for that index, landing at the target ladder:
+//   wear   W1 0 · W2 0 · W3 1 · W4 2 · W5 2 · W6 3
+//   jitter W1–2 ±15 · W3–5 ±18 · W6 ±22
+const WEEK_JITTER: Record<number, [number, number]> = {
+  2: [-15, 15], 3: [-18, 18], 4: [-18, 18], 5: [-18, 18], 6: [-22, 22],
+};
+const WEEK_WEAR_DELTA: Record<number, number> = { 2: -2, 3: -2, 4: 2, 5: 2, 6: 3 };
 
 const beatTag = (ev: any) => (ev.tags || []).find((t: string) => t.startsWith('beat:'));
+const atSlot = (at: number | 'end' | 'end-1', len: number) =>
+  at === 'end' ? len - 1 : at === 'end-1' ? Math.max(0, len - 2) : at;
 
 export const producersPlugin: Plugin = {
   id: 'producers',
   stateDefaults: { rivalMagnet: false },
-
-  // The Season's pacing is the pack's (the engine default fits a tour).
-  modifyActLength(state, act, base) {
-    return state.tutorial ? base : ACT_LENGTHS[act] ?? base;
-  },
 
   // The Season opens on the arrival Text — the first coupling is card one.
   // rivalMagnet (the Heartthrob's poaching exposure) is stamped here so the
@@ -62,17 +86,13 @@ export const producersPlugin: Plugin = {
     state.pendingChainId = hooks.bombshellStart ? 'li_arrival_bomb' : 'li_arrival';
   },
 
-  // Act breaks are where the structure lands (ADR-0002/0003): Casa Amor splits
-  // the villa at Act 1→2; the exposed Recoupling opens Final Week. R1 is the
-  // girls' ceremony, R2 the boys' — your gender decides which side of each you
-  // stand on.
+  // Final Week opens on the exposed Recoupling (ADR-0002/0003): R2 is the
+  // boys' ceremony — your gender decides which side of it you stand on.
+  // (Casa Amor is no longer an act-break chain: it's week 3's end-of-week
+  // tentpole, delivered by its beat window above.)
   onActBreak(state, act, notes) {
     if (state.tutorial) return;
-    if (act === 2) {
-      state.pendingChainId = 'li_casa_text';
-      notes.push('🧳 Production has been quiet all morning. Production is never quiet all morning.');
-    }
-    if (act === 3) {
+    if (act === 6) {
       const chooser = state.gender === 'boy'; // R2: the boys choose
       state.pendingChainId = chooser
         ? (state.partner ? 'li_recoup2_choose' : 'li_recoup2_choose_single')
@@ -83,21 +103,50 @@ export const producersPlugin: Plugin = {
     }
   },
 
+  // The villa's jitter ladder, keyed by week (see the table above). The
+  // engine's own per-act band only knows indices 1–3.
+  modifyJitter(state, jitter) {
+    if (state.tutorial) return jitter;
+    return WEEK_JITTER[state.act] ?? jitter;
+  },
+
+  // The villa's wear ladder: a delta on CONFIG.actWear's contribution for
+  // this index, landing on the week table above. (The villa authors no
+  // Promises, so every payload folded here belongs to a resolved card.)
+  modifyBurnout(state, v) {
+    if (state.tutorial) return v;
+    return v + (WEEK_WEAR_DELTA[state.act] ?? 0);
+  },
+
   // Beat delivery: outside its window a beat card never enters the pool; when
   // a window opens, the pool narrows to that beat's eligible variants. Shop
-  // draws keep priority (the daybed already owns its slot); the beat simply
-  // takes the next draw. A window with no eligible variant right now yields
-  // to the NEXT beat rather than blocking the schedule — v2 added beats whose
-  // variants are state-gated by design (the rival's move, the second wave),
-  // and a fully-covered beat is unaffected (it always has an eligible hit).
+  // draws keep priority when a shop is actually available (the daybed already
+  // owns its slot); the beat simply takes the next draw. A window with no
+  // eligible variant right now yields to the NEXT beat rather than blocking
+  // the schedule — v2 added beats whose variants are state-gated by design
+  // (the rival's move, the second wave), and a fully-covered beat is
+  // unaffected (it always has an eligible hit). A window from an EARLIER week
+  // that never fired is still due (at slot 0) — the roll-forward guarantee.
   refineDeck(state, pool, ctx) {
+    if (state.tutorial) return pool;
     const beats = pool.filter((e: any) => beatTag(e));
     const rest = pool.filter((e: any) => !beatTag(e));
-    if (ctx.shopDue) return rest.length ? rest : pool;
+    // Defer to the engine's shop slot only when it can actually deliver —
+    // a shop-less week must not suppress its own tentpole.
+    if (ctx.shopDue && pool.some((e: any) => e.shop)) return rest.length ? rest : pool;
+    // Weeks past the shared shopSlot table (4+): force the daybed once per
+    // week the way the engine does for weeks 1–3, before any beat fires.
+    if (!ctx.shopDue && CONFIG.shopSlot[state.act] === undefined &&
+        !state.shopPlayedInAct && (state.cardsPlayedInAct || 0) >= 2) {
+      const shops = rest.filter((e: any) => e.shop);
+      if (shops.length) return shops;
+    }
+    const len = actLength(state, state.act);
     for (const b of BEATS) {
-      if (b.act !== state.act) continue;
+      if (b.act > state.act) continue;
       if (state.flags.includes(`li_done_${b.key}`)) continue;
-      if ((state.cardsPlayedInAct || 0) < b.at) continue;
+      const at = b.act < state.act ? 0 : atSlot(b.at, len);
+      if ((state.cardsPlayedInAct || 0) < at) continue;
       const hit = beats.filter((e: any) => beatTag(e) === `beat:${b.key}`);
       if (hit.length) return hit;
       // no eligible variant this draw — the next beat may still be due

@@ -211,7 +211,7 @@ export const REACT_TAGGED: Record<string, { incredible: BarkDef[]; bad: BarkDef[
 // Conditions are matched by the selection engine off the ceremony readings.
 export const BEAT_VERDICT: Record<string, BarkDef[]> = {
   held: [
-    { id: 'vh_lifting', text: 'Held. The Bond did the lifting — all those chats on the wobbly lounger, paying out at last.', priority: 10 },
+    { id: 'vh_lifting', text: 'Held. The Connection did the lifting — all those chats on the wobbly lounger, paying out at last.', priority: 10 },
     { id: 'vh_boring', text: 'Chosen, first, by name. That’s what the boring homework chats buy: ceremony insurance.', priority: 10 },
     { id: 'vh_hydrate', text: 'Safe. The couple carried it. Take the win, say nothing smug, hydrate.', priority: 10 },
     { id: 'vh_nan', text: 'Held. Not a twitch in the choosing. Somewhere, your nan exhales.', priority: 10 },
@@ -220,11 +220,11 @@ export const BEAT_VERDICT: Record<string, BarkDef[]> = {
   rescued: [
     { id: 'vr_village', text: 'Saved — not by your couple, by the room. The nation raised you like a village.', priority: 10 },
     { id: 'vr_bailout', text: 'That wasn’t romance, that was a bailout. Take it; bailouts spend the same.', priority: 10 },
-    { id: 'vr_feeds', text: 'Rescued at the fire. The Bond didn’t show up; your public did. Remember who feeds you.', priority: 10 },
-    { id: 'vr_sofas', text: 'The Bond flinched. Nine million sofas didn’t. Send the sofas a card.', priority: 10 },
+    { id: 'vr_feeds', text: 'Rescued at the fire. The Connection didn’t show up; your public did. Remember who feeds you.', priority: 10 },
+    { id: 'vr_sofas', text: 'The Connection flinched. Nine million sofas didn’t. Send the sofas a card.', priority: 10 },
   ],
   dumped: [
-    { id: 'vd_maths', text: 'No name, no seat, taxi. The maths was the maths: the Bond wasn’t there, and the vote never arrived.', priority: 10 },
+    { id: 'vd_maths', text: 'No name, no seat, taxi. The maths was the maths: the Connection wasn’t there, and the vote never arrived.', priority: 10 },
     { id: 'vd_legends', text: 'Dumped. Brutal. For what it’s worth, exit interviews are where legends start. Usually. Sometimes.', priority: 10 },
     { id: 'vd_shape', text: 'The firepit went quiet in the wrong shape, and you knew before I did. Head high. The car has snacks.', priority: 10 },
     { id: 'vd_book', text: 'Dumped, by the oldest rule in the book: nobody said the name. The book is rude. It’s also the book.', priority: 10 },
@@ -281,7 +281,7 @@ export const BEAT_REACT: Record<string, BarkDef[]> = {
   ],
   steal_survived: [
     { id: 'st_held', text: 'Sixty seconds of pure lawn maths, and your couple came out the other side. Exhale.', priority: 10 },
-    { id: 'st_audit', text: 'Sixty seconds where every Bond on the lawn got audited — and yours passed. Frame the receipt.', priority: 10 },
+    { id: 'st_audit', text: 'Sixty seconds where every Connection on the lawn got audited — and yours passed. Frame the receipt.', priority: 10 },
   ],
   steal_lost: [
     { id: 'st_gone', text: 'Stolen. Live. At a firepit. There are heists with more warning. Deep breath — the game’s not done with you.', priority: 10 },
@@ -303,24 +303,24 @@ export const FORECAST: Record<string, BarkDef[]> = {
     { id: 'fc_dyn_3', text: 'Everyone’s watching the couples. Nobody’s watching the pocket with the secret in it. Well — I am.', priority: 10 },
   ],
   bondSafe: [
-    { id: 'fb_seatbelt', text: 'Recoupling tonight. That Bond of yours is wearing a seatbelt. Should be fine. Should.' },
+    { id: 'fb_seatbelt', text: 'Recoupling tonight. That Connection of yours is wearing a seatbelt. Should be fine. Should.' },
     { id: 'fb_wrong', text: 'Forecast: your couple holds. I say that with the confidence of a man who’s been wrong twice this series.' },
     { id: 'fb_armour', text: 'Tonight’s ceremony, and yours is one of the boring couples. Tonight, boring is armour.' },
-    { id: 'fb_homework', text: 'Ceremony tonight. You did the chats, you did the tea rounds — the Bond should answer when called. Should.' },
+    { id: 'fb_homework', text: 'Ceremony tonight. You did the chats, you did the tea rounds — the Connection should answer when called. Should.' },
     { id: 'fb_calm', text: 'Tonight’s forecast: settled, with a strong couple front. I hate a quiet night. Thrilled for you, though.' },
   ],
   publicSafe: [
-    { id: 'fp_mug', text: 'The Bond’s wobbling — but the nation’s got your name on a mug. Someone will say it at that fire.' },
+    { id: 'fp_mug', text: 'The Connection’s wobbling — but the nation’s got your name on a mug. Someone will say it at that fire.' },
     { id: 'fp_sofas', text: 'Between you and me: it’s not your couple saving you tonight. It’s nine million sofas.' },
     { id: 'fp_plan', text: 'Forecast: shaky indoors, popular outdoors. In here, that counts as a plan.' },
     { id: 'fp_postman', text: 'The couple’s wobbly; the country isn’t. Somewhere out there a postman is voting for you on his break.' },
-    { id: 'fp_mugs', text: 'Weak Bond, strong fanbase. In ceremony maths, mugs beat hugs. Tonight, anyway.' },
+    { id: 'fp_mugs', text: 'Weak Connection, strong fanbase. In ceremony maths, mugs beat hugs. Tonight, anyway.' },
   ],
   danger: [
-    { id: 'fd_look', text: 'Honest forecast? Bond’s shaky, vote’s shaky, and the firepit’s got that look. Big night needed, pal.' },
-    { id: 'fd_fence', text: 'Squeaky-bum time. The Bond won’t carry you, and the vote is sitting on the fence it built.' },
+    { id: 'fd_look', text: 'Honest forecast? Connection’s shaky, vote’s shaky, and the firepit’s got that look. Big night needed, pal.' },
+    { id: 'fd_fence', text: 'Squeaky-bum time. The Connection won’t carry you, and the vote is sitting on the fence it built.' },
     { id: 'fd_taxi', text: 'I’ve seen Islanders survive worse. I’ve also seen the taxi. Big speech, yeah?' },
-    { id: 'fd_booth', text: 'I’d spin this if I could, pal. The Bond’s thin, the vote’s thin — the booth recommends a very good speech.' },
+    { id: 'fd_booth', text: 'I’d spin this if I could, pal. The Connection’s thin, the vote’s thin — the booth recommends a very good speech.' },
     { id: 'fd_weather', text: 'Forecast: exposed, with a chance of taxi. Wear something you can leave in.' },
   ],
   single: [
@@ -362,15 +362,15 @@ export const TUTOR: Record<string, BarkDef[]> = {
   arrival: [{ id: 'tu_arrival', text: 'New to the villa? Three rules: couple up, stay coupled, and never trust a quiet producer. The nation’s watching from sofa one — and the nation gets a vote. Several, actually.', priority: 10 }],
   daybed: [{ id: 'tu_daybed', text: 'The daybed shelf, for the newcomers: Graft in, reputation out. An Angle is who the edit says you are — and the edit is rarely wrong and never kind.', priority: 10 }],
   wobble: [{ id: 'tu_wobble', text: 'See the spiral up top, babes? That’s your head. Top it out and you walk — no envelope, no slow-mo montage. Rest is a move. The pros nap.', priority: 10 }],
-  temptation: [{ id: 'tu_tempt', text: 'A word for the new viewers: a head-turn dents the Bond, it doesn’t break the couple. Officially. The duvets keep their own records.', priority: 10 }],
-  lineup_bondSafe: [{ id: 'tu_line_bond', text: 'Recoupling rules, quickly: the Bond keeps you, or the nation does. Tonight your Bond’s doing the heavy lifting — as it should.', priority: 10 }],
-  lineup_publicSafe: [{ id: 'tu_line_public', text: 'Recoupling rules, quickly: Bond or nation, either keeps you in. Tonight, babes, it’s the nation carrying you. Wave.', priority: 10 }],
-  lineup_danger: [{ id: 'tu_line_danger', text: 'Recoupling rules, quickly: the Bond holds you or the nation saves you. Tonight neither is promising. I’d stand near the fire — it’s warmer.', priority: 10 }],
+  temptation: [{ id: 'tu_tempt', text: 'A word for the new viewers: a head-turn dents the Connection, it doesn’t break the couple. Officially. The duvets keep their own records.', priority: 10 }],
+  lineup_bondSafe: [{ id: 'tu_line_bond', text: 'Recoupling rules, quickly: the Connection keeps you, or the nation does. Tonight your Connection’s doing the heavy lifting — as it should.', priority: 10 }],
+  lineup_publicSafe: [{ id: 'tu_line_public', text: 'Recoupling rules, quickly: Connection or nation, either keeps you in. Tonight, babes, it’s the nation carrying you. Wave.', priority: 10 }],
+  lineup_danger: [{ id: 'tu_line_danger', text: 'Recoupling rules, quickly: the Connection holds you or the nation saves you. Tonight neither is promising. I’d stand near the fire — it’s warmer.', priority: 10 }],
   bombshell: [{ id: 'tu_bomb', text: 'First bombshell of your Season. They look like a person; they function as a countdown. It goes off at the next recoupling.', priority: 10 }],
   casa: [{ id: 'tu_casa', text: 'Casa Amor, for the uninitiated: the villa splits, loyalty gets audited, and everything comes home on a postcard. Pack honesty. Or don’t — it’s telly either way.', priority: 10 }],
   movienight: [{ id: 'tu_movie', text: 'Movie Night, new viewers: everything anyone did, in HD, with sound. Footage outranks feelings. Enjoy.', priority: 10 }],
   gossip: [{ id: 'tu_gossip', text: 'Intel, babes: gather it in the quiet chats, hold three pieces at most, and spend it at a ceremony — that’s where words become results.', priority: 10 }],
-  exclusive: [{ id: 'tu_excl', text: 'Going exclusive: the Bond locks in higher, the temptations back off, and the drop — should it come — doubles. This show is a mortgage with cameras.', priority: 10 }],
+  exclusive: [{ id: 'tu_excl', text: 'Going exclusive: the Connection locks in higher, the temptations back off, and the drop — should it come — doubles. This show is a mortgage with cameras.', priority: 10 }],
   finale: [{ id: 'tu_final', text: 'The Final. Your declared Intention gets judged, the vote peaks, and the envelope has no memory of your excuses. Good luck, babes. Genuinely.', priority: 10 }],
 };
 

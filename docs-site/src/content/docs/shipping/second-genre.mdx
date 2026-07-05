@@ -28,19 +28,19 @@ Every villa concept lands on an existing engine mechanic:
 
 | The show | The engine |
 |---|---|
-| A **Season** across Arrival / The Turn / Final Week | one run · three acts |
+| A **Season** of six weeks across Arrival / The Turn / Final Week | one run · six manifest segments (ADR-0010/0011) |
 | Your **Islander** (a Type × a gender) | loadout — the persona pick *is* the gender pick |
 | **Rizz / Loyalty / Savvy / Charisma**, **In Your Head** | manifest stats + the universal burnout slot |
-| **Public / Followers / Bond / Graft** | manifest resources (Public doubles as the finale momentum clutch) |
+| **Public / Followers / Connection / Graft** | manifest resources (Public doubles as the finale momentum clutch) |
 | Declaring your **Intention** at the Crossroads | `commitPath` + `winGates` |
-| **Bond**, the single Partner, Recoupling survival | the coupling *plugin* — `applyResource('bond')`, its own verbs |
+| The **Connection** (resource id `bond`), the single Partner, Recoupling survival | the coupling *plugin* — `applyResource('bond')`, its own verbs |
 | **Casa Amor**, the postcard, **Movie Night** | a forced chain + latent flags a `reveal` verb detonates |
 | **Bombshells**, the girls' Recoupling, **Meet the Parents** | `refineDeck` scheduled windows (the shop-slot mechanism) |
 | The **Edit** of **Angles**, bought with Graft on the daybed | the gear mechanic, reskinned — `costResource`, `loseOnBad` = *exposed* |
 | **Walk** and **Dumped** | the burnout fail + pack-declared `failStates` |
 | *"I've got a text!"*, the Host, the Narrator | presenter copy + a `cardClass` styling hook — pure data |
 | **Encounters** — branching dialogue scenes (v2) | the chain mechanism: `chainEventId` per side *and* tier, plus plugin routing |
-| **Opinion / mood / secret** on the Partner, Rival, bombshell (v2) | a characters plugin — tiers over Bond, `stateDefaults`, tier-gated `requires` |
+| **Opinion / mood / secret** on the Partner, Rival, bombshell (v2) | a characters plugin — tiers over the Connection, `stateDefaults`, tier-gated `requires` |
 | **Gossip** — held intel, gathered and deployed (v2) | an inventory plugin: typed items spent by choice, cashing out at the ceremony |
 | **Stirling**, the voiceover (v2) | a bark-engine plugin — seeded, condition-filtered, no-repeat — on the generic overlay-note channel |
 
@@ -68,7 +68,7 @@ pack may use), and the lean-preview (qualitative magnitude dots as you tilt —
 direction and volatility, never numbers) in the shared shell.
 
 Two playable-Type quirks touch plugin-owned meters (the Golden Retriever's
-faster Bond, the Influencer's Followers-on-drama). They ride custom keys on the
+faster Connection-building, the Influencer's Followers-on-drama). They ride custom keys on the
 loadout's `quirk.hooks` that the owning plugin reads back off `pctx.hooks` —
 the engine names neither key.
 

@@ -344,6 +344,10 @@ export interface Presenter {
   // 1-indexed act names (HUD strip, scrapbook) + act-break interstitial copy.
   actNames?: string[];
   actIntro?: Record<number, { name: string; text: string }>;
+  // The pack's noun for a run segment ("ACT", "WEEK" — ADR-0010: the count is
+  // data, and so is the word). The shell renders it wherever it numbers a
+  // segment; packs that omit it get the original 'ACT'.
+  actWord?: string;
   // The HUD's counter chips (top-right), replacing the default resource row.
   hudCounters?: (state: RunState) => { html: string; cls?: string }[];
   // Resolve an equipped-item id (the gear mechanic's per-pack catalog) for
