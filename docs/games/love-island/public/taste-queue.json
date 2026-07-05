@@ -1,53 +1,385 @@
 {
   "version": 1,
-  "batch": "sample · daily-rhythm beats",
-  "note": "Sample queue so the page loads live. The builder overwrites this file (or serves ?queue=<file>) with each batch of candidate writing to review.",
+  "batch": "v4 S2 · the six-week season",
+  "note": "Session 2 taste checkpoint: the daily-rhythm cards (each card, then its left/right outcomes as separate swipes), week names, week-turn recap copy, tentpole trims, and the Connection rename lines. «guillemets» mark runtime tokens.",
   "items": [
     {
-      "id": "sample_coffee",
+      "id": "li_iced_coffee",
       "type": "card",
-      "context": "Morning, Week 1 — the kitchen",
-      "prompt": "Marco slides an iced coffee across the counter before you’ve said a word. “Oat, no sugar. I listen.”",
-      "left": "Take it, say nothing, let it land",
-      "right": "“Careful, I could get used to this”",
-      "voice": "He’s remembered her order. Four days in. Somebody get this boy a gold star and a lie detector."
+      "context": "Morning · the kitchen · day four · daily beat (Arrival)",
+      "prompt": "{partner} slides an iced coffee across the counter before you’ve said a word. “Oat, no sugar. I listen.” Four days in, and somebody has learned your order.",
+      "left": "Take it. Let it land",
+      "right": "“Careful. I could get used to this”"
     },
     {
-      "id": "sample_check_in",
+      "id": "li_iced_coffee_left_outcomes",
+      "type": "outcomes",
+      "context": "li_iced_coffee → “Take it. Let it land”",
+      "text": "BAD: You’re so busy playing it cool the coffee sweats a full ring into the counter. “It’s fine,” says {partner}, in the voice of someone filing that away.\n\nGOOD: You say nothing and drink it slowly, and {partner} pretends not to watch you drink it. The villa’s quietest transaction, and its realest one so far.\n\nINCREDIBLE: Next morning there are two glasses out before either of you is awake enough to claim credit. A routine. The nation clocks it before you do."
+    },
+    {
+      "id": "li_iced_coffee_right_outcomes",
+      "type": "outcomes",
+      "context": "li_iced_coffee → ““Careful. I could get used to this””",
+      "text": "BAD: “Then get used to it,” {partner} says, too fast, and the kitchen goes quiet enough to hear the ice. You both laugh one beat late. The beat airs.\n\nGOOD: “Don’t threaten me with a good time,” says {partner}, and the whole counter suddenly needs wiping. Flirting before nine. Strong scenes.\n\nINCREDIBLE: The back-and-forth runs four rounds and ends with {partner} bowing out holding the blender for protection. The clip does numbers before lunch."
+    },
+    {
+      "id": "li_sunrise_shift",
       "type": "card",
-      "context": "Fire pit, after a recoupling",
-      "prompt": "Grace catches your eye across the fire and mouths “you good?” — the first person all night to check.",
-      "left": "Nod. You’re fine. (You’re not.)",
-      "right": "Pull her for a chat"
+      "context": "Six a.m. · the roof terrace · nobody else up · daily beat (Arrival)",
+      "prompt": "You’re awake first, which never happens. On the terrace, {mate} is already sitting with two teas, one of them yours. “Couldn’t sleep either. Don’t tell anyone I do sincerity.”",
+      "left": "Stay till the sun’s up",
+      "right": "Do the debrief instead"
     },
     {
-      "id": "sample_bombshell",
-      "type": "narrator line",
-      "context": "Bombshell arrival",
-      "text": "A new arrival. Somewhere, three couples just remembered they were never actually that secure."
+      "id": "li_sunrise_shift_left_outcomes",
+      "type": "outcomes",
+      "context": "li_sunrise_shift → “Stay till the sun’s up”",
+      "text": "BAD: You’re mid-sentence about something true when the garden mics crackle on. “Save it,” {mate} says gently. You bank it instead. Even the quiet here has a schedule.\n\nGOOD: Twenty minutes, no cameras worth performing for, one conversation you’d have had in the real world. Your head files a complaint, then quietly drops it.\n\nINCREDIBLE: “You’re alright, you know,” {mate} says at the exact moment the sun clears the wall, and the show can’t use any of it because nothing happened. Perfect."
     },
     {
-      "id": "sample_hideaway",
+      "id": "li_sunrise_shift_right_outcomes",
+      "type": "outcomes",
+      "context": "li_sunrise_shift → “Do the debrief instead”",
+      "text": "BAD: Your six a.m. read of the villa is forensic, ruthless — and delivered directly over a live mic pack. “Morning!” says a producer’s voice from nowhere.\n\nGOOD: You map every couple in the villa over one tea. {mate} adds footnotes. By the time the others wake up, you two are the only people here with a plan.\n\nINCREDIBLE: “Watch the new boy at breakfast,” {mate} says. You watch. It’s exactly as predicted, twice. The two of you clink mugs like analysts at full time."
+    },
+    {
+      "id": "li_lounger_row",
       "type": "card",
-      "context": "The Hideaway invite",
-      "prompt": "The others have voted you and your partner the Hideaway. Everyone’s watching to see if you’ll go.",
-      "left": "Keep it to a cup of tea and a chat",
-      "right": "Go. Make the statement.",
-      "voice": "Bold. The nation has opinions, and half of them are your nan."
+      "context": "Two p.m. · the lawn · the wobbly lounger · daily beat (Arrival)",
+      "prompt": "There is one wobbly sun lounger, and a rota for avoiding it that nobody wrote down but everybody knows. {rival} has just moved your towel onto it. “Oh — was that yours?”",
+      "left": "Laugh it off, loudly",
+      "right": "Move the towel back. Hold eye contact"
     },
     {
-      "id": "sample_movie_night",
-      "type": "narrator line",
-      "context": "Movie Night",
-      "text": "Tonight, the villa watches itself back. Somewhere in that footage is the version of you that thought no one was listening."
+      "id": "li_lounger_row_left_outcomes",
+      "type": "outcomes",
+      "context": "li_lounger_row → “Laugh it off, loudly”",
+      "text": "BAD: Your bit about the lounger’s tragic backstory runs long. The lawn drifts off to the pool mid-punchline, which is somehow worse than booing.\n\nGOOD: You give the lounger a eulogy. “It wobbles because it has seen things.” The lawn cackles; {rival} has to laugh along at their own move. Point taken, no blood.\n\nINCREDIBLE: By dinner the wobbly lounger has a name, a backstory, and a small cult. {rival}’s towel move is now the setup to YOUR running joke. Daylight robbery."
     },
     {
-      "id": "sample_head",
+      "id": "li_lounger_row_right_outcomes",
+      "type": "outcomes",
+      "context": "li_lounger_row → “Move the towel back. Hold eye contact”",
+      "text": "BAD: The towel goes back. So does theirs. Back. Theirs. Back. Fourteen seconds of silent laundry chess, and the villa watches all of it through sunglasses.\n\nGOOD: “All yours,” you say, placing their towel on the wobbler with hospital corners. {rival} sits on it out of pure stubbornness. It wobbles. Justice, at 2 p.m.\n\nINCREDIBLE: You don’t say a word. You just straighten your towel and lie back, and the lawn quietly reclassifies you as someone not to try that on. {rival} recalculates."
+    },
+    {
+      "id": "li_hoodie_diplomacy",
       "type": "card",
-      "context": "Week 2 — daybed",
-      "prompt": "“Where’s your head at?” she asks, and means it. The honest answer and the safe answer are not the same sentence.",
-      "left": "Give the safe answer",
-      "right": "Tell her the honest one"
+      "context": "Evening · the dressing room · exhibit A · daily beat (Arrival)",
+      "prompt": "It got cold on the terrace last night and now you own {partner}’s hoodie, in the sense that it is on your body and you have no plans. “Looks better on you,” they said. A trap, or a fact. Or both.",
+      "left": "Give it back washed, folded",
+      "right": "Wear it to breakfast"
+    },
+    {
+      "id": "li_hoodie_diplomacy_left_outcomes",
+      "type": "outcomes",
+      "context": "li_hoodie_diplomacy → “Give it back washed, folded”",
+      "text": "BAD: You return it so promptly it reads as a verdict. “Right,” says {partner}, taking the world’s most politely rejected hoodie. You meant it nicely. It didn’t land nicely.\n\nGOOD: “You washed it?” {partner} says, holding it like evidence of something. “Nobody washes it.” You have accidentally set a precedent and a standard.\n\nINCREDIBLE: It comes back washed with a note in the pocket — one line, private, not for the cameras. {partner} reads it twice and doesn’t tell anyone. The villa hates a secret it can’t see."
+    },
+    {
+      "id": "li_hoodie_diplomacy_right_outcomes",
+      "type": "outcomes",
+      "context": "li_hoodie_diplomacy → “Wear it to breakfast”",
+      "text": "BAD: You wear it to breakfast the same morning {rival} decides breakfast needs commentary. “Cute. Whose is it again?” The table already knows. That’s the point of the question.\n\nGOOD: You say nothing about it, which says everything about it. {partner} clocks it across the table and misses their mouth with the spoon. Breakfast television.\n\nINCREDIBLE: The hoodie becomes a headline. The nation screenshots the sleeve. Somewhere a merch intern opens a spreadsheet. {partner} has never looked so pleased to be robbed."
+    },
+    {
+      "id": "li_kitchen_4am",
+      "type": "card",
+      "context": "Four a.m. · the kitchen · one lamp on · daily beat (The Turn)",
+      "prompt": "You come down for water and {partner} is already there, sitting on the counter in the dark. “Couldn’t switch it off,” they say, tapping their temple. “Don’t make it a thing.”",
+      "left": "Make it a thing. Gently",
+      "right": "Make a toastie instead"
+    },
+    {
+      "id": "li_kitchen_4am_left_outcomes",
+      "type": "outcomes",
+      "context": "li_kitchen_4am → “Make it a thing. Gently”",
+      "text": "BAD: You open with “talk to me” and {partner} closes like a shop. “I said don’t make it a thing.” You made it a thing. The fridge hums judgment until you both give up.\n\nGOOD: You don’t ask. You just get up on the counter next to them and wait. Third minute in, they start talking. Turns out the counter was the therapy all along.\n\nINCREDIBLE: At some point they stop mid-sentence and go, “why is this easy with you?” — and that, at 4 a.m., unmiked and unplanned, is the whole show. Nobody else will ever see it."
+    },
+    {
+      "id": "li_kitchen_4am_right_outcomes",
+      "type": "outcomes",
+      "context": "li_kitchen_4am → “Make a toastie instead”",
+      "text": "BAD: The smoke alarm has opinions about your toastie. Lights on, villa up, {mate} downstairs in a towel demanding names. The moment, whatever it was, is now a fire drill.\n\nGOOD: You make two, cut them wrong on purpose, and argue about the cutting instead of the thing. By the last bite {partner}’s shoulders have come down an inch. Cheese, doing therapy’s job.\n\nINCREDIBLE: “You’re the only person here who’d feed me instead of interviewing me,” {partner} says, mouth full. The bar is on the floor and you have still, somehow, won the night."
+    },
+    {
+      "id": "li_you_good",
+      "type": "card",
+      "context": "After the ceremony · the firepit · everyone performing fine-ness · daily beat (The Turn)",
+      "prompt": "The fire pit is doing its post-ceremony theatre — everyone laughing one notch too loud. Across the flames, {mate} catches your eye and mouths, “you good?” The first person all night to ask.",
+      "left": "Tell the truth. Quietly",
+      "right": "“All good.” Keep the mask on"
+    },
+    {
+      "id": "li_you_good_left_outcomes",
+      "type": "outcomes",
+      "context": "li_you_good → “Tell the truth. Quietly”",
+      "text": "BAD: You get one honest sentence out before the group descends mid-word, and you convert the feeling into a joke on the fly. {mate} clocks the swerve. “Later,” they mouth. Later never quite comes.\n\nGOOD: “Honestly? No.” Two minutes by the fire, no performance, one person listening. It fixes nothing and helps enormously — the villa’s only genuine currency exchange.\n\nINCREDIBLE: {mate} hears you out, nods once, and starts running interference — steering the loud ones away all night without being asked. Somewhere in here you acquired actual backup."
+    },
+    {
+      "id": "li_you_good_right_outcomes",
+      "type": "outcomes",
+      "context": "li_you_good → ““All good.” Keep the mask on”",
+      "text": "BAD: “All good,” you say, to the one person in the villa who can tell it isn’t. {mate} lets it go, visibly. The mask holds. The head, underneath it, does not.\n\nGOOD: You keep it together and keep the group’s energy up, and the edit reads you as unbothered — which, at this stage of the season, is a currency of its own.\n\nINCREDIBLE: Your fine-ness is so convincing that two separate Islanders come to YOU for reassurance. You dispense wisdom you do not currently possess. The camera loves a rock."
+    },
+    {
+      "id": "li_washing_line",
+      "type": "card",
+      "context": "Mid-morning · the washing line · pegs and intelligence · daily beat (The Turn)",
+      "prompt": "You’re pegging out swimwear with {mate} when two voices drift over the hedge, discussing a couple that is not theirs. Yours, possibly. The pegging slows to surveillance speed.",
+      "left": "Keep pegging. Keep it",
+      "right": "Report it to the daybeds"
+    },
+    {
+      "id": "li_washing_line_left_outcomes",
+      "type": "outcomes",
+      "context": "li_washing_line → “Keep pegging. Keep it”",
+      "text": "BAD: You lean so far into the hedge for the ending that you wear it. Two heads pop round the other side. “Alright?” Nothing to do now but compliment their laundry.\n\nGOOD: You hear the whole thing, file it, and peg on like the hedge said nothing. {mate} raises an eyebrow; you raise one back. A full conversation, zero words, one asset.\n\nINCREDIBLE: Not only do you keep it — three days later it pays out, when someone tries a story on you that you already know ends differently. Your face doesn’t move. Theirs does."
+    },
+    {
+      "id": "li_washing_line_right_outcomes",
+      "type": "outcomes",
+      "context": "li_washing_line → “Report it to the daybeds”",
+      "text": "BAD: Your retelling grows a detail in transit, the detail grows legs, and by dinner the story has your name on it as the source. The hedge, notably, stays anonymous.\n\nGOOD: You deliver the hedge report to the daybeds with full dramatic staging. The villa redistributes its attention accordingly. You are, briefly, the six o’clock news.\n\nINCREDIBLE: Your performance of “the hedge, verbatim” — two voices, one peg as a prop — becomes the villa’s clip of the day. Journalism is dead; this is better."
+    },
+    {
+      "id": "li_inside_joke",
+      "type": "card",
+      "context": "Dinner · the big table · callback incoming · daily beat (The Turn)",
+      "prompt": "Somebody at dinner says the word “allegedly” and {partner} catches your eye across the table, already fighting a grin — it’s the thing, from the thing, that only you two were there for.",
+      "left": "Keep it between you",
+      "right": "Play it for the table"
+    },
+    {
+      "id": "li_inside_joke_left_outcomes",
+      "type": "outcomes",
+      "context": "li_inside_joke → “Keep it between you”",
+      "text": "BAD: You both lose it simultaneously into your drinks, and the table demands the joke. It doesn’t survive translation. “You had to be there” lands like a court summons.\n\nGOOD: One look, one bitten lip each, nothing said. The table moves on. Under it, {partner}’s foot finds yours — the joke continuing by other means.\n\nINCREDIBLE: You don’t even smile. Neither do they. The restraint is so total it becomes its own inside joke, layered on the first. You are now two jokes deep in a private language."
+    },
+    {
+      "id": "li_inside_joke_right_outcomes",
+      "type": "outcomes",
+      "context": "li_inside_joke → “Play it for the table”",
+      "text": "BAD: You tell the story. {partner} smiles with the front of their face. Some things are load-bearing precisely because they’re private, and you can hear this one crack.\n\nGOOD: You tell it well, {partner} jumps in for the ending, and the double act is so smooth the table starts a rumour you rehearsed it. A couple with BITS. Dangerous.\n\nINCREDIBLE: The story kills, the callback kills harder, and “allegedly” enters the villa dictionary with you two credited as authors. The nation adopts it within the hour."
+    },
+    {
+      "id": "li_last_sunrise",
+      "type": "card",
+      "context": "Dawn · the roof terrace · the last quiet one · daily beat (Final Week)",
+      "prompt": "“Get up,” {partner} whispers, at an hour that is technically a crime. “It’s the last one where nobody knows anything yet.” The terrace, two blankets, a sky going from grey to gold over a villa that ends this week.",
+      "left": "Say nothing. Watch it",
+      "right": "“So. Us. Out there.”"
+    },
+    {
+      "id": "li_last_sunrise_left_outcomes",
+      "type": "outcomes",
+      "context": "li_last_sunrise → “Say nothing. Watch it”",
+      "text": "BAD: You try to hold the silence and your brain holds a recoupling instead. {partner} watches the sunrise; you watch the maths. They notice. Of course they notice.\n\nGOOD: Neither of you says a word for twenty minutes, and it’s the best conversation you’ve had all week. Your head goes quiet on its own — no Beach Hut required.\n\nINCREDIBLE: Somewhere mid-sunrise their hand finds yours without either of you deciding it. Whatever the envelope says on Friday, this bit already happened. The nation never gets it."
+    },
+    {
+      "id": "li_last_sunrise_right_outcomes",
+      "type": "outcomes",
+      "context": "li_last_sunrise → ““So. Us. Out there.””",
+      "text": "BAD: You open the out-there conversation at dawn with no exits. Trains, distances, whose city. By full daylight you’ve invented four problems you didn’t have at sunrise.\n\nGOOD: “I’m an hour on the train,” {partner} says, like they’ve checked. They’ve checked. You talk about the real world like it’s a place you’re actually going. Together, apparently.\n\nINCREDIBLE: They’ve already thought about the dog. Not a hypothetical dog — a breed, a name, a custody schedule for weekends. You laugh, then you don’t, because you’d also thought about the dog."
+    },
+    {
+      "id": "li_suitcase_tetris",
+      "type": "card",
+      "context": "Final Week · the dressing room · suitcases out · daily beat (Final Week)",
+      "prompt": "The suitcases are out on the beds, which makes it real in a way no ceremony has. {mate} holds up a single orphaned flip-flop. “Whose IS this? It’s been here since week one. It has seniority.”",
+      "left": "Pack properly. Talk properly",
+      "right": "Stage a farewell fashion show"
+    },
+    {
+      "id": "li_suitcase_tetris_left_outcomes",
+      "type": "outcomes",
+      "context": "li_suitcase_tetris → “Pack properly. Talk properly”",
+      "text": "BAD: Folding gets philosophical, philosophical gets teary, and you lose an hour to “remember week one” while your case sits empty. The flip-flop watches, unclaimed.\n\nGOOD: You fold, {mate} narrates, and the villa’s whole season gets sorted into keep, bin, and “burn before customs.” It’s an ending, done the manageable size.\n\nINCREDIBLE: At the bottom of your case: the note, the bracelet from the challenge, a Mini Milk wrapper you kept on purpose. {mate} looks over. “Don’t,” you say. You both do."
+    },
+    {
+      "id": "li_suitcase_tetris_right_outcomes",
+      "type": "outcomes",
+      "context": "li_suitcase_tetris → “Stage a farewell fashion show”",
+      "text": "BAD: The farewell runway peaks early when you go over on a heel that isn’t yours. The fall airs in slow motion. Twice. The physio has opinions about Final Week.\n\nGOOD: Everyone models the season’s worst purchases. {mate} commentates in a towel turban. It’s the hardest the villa has laughed since the wobbly lounger, and it needed it.\n\nINCREDIBLE: The finale look is the orphaned flip-flop, worn as a hat. The villa gives it a standing ovation and a name. Production quietly adds it to the tour of the villa."
+    },
+    {
+      "id": "week_names",
+      "type": "villa-copy",
+      "context": "The HUD week strip (was “ACT n · …”)",
+      "text": "WEEK 1 · Arrival\nWEEK 2 · The Graft\nWEEK 3 · Casa Amor\nWEEK 4 · Movie Night\nWEEK 5 · The Recoupling\nWEEK 6 · Final Week\n\n(Each week is named for the tentpole it builds to — the anticipation is on the scoreboard.)"
+    },
+    {
+      "id": "recap_kicker",
+      "type": "recap",
+      "context": "Every week-turn screen, the kicker",
+      "text": "PREVIOUSLY, IN THE VILLA · WEEK «n»"
+    },
+    {
+      "id": "recap_w2_bombshell",
+      "type": "recap",
+      "context": "Week 1 → 2 recap · story, when a bombshell landed",
+      "text": "And last night the doors opened: «Zara» unpacked a suitcase and a plan."
+    },
+    {
+      "id": "recap_w3_story_a",
+      "type": "recap",
+      "context": "Week 2 → 3 recap · story variant",
+      "text": "Week two was the graft: iced coffees, terrace debriefs, and a challenge with a scoreboard nobody asked for. At the Crossroads you said the quiet part into a microphone."
+    },
+    {
+      "id": "recap_w3_story_b",
+      "type": "recap",
+      "context": "Week 2 → 3 recap · story variant",
+      "text": "Week two: the couples stopped auditioning and started existing. Production made a note to fix that."
+    },
+    {
+      "id": "recap_w3_story_c",
+      "type": "recap",
+      "context": "Week 2 → 3 recap · story variant",
+      "text": "The grafting week is done — favours banked, orders memorised, a challenge survived on camera."
+    },
+    {
+      "id": "recap_w5_clean",
+      "type": "recap",
+      "context": "Week 4 → 5 recap · story, clean reel",
+      "text": "Movie Night came for everyone’s receipts and left yours, remarkably, alone."
+    },
+    {
+      "id": "recap_w5_bestie",
+      "type": "recap",
+      "context": "Week 4 → 5 recap · story, bestie formed",
+      "text": "Somewhere in the wreckage you acquired a ride-or-die — two spoons, one tub, terms binding."
+    },
+    {
+      "id": "recap_w5_rival",
+      "type": "recap",
+      "context": "Week 4 → 5 recap · story, the rival moved",
+      "text": "«Chloe» stopped watching and made their move. You noticed. So did the nation."
+    },
+    {
+      "id": "recap_w6_nodrama",
+      "type": "recap",
+      "context": "Week 5 → 6 recap · story, survived quietly",
+      "text": "The recoupling came and went, and you’re still holding a drink on the lawn. Which brings us here: the last week there is."
+    },
+    {
+      "id": "recap_w6_dumped_near",
+      "type": "recap",
+      "context": "Week 5 → 6 recap · story, a body was taken",
+      "text": "The firepit took a body. It nearly took yours. Which brings us here: the last week there is."
+    },
+    {
+      "id": "forecast_w2",
+      "type": "recap",
+      "context": "Week 2 recap · THIS WEEK (honest forecast)",
+      "text": "⚠️ The graft gets graded: a challenge at the end of the week, played for laughs and scored for keeps. And after it, the Crossroads — you declare why you’re really here, out loud, on the record."
+    },
+    {
+      "id": "forecast_w3",
+      "type": "recap",
+      "context": "Week 3 recap · THIS WEEK",
+      "text": "⚠️ Casa Amor. At the end of this week the villa splits, strangers unpack, and loyalty gets a camera pointed at it. Whatever happens over there comes home on a postcard."
+    },
+    {
+      "id": "forecast_w4",
+      "type": "recap",
+      "context": "Week 4 recap · THIS WEEK",
+      "text": "⚠️ Movie Night. The footage exists, and this week production presses play — footage outranks feelings, every time. New allies help. So does a clean reel, if yours is one."
+    },
+    {
+      "id": "forecast_w5",
+      "type": "recap",
+      "context": "Week 5 recap · THIS WEEK (you hold the pen / exposed)",
+      "text": "⚠️ This week ends at the firepit: a recoupling where the girls choose — that’s you, holding the pen. Before that: one more bombshell, and everyone recalculating.\n\n— or, exposed side —\n\n…a recoupling where the girls choose — and you find out what your season is worth."
+    },
+    {
+      "id": "intro_w3",
+      "type": "recap",
+      "context": "Week 3 fallback intro (rarely seen)",
+      "text": "Week three. It’s quiet. It’s lovely. It ends with a text, a suitcase, and six strangers unpacking aftershave. Nothing survives this week unchanged."
+    },
+    {
+      "id": "intro_w4",
+      "type": "recap",
+      "context": "Week 4 fallback intro (rarely seen)",
+      "text": "Week four. The fallout settles, new alliances form — and at the end of it, production presses play on everything the cameras saw. Footage outranks feelings."
+    },
+    {
+      "id": "intro_w5",
+      "type": "recap",
+      "context": "Week 5 fallback intro (rarely seen)",
+      "text": "Week five. One more bombshell, one more recalculation, and a firepit ceremony where the girls hold the pen. The week ends with everyone standing up."
+    },
+    {
+      "id": "prompt_recoup2_trim",
+      "type": "card",
+      "context": "Final Week opens · the boys’ recoupling, exposed side (trimmed to fit small phones)",
+      "prompt": "“Tonight, there will be a recoupling. The boys will choose. The girl not chosen will be dumped from the Island. #judgementweek” — More girls than places: a maths problem with feelings. No move left tonight. Only what you’ve built — the Connection, or the vote.",
+      "left": "Trust the graft",
+      "right": "Work the line-up"
+    },
+    {
+      "id": "prompt_final_trim",
+      "type": "card",
+      "context": "The Final, Win-the-Villa climax (trimmed to fit small phones)",
+      "prompt": "“Islanders. Tonight, the public decide.” — The lawn has a stage now; the stage has fairy lights; the lights, somehow, have a sponsor. Millions of thumbs hover over two names. One is yours. Make the last look count.",
+      "left": "(unchanged choices)",
+      "right": "(unchanged choices)"
+    },
+    {
+      "id": "conn_coupled",
+      "type": "connection-copy",
+      "context": "Coupling notice (every new couple)",
+      "text": "💘 Coupled up: «Kai» — «vibe». The Connection starts where all Connections start."
+    },
+    {
+      "id": "conn_reads",
+      "type": "connection-copy",
+      "context": "After-swipe movement reads (the ladder, samples)",
+      "text": "💘 The Connection surges. Other couples take it personally.\n💘 Real Connection, banked.\n💘 The Connection ticks up. Slow is a strategy.\n💘 The Connection craters. The duvet has a border now.\n💘 A scuff on the Connection. Buffable."
+    },
+    {
+      "id": "conn_stakes",
+      "type": "connection-copy",
+      "context": "Recoupling set-piece stakes",
+      "text": "💘 The Connection: enough to hold «Kai»\n💘 The Connection: not enough on its own tonight\n💘 No Partner, no Connection — the public is the whole plan\n💘 Whoever you pick, the Connection starts where all Connections start"
+    },
+    {
+      "id": "conn_stirling_mugs",
+      "type": "connection-copy",
+      "context": "Stirling, ceremony forecast (public carrying you)",
+      "text": "Weak Connection, strong fanbase. In ceremony maths, mugs beat hugs. Tonight, anyway."
+    },
+    {
+      "id": "conn_stirling_seatbelt",
+      "type": "connection-copy",
+      "context": "Stirling, ceremony forecast (couple solid)",
+      "text": "Recoupling tonight. That Connection of yours is wearing a seatbelt. Should be fine. Should."
+    },
+    {
+      "id": "conn_stirling_rules",
+      "type": "connection-copy",
+      "context": "Stirling, first-season tutor at the line-up",
+      "text": "Recoupling rules, quickly: the Connection keeps you, or the nation does. Tonight your Connection’s doing the heavy lifting — as it should."
+    },
+    {
+      "id": "conn_verdict",
+      "type": "connection-copy",
+      "context": "Recoupling verdict set-piece (rescued)",
+      "text": "The Connection blinked. The public didn’t."
+    },
+    {
+      "id": "conn_help",
+      "type": "connection-copy",
+      "context": "Help sheet",
+      "text": "💘 Connection is your couple’s strength — The Real Thing runs on it, and it RESETS when you switch partners."
+    },
+    {
+      "id": "angle_blurbs",
+      "type": "villa-copy",
+      "context": "Daybed Angle blurbs (compounding is per-week now)",
+      "text": "Comedy Gold: “+8 on challenge and banter choices. Compounds: +1 Charisma every week.”\nEveryone’s Type: “+8 on flirt and date choices. Compounds: +1 Charisma every week.”"
     }
   ]
 }
