@@ -57,6 +57,15 @@ that you often watch from the side. Rebalancing "rival vs partner" is not enough
 the fix is that the room has to be alive. The Rival becomes *one thread in the
 web*, not the web's whole antagonist.
 
+> **Can a living villa be expressed on swipe cards alone?** Yes — this is the
+> hardest pillar, so it has its own companion note:
+> [`V4-LIVING-VILLA.md`](./V4-LIVING-VILLA.md). Short version: widen what a card
+> is *for* (witness / consequence / gossip / callback / cascade cards, not only
+> "choices you drive"), let the v3 Clarity Layer carry continuity while the card
+> carries the moment, foreground ~2–3 threads rather than simulating all seven,
+> and keep the background couple-graph *mostly scripted* so v4 stays a
+> card-driven narrative and doesn't drift into a social sim.
+
 ---
 
 ## The design pillars
