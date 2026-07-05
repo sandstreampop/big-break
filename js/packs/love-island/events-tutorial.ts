@@ -46,7 +46,7 @@ export const LI_TUTORIAL_EVENTS: GameEvent[] = [
     art: 'li_phone', context: 'THE LAWN · A PHONE GOES OFF',
     prompt: '“TEXT! I’VE GOT A TEXT!!” The villa converges at a sprint, dripping pool water. “Islanders: tonight, the welcome party. One of you will give the toast. #speechspeech” Eleven faces turn. The phone is in your hand.',
     tags: ['text'],
-    coach: 'The icons on each button are the stats a choice rolls on — bright is the main one. The coloured shape is the <b>risk tell</b>: ● safe · ▲ dicey · ■ likely bad · ✦ big upside. Your stats live up top; tap one to see what it feeds.',
+    coach: 'The icons on each button are the stats a choice rolls on — bright is the main one. The coloured shape is the <b>risk tell</b>: ● safe · ▲ dicey · ■ likely bad · ✦ big upside. The full picture — stats, your Edit — lives under <b>☰</b> up top.',
     forceTier: { left: 'good', right: 'bad' },
     choices: {
       left: {
@@ -76,7 +76,7 @@ export const LI_TUTORIAL_EVENTS: GameEvent[] = [
     art: 'li_firepit', context: 'THE FIREPIT · FIRST NIGHT · SOMEONE’S ALREADY CRYING',
     prompt: 'Midnight. A girl you met nine hours ago is crying about a boy she met eight hours ago, and the group has gone quiet in that specific way. You’re new here. So is everyone. What kind of Islander are you, then?',
     tags: ['chat'],
-    coach: 'No script this time — a real roll against your stats. One more thing: 🌀 up top is <b>In Your Head</b>. It climbs on drama and ends your Season at the top. Rest brings it down. Watch it.',
+    coach: 'No script this time — a real roll against your stats. One more thing: <b>In Your Head</b> (🌀) climbs on drama and ends your Season at the top. When it runs hot, you’ll see it glowing up top — rest brings it down.',
     choices: {
       left: {
         label: 'Sit with her',

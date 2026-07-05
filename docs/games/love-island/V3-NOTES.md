@@ -85,3 +85,18 @@ story stands vs your Intention (recap), and what tonight can cost you
 (set-piece stakes). The comedy carries the clarity — Stirling explains the
 verdict, the recap does the "previously on," and the stakes rows read like
 production notes, not a spreadsheet.
+
+## Postscript — v3.1, the screen contract
+
+The v3 Clarity Layer made every state legible; the beta immediately taught
+the next lesson: legible ≠ simultaneous. On a real phone the set-piece
+screen stacked thirteen bands and clipped the prompt — the one load-bearing
+element — to a single line. The fix is [ADR-0009](./adr/0009-progressive-disclosure-screen-contract.md):
+three tiers (scene takes space first; one glanceable ambient strip;
+everything else one tap away in the status drawer), set-pieces as sequenced
+beats instead of stacks, salience over permanence (the In-Your-Head pip
+appears only when the meter matters), and a CI layout gate that audits real
+seasons at phone viewports so the contract can't silently rot. The stat
+rail is gone from the permanent screen because the per-choice governing
+icons and the risk tell already carry the decision-relevant stats — the
+rail was redundancy dressed as information.

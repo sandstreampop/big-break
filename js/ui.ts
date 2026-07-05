@@ -528,6 +528,7 @@ function renderHud() {
   const game = $('#screen-game');
   game.classList.toggle('burnout-warm', run.stats.burnout >= 50 && run.stats.burnout < 72);
   game.classList.toggle('burnout-hot', run.stats.burnout >= 72);
+  const compact = !!PRES.compactHud; // ADR-0009: one ambient strip, drawer for the rest
   const top = el('div', 'hud-top');
   const actWrap = el('span', 'hud-act-wrap');
   const actNames = PRES.actNames || ['', 'The Garage', 'The Grind', 'The Reckoning'];
@@ -545,6 +546,12 @@ function renderHud() {
   const helpBtn = el('button', 'chart-btn', '❓');
   helpBtn.addEventListener('click', () => { sfx.ui(); showHelp(); });
   actWrap.append(helpBtn);
+  if (compact) {
+    // Tier 3 entry point: everything the rail and gear row used to force-feed.
+    const drawerBtn = el('button', 'chart-btn drawer-btn', '☰');
+    drawerBtn.addEventListener('click', () => { sfx.ui(); showStatusDrawer(); });
+    actWrap.append(drawerBtn);
+  }
   top.append(actWrap);
   const counters = el('span', 'hud-counters');
   if (PRES.hudCounters) {
@@ -556,8 +563,26 @@ function renderHud() {
     counters.append(el('span', 'hud-money' + (run.money < 0 ? ' neg' : ''), `$${run.money}`));
     if (run.path === 'hitfactory' || run.hits > 0) counters.append(el('span', 'hud-hits', `♪ ${run.hits} hit${run.hits === 1 ? '' : 's'}`));
   }
+  if (compact) {
+    // Salience over permanence (ADR-0009): the danger meter earns a chip
+    // only once it matters; the hot streak rides as a small chip, not a
+    // banner. Both tap through to their explanation.
+    const b = run.stats.burnout;
+    if (!run.tutorial && b >= 45) {
+      const pip = el('span', 'hud-danger' + (b >= 70 ? ' danger' : ' warn'), STAT_META.burnout.icon);
+      pip.addEventListener('click', () => { sfx.ui(); showInspectStat('burnout'); });
+      counters.append(pip);
+    }
+    if (!run.tutorial && (run.hotStreak || 0) >= CONFIG.hotStreakAt) {
+      counters.append(el('span', 'hud-streak', `🔥×${run.hotStreak}`));
+    }
+  }
   top.append(counters);
   hud.append(top);
+
+  // Compact mode ends the HUD here: the rail, the streak banner, and the
+  // gear row live in the status drawer (Tier 3), one tap away.
+  if (compact) return;
 
   // U3: the hot streak is a visible thing you're riding
   if (!run.tutorial && (run.hotStreak || 0) >= CONFIG.hotStreakAt) {
@@ -738,6 +763,7 @@ function renderStage(ev) {
     $('#card-area').before(host);
   }
   host.innerHTML = '';
+  host.classList.toggle('stage-compact', !!PRES.compactHud);
   const slots = PRES.stage?.(run, ev || null);
   if (!slots || !slots.length) return;
   for (const s of slots) {
@@ -771,22 +797,51 @@ function dealCard() {
   // scene is about. Packs without one leave the slot empty.
   renderStage(ev);
 
+  // A set-piece is a SEQUENCE, not a stack (ADR-0009): the framed moment —
+  // banner, scene line, stakes, feel cues — plays first as its own beat,
+  // then the card deals with the whole screen to itself. `spSeen` makes the
+  // beat once-per-card (a resumed run goes straight to the card).
+  const sp = PRES.setPiece?.(run, ev);
+  if (sp && !(run.spSeen || {})[ev.id]) {
+    (run.spSeen = run.spSeen || {})[ev.id] = true;
+    save.saveRun(run);
+    showSetPieceBeat(sp, () => renderDealtCard(ev, sp));
+    return;
+  }
+  renderDealtCard(ev, sp);
+}
+
+// The framed moment: full-screen banner + stakes, one tap to the card.
+// The feel cues (R11's mood contract) play here, at the beat.
+function showSetPieceBeat(sp, cont) {
+  const ov = $('#overlay');
+  ov.innerHTML = '';
+  ov.classList.add('active');
+  vibrate(sp.mood === 'blow' ? [60, 40, 90] : [12, 30, 12]);
+  const box = el('div', 'result-card sp-beat ' + (sp.cls || ''));
+  if (sp.mood === 'triumph') { spawnConfetti(ov); sfx.win(); }
+  if (sp.mood === 'blow' && !reducedMotion()) box.classList.add('shake');
+  box.append(el('div', 'set-piece-banner sp-beat-banner', sp.banner));
+  if (sp.sub) box.append(el('div', 'set-piece-sub sp-beat-sub', fillText(sp.sub)));
+  if (sp.stakes?.length) {
+    const st = el('div', 'set-piece-stakes sp-beat-stakes');
+    for (const stake of sp.stakes) st.append(el('div', 'sp-stake ' + (stake.cls || ''), fillText(stake.html)));
+    box.append(st);
+  }
+  box.append(el('p', 'tap-hint', 'tap to continue'));
+  ov.append(box);
+  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); cont(); };
+  setTimeout(() => ov.addEventListener('click', done), 250);
+}
+
+// The card, alone on its screen (ADR-0009 Tier 1); a set-piece card keeps
+// only a slim ribbon for continuity.
+function renderDealtCard(ev, sp) {
   const area = $('#card-area');
   area.innerHTML = '';
-
-  // Set-piece framing (presenter.setPiece): a ceremonial banner + explicit
-  // stakes above the card, so a climax reads as a screen, not another card.
-  const sp = PRES.setPiece?.(run, ev);
   if (sp) {
-    const box = el('div', 'set-piece ' + (sp.cls || ''));
-    box.append(el('div', 'set-piece-banner', sp.banner));
-    if (sp.sub) box.append(el('div', 'set-piece-sub', fillText(sp.sub)));
-    if (sp.stakes?.length) {
-      const st = el('div', 'set-piece-stakes');
-      for (const s of sp.stakes) st.append(el('div', 'sp-stake ' + (s.cls || ''), fillText(s.html)));
-      box.append(st);
-    }
-    area.append(box);
+    area.append(el('div', 'set-piece set-piece-slim ' + (sp.cls || ''),
+      `<div class="set-piece-banner">${sp.banner}</div>`));
   }
 
   // A pack may class up a card for its own framing tiers (e.g. a ceremony).
@@ -900,7 +955,9 @@ function dealCard() {
   if (!run.tutorial && !meta.coach.card) {
     meta.coach.card = true;
     save.saveMeta(meta);
-    coachMark('Drag the card left/right — or tap a button below. The colored dot is your <b>risk tell</b>. Tap ❓ up top anytime.');
+    coachMark(PRES.compactHud
+      ? 'Drag the card left/right — or tap a button below. The colored dot is your <b>risk tell</b>. Your full stats live under <b>☰</b> up top.'
+      : 'Drag the card left/right — or tap a button below. The colored dot is your <b>risk tell</b>. Tap ❓ up top anytime.');
   }
 }
 
@@ -1123,6 +1180,59 @@ function showInspect(sheet) {
   if (sheet.art) box.append(artFor(sheet.art, 'inspect-art'));
   box.append(el('p', 'result-text', `${sheet.emoji ? sheet.emoji + ' ' : ''}<b>${sheet.title}</b>`));
   for (const line of sheet.lines || []) box.append(el('p', 'gear-blurb', line));
+  box.append(el('p', 'tap-hint', 'tap to close'));
+  ov.append(box);
+  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
+  setTimeout(() => ov.addEventListener('click', done), 200);
+}
+
+// The status drawer (ADR-0009 Tier 3): the full picture the compact HUD
+// stopped force-feeding — stats with bars, resources, persona, equipped
+// items. Generic: rendered entirely from manifest + run state; tapping a
+// stat row opens its inspector.
+function showStatusDrawer() {
+  const ov = $('#overlay');
+  ov.innerHTML = '';
+  ov.classList.add('active');
+  const box = el('div', 'result-card drawer-sheet');
+  box.append(el('div', 'tier-badge', 'THE FULL PICTURE'));
+
+  const inst = activePack.loadoutById(run.loadout);
+  if (inst) {
+    box.append(el('p', 'drawer-persona', `<b>${inst.name}</b>${inst.quirk ? ` — <b>${inst.quirk.name}:</b> ${inst.quirk.desc}` : ''}`));
+  }
+
+  const list = el('div', 'drawer-stats');
+  for (const key of [...activePack.manifest.stats, 'burnout']) {
+    const v = run.stats[key];
+    const row = el('div', 'drawer-stat' + (key === 'burnout' && v >= 70 ? ' danger' : key === 'burnout' && v >= 45 ? ' warn' : ''));
+    row.append(el('span', 'drawer-stat-name', `${STAT_META[key].icon} ${STAT_META[key].name}`));
+    const bar = el('div', 'stat-bar');
+    bar.append(el('div', 'stat-fill', ''));
+    (bar.querySelector('.stat-fill') as HTMLElement).style.width = `${v}%`;
+    row.append(bar);
+    row.append(el('span', 'drawer-stat-val', String(v)));
+    row.addEventListener('click', (e) => { e.stopPropagation(); sfx.ui(); showInspectStat(key); });
+    list.append(row);
+  }
+  box.append(list);
+
+  const resRow = el('div', 'drawer-resources');
+  for (const key of activePack.manifest.resources) {
+    const m = metaFor(key);
+    resRow.append(el('span', 'chip chip-good', `${m.icon} ${run[key] ?? 0} ${m.name}`));
+  }
+  box.append(resRow);
+
+  if ((run.accessories || []).length) {
+    const gear = el('div', 'result-notices');
+    for (const id of run.accessories) {
+      const acc = itemById(id);
+      if (acc) gear.append(el('div', 'notice notice-gear', `<b>${acc.name}</b> — ${acc.blurb}`));
+    }
+    box.append(gear);
+  }
+
   box.append(el('p', 'tap-hint', 'tap to close'));
   ov.append(box);
   const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
@@ -1865,7 +1975,14 @@ function actInterstitial(step) {
     box.append(cw);
   }
 
-  // The Trades: procedural press about YOUR run (Pass 14)
+  // The Trades: procedural press about YOUR run (Pass 14). When the pack
+  // ships a full-screen recap (ADR-0009), the press + inbox flavour folds
+  // behind one tap — the story blocks are the moment.
+  const flavourHost = recap ? el('details', 'recap-fold') : box;
+  if (recap) {
+    flavourHost.append(el('summary', 'recap-fold-head', '📰 Meanwhile, outside the villa…'));
+    box.append(flavourHost);
+  }
   const headlines = PRES.headlines?.(run, 2) || [];
   if (headlines.length) {
     const paper = el('div', 'trades');
@@ -1873,7 +1990,7 @@ function actInterstitial(step) {
     for (const h of headlines) {
       paper.append(el('div', 'trades-row', `<b>${h.text}</b><span>— ${h.src}</span>`));
     }
-    box.append(paper);
+    flavourHost.append(paper);
   }
   // The inbox: people from your run remember you (Pass 22)
   const dms = PRES.dms?.(run, 2) || [];
@@ -1886,7 +2003,7 @@ function actInterstitial(step) {
       bubble.append(el('div', 'dm-text', dm.text));
       inbox.append(bubble);
     }
-    box.append(inbox);
+    flavourHost.append(inbox);
   }
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);

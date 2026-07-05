@@ -26,6 +26,13 @@ report should land as ADRs; nothing here re-litigates ADR-0001…0008.
 > R13 (standing routines), Horizon 3. Prepared-not-decided items for Viktor:
 > [`FOR-VIKTOR.md`](./FOR-VIKTOR.md).
 >
+> **v3.1 (same day):** beta feedback — *too much information at once on
+> every screen* — answered with the progressive-disclosure screen contract
+> ([ADR-0009](./adr/0009-progressive-disclosure-screen-contract.md)):
+> compact HUD + status drawer, set-pieces as sequenced beats, the recap's
+> flavour folded, and a CI layout gate (`test/ui-crowding.mjs`) that fails
+> the build if any card's prompt ever clips again.
+>
 > **Verdicts overturned in execution, with evidence:**
 > 1. **A1(b) loyalty gate "modest raise to ~76" → shipped 80.** Under the
 >    narrative policy the realthing cohort self-selects loyalty-rich, so at
