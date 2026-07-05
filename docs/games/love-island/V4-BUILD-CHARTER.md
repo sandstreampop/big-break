@@ -120,6 +120,28 @@ no test grades wit:
 Also grow `VOICE.md` for the new card types, and self-critique a full sample
 season via `simulate-pack.mjs` before merge.
 
+### When Viktor comes in (the taste checkpoint — a hard pause)
+
+The taste review is the **one place the builder stops and waits for a human**.
+It is a blocking checkpoint, not a fire-and-forget note:
+
+- **Session 1 — no checkpoint.** Pure engine refactor, no new writing. Fully
+  hands-off; Viktor is not involved.
+- **Session 2 — one checkpoint**, once the week's new writing (daily beats,
+  tentpole framing, week transitions, Connection copy) is drafted.
+- **Session 3 — checkpoint per system**, reviewed **incrementally** (daily beats
+  → faction-telegraph copy → the new card types), *not* one pile at the end — so
+  each swipe set is short and the `taste.mjs`/`VOICE.md` rules learned from early
+  verdicts sharpen the writing generated later in the same session.
+
+**The builder's obligation at a checkpoint:** draft the batch → write
+`public/taste-queue.json` → **notify Viktor with the review URL and then BLOCK**
+— do not finalize or merge that content until his verdicts return (async, on his
+schedule: pasted into chat, committed to `taste-feedback/`, or downloaded). Then
+ingest (keep 👍 / cut-revise 👎 / promote ⭐ / grow `taste.mjs`) and only then
+proceed to merge. Mechanics may self-merge freely; **player-facing writing may
+not merge until it has cleared its checkpoint.**
+
 ## Definition of done, per session
 
 Green (full gate above) + self-merged + goldens either byte-identical (S1) or
