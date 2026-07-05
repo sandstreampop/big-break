@@ -2047,11 +2047,25 @@ function runMode(r) {
 // comma-joined strings so HogQL can splitByChar+arrayJoin them.
 function runContentProps(r, summary) {
   const join = (a) => (a || []).slice().sort().join(',');
+  // The pack's own run-summary fields ride run_end generically (R3/G2):
+  // scalars as-is, arrays joined, objects skipped — a pack instruments its
+  // subsystems by extending its summarize, never this file.
+  const packProps = {};
+  if (activePack.summarize) {
+    for (const [k, v] of Object.entries(activePack.summarize(r))) {
+      if (Array.isArray(v)) {
+        if (v.every((x) => typeof x !== 'object')) packProps[k] = v.join(',');
+      } else if (v === null || typeof v !== 'object') packProps[k] = v;
+    }
+  }
   return {
     rival: r.rival || 'none',
     band: join(summary.band),
     gear: join(r.accessories),
     hustles: join(r.hustles),
+    career_runs: meta.runs || 0,
+    last_card: (r.cardLog || [])[r.cardLog?.length - 1]?.e || 'none',
+    ...packProps,
   };
 }
 

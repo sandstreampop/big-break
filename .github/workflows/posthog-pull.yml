@@ -30,6 +30,12 @@ jobs:
     environment: ${{ inputs.env_name || 'github-pages' }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      # coverage.md diffs observed play against the BUILT content catalogs
+      # (dist/) — the pinned toolchain, same as every other consumer.
+      - name: Build content catalogs
+        run: npm install --no-audit --no-fund && npm run build
       - name: Query PostHog EU
         env:
           POSTHOG_TOKEN: ${{ secrets.POSTHOGREADALLTOKEN || vars.POSTHOGREADALLTOKEN }}

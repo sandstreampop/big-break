@@ -450,6 +450,67 @@ const QUERIES = {
     FROM events WHERE event = 'run_end' AND coalesce(properties.hustles, '') != ''
     GROUP BY id ORDER BY n DESC, id`,
   },
+
+  // --- the villa's own instruments (R3) ---
+  stirling_seen: {
+    title: 'Stirling lines heard (runs heard in; run_end ledger, app 2.3+)',
+    sql: `
+    SELECT arrayJoin(splitByChar(',', coalesce(properties.stirling, ''))) AS id, count() AS n
+    FROM events WHERE event = 'run_end' AND properties.pack = 'love-island'
+      AND coalesce(properties.stirling, '') != ''
+    GROUP BY id ORDER BY n DESC, id`,
+  },
+  li_death_causes: {
+    title: 'Villa exits (dumped vs the Walk)',
+    sql: `
+    SELECT properties.cause AS cause, count() AS n
+    FROM events WHERE event = 'run_end' AND properties.pack = 'love-island'
+      AND properties.outcome = 'gameover'
+    GROUP BY cause ORDER BY n DESC, cause`,
+  },
+  li_exit_seen: {
+    title: 'Villa exit-interview choices (app 2.2+)',
+    sql: `
+    SELECT properties.exit AS exit, count() AS n
+    FROM events WHERE event = 'run_end' AND properties.pack = 'love-island'
+      AND coalesce(properties.exit, 'none') != 'none'
+    GROUP BY exit ORDER BY n DESC, exit`,
+  },
+  li_ceremony: {
+    title: 'Villa ceremonies: verdict × lane trusted × secret played (app 2.3+)',
+    sql: `
+    SELECT properties.ceremonyVerdict AS verdict, properties.ceremonyLane AS lane,
+           countIf(properties.secretDetonated = true) AS secret_played, count() AS n
+    FROM events WHERE event = 'run_end' AND properties.pack = 'love-island'
+      AND coalesce(properties.ceremonyVerdict, 'none') != 'none'
+    GROUP BY verdict, lane ORDER BY n DESC, verdict, lane`,
+  },
+  li_casa: {
+    title: 'Casa Amor outcomes at run end (app 2.3+)',
+    sql: `
+    SELECT properties.casaOutcome AS casa, count() AS n
+    FROM events WHERE event = 'run_end' AND properties.pack = 'love-island'
+      AND coalesce(properties.casaOutcome, 'none') != 'none'
+    GROUP BY casa ORDER BY n DESC, casa`,
+  },
+  // --- the first-session cohort (R3/G3): what happens on career run #0 ---
+  first_run_fates: {
+    title: 'First-ever runs: how they end, and on which card (app 2.3+)',
+    sql: `
+    SELECT properties.pack AS pack, properties.cause AS cause,
+           properties.last_card AS last_card, count() AS n
+    FROM events WHERE event = 'run_end' AND properties.career_runs = 0
+      AND properties.tutorial IS NULL
+    GROUP BY pack, cause, last_card ORDER BY n DESC, pack, cause, last_card
+    LIMIT 60`,
+  },
+  first_run_tutor: {
+    title: 'First villa runs that met Stirling’s tutor lines (app 2.3+)',
+    sql: `
+    SELECT countIf(properties.stirling LIKE '%tu_%') AS met_tutor, count() AS first_runs
+    FROM events WHERE event = 'run_end' AND properties.pack = 'love-island'
+      AND properties.career_runs = 0`,
+  },
 };
 
 const out = {};
@@ -503,15 +564,20 @@ fs.writeFileSync(path.join(OUT_DIR, 'summary.md'), md);
 // the coverage-feed queries above. This is what the queries can't say on
 // their own: PostHog only knows what happened, the repo knows what exists.
 async function buildCoverage() {
-  const imp = (p) => import(new URL('../' + p, import.meta.url));
-  const [ev, meta, contracts, genres, instruments, venues, rivals, band, accessories, hustles] =
+  // Catalogs come from the built dist (source is TypeScript — `npm run
+  // build` first; the workflow does).
+  const imp = (p) => import(new URL('../dist/' + p, import.meta.url));
+  const [ev, meta, contracts, genres, instruments, venues, rivals, band, accessories, hustles,
+    liPack, liLines, liAngles] =
     await Promise.all([
       imp('js/data/events.js'), imp('js/data/meta.js'), imp('js/data/contracts.js'),
       imp('js/data/genres.js'), imp('js/data/instruments.js'), imp('js/data/venues.js'),
       imp('js/data/rivals.js'), imp('js/data/band.js'), imp('js/data/accessories.js'),
       imp('js/data/hustles.js'),
+      imp('js/packs/love-island/pack.js'), imp('js/packs/love-island/stirling-lines.js'),
+      imp('js/packs/love-island/angles.js'),
     ]);
-  const mgSrc = fs.readFileSync(new URL('../js/minigames.js', import.meta.url), 'utf8');
+  const mgSrc = fs.readFileSync(new URL('../js/minigames.ts', import.meta.url), 'utf8');
   const minigameIds = [...mgSrc.matchAll(/register\('([\w-]+)'/g)].map((m) => m[1]);
 
   const cardNote = (e) => ['act ' + e.act, e.requires && 'gated', e.chainOnly && 'chain-only',
@@ -564,6 +630,36 @@ async function buildCoverage() {
       items: ids(accessories.ACCESSORIES) },
     { title: 'Hustles', unit: 'runs', rareBelow: 2, from: 'hustle_seen', since: SINCE,
       items: ids(hustles.HUSTLES) },
+
+    // ---- the villa (R3/G1): the same instruments, pointed at pack #2 ----
+    { title: 'Villa cards', unit: 'swipes', rareBelow: 5, from: 'card_seen',
+      items: ids([...liPack.loveIslandPack.events, ...liPack.loveIslandPack.tutorialEvents], cardNote) },
+    { title: 'Villa finale endings (path × outcome)', unit: 'runs', rareBelow: 2, from: 'finale_endings',
+      keyFn: (r) => [r[0] + '/' + r[1], r[2]],
+      items: ['winvilla', 'realthing', 'brand'].flatMap((p) =>
+        ['success', 'partial', 'failure'].map((o) => ({ id: p + '/' + o, note: '' }))) },
+    { title: 'Villa game-over endings', unit: 'exits', rareBelow: 2, from: 'li_death_causes',
+      items: [{ id: 'burnout', note: 'the Walk' }, { id: 'dumped', note: '' }] },
+    { title: 'Villa exit interviews', unit: 'picks', rareBelow: 2, from: 'li_exit_seen', since: SINCE,
+      items: Object.entries(liPack.loveIslandPack.presenter.exitInterviews).flatMap(([k, v]) =>
+        ['left', 'right'].map((side) => ({ id: v[side].exit, note: k + ' / ' + side }))) },
+    { title: 'Villa trophies', unit: 'earns', rareBelow: 2, from: 'trophy_seen', since: SINCE,
+      items: ids(liPack.loveIslandPack.presenter.trophies) },
+    { title: 'Villa personas', unit: 'runs', rareBelow: 3, from: 'by_instrument',
+      items: ids(liPack.loveIslandPack.loadouts) },
+    { title: 'Villa Angles', unit: 'runs', rareBelow: 2, from: 'gear_seen', since: SINCE,
+      items: ids(liAngles.ANGLES) },
+    { title: 'Stirling lines', unit: 'runs heard in', rareBelow: 2, from: 'stirling_seen',
+      since: 'tracked since app 2.3 — run_end carries the per-run no-repeat ledger',
+      items: [
+        ...liLines.REACT_INCREDIBLE, ...liLines.REACT_BAD,
+        ...Object.values(liLines.REACT_TAGGED).flatMap((t) => [...t.incredible, ...t.bad]),
+        ...Object.values(liLines.BEAT_VERDICT).flat(),
+        ...Object.values(liLines.BEAT_REACT).flat(),
+        ...Object.values(liLines.FORECAST).flat(),
+        ...Object.values(liLines.SCENE_STAMP).flat(),
+        ...Object.values(liLines.TUTOR).flat(),
+      ].map((l) => ({ id: l.id, note: '' })) },
   ];
 
   const coverage = {};

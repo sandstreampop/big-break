@@ -67,6 +67,18 @@ const summarize = (state: RunState) => ({
   angles: [...(state.accessories || [])],
   intelDeployed: state.intelDeployed || 0,
   secretsKnown: [...(state.secretKnown || [])],
+  // Telemetry props (R3/G2): the villa-specific reads the beta can't be
+  // evaluated without. Scalars/arrays only — the shell's generic prop
+  // flattener puts them on run_end.
+  casaOutcome: state.flags.includes('li_betrayed') ? 'betrayed'
+    : state.flags.includes('li_casa_recouple') ? 'recoupled'
+    : state.flags.includes('li_casa_kiss') ? 'kissed'
+    : state.flags.includes('li_loyal_casa') ? 'loyal' : 'none',
+  ceremonyVerdict: state.lastCeremony?.verdict || 'none',
+  ceremonyLane: state.lastCeremony ? (state.lastCeremony.bondLane ? 'bond' : 'public') : 'none',
+  secretDetonated: state.flags.includes('li_secret_detonated'),
+  wobbles: (state.cardLog || []).filter((c: any) => String(c.e).startsWith('li_wobble')).map((c: any) => c.e),
+  stirling: [...(state.stirlingSeen || [])],
 });
 
 // #region pack
