@@ -11,7 +11,7 @@
 // plugin-owned. All numbers live here; the presenter reads TIERS and MOODS out
 // diegetically (portraits, Stirling), never the floats.
 
-import { castById, CAST } from '../cast.js';
+import { castById, CAST, sameGenderPool } from '../cast.js';
 import type { Plugin, RunState } from '../../../types.js';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -61,12 +61,32 @@ export const RIVAL_SECRETS: SecretDef[] = [
   { id: 'sec_list', label: 'there’s a ranked list of targets in a notes app' },
   { id: 'sec_producer', label: 'production keeps pulling them in for “little chats”' },
 ];
-export const PARTNER_SECRETS: SecretDef[] = [
-  { id: 'sec_ex_dm', label: 'an ex got a “just checking in” DM the night before the villa' },
-  { id: 'sec_cold_feet', label: 'they told their mate they’d walk by week three' },
-  { id: 'sec_type', label: 'you are, on paper, the opposite of their type' },
-  { id: 'sec_showmance', label: 'the word “showmance” appears in their audition tape' },
-];
+// Partner secrets are drawn from the Partner's SHAPE pool (R7/D1): a
+// sweetheart's landmine is intensity, a game-player's is the game, a
+// slow-burner's is the guard. Who you coupled with changes what's buried.
+export const PARTNER_SECRETS_BY_SHAPE: Record<string, SecretDef[]> = {
+  sweetheart: [
+    { id: 'sec_sw_mum', label: 'their mum already has you saved in her phone' },
+    { id: 'sec_sw_rebound', label: 'there was somebody, right up until the flight out' },
+    { id: 'sec_sw_lastyear', label: 'they fell exactly like this last summer too. It lasted nine days' },
+  ],
+  gameplayer: [
+    { id: 'sec_showmance', label: 'the word “showmance” appears in their audition tape' },
+    { id: 'sec_gp_planb', label: 'you’re plan B — plan A got dumped in week one' },
+    { id: 'sec_gp_manager', label: 'their manager signs off on couple decisions. By text' },
+  ],
+  slowburner: [
+    { id: 'sec_ex_dm', label: 'an ex got a “just checking in” DM the night before the villa' },
+    { id: 'sec_cold_feet', label: 'they told their mate they’d walk by week three' },
+    { id: 'sec_type', label: 'you are, on paper, the opposite of their type' },
+  ],
+};
+export const PARTNER_SECRETS: SecretDef[] = Object.values(PARTNER_SECRETS_BY_SHAPE).flat();
+
+// The current Partner's shape (or null while single).
+export function partnerShape(state: RunState): string | null {
+  return (castById(state.partner) as any)?.shape || null;
+}
 export const BOMBSHELL_SECRETS: SecretDef[] = [
   { id: 'sec_knows', label: 'they know one of the Islanders from home' },
   { id: 'sec_brief', label: 'they walked in with a target already picked' },
@@ -170,6 +190,7 @@ export const charactersPlugin: Plugin = {
     'surfaceSecret', 'bombshellEnters', 'rivalFromBombshell',
   ],
   stateDefaults: {
+    bestie: null,       // the same-gender ride-or-die (R7/D2); {mate} resolves here
     charOpinion: {},     // rival/bombshell opinion numbers (partner = Bond)
     charMood: {},        // role → { id, ttl } transient mood
     charSecret: {},      // role → secret id (hidden until surfaced)
@@ -191,6 +212,11 @@ export const charactersPlugin: Plugin = {
       partner: null,
       bombshell: null,
     };
+    // The Bestie (R7/D2): your same-gender ride-or-die — the show's secret
+    // spine. Seeded here (third construction draw, golden-pinned) from the
+    // day-one pool, never the Rival; the {mate} token resolves to them.
+    const mates = sameGenderPool(state).filter((c) => c.id !== state.rival);
+    state.bestie = mates.length ? mates[Math.floor(rng() * mates.length)].id : null;
   },
 
   requires: {
@@ -213,6 +239,20 @@ export const charactersPlugin: Plugin = {
       return holds === (want !== 'false');
     },
     bombshellActiveIs: (s, arg) => !!s.bombshellId === !!arg,
+    // Route encounter variants on the Partner's shape (R7/D1).
+    partnerShapeIs: (s, arg) => partnerShape(s) === arg,
+    // Cross-season memory (R9/C4b): is this Partner/Rival a returning face
+    // from the player's past Seasons? Reads the shell's history ledger —
+    // absent in sims, so these gates fail closed there.
+    partnerAgainIs: (s, arg) => {
+      const past = (s.history || []).flatMap((h: any) =>
+        [h.partner, ...String(h.exes || '').split(',')]).filter(Boolean);
+      return (!!s.partner && past.includes(s.partner)) === !!arg;
+    },
+    rivalAgainIs: (s, arg) => {
+      const past = (s.history || []).map((h: any) => h.rival).filter(Boolean);
+      return (!!s.rival && past.includes(s.rival)) === !!arg;
+    },
   },
 
   // The nation watches moments: encounter beats that land pull votes, and a
@@ -304,7 +344,8 @@ export const charactersPlugin: Plugin = {
       state.secretKnown = (state.secretKnown || []).filter((r: string) => r !== 'partner');
       state.secretSpent = (state.secretSpent || []).filter((r: string) => r !== 'partner');
       if (state.partner) {
-        state.charSecret.partner = PARTNER_SECRETS[Math.floor(cardCtx.rng() * PARTNER_SECRETS.length)].id;
+        const pool = PARTNER_SECRETS_BY_SHAPE[partnerShape(state) || 'slowburner'] || PARTNER_SECRETS;
+        state.charSecret.partner = pool[Math.floor(cardCtx.rng() * pool.length)].id;
       }
     }
     for (const role of ['partner', 'rival', 'bombshell'] as CharRole[]) {

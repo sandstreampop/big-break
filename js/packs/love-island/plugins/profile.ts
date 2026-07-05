@@ -68,6 +68,19 @@ export const profilePlugin: Plugin = {
     return undefined; // bond is the coupling plugin's
   },
 
+  // The build pays out (R1/A3): an equipped Angle with a per-act stat grant
+  // compounds at every act break — the Brand's early-pick reward.
+  onActBreak(state, _act, notes) {
+    for (const id of state.accessories || []) {
+      const a = angleById(id);
+      if (!a?.perAct) continue;
+      for (const [k, v] of Object.entries(a.perAct)) {
+        if (k in state.stats) state.stats[k] = Math.min(100, Math.max(0, state.stats[k] + (v as number)));
+        notes.push(`✨ The ${a.name} edit compounds: +${v} ${k === 'charisma' ? 'Charisma' : k}. The camera keeps finding you.`);
+      }
+    }
+  },
+
   onEffect(state, effects, pctx) {
     const e = effects as any;
     const { deltas, rng } = pctx as any;

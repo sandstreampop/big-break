@@ -110,3 +110,55 @@ body {
   box-shadow: 0 0 8px rgba(154, 160, 176, 0.4);
   filter: saturate(0.7);
 }
+
+/* ---------- The Clarity Layer (v3): villa skin on the generic slots ---------- */
+
+/* The stage: the villa's people, mood worn as the ring (same palette as the
+   old cast-chips — the six moods are the whole vocabulary). */
+.stage-slot .stage-face { border-color: #4b4066; }
+.stage-slot.mood-buzzing .stage-face, .result-face.mood-buzzing { border-color: #ff5c8a; box-shadow: 0 0 10px rgba(255, 92, 138, .55); }
+.stage-slot.mood-smug .stage-face, .result-face.mood-smug { border-color: #ffb35c; box-shadow: 0 0 10px rgba(255, 179, 92, .45); }
+.stage-slot.mood-fuming .stage-face, .result-face.mood-fuming { border-color: #ff5347; box-shadow: 0 0 12px rgba(255, 83, 71, .55); }
+.stage-slot.mood-wounded .stage-face, .result-face.mood-wounded { border-color: #6fa8ff; box-shadow: 0 0 10px rgba(111, 168, 255, .45); }
+.stage-slot.mood-scheming .stage-face, .result-face.mood-scheming { border-color: #ba7aff; box-shadow: 0 0 10px rgba(186, 122, 255, .5); }
+.stage-slot.mood-torn .stage-face, .result-face.mood-torn { border-color: #9aa0b0; box-shadow: 0 0 8px rgba(154, 160, 176, .4); filter: saturate(.7); }
+
+/* Seat flavour: the Rival runs violet; a Rival on the move signals it. */
+.stage-slot.stage-rival { border-color: rgba(186, 122, 255, .35); }
+.stage-slot.stage-rival .stage-label { color: #c9a1ff; }
+.stage-slot.stage-threat { border-color: rgba(255, 83, 71, .6); }
+.stage-slot.stage-threat .stage-read { color: #ff8a80; font-weight: 700; }
+.stage-slot.stage-bombshell { border-color: rgba(255, 179, 92, .4); }
+.stage-slot.stage-bombshell .stage-label { color: #ffce93; }
+/* Single is an alarm, quietly ringing. */
+.stage-slot.stage-single { border-color: rgba(255, 99, 120, .55); }
+.stage-slot.stage-single .stage-read { color: #ff8a80; font-weight: 700; letter-spacing: .06em; }
+
+/* Set-pieces: each scene gets its own light. */
+.set-piece .set-piece-banner {
+  background: linear-gradient(135deg, #ff5c8a 0%, #ffb35c 70%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.set-piece.sp-casa .set-piece-banner { background: linear-gradient(135deg, #6fa8ff 0%, #ba7aff 70%); -webkit-background-clip: text; background-clip: text; }
+.set-piece.sp-movienight .set-piece-banner { background: linear-gradient(135deg, #e8e6f0 0%, #9aa0b0 70%); -webkit-background-clip: text; background-clip: text; }
+.set-piece.sp-hut .set-piece-banner { background: linear-gradient(135deg, #9aa0b0 0%, #6fa8ff 70%); -webkit-background-clip: text; background-clip: text; }
+.set-piece.sp-final .set-piece-banner { background: linear-gradient(135deg, #ffe38a 0%, #ffb35c 70%); -webkit-background-clip: text; background-clip: text; }
+.set-piece.sp-held .set-piece-sub { color: #8fe3ae; font-weight: 700; }
+.set-piece.sp-rescued .set-piece-sub { color: #ffce93; font-weight: 700; }
+.set-piece.sp-dumped .set-piece-sub { color: #ff8a80; font-weight: 700; }
+
+/* The recap: an episode title card, not a settings panel. */
+.recap-card {
+  background:
+    radial-gradient(120% 80% at 85% -10%, rgba(255, 92, 138, .16) 0%, transparent 55%),
+    radial-gradient(110% 70% at 5% 110%, rgba(186, 122, 255, .13) 0%, transparent 50%),
+    var(--card);
+}
+.recap-card .act-name {
+  background: linear-gradient(135deg, #ff5c8a 0%, #ffb35c 60%, #ffe38a 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.recap-block.recap-story .recap-body { font-style: italic; color: #ffe9cf; }
+.recap-block.recap-couple { border-color: rgba(255, 92, 138, .4); }
+.recap-block.recap-intention { border-color: rgba(255, 179, 92, .4); }
+.recap-block.recap-threat { border-color: rgba(255, 99, 120, .45); }

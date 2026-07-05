@@ -8,9 +8,9 @@
 import { castById, couplePool, sameGenderPool, islanderTypeById } from './cast.js';
 import { angleById } from './angles.js';
 import { PATHS } from './manifest.js';
-import { characterRead, TIER_LABEL, MOODS } from './plugins/characters.js';
 import { intelCount } from './plugins/gossip.js';
 import { stirlingDealNote } from './plugins/stirling.js';
+import { villaStage, villaResultStage, villaRecap, villaSetPiece } from './clarity.js';
 import { mulberry32 } from '../../engine.js';
 import type { Presenter, RunState } from '../../types.js';
 
@@ -149,6 +149,61 @@ const TROPHIES = [
   { id: 'li_bond_80', cat: 'feats', name: 'Disgustingly Happy', icon: '🥂',
     desc: 'End a Season with a Bond of 80+. The other couples are pretending to be pleased.',
     check: (s: any) => (s.bond || 0) >= 80 },
+  // ---- R8/C3c: trophy mass — the state was already tracked; now it pays ----
+  { id: 'li_bestie_pact', cat: 'feats', name: 'The Two-Person Institution', icon: '🍦',
+    desc: 'Form the ride-or-die. The tub was binding.',
+    check: (s: any) => (s.flags || []).includes('li_bestie') },
+  { id: 'li_cashout', cat: 'feats', name: 'Exact Change', icon: '💥',
+    desc: 'Detonate a secret at a ceremony. Said sentences don’t come back.',
+    check: (s: any) => (s.flags || []).includes('li_secret_detonated') },
+  { id: 'li_dealer', cat: 'feats', name: 'The Lending Library', icon: '📚',
+    desc: 'Deploy intel twice in one Season. Words, becoming results.',
+    check: (s: any) => (s.intelDeployed || 0) >= 2 },
+  { id: 'li_serial', cat: 'feats', name: 'A Type, Apparently', icon: '🔁',
+    desc: 'Three different Partners in one Season. The villa updates its spreadsheets.',
+    check: (s: any) => (s.exes || []).length >= 2 && s.partner },
+  { id: 'li_clean_reel', cat: 'feats', name: 'Nothing To Screen', icon: '🧼',
+    desc: 'Reach the Final with a clean reel — no kisses, no confessions, no footage. Movie Night hates you.',
+    check: (s: any) => s.result != null && !['li_casa_kiss', 'li_head_turned', 'li_strayed_official', 'li_came_clean', 'li_revealed'].some((f: string) => (s.flags || []).includes(f)) },
+  { id: 'li_squeaky', cat: 'feats', name: 'Squeaky Bum Season', icon: '🌀',
+    desc: 'Touch a 75+ wobble and still reach the Final. The Hut remembers.',
+    check: (s: any) => s.result != null && (s.wobbles || []).some((w: string) => w === 'li_wobble_75' || w === 'li_wobble_break') },
+  { id: 'li_dynamite_hold', cat: 'feats', secret: true, name: 'Sat On Dynamite', icon: '🧨',
+    desc: 'Reach the Final still holding an unspent secret. Granite nerves or a soft heart — the booth can’t tell.',
+    check: (s: any) => s.result != null && (s.secretsKnown || []).length > 0 && !s.secretDetonated },
+  { id: 'li_coven', cat: 'feats', name: 'The Coven', icon: '🕯️',
+    desc: 'Honour the code all Season and break it never. Blocs form quietly.',
+    check: (s: any) => s.result != null && (s.flags || []).includes('li_code_honour') && !(s.flags || []).includes('li_code_broke') },
+  { id: 'li_open_water', cat: 'feats', name: 'Options Open', icon: '🌊',
+    desc: 'Reach the Final never having gone exclusive. The options heard you.',
+    check: (s: any) => s.result != null && !s.exclusive },
+  { id: 'li_casa_stray', cat: 'feats', name: 'What Happens At Casa', icon: '🧳',
+    desc: 'Come back from Casa Amor with someone new. Bold television.',
+    check: (s: any) => s.casaOutcome === 'recoupled' },
+  { id: 'li_gauntlet_done', cat: 'career', name: 'Format Veteran', icon: '📆',
+    desc: 'Finish a Gauntlet Season. Same seed, same chaos, all skill. Mostly.',
+    check: (s: any) => s.gauntlet != null },
+  { id: 'li_daily_done', cat: 'career', name: 'Appointment Viewing', icon: '📅',
+    desc: 'Finish a Daily Villa. Same Season as everyone — the swipes were yours.',
+    check: (s: any) => s.daily != null },
+  { id: 'li_streak_3', cat: 'career', name: 'The Habit', icon: '🔥',
+    desc: 'A three-day Daily Villa streak. The villa opens at midnight; so, apparently, do you.',
+    check: (s: any) => (s.dailyStreak || 0) >= 3 },
+  { id: 'li_nation_darling', cat: 'feats', name: 'The Nation’s Sweetheart', icon: '🗳️',
+    desc: 'End a Season with 85+ Public. The mugs are being printed.',
+    check: (s: any) => (s.public || 0) >= 85 },
+  { id: 'li_booth_25', cat: 'feats', name: 'The Booth’s Favourite', icon: '🎙️',
+    desc: 'Hear 25 different lines from the booth in one Season. He’s allowed favourites; sue him.',
+    check: (s: any) => (s.stirling || []).length >= 25 },
+  { id: 'li_second_wave_final', cat: 'feats', secret: true, name: 'The Sequel Villain', icon: '🌊',
+    desc: 'Watch a second-wave Rival step up — and reach the Final anyway.',
+    check: (s: any) => s.result != null && (s.flags || []).includes('li_done_wave') },
+  { id: 'li_redemption', cat: 'endings', secret: true, name: 'The Redemption Arc', icon: '🦅',
+    desc: 'Win any Summit on a redemption Season. The nation loves a sequel.',
+    check: (s: any) => s.result === 'success' && (s.flags || []).includes('li_comeback') },
+  { id: 'li_bombshell_win', cat: 'endings', secret: true, name: 'The Scheduled Explosion', icon: '💣',
+    desc: 'Win any Summit as The Bombshell. You happened to a whole villa.',
+    check: (s: any) => s.result === 'success' && String(s.loadout || '').startsWith('bombshell_') },
 ];
 
 // ---------- Token filling ----------
@@ -164,6 +219,10 @@ function bombshellFor(state: RunState) {
   return pool[(state.flavorSeed || 1) % pool.length];
 }
 function mateFor(state: RunState) {
+  // The Bestie seat (R7/D2) — one person, all Season. Flavour pick only as
+  // a fallback for pre-bestie saves.
+  const seated = castById(state.bestie);
+  if (seated) return seated;
   const pool = sameGenderPool(state).filter((c) => c.id !== state.rival);
   if (!pool.length) return null;
   return pool[(state.flavorSeed || 1) % pool.length];
@@ -262,6 +321,10 @@ function epilogue(state: RunState): string {
   } else {
     bits.push('Three months on: the tan faded, the group chat renamed itself twice, and somewhere in a drawer there’s a water bottle with your name on it. You did a Season. Not every story needs an envelope.');
   }
+  if ((state.flags || []).includes('li_bestie') && (ending.key === 'dumped' || ending.key === 'burnout')) {
+    const mate = castById(state.bestie)?.name || 'your best mate in there';
+    bits.push(`${mate} texts you every episode night: “it’s worse without you.” It is, slightly. You watch anyway — together, apart.`);
+  }
   if ((state.exes || []).length >= 2) bits.push(`Your exes have a group chat. You are its subject and its glue.`);
   if ((state.accessories || []).includes('angle_villain')) bits.push('The villain edit follows you into brand meetings. You’ve stopped correcting it. It negotiates better rates.');
   return bits.join(' ');
@@ -298,60 +361,15 @@ function finalSet(state: RunState) {
   };
 }
 
-// ---------- The people in this scene (portraits on the card) ----------
-// The mood-driven portrait system (V2-DESIGN "presentation"): a bounded set —
-// each Cast member's face × the six moods (worn as a mood face + a mood-tinted
-// frame, styled in love-island.css). Persistent across a scene's beats
-// (ADR-0005's framing), and the line-up puts Partner AND Rival on screen.
-// Pure: a read of characterRead only.
-
-const LINEUP_IDS = new Set([
-  'li_recoup1_exposed', 'li_recoup1_exposed_single',
-  'li_recoup2_exposed', 'li_recoup2_exposed_single', 'li_recoup_cashout',
-]);
-const VERDICT_IDS = new Set(['li_recoup_held', 'li_recoup_rescued', 'li_recoup_dumped']);
-
-function cardCast(state: RunState, ev: any) {
-  const out: any[] = [];
-  const seat = (role: 'partner' | 'rival' | 'bombshell') => {
-    const c = characterRead(state, role);
-    if (!c) return;
-    out.push({
-      name: c.cast.name,
-      face: c.face,
-      moodFace: c.moodFace,
-      sub: c.mood ? MOODS[c.mood]?.label : role === 'partner' ? TIER_LABEL[c.tier] : role,
-      cls: 'cast-' + (c.mood || 'level'),
-    });
-  };
-  const id = ev.id || '';
-  const tags: string[] = ev.tags || [];
-  if (LINEUP_IDS.has(id) || VERDICT_IDS.has(id)) { seat('partner'); seat('rival'); }
-  else if (id.startsWith('li_enc_rival') || id.startsWith('li_enc_rmove') || id === 'li_connect_dots') seat('rival');
-  else if (id.startsWith('li_enc_partner') || id.startsWith('li_enc_p3')) seat('partner');
-  else if (id === 'li_second_wave') seat('rival');
-  else if (id === 'li_kitchen_drop') { seat('partner'); seat('rival'); }
-  else if (id === 'li_casa_held' || id === 'li_parents' || id === 'li_parents_messy') seat('partner');
-  else if (tags.includes('temptation')) seat('bombshell');
-  return out.length ? out : null;
-}
-
 // ---------- HUD counters ----------
 
-// Relationship-forward (V2-DESIGN): the people lead, the meters follow. The
-// Partner is a persistent presence — name, opinion TIER (never the Bond
-// number), mood face, lock; the Rival and any active bombshell ride alongside.
+// The scoreboard row. The PEOPLE moved off these chips and onto the stage
+// (the Clarity Layer's persistent relationship stage — clarity.ts); what's
+// left up here is the show's actual scoreboard: vote, following, capital,
+// held intel, and a banked moment.
 function hudCounters(state: RunState) {
   const out: { html: string; cls?: string }[] = [];
   if ((state.encore || 0) > 0) out.push({ html: `🌟${state.encore > 1 ? '×' + state.encore : ''}`, cls: 'hud-encore' });
-  const p = characterRead(state, 'partner');
-  out.push(p
-    ? { html: `<span class="rel-face">${p.face}</span><b>${p.cast.name}</b> · ${TIER_LABEL[p.tier]}${p.moodFace ? ' ' + p.moodFace : ''}${state.exclusive ? ' 🔒' : ''}`, cls: 'hud-rel hud-rel-partner' }
-    : { html: '💔 single', cls: 'hud-rel hud-rel-partner neg' });
-  const r = characterRead(state, 'rival');
-  if (r) out.push({ html: `⚔️<span class="rel-face">${r.face}</span>${r.cast.name}${r.moodFace ? ' ' + r.moodFace : ''}`, cls: 'hud-rel hud-rel-rival' });
-  const b = characterRead(state, 'bombshell');
-  if (b) out.push({ html: `💣<span class="rel-face">${b.face}</span>${b.cast.name}${b.moodFace ? ' ' + b.moodFace : ''}`, cls: 'hud-rel' });
   const held = intelCount(state);
   if (held) out.push({ html: `🤫 ${held}`, cls: 'hud-rel' });
   out.push({ html: `🗳️ ${state.public ?? 0}`, cls: 'hud-fame' });
@@ -418,9 +436,35 @@ export const loveIslandPresenter: Presenter = {
   // Stirling's deal-time channel: the ceremony forecast, the verdict explain,
   // the scene stamps (ADR-0008). Pure — see stirlingDealNote.
   overlayNote: stirlingDealNote,
-  // The scene's portraits (mood-driven, persistent across encounter beats).
-  cardCast,
+  // The Clarity Layer (v3): the persistent relationship stage, the after-swipe
+  // result beat, the "previously, in the villa" act recap, and set-piece
+  // framing for ceremonies/Casa/Movie Night. All pure reads — clarity.ts.
+  stage: villaStage,
+  resultStage: villaResultStage,
+  recap: villaRecap,
+  setPiece: villaSetPiece,
   vibe: (state: RunState) => ({ fame: state.public ?? 0, network: state.stats?.charisma ?? 0, burnout: state.stats?.burnout ?? 0 }),
+
+  tutorial: {
+    offer: '▶ Play — Your First Morning',
+    skip: 'Skip it — I know the format',
+    replay: '🎓 Replay the first morning',
+    hud: 'THE FIRST MORNING · day one',
+    end: {
+      verdict: 'FIRST NIGHT SURVIVED',
+      title: 'Welcome to the Villa',
+      art: 'li_arrival',
+      text: 'One morning, one text, one firepit — and nobody’s gone home yet. That’s the whole rehearsal. The real Season has recouplings, bombshells, a cinema screen with your name on it, and a nation holding the remote. Sleep well.',
+      lessons: [
+        { cls: 'notice-gear', html: '👆 <b>Swipe or tap</b> — every villa moment is one decision.' },
+        { cls: 'notice-gear', html: '😏 <b>Stat icons</b> show what a choice rolls on; the shape is the risk tell: ● safe · ▲ dicey · ■ likely bad · ✦ big upside.' },
+        { cls: 'notice-bad', html: '🌀 <b>In Your Head</b> ends Seasons at the top — and Final Week’s line is lower. Rest is a real move.' },
+        { cls: 'notice-good', html: '💘 <b>Recouplings</b> check the Bond OR the public. Hold one and you stay.' },
+        { cls: 'notice-encore', html: '📱 <b>Texts run the villa.</b> When the phone screams, everything stops.' },
+      ],
+      next: '▶ Start your Season',
+    },
+  },
 
   encore: {
     ready: '🌟 Main-character moment banked — spend it for a boosted roll',
@@ -432,30 +476,61 @@ export const loveIslandPresenter: Presenter = {
     loyalty: 'Being genuine — the anti-game stat. Feeds <b>The Real Thing</b> and holds your Bond together.',
     savvy: 'Villa game-sense: strategy, recouplings, reading the lawn. Keeps you alive when you’re the chosen, not the chooser.',
     charisma: 'On-camera magnetism. Feeds <b>The Brand</b> and turns villa moments into screen time.',
-    burnout: 'The spiral meter. Drama, betrayal, and grafting too hard push it up; at 100 you walk out of the villa in tears. Rest is a real move.',
+    burnout: 'The spiral meter. Drama, betrayal, and grafting too hard push it up; at 100 you walk out of the villa in tears — and once Final Week starts, 79 is the line. Rest is a real move.',
   },
   helpBlocks: [
     '<b>Swipe</b> left or right on every villa moment. The stats on each choice tilt the roll.',
     '🗳️ <b>Public</b> is the nation’s vote — it anchors <b>Win the Villa</b>, rescues you at recouplings, and surges at the Final. 📱 <b>Followers</b> build <b>The Brand</b>. 💘 <b>Bond</b> is your couple’s strength — <b>The Real Thing</b> runs on it, and it RESETS when you switch partners.',
     '💪 <b>Graft</b> is banked social capital — spend it on the daybed to buy an <b>Angle</b> (the reputation you’re building). Angles boost matching choices; fragile ones fall off on a botched scene.',
-    '🌀 <b>In Your Head</b> drags every roll down and ends your Season at 100 — you walk. Beach Hut time and rest bring it back.',
+    '🌀 <b>In Your Head</b> drags every roll down and ends your Season at 100 — you walk. In <b>Final Week</b> the line drops to 79: arrive loud and you’re gone. Beach Hut time and rest bring it back.',
     '📜 <b>Recouplings</b>: when your gender chooses, you have the power. When the other gender chooses, you survive on Bond OR Public — fail both and you’re dumped.',
     '🌟 An INCREDIBLE moment banks a <b>main-character moment</b> — arm it later to boost the swipe that matters.',
   ],
 
   finalSet,
 
+  // The share card (R6): a spoiler-safe season in one paste — the swipe
+  // grid, couples formed, secrets held, days survived, and (daily) the
+  // streak. Names and cards stay out of it; "did YOUR partner stray?" is
+  // the group chat's job.
   shareText: (summary: any, lp: number) => {
     const t = islanderTypeById(summary.loadout);
     const head = summary.gauntlet ? `THE VILLA Gauntlet ${summary.gauntlet}`
       : summary.daily ? `THE VILLA Daily ${summary.daily}` : 'THE VILLA';
-    const pathName = summary.path ? PATHS[summary.path].name : 'the villa';
+    const pathName = summary.path ? PATHS[summary.path].name : 'no Intention declared';
     const res = summary.result ? summary.result.toUpperCase()
       : summary.endingKey === 'burnout' ? 'WALKED' : summary.endingKey === 'dumped' ? 'DUMPED' : 'GAME OVER';
     const TIER_EMOJI: Record<string, string> = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
     const line = (summary.tierLog || []).map((x: string) => TIER_EMOJI[x] || '⬜').join('');
-    return `${head}\n${t ? t.name : '?'} → ${pathName} → ${res}\n${line}\n🗳️${summary.public ?? 0} · 📱${summary.followers ?? 0} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/love-island/`;
+    const couples = (summary.exes?.length || 0) + (summary.partner ? 1 : 0);
+    const bits = [
+      `💘 ${couples} couple${couples === 1 ? '' : 's'}${summary.exclusive ? ' 🔒' : ''}`,
+      ...(summary.secretsKnown?.length ? [`🤫 ${summary.secretsKnown.length}`] : []),
+      `🌴 ${(summary.cardLog || []).length} days`,
+      ...(summary.dailyStreak > 1 ? [`🔥 streak ${summary.dailyStreak}`] : []),
+    ];
+    return `${head}\n${t ? t.name : '?'} → ${pathName} → ${res}\n${line}\n${bits.join(' · ')} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/love-island/`;
   },
+
+  // The redemption season (R8/C2b): comeback mode in villa clothes.
+  comeback: {
+    label: '🧳 The Redemption Season (×1.2 LP)',
+    head: 'The Redemption Season',
+    sub: 'You’ve been here before. It ended badly, publicly, and with a suitcase. Come back notorious: the nation remembers you, the Villain edit is pre-installed, and your Rival has receipts. Sequels hit harder.',
+  },
+
+  // The Daily Villa (R6): one shared seeded Season a day — same bombshells,
+  // same secrets, everyone. The end note closes the loop.
+  daily: {
+    name: 'The Daily Villa',
+    endNote: (summary: any) => {
+      const n = summary.dailyStreak || 1;
+      const streak = n > 1 ? `Day ${n} of your streak.` : 'Streak: day one.';
+      return `🌴 That was today’s villa — everyone on Earth got the same Season: same bombshells, same secrets, same wobbly lounger. ${streak} Tomorrow’s villa opens at midnight. Compare notes; the share button keeps the spoilers out.`;
+    },
+  },
+  // The weekly gauntlet (C2a): the shared-seed ritual, switched on.
+  gauntlet: true,
 
   // Art slots: emoji badge + which generated scene each villa moment paints.
   // Registered generically at boot (art.registerArt) — art.ts stays genre-free.
@@ -490,6 +565,7 @@ export const loveIslandPresenter: Presenter = {
     li_type_gameplayer: { e: '♟️', s: 'pedestal' },
     li_type_influencer: { e: '💍', s: 'pedestal' },
     li_type_heartthrob: { e: '😏', s: 'pedestal' },
+    li_type_bombshell: { e: '💣', s: 'pedestal' },
     li_angle_loyal: { e: '🧱', s: 'pedestal' },
     li_angle_villain: { e: '😈', s: 'pedestal' },
     li_angle_comedy: { e: '🃏', s: 'pedestal' },

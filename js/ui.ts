@@ -207,9 +207,9 @@ function renderTitle() {
     }));
   } else if (!meta.tutorialDone && (meta.runs || 0) === 0 && activePack.tutorialEvents.length) {
     // First install: the game opens with a playable lesson, not a manual.
-    // (Only packs that ship a tutorial deck — the music game does.)
-    menu.append(btn('▶ Play — Your First Gig', 'primary', startTutorial));
-    menu.append(btn('Skip the gig — I know the drill', 'ghost', () => {
+    // (Only packs that ship a tutorial deck; labels are the pack's.)
+    menu.append(btn(PRES.tutorial?.offer || '▶ Play — Your First Gig', 'primary', startTutorial));
+    menu.append(btn(PRES.tutorial?.skip || 'Skip the gig — I know the drill', 'ghost', () => {
       track('tutorial_skip', {});
       meta.tutorialDone = true;
       save.saveMeta(meta);
@@ -220,14 +220,15 @@ function renderTitle() {
   }
   const today = todayStr();
   const dailyDone = meta.dailyResults?.[today];
+  const dailyName = PRES.daily?.name || 'Daily Grind';
   menu.append(btn(
     dailyDone
-      ? `📅 Daily Grind ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
-      : `📅 Daily Grind — ${today}`,
+      ? `📅 ${dailyName} ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
+      : `📅 ${dailyName} — ${today}`,
     '', () => { save.clearRun(); startNewRun(true); }));
   // Comeback mode exists only for packs that ship the transform.
   if (meta.successPaths?.length > 0 && activePack.comeback) {
-    menu.append(btn('🦅 Comeback Run (×1.2 LP)', '', () => { save.clearRun(); startNewRun(false, true); }));
+    menu.append(btn(PRES.comeback?.label || '🦅 Comeback Run (×1.2 LP)', '', () => { save.clearRun(); startNewRun(false, true); }));
   }
   // The Gauntlet builds its weekly loadout from pack data; only packs that
   // declare the mode offer it.
@@ -319,6 +320,8 @@ function startNewRun(daily = false, comeback = false) {
     }
     if (comeback) engine.applyComeback(run);
     run.nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 2; // 3rd+ meeting
+    run.firstRun = (meta.runs || 0) === 0; // a pack may key onboarding off this
+    run.history = (meta.history || []).slice(); // the memory ledger (packs author off it; sims never set it)
     save.saveRun(run);
     track('run_start', {
       instrument: inst.id, contract: chosenContract || 'none',
@@ -335,7 +338,7 @@ function startNewRun(daily = false, comeback = false) {
       ? [cMods.forceInstrument]
       : activePack.id === 'music'
       ? save.unlockedInstrumentIds(meta) // music: default + Career-Wall unlocks
-      : activePack.loadouts.filter((i) => i.unlockedByDefault).map((i) => i.id);
+      : activePack.loadouts.filter((i) => i.unlockedByDefault || i.unlockedBy?.(meta)).map((i) => i.id);
     // A pack may offer its whole roster (e.g. persona × gender picks) instead
     // of the seeded three.
     const offered = PRES.offerAllLoadouts
@@ -345,9 +348,9 @@ function startNewRun(daily = false, comeback = false) {
     const keepScroll = s.scrollTop;
     s.innerHTML = '';
     const isMusic = activePack.id === 'music';
-    s.append(el('h2', 'screen-head', comeback ? 'The Second Act' : daily ? `Daily Grind — ${todayStr()}` : (isMusic ? 'Choose your weapon' : 'Choose your player')));
+    s.append(el('h2', 'screen-head', comeback ? (PRES.comeback?.head || 'The Second Act') : daily ? `${PRES.daily?.name || 'Daily Grind'} — ${todayStr()}` : (isMusic ? 'Choose your weapon' : 'Choose your player')));
     s.append(el('p', 'screen-sub', comeback
-      ? 'You were somebody. Start famous, bruised, and 25% burned out already — the industry remembers you, which cuts both ways.'
+      ? (PRES.comeback?.sub || 'You were somebody. Start famous, bruised, and 25% burned out already — the industry remembers you, which cuts both ways.')
       : daily
       ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
       : (isMusic ? 'Each one is almost useless. That’s the point.' : 'Who are you, when the cameras are always on?')));
@@ -529,7 +532,7 @@ function renderHud() {
   const actWrap = el('span', 'hud-act-wrap');
   const actNames = PRES.actNames || ['', 'The Garage', 'The Grind', 'The Reckoning'];
   actWrap.append(el('span', 'hud-act', run.tutorial
-    ? 'FIRST GIG · The Rubber Room'
+    ? (PRES.tutorial?.hud || 'FIRST GIG · The Rubber Room')
     : `ACT ${run.act} · ${actNames[run.act]}`));
   // The Hot 10 belongs to the songs subsystem — only runs that carry it get
   // the chart button.
@@ -723,6 +726,31 @@ function spawnConfetti(host) {
   setTimeout(() => box.remove(), 1600);
 }
 
+// The persistent character stage (presenter.stage). Lives between the HUD and
+// the card area; each slot is a face + a short qualitative read, tappable when
+// the pack backs it with an inspector sheet. Genre-neutral: the shell renders
+// slots, the pack decides who is on stage and what their state reads as.
+function renderStage(ev) {
+  let host = $('#stage');
+  if (!host) {
+    host = el('div', '');
+    host.id = 'stage';
+    $('#card-area').before(host);
+  }
+  host.innerHTML = '';
+  const slots = PRES.stage?.(run, ev || null);
+  if (!slots || !slots.length) return;
+  for (const s of slots) {
+    const slot = el('div', 'stage-slot' + (s.cls ? ' ' + s.cls : '') + (s.live ? ' stage-live' : ''));
+    slot.append(el('div', 'stage-label', s.label));
+    slot.append(el('div', 'stage-face', `${s.face}${s.moodFace ? `<span class="stage-moodface">${s.moodFace}</span>` : ''}`));
+    slot.append(el('div', 'stage-name', s.name));
+    if (s.read) slot.append(el('div', 'stage-read', s.read));
+    if (s.sheet) slot.addEventListener('click', () => { sfx.ui(); showInspect(s.sheet); });
+    host.append(slot);
+  }
+}
+
 function dealCard() {
   encoreArmed = false;
   show('#screen-game');
@@ -738,12 +766,32 @@ function dealCard() {
   }
   save.saveRun(run);
 
+  // The persistent character stage (presenter.stage): the run's load-bearing
+  // people as first-class faces, re-read every deal, spotlighting whoever the
+  // scene is about. Packs without one leave the slot empty.
+  renderStage(ev);
+
   const area = $('#card-area');
   area.innerHTML = '';
 
+  // Set-piece framing (presenter.setPiece): a ceremonial banner + explicit
+  // stakes above the card, so a climax reads as a screen, not another card.
+  const sp = PRES.setPiece?.(run, ev);
+  if (sp) {
+    const box = el('div', 'set-piece ' + (sp.cls || ''));
+    box.append(el('div', 'set-piece-banner', sp.banner));
+    if (sp.sub) box.append(el('div', 'set-piece-sub', fillText(sp.sub)));
+    if (sp.stakes?.length) {
+      const st = el('div', 'set-piece-stakes');
+      for (const s of sp.stakes) st.append(el('div', 'sp-stake ' + (s.cls || ''), fillText(s.html)));
+      box.append(st);
+    }
+    area.append(box);
+  }
+
   // A pack may class up a card for its own framing tiers (e.g. a ceremony).
   const packCls = PRES.cardClass?.(ev);
-  const card = el('div', 'card' + (ev.flashpoint ? ' flashpoint' : '') + (packCls ? ' ' + packCls : ''));
+  const card = el('div', 'card' + (ev.flashpoint ? ' flashpoint' : '') + (packCls ? ' ' + packCls : '') + (sp ? ' in-set-piece' : ''));
   ambient(sceneFor(ev.art));
   if (ev.flashpoint) {
     // U2: the moment must be LEGIBLE — foil frame, sting, badge
@@ -1235,16 +1283,35 @@ function showResult(result) {
     setTimeout(() => ov.classList.remove('flash-bad'), 500);
   }
   box.append(el('div', 'tier-badge', TIER_LABEL[result.tier]));
+  // The result beat (presenter.resultStage): the pack's read of HOW this
+  // landed — a reacting portrait front and centre, then qualitative movement
+  // lines below the outcome text. The keys it claims lose their numeric chip.
+  const rs = PRES.resultStage?.(run, result);
+  if (rs?.portrait) {
+    const p = rs.portrait;
+    const po = el('div', 'result-portrait' + (p.cls ? ' ' + p.cls : ''));
+    po.append(el('div', 'result-face', `${p.face}${p.moodFace ? `<span class="stage-moodface">${p.moodFace}</span>` : ''}`));
+    if (p.name) po.append(el('div', 'result-face-name', `${p.name}${p.sub ? `<span class="result-face-sub">${p.sub}</span>` : ''}`));
+    box.append(po);
+  }
   box.append(el('p', 'result-text', fillText(result.text)));
   // The overlay-note channel, result side: a pack plugin's commentary on how
   // this card landed (set on the result during resolution — already seeded).
   if (result.overlayNote) {
     box.append(el('div', 'overlay-note overlay-note-result ' + (result.overlayNote.cls || ''), fillText(result.overlayNote.html)));
   }
+  if (rs?.reads?.length) {
+    const reads = el('div', 'result-reads');
+    for (const r of rs.reads) reads.append(el('div', 'result-read ' + (r.cls || ''), fillText(r.html)));
+    box.append(reads);
+  }
 
-  // Numeric stat deltas: compact uniform chips.
+  // Numeric stat deltas: compact uniform chips (minus any key the pack's
+  // result beat already voiced qualitatively).
+  const hideChips = new Set(rs?.hideChipKeys || []);
   const chips = el('div', 'delta-chips');
   for (const d of result.deltas) {
+    if (hideChips.has(d.key)) continue;
     chips.append(deltaChip(d.key, d.amount));
   }
   box.append(chips);
@@ -1459,24 +1526,29 @@ function renderTutorialEnd() {
   const s = $('#screen-ending');
   s.innerHTML = '';
   const wrap = el('div', 'ending-wrap');
-  wrap.append(artFor('ev_tut_set', 'ending-art', { fame: 12, network: 40, burnout: 10 }));
-  wrap.append(el('div', 'verdict verdict-success', 'SOUNDCHECK COMPLETE'));
-  wrap.append(el('h2', 'ending-title', 'The First Gig'));
-  wrap.append(el('p', 'ending-text',
-    'Nineteen people, four of them on purpose, and nobody left. Dee flips the clipboard shut: “Tuesday’s yours if you want it.” That’s the whole tutorial — the career ahead is longer, meaner, and much funnier.'));
+  // The wrap-up copy is the pack's (presenter.tutorial.end); the music game's
+  // First Gig is the built-in default.
+  const tend = PRES.tutorial?.end || {
+    verdict: 'SOUNDCHECK COMPLETE', title: 'The First Gig', art: 'ev_tut_set',
+    text: 'Nineteen people, four of them on purpose, and nobody left. Dee flips the clipboard shut: “Tuesday’s yours if you want it.” That’s the whole tutorial — the career ahead is longer, meaner, and much funnier.',
+    lessons: [
+      { cls: 'notice-gear', html: '👆 <b>Swipe or tap</b> — every card is one decision, left or right.' },
+      { cls: 'notice-gear', html: '🎸 <b>Stat icons</b> on a choice show what it rolls against. Build what your path needs.' },
+      { cls: 'notice-gear', html: '<b>The risk tell</b> — ● safe · ▲ dicey · ■ likely bad · ✦ big upside. Read it before you leap.' },
+      { cls: 'notice-bad', html: '🔥 <b>Burnout</b> drags every roll and ends careers at 100. Rest is a real move.' },
+      { cls: 'notice-encore', html: '🎇 <b>Encores</b> — an INCREDIBLE banks one; arm it on the card that matters.' },
+    ],
+  };
+  wrap.append(artFor(tend.art || 'ev_tut_set', 'ending-art', { fame: 12, network: 40, burnout: 10 }));
+  wrap.append(el('div', 'verdict verdict-success', tend.verdict));
+  wrap.append(el('h2', 'ending-title', tend.title));
+  wrap.append(el('p', 'ending-text', tend.text));
   const list = el('div', 'result-notices');
-  const lessons = [
-    ['notice-gear', '👆 <b>Swipe or tap</b> — every card is one decision, left or right.'],
-    ['notice-gear', '🎸 <b>Stat icons</b> on a choice show what it rolls against. Build what your path needs.'],
-    ['notice-gear', '<b>The risk tell</b> — ● safe · ▲ dicey · ■ likely bad · ✦ big upside. Read it before you leap.'],
-    ['notice-bad', '🔥 <b>Burnout</b> drags every roll and ends careers at 100. Rest is a real move.'],
-    ['notice-encore', '🎇 <b>Encores</b> — an INCREDIBLE banks one; arm it on the card that matters.'],
-  ];
-  for (const [cls, html] of lessons) list.append(el('div', 'notice ' + cls, html));
+  for (const l of tend.lessons) list.append(el('div', 'notice ' + l.cls, l.html));
   wrap.append(list);
   if (firstTime) wrap.append(el('p', 'lp-award', '+15 Legacy Points — walk-in money for the Career Wall'));
   const menu = el('div', 'menu');
-  menu.append(btn('▶ Start your real career', 'primary', () => startNewRun()));
+  menu.append(btn(PRES.tutorial?.end.next || '▶ Start your real career', 'primary', () => startNewRun()));
   menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title'); }));
   wrap.append(menu);
   s.append(wrap);
@@ -1714,13 +1786,29 @@ function actInterstitial(step) {
   const ov = $('#overlay');
   ov.innerHTML = '';
   ov.classList.add('active');
-  const box = el('div', 'result-card act-card');
-  box.append(el('div', 'tier-badge', `ACT ${step.act}`));
-  const intro = PRES.actIntro?.[step.act] || (step.act === 2
-    ? { name: 'THE GRIND', text: 'The garage is behind you. Everything now costs something.' }
-    : { name: 'THE RECKONING', text: 'Higher stakes, fewer excuses. The summit is visible. So is the drop.' });
-  box.append(el('p', 'result-text act-name', intro.name));
-  box.append(el('p', 'result-text', intro.text));
+  // The act recap (presenter.recap): a pack's full-screen "previously on"
+  // takeover — kicker, title, labeled blocks — in place of the default
+  // act-intro copy. The rest of the interstitial (twist note, press, inbox)
+  // still rides below it.
+  const recap = PRES.recap?.(run, step.act, run.flavorSeed || 1);
+  const box = el('div', 'result-card act-card' + (recap ? ' recap-card' : ''));
+  if (recap) {
+    if (recap.kicker) box.append(el('div', 'recap-kicker', recap.kicker));
+    box.append(el('p', 'result-text act-name', recap.title));
+    for (const b of recap.blocks || []) {
+      const blk = el('div', 'recap-block ' + (b.cls || ''));
+      if (b.label) blk.append(el('div', 'recap-label', b.label));
+      blk.append(el('div', 'recap-body', fillText(b.html)));
+      box.append(blk);
+    }
+  } else {
+    box.append(el('div', 'tier-badge', `ACT ${step.act}`));
+    const intro = PRES.actIntro?.[step.act] || (step.act === 2
+      ? { name: 'THE GRIND', text: 'The garage is behind you. Everything now costs something.' }
+      : { name: 'THE RECKONING', text: 'Higher stakes, fewer excuses. The summit is visible. So is the drop.' });
+    box.append(el('p', 'result-text act-name', intro.name));
+    box.append(el('p', 'result-text', intro.text));
+  }
   for (const n of step.notes || []) {
     if (n.startsWith('♪')) continue; // chart news gets its own stage below
     if (n.startsWith('✂️') || n.startsWith('➕')) {
@@ -1882,6 +1970,7 @@ function finishMeta(summary, lp) {
     if (!meta.dailyResults[summary.daily]) {
       meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path, fame: summary.fame || 0 };
     }
+    summary.dailyStreak = dailyStreakFor(summary.daily); // trophies + share read it
   }
   if (summary.gauntlet) {
     meta.gauntletResults = meta.gauntletResults || {};
@@ -1889,6 +1978,16 @@ function finishMeta(summary, lp) {
       meta.gauntletResults[summary.gauntlet] = { result: summary.result, path: summary.path, fame: summary.fame || 0 };
     }
   }
+  // The memory ledger: the last five runs' scalar summary fields, kept on
+  // meta and stamped onto future runs (run.history) so a pack can author
+  // remembers-you content. Generic: same flattener as the telemetry props.
+  const compact: any = {};
+  for (const [k, v] of Object.entries(summary)) {
+    if (Array.isArray(v)) { if (v.length <= 8 && v.every((x) => typeof x !== 'object')) compact[k] = v.join(','); }
+    else if (v === null || typeof v !== 'object') compact[k] = v;
+  }
+  meta.history = [...(meta.history || []).slice(-4), compact];
+
   // Lifetime aggregates (Pass 25)
   const lt = meta.lifetime = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
   lt.swipes += (summary.tierLog || []).length;
@@ -1961,11 +2060,25 @@ function runMode(r) {
 // comma-joined strings so HogQL can splitByChar+arrayJoin them.
 function runContentProps(r, summary) {
   const join = (a) => (a || []).slice().sort().join(',');
+  // The pack's own run-summary fields ride run_end generically (R3/G2):
+  // scalars as-is, arrays joined, objects skipped — a pack instruments its
+  // subsystems by extending its summarize, never this file.
+  const packProps = {};
+  if (activePack.summarize) {
+    for (const [k, v] of Object.entries(activePack.summarize(r))) {
+      if (Array.isArray(v)) {
+        if (v.every((x) => typeof x !== 'object')) packProps[k] = v.join(',');
+      } else if (v === null || typeof v !== 'object') packProps[k] = v;
+    }
+  }
   return {
     rival: r.rival || 'none',
     band: join(summary.band),
     gear: join(r.accessories),
     hustles: join(r.hustles),
+    career_runs: meta.runs || 0,
+    last_card: (r.cardLog || [])[r.cardLog?.length - 1]?.e || 'none',
+    ...packProps,
   };
 }
 
@@ -2056,6 +2169,16 @@ function failLabelFor(endingKey) {
   return labels[endingKey];
 }
 
+// Consecutive daily-mode days ending at `d` (inclusive) — the streak the
+// share card and the pack's end note read. Pure ledger walk.
+function dailyStreakFor(d) {
+  const done = meta.dailyResults || {};
+  let n = 0;
+  const day = new Date(d + 'T12:00:00Z');
+  while (done[day.toISOString().slice(0, 10)]) { n++; day.setUTCDate(day.getUTCDate() - 1); }
+  return n;
+}
+
 function shareTextFor(summary, lp) {
   if (PRES.shareText) return PRES.shareText(summary, lp);
   const inst = activePack.loadoutById(summary.loadout);
@@ -2071,6 +2194,7 @@ function shareTextFor(summary, lp) {
 }
 
 function renderEndingScreen(ending, lp, trophies, evalr, summary) {
+  if (summary?.daily) summary.dailyStreak = dailyStreakFor(summary.daily);
   music.setMood('ending');
   const s = $('#screen-ending');
   s.innerHTML = '';
@@ -2150,6 +2274,11 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
 
   if (summary?.tierLog?.length) {
     wrap.append(el('p', 'tier-strip', summary.tierLog.map((t) => TIER_EMOJI[t] || '⬜').join('')));
+  }
+
+  // The daily loop's closing beat: the pack's "come back tomorrow" note.
+  if (summary?.daily && PRES.daily?.endNote) {
+    wrap.append(el('p', 'daily-note', PRES.daily.endNote(summary)));
   }
 
   const menu = el('div', 'menu');
@@ -2448,7 +2577,7 @@ function renderSettings() {
 
   menu.append(el('h3', 'contract-head', 'Career data'));
   menu.append(btn('❓ How to play', '', showHelp));
-  if (activePack.tutorialEvents.length) menu.append(btn('🎓 Replay the first gig', '', () => { save.clearRun(); startTutorial(); }));
+  if (activePack.tutorialEvents.length) menu.append(btn(PRES.tutorial?.replay || '🎓 Replay the first gig', '', () => { save.clearRun(); startTutorial(); }));
   const exportBtn = btn('📤 Export save (backup code)', '', async () => {
     const code = save.exportSave();
     try {

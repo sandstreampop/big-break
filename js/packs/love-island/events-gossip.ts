@@ -8,7 +8,7 @@ import type { GameEvent } from '../../types.js';
 
 export const GOSSIP_EVENTS: GameEvent[] = [
   {
-    id: 'li_hut_confess_1', act: 2, weight: 2, tags: ['camera', 'chat'],
+    id: 'li_hut_confess_1', act: [1, 2], weight: 4, tags: ['camera', 'chat'],
     art: 'li_beachhut',
     context: 'The Beach Hut · a leading question',
     prompt: '“So,” says the producer voice, light as anything. “Tell us about {rival}.” The chair creaks. The Hut knows exactly what it’s doing — it trades. You give it a headline, it gives you tomorrow’s.',
@@ -20,7 +20,7 @@ export const GOSSIP_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You go loud, and the edit goes louder. What comes back out has your voice and somebody else’s sentences. {rival} hears the remix by dinner.', effects: { charisma: 2, followers: 3, rivalOpinion: -4, rivalMood: 'fuming', burnout: 3, gainIntel: { about: 'rival', label: 'they’re rattled about the vote' } } },
           good: { text: 'You give the Hut a tidy little headline and the Hut, fair’s fair, gives one back: {rival} has been asking about your couple. Noted. Filed.', effects: { charisma: 5, followers: 5, rivalOpinion: -2, gainIntel: { about: 'rival', label: 'they’ve been asking about your couple' } } },
-          incredible: { text: 'Your confessional is so quotable production practically curtsies — and lets slip more than they meant to about {rival}’s week. The Hut trades. You traded up.', effects: { charisma: 8, followers: 8, public: 3, gainIntel: { about: 'rival', label: 'their game plan for the week' } } },
+          incredible: { text: 'Your confessional is so quotable production practically curtsies — and lets slip the thing they’ve been sitting on about {rival}. The Hut trades. You traded up.', effects: { charisma: 8, followers: 8, public: 3, surfaceSecret: 'rival' } },
         },
       },
       right: {
@@ -67,7 +67,7 @@ export const GOSSIP_EVENTS: GameEvent[] = [
   // into the real thing (ADR-0006's surfacing, on a deliberate player path —
   // the encounter-climax surfaces are the lucky shortcut, this is the graft).
   {
-    id: 'li_connect_dots', act: [2, 3], weight: 3, tags: ['strategy', 'graft'],
+    id: 'li_connect_dots', act: [1, 2, 3], weight: 9, tags: ['strategy', 'graft'],
     art: 'li_bedroom',
     requires: { intelAboutIs: 'rival:true', secretHeldIs: 'rival:false' },
     context: 'The dressing room · your notes, assembling themselves',

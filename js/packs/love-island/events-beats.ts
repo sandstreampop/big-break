@@ -22,7 +22,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['flirt', 'date'],
         governingStats: { rizz: 1 },
         outcomes: {
-          bad: { text: '“Oh — hi,” says the smile, which was aimed at someone behind you. You couple up anyway, both pretending this is fine, live, forever.', effects: { couple: true, rizz: 2, burnout: 3 } },
+          bad: { text: '“Oh — hi,” says the smile, which was aimed at someone behind you. You couple up anyway, both pretending this is fine, live, forever.', effects: { couple: true, rizz: 2, public: 2 } },
           good: { text: '“Took you long enough,” they murmur as you step forward — not surprised at all. In here, not-surprised is a love language.', effects: { couple: true, rizz: 5, public: 3 } },
           incredible: { text: 'You step forward and two other people visibly deflate. The nation clocks it. Day one, and you’re already a storyline.', effects: { couple: true, rizz: 8, public: 5, followers: 4 } },
         },
@@ -32,9 +32,40 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['strategy'],
         governingStats: { savvy: 1 },
         outcomes: {
-          bad: { text: 'You pick the safe option. The safe option immediately describes you to camera as “a slow burner,” which is villa for furniture.', effects: { couple: true, savvy: 2, burnout: 3 } },
+          bad: { text: 'You pick the safe option. The safe option immediately describes you to camera as “a slow burner,” which is villa for furniture.', effects: { couple: true, savvy: 2, public: 2 } },
           good: { text: 'You pick the one nobody will fight you for. Boring is underrated. Boring survives week one.', effects: { couple: true, savvy: 5, public: 3 } },
           incredible: { text: 'You read the whole lawn in one pass and pick the exact couple-shaped gap in it. A producer, somewhere, updates a whiteboard.', effects: { couple: true, savvy: 8, public: 4, graft: 3 } },
+        },
+      },
+    },
+  },
+
+  // The Bombshell persona's arrival (R8/C3a): unlockable-only, so it never
+  // enters seeded sims. Day one is a steal, not a mixer.
+  {
+    id: 'li_arrival_bomb', act: 1, chainOnly: true, tags: ['text', 'camera'],
+    art: 'li_bombshell',
+    context: 'Their day 9 · your day 1 · the lawn goes quiet',
+    prompt: '“Islanders — say hello to your newest arrival. #latecheckin” You walk in slow, the way the promo taught you. Six settled couples look up, and every single one does the same maths at the same time. You’re not joining this villa. You’re happening to it.',
+    choices: {
+      left: {
+        label: 'Pick a target tonight',
+        tags: ['flirt', 'strategy'],
+        governingStats: { rizz: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You pull the best-looking one for a chat and their other half joins it, uninvited, with a smile you’ll be seeing again. Coupled by midnight — surveilled by one.', effects: { couple: true, rizz: 2, followers: 3, addFlag: 'li_rival_active', rivalMood: 'fuming' } },
+          good: { text: '“Sorry — is this seat taken?” It was. It isn’t now. The villa recalculates over dinner; the nation does it faster.', effects: { couple: true, rizz: 5, followers: 5, public: 3 } },
+          incredible: { text: 'One chat. ONE. And the strongest couple on the lawn is suddenly a press release. You didn’t break a rule; you just walked in with better lighting.', effects: { couple: true, rizz: 8, followers: 8, public: 5 } },
+        },
+      },
+      right: {
+        label: 'Let them come to you',
+        tags: ['camera', 'rest'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You hold court at the breakfast bar and nobody quite dares. Respect, at a distance, on camera. The distance is the problem.', effects: { charisma: 2, followers: 3, public: 2 } },
+          good: { text: 'You unpack, slowly, in full view, and let the villa’s nerves do your grafting. Two of them crack by sundown and bring you juice.', effects: { charisma: 5, followers: 5, public: 3 } },
+          incredible: { text: 'By evening there’s a queue — a polite, terrified queue — for “a quick chat.” You’ve been here nine hours and you’re already the storyline.', effects: { charisma: 8, followers: 7, public: 5, graft: 3 } },
         },
       },
     },
@@ -568,6 +599,9 @@ export const BEAT_EVENTS: GameEvent[] = [
     },
   },
   {
+    // Safety net (R1/A5): with the current beat schedule a single chooser at
+    // the Act 2→3 break is unreachable (recoup1 re-couples or dumps first) —
+    // kept because producers.onActBreak routes here if content ever changes.
     id: 'li_recoup2_choose_single', act: 3, chainOnly: true, tags: ['text', 'recoupling'],
     art: 'li_firepit',
     context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
@@ -624,6 +658,8 @@ export const BEAT_EVENTS: GameEvent[] = [
     },
   },
   {
+    // Safety net (R1/A5): same reasoning as li_recoup2_choose_single, exposed
+    // side. Unreachable today by schedule, load-bearing if it ever isn't.
     id: 'li_recoup2_exposed_single', act: 3, chainOnly: true, tags: ['text', 'recoupling'],
     art: 'li_firepit',
     context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
@@ -972,6 +1008,38 @@ export const BEAT_EVENTS: GameEvent[] = [
           bad: { text: 'You hide by the pool till noon, and it mostly works, except the show frames it as “tension” and now everyone’s asking if you’re okay, which — fair.', effects: { savvy: 2, burnout: -8, public: -1 } },
           good: { text: 'Headphones, sun, water, no chat. You give the villa nothing for a morning and the villa, miraculously, survives. So do you.', effects: { savvy: 5, burnout: -11 } },
           incredible: { text: 'You take a whole morning for yourself and come back so restored that two people ask what you’ve had done. Rest. You’ve had rest done.', effects: { savvy: 8, burnout: -13, public: 4 } },
+        },
+      },
+    },
+  },
+
+  {
+    // The break (R1/A2): the tier-3 wobble. Fires once, the last
+    // exit ramp before Final Week's wall (76+, under the 79 line) — and the one card where a bad
+    // choice IS the Walk (tough it out, botch it, and you're done).
+    id: 'li_wobble_break', act: [2, 3], chainOnly: true, tags: ['rest', 'chat'],
+    art: 'li_beachhut',
+    context: 'Dawn · the end of the garden · packing distance from the gate',
+    prompt: 'You’re up before the sun, sitting on your suitcase — when did you pack the suitcase? — doing the one sum the villa can’t edit: stay or go. Somewhere above you a camera whirs awake. Whatever you decide, you have to decide it now.',
+    choices: {
+      left: {
+        label: 'Tough it out',
+        tags: ['strategy'],
+        governingStats: { savvy: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: '“I’m fine.” You say it to the mirror, the kettle, the Beach Hut, and none of them believe you. By lunch the villa is one wall of noise, and you’re done — properly done. You ask for the gate before the evening feed.', effects: { burnout: 25 } },
+          good: { text: 'You give yourself until the coffee goes cold to feel all of it. Then you unpack the case, put it back on the wardrobe, and go make eggs. Nobody ever knows.', effects: { burnout: -8, savvy: 2 } },
+          incredible: { text: 'You sit with it until the sun is properly up, and something quietly rewires. The villa gets the same person back, minus the noise. That night’s Beach Hut is almost unrecognisable.', effects: { burnout: -12, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Ask for help',
+        tags: ['rest', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: '“I need a day,” you tell production, and get one — off-camera, a phone call home, a walk outside the walls. The episode barely features you. That was the price. It was cheap.', effects: { burnout: -10, public: -2, followers: -2 } },
+          good: { text: '“Talk to someone today,” says the welfare chat, and you do — properly, ugly bits included. You come back lighter. The show, to its credit, doesn’t use a second of it.', effects: { burnout: -14, public: -1 } },
+          incredible: { text: 'You say the quiet thing to the right person and the machine, for once, works: a morning off the lawn, your mum’s voice, a plan. You walk back in like the Season just started.', effects: { burnout: -16 } },
         },
       },
     },

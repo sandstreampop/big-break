@@ -21,6 +21,7 @@ const BEATS: { key: string; act: number; at: number }[] = [
   { key: 'rivalenc', act: 1, at: 3 },    // early Arrival: the Rival, established (ADR-0005 V1)
   { key: 'bomb1', act: 1, at: 6 },       // late Act 1: the first Bombshell
   { key: 'partnerenc1', act: 1, at: 7 }, // late Arrival: the Partner, actually met (v2 arc)
+  { key: 'bestieenc', act: 2, at: 3 },   // post-Casa: the ride-or-die forms (R7/D2)
   { key: 'rivalmove', act: 2, at: 6 },   // post-Casa: the Rival makes their move (v2 arc)
   { key: 'bomb2', act: 2, at: 7 },       // post-Casa: the Act 2 Bombshell (rarely, the steal)
   { key: 'movienight', act: 2, at: 9 },  // the big Reveal, before anyone chooses
@@ -35,7 +36,10 @@ const BEATS: { key: string; act: number; at: number }[] = [
 // for the ceremony), so the acts stretch to keep the ambient connective
 // tissue between the peaks (ADR-0005's mostly-ambient deck) instead of
 // letting scheduled beats crowd it out.
-const ACT_LENGTHS: Record<number, number> = { 1: 10, 2: 13, 3: 9 };
+// R7/D2: the Bestie arc joins act 2's schedule, and earns its days — The
+// Turn runs 15 so the ambient connective tissue keeps its v2 share
+// (ADR-0005's mostly-ambient rule) instead of being eaten by beats.
+const ACT_LENGTHS: Record<number, number> = { 1: 10, 2: 15, 3: 9 };
 
 const beatTag = (ev: any) => (ev.tags || []).find((t: string) => t.startsWith('beat:'));
 
@@ -52,8 +56,10 @@ export const producersPlugin: Plugin = {
   // rivalMagnet (the Heartthrob's poaching exposure) is stamped here so the
   // coupling plugin's ceremony math stays a pure state read.
   onRunStart(state) {
-    state.rivalMagnet = !!islanderTypeById(state.loadout)?.quirk?.hooks?.rivalMagnet;
-    state.pendingChainId = 'li_arrival';
+    const hooks: any = islanderTypeById(state.loadout)?.quirk?.hooks || {};
+    state.rivalMagnet = !!hooks.rivalMagnet;
+    // The Bombshell persona (R8): no mixer — you arrive INTO a coupled villa.
+    state.pendingChainId = hooks.bombshellStart ? 'li_arrival_bomb' : 'li_arrival';
   },
 
   // Act breaks are where the structure lands (ADR-0002/0003): Casa Amor splits

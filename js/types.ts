@@ -341,6 +341,19 @@ export interface Presenter {
   helpBlocks?: string[];
   // Copy for the banked-bonus (encore) mechanic's arm toggle.
   encore?: { ready: string; armed: string };
+  // Tutorial copy: the title-screen offer/skip/replay labels and the wrap-up
+  // screen (verdict ribbon, title, art slot, closing text, lesson recap).
+  // The tutorial MECHANISM (tutorialEvents/tutorialStart, coach marks,
+  // forceTier) is engine/shell-generic; only the words are the pack's.
+  tutorial?: {
+    offer: string; skip: string; replay: string;
+    hud?: string; // the HUD act-strip label while the tutorial runs
+    end: {
+      verdict: string; title: string; art?: string; text: string;
+      lessons: { cls: string; html: string }[];
+      next?: string; // the "start the real thing" button label
+    };
+  };
   // Crossroads copy, and the pre-finale choice screen (head/sub/options; an
   // option is { title, blurb, stat, amount, label, apply(state) }).
   crossroads?: { head: string; sub: string };
@@ -365,6 +378,47 @@ export interface Presenter {
   cardCast?: (state: RunState, ev: GameEvent) => {
     name: string; face: string; moodFace?: string | null; sub?: string | null; cls?: string;
   }[] | null;
+
+  // ── The clarity screens: four sibling channels of the overlay note. Each is
+  // a generic presentation SLOT the shell renders when a pack provides it —
+  // the shell knows layout, never content, and a pack that omits one gets the
+  // original shell behavior byte-for-byte. All four MUST be pure reads of
+  // state (deals re-render on resume; the sims never render). ──
+
+  // A persistent row of this run's load-bearing characters, rendered above
+  // the dealt card and re-read every deal. `read` is a short qualitative
+  // state label (a tier, a mood — never a raw number); `live` marks the
+  // slot(s) the current scene is about; `sheet` backs a tap-to-inspect.
+  stage?: (state: RunState, ev: GameEvent | null) => {
+    label: string; name: string; face: string; moodFace?: string | null;
+    read?: string | null; cls?: string; live?: boolean;
+    sheet?: { title: string; lines: string[] };
+  }[] | null;
+  // The result beat: a pack's presentation of HOW the swipe landed, rendered
+  // inside the result overlay — a reacting portrait plus qualitative movement
+  // lines, replacing the numeric chips it claims via hideChipKeys.
+  resultStage?: (state: RunState, result: any) => {
+    portrait?: { face: string; moodFace?: string | null; name?: string; sub?: string | null; cls?: string } | null;
+    reads?: { html: string; cls?: string }[];
+    hideChipKeys?: string[];
+  } | null;
+  // A full-screen act-transition takeover: the pack's own "previously on"
+  // recap (title, kicker, labeled blocks), replacing the default act-intro
+  // copy inside the act interstitial. `seed` is a per-run flavor seed for
+  // line rotation — NOT the play RNG.
+  recap?: (state: RunState, act: number, seed: number) => {
+    kicker?: string; title: string;
+    blocks: { label?: string; html: string; cls?: string }[];
+  } | null;
+  // Set-piece framing on a dealt card: a ceremonial banner plus explicit
+  // stakes-in lines rendered above the card, and a class for scene styling.
+  // The honest-forecast contract applies: stakes must reflect real state.
+  setPiece?: (state: RunState, ev: GameEvent) => {
+    banner: string; sub?: string; stakes?: { html: string; cls?: string }[]; cls?: string;
+    // Optional feel cue the shell plays generically: 'triumph' (confetti,
+    // win sting) or 'blow' (shake, heavy haptic). Content-free.
+    mood?: 'triumph' | 'blow';
+  } | null;
   // The art system's reactive-scene inputs, mapped from this pack's state.
   vibe?: (state: RunState) => { fame: number; network: number; burnout: number };
   // Art slots this pack registers with the generated-scene painter:
@@ -374,6 +428,13 @@ export interface Presenter {
   offerAllLoadouts?: boolean;
   // This pack ships the weekly Gauntlet mode (its build draws on pack data).
   gauntlet?: boolean;
+  // Daily-mode copy: the mode's display name (title button, persona screen)
+  // and an end-screen note (streak-aware "come back tomorrow"). The daily
+  // MECHANISM (shared date seed, results ledger) is engine/shell-generic.
+  daily?: { name: string; endNote?: (summary: any) => string };
+  // Comeback-mode copy (title button, persona-screen header/sub); the
+  // TRANSFORM stays Pack.comeback. Music's Second Act is the default.
+  comeback?: { label: string; head: string; sub: string };
 }
 
 export interface Pack {
