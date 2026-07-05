@@ -105,7 +105,10 @@ grind."
    replayability, tight pacing, and low commitment; the three-Summit divergence
    *rewards* replaying. Longer runs risk pacing sag, repetition, and fatigue.
    There's a genuine **positioning fork** — *"short replayable roguelike"* vs
-   *"a longer narrative season"* — and it's Viktor's call, not a detail.
+   *"a longer narrative season"* — and it's Viktor's call, not a detail. Laid out
+   as an explicit A/B/C choice in
+   [`V4-POSITIONING-FORK.md`](./V4-POSITIONING-FORK.md) (recommendation: the
+   hybrid — a longer season built from short "weeks").
 2. **Everything numeric is tuned to ~28 cards** — `actWear`/burnout, `jitterByAct`,
    the win gates, the seeded-arc slots — and the **golden masters** pin it.
    Extending re-tunes all of it and deliberately re-baselines the goldens.
