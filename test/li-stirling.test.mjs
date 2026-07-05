@@ -104,7 +104,8 @@ test('a surfaced secret gets its authored reaction, once per surface', () => {
   s.secretSurfacedCount = 1;
   const r1 = {};
   stirlingPlugin.afterResolve(s, r1, { ev, choice, tier: 'good', rng: engine.mulberry32(4) });
-  assert.ok(r1.overlayNote && /know|secret|fifty/i.test(r1.overlayNote.html), 'reacts to new intel');
+  assert.ok(r1.overlayNote && BEAT_REACT.secret.some((l) => r1.overlayNote.html.includes(l.text)),
+    'reacts to new intel with a secret-pool line');
   const r2 = {};
   stirlingPlugin.afterResolve(s, r2, { ev, choice, tier: 'good', rng: engine.mulberry32(4) });
   assert.equal(r2.overlayNote, undefined, 'no re-react to old intel');

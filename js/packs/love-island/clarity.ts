@@ -283,6 +283,8 @@ function storySoFar(state: RunState, act: number): string {
       'Week one: sun cream, first dates, and eye contact with consequences.',
       'One week down. Everyone said “vibes” a minimum of forty times.',
       'Arrival week is over. The airport tans have faded; the agendas haven’t.',
+      'Half-time in paradise. The couples think they’re settled. Production disagrees, and production has a budget.',
+      'One week down. Feelings have been caught. Some were even meant.',
     ], 7);
     const couple = p
       ? ` You coupled up with <b>${p}</b>, and the nation started having opinions in group chats. ${r} started having them out loud.`
