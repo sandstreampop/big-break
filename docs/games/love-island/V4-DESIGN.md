@@ -68,6 +68,58 @@ web*, not the web's whole antagonist.
 
 ---
 
+## Pillar 0 — Length is the substrate: the season needs room to breathe
+
+A later note from Hillevi, and a foundational one: **each run is too short.** The
+game currently plays a whole eight-week season in **~28 villa moments**
+(`actLengths` 8 / 12 / 8 across the three acts — see
+[`config.ts`](../../../js/config.ts)). That's a tight, replayable *roguelike*
+run. Her verdict as a viewer: it doesn't feel like a *season*. She wants a
+**richer, longer experience** — more content per run — not another quick loop.
+
+This isn't a fourth request bolted on; it's the **enabling condition for every
+pillar above it**:
+
+- You cannot build a **relationship-as-a-garden** (Pillar 1) — slow accumulation,
+  inside jokes, a connection you *watch* grow — in ~28 beats. A garden needs
+  days. Grafting only reads as grafting if there's time to do it repeatedly.
+- The **living web** (the core reframe) needs runway for other couples'
+  storylines to *set up, drift, and pay off*. Ripples need time to travel.
+- The **season spine** (day one → first bombshell → Casa → Movie Night →
+  families → Final) is a lot of tentpoles; at 28 cards each gets ~3–4 beats, so
+  everything arrives rushed and telegraphed. The arc has no *middle*.
+- The show's **duration is part of the fantasy** — eight weeks locked in together
+  is *why* friendships and real connections form at all.
+
+**Design consequence.** Fill the extra length with **arc, not filler.** The new
+runtime should go to: the **daily-rhythm texture** Hillevi described (the morning
+coffee, the fire-pit debriefs, "where's your head at?") and the outward-pointing
+card types from [`V4-LIVING-VILLA.md`](./V4-LIVING-VILLA.md) (witness / consequence
+/ gossip / callback beats) — *not* more of the same choose-left-or-right cards.
+Length should read as "a season with quiet days and big nights," not "a longer
+grind."
+
+**Honest tensions to decide at the ADR stage (not here):**
+
+1. **This trades against the roguelike identity.** Short runs bought
+   replayability, tight pacing, and low commitment; the three-Summit divergence
+   *rewards* replaying. Longer runs risk pacing sag, repetition, and fatigue.
+   There's a genuine **positioning fork** — *"short replayable roguelike"* vs
+   *"a longer narrative season"* — and it's Viktor's call, not a detail.
+2. **Everything numeric is tuned to ~28 cards** — `actWear`/burnout, `jitterByAct`,
+   the win gates, the seeded-arc slots — and the **golden masters** pin it.
+   Extending re-tunes all of it and deliberately re-baselines the goldens.
+3. **Anti-repetition has to scale with length.** The novelty weighting and
+   `seenCards` machinery already exist; a longer deck leans on them harder, plus
+   the daily-rhythm beats must have enough variety not to feel samey.
+
+**Levers (options, not a decision):** raise `actLengths`; add acts / a longer
+middle; or — most on-theme — introduce a light **week/day structure** so the
+season has a real weekly rhythm, with quiet daily beats between the tentpoles.
+The right answer is likely structural (a rhythm), not just a bigger number.
+
+---
+
 ## The design pillars
 
 ### 1. A relationship is a garden you tend daily — not a number you buy
