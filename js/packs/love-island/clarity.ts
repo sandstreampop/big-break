@@ -23,6 +23,8 @@
 import { castById, SHAPES } from './cast.js';
 import { characterRead, opinionTier, secretOf, TIER_LABEL, MOODS } from './plugins/characters.js';
 import { ceremonyOutlook } from './plugins/coupling.js';
+import { FACTION_KEYS, FACTION_META, factionTier } from './plugins/factions.js';
+import { THREADS, threadState, litThreads } from './plugins/coupleweb.js';
 import { PATHS, WIN_GATES } from './manifest.js';
 import type { RunState, GameEvent } from '../../types.js';
 
@@ -206,6 +208,35 @@ export function villaResultStage(state: RunState, result: any) {
       : { html: `💣 ${bomb} moves you down the list.`, cls: '' });
   }
 
+  // The nation's wings, spoken (ADR-0012): faction movement reads as living
+  // rooms reacting, never as three more number chips. Chips hide; the loudest
+  // wing gets the line (one, at most two — phones are the platform).
+  const FACTION_READS: Record<string, { up: string[]; down: string[] }> = {
+    romantics: {
+      up: ['🌹 The Romantics melt, nationally.', '🌹 Somewhere, a nan approves.', '🌹 The soft wing adds you to the good cushion.'],
+      down: ['🌹 The Romantics go quiet in group chats.', '🌹 The soft wing files a complaint.', '🌹 A nation of nans narrows its eyes.'],
+    },
+    selfrespect: {
+      up: ['💅 The spine-havers salute.', '💅 The Self-Respect crowd frames the clip.', '💅 Backbone, clocked and logged.'],
+      down: ['💅 The Self-Respect crowd winces.', '💅 “Doormat,” types someone, regretfully.', '💅 The spine wing updates your file.'],
+    },
+    drama: {
+      up: ['🍿 The Drama-lovers are FED.', '🍿 The chaos wing stands and applauds.', '🍿 Popcorn sales, reportedly, up.'],
+      down: ['🍿 The Drama-lovers check the other channel.', '🍿 Too wholesome; the chaos wing yawns.', '🍿 The popcorn goes back in the cupboard.'],
+    },
+  };
+  const factionDeltas = (result.deltas || []).filter((d: any) =>
+    (d.key === 'romantics' || d.key === 'selfrespect' || d.key === 'drama') && d.amount);
+  if (factionDeltas.length) {
+    hideChipKeys.push('romantics', 'selfrespect', 'drama');
+    const loudest = [...factionDeltas].sort((a: any, b: any) => Math.abs(b.amount) - Math.abs(a.amount)).slice(0, 2);
+    for (const d of loudest) {
+      if (Math.abs(d.amount) < 2) continue;
+      const pool = FACTION_READS[d.key][d.amount > 0 ? 'up' : 'down'];
+      reads.push({ html: pick(state, pool, d.key.length), cls: d.amount > 0 ? 'read-good' : 'read-bad' });
+    }
+  }
+
   // Moods this card set: weather, reported as weather.
   const moodBits: [string, string][] = [
     ['partnerMood', state.partner], ['rivalMood', state.rival], ['bombshellMood', state.bombshellId],
@@ -260,6 +291,7 @@ function intentionRead(state: RunState): string {
   const NAMES: Record<string, string> = {
     public: 'The nation', bond: 'The couple', loyalty: 'The being-genuine part',
     followers: 'The following', charisma: 'The main-character energy',
+    story: 'The storyline',
   };
   const parts = Object.keys(gates).map((k) => `${NAMES[k] || k}: <b>${distanceWord(gateRatio(state, k))}</b>.`);
   return `You declared <b>${path.name}</b>. ${parts.join(' ')}`;
@@ -358,14 +390,61 @@ function whatsComing(state: RunState, week: number): string {
   return `⚠️ ${recoup} After that: families with opinions, final dates, and a public vote climbing like a fever. The envelope is already printed.${hot}`;
 }
 
+// The nation, read out by wing (ADR-0012 — tiers on screen, floats
+// backstage). One line of state plus one line of interpretation, patterned
+// on where the three wings actually sit.
+function nationRead(state: RunState): string {
+  const tiers = FACTION_KEYS.map((k) => ({ k, meta: FACTION_META[k], tier: factionTier(state[k] ?? 0) }));
+  const chips = tiers.map((t) => `${t.meta.icon} ${t.meta.name.replace('The ', '')}: <b>${t.tier}</b>`).join(' · ');
+  const lost = tiers.filter((t) => t.tier === 'lost');
+  const warm = tiers.filter((t) => t.tier === 'onside' || t.tier === 'devoted');
+  const verdictLine = lost.length
+    ? `${lost[0].meta.icon} ${lost[0].meta.name} have gone off you — ${lost[0].meta.wants}, and they’re not seeing it.`
+    : warm.length === 3 ? 'All three wings onside. At a vote, that’s a landslide waiting.'
+    : warm.length === 0 ? 'Nobody’s sold yet. The vote is a coin with three sides.'
+    : 'You can’t please a nation. You’re pleasing most of one.';
+  return `${chips}<br>${verdictLine}`;
+}
+
+// The villa moved whether you watched or not: threads that ended OFFSCREEN
+// when their window closed last week, plus what the cameras follow now. A
+// pure read — the "since last recap" question is answered structurally
+// (window[1] === the week that just ended).
+const THREAD_NAMES: Record<string, string> = {
+  triangle: 'Marco & Sophia', slowburn: 'Dev & Tash', lovebomb: 'Kai & Chloe',
+  feud: 'the villa cold war', scorched: 'Sophia, at large',
+};
+const OFFSCREEN_LINES: Record<string, string> = {
+  'triangle:off_quiet': 'Marco and Sophia patched it up off-camera — a peace with the shelf life of a smoothie.',
+  'slowburn:off_parked': 'Dev never quite said the thing to Tash. The wall tea keeps its vigil.',
+  'lovebomb:off_wobbles': 'Kai and Chloe cooled without ceremony. The gel nails point elsewhere now.',
+  'feud:off_simmer': 'The cold war went dormant — unsigned, unforgotten, both kettles armed.',
+  'scorched:off_exit': 'Sophia took her summer somewhere quieter. The villa pretends not to miss the danger.',
+};
+function meanwhileRead(state: RunState, act: number): string | null {
+  const bits: string[] = [];
+  for (const def of THREADS) {
+    const t = threadState(state, def.id);
+    if (t.resolved && String(t.resolved).startsWith('off_') && def.window[1] === act - 1) {
+      bits.push(OFFSCREEN_LINES[`${def.id}:${t.resolved}`] || `${THREAD_NAMES[def.id]} resolved itself while nobody filmed it.`);
+    }
+  }
+  const lit = litThreads(state).map((id) => THREAD_NAMES[id]).filter(Boolean);
+  if (lit.length) bits.push(`The cameras are following: <b>${lit.join('</b> and <b>')}</b>.`);
+  return bits.length ? `👀 ${bits.join(' ')}` : null;
+}
+
 export function villaRecap(state: RunState, act: number, _seed: number) {
   if (state.tutorial || act < 2 || act > 6) return null;
+  const meanwhile = meanwhileRead(state, act);
   return {
     kicker: `PREVIOUSLY, IN THE VILLA · WEEK ${act - 1}`,
     title: WEEK_TITLE[act],
     blocks: [
       { html: storySoFar(state, act), cls: 'recap-story' },
       { label: 'YOUR COUPLE', html: coupleRead(state), cls: 'recap-couple' },
+      ...(meanwhile ? [{ label: 'MEANWHILE', html: meanwhile, cls: 'recap-story' }] : []),
+      { label: 'THE NATION', html: `🗳️ ${nationRead(state)}`, cls: 'recap-intention' },
       { label: 'YOUR INTENTION', html: `🎯 ${intentionRead(state)}`, cls: 'recap-intention' },
       { label: 'THIS WEEK', html: whatsComing(state, act), cls: 'recap-threat' },
     ],
@@ -389,6 +468,11 @@ function ceremonyStakes(state: RunState) {
     : stake('💘 No Partner, no Connection — the public is the whole plan', 'sp-risk'));
   out.push(o.publicSafe ? stake('🗳️ The public: they’d keep you', 'sp-safe')
     : stake('🗳️ The public: undecided at best', 'sp-risk'));
+  // The factional texture on the vote (ADR-0012): name the wing that's gone,
+  // or the landslide — one line, only when there's something to say.
+  const lostWing = FACTION_KEYS.find((k) => factionTier(state[k] ?? 0) === 'lost');
+  if (lostWing) out.push(stake(`${FACTION_META[lostWing].icon} ${FACTION_META[lostWing].name} won’t be voting for you tonight`, 'sp-risk'));
+  else if ((state.surge ?? 0) >= 3) out.push(stake('🗳️ All three wings of the nation: onside', 'sp-safe'));
   if (state.flags.includes('li_rival_active') && rival) {
     const sec = secretOf(state, 'rival');
     out.push(sec.known && !sec.spent
@@ -403,6 +487,78 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
   const id = ev.id || '';
   const tags: string[] = ev.tags || [];
   const partner = castById(state.partner)?.name || 'your partner';
+
+  // ---- The couple-web's framed moments (ADR-0013): a thread resolving is a
+  // set-piece — the villa stops for it. Beats wear the slim ribbon after. ----
+  if (id === 'li_web_tri_showdown') {
+    return {
+      key: 'web-tri', banner: 'THE SHOWDOWN', cls: 'sp-rival',
+      sub: 'Sophia has assembled the villa. Marco has assembled a defence. One of these will hold.',
+      stakes: [
+        stake('🍿 The Drama-lovers have waited all season for this', 'sp-risk'),
+        stake('📺 You’re in frame. Pick a distance', 'sp-risk'),
+      ],
+    };
+  }
+  if (id === 'li_web_slow_together') {
+    return {
+      key: 'web-slow', banner: 'THE SLOW BURN', cls: 'sp-date',
+      sub: 'Dev is standing up at the firepit, and for once the villa shuts up on its own.',
+      stakes: [stake('🌹 If he lands it, the whole nation softens', 'sp-safe')],
+      mood: 'triumph' as const,
+    };
+  }
+  if (id === 'li_web_love_wakes' || id === 'li_web_love_doubles') {
+    return {
+      key: 'web-love', banner: 'THE QUESTION', cls: 'sp-ceremony',
+      sub: id === 'li_web_love_wakes'
+        ? 'Kai puts the spatula down. In Kai terms, a gavel.'
+        : 'Chloe has an announcement voice on. Check the calendar.',
+      stakes: [stake('💅 Somebody’s game gets graded this morning', 'sp-risk')],
+    };
+  }
+  if (id === 'li_web_sco_0') {
+    return {
+      key: 'web-sco', banner: 'SCORCHED EARTH', cls: 'sp-bomb',
+      sub: 'Sophia — single, furious, immaculate — has chosen a seat. It’s next to your other half.',
+      stakes: [
+        stake(`💘 ${partner} is the target tonight`, 'sp-risk'),
+        stake('🌹 How you handle it IS the storyline', 'sp-risk'),
+      ],
+    };
+  }
+
+  // ---- The player couple's own arcs (ADR-0013), framed. ----
+  if (id.startsWith('li_ick_') && id !== 'li_ick_talk' && id !== 'li_ick_theirs' && id !== 'li_ick_watch') {
+    return {
+      key: 'ick', banner: 'THE ICK', cls: 'sp-hut',
+      sub: 'Love’s internal lie-detector just pinged. It does not offer a snooze button.',
+      stakes: [
+        stake('💘 Named early, an ick is a conversation. Buried, it compounds', 'sp-risk'),
+        stake('📖 Surviving one is exactly the storyline the nation crowns'),
+      ],
+    };
+  }
+  if (id === 'li_repair_mine_1') {
+    return {
+      banner: 'THE RE-COMMITMENT', cls: 'sp-ceremony',
+      sub: 'Three days of coffee and shutting up. Now the sentence, at the firepit, on the record.',
+      stakes: [
+        stake('💘 Land it plainly and the ledger reopens', 'sp-safe'),
+        stake('🌹 The Romantics are watching. So is the wing that thinks you got off easy', 'sp-risk'),
+      ],
+    };
+  }
+  if (id === 'li_repair_theirs_0' || id === 'li_repair_theirs_1') {
+    return {
+      key: 'repair-theirs', banner: 'THE FORGIVENESS QUESTION', cls: 'sp-ceremony',
+      sub: 'The coffee has been arriving. The sentence got said. The queue number being called is yours.',
+      stakes: [
+        stake('🌹 Forgive, and the soft wing crowns you — the spine wing calls it early', 'sp-risk'),
+        stake('💅 Make them earn it, and the arithmetic reverses', 'sp-risk'),
+      ],
+    };
+  }
 
   // ---- Day One (v3.2: the season opens framed, not dealt cold) ----
   if (id === 'li_arrival') {
@@ -687,6 +843,7 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
         mine ? stake('🎬 There is footage of you. You know exactly which bit.', 'sp-risk')
           : stake('🎬 Your reel is clean. That has never once stopped Movie Night.', ''),
         ...(state.partner ? [stake(`🎬 ${partner}’s reel: contents unknown`, 'sp-risk')] : []),
+        stake('🍿 The Drama-lovers have been fed all week. Tonight they feast', 'sp-risk'),
       ],
     };
   }
@@ -736,11 +893,26 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
     };
   }
 
-  // The Final's authored cards.
+  // The Final's authored cards — the vote is live, so the nation's wings get
+  // read out (ADR-0012), and a Win-the-Villa run hears its story ledger.
   if (ev.finaleCard || id.startsWith('li_final_')) {
+    const lost = FACTION_KEYS.filter((k) => factionTier(state[k] ?? 0) === 'lost');
+    const stakes = [
+      (state.surge ?? 0) >= 3
+        ? stake('🗳️ All three wings of the nation are onside — a surge is building', 'sp-safe')
+        : lost.length
+          ? stake(`${FACTION_META[lost[0]].icon} ${FACTION_META[lost[0]].name} never came back to you`, 'sp-risk')
+          : stake('🗳️ The nation is split. Every wing votes its own show', ''),
+      ...(state.path === 'winvilla'
+        ? [(state.story || 0) >= 2
+          ? stake(`📖 Your season had a story — ${state.story} storylines the nation can retell`, 'sp-safe')
+          : stake('📖 A smooth season. The crown wants a story it can retell', 'sp-risk')]
+        : []),
+    ];
     return {
       banner: 'THE FINAL', cls: 'sp-final',
       sub: 'Last night in the villa. The nation is voting right now.',
+      stakes,
     };
   }
   return null;

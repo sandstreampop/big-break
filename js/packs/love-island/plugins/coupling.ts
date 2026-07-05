@@ -9,6 +9,7 @@
 
 import { castById, couplePool, sameGenderPool } from '../cast.js';
 import { opinionTier, setCharMood } from './characters.js';
+import { movePublicFactional } from './factions.js';
 import type { Plugin, RunState } from '../../../types.js';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -21,7 +22,9 @@ export const COUPLING = {
   // much higher than they did at the v2 acts' checks — the floors rose to
   // keep a recoupling a real question instead of a formality.
   bondFloor: 42,       // chosen-Recoupling survival: Bond ≥ this holds your Partner
-  publicFloor: 56,     // …OR Public ≥ this and somebody picks you anyway
+  publicFloor: 60,     // …OR Public ≥ this and somebody picks you anyway
+                       // (raised for ADR-0012: the factional reactions inject
+                       // net vote mid-season, so the S2 floor stopped biting)
   rivalPenalty: 8,    // active Rival poaches: effective Bond at the check drops
   // ADR-0006: the Rival's OPINION of you feeds the poach — a rival who rates
   // you pulls their punches; one who despises you goes in harder. Added to
@@ -92,10 +95,12 @@ function moveBond(state: RunState, v: number, pctx: any) {
 }
 function movePublic(state: RunState, v: number, pctx: any) {
   if (!v) return 0;
-  const before = state.public;
-  state.public = Math.max(0, before + v);
-  pushDelta(pctx, 'public', before === state.public ? 0 : state.public - before);
-  return state.public - before;
+  // Public is the factions' derived aggregate (ADR-0012): the coupling
+  // plugin's own vote moves route through the factional writer (uniform —
+  // no choice tags here), so the aggregate can't drift from its parts.
+  const d = movePublicFactional(state, v);
+  pushDelta(pctx, 'public', d);
+  return d;
 }
 
 // Draw a new Partner from the couple pool (never your exes while anyone fresh

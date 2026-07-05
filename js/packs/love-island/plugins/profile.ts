@@ -36,13 +36,8 @@ export const profilePlugin: Plugin = {
   applyResource(res, effects, state, ctx) {
     const e = effects as any;
     const hooks = (ctx as any).hooks || {};
-    if (res === 'public') {
-      const v = e.public || 0;
-      if (!v) return 0;
-      const before = state.public;
-      state.public = Math.max(0, before + v);
-      return state.public - before;
-    }
+    // (`public` moved to the factions plugin in ADR-0012 — it's the derived
+    // aggregate now, and the factions plugin is its single writer.)
     if (res === 'followers') {
       let v = e.followers || 0;
       // The Influencer: drama/camera moments that LAND throw off bonus Followers.

@@ -111,6 +111,23 @@ const DESCRIPTORS = {
         'li_enc_rmove_poach', 'li_enc_rmove_rumour',
         'li_enc_p3_high', 'li_enc_p3_low', 'li_second_wave'],
       payoffs: [],
+    }, {
+      // The couple-web (ADR-0013): thread cards are requires-gated stage
+      // VARIANTS with their own forced surfacing (the drama manager's lit
+      // windows + weighted bag), and the player-arc cards (ick, repair) are
+      // flag-gated storylines — the same delivery-owned class as the
+      // scheduled beats above.
+      id: 'li_couple_web',
+      setup: ['li_web_tri_0', 'li_web_tri_1', 'li_web_tri_showdown', 'li_web_tri_fizzle',
+        'li_web_slow_0', 'li_web_slow_1', 'li_web_slow_together', 'li_web_slow_parked',
+        'li_web_love_0', 'li_web_love_1', 'li_web_love_wakes', 'li_web_love_doubles',
+        'li_web_feud_0', 'li_web_feud_peace', 'li_web_feud_coldwar',
+        'li_web_sco_0', 'li_web_sco_loud', 'li_web_sco_grace',
+        'li_web_cb_showdown', 'li_web_cb_together', 'li_web_cb_wakes',
+        'li_ick_sweet', 'li_ick_game', 'li_ick_slow', 'li_ick_resurface', 'li_ick_theirs',
+        'li_repair_mine_0', 'li_repair_mine_1', 'li_repair_theirs_0', 'li_repair_theirs_1',
+        'li_nation_correction'],
+      payoffs: [],
     }],
   },
 };

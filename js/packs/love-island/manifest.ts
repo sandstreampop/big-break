@@ -45,21 +45,26 @@ export const PHASE_OF_WEEK: Record<number, number> = { 1: 1, 2: 1, 3: 2, 4: 2, 5
 // the seeded stat-roll order the goldens pin.
 export const STATS: string[] = ['rizz', 'loyalty', 'savvy', 'charisma'];
 
-// Public anchors Win the Villa and doubles as the finale momentum clutch (the
-// late-season vote surge). Followers anchors The Brand. The `bond` resource
-// (displayed as "Connection" — the id never changes) anchors The Real Thing
-// and is owned by the Coupling plugin (its clamps, its resets). Graft is
-// the cost resource — social capital banked from good villa moments, spent on
-// the daybed for Angles.
-export const RESOURCES: string[] = ['public', 'followers', 'bond', 'graft'];
+// The nation is THREE audiences that want opposite things (ADR-0012): the
+// Romantics, the Self-Respect crowd, and the Drama-lovers — each a resource
+// cards can move directly. Public is now the DERIVED aggregate (the mean of
+// the three, recomputed by the factions plugin), so it still anchors Win the
+// Villa and the dumped-by-vote fail without naming a faction; the finale
+// momentum clutch moved to `surge` (net approval — see momentumResource
+// below). Followers anchors The Brand. The `bond` resource (displayed as
+// "Connection" — the id never changes) anchors The Real Thing and is owned by
+// the Coupling plugin (its clamps, its resets). Graft is the cost resource —
+// social capital banked from good villa moments, spent on the daybed for
+// Angles.
+export const RESOURCES: string[] = ['public', 'followers', 'bond', 'graft', 'romantics', 'selfrespect', 'drama'];
 
 // #region paths
 export const PATHS: Record<string, PathDef> = {
   winvilla: {
     id: 'winvilla',
     name: 'Win the Villa',
-    blurb: 'The public crowns you and whoever you’re holding hands with by then. Fifty grand, split with feeling.',
-    gateLabel: 'Public 106 · Connection 54',
+    blurb: 'The public crowns you and whoever you’re holding hands with by then. Fifty grand, split with feeling. The nation wants a love STORY — flawless and frictionless finishes second.',
+    gateLabel: 'Public 106 · Connection 50 · A Story 2',
     icon: '👑',
   },
   realthing: {
@@ -84,8 +89,13 @@ export const PATHS: Record<string, PathDef> = {
 // near-miss over the line — the late vote surge, on-format. Tuned for the v4
 // six-week season (~47 cards/run vs the v2 ~33 — resources and stats
 // accumulate ~40% higher, so the ceilings rose with them; ADR-0011).
+// Win the Villa is STORY-GATED (ADR-0013, Pillar 8): the crown demands an
+// earned arc — `story` is the couple-web plugin's counter of survived
+// ruptures / redemptions / tested-and-came-backs, read generically through
+// gateValue. A drama-free run books the People's Runners-Up, never the
+// envelope; friction is the entry fee, not a penalty.
 export const WIN_GATES: Record<string, Record<string, number>> = {
-  winvilla: { public: 106, bond: 54 },
+  winvilla: { public: 106, bond: 50, story: 2 },
   realthing: { bond: 90, loyalty: 93 },
   brand: { followers: 96, charisma: 76 },
 };
@@ -105,6 +115,14 @@ export const RESOURCE_META: Record<string, StatMeta> = {
   // display/copy only — the internal resource id stays `bond`, everywhere).
   bond: { name: 'Connection', icon: '💘' },
   graft: { name: 'Graft', icon: '💪' },
+  // The three audiences (ADR-0012).
+  romantics: { name: 'Romantics', icon: '🌹' },
+  selfrespect: { name: 'Self-Respect', icon: '💅' },
+  drama: { name: 'Drama-lovers', icon: '🍿' },
+  // Display meta for the derived reads (not resources; read via gateValue):
+  // the clutch and the story gate label everywhere the UI numbers a key.
+  surge: { name: 'Surge', icon: '📈' },
+  story: { name: 'A Story', icon: '📖' },
 };
 
 // Fail states beyond the engine's universal In-Your-Head Walk (fromAct is in
@@ -119,7 +137,7 @@ export const RESOURCE_META: Record<string, StatMeta> = {
 //    (50 → 75 → the break), the Final Week recap's warning, and Stirling.
 //    Weeks 1–5 keep the engine's 100 line.
 export const FAIL_STATES: FailStateRule[] = [
-  { key: 'public', cmp: '<=', value: 0, fromAct: 3, ending: 'dumped' },
+  { key: 'public', cmp: '<=', value: 4, fromAct: 3, ending: 'dumped' },
   { key: 'bond', cmp: '>=', value: 0, flag: 'li_dumped_single', ending: 'dumped' },
   { key: 'burnout', cmp: '>=', value: 79, fromAct: 6, ending: 'burnout' },
 ];
@@ -132,15 +150,21 @@ export const loveIslandManifest: PackManifest = {
   winGates: WIN_GATES,
   statMeta: STAT_META,
   resourceMeta: RESOURCE_META,
-  // Walk in with a flicker of public goodwill and enough Graft for nothing.
-  resourceStart: { public: 8, graft: 3 },
+  // Walk in with a flicker of goodwill in every corner of the nation (the
+  // derived public reads 8, exactly where S2 started) and enough Graft for
+  // nothing.
+  resourceStart: { public: 8, graft: 3, romantics: 8, selfrespect: 8, drama: 8 },
   lpResources: ['public', 'followers'],
-  // Resource roles: Graft is the daybed currency; Public & Followers are the
-  // magnitude meters an INCREDIBLE scales; Public is the finale clutch (the
-  // public-vote surge that carries a near-miss).
+  // Resource roles: Graft is the daybed currency; the vote meters (public —
+  // scaled BEFORE the factions plugin routes it, so the S2 economy carries
+  // over — plus the three factions) and Followers are the magnitude meters an
+  // INCREDIBLE scales; `surge` is the finale clutch
+  // — net approval across the factions (onside − lost, ADR-0012), maintained
+  // by the factions plugin and read generically by the engine. The late vote
+  // surge only carries a near-miss when the whole nation is onside.
   costResource: 'graft',
-  incredibleResources: ['public', 'followers'],
-  momentumResource: 'public',
+  incredibleResources: ['public', 'followers', 'romantics', 'selfrespect', 'drama'],
+  momentumResource: 'surge',
   failStates: FAIL_STATES,
   declinePenalty: { public: -1 },
   declineText: 'You haven’t got the Graft for it. You announce you’re “keeping your options open.” The options heard you.',
