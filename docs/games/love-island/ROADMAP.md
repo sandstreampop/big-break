@@ -18,6 +18,37 @@ A jargon-free companion walkthrough of this report ships alongside it:
 Vocabulary per [`CONTEXT.md`](./CONTEXT.md). Decisions that graduate out of this
 report should land as ADRs; nothing here re-litigates ADR-0001…0008.
 
+> **v3 shipping status (2026-07-05, the v3 build session).** Horizon 1 + 2
+> shipped: **R1 ✅ R2 ✅ R3 ✅ R4 ✅ R6 ✅ R7 ✅ R8 ✅ R9 ✅ R11 ✅**, plus the
+> **Clarity Layer** (the v3 centrepiece — see
+> [`V3-NOTES.md`](./V3-NOTES.md)) and C2a's gauntlet flag from R5. Still
+> open: R5 (front door/cross-promo), R10 (the rename — staged, human pick),
+> R13 (standing routines), Horizon 3. Prepared-not-decided items for Viktor:
+> [`FOR-VIKTOR.md`](./FOR-VIKTOR.md).
+>
+> **Verdicts overturned in execution, with evidence:**
+> 1. **A1(b) loyalty gate "modest raise to ~76" → shipped 80.** Under the
+>    narrative policy the realthing cohort self-selects loyalty-rich, so at
+>    76 the gate stayed decorative (misses in ~5% of non-success finales).
+>    At 80 it misses in 42% — a real second axis — and conditional success
+>    landed at 43% (band 36–44).
+> 2. **A2 "a third interstitial tier where a bad choice is the Walk" →
+>    shipped that PLUS a Final Week wall** (pack fail state: In Your Head
+>    79+ in act 3 ends the Season). Burnout peaks concentrate almost
+>    entirely in act 3; the interstitial alone produced 0.5% walks against
+>    the 3–5% target because its own relief branches rescued everyone. The
+>    ladder (50 → 75 → the break at 76 → the wall at 79) hit 3.8–3.9% at
+>    10k, fully telegraphed (wobble copy, act-3 recap warning, Stirling,
+>    stat/help text).
+> 3. **Season length: The Turn runs 15 days (was 13).** The Bestie arc
+>    (R7/D2) without the stretch ate act 2's ambient tissue and broke The
+>    Brand's band (34→26.5%); with it, ambient share matches v2 and avg
+>    season is 33.2 cards — inside the ≤36 tripwire. Finale gates re-trued
+>    for the longer Season: public 79, followers 60, charisma 62.
+> 4. **B2's gate-distance reads** landed inside the Clarity recap's YOUR
+>    INTENTION block rather than as Stirling act-intro lines — same honest
+>    read, a better surface (it sits beside the couple/threat blocks).
+
 ---
 
 ## 1. Executive summary
