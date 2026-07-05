@@ -18,6 +18,9 @@ import { FINAL_EVENTS } from './events-final.js';
 import { ENCOUNTER_EVENTS } from './events-encounters.js';
 import { GOSSIP_EVENTS } from './events-gossip.js';
 import { DAY_EVENTS } from './events-days.js';
+import { WEB_EVENTS } from './events-web.js';
+import { ARC_EVENTS } from './events-arcs.js';
+import { NATION_EVENTS } from './events-nation.js';
 import { PHASE_WEEKS, SEGMENTS } from './manifest.js';
 import type { GameEvent } from '../../types.js';
 
@@ -44,4 +47,7 @@ export const LOVE_ISLAND_EVENTS: GameEvent[] = [
   ...ENCOUNTER_EVENTS,
   ...GOSSIP_EVENTS,
   ...DAY_EVENTS,
+  ...WEB_EVENTS,
+  ...ARC_EVENTS,
+  ...NATION_EVENTS,
 ].map(remap);

@@ -7,6 +7,7 @@
 
 import { castById, couplePool, sameGenderPool, islanderTypeById } from './cast.js';
 import { angleById } from './angles.js';
+import { FACTIONS, movePublicFactional } from './plugins/factions.js';
 import { PATHS } from './manifest.js';
 import { intelCount } from './plugins/gossip.js';
 import { stirlingDealNote } from './plugins/stirling.js';
@@ -334,6 +335,15 @@ function epilogue(state: RunState): string {
 
 function finalSet(state: RunState) {
   const partner = castById(state.partner)?.name || 'your partner';
+  // The speech works the WHOLE nation (ADR-0012): +4 to every faction, which
+  // is +4 Public — and, if a wing was wavering at a threshold, real Surge.
+  // The Surge preview is computed exactly (the closer readout must be honest).
+  const SPEECH = 4;
+  const after = (['romantics', 'selfrespect', 'drama'] as const)
+    .map((k) => Math.max(0, (state[k] ?? 0) + SPEECH));
+  const surgeAfter = Math.max(0, after.filter((v) => v >= FACTIONS.warmAt).length -
+    after.filter((v) => v < FACTIONS.coldAt).length);
+  const surgeDelta = surgeAfter - (state.surge ?? 0);
   const options: any[] = [
     {
       title: 'The declaration',
@@ -343,9 +353,9 @@ function finalSet(state: RunState) {
     },
     {
       title: 'The speech to the nation',
-      blurb: 'Thirty seconds, straight down the lens, to every sofa that got you here.',
-      stat: 'public', amount: 5, label: '+5 Public',
-      apply: (s: RunState) => { s.public = (s.public || 0) + 5; },
+      blurb: 'Thirty seconds, straight down the lens, to every sofa in the country — the soft hearts, the spines, and the popcorn.',
+      stat: 'surge', amount: surgeDelta, label: `+${SPEECH} across the nation`,
+      apply: (s: RunState) => { movePublicFactional(s, SPEECH); },
     },
     {
       title: 'The reunion tease',
@@ -491,7 +501,8 @@ export const loveIslandPresenter: Presenter = {
   },
   helpBlocks: [
     '<b>Swipe</b> left or right on every villa moment. The stats on each choice tilt the roll.',
-    '🗳️ <b>Public</b> is the nation’s vote — it anchors <b>Win the Villa</b>, rescues you at recouplings, and surges at the Final. 📱 <b>Followers</b> build <b>The Brand</b>. 💘 <b>Connection</b> is your couple’s strength — <b>The Real Thing</b> runs on it, and it RESETS when you switch partners.',
+    '🗳️ <b>Public</b> is the nation’s vote — and the nation is THREE audiences that want opposite things: 🌹 <b>Romantics</b> (stick together, forgive), 💅 <b>Self-Respect</b> (backbone, never be a doormat), 🍿 <b>Drama-lovers</b> (chaos, scenes, a villain to adopt). The same move pleases one wing and annoys another; Public is their average, and at the Final a vote <b>surge</b> only comes when ALL THREE are onside.',
+    '📱 <b>Followers</b> build <b>The Brand</b>. 💘 <b>Connection</b> is your couple’s strength — <b>The Real Thing</b> runs on it, and it RESETS when you switch partners. 📖 <b>Win the Villa</b> also wants a STORY: survive an ick, repair a betrayal, get rescued at a firepit — the nation crowns an arc, never a cruise.',
     '💪 <b>Graft</b> is banked social capital — spend it on the daybed to buy an <b>Angle</b> (the reputation you’re building). Angles boost matching choices; fragile ones fall off on a botched scene.',
     '🌀 <b>In Your Head</b> drags every roll down and ends your Season at 100 — you walk. In <b>Final Week</b> the line drops to 79: arrive loud and you’re gone. Beach Hut time and rest bring it back.',
     '📜 <b>Recouplings</b>: when your gender chooses, you have the power. When the other gender chooses, you survive on Connection OR Public — fail both and you’re dumped.',

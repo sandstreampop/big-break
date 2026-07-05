@@ -10,6 +10,8 @@ import { LOVE_ISLAND_EVENTS } from './events.js';
 import { ISLANDER_TYPES, islanderTypeById } from './cast.js';
 import { couplingPlugin } from './plugins/coupling.js';
 import { profilePlugin } from './plugins/profile.js';
+import { setFactions, factionsPlugin } from './plugins/factions.js';
+import { coupleWebPlugin } from './plugins/coupleweb.js';
 import { producersPlugin } from './plugins/producers.js';
 import { charactersPlugin } from './plugins/characters.js';
 import { gossipPlugin } from './plugins/gossip.js';
@@ -26,8 +28,10 @@ declare module '../../types.js' {
   interface Effect {
     // core stats
     rizz?: number; loyalty?: number; savvy?: number; charisma?: number;
-    // resources
+    // resources — public is the factions' derived aggregate (ADR-0012); the
+    // three faction meters are directly authorable, and the loud cards do.
     public?: number; followers?: number; bond?: number; graft?: number;
+    romantics?: number; selfrespect?: number; drama?: number;
     // coupling subsystem verbs (ADR-0001/0002/0003)
     couple?: boolean; switchPartner?: boolean; bondReset?: boolean;
     exclusive?: number; stealRoll?: boolean;
@@ -42,6 +46,12 @@ declare module '../../types.js' {
     surfaceSecret?: string; bombshellEnters?: boolean | string; rivalFromBombshell?: boolean;
     // gossip currency verbs (ADR-0007): gather a feeling, spend what you hold
     gainIntel?: { about: string; label: string }; deployIntel?: string;
+    // couple-web verbs (ADR-0013): advance/resolve a foregrounded thread,
+    // light a cascade, and bank a beat of the player couple's own arc (the
+    // story gate's currency — always authored, never inferred, so the cause
+    // stays legible).
+    threadBeat?: string; threadResolve?: string; threadLight?: string;
+    storyBeat?: string;
   }
   interface Requires {
     singleIs?: boolean; exclusiveIs?: boolean; genderIs?: string;
@@ -52,6 +62,11 @@ declare module '../../types.js' {
     secretHeldIs?: string; bombshellActiveIs?: boolean;
     // gossip gates (ADR-0007)
     intelMin?: number; intelAboutIs?: string;
+    // couple-web gates (ADR-0013): a thread card is eligible only at its
+    // exact stage of a LIT thread (the Reigns bag — resolved threads' cards
+    // leave the deck), and only while its fixed cast is free of the player's
+    // own love life.
+    threadStageIs?: string; threadOutcomeIs?: string; webCoupleIs?: string;
   }
 }
 // #endregion effect-augmentation
@@ -81,6 +96,14 @@ const summarize = (state: RunState) => ({
   secretDetonated: state.flags.includes('li_secret_detonated'),
   wobbles: (state.cardLog || []).filter((c: any) => String(c.e).startsWith('li_wobble')).map((c: any) => c.e),
   stirling: [...(state.stirlingSeen || [])],
+  // v4 S3 (ADR-0012/0013): the factional finish, the clutch, and the season's
+  // narrative ledger — scalars/short strings only, for the share card and the
+  // telemetry props.
+  surge: state.surge ?? 0,
+  story: state.story ?? 0,
+  threadsResolved: Object.entries(state.threads || {})
+    .filter(([, t]: [string, any]) => t.resolved && !String(t.resolved).startsWith('off_'))
+    .map(([id, t]: [string, any]) => `${id}:${t.resolved}`).join(','),
 });
 
 // #region pack
@@ -89,7 +112,9 @@ const summarize = (state: RunState) => ({
 // pre-slotted, the Rival starts colder, and you know exactly what this
 // place costs. The engine's ×1.2 LP comeback bonus reads the flag.
 const liComeback = (state: RunState) => {
-  state.public = 20;
+  // Notoriety is factional (ADR-0012): the Drama-lovers remember you fondly,
+  // the Romantics less so. Mean 20 — exactly the old comeback public.
+  setFactions(state, { drama: 30, selfrespect: 18, romantics: 12 });
   state.followers = 14;
   state.graft = 6;
   state.accessories = ['angle_villain'];
@@ -106,9 +131,14 @@ export const loveIslandPack: Pack = {
   // Rival draw) is the pack's first construction draw, characters' (the
   // Rival's secret) the second; producers owns the run-start chain queue.
   // The goldens pin this order.
-  // Stirling registers LAST: his afterResolve reads what the other plugins
-  // decided this card (verdict queues, secret surfacing) before he speaks.
-  plugins: [couplingPlugin, profilePlugin, charactersPlugin, gossipPlugin, producersPlugin, stirlingPlugin],
+  // Factions registers AFTER coupling/gossip: its structural reactions
+  // observe their verbs' outcomes (flags set this card) — and it owns the
+  // `public` aggregate, so it must run its routing before nothing (resource
+  // application is engine-ordered, not registration-ordered).
+  // Coupleweb registers after factions: thread resolutions pay faction
+  // spreads through it. Stirling stays LAST: his afterResolve reads what the
+  // other plugins decided this card before he speaks.
+  plugins: [couplingPlugin, profilePlugin, charactersPlugin, gossipPlugin, factionsPlugin, coupleWebPlugin, producersPlugin, stirlingPlugin],
   events: LOVE_ISLAND_EVENTS,
   // THE FIRST MORNING (R2): the 3-card gesture ramp. Stirling carries the
   // format teaching in-season (his first-season tutor pool, stirling.ts).

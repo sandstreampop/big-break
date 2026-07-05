@@ -169,9 +169,9 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['loyal', 'chat'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: 'You rehearse the confession on the minibus. It comes out in the wrong order, worst part first. Honest, though. Painfully, structurally honest.', effects: { loyalty: 2, chainEventId: 'li_casa_return', comeClean: true, bond: -5, public: 2, burnout: 3 } },
-          good: { text: '“You deserve to hear it from me.” You rehearse it once and mean it twice. It costs you. It costs you less than a cinema screen would have.', effects: { loyalty: 5, chainEventId: 'li_casa_return', comeClean: true, bond: -4, public: 4 } },
-          incredible: { text: 'You tell the whole truth, unprompted, before anyone can screen anything. The villa is stunned. Honesty this efficient is basically a twist.', effects: { loyalty: 8, chainEventId: 'li_casa_return', comeClean: true, bond: -3, public: 6, graft: 3 } },
+          bad: { text: 'You rehearse the confession on the minibus. It comes out in the wrong order, worst part first. Honest, though. Painfully, structurally honest.', effects: { loyalty: 2, chainEventId: 'li_casa_return', comeClean: true, bond: -5, public: 2, burnout: 3, storyBeat: 'Kissed at Casa — and said it yourself, badly, before any screen could.' } },
+          good: { text: '“You deserve to hear it from me.” You rehearse it once and mean it twice. It costs you. It costs you less than a cinema screen would have.', effects: { loyalty: 5, chainEventId: 'li_casa_return', comeClean: true, bond: -4, public: 4, storyBeat: 'Strayed, then told the truth to their face. The tested-and-honest arc.' } },
+          incredible: { text: 'You tell the whole truth, unprompted, before anyone can screen anything. The villa is stunned. Honesty this efficient is basically a twist.', effects: { loyalty: 8, chainEventId: 'li_casa_return', comeClean: true, bond: -3, public: 6, graft: 3, storyBeat: 'The unprompted whole truth — a crack owned before it aired.' } },
         },
       },
       right: {
@@ -704,9 +704,9 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['drama', 'camera'],
         governingStats: { charisma: 0.6, savvy: 0.4 },
         outcomes: {
-          bad: { text: '“Since we’re all being honest tonight—” Your voice shakes on the way in and steadies on the landing. The secret hits the fire and burns blue. {rival}’s face does the whole season in four seconds.', effects: { charisma: 2, playSecret: 'rival', chosenCeremony: true, public: 3, followers: 3, burnout: 3 } },
-          good: { text: 'You say it plainly, once, no garnish. The firepit goes so quiet you can hear the ring light. {rival} has no move, because there is no move.', effects: { charisma: 5, playSecret: 'rival', chosenCeremony: true, public: 5, followers: 5, burnout: 2 } },
-          incredible: { text: 'One sentence, perfectly weighted, dropped at the exact moment the Host inhales. Production will study the timing for years. {rival} is, officially, done poaching.', effects: { charisma: 8, playSecret: 'rival', chosenCeremony: true, public: 7, followers: 8, burnout: 2 } },
+          bad: { text: '“Since we’re all being honest tonight—” Your voice shakes on the way in and steadies on the landing. The secret hits the fire and burns blue. {rival}’s face does the whole season in four seconds.', effects: { charisma: 2, playSecret: 'rival', chosenCeremony: true, public: 3, followers: 3, burnout: 3, storyBeat: 'Detonated a secret at the firepit to hold your couple. The nation felt the blast at home.' } },
+          good: { text: 'You say it plainly, once, no garnish. The firepit goes so quiet you can hear the ring light. {rival} has no move, because there is no move.', effects: { charisma: 5, playSecret: 'rival', chosenCeremony: true, public: 5, followers: 5, burnout: 2, storyBeat: 'Detonated a secret at the firepit to hold your couple. The nation felt the blast at home.' } },
+          incredible: { text: 'One sentence, perfectly weighted, dropped at the exact moment the Host inhales. Production will study the timing for years. {rival} is, officially, done poaching.', effects: { charisma: 8, playSecret: 'rival', chosenCeremony: true, public: 7, followers: 8, burnout: 2, storyBeat: 'Detonated a secret at the firepit to hold your couple. The nation felt the blast at home.' } },
         },
       },
       right: {
@@ -762,9 +762,9 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['strategy', 'recoupling'],
         governingStats: { savvy: 1 },
         outcomes: {
-          bad: { text: 'You join your rescuer with a smile that needs two more drafts. Saved, publicly, by someone you now have to learn from scratch.', effects: { savvy: 2, couple: true, partnerMood: 'buzzing', public: 2, burnout: 4 } },
-          good: { text: 'You cross the fire with your chin up. It’s not the couple you built — it’s the one the room built for you. The vote loves a plot twist.', effects: { savvy: 5, couple: true, partnerMood: 'buzzing', public: 4, followers: 3 } },
-          incredible: { text: 'Your rescuer’s speech — “I’ve been watching, and I don’t think anyone in here sees it” — lands so well the villa briefly forgets whose ceremony this was.', effects: { savvy: 8, couple: true, partnerMood: 'buzzing', public: 6, followers: 5 } },
+          bad: { text: 'You join your rescuer with a smile that needs two more drafts. Saved, publicly, by someone you now have to learn from scratch.', effects: { savvy: 2, couple: true, partnerMood: 'buzzing', public: 2, burnout: 4, storyBeat: 'Dropped at the fire — and caught. A rupture, survived in public.' } },
+          good: { text: 'You cross the fire with your chin up. It’s not the couple you built — it’s the one the room built for you. The vote loves a plot twist.', effects: { savvy: 5, couple: true, partnerMood: 'buzzing', public: 4, followers: 3, storyBeat: 'Dropped at the fire — and caught. A rupture, survived in public.' } },
+          incredible: { text: 'Your rescuer’s speech — “I’ve been watching, and I don’t think anyone in here sees it” — lands so well the villa briefly forgets whose ceremony this was.', effects: { savvy: 8, couple: true, partnerMood: 'buzzing', public: 6, followers: 5, storyBeat: 'Dropped at the fire — and caught. A rupture, survived in public.' } },
         },
       },
       right: {
@@ -772,9 +772,9 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['drama'],
         governingStats: { charisma: 1 },
         outcomes: {
-          bad: { text: 'You aim a look of pure judgement across the fire and hold it slightly too long. The GIF crops out your new partner entirely.', effects: { charisma: 2, couple: true, partnerMood: 'buzzing', followers: 4, public: -1, burnout: 3 } },
-          good: { text: 'One glance at the person who didn’t say your name — brief, complete, devastating — and then you take your new seat like a promotion.', effects: { charisma: 5, couple: true, partnerMood: 'buzzing', followers: 5, public: 3 } },
-          incredible: { text: 'You thank your ex, sincerely, for “making space for something better,” live, at a firepit. The nation gets up and applauds its television.', effects: { charisma: 8, couple: true, partnerMood: 'buzzing', followers: 8, public: 5 } },
+          bad: { text: 'You aim a look of pure judgement across the fire and hold it slightly too long. The GIF crops out your new partner entirely.', effects: { charisma: 2, couple: true, partnerMood: 'buzzing', followers: 4, public: -1, burnout: 3, storyBeat: 'Dropped at the fire — and caught. A rupture, survived in public.' } },
+          good: { text: 'One glance at the person who didn’t say your name — brief, complete, devastating — and then you take your new seat like a promotion.', effects: { charisma: 5, couple: true, partnerMood: 'buzzing', followers: 5, public: 3, storyBeat: 'Dropped at the fire — and caught. A rupture, survived in public.' } },
+          incredible: { text: 'You thank your ex, sincerely, for “making space for something better,” live, at a firepit. The nation gets up and applauds its television.', effects: { charisma: 8, couple: true, partnerMood: 'buzzing', followers: 8, public: 5, storyBeat: 'Dropped at the fire — and caught. A rupture, survived in public.' } },
         },
       },
     },
@@ -997,9 +997,9 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['chat', 'loyal'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: '“You’re fine, babe,” they slur at 3 a.m., warm, half-asleep, 60% about their own thing. It still counts.', effects: { loyalty: 2, burnout: -8, bond: 2 } },
-          good: { text: 'Kettle on, blanket out, the whole thing whispered on the kitchen terrace. Some people are load-bearing. You found yours.', effects: { loyalty: 5, burnout: -12, bond: 3 } },
-          incredible: { text: 'They listen to the entire spiral and then say the one sentence that unhooks it. You go back to bed a different weight.', effects: { loyalty: 8, burnout: -14, bond: 4, public: 4 } },
+          bad: { text: '“You’re fine, babe,” they slur at 3 a.m., warm, half-asleep, 60% about their own thing. It still counts.', effects: { loyalty: 2, burnout: -8, bond: 2, storyBeat: 'The 3 a.m. maths, done and survived. The nation saw the crack and the staying.' } },
+          good: { text: 'Kettle on, blanket out, the whole thing whispered on the kitchen terrace. Some people are load-bearing. You found yours.', effects: { loyalty: 5, burnout: -12, bond: 3, storyBeat: 'The 3 a.m. maths, done and survived. The nation saw the crack and the staying.' } },
+          incredible: { text: 'They listen to the entire spiral and then say the one sentence that unhooks it. You go back to bed a different weight.', effects: { loyalty: 8, burnout: -14, bond: 4, public: 4, storyBeat: 'The 3 a.m. maths, done and survived. The nation saw the crack and the staying.' } },
         },
       },
       right: {
@@ -1007,9 +1007,9 @@ export const BEAT_EVENTS: GameEvent[] = [
         tags: ['rest'],
         governingStats: { savvy: 1 },
         outcomes: {
-          bad: { text: 'You hide by the pool till noon, and it mostly works, except the show frames it as “tension” and now everyone’s asking if you’re okay, which — fair.', effects: { savvy: 2, burnout: -8, public: -1 } },
-          good: { text: 'Headphones, sun, water, no chat. You give the villa nothing for a morning and the villa, miraculously, survives. So do you.', effects: { savvy: 5, burnout: -11 } },
-          incredible: { text: 'You take a whole morning for yourself and come back so restored that two people ask what you’ve had done. Rest. You’ve had rest done.', effects: { savvy: 8, burnout: -13, public: 4 } },
+          bad: { text: 'You hide by the pool till noon, and it mostly works, except the show frames it as “tension” and now everyone’s asking if you’re okay, which — fair.', effects: { savvy: 2, burnout: -8, public: -1, storyBeat: 'The 3 a.m. maths, done and survived. The nation saw the crack and the staying.' } },
+          good: { text: 'Headphones, sun, water, no chat. You give the villa nothing for a morning and the villa, miraculously, survives. So do you.', effects: { savvy: 5, burnout: -11, storyBeat: 'The 3 a.m. maths, done and survived. The nation saw the crack and the staying.' } },
+          incredible: { text: 'You take a whole morning for yourself and come back so restored that two people ask what you’ve had done. Rest. You’ve had rest done.', effects: { savvy: 8, burnout: -13, public: 4, storyBeat: 'The 3 a.m. maths, done and survived. The nation saw the crack and the staying.' } },
         },
       },
     },
@@ -1030,8 +1030,8 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.6, loyalty: 0.4 },
         outcomes: {
           bad: { text: '“I’m fine.” You say it to the mirror, the kettle, the Beach Hut, and none of them believe you. By lunch the villa is one wall of noise, and you’re done — properly done. You ask for the gate before the evening feed.', effects: { burnout: 25 } },
-          good: { text: 'You give yourself until the coffee goes cold to feel all of it. Then you unpack the case, put it back on the wardrobe, and go make eggs. Nobody ever knows.', effects: { burnout: -8, savvy: 2 } },
-          incredible: { text: 'You sit with it until the sun is properly up, and something quietly rewires. The villa gets the same person back, minus the noise. That night’s Beach Hut is almost unrecognisable.', effects: { burnout: -12, public: 4 } },
+          good: { text: 'You give yourself until the coffee goes cold to feel all of it. Then you unpack the case, put it back on the wardrobe, and go make eggs. Nobody ever knows.', effects: { burnout: -8, savvy: 2, storyBeat: 'Packed the suitcase at dawn — and unpacked it. Chose the villa on the hardest morning.' } },
+          incredible: { text: 'You sit with it until the sun is properly up, and something quietly rewires. The villa gets the same person back, minus the noise. That night’s Beach Hut is almost unrecognisable.', effects: { burnout: -12, public: 4, storyBeat: 'Packed the suitcase at dawn — and unpacked it. Chose the villa on the hardest morning.' } },
         },
       },
       right: {
