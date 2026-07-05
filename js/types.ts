@@ -425,6 +425,10 @@ export interface Presenter {
   offerAllLoadouts?: boolean;
   // This pack ships the weekly Gauntlet mode (its build draws on pack data).
   gauntlet?: boolean;
+  // Daily-mode copy: the mode's display name (title button, persona screen)
+  // and an end-screen note (streak-aware "come back tomorrow"). The daily
+  // MECHANISM (shared date seed, results ledger) is engine/shell-generic.
+  daily?: { name: string; endNote?: (summary: any) => string };
 }
 
 export interface Pack {

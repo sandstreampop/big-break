@@ -1533,3 +1533,9 @@ body.big-text #app { zoom: 1.18; }
   width: min(92%, 372px); flex: none; margin: 0;
 }
 #card-area:has(.set-piece) .card-art { max-height: 16vh; }
+
+/* The daily loop's closing note ("come back tomorrow") on the ending screen. */
+.daily-note {
+  font-size: 13.5px; line-height: 1.45; color: var(--dim);
+  border: 1px dashed #3b3352; border-radius: 12px; padding: 9px 12px;
+}

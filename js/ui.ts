@@ -220,10 +220,11 @@ function renderTitle() {
   }
   const today = todayStr();
   const dailyDone = meta.dailyResults?.[today];
+  const dailyName = PRES.daily?.name || 'Daily Grind';
   menu.append(btn(
     dailyDone
-      ? `📅 Daily Grind ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
-      : `📅 Daily Grind — ${today}`,
+      ? `📅 ${dailyName} ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
+      : `📅 ${dailyName} — ${today}`,
     '', () => { save.clearRun(); startNewRun(true); }));
   // Comeback mode exists only for packs that ship the transform.
   if (meta.successPaths?.length > 0 && activePack.comeback) {
@@ -346,7 +347,7 @@ function startNewRun(daily = false, comeback = false) {
     const keepScroll = s.scrollTop;
     s.innerHTML = '';
     const isMusic = activePack.id === 'music';
-    s.append(el('h2', 'screen-head', comeback ? 'The Second Act' : daily ? `Daily Grind — ${todayStr()}` : (isMusic ? 'Choose your weapon' : 'Choose your player')));
+    s.append(el('h2', 'screen-head', comeback ? 'The Second Act' : daily ? `${PRES.daily?.name || 'Daily Grind'} — ${todayStr()}` : (isMusic ? 'Choose your weapon' : 'Choose your player')));
     s.append(el('p', 'screen-sub', comeback
       ? 'You were somebody. Start famous, bruised, and 25% burned out already — the industry remembers you, which cuts both ways.'
       : daily
@@ -2156,6 +2157,16 @@ function failLabelFor(endingKey) {
   return labels[endingKey];
 }
 
+// Consecutive daily-mode days ending at `d` (inclusive) — the streak the
+// share card and the pack's end note read. Pure ledger walk.
+function dailyStreakFor(d) {
+  const done = meta.dailyResults || {};
+  let n = 0;
+  const day = new Date(d + 'T12:00:00Z');
+  while (done[day.toISOString().slice(0, 10)]) { n++; day.setUTCDate(day.getUTCDate() - 1); }
+  return n;
+}
+
 function shareTextFor(summary, lp) {
   if (PRES.shareText) return PRES.shareText(summary, lp);
   const inst = activePack.loadoutById(summary.loadout);
@@ -2171,6 +2182,7 @@ function shareTextFor(summary, lp) {
 }
 
 function renderEndingScreen(ending, lp, trophies, evalr, summary) {
+  if (summary?.daily) summary.dailyStreak = dailyStreakFor(summary.daily);
   music.setMood('ending');
   const s = $('#screen-ending');
   s.innerHTML = '';
@@ -2250,6 +2262,11 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
 
   if (summary?.tierLog?.length) {
     wrap.append(el('p', 'tier-strip', summary.tierLog.map((t) => TIER_EMOJI[t] || '⬜').join('')));
+  }
+
+  // The daily loop's closing beat: the pack's "come back tomorrow" note.
+  if (summary?.daily && PRES.daily?.endNote) {
+    wrap.append(el('p', 'daily-note', PRES.daily.endNote(summary)));
   }
 
   const menu = el('div', 'menu');

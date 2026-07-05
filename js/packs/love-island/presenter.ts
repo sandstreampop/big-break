@@ -426,17 +426,41 @@ export const loveIslandPresenter: Presenter = {
 
   finalSet,
 
+  // The share card (R6): a spoiler-safe season in one paste — the swipe
+  // grid, couples formed, secrets held, days survived, and (daily) the
+  // streak. Names and cards stay out of it; "did YOUR partner stray?" is
+  // the group chat's job.
   shareText: (summary: any, lp: number) => {
     const t = islanderTypeById(summary.loadout);
     const head = summary.gauntlet ? `THE VILLA Gauntlet ${summary.gauntlet}`
       : summary.daily ? `THE VILLA Daily ${summary.daily}` : 'THE VILLA';
-    const pathName = summary.path ? PATHS[summary.path].name : 'the villa';
+    const pathName = summary.path ? PATHS[summary.path].name : 'no Intention declared';
     const res = summary.result ? summary.result.toUpperCase()
       : summary.endingKey === 'burnout' ? 'WALKED' : summary.endingKey === 'dumped' ? 'DUMPED' : 'GAME OVER';
     const TIER_EMOJI: Record<string, string> = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
     const line = (summary.tierLog || []).map((x: string) => TIER_EMOJI[x] || '⬜').join('');
-    return `${head}\n${t ? t.name : '?'} → ${pathName} → ${res}\n${line}\n🗳️${summary.public ?? 0} · 📱${summary.followers ?? 0} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/love-island/`;
+    const couples = (summary.exes?.length || 0) + (summary.partner ? 1 : 0);
+    const bits = [
+      `💘 ${couples} couple${couples === 1 ? '' : 's'}${summary.exclusive ? ' 🔒' : ''}`,
+      ...(summary.secretsKnown?.length ? [`🤫 ${summary.secretsKnown.length}`] : []),
+      `🌴 ${(summary.cardLog || []).length} days`,
+      ...(summary.dailyStreak > 1 ? [`🔥 streak ${summary.dailyStreak}`] : []),
+    ];
+    return `${head}\n${t ? t.name : '?'} → ${pathName} → ${res}\n${line}\n${bits.join(' · ')} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/love-island/`;
   },
+
+  // The Daily Villa (R6): one shared seeded Season a day — same bombshells,
+  // same secrets, everyone. The end note closes the loop.
+  daily: {
+    name: 'The Daily Villa',
+    endNote: (summary: any) => {
+      const n = summary.dailyStreak || 1;
+      const streak = n > 1 ? `Day ${n} of your streak.` : 'Streak: day one.';
+      return `🌴 That was today’s villa — everyone on Earth got the same Season: same bombshells, same secrets, same wobbly lounger. ${streak} Tomorrow’s villa opens at midnight. Compare notes; the share button keeps the spoilers out.`;
+    },
+  },
+  // The weekly gauntlet (C2a): the shared-seed ritual, switched on.
+  gauntlet: true,
 
   // Art slots: emoji badge + which generated scene each villa moment paints.
   // Registered generically at boot (art.registerArt) — art.ts stays genre-free.
