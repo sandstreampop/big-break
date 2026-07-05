@@ -143,6 +143,12 @@ body {
 .set-piece.sp-movienight .set-piece-banner, .sp-beat.sp-movienight .set-piece-banner { background: linear-gradient(135deg, #e8e6f0 0%, #9aa0b0 70%); -webkit-background-clip: text; background-clip: text; }
 .set-piece.sp-hut .set-piece-banner, .sp-beat.sp-hut .set-piece-banner { background: linear-gradient(135deg, #9aa0b0 0%, #6fa8ff 70%); -webkit-background-clip: text; background-clip: text; }
 .set-piece.sp-final .set-piece-banner, .sp-beat.sp-final .set-piece-banner { background: linear-gradient(135deg, #ffe38a 0%, #ffb35c 70%); -webkit-background-clip: text; background-clip: text; }
+/* v3.2 — the beat grammar goes global: every format family gets its light. */
+.set-piece.sp-arrival .set-piece-banner, .sp-beat.sp-arrival .set-piece-banner { background: linear-gradient(135deg, #ffe38a 0%, #ff5c8a 70%); -webkit-background-clip: text; background-clip: text; }
+.set-piece.sp-bomb .set-piece-banner, .sp-beat.sp-bomb .set-piece-banner { background: linear-gradient(135deg, #ff5347 0%, #ffb35c 70%); -webkit-background-clip: text; background-clip: text; }
+.set-piece.sp-rival .set-piece-banner, .sp-beat.sp-rival .set-piece-banner { background: linear-gradient(135deg, #ba7aff 0%, #ff5347 70%); -webkit-background-clip: text; background-clip: text; }
+.set-piece.sp-date .set-piece-banner, .sp-beat.sp-date .set-piece-banner { background: linear-gradient(135deg, #ff5c8a 0%, #ba7aff 70%); -webkit-background-clip: text; background-clip: text; }
+.set-piece.sp-challenge .set-piece-banner, .sp-beat.sp-challenge .set-piece-banner { background: linear-gradient(135deg, #8fe3ae 0%, #6fa8ff 70%); -webkit-background-clip: text; background-clip: text; }
 .set-piece.sp-held .set-piece-sub, .sp-beat.sp-held .set-piece-sub { color: #8fe3ae; font-weight: 700; }
 .set-piece.sp-rescued .set-piece-sub, .sp-beat.sp-rescued .set-piece-sub { color: #ffce93; font-weight: 700; }
 .set-piece.sp-dumped .set-piece-sub, .sp-beat.sp-dumped .set-piece-sub { color: #ff8a80; font-weight: 700; }

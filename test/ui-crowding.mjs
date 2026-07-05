@@ -143,7 +143,9 @@ for (const vp of VIEWPORTS) {
   }
 
   if (cardsChecked < 20) violations.push(`[${vp.label}] only ${cardsChecked} cards audited — season did not complete`);
-  if (beatsSeen < 1) violations.push(`[${vp.label}] no set-piece beat ever played`);
+  // v3.2: the beat grammar is global — act 1's schedule alone (Day One, the
+  // Rival, the first Bombshell, the Graft) plus the Casa text guarantees 5+.
+  if (beatsSeen < 5) violations.push(`[${vp.label}] only ${beatsSeen} set-piece beats played — the global beat grammar regressed`);
   if (ribbonsSeen < 1) violations.push(`[${vp.label}] no set-piece ribbon card ever audited`);
   const uniq = [...new Set(violations)];
   if (uniq.length) {

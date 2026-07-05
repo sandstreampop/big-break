@@ -67,6 +67,24 @@ ambient or set-piece:
 A future card, pool, or feature that re-crowds the screen turns the gate
 red. The contract is the test.
 
+## Addendum (v3.2): the beat grammar is global
+
+The v3.1 beats covered only acts 2–3's big set-pieces; act 1 still dealt its
+whole schedule — Day One, the Rival, the first Bombshell, meeting the
+Partner — as cold cards. v3.2 makes the in-between screen the *grammar of
+the format*, not a garnish on ceremonies: **every produced moment in every
+act announces itself** (arrivals, bombshells, encounter arcs, dates,
+challenges, the Beach Hut, the votes, the postcard, temptations, the ex),
+while unproduced villa life — kitchen chats, gossip, banter — stays clean.
+That contrast is load-bearing: beats read as event *because* ambient cards
+don't have them.
+
+Volume is controlled by one generic addition, the **arc key**
+(`setPiece.key`): set-pieces sharing a key play their full-screen beat once
+per run — the first card of the arc or family — and every later card in it
+wears only the slim continuity ribbon. The frame is taught once, then it
+recedes: progressive disclosure applied to the beats themselves.
+
 ## Why this is hard to reverse
 
 It defines the play screen's information hierarchy, the HUD's opt-in

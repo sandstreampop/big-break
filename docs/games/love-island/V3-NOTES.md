@@ -100,3 +100,12 @@ seasons at phone viewports so the contract can't silently rot. The stat
 rail is gone from the permanent screen because the per-choice governing
 icons and the risk tell already carry the decision-relevant stats — the
 rail was redundancy dressed as information.
+
+**v3.2 made the beat grammar global.** The v3.1 sequenced beats stopped at
+acts 2–3's ceremonies; act 1 — the whole first impression — still dealt
+Day One, the Rival, the first Bombshell and the Partner arc as cold cards.
+Now every produced moment in every act announces itself with a framed beat,
+and a generic *arc key* keeps the volume honest: a family (dates,
+challenges, an encounter arc) beats once, then carries only the slim
+ribbon. Unproduced villa life stays clean on purpose — the contrast is what
+makes a beat read as an event. See the ADR-0009 addendum.
