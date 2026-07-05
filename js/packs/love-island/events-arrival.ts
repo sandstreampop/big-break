@@ -16,9 +16,9 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         tags: ['chat', 'loyal'],
         governingStats: { loyalty: 0.7, savvy: 0.3 },
         outcomes: {
-          bad: { text: '“So what do you actually do?” Three questions about his job; he answers all three. It is the most anyone has learned about pipe fitting on this network.', effects: { loyalty: 2, bond: 1, burnout: 2 } },
-          good: { text: 'Easy, warm, no fireworks. “I could actually talk to you,” they say. In here, that’s a diamond ring.', effects: { loyalty: 5, bond: 4, public: 3 } },
-          incredible: { text: 'You don’t perform. They notice. “You’re not what I expected,” they say, meaning it. The Bond does the loud part for you.', effects: { loyalty: 8, bond: 6, public: 5, graft: 3 } },
+          bad: { text: '“So what do you actually do?” Three questions about his job; he answers all three. It is the most anyone has learned about pipe fitting on this network.', effects: { loyalty: 2, bond: 2, public: 1 } },
+          good: { text: 'Easy, warm, no fireworks. “I could actually talk to you,” they say. In here, that’s a diamond ring.', effects: { loyalty: 3, bond: 4, public: 3 } },
+          incredible: { text: 'You don’t perform. They notice. “You’re not what I expected,” they say, meaning it. The Bond does the loud part for you.', effects: { loyalty: 5, bond: 6, public: 5, graft: 3 } },
         },
       },
       right: {
@@ -26,7 +26,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         tags: ['flirt'],
         governingStats: { rizz: 1 },
         outcomes: {
-          bad: { text: '“Capricorn,” he says, when you open with star signs. Star signs, mate. And then, over the longest four minutes of your life, it emerges that he’s also a critic.', effects: { rizz: 2, burnout: 3 } },
+          bad: { text: '“Capricorn,” he says, when you open with star signs. Star signs, mate. And then, over the longest four minutes of your life, it emerges that he’s also a critic.', effects: { rizz: 2, public: 1 } },
           good: { text: '“No. NO. It did not end like that—” The airport story lands. They lean in; the camera leans in with them.', effects: { rizz: 5, public: 3, graft: 3 } },
           incredible: { text: '“You’re trouble,” they decide, delighted, somewhere in the second drink, nerves forgotten. The nation, live on air, agrees.', effects: { rizz: 8, public: 5, followers: 4, bond: 2 } },
         },
@@ -73,8 +73,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“That got deep quick,” says {mate}, patting your arm the way people pat unfamiliar dogs. One confession too far, one tea too early.', effects: { loyalty: 2, burnout: 3 } },
-          good: { text: '“Okay — your turn.” You swap one true thing for another, like conkers. No angles, no cameras played-to; genuinely the strangest thing to happen in this villa all week.', effects: { loyalty: 5, public: 3, addFlag: 'li_code_honour' } },
-          incredible: { text: '“I’ve not told anyone that,” says {mate}, twice before 2 a.m. — the ex, the mum, the plan. In a game of angles you just acquired the villa’s rarest asset: an actual friend.', effects: { loyalty: 8, public: 5, graft: 3, addFlag: 'li_code_honour' } },
+          good: { text: '“Okay — your turn.” You swap one true thing for another, like conkers. No angles, no cameras played-to; genuinely the strangest thing to happen in this villa all week.', effects: { loyalty: 3, public: 3, addFlag: 'li_code_honour' } },
+          incredible: { text: '“I’ve not told anyone that,” says {mate}, twice before 2 a.m. — the ex, the mum, the plan. In a game of angles you just acquired the villa’s rarest asset: an actual friend.', effects: { loyalty: 5, public: 5, graft: 3, addFlag: 'li_code_honour' } },
         },
       },
       right: {
@@ -101,8 +101,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.5, rizz: 0.5 },
         outcomes: {
           bad: { text: 'You keep it strictly for {partner}, which is sweet, and their heart rate comes back “resting.” The villa says “awww” in the wrong tone.', effects: { loyalty: 2, bond: 2, burnout: 3 } },
-          good: { text: '“I hate this game,” announces {partner}, betrayed beautifully by their own monitor. You danced for one person in a room of twelve. Loyalty, with receipts.', effects: { loyalty: 5, bond: 5, public: 3 } },
-          incredible: { text: '“Can we see that again?” Their heart rate spiked so hard the reading gets a replay. You have never looked smugger. You have earned every pixel of it.', effects: { loyalty: 8, bond: 6, public: 5, followers: 4 } },
+          good: { text: '“I hate this game,” announces {partner}, betrayed beautifully by their own monitor. You danced for one person in a room of twelve. Loyalty, with receipts.', effects: { charisma: 2, loyalty: 3, bond: 5, public: 3 } },
+          incredible: { text: '“Can we see that again?” Their heart rate spiked so hard the reading gets a replay. You have never looked smugger. You have earned every pixel of it.', effects: { charisma: 2, loyalty: 5, bond: 6, public: 5, followers: 4 } },
         },
       },
       right: {
@@ -129,8 +129,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, rizz: 0.4 },
         outcomes: {
           bad: { text: 'Two adults, one swan, zero core strength. You both go in. The swan sails on, alone, vindicated.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
-          good: { text: '“This is us now,” {partner} declares from the swan, mid-drift, and you talk about nothing for an hour. The nation coos. The swan, historically neutral, approves.', effects: { loyalty: 5, bond: 4, burnout: -2 } },
-          incredible: { text: 'Golden hour finds your couple mid-pool on a swan, laughing at a joke no mic caught. That shot opens the episode. That shot IS the episode.', effects: { loyalty: 8, bond: 6, public: 5, burnout: -3 } },
+          good: { text: '“This is us now,” {partner} declares from the swan, mid-drift, and you talk about nothing for an hour. The nation coos. The swan, historically neutral, approves.', effects: { loyalty: 3, bond: 4, burnout: -2 } },
+          incredible: { text: 'Golden hour finds your couple mid-pool on a swan, laughing at a joke no mic caught. That shot opens the episode. That shot IS the episode.', effects: { loyalty: 5, bond: 6, public: 5, burnout: -3 } },
         },
       },
       right: {
@@ -139,8 +139,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: 'You institute a booking system for the swan. The villa, a lawless nation, ignores it by lunch. The clipboard was laminated. You made a clipboard.', effects: { savvy: 2, burnout: 2 } },
-          good: { text: '“Two kitchen shifts an hour, or one decent secret.” Swan slots are now a currency and you take a broker’s cut of both. The daybed respects a hustler.', effects: { savvy: 5, graft: 4 } },
-          incredible: { text: 'By sunset the swan has a waiting list, a dress code, and you at the centre of villa logistics. Power looks like many things. Today it’s inflatable.', effects: { savvy: 8, graft: 5, followers: 4 } },
+          good: { text: '“Two kitchen shifts an hour, or one decent secret.” Swan slots are now a currency and you take a broker’s cut of both. The daybed respects a hustler.', effects: { charisma: 2, savvy: 5, graft: 4 } },
+          incredible: { text: 'By sunset the swan has a waiting list, a dress code, and you at the centre of villa logistics. Power looks like many things. Today it’s inflatable.', effects: { charisma: 2, savvy: 8, graft: 5, followers: 4 } },
         },
       },
     },
@@ -157,8 +157,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You burn the halloumi and set off the alarm, and eleven people in eye masks learn your name for the wrong reason.', effects: { loyalty: 2, burnout: 3, public: -1 } },
-          good: { text: 'Eggs land, tea flows, and two separate people call you “an actual angel” with their mouths full. Cheap goodwill is still goodwill.', effects: { loyalty: 5, public: 3, graft: 3 } },
-          incredible: { text: '“How did you know about the eggs thing?” The villa goes silent doing the maths. You plated the exact order everyone mentioned once, days ago. You listened. Nobody listens.', effects: { loyalty: 8, public: 5, graft: 4, bond: 2 } },
+          good: { text: 'Eggs land, tea flows, and two separate people call you “an actual angel” with their mouths full. Cheap goodwill is still goodwill.', effects: { loyalty: 3, public: 3, graft: 3 } },
+          incredible: { text: '“How did you know about the eggs thing?” The villa goes silent doing the maths. You plated the exact order everyone mentioned once, days ago. You listened. Nobody listens.', effects: { loyalty: 5, public: 5, graft: 4, bond: 2 } },
         },
       },
       right: {
@@ -185,8 +185,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“No fun,” rules the summit, moving on without you. Diplomacy has a price and it’s screen time.', effects: { loyalty: 2, followers: -1 } },
-          good: { text: 'You defend the absent couple with one kind, fair read. It gets back to them by dinner, word-for-word. Kindness travels faster than shade here, twice as far.', effects: { loyalty: 5, public: 3, addFlag: 'li_code_honour' } },
-          incredible: { text: 'You shut the pile-on down so gently nobody notices being shut down. The villa recalibrates around you. The nation files you under “keeper.”', effects: { loyalty: 8, public: 5, addFlag: 'li_code_honour' } },
+          good: { text: 'You defend the absent couple with one kind, fair read. It gets back to them by dinner, word-for-word. Kindness travels faster than shade here, twice as far.', effects: { loyalty: 3, public: 3, addFlag: 'li_code_honour' } },
+          incredible: { text: 'You shut the pile-on down so gently nobody notices being shut down. The villa recalibrates around you. The nation files you under “keeper.”', effects: { loyalty: 5, public: 5, addFlag: 'li_code_honour' } },
         },
       },
       right: {
@@ -270,7 +270,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'Your heartfelt acoustic moment is undermined by a moth with main-character energy. The moth trends. You do not.', effects: { loyalty: 2, burnout: 3, followers: 1 } },
           good: { text: 'You do the one true thing you’re actually good at, unironically, and the villa forgets to heckle. Sincerity: the rarest act on the bill.', effects: { loyalty: 3, public: 4, bond: 2, charisma: 2 } },
-          incredible: { text: '“Oh,” says the villa, collectively — it wanted comedy and got feelings. {partner} looks at you like furniture just sang.', effects: { loyalty: 8, public: 6, bond: 4, followers: 4 } },
+          incredible: { text: '“Oh,” says the villa, collectively — it wanted comedy and got feelings. {partner} looks at you like furniture just sang.', effects: { charisma: 2, loyalty: 5, public: 6, bond: 4, followers: 4 } },
         },
       },
       right: {
@@ -297,8 +297,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“Do YOU clap when food arrives?” The tribunal turns on you mid-defence. You do now, apparently.', effects: { loyalty: 2, burnout: 3, followers: 1 } },
-          good: { text: '“It’s not an ick, it’s enthusiasm.” The tribunal considers this. The couple survives the night. You did that, quietly.', effects: { loyalty: 5, public: 3, addFlag: 'li_code_honour' } },
-          incredible: { text: 'You reverse a fully-declared ick with one two-minute speech about joy. The dressing room applauds. The ick, clinically dead, is buried at sea.', effects: { loyalty: 8, public: 5, graft: 3 } },
+          good: { text: '“It’s not an ick, it’s enthusiasm.” The tribunal considers this. The couple survives the night. You did that, quietly.', effects: { loyalty: 3, public: 3, addFlag: 'li_code_honour' } },
+          incredible: { text: 'You reverse a fully-declared ick with one two-minute speech about joy. The dressing room applauds. The ick, clinically dead, is buried at sea.', effects: { loyalty: 5, public: 5, graft: 3 } },
         },
       },
       right: {
@@ -325,8 +325,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { rizz: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: 'You add ten kilos for the audience and your face does something private in public. “Do the face,” the daybed requests, all afternoon.', effects: { rizz: 2, burnout: 3, followers: 2 } },
-          good: { text: 'You find a rhythm that says effortless and hold it for exactly as long as anyone’s watching. Cardio, but make it PR.', effects: { rizz: 5, followers: 3 } },
-          incredible: { text: '“What was I saying?” Somebody drops a smoothie; somebody else loses a whole sentence. Your workout has casualties. The nation logs the timestamp.', effects: { rizz: 8, followers: 6, public: 4 } },
+          good: { text: 'You find a rhythm that says effortless and hold it for exactly as long as anyone’s watching. Cardio, but make it PR.', effects: { charisma: 2, rizz: 5, followers: 3 } },
+          incredible: { text: '“What was I saying?” Somebody drops a smoothie; somebody else loses a whole sentence. Your workout has casualties. The nation logs the timestamp.', effects: { charisma: 2, rizz: 8, followers: 6, public: 4 } },
         },
       },
       right: {
@@ -335,8 +335,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.5, rizz: 0.5 },
         outcomes: {
           bad: { text: 'Couples’ workout: you demonstrate a partner squat, misjudge the physics, and become a cautionary tale with a lovely view of the sky.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
-          good: { text: 'You spot each other, badly, laughing, for forty minutes. Fitness outcome: zero. Couple outcome: significant.', effects: { loyalty: 3, bond: 4, rizz: 2 } },
-          incredible: { text: '“Get a room,” calls the daybed, starting a slow clap for your couple’s gym bit. Even {rival} joins in, with the face of someone chewing a wasp.', effects: { loyalty: 8, bond: 5, public: 5, followers: 4 } },
+          good: { text: 'You spot each other, badly, laughing, for forty minutes. Fitness outcome: zero. Couple outcome: significant.', effects: { charisma: 2, loyalty: 3, bond: 4, rizz: 2 } },
+          incredible: { text: '“Get a room,” calls the daybed, starting a slow clap for your couple’s gym bit. Even {rival} joins in, with the face of someone chewing a wasp.', effects: { charisma: 2, loyalty: 5, bond: 5, public: 5, followers: 4 } },
         },
       },
     },
@@ -381,8 +381,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.5, charisma: 0.5 },
         outcomes: {
           bad: { text: 'You go in as a peacekeeper and come out as a combatant. Nobody remembers the lounger. Everyone remembers you were there.', effects: { loyalty: 2, burnout: 4, public: -1 } },
-          good: { text: '“Ten seconds each. Go.” You separate, hydrate, translate. Both sides end up apologising to you, somehow. Fine. It airs as maturity.', effects: { loyalty: 5, public: 4 } },
-          incredible: { text: 'You resolve the row with one question so precise both parties stop mid-shout to think. The villa now brings you disputes like a small-claims court.', effects: { loyalty: 6, public: 6, savvy: 2 } },
+          good: { text: '“Ten seconds each. Go.” You separate, hydrate, translate. Both sides end up apologising to you, somehow. Fine. It airs as maturity.', effects: { loyalty: 3, public: 4 } },
+          incredible: { text: 'You resolve the row with one question so precise both parties stop mid-shout to think. The villa now brings you disputes like a small-claims court.', effects: { loyalty: 4, public: 6, savvy: 2 } },
         },
       },
       right: {
@@ -391,8 +391,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: 'You’re caught mid-popcorn-face by the exact person shouting. Congratulations: you are now “and ANOTHER thing.”', effects: { savvy: 2, burnout: 4, followers: 2 } },
-          good: { text: 'You watch from the kitchen with a beverage and perfect neutrality. Report drama like weather; never be weather.', effects: { savvy: 5, followers: 3 } },
-          incredible: { text: 'Your reaction shots are so good the edit intercuts you like a Greek chorus. You said nothing all night and got the most screen time.', effects: { savvy: 8, followers: 7, public: 4 } },
+          good: { text: 'You watch from the kitchen with a beverage and perfect neutrality. Report drama like weather; never be weather.', effects: { charisma: 2, savvy: 5, followers: 3 } },
+          incredible: { text: 'Your reaction shots are so good the edit intercuts you like a Greek chorus. You said nothing all night and got the most screen time.', effects: { charisma: 2, savvy: 8, followers: 7, public: 4 } },
         },
       },
     },
@@ -409,8 +409,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You attempt a romantic 50/50 split and the whole thing sheers off into the grass. Two people, zero lolly, one metaphor nobody requests.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
-          good: { text: '“Last one,” he says, like a vow. Half each, elbows on knees, comfortable silence. In this villa, that’s a diamond ring.', effects: { loyalty: 5, bond: 5, public: 3 } },
-          incredible: { text: 'The Mini Milk moment airs uncut, forty seconds, no music. The nation, feral for drama all week, votes it the best scene of the Season so far.', effects: { loyalty: 8, bond: 6, public: 6 } },
+          good: { text: '“Last one,” he says, like a vow. Half each, elbows on knees, comfortable silence. In this villa, that’s a diamond ring.', effects: { loyalty: 3, bond: 5, public: 3 } },
+          incredible: { text: 'The Mini Milk moment airs uncut, forty seconds, no music. The nation, feral for drama all week, votes it the best scene of the Season so far.', effects: { loyalty: 5, bond: 6, public: 6 } },
         },
       },
       right: {
@@ -419,8 +419,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.5, charisma: 0.5 },
         outcomes: {
           bad: { text: 'The auction gets competitive, then personal, then somehow about night two again. The lolly melts mid-bidding. Everyone loses. Mostly you.', effects: { savvy: 2, burnout: 3, bond: -2 } },
-          good: { text: 'Bidding reaches two kitchen shifts and a foot rub. You split the proceeds with {partner} like a tiny crime family. The villa applauds the grift.', effects: { savvy: 5, graft: 5, followers: 3 } },
-          incredible: { text: 'The Mini Milk sells for three favours and a secret, and the secret is genuinely useful. Never has dairy moved a season’s plot so far.', effects: { graft: 6, savvy: 8, followers: 4 } },
+          good: { text: 'Bidding reaches two kitchen shifts and a foot rub. You split the proceeds with {partner} like a tiny crime family. The villa applauds the grift.', effects: { charisma: 2, savvy: 5, graft: 5, followers: 3 } },
+          incredible: { text: 'The Mini Milk sells for three favours and a secret, and the secret is genuinely useful. Never has dairy moved a season’s plot so far.', effects: { charisma: 2, graft: 6, savvy: 8, followers: 4 } },
         },
       },
     },

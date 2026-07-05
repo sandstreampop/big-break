@@ -315,7 +315,10 @@ function whatsComing(state: RunState, act: number): string {
   const recoup = chooser
     ? 'First: a recoupling. <b>The boys choose.</b> You are the boys.'
     : 'First: a recoupling. <b>The boys choose.</b> You are not the boys — you survive on the Bond or the nation, and nothing else.';
-  return `⚠️ ${recoup} After that: families with opinions, final dates, and a public vote climbing like a fever. The envelope is already printed.`;
+  const hot = (state.stats?.burnout ?? 0) >= 62
+    ? ' And you’re carrying a loud head into a week that eats loud heads — <b>get it quiet or you’ll walk</b>. The Beach Hut counts as a move.'
+    : '';
+  return `⚠️ ${recoup} After that: families with opinions, final dates, and a public vote climbing like a fever. The envelope is already printed.${hot}`;
 }
 
 export function villaRecap(state: RunState, act: number, _seed: number) {
@@ -472,6 +475,16 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
   }
 
   // The wobbles: the spiral, framed as the place it happens.
+  if (id === 'li_wobble_break') {
+    return {
+      banner: 'THE GATE', cls: 'sp-hut',
+      sub: 'Dawn. A packed suitcase. Your call.',
+      stakes: [
+        stake('🌀 Tough it out and botch it, and you’re done — you walk', 'sp-risk'),
+        stake('🚪 Asking for help costs screen time. It is always worth it', 'sp-safe'),
+      ],
+    };
+  }
   if (id === 'li_wobble_50' || id === 'li_wobble_75') {
     return {
       banner: 'THE BEACH HUT', cls: 'sp-hut',

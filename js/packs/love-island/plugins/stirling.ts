@@ -184,6 +184,7 @@ export const stirlingPlugin: Plugin = {
     if (ev.id === 'li_enc_rival_3_pact') { say(BEAT_REACT.enc_pact); return; }
     if (ev.id === 'li_enc_rival_3_war') { say(BEAT_REACT.enc_war); return; }
     if (ev.id === 'li_wobble_50' || ev.id === 'li_wobble_75') { say(BEAT_REACT.wobble); return; }
+    if (ev.id === 'li_wobble_break') { say(BEAT_REACT.wobble_break); return; }
     const beat = (ev.tags || []).find((t) => t.startsWith('beat:'));
     if ((beat === 'beat:bomb1' || beat === 'beat:bomb2') && ev.id !== 'li_bomb2_steal') {
       say(BEAT_REACT.bombshell);

@@ -24,21 +24,21 @@ export const PATHS: Record<string, PathDef> = {
     id: 'winvilla',
     name: 'Win the Villa',
     blurb: 'The public crowns you and whoever you’re holding hands with by then. Fifty grand, split with feeling.',
-    gateLabel: 'Public 76 · Bond 44',
+    gateLabel: 'Public 75 · Bond 44',
     icon: '👑',
   },
   realthing: {
     id: 'realthing',
     name: 'The Real Thing',
     blurb: 'Leave with an actual person who actually knows your middle name. The prize is optional. Allegedly.',
-    gateLabel: 'Bond 78 · Loyalty 72',
+    gateLabel: 'Bond 78 · Loyalty 80',
     icon: '💘',
   },
   brand: {
     id: 'brand',
     name: 'The Brand',
     blurb: 'Win or lose, hero or villain — walk out with a following and a discount code. The villa is a launchpad.',
-    gateLabel: 'Followers 62 · Charisma 62',
+    gateLabel: 'Followers 62 · Charisma 64',
     icon: '📱',
   },
 };
@@ -49,9 +49,9 @@ export const PATHS: Record<string, PathDef> = {
 // near-miss over the line — the late vote surge, on-format. Tuned for the v2
 // Season length (the encounter arcs stretch the acts, so the ceilings rose).
 export const WIN_GATES: Record<string, Record<string, number>> = {
-  winvilla: { public: 76, bond: 44 },
-  realthing: { bond: 78, loyalty: 72 },
-  brand: { followers: 62, charisma: 62 },
+  winvilla: { public: 75, bond: 44 },
+  realthing: { bond: 78, loyalty: 80 },
+  brand: { followers: 62, charisma: 64 },
 };
 
 export const STAT_META: Record<string, StatMeta> = {
@@ -73,9 +73,14 @@ export const RESOURCE_META: Record<string, StatMeta> = {
 //  · dumped-by-vote — the public craters (live from Act 2; Act 1 is grace)
 //  · dumped-single — left standing at a Recoupling; the Coupling plugin sets
 //    the flag, this rule (bond ≥ 0 is always true) turns it into the ending.
+//  · the Final Week wall — In Your Head at 79+ once Final Week starts and you
+//    walk (R1/A2: the pack's second real mortality). Telegraphed three ways
+//    before it can fire: the wobble ladder (50 → 75 → the break), the
+//    act-3 recap's warning, and Stirling. Acts 1–2 keep the engine's 100 line.
 export const FAIL_STATES: FailStateRule[] = [
   { key: 'public', cmp: '<=', value: 0, fromAct: 2, ending: 'dumped' },
   { key: 'bond', cmp: '>=', value: 0, flag: 'li_dumped_single', ending: 'dumped' },
+  { key: 'burnout', cmp: '>=', value: 79, fromAct: 3, ending: 'burnout' },
 ];
 
 export const loveIslandManifest: PackManifest = {

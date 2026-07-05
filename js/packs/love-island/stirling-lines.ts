@@ -154,6 +154,10 @@ export const BEAT_REACT: Record<string, BarkDef[]> = {
   wobble: [
     { id: 'wb_hut', text: 'A wobble. Happens to the best — and the best usually cry in the nice Hut, so you’re on track.', priority: 10 },
   ],
+  wobble_break: [
+    { id: 'wbk_suitcase', text: 'Dawn, a suitcase, and the long stare. I’ve narrated a hundred of these. The ones who ask for help stay. The ones who say “I’m fine” pack.', priority: 10 },
+    { id: 'wbk_quiet', text: 'No jokes for a second. That gate is real, and Final Week has no patience for a loud head. Whatever keeps you in the game — do that one.', priority: 10 },
+  ],
   steal_survived: [
     { id: 'st_held', text: 'Sixty seconds of pure lawn maths, and your couple came out the other side. Exhale.', priority: 10 },
   ],

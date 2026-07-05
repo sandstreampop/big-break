@@ -81,10 +81,13 @@ export const loveIslandPack: Pack = {
   plugins: [couplingPlugin, profilePlugin, charactersPlugin, gossipPlugin, producersPlugin, stirlingPlugin],
   events: LOVE_ISLAND_EVENTS,
   tutorialEvents: [],
-  // In-Your-Head wobbles: the engine's coping-interstitial capability,
-  // reskinned as the Beach Hut spiral and the 3 a.m. wall.
+  // The In-Your-Head ladder (R1/A2): the soft wobble at 50, the real one at
+  // 75, and — if the head climbs back after that relief — the break at 76,
+  // where a botched "tough it out" IS the Walk. Order is load-bearing: rules
+  // are checked top-down, so 75 takes the first crossing, the break the next.
   interstitials: [
     { id: 'li_wobble_75', burnoutMin: 75, belowFail: true },
+    { id: 'li_wobble_break', burnoutMin: 76, belowFail: true },
     { id: 'li_wobble_50', burnoutMin: 50 },
   ],
   presenter: loveIslandPresenter,

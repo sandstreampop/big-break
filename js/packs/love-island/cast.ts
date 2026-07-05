@@ -18,8 +18,8 @@ const TYPES = [
     modifiers: { loyalty: 8, savvy: -6 },
     quirk: {
       id: 'devoted', name: 'Devoted',
-      desc: 'Loyalty gains ×1.25 and Bond builds 30% faster. Feelings arrive early and unpack.',
-      hooks: { statGainMult: { loyalty: 1.25 }, bondGainMult: 1.3 },
+      desc: 'Loyalty gains ×1.15 and Bond builds 30% faster. Feelings arrive early and unpack.',
+      hooks: { statGainMult: { loyalty: 1.15 }, bondGainMult: 1.3 },
     },
   },
   {
