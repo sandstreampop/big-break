@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#ff2e88">
+<title>Hillevi's Love Island Interview Wrapped</title>
+<meta name="description" content="A playful Spotify-Wrapped-style recap of Hillevi's Love Island design interview — the year she basically redesigned the villa.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --ink: #1a0d18;
+    --paper: #fff7fb;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  html, body { height: 100%; overflow: hidden; background: #12030c; }
+  body {
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    user-select: none;
+    touch-action: manipulation;
+  }
+  .serif { font-family: Georgia, "Times New Roman", serif; font-style: italic; }
+
+  /* ---------- Stage ---------- */
+  #stage { position: fixed; inset: 0; }
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    flex-direction: column;
+    padding: calc(52px + var(--safe-t)) 26px calc(30px + var(--safe-b));
+    overflow: hidden;
+  }
+  .slide.active { display: flex; animation: slideIn .5s cubic-bezier(.2,.7,.3,1); }
+  @keyframes slideIn { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: none; } }
+
+  .slide-body { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .scrolly { justify-content: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-top: 8px; }
+
+  /* rotating gradient backgrounds */
+  .g1  { background: radial-gradient(120% 90% at 20% 10%, #ff5fa2 0%, #ff2e88 35%, #b3006e 100%); }
+  .g2  { background: radial-gradient(120% 90% at 80% 15%, #ffd166 0%, #ff8a5b 45%, #ff2e88 100%); }
+  .g3  { background: radial-gradient(120% 100% at 15% 85%, #22d3ee 0%, #3b82f6 55%, #7c3aed 100%); }
+  .g4  { background: radial-gradient(120% 90% at 85% 10%, #f9a8d4 0%, #a855f7 50%, #4c1d95 100%); }
+  .g5  { background: radial-gradient(120% 90% at 20% 20%, #34d399 0%, #06b6d4 55%, #0e7490 100%); }
+  .g6  { background: radial-gradient(120% 100% at 80% 90%, #fb7185 0%, #e11d6b 50%, #6b0f3a 100%); }
+  .g7  { background: radial-gradient(120% 90% at 50% 0%, #fde047 0%, #fb923c 40%, #db2777 100%); }
+  .g8  { background: radial-gradient(120% 100% at 15% 10%, #c4b5fd 0%, #8b5cf6 45%, #2e1065 100%); }
+  .g9  { background: radial-gradient(130% 100% at 50% 100%, #ff9ec7 0%, #ff2e88 45%, #7a0043 100%); }
+
+  /* ---------- Progress bar ---------- */
+  #bars { position: fixed; top: calc(10px + var(--safe-t)); left: 12px; right: 12px; display: flex; gap: 5px; z-index: 40; }
+  .bar { flex: 1; height: 3.5px; border-radius: 3px; background: rgba(255,255,255,.28); overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: #fff; border-radius: 3px; }
+  .bar.done > i { width: 100%; }
+  .bar.cur > i { width: 100%; }
+
+  /* ---------- Nav zones ---------- */
+  .zone { position: fixed; top: 0; bottom: 0; width: 32%; z-index: 20; }
+  .zone.left { left: 0; }
+  .zone.right { right: 0; }
+
+  /* ---------- Typography ---------- */
+  .kicker { font-size: 13px; letter-spacing: .22em; text-transform: uppercase; font-weight: 800; opacity: .9; margin-bottom: 14px; }
+  h1 { font-size: clamp(30px, 9vw, 46px); line-height: 1.04; font-weight: 900; letter-spacing: -.02em; margin-bottom: 12px; text-wrap: balance; }
+  h2 { font-size: clamp(24px, 7vw, 34px); line-height: 1.1; font-weight: 900; letter-spacing: -.01em; margin-bottom: 10px; text-wrap: balance; }
+  .big-num { font-size: clamp(76px, 26vw, 150px); font-weight: 900; line-height: .9; letter-spacing: -.04em; }
+  p.lede { font-size: clamp(17px, 4.6vw, 21px); line-height: 1.4; font-weight: 500; opacity: .96; }
+  .small { font-size: 14px; opacity: .8; line-height: 1.45; }
+  .quote { font-size: clamp(21px, 6vw, 30px); line-height: 1.28; font-weight: 700; }
+  .hearted { color: #fff; }
+  .tag { display: inline-block; background: rgba(255,255,255,.2); padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+
+  .hint { position: absolute; bottom: calc(18px + var(--safe-b)); left: 0; right: 0; text-align: center; font-size: 12.5px; opacity: .72; font-weight: 600; animation: pulse 2s infinite; z-index: 5; pointer-events: none; }
+  @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.85} }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: #fff; color: #d1006b; border: none; border-radius: 999px;
+    font-size: 16px; font-weight: 800; padding: 15px 26px; cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0,0,0,.22); width: 100%;
+    transition: transform .12s ease, opacity .2s;
+  }
+  .btn:active { transform: scale(.96); }
+  .btn.ghost { background: rgba(255,255,255,.16); color: #fff; box-shadow: none; border: 1.5px solid rgba(255,255,255,.4); }
+  .btn:disabled { opacity: .4; }
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .zone-off .zone { display: none; }
+
+  /* ---------- Option cards (quiz / faction) ---------- */
+  .opts { display: flex; flex-direction: column; gap: 11px; margin-top: 8px; }
+  .opt {
+    background: rgba(255,255,255,.14); border: 1.5px solid rgba(255,255,255,.28);
+    border-radius: 16px; padding: 15px 16px; font-size: 16px; font-weight: 600;
+    cursor: pointer; text-align: left; color: #fff; transition: all .15s; line-height: 1.3;
+  }
+  .opt:active { transform: scale(.98); }
+  .opt.correct { background: #21c56b; border-color: #21c56b; box-shadow: 0 6px 18px rgba(33,197,107,.4); }
+  .opt.wrong { background: rgba(255,60,90,.35); border-color: #ff5b73; }
+  .opt.dim { opacity: .45; }
+  .feedback { margin-top: 14px; font-size: 15px; font-weight: 600; line-height: 1.4; min-height: 22px; }
+
+  /* ---------- Rank list ---------- */
+  .rank { display: flex; flex-direction: column; gap: 9px; margin-top: 6px; }
+  .rankItem {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.28);
+    border-radius: 14px; padding: 13px 14px; font-weight: 700; font-size: 15.5px;
+  }
+  .rankItem .n { width: 26px; height: 26px; flex: none; border-radius: 50%; background: rgba(255,255,255,.25); display: grid; place-items: center; font-size: 13px; font-weight: 900; }
+  .rankItem .label { flex: 1; line-height: 1.2; }
+  .rankItem .updown { display: flex; flex-direction: column; gap: 3px; }
+  .rankItem .updown button { width: 30px; height: 22px; border-radius: 7px; border: none; background: rgba(255,255,255,.28); color: #fff; font-weight: 900; cursor: pointer; font-size: 13px; line-height: 1; }
+  .rankItem .updown button:active { background: rgba(255,255,255,.5); }
+  .rankItem.ok { background: #21c56b; border-color: #21c56b; }
+  .rankItem.no { background: rgba(255,60,90,.3); border-color: #ff5b73; }
+
+  /* ---------- Grafting / coffee game ---------- */
+  .meterWrap { margin: 22px 0 8px; }
+  .meterTrack { height: 26px; border-radius: 999px; background: rgba(255,255,255,.2); overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,.2); }
+  .meterFill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg,#ffd166,#ff5fa2,#ff2e88); transition: width .18s ease; }
+  .coffee { font-size: 92px; cursor: pointer; display: inline-block; transition: transform .07s; }
+  .coffee:active { transform: scale(.82) rotate(-6deg); }
+  .tapzone { display: grid; place-items: center; flex: 1; }
+
+  /* ---------- Ick swipe ---------- */
+  .deck { position: relative; flex: 1; margin: 14px 0; min-height: 220px; }
+  .card {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.3);
+    border-radius: 22px; padding: 26px; text-align: center; backdrop-filter: blur(2px);
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+  }
+  .card .emoji { font-size: 54px; margin-bottom: 14px; }
+  .card .txt { font-size: 20px; font-weight: 700; line-height: 1.3; }
+  .card .stamp { position: absolute; top: 20px; font-size: 22px; font-weight: 900; padding: 4px 14px; border-radius: 10px; border: 3px solid; opacity: 0; transform: rotate(-14deg); }
+  .card .stamp.ick { left: 18px; color: #ff5b73; border-color: #ff5b73; }
+  .card .stamp.legit { right: 18px; color: #21ffa0; border-color: #21ffa0; }
+
+  /* ---------- Slang reveal ---------- */
+  .slangList { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .slang { background: rgba(255,255,255,.14); border-radius: 14px; padding: 13px 15px; cursor: pointer; transition: background .15s; }
+  .slang:active { background: rgba(255,255,255,.24); }
+  .slang .top { display: flex; align-items: baseline; gap: 10px; }
+  .slang .rank { font-size: 20px; font-weight: 900; opacity: .7; width: 22px; }
+  .slang .term { font-size: 18px; font-weight: 800; }
+  .slang .mean { font-size: 14px; opacity: 0; max-height: 0; overflow: hidden; transition: all .3s; line-height: 1.35; margin-top: 0; }
+  .slang.open .mean { opacity: .92; max-height: 90px; margin-top: 7px; }
+
+  /* ---------- stat chips ---------- */
+  .chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+  .chip { background: rgba(255,255,255,.16); border-radius: 13px; padding: 12px 14px; flex: 1 1 40%; }
+  .chip b { display: block; font-size: 26px; font-weight: 900; }
+  .chip span { font-size: 12.5px; opacity: .85; }
+
+  /* ---------- hearts burst ---------- */
+  #fx { position: fixed; inset: 0; pointer-events: none; z-index: 60; overflow: hidden; }
+  .fxheart { position: absolute; font-size: 26px; animation: rise 1.5s ease-out forwards; }
+  @keyframes rise { 0%{ transform: translateY(0) scale(.5); opacity: 1; } 100%{ transform: translateY(-150px) scale(1.3) rotate(30deg); opacity: 0; } }
+
+  .center { text-align: center; }
+  .mt { margin-top: 16px; }
+  .mt-s { margin-top: 9px; }
+  .badge-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .grow { flex: 1; }
+  .count { font-variant-numeric: tabular-nums; }
+  a.link { color: #fff; text-decoration: underline; font-weight: 700; }
+  @media (min-width: 620px) {
+    .slide { max-width: 460px; margin: 0 auto; border-left: 1px solid rgba(255,255,255,.08); border-right: 1px solid rgba(255,255,255,.08); }
+    #bars { max-width: 436px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+<div id="bars"></div>
+<div id="stage"></div>
+<div class="zone left" id="zoneL"></div>
+<div class="zone right" id="zoneR"></div>
+<div id="fx"></div>
+
+<script>
+/* ============================================================
+   Hillevi's Love Island Interview Wrapped
+   Self-contained. No network, no build. Story-card flow.
+   ============================================================ */
+
+const stage = document.getElementById('stage');
+const barsEl = document.getElementById('bars');
+const fx = document.getElementById('fx');
+
+/* -------- little helpers -------- */
+const el = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; };
+function burstHearts(n=14, chars=['💘','💖','☕','✨','🔥','🏝️']) {
+  for (let i=0;i<n;i++){
+    const h = document.createElement('div');
+    h.className='fxheart';
+    h.textContent = chars[Math.floor(Math.random()*chars.length)];
+    h.style.left = (Math.random()*100)+'%';
+    h.style.top = (60+Math.random()*30)+'%';
+    h.style.animationDelay = (Math.random()*.3)+'s';
+    fx.appendChild(h);
+    setTimeout(()=>h.remove(), 1800);
+  }
+}
+function countUp(node, to, dur=1100, suffix='') {
+  const start = performance.now();
+  function step(t){
+    const p = Math.min(1,(t-start)/dur);
+    const e = 1-Math.pow(1-p,3);
+    node.textContent = Math.round(to*e) + suffix;
+    if (p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ============================================================
+   SLIDE DEFINITIONS
+   Each: { g: gradient class, tap: can advance by tapping,
+           html: markup, init: fn(slideEl){} }
+   ============================================================ */
+const slides = [];
+
+/* 0 — SPLASH */
+slides.push({ g:'g1', tap:true, html:`
+  <div class="slide-body center">
+    <div style="font-size:64px" class="mt">🏝️💘</div>
+    <div class="kicker mt">Love Island · 2026</div>
+    <h1>Hillevi's<br>Interview<br>Wrapped</h1>
+    <p class="lede mt">One evening. One superfan. One villa, completely redesigned.</p>
+    <p class="small mt">Let's play back your year in the villa.</p>
+  </div>
+  <div class="hint">tap to begin →</div>`,
+});
+
+/* 1 — INTRO / who */
+slides.push({ g:'g4', tap:true, html:`
+  <div class="slide-body">
+    <div class="kicker">The expert of the year</div>
+    <h1>You.</h1>
+    <p class="lede mt">Every season watched. Every meme clocked. Every rule-change tracked across the years.</p>
+    <p class="lede mt-s">We asked. You didn't hold back. And the game will never be the same.</p>
+    <div class="badge-row">
+      <span class="tag">Superfan</span><span class="tag">Playtester</span><span class="tag">Villa oracle</span>
+    </div>
+  </div>
+  <div class="hint">tap →</div>`,
+});
+
+/* 2 — BY THE NUMBERS */
+slides.push({ g:'g2', tap:true, html:`
+  <div class="slide-body">
+    <div class="kicker">Your interview, by the numbers</div>
+    <h2>You said a lot. All of it good.</h2>
+    <div class="chips">
+      <div class="chip"><b class="count" data-c="8">0</b><span>design pillars you inspired</span></div>
+      <div class="chip"><b class="count" data-c="7">0</b><span>couples in a living villa</span></div>
+      <div class="chip"><b class="count" data-c="1">0</b><span>rival mention (you wanted fewer 😌)</span></div>
+      <div class="chip"><b class="count" data-c="100">0</b><span>% authenticity, always</span></div>
+    </div>
+    <p class="small mt">Not bad for someone with "no programming background."</p>
+  </div>
+  <div class="hint">tap →</div>`,
+  init(s){ s.querySelectorAll('.count').forEach(n=>countUp(n, +n.dataset.c, 1200, n.dataset.c==='100'?'%':'')); }
+});
+
+/* 3 — YOUR #1 INSIGHT (top-song reveal) */
+slides.push({ g:'g3', tap:true, html:`
+  <div class="slide-body">
+    <div class="kicker">Your #1 insight</div>
+    <div class="big-num">#1</div>
+    <h2 class="mt">The villa is a living web.</h2>
+    <p class="lede mt">Not a spotlight on you. Five, six, seven couples — and one small move makes <span class="serif">someone else</span> vulnerable.</p>
+    <p class="small mt">This one idea reorganised the entire game. No pressure.</p>
+  </div>
+  <div class="hint">tap →</div>`,
+  init(){ setTimeout(()=>burstHearts(10,['🕸️','💘','🔥']), 400); }
+});
+
+/* 4 — GAME: Guess what you said */
+slides.push({ g:'g6', tap:false, html:`
+  <div class="slide-body scrolly">
+    <div class="kicker">🎤 Round 1</div>
+    <h2>Can you guess what <span class="serif">you</span> said here?</h2>
+    <p class="small" style="margin:6px 0 14px">Fill the blank. It's a direct quote — from you.</p>
+    <div id="quiz"></div>
+  </div>`,
+  init(s){ initQuiz(s.querySelector('#quiz')); }
+});
+
+/* 5 — GAME: rank the season */
+slides.push({ g:'g7', tap:false, html:`
+  <div class="slide-body scrolly">
+    <div class="kicker">📺 Round 2</div>
+    <h2>Order the season.</h2>
+    <p class="small" style="margin:6px 0 12px">Put the big beats in the order they actually air. Use the arrows.</p>
+    <div id="rank" class="rank"></div>
+    <div class="btn-row"><button class="btn" id="rankCheck">Lock it in</button></div>
+    <div class="feedback center" id="rankFb"></div>
+  </div>`,
+  init(s){ initRank(s); }
+});
+
+/* 6 — GAME: which faction */
+slides.push({ g:'g8', tap:false, html:`
+  <div class="slide-body scrolly">
+    <div class="kicker">🗳️ Round 3</div>
+    <h2 id="facTitle">Which side of the nation are you?</h2>
+    <p class="small" id="facSub" style="margin:6px 0 14px">You told us the public isn't one voice. So — which voice are <em>you</em>?</p>
+    <div id="faction"></div>
+  </div>`,
+  init(s){ initFaction(s); }
+});
+
+/* 7 — GAME: grafting simulator */
+slides.push({ g:'g5', tap:false, html:`
+  <div class="slide-body">
+    <div class="kicker">☕ Round 4</div>
+    <h2>The grafting simulator.</h2>
+    <p class="small" style="margin:6px 0 2px">Bring them coffee every morning. Fill the Bond. But easy, tiger — <span class="serif">come on too strong</span> and you'll get the ick.</p>
+    <div class="meterWrap">
+      <div class="meterTrack"><div class="meterFill" id="bondFill"></div></div>
+    </div>
+    <div class="tapzone"><div class="coffee" id="coffee">☕</div></div>
+    <div class="feedback center" id="graftFb">Tap the coffee. Steady does it.</div>
+  </div>`,
+  init(s){ initGraft(s); }
+});
+
+/* 8 — GAME: ick or legit */
+slides.push({ g:'g6', tap:false, html:`
+  <div class="slide-body">
+    <div class="kicker">🤢 Round 5</div>
+    <h2>Ick, or legit?</h2>
+    <p class="small" style="margin:6px 0 2px">You know one when you see one. Tap your verdict.</p>
+    <div class="deck" id="deck"></div>
+    <div class="btn-row">
+      <button class="btn ghost" id="ickNo">🤢 ICK</button>
+      <button class="btn" id="ickYes" style="color:#0a7d3f">💚 LEGIT</button>
+    </div>
+    <div class="feedback center" id="ickFb"></div>
+  </div>`,
+  init(s){ initIck(s); }
+});
+
+/* 9 — YOUR TOP 5 SLANG (tap to reveal) */
+slides.push({ g:'g2', tap:true, html:`
+  <div class="slide-body scrolly">
+    <div class="kicker">Your top villa vocabulary</div>
+    <h2>The words that <span class="serif">must</span> make the cut.</h2>
+    <p class="small" style="margin:6px 0 12px">Tap each to remember what it means.</p>
+    <div class="slangList" id="slang"></div>
+  </div>
+  <div class="hint">tap the edge to continue →</div>`,
+  init(s){ initSlang(s); }
+});
+
+/* 10 — THE MORAL (authenticity) */
+slides.push({ g:'g3', tap:true, html:`
+  <div class="slide-body">
+    <div class="kicker">The one rule above all rules</div>
+    <h1>Be real.</h1>
+    <p class="lede mt">Authenticity = consistency. Same you with your partner, a bombshell, your mates. Play for the cameras and the nation clocks it.</p>
+    <p class="lede mt-s serif">"People appreciate when someone feels real."</p>
+    <p class="small mt">— you, nailing the entire design brief in seven words</p>
+  </div>
+  <div class="hint">tap →</div>`,
+  init(){ setTimeout(()=>burstHearts(8,['✨','💚','💘']),400); }
+});
+
+/* 11 — OUTRO / share card */
+slides.push({ g:'g9', tap:false, html:`
+  <div class="slide-body center">
+    <div style="font-size:58px">👑</div>
+    <div class="kicker mt">That's a wrap</div>
+    <h1>You won<br>the villa.</h1>
+    <p class="lede mt">You didn't just watch the show — you rebuilt it. Living webs, factions, the ick, grafting, and one very good rule about being real.</p>
+    <div class="chips" style="margin-top:18px">
+      <div class="chip"><b>💯</b><span>Your authenticity score</span></div>
+      <div class="chip"><b>#1</b><span>Fan in the villa</span></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="replay">↺ Watch again</button>
+    </div>
+    <p class="small mt">Made with love (and a lot of iced coffee) for Hillevi.</p>
+  </div>`,
+  init(s){
+    setTimeout(()=>burstHearts(22,['💘','👑','🏝️','☕','✨','🔥','💖']), 300);
+    s.querySelector('#replay').addEventListener('click', ()=>go(0));
+  }
+});
+
+/* ============================================================
+   GAME LOGIC
+   ============================================================ */
+
+/* ---- Quiz: guess what you said ---- */
+const QUIZ = [
+  { pre:'"Too much focus on the ', blank:'rival', post:', and too little on building a relationship with my partner."',
+    opts:['rival','drama','bombshells','producers'], answer:0,
+    good:"Exactly. Your very first words — and the reason for the whole overhaul." },
+  { pre:'"An authentic Islander acts more or less the same with their partner as they do with a ', blank:'bombshell', post:', or with their friends."',
+    opts:['producer','bombshell','camera','ex'], answer:1,
+    good:"Yep. Consistency across the room = the real thing." },
+  { pre:'"You get the feeling they’re only acting interested because they need to ', blank:'stay in the villa', post:'." — the classic ick.',
+    opts:['win the money','get famous','stay in the villa','make coffee'], answer:2,
+    good:"Spot on. The ick is love’s lie-detector." },
+  { pre:'"The couple that wins is properly in love — but NOT the ', blank:'uncomplicated', post:' day-one happy couple. There’s always a storyline."',
+    opts:['uncomplicated','boring','perfect','loudest'], answer:0,
+    good:"Right. The nation crowns the story, not the smoothest couple." },
+];
+function initQuiz(root){
+  let i=0, score=0;
+  function render(){
+    if (i>=QUIZ.length){
+      root.innerHTML = `<div class="center"><div class="big-num">${score}/${QUIZ.length}</div>
+        <p class="lede mt">${score===QUIZ.length?'Flawless. You quoted yourself perfectly. 🏆':score>=2?'Strong. You know your own mind. 💅':'Close enough — you said it, we remember it. 💘'}</p>
+        <div class="btn-row"><button class="btn" id="qNext">Next round →</button></div></div>`;
+      root.querySelector('#qNext').addEventListener('click', ()=>go(current+1));
+      burstHearts(10);
+      return;
+    }
+    const q = QUIZ[i];
+    root.innerHTML = `
+      <div class="quote">${q.pre}<span style="border-bottom:3px dashed rgba(255,255,255,.7);padding:0 22px">?</span>${q.post}</div>
+      <div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div>
+      <div class="feedback" id="qfb"></div>`;
+    root.querySelectorAll('.opt').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const k = +b.dataset.k; const correct = k===q.answer;
+        root.querySelectorAll('.opt').forEach(x=>{ x.style.pointerEvents='none';
+          const xk=+x.dataset.k;
+          if (xk===q.answer) x.classList.add('correct');
+          else if (xk===k) x.classList.add('wrong'); else x.classList.add('dim'); });
+        if (correct) score++;
+        const fb = root.querySelector('#qfb');
+        fb.innerHTML = (correct?'✅ ':'💡 ') + q.good;
+        if (correct) burstHearts(6);
+        setTimeout(()=>{ i++; render(); }, correct?1150:2050);
+      });
+    });
+  }
+  render();
+}
+
+/* ---- Rank the season ---- */
+const SEASON = [
+  { label:'Day One — the OGs enter & couple up', pos:0 },
+  { label:'The first bombshell struts in', pos:1 },
+  { label:'Casa Amor — heads turn', pos:2 },
+  { label:'Movie Night — the receipts drop', pos:3 },
+  { label:'The Final — the nation crowns a couple', pos:4 },
+];
+function initRank(s){
+  // start shuffled (fixed non-trivial order so it isn't accidentally solved)
+  let order = [2,0,3,1,4].map(k=>SEASON[k]);
+  const listEl = s.querySelector('#rank');
+  const fb = s.querySelector('#rankFb');
+  function draw(){
+    listEl.innerHTML='';
+    order.forEach((item,idx)=>{
+      const row = el(`<div class="rankItem"><span class="n">${idx+1}</span><span class="label">${item.label}</span>
+        <span class="updown"><button data-d="-1" ${idx===0?'style="opacity:.3"':''}>▲</button><button data-d="1" ${idx===order.length-1?'style="opacity:.3"':''}>▼</button></span></div>`);
+      row.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{
+        const d=+btn.dataset.d, j=idx+d;
+        if (j<0||j>=order.length) return;
+        [order[idx],order[j]]=[order[j],order[idx]];
+        draw();
+      }));
+      listEl.appendChild(row);
+    });
+  }
+  draw();
+  s.querySelector('#rankCheck').addEventListener('click',()=>{
+    let ok=true;
+    listEl.querySelectorAll('.rankItem').forEach((row,idx)=>{
+      const right = order[idx].pos===idx;
+      row.classList.add(right?'ok':'no'); if(!right) ok=false;
+    });
+    if (ok){ fb.innerHTML='🎬 Perfect running order. You could produce this show.'; burstHearts(14,['📺','🎬','💘','👑']);
+      const b=s.querySelector('#rankCheck'); b.textContent='Nailed it → next'; b.onclick=()=>go(current+1);
+    } else {
+      fb.innerHTML='So close! Green = right seat. Nudge the rest and lock in again.';
+      setTimeout(()=>listEl.querySelectorAll('.rankItem').forEach(r=>r.classList.remove('ok','no')), 1600);
+    }
+  });
+}
+
+/* ---- Which faction ---- */
+const FACTS = [
+  { q:'Your partner cheated at Casa. On Movie Night, you…', a:[
+    ['Take them back — love conquers all 💘','R'],['Walk with your head high. Bye. 💅','S'],['Make it a SCENE. Cameras rolling. 🎬','D'] ]},
+  { q:'A messy bombshell enters. You’re…', a:[
+    ['Rooting for a soft, real connection','R'],['Watching who keeps their word','S'],['Absolutely buzzing for chaos','D'] ]},
+  { q:'The couple you’d crown to win is…', a:[
+    ['The sweet ones who found each other','R'],['The one who never lost themselves','S'],['The villain who ran the whole villa','D'] ]},
+];
+const FACT_RESULT = {
+  R:{ t:'The Romantics ', d:'Stick together, forgive, believe in the fairytale. You want the coffee-in-bed, meet-the-parents ending — and you’ll cry happy tears at the Final.', e:'💘' },
+  S:{ t:'The Self-Respect Crowd', d:'Backbone over butterflies. You will NOT watch someone accept the disrespect. Walk away with your head high — that’s the real win.', e:'💅' },
+  D:{ t:'The Drama-Lovers', d:'You’re not here for love, you’re here for the group chat. Long live the villain, the recoupling twist and the gasp heard ’round the nation.', e:'🎬' },
+};
+function initFaction(s){
+  const root = s.querySelector('#faction'); let i=0; const tally={R:0,S:0,D:0};
+  function render(){
+    if (i>=FACTS.length){
+      const win = Object.keys(tally).sort((a,b)=>tally[b]-tally[a])[0];
+      const r = FACT_RESULT[win];
+      s.querySelector('#facTitle').textContent='You are…';
+      s.querySelector('#facSub').style.display='none';
+      root.innerHTML = `<div class="center"><div style="font-size:66px">${r.e}</div>
+        <h1 style="font-size:34px" class="mt">${r.t}</h1>
+        <p class="lede mt">${r.d}</p>
+        <div class="btn-row"><button class="btn" id="fNext">Next round →</button></div></div>`;
+      root.querySelector('#fNext').addEventListener('click',()=>go(current+1));
+      burstHearts(12,[r.e,'✨','💘']);
+      return;
+    }
+    const f=FACTS[i];
+    root.innerHTML = `<div class="quote" style="font-size:22px">${f.q}</div>
+      <div class="opts">${f.a.map((o,k)=>`<button class="opt" data-k="${k}">${o[0]}</button>`).join('')}</div>`;
+    root.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+      tally[f.a[+b.dataset.k][1]]++; i++; render();
+    }));
+  }
+  render();
+}
+
+/* ---- Grafting simulator ---- */
+function initGraft(s){
+  const fill=s.querySelector('#bondFill'), fb=s.querySelector('#graftFb'), cup=s.querySelector('#coffee');
+  let bond=0, last=0, done=false;
+  cup.addEventListener('click',()=>{
+    if (done) return;
+    const now=performance.now(); const gap=now-last; last=now;
+    burstHearts(3,['☕','💛']);
+    if (gap<230){ // too fast = coming on too strong
+      done=true;
+      fill.style.background='#ff5b73'; fill.style.width='100%';
+      cup.textContent='🤢'; fb.innerHTML='😬 Woah — too keen, too fast. <b>She got the ick.</b> It’s over.<br><span class="small">Tap to try again — slower.</span>';
+      fb.style.cursor='pointer';
+      fb.onclick=()=>{ bond=0;done=false;last=0; fill.style.background=''; fill.style.width='0'; cup.textContent='☕'; fb.style.cursor=''; fb.onclick=null; fb.textContent='Tap the coffee. Steady does it.'; };
+      return;
+    }
+    bond=Math.min(100,bond+11);
+    fill.style.width=bond+'%';
+    if (bond>=100){
+      done=true; cup.textContent='💘';
+      fb.innerHTML='💘 Bond secured — the slow, real way. That’s how you build it.';
+      burstHearts(16);
+      // reveal continue
+      const b=document.createElement('button'); b.className='btn'; b.style.marginTop='14px'; b.textContent='Next round →';
+      b.onclick=()=>go(current+1); fb.appendChild(document.createElement('br')); fb.appendChild(b);
+    } else {
+      const lines=['Nice. She noticed. ☺️','Inside joke unlocked. 😄','Iced, obviously. 🧊','She’s smiling. Keep going.','That’s the good stuff.'];
+      fb.textContent=lines[Math.floor(bond/22)%lines.length];
+    }
+  });
+}
+
+/* ---- Ick or legit ---- */
+const ICKS = [
+  { e:'🏃', t:'Chases you round the villa on day one, coming on WAY too strong', legit:false },
+  { e:'☕', t:'Brings you an iced coffee every morning without being asked', legit:true },
+  { e:'📉', t:'Only seems into you the day before a recoupling', legit:false },
+  { e:'😂', t:'Brings back your inside joke from last week', legit:true },
+  { e:'😢', t:'Fake-cries to the camera to win sympathy', legit:false },
+  { e:'🪞', t:'Says the exact same thing to your face as behind your back', legit:true },
+];
+function initIck(s){
+  const deck=s.querySelector('#deck'), fb=s.querySelector('#ickFb');
+  let i=0, score=0;
+  function render(){
+    if (i>=ICKS.length){
+      deck.innerHTML=`<div class="card"><div class="emoji">${score===ICKS.length?'🏆':'💘'}</div>
+        <div class="txt">${score}/${ICKS.length} — ${score===ICKS.length?'Immaculate ick radar.':'Your gut knows the villa.'}</div></div>`;
+      fb.innerHTML='';
+      s.querySelector('#ickNo').style.display='none'; s.querySelector('#ickYes').style.display='none';
+      const b=document.createElement('button'); b.className='btn'; b.textContent='Last stop →'; b.style.marginTop='14px';
+      b.onclick=()=>go(current+1); fb.appendChild(b); burstHearts(12);
+      return;
+    }
+    const c=ICKS[i];
+    deck.innerHTML=`<div class="card"><span class="stamp ick">ICK</span><span class="stamp legit">LEGIT</span>
+      <div class="emoji">${c.e}</div><div class="txt">${c.t}</div></div>`;
+  }
+  function answer(saysLegit){
+    if (i>=ICKS.length) return;
+    const c=ICKS[i]; const card=deck.querySelector('.card');
+    const stamp=card.querySelector(saysLegit?'.stamp.legit':'.stamp.ick');
+    if(stamp) stamp.style.opacity='1';
+    const right = saysLegit===c.legit;
+    if (right) score++;
+    fb.innerHTML = right?'✅ Correct.':'❌ '+(c.legit?'That one’s actually a green flag.':'Nope — that’s an ick.');
+    card.style.transition='transform .4s ease, opacity .4s';
+    card.style.transform=`translateX(${saysLegit?'':'-'}120%) rotate(${saysLegit?'':'-'}18deg)`;
+    card.style.opacity='0';
+    setTimeout(()=>{ i++; fb.innerHTML=''; render(); }, 520);
+  }
+  s.querySelector('#ickNo').addEventListener('click',()=>answer(false));
+  s.querySelector('#ickYes').addEventListener('click',()=>answer(true));
+  render();
+}
+
+/* ---- Slang top 5 ---- */
+const SLANG = [
+  ['Pull for a chat','Quietly take someone aside — the first real move.'],
+  ['Grafting','Putting in the work on someone: coffee, graft, showing up daily.'],
+  ['The ick','A sudden, usually fatal turn-off. Once it lands, it’s over.'],
+  ['Closed off / open','Are you exclusive, or still getting to know people? A whole contract.'],
+  ['Where’s your head at?','The check-in question — who are you really feeling right now?'],
+];
+function initSlang(s){
+  const root=s.querySelector('#slang');
+  SLANG.forEach((sl,k)=>{
+    const row=el(`<div class="slang"><div class="top"><span class="rank">${k+1}</span><span class="term">${sl[0]}</span></div><div class="mean">${sl[1]}</div></div>`);
+    row.addEventListener('click',()=>row.classList.toggle('open'));
+    root.appendChild(row);
+  });
+}
+
+/* ============================================================
+   NAVIGATION / RENDER
+   ============================================================ */
+let current = 0;
+const rendered = [];
+
+// build progress bars
+slides.forEach(()=>{ const b=el('<div class="bar"><i></i></div>'); barsEl.appendChild(b); });
+const barEls=[...barsEl.children];
+
+function updateBars(){
+  barEls.forEach((b,idx)=>{ b.classList.remove('done','cur');
+    if (idx<current) b.classList.add('done'); else if (idx===current) b.classList.add('cur'); });
+}
+
+function go(n){
+  if (n<0 || n>=slides.length) return;
+  const prev = stage.querySelector('.slide.active');
+  if (prev) prev.classList.remove('active');
+  current = n;
+  let s = rendered[n];
+  if (!s){
+    const def = slides[n];
+    s = el(`<section class="slide ${def.g}" data-tap="${def.tap?1:0}">${def.html}</section>`);
+    stage.appendChild(s);
+    rendered[n]=s;
+    if (def.init) try{ def.init(s); }catch(e){ console.error(e); }
+  }
+  s.classList.add('active');
+  document.body.classList.toggle('zone-off', slides[n].tap!==true);
+  updateBars();
+}
+
+// tap zones (only advance on tappable/non-interactive slides)
+document.getElementById('zoneR').addEventListener('click', ()=>{ if (slides[current].tap) go(current+1); });
+document.getElementById('zoneL').addEventListener('click', ()=>{ if (slides[current].tap) go(current-1); });
+// keyboard for desktop
+addEventListener('keydown', e=>{ if(e.key==='ArrowRight') go(current+1); if(e.key==='ArrowLeft') go(current-1); });
+
+window.go = go;
+go(0);
+</script>
+</body>
+</html>
