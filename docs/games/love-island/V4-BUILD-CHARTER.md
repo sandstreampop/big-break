@@ -102,7 +102,7 @@ genres, which is the whole point of the neutral-engine vision.
   this charter**; (3) a **new player-facing identity element** the docs never
   sanctioned (new Summit / stat / win condition).
 
-## The taste gate (the one human-in-the-loop step)
+## The taste gate (blocking in Session 2, optional/post-hoc in Session 3)
 
 Mechanics self-merge, but the **taste ceiling** is gated by a swipe review, since
 no test grades wit:
@@ -115,38 +115,43 @@ no test grades wit:
    GitHub commit (owner-authenticated; the page holds no credentials), or download.
 4. Builder ingests: keep 👍, cut/revise 👎 (use notes), promote ⭐ into
    `GUIDING_EXAMPLES.md`, fold recurring 👎 clichés into `taste.mjs` so the floor
-   rises each batch. **Content isn't done until it clears a review pass.**
+   rises each batch. In **Session 2** this is *blocking* (writing waits for the
+   pass); in **Session 3** it is *optional and post-hoc* (see below).
 
 Also grow `VOICE.md` for the new card types, and self-critique a full sample
 season via `simulate-pack.mjs` before merge.
 
-### When Viktor comes in (the taste checkpoint — a hard pause)
+### When Viktor comes in (checkpoints)
 
-The taste review is the **one place the builder stops and waits for a human**.
-It is a blocking checkpoint, not a fire-and-forget note:
+- **Session 1 — never.** Pure engine refactor, no new writing. Fully hands-off.
+- **Session 2 — once, blocking**, after the week's new writing (daily beats,
+  tentpole framing, week transitions, Connection copy) is drafted. The builder
+  pauses here and waits for Viktor.
+- **Session 3 — OPTIONAL, post-hoc. No checkpoint, no pause.** Session 3 builds
+  to **total completion and self-merges everything, including content** — it does
+  NOT wait for Viktor. It still *emits* the `public/taste-queue.json` batch(es)
+  (per system, so a later reviewer gets short sets) and leaves the review URL in
+  its wrap-up, but the queue is a **standing invitation, not a gate**. Viktor's
+  taste feedback **might** come afterward as a **separate new session** that reads
+  the returned verdicts and revises (cut/revise 👎, promote ⭐, grow `taste.mjs`)
+  in a follow-up pass. Because there's no human gate on Session 3 content, the
+  builder must lean harder on its own defenses: obey the `taste.mjs`/`lint-content`
+  floor, grow `taste.mjs` + `VOICE.md`, and self-critique a full sample season via
+  `simulate-pack.mjs` before merging.
 
-- **Session 1 — no checkpoint.** Pure engine refactor, no new writing. Fully
-  hands-off; Viktor is not involved.
-- **Session 2 — one checkpoint**, once the week's new writing (daily beats,
-  tentpole framing, week transitions, Connection copy) is drafted.
-- **Session 3 — checkpoint per system**, reviewed **incrementally** (daily beats
-  → faction-telegraph copy → the new card types), *not* one pile at the end — so
-  each swipe set is short and the `taste.mjs`/`VOICE.md` rules learned from early
-  verdicts sharpen the writing generated later in the same session.
-
-**The builder's obligation at a checkpoint:** draft the batch → write
-`public/taste-queue.json` → **notify Viktor with the review URL and then BLOCK**
-— do not finalize or merge that content until his verdicts return (async, on his
-schedule: pasted into chat, committed to `taste-feedback/`, or downloaded). Then
-ingest (keep 👍 / cut-revise 👎 / promote ⭐ / grow `taste.mjs`) and only then
-proceed to merge. Mechanics may self-merge freely; **player-facing writing may
-not merge until it has cleared its checkpoint.**
+**At a Session 2 checkpoint (blocking):** draft the batch → write
+`public/taste-queue.json` → **notify Viktor with the review URL and BLOCK** — do
+not finalize or merge that content until his verdicts return (async: pasted into
+chat, committed to `taste-feedback/`, or downloaded). Then ingest and merge.
+**Session 3 skips the block entirely** — emit the queue, merge on green, move on.
 
 ## Definition of done, per session
 
 Green (full gate above) + self-merged + goldens either byte-identical (S1) or
-re-baselined-with-justification (S2/S3) + the ADR written + (S2/S3) content has
-cleared a taste-review pass.
+re-baselined-with-justification (S2/S3) + the ADR written. Taste: **S2** content
+has cleared its blocking review pass; **S3** is built to total completion and
+self-merged with `taste-queue.json` batch(es) emitted for an *optional* later
+review session (no pass required to call S3 done).
 
 ---
 
