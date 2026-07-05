@@ -192,6 +192,33 @@ recommendation of **Option C (a longer season built from short "weeks")**:
 7. **Cognitive-load cap** (~2–3 foregrounded threads) as a hard rule, with the
    Clarity Layer doing the chunking.
 
+## The taste gate (human-in-the-loop, no backend)
+
+The taste *ceiling* can't be machine-graded, so it gets the one human gate in an
+otherwise self-merging build — made frictionless via a swipe miniapp:
+[`/love-island/taste-review.html`](https://sandstreampop.github.io/big-break/love-island/taste-review.html)
+(source: `docs/games/love-island/public/taste-review.html`).
+
+**The loop (no server needed — the repo and the chat are the courier):**
+
+1. The builder emits a batch of candidate writing as **`taste-queue.json`** (or a
+   named file, served via `?queue=<file>`) committed to `public/` — the schema is
+   documented in the app header (per-item `id` / `type` / `context` /
+   `prompt` / `left` / `right` / `voice` / `text`).
+2. Viktor opens the app (auto-loads the queue over HTTPS) and swipes:
+   **right = keep (👍), left = cut (👎), up = ⭐ love (voice exemplar)**, with an
+   optional note per card.
+3. He returns the verdicts by any of three no-backend paths: **① Copy → paste
+   into the Claude chat** (easiest, size-independent); **② one-tap "Commit to
+   repo"** (a prefilled GitHub new-file URL drops `verdicts-<batch>.json` under
+   `docs/games/love-island/taste-feedback/` — builder reads it from git); **③
+   Download** the JSON and upload it. (② is size-capped ~7.5k chars; ①/③ handle
+   any size.)
+4. The builder ingests the verdicts: **keep** the 👍, **cut/revise** the 👎
+   (using notes), promote **⭐** to positive exemplars in `GUIDING_EXAMPLES.md`,
+   and fold recurring 👎 clichés into `taste.mjs` so the *floor rises* with each
+   batch. Content isn't "done" until it has cleared a review pass.
+
 ## Readiness checklist for next session
 
 - [ ] Viktor picks the positioning fork (A/B/**C**) → graduate to ADR-0010.

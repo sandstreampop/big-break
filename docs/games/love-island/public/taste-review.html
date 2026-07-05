@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#e0457b">
+<title>Villa Taste Review — swipe to judge the writing</title>
+<meta name="description" content="Swipe left/right (and up to ⭐ love) to grade candidate Love Island card writing. Exports verdict JSON for the builder.">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root{
+    --safe-t: env(safe-area-inset-top,0px);
+    --safe-b: env(safe-area-inset-bottom,0px);
+    --like:#21c56b; --dislike:#ff4d67; --love:#ffb020;
+    font-family: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  html,body{height:100%; overflow:hidden; background:#160a12; color:#fff; -webkit-font-smoothing:antialiased;}
+  body{ user-select:none; touch-action:none; display:flex; flex-direction:column; }
+  .serif{ font-family:Georgia,serif; font-style:italic; }
+
+  header{
+    padding: calc(12px + var(--safe-t)) 16px 10px; flex:none;
+    display:flex; align-items:center; gap:12px;
+    background:linear-gradient(180deg,#2a1122,rgba(42,17,34,0));
+  }
+  header .title{ font-size:15px; font-weight:800; letter-spacing:.02em; }
+  header .batch{ font-size:12px; opacity:.7; }
+  header .count{ margin-left:auto; font-size:13px; font-weight:800; font-variant-numeric:tabular-nums; opacity:.9; }
+  .pbar{ height:4px; background:rgba(255,255,255,.15); flex:none; }
+  .pbar > i{ display:block; height:100%; width:0; background:linear-gradient(90deg,#ff5fa2,#ffb020); transition:width .25s; }
+
+  main{ flex:1; position:relative; overflow:hidden; }
+  .deck{ position:absolute; inset:14px 14px 6px; }
+  .card{
+    position:absolute; inset:0; border-radius:22px; padding:22px;
+    background:linear-gradient(160deg,#3a1730,#241528);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 18px 40px rgba(0,0,0,.4);
+    display:flex; flex-direction:column; overflow:hidden;
+    will-change:transform;
+  }
+  .card .type{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:800; opacity:.6; }
+  .card .ctx{ font-size:13px; opacity:.7; margin-top:4px; }
+  .card .body{ flex:1; display:flex; flex-direction:column; justify-content:center; min-height:0; overflow-y:auto; padding:6px 0; }
+  .card .prompt{ font-size:clamp(19px,5.2vw,25px); font-weight:700; line-height:1.32; }
+  .card .choices{ display:flex; gap:10px; margin-top:16px; }
+  .card .choice{ flex:1; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.16); border-radius:13px; padding:11px 12px; font-size:13.5px; font-weight:600; line-height:1.25; }
+  .card .choice .lbl{ font-size:10px; opacity:.55; text-transform:uppercase; letter-spacing:.1em; display:block; margin-bottom:3px; }
+  .card .voice{ margin-top:14px; font-size:14px; opacity:.85; border-left:3px solid rgba(255,255,255,.3); padding-left:11px; }
+  .card .voice b{ opacity:.7; font-weight:800; }
+  .card .note{ margin-top:12px; }
+  .card .note textarea{ width:100%; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.2); border-radius:11px; color:#fff; font:inherit; font-size:14px; padding:10px; resize:none; }
+  .card .noteShown{ margin-top:10px; font-size:13px; opacity:.8; }
+
+  .stamp{ position:absolute; top:22px; font-size:26px; font-weight:900; letter-spacing:.05em; padding:5px 14px; border-radius:12px; border:3px solid; opacity:0; }
+  .stamp.like{ right:20px; color:var(--like); border-color:var(--like); transform:rotate(12deg); }
+  .stamp.dislike{ left:20px; color:var(--dislike); border-color:var(--dislike); transform:rotate(-12deg); }
+  .stamp.love{ left:50%; transform:translateX(-50%); top:14px; color:var(--love); border-color:var(--love); }
+
+  .controls{ flex:none; display:flex; align-items:center; justify-content:center; gap:14px; padding:12px 16px calc(16px + var(--safe-b)); }
+  .cbtn{ border:none; border-radius:50%; cursor:pointer; display:grid; place-items:center; box-shadow:0 8px 20px rgba(0,0,0,.3); transition:transform .1s; color:#fff; }
+  .cbtn:active{ transform:scale(.9); }
+  .cbtn.big{ width:66px; height:66px; font-size:28px; }
+  .cbtn.sm{ width:48px; height:48px; font-size:20px; opacity:.9; }
+  .cbtn.dislike{ background:var(--dislike); }
+  .cbtn.like{ background:var(--like); }
+  .cbtn.love{ background:var(--love); }
+  .cbtn.util{ background:rgba(255,255,255,.14); }
+  .cbtn:disabled{ opacity:.35; }
+
+  /* overlays */
+  .screen{ position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px 24px calc(30px + var(--safe-b)); background:radial-gradient(120% 90% at 50% 0%,#3a1730,#160a12); z-index:5; overflow-y:auto; }
+  .screen.on{ display:flex; }
+  .screen h1{ font-size:30px; font-weight:900; margin-bottom:10px; }
+  .screen p{ font-size:15px; opacity:.85; line-height:1.5; max-width:34ch; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#fff; color:#c01a5f; border:none; border-radius:999px; font-size:15px; font-weight:800; padding:14px 22px; cursor:pointer; margin-top:12px; }
+  .btn.ghost{ background:rgba(255,255,255,.14); color:#fff; border:1.5px solid rgba(255,255,255,.35); }
+  .btn:active{ transform:scale(.97); }
+  textarea.paste{ width:100%; max-width:420px; height:120px; margin-top:14px; background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.2); border-radius:12px; color:#fff; font:12px ui-monospace,monospace; padding:10px; }
+  .tally{ display:flex; gap:16px; margin:16px 0; }
+  .tally div{ font-size:13px; opacity:.85; }
+  .tally b{ display:block; font-size:30px; font-weight:900; }
+  .hint{ font-size:12.5px; opacity:.6; margin-top:14px; }
+  input[type=file]{ display:none; }
+  .filelabel{ cursor:pointer; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="title">Villa Taste Review</div>
+    <div class="batch" id="batchLabel">—</div>
+  </div>
+  <div class="count" id="count">0 / 0</div>
+</header>
+<div class="pbar"><i id="pfill"></i></div>
+
+<main>
+  <div class="deck" id="deck"></div>
+
+  <!-- LOADER -->
+  <div class="screen on" id="loader">
+    <h1>👋 Villa Taste Review</h1>
+    <p>Swipe <b style="color:var(--like)">right = keep it</b>, <b style="color:var(--dislike)">left = cut it</b>, <b style="color:var(--love)">up = ⭐ love it</b> (use as a voice model). Add a note anytime. At the end you export the verdicts for the builder.</p>
+    <p class="hint">Load a batch to review:</p>
+    <button class="btn" id="loadFile">📂 Open a queue file</button>
+    <label class="filelabel"><input type="file" id="fileInput" accept="application/json,.json"><span class="btn ghost">…or pick a .json</span></label>
+    <button class="btn ghost" id="useDemo">Try the demo batch</button>
+    <textarea class="paste" id="pasteBox" placeholder="…or paste queue JSON here, then tap Load"></textarea>
+    <button class="btn ghost" id="loadPaste">Load pasted JSON</button>
+    <p class="hint" id="loadMsg"></p>
+  </div>
+
+  <!-- DONE -->
+  <div class="screen" id="done">
+    <h1 id="doneTitle">Nice work 💅</h1>
+    <div class="tally">
+      <div><b style="color:var(--dislike)" id="tDislike">0</b>cut</div>
+      <div><b style="color:var(--like)" id="tLike">0</b>keep</div>
+      <div><b style="color:var(--love)" id="tLove">0</b>⭐ love</div>
+    </div>
+    <p>Hand this back to the builder — it keeps the 👍, revises/cuts the 👎, and treats ⭐ as voice exemplars. Pick whichever is easiest:</p>
+    <button class="btn" id="copy">① ⧉ Copy — paste into your Claude chat</button>
+    <button class="btn ghost" id="toRepo">② ⬆︎ Commit to repo (one tap)</button>
+    <button class="btn ghost" id="download">③ ⬇︎ Download verdicts.json</button>
+    <p class="hint" id="copyMsg"></p>
+    <button class="btn ghost" id="reviewDislikes">Re-check my cuts</button>
+    <button class="btn ghost" id="restart">Start over</button>
+  </div>
+</main>
+
+<div class="controls" id="controls" style="display:none">
+  <button class="cbtn sm util" id="btnUndo" title="Undo (u)">↶</button>
+  <button class="cbtn big dislike" id="btnDislike" title="Cut (←)">👎</button>
+  <button class="cbtn big love" id="btnLove" title="Love (↑)">⭐</button>
+  <button class="cbtn big like" id="btnLike" title="Keep (→)">👍</button>
+  <button class="cbtn sm util" id="btnNote" title="Note (n)">✎</button>
+</div>
+
+<script>
+/* ============================================================
+   Villa Taste Review — swipe like/dislike/love over candidate
+   card writing, export verdict JSON. Self-contained, static,
+   works on GitHub Pages or opened locally. No backend.
+
+   QUEUE FORMAT (what the builder emits):
+   {
+     "version": 1,
+     "batch": "session-2 · week 1 daily beats",
+     "items": [
+       { "id":"li_x", "type":"card", "context":"Morning, week 1",
+         "prompt":"…", "left":"…", "right":"…", "voice":"Stirling: …" },
+       { "id":"li_y", "type":"narrator line", "context":"After Casa",
+         "text":"…" }
+     ]
+   }
+   Any of context/prompt/left/right/voice/text are optional; the card
+   renders whatever is present. Verdict is per-item (the whole bit of
+   writing), value ∈ {like, dislike, love}, plus an optional note.
+
+   OUTPUT (verdicts.json):
+   { "version":1, "batch":"…", "reviewedAt":"<iso>",
+     "summary":{like,dislike,love,total},
+     "verdicts":[ {"id":"…","verdict":"like|dislike|love","note":"…"} ] }
+   ============================================================ */
+
+const $ = s => document.querySelector(s);
+const deck = $('#deck');
+let QUEUE = null;         // {version,batch,items:[]}
+let idx = 0;              // current item index
+let verdicts = {};        // id -> {verdict, note}
+let history = [];         // stack of ids for undo
+let pendingNote = '';     // note typed for the current card
+let subsetIds = null;     // when re-checking a subset (e.g. dislikes)
+
+const LSKEY = b => 'villa-taste::' + b;
+
+/* ---------- loading ---------- */
+async function tryAutoLoad(){
+  const params = new URLSearchParams(location.search);
+  const url = params.get('queue') || 'taste-queue.json';
+  try{
+    const r = await fetch(url + (url.includes('?')?'':'?v=' + Date.now()), {cache:'no-store'});
+    if(r.ok){ const j = await r.json(); startQueue(j); return true; }
+  }catch(e){/* file:// or missing — fall through to manual */}
+  return false;
+}
+function parseQueue(text){
+  const j = JSON.parse(text);
+  if(!j || !Array.isArray(j.items) || !j.items.length) throw new Error('no items[]');
+  j.items.forEach((it,i)=>{ if(!it.id) it.id = 'item_'+i; });
+  return j;
+}
+function startQueue(j){
+  QUEUE = j;
+  $('#batchLabel').textContent = j.batch || 'untitled batch';
+  // resume?
+  const saved = localStorage.getItem(LSKEY(j.batch||'untitled'));
+  if(saved){ try{ const s = JSON.parse(saved); verdicts = s.verdicts||{}; }catch(e){} }
+  subsetIds = null;
+  idx = firstUnjudged();
+  $('#loader').classList.remove('on');
+  $('#controls').style.display = 'flex';
+  render();
+}
+function firstUnjudged(){
+  for(let i=0;i<QUEUE.items.length;i++) if(!verdicts[QUEUE.items[i].id]) return i;
+  return QUEUE.items.length; // all judged
+}
+
+/* ---------- rendering ---------- */
+function itemsList(){ return subsetIds ? QUEUE.items.filter(it=>subsetIds.includes(it.id)) : QUEUE.items; }
+function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function render(){
+  const list = itemsList();
+  deck.innerHTML='';
+  if(idx >= list.length){ finish(); return; }
+  $('#done').classList.remove('on');
+  $('#controls').style.display='flex';
+  // render up to 2 stacked (top + peek)
+  for(let k=Math.min(idx+1, list.length-1); k>=idx; k--){
+    const it = list[k];
+    const c = document.createElement('div');
+    c.className='card';
+    if(k>idx){ c.style.transform='scale(.96) translateY(10px)'; c.style.filter='brightness(.8)'; }
+    let choices='';
+    if(it.left||it.right){
+      choices = `<div class="choices">
+        <div class="choice"><span class="lbl">◀ swipe-left choice</span>${esc(it.left||'—')}</div>
+        <div class="choice"><span class="lbl">swipe-right choice ▶</span>${esc(it.right||'—')}</div></div>`;
+    }
+    const voice = it.voice ? `<div class="voice"><b>Stirling</b> ${esc(it.voice)}</div>` : '';
+    const main = it.prompt ? `<div class="prompt">${esc(it.prompt)}</div>`
+               : it.text ? `<div class="prompt serif">${esc(it.text)}</div>` : '';
+    const noteShown = (k===idx && pendingNote) ? `<div class="noteShown">📝 ${esc(pendingNote)}</div>` : '';
+    c.innerHTML = `
+      <span class="stamp like">KEEP</span>
+      <span class="stamp dislike">CUT</span>
+      <span class="stamp love">⭐ LOVE</span>
+      <div class="type">${esc(it.type||'card')}</div>
+      ${it.context?`<div class="ctx">${esc(it.context)}</div>`:''}
+      <div class="body">${main}${choices}${voice}${noteShown}
+        <div class="note" style="display:none"><textarea placeholder="optional note — why? (cliché / off-voice / not funny / unclear)"></textarea></div>
+      </div>`;
+    deck.appendChild(c);
+    if(k===idx) wireDrag(c);
+  }
+  updateHUD();
+}
+function updateHUD(){
+  const list = itemsList();
+  const total = list.length;
+  const judged = list.filter(it=>verdicts[it.id]).length;
+  $('#count').textContent = `${Math.min(idx+1,total)} / ${total}`;
+  $('#pfill').style.width = (total? (judged/total*100):0)+'%';
+  $('#btnUndo').disabled = history.length===0;
+}
+
+/* ---------- verdict ---------- */
+function commit(verdict){
+  const list = itemsList();
+  if(idx>=list.length) return;
+  const it = list[idx];
+  verdicts[it.id] = { verdict, note: pendingNote || undefined };
+  history.push(it.id);
+  pendingNote='';
+  persist();
+  const top = deck.querySelector('.card');
+  const dir = verdict==='dislike' ? -1 : verdict==='like' ? 1 : 0;
+  if(top){
+    top.style.transition='transform .32s ease, opacity .32s';
+    top.style.transform = verdict==='love'
+      ? 'translateY(-130%) rotate(-4deg)'
+      : `translateX(${dir*130}%) rotate(${dir*16}deg)`;
+    top.style.opacity='0';
+  }
+  idx++;
+  setTimeout(render, 240);
+}
+function undo(){
+  if(!history.length) return;
+  const id = history.pop();
+  delete verdicts[id];
+  persist();
+  // move idx back to that item within current list
+  const list = itemsList();
+  const at = list.findIndex(it=>it.id===id);
+  if(at>=0) idx=at; else idx=Math.max(0,idx-1);
+  pendingNote='';
+  $('#done').classList.remove('on');
+  render();
+}
+function persist(){
+  if(!QUEUE) return;
+  localStorage.setItem(LSKEY(QUEUE.batch||'untitled'), JSON.stringify({verdicts}));
+}
+
+/* ---------- drag ---------- */
+function wireDrag(card){
+  let sx=0, sy=0, dx=0, dy=0, drag=false;
+  const like=card.querySelector('.stamp.like'), dis=card.querySelector('.stamp.dislike'), lov=card.querySelector('.stamp.love');
+  const down=e=>{ if(e.target.tagName==='TEXTAREA') return; drag=true; sx=(e.touches?e.touches[0]:e).clientX; sy=(e.touches?e.touches[0]:e).clientY; card.style.transition='none'; };
+  const move=e=>{ if(!drag) return; const p=e.touches?e.touches[0]:e; dx=p.clientX-sx; dy=p.clientY-sy;
+    card.style.transform=`translate(${dx}px,${dy}px) rotate(${dx/18}deg)`;
+    const up = dy < -60 && Math.abs(dx) < 80;
+    lov.style.opacity = up ? Math.min(1,(-dy-60)/80) : 0;
+    like.style.opacity = (!up && dx>0) ? Math.min(1,dx/90) : 0;
+    dis.style.opacity = (!up && dx<0) ? Math.min(1,-dx/90) : 0;
+    if(e.cancelable) e.preventDefault();
+  };
+  const up=()=>{ if(!drag) return; drag=false;
+    if(dy < -90 && Math.abs(dx) < 100) return commit('love');
+    if(dx > 100) return commit('like');
+    if(dx < -100) return commit('dislike');
+    card.style.transition='transform .2s'; card.style.transform=''; like.style.opacity=dis.style.opacity=lov.style.opacity=0;
+  };
+  card.addEventListener('pointerdown',down); card.addEventListener('pointermove',move);
+  window.addEventListener('pointerup',up,{once:false});
+  card.addEventListener('touchstart',down,{passive:true}); card.addEventListener('touchmove',move,{passive:false}); card.addEventListener('touchend',up);
+}
+
+/* ---------- note ---------- */
+function toggleNote(){
+  const card = deck.querySelector('.card'); if(!card) return;
+  const box = card.querySelector('.note'); if(!box) return;
+  const showing = box.style.display!=='none';
+  box.style.display = showing ? 'none' : 'block';
+  const ta = box.querySelector('textarea');
+  if(!showing){ ta.value=pendingNote; ta.focus(); ta.oninput=()=>pendingNote=ta.value; }
+}
+
+/* ---------- finish / export ---------- */
+function finish(){
+  $('#controls').style.display='none';
+  const all = Object.values(verdicts);
+  const like = all.filter(v=>v.verdict==='like').length;
+  const dislike = all.filter(v=>v.verdict==='dislike').length;
+  const love = all.filter(v=>v.verdict==='love').length;
+  $('#tLike').textContent=like; $('#tDislike').textContent=dislike; $('#tLove').textContent=love;
+  $('#done').classList.add('on');
+}
+function buildOutput(){
+  const all = Object.entries(verdicts).map(([id,v])=>({id, verdict:v.verdict, ...(v.note?{note:v.note}:{})}));
+  const s = {like:0,dislike:0,love:0};
+  all.forEach(v=>s[v.verdict]++);
+  return { version:1, batch:QUEUE?.batch||'untitled', reviewedAt:new Date().toISOString(),
+    summary:{...s,total:all.length}, verdicts:all };
+}
+function download(){
+  const blob=new Blob([JSON.stringify(buildOutput(),null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`verdicts-${(QUEUE?.batch||'batch').replace(/[^a-z0-9]+/gi,'-')}.json`;
+  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+async function copy(){
+  try{ await navigator.clipboard.writeText(JSON.stringify(buildOutput(),null,2)); $('#copyMsg').textContent='Copied ✓ — paste it straight into your Claude chat.'; }
+  catch(e){ $('#copyMsg').textContent='Copy failed — use Download instead.'; }
+}
+// No backend: commit the verdicts to the repo via GitHub's prefilled new-file
+// editor, so the builder reads it from git next run. Owner is the repo owner,
+// so this commits straight to main after one tap "Commit changes".
+const REPO='sandstreampop/big-break', BRANCH='main', FEEDBACK_DIR='docs/games/love-island/taste-feedback';
+function toRepo(){
+  const json = JSON.stringify(buildOutput(),null,2);
+  const fname = `verdicts-${(QUEUE?.batch||'batch').replace(/[^a-z0-9]+/gi,'-')}.json`;
+  const url = `https://github.com/${REPO}/new/${BRANCH}?filename=${encodeURIComponent(FEEDBACK_DIR+'/'+fname)}&value=${encodeURIComponent(json)}`;
+  if(url.length > 7500){ $('#copyMsg').textContent='This batch is big — use ① Copy-paste or ③ Download (URL commit has a size limit).'; return; }
+  window.open(url,'_blank','noopener');
+  $('#copyMsg').textContent='GitHub opened with the file prefilled — scroll down and tap “Commit changes”.';
+}
+
+/* ---------- wire up ---------- */
+$('#btnDislike').onclick=()=>commit('dislike');
+$('#btnLike').onclick=()=>commit('like');
+$('#btnLove').onclick=()=>commit('love');
+$('#btnUndo').onclick=undo;
+$('#btnNote').onclick=toggleNote;
+addEventListener('keydown',e=>{
+  if($('#loader').classList.contains('on')||$('#done').classList.contains('on')) return;
+  if(e.key==='ArrowLeft')commit('dislike'); else if(e.key==='ArrowRight')commit('like');
+  else if(e.key==='ArrowUp')commit('love'); else if(e.key==='u')undo(); else if(e.key==='n'){e.preventDefault();toggleNote();}
+});
+$('#download').onclick=download;
+$('#copy').onclick=copy;
+$('#toRepo').onclick=toRepo;
+$('#restart').onclick=()=>{ if(confirm('Clear all verdicts for this batch and start over?')){ verdicts={};history=[];idx=0;subsetIds=null;persist();$('#done').classList.remove('on');$('#controls').style.display='flex';render(); } };
+$('#reviewDislikes').onclick=()=>{ subsetIds=Object.entries(verdicts).filter(([,v])=>v.verdict==='dislike').map(([id])=>id); if(!subsetIds.length){$('#copyMsg').textContent='No cuts to re-check.';return;} idx=0; $('#done').classList.remove('on'); $('#controls').style.display='flex'; render(); };
+
+$('#loadFile').onclick=()=>$('#fileInput').click();
+$('#fileInput').onchange=e=>{ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ startQueue(parseQueue(r.result)); }catch(err){ $('#loadMsg').textContent='Invalid queue JSON: '+err.message; } }; r.readAsText(f); };
+$('#loadPaste').onclick=()=>{ try{ startQueue(parseQueue($('#pasteBox').value)); }catch(err){ $('#loadMsg').textContent='Invalid JSON: '+err.message; } };
+$('#useDemo').onclick=()=>startQueue(DEMO);
+
+/* ---------- demo batch (also documents the format) ---------- */
+const DEMO = { version:1, batch:'demo · sample beats', items:[
+  { id:'d1', type:'card', context:'Morning, Week 1 — the kitchen', prompt:'Marco slides an iced coffee across the counter before you’ve said a word. “Oat, no sugar. I listen.”', left:'Take it, say nothing, let it land', right:'“Careful, I could get used to this”', voice:'He’s remembered her order. Four days in. Somebody get this boy a gold star and a lie detector.' },
+  { id:'d2', type:'card', context:'Fire pit, after a recoupling', prompt:'Grace catches your eye across the fire and mouths “you good?” — the first person all night to check.', left:'Nod. You’re fine. (You’re not.)', right:'Pull her for a chat', voice:'' },
+  { id:'d3', type:'narrator line', context:'Bombshell arrival', text:'A new arrival. Somewhere, three couples just remembered they were never actually that secure.' },
+  { id:'d4', type:'card', context:'The Hideaway invite', prompt:'The others have voted you and your partner the Hideaway. Everyone’s watching to see if you’ll go.', left:'Keep it to a cup of tea and a chat', right:'Go. Make the statement.', voice:'Bold. The nation has opinions, and half of them are your nan.' },
+  { id:'d5', type:'narrator line', context:'Movie Night', text:'Tonight, the villa watches itself back. Somewhere in that footage is the version of you that thought no one was listening.' },
+]};
+
+/* boot */
+tryAutoLoad();
+</script>
+</body>
+</html>

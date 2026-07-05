@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "batch": "sample · daily-rhythm beats",
+  "note": "Sample queue so the page loads live. The builder overwrites this file (or serves ?queue=<file>) with each batch of candidate writing to review.",
+  "items": [
+    {
+      "id": "sample_coffee",
+      "type": "card",
+      "context": "Morning, Week 1 — the kitchen",
+      "prompt": "Marco slides an iced coffee across the counter before you’ve said a word. “Oat, no sugar. I listen.”",
+      "left": "Take it, say nothing, let it land",
+      "right": "“Careful, I could get used to this”",
+      "voice": "He’s remembered her order. Four days in. Somebody get this boy a gold star and a lie detector."
+    },
+    {
+      "id": "sample_check_in",
+      "type": "card",
+      "context": "Fire pit, after a recoupling",
+      "prompt": "Grace catches your eye across the fire and mouths “you good?” — the first person all night to check.",
+      "left": "Nod. You’re fine. (You’re not.)",
+      "right": "Pull her for a chat"
+    },
+    {
+      "id": "sample_bombshell",
+      "type": "narrator line",
+      "context": "Bombshell arrival",
+      "text": "A new arrival. Somewhere, three couples just remembered they were never actually that secure."
+    },
+    {
+      "id": "sample_hideaway",
+      "type": "card",
+      "context": "The Hideaway invite",
+      "prompt": "The others have voted you and your partner the Hideaway. Everyone’s watching to see if you’ll go.",
+      "left": "Keep it to a cup of tea and a chat",
+      "right": "Go. Make the statement.",
+      "voice": "Bold. The nation has opinions, and half of them are your nan."
+    },
+    {
+      "id": "sample_movie_night",
+      "type": "narrator line",
+      "context": "Movie Night",
+      "text": "Tonight, the villa watches itself back. Somewhere in that footage is the version of you that thought no one was listening."
+    },
+    {
+      "id": "sample_head",
+      "type": "card",
+      "context": "Week 2 — daybed",
+      "prompt": "“Where’s your head at?” she asks, and means it. The honest answer and the safe answer are not the same sentence.",
+      "left": "Give the safe answer",
+      "right": "Tell her the honest one"
+    }
+  ]
+}
