@@ -33,7 +33,7 @@ different conception of what the villa *is*.
 ## The core reframe: a spotlight → a web
 
 Today the game is **player-centric**: the Rival exists to antagonise *you*, the
-Partner exists as a thing *you* have (a name and a Bond number). Hillevi's villa
+Partner exists as a thing *you* have (a name and a Connection number). Hillevi's villa
 is the opposite geometry.
 
 > *"Usually there's at least five or six, maybe up to seven different couples at
@@ -77,12 +77,22 @@ Three components, none of which is a single big delta:
   comes back today. A relationship that references its own past.
 - **Visible development** — the viewer can *see* it grow over time.
 
-**Design consequence.** Bond should be **accumulated and remembered**, not
+**Design consequence.** Connection should be **accumulated and remembered**, not
 purchased with one grand romantic card. This is exactly the show's word:
 **grafting** — and Hillevi was clear it is *a verb you do to a person, day after
 day*, not a resource you hoard. (The pack already ships a `graft` resource; v4
 should make grafting the daily-gesture *action*, and let it leave a trace — a
 callback the game can raise later as an "inside joke" beat.)
+
+> **Vocabulary — say "Connection", not "Bond".** Hillevi's correction, and a
+> load-bearing one for the authenticity principle: in the villa Islanders talk
+> about a **connection** ("I've got a strong connection with him"), never a
+> "bond". The player-facing meter should read **Connection** everywhere. The
+> engine resource keeps its internal id (`bond` in
+> [`manifest.ts`](../../../js/packs/love-island/manifest.ts)/`CONTEXT.md`) — this
+> is a display-name and copy rename (`RESOURCE_META.bond.name` + every string
+> that says "bond"), not a mechanics change. Fold it into the overhaul; keep the
+> word the fans actually use.
 
 ### 2. Nothing means anything in isolation — everything means something in context
 
@@ -101,8 +111,8 @@ generative idea from the whole interview.
 > still.)
 
 **Design consequence.** The *same action* carries wildly different stakes
-depending on the room and the moment. A kiss is not "a kiss (+X bond)"; its
-effect on Bond, on the public, and on your partner's **ick** (see Pillar 6)
+depending on the room and the moment. A kiss is not "a kiss (+X connection)"; its
+effect on Connection, on the public, and on your partner's **ick** (see Pillar 6)
 should scale with context. This is a clean, reusable scoring rule that can run
 through the whole content set.
 
@@ -128,7 +138,7 @@ A **friendship couple** is a safe parking space you actively want to leave. And
 the couple's *state* is a social contract with rules: **open** vs **exclusive /
 closed off** governs what behaviour is acceptable (see Pillar 4's bombshell test).
 
-**Design consequence.** Model these as two axes, not one Bond bar. A "secure but
+**Design consequence.** Model these as two axes, not one Connection bar. A "secure but
 hollow" couple and a "precarious but real" couple are different stories the game
 currently can't tell apart — and the *tension between safety and truth* is a
 core engine of villa decisions.
@@ -154,7 +164,7 @@ Crucially, "authenticity" is not a vibe the game can't reach — she made it
 what the player says/does in different rooms — private with the partner, gossiping
 with friends, tempted by a bombshell, in an aside to camera — and let
 **inconsistency accumulate as hidden "receipts."** Consistency reads as real
-(public love + genuine Bond); contradiction is a debt that comes due.
+(public love + genuine Connection); contradiction is a debt that comes due.
 
 This is also where the shipped **The Brand** summit gets a spine it was missing:
 
@@ -231,9 +241,9 @@ nation cools, and the person beside you gets the ick.
 > other girl, I'm focusing only on you.' After a few days of that, sometimes she
 > forgives him — or vice versa."*
 
-The morning coffee comes back. **Repair uses the exact tools that built the bond:**
+The morning coffee comes back. **Repair uses the exact tools that built the connection:**
 a stream of small visible daily gestures *plus a public re-commitment*, sustained
-over days. Bond is not a button you press with one grand apology — it is the
+over days. Connection is not a button you press with one grand apology — it is the
 garden of Pillar 1, and after a betrayal you water it twice as hard.
 
 The **factional** read applies here too: the public sides with the *betrayed*
@@ -302,7 +312,7 @@ it. Together they are the emotional climax the season is built around.
 - **Snog, Marry, Pie** (post-Casa) — each person **kisses** someone they fancy,
   **pies** (cream-pie-in-the-face = rejects / has beef with) someone, and
   **proposes** to someone they value as a person. This maps *exactly* onto the
-  three social bonds v4 should track: **romance / rivalry / friendship.** A forced
+  three social ties v4 should track: **romance / rivalry / friendship.** A forced
   public declaration across all three axes at once.
 - **The heart-rate challenge** — everyone dances provocatively; the result shows
   **whose heart you raised most.** Drama when it isn't your partner (an ex).
