@@ -11,7 +11,7 @@
 // plugin-owned. All numbers live here; the presenter reads TIERS and MOODS out
 // diegetically (portraits, Stirling), never the floats.
 
-import { castById, CAST } from '../cast.js';
+import { castById, CAST, sameGenderPool } from '../cast.js';
 import type { Plugin, RunState } from '../../../types.js';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -190,6 +190,7 @@ export const charactersPlugin: Plugin = {
     'surfaceSecret', 'bombshellEnters', 'rivalFromBombshell',
   ],
   stateDefaults: {
+    bestie: null,       // the same-gender ride-or-die (R7/D2); {mate} resolves here
     charOpinion: {},     // rival/bombshell opinion numbers (partner = Bond)
     charMood: {},        // role → { id, ttl } transient mood
     charSecret: {},      // role → secret id (hidden until surfaced)
@@ -211,6 +212,11 @@ export const charactersPlugin: Plugin = {
       partner: null,
       bombshell: null,
     };
+    // The Bestie (R7/D2): your same-gender ride-or-die — the show's secret
+    // spine. Seeded here (third construction draw, golden-pinned) from the
+    // day-one pool, never the Rival; the {mate} token resolves to them.
+    const mates = sameGenderPool(state).filter((c) => c.id !== state.rival);
+    state.bestie = mates.length ? mates[Math.floor(rng() * mates.length)].id : null;
   },
 
   requires: {

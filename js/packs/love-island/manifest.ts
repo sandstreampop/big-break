@@ -24,7 +24,7 @@ export const PATHS: Record<string, PathDef> = {
     id: 'winvilla',
     name: 'Win the Villa',
     blurb: 'The public crowns you and whoever you’re holding hands with by then. Fifty grand, split with feeling.',
-    gateLabel: 'Public 75 · Bond 44',
+    gateLabel: 'Public 79 · Bond 44',
     icon: '👑',
   },
   realthing: {
@@ -38,7 +38,7 @@ export const PATHS: Record<string, PathDef> = {
     id: 'brand',
     name: 'The Brand',
     blurb: 'Win or lose, hero or villain — walk out with a following and a discount code. The villa is a launchpad.',
-    gateLabel: 'Followers 62 · Charisma 64',
+    gateLabel: 'Followers 60 · Charisma 62',
     icon: '📱',
   },
 };
@@ -49,9 +49,9 @@ export const PATHS: Record<string, PathDef> = {
 // near-miss over the line — the late vote surge, on-format. Tuned for the v2
 // Season length (the encounter arcs stretch the acts, so the ceilings rose).
 export const WIN_GATES: Record<string, Record<string, number>> = {
-  winvilla: { public: 75, bond: 44 },
+  winvilla: { public: 79, bond: 44 },
   realthing: { bond: 78, loyalty: 80 },
-  brand: { followers: 62, charisma: 64 },
+  brand: { followers: 60, charisma: 62 },
 };
 
 export const STAT_META: Record<string, StatMeta> = {

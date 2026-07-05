@@ -64,6 +64,7 @@ const summarize = (state: RunState) => ({
   exes: [...(state.exes || [])],
   gender: state.gender || null,
   rival: state.rival || null,
+  bestie: state.bestie || null,
   angles: [...(state.accessories || [])],
   intelDeployed: state.intelDeployed || 0,
   secretsKnown: [...(state.secretKnown || [])],

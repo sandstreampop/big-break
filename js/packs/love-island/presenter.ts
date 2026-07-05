@@ -164,6 +164,10 @@ function bombshellFor(state: RunState) {
   return pool[(state.flavorSeed || 1) % pool.length];
 }
 function mateFor(state: RunState) {
+  // The Bestie seat (R7/D2) — one person, all Season. Flavour pick only as
+  // a fallback for pre-bestie saves.
+  const seated = castById(state.bestie);
+  if (seated) return seated;
   const pool = sameGenderPool(state).filter((c) => c.id !== state.rival);
   if (!pool.length) return null;
   return pool[(state.flavorSeed || 1) % pool.length];
@@ -261,6 +265,10 @@ function epilogue(state: RunState): string {
     bits.push('Three months on: the exit interview follow-up did better numbers than your entrance ever did. The villa needed a body; you made it a launchpad. Ish.');
   } else {
     bits.push('Three months on: the tan faded, the group chat renamed itself twice, and somewhere in a drawer there’s a water bottle with your name on it. You did a Season. Not every story needs an envelope.');
+  }
+  if ((state.flags || []).includes('li_bestie') && (ending.key === 'dumped' || ending.key === 'burnout')) {
+    const mate = castById(state.bestie)?.name || 'your best mate in there';
+    bits.push(`${mate} texts you every episode night: “it’s worse without you.” It is, slightly. You watch anyway — together, apart.`);
   }
   if ((state.exes || []).length >= 2) bits.push(`Your exes have a group chat. You are its subject and its glue.`);
   if ((state.accessories || []).includes('angle_villain')) bits.push('The villain edit follows you into brand meetings. You’ve stopped correcting it. It negotiates better rates.');

@@ -166,6 +166,95 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
   },
 
   // ---------- Act 1 · the Partner, actually met (3 beats, ambient-triggered) ----------
+  // ---------- The Bestie arc (R7/D2): the show's secret spine ----------
+  // Same-gender ride-or-die, formed post-Casa. Two lanes: the friendship
+  // (loyalty, relief, a witness) or the alliance (savvy, the third intel
+  // channel). Both end seated — the villa is survivable with a mate.
+  {
+    id: 'li_enc_bestie_1', act: 2, weight: 1, tags: ['beat:bestieenc', 'encounter', 'chat', 'code'],
+    art: 'li_kitchen',
+    context: 'The kitchen · 1 a.m. · two spoons, one tub',
+    prompt: '“Right.” {mate} appears with a tub of ice cream and two spoons, which in villa law is a summons. “Everyone in here is performing except possibly you. Don’t make me regret this tub. What’s actually going on with you?”',
+    choices: {
+      left: {
+        label: 'Actually tell them',
+        tags: ['loyal', 'chat', 'code'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You get four sentences in before the tears arrive — yours, embarrassingly. {mate} doesn’t flinch, just hands you the tub. “Keep going.” You do. It airs. You don’t care.', effects: { loyalty: 3, burnout: -4, addFlag: 'li_code_honour', chainEventId: 'li_enc_bestie_2_ride' } },
+          good: { text: '“Finally,” says {mate}, around a spoon. You talk until the spoons stand up on their own. Somewhere in there it stops being telly and starts being a friendship.', effects: { loyalty: 3, burnout: -5, addFlag: 'li_code_honour', chainEventId: 'li_enc_bestie_2_ride' } },
+          incredible: { text: 'You tell them the whole unedited thing — and get the whole unedited thing back. By 2 a.m. you have what nobody else in here has: a witness.', effects: { loyalty: 5, burnout: -6, public: 2, addFlag: 'li_code_honour', chainEventId: 'li_enc_bestie_2_ride' } },
+        },
+      },
+      right: {
+        label: 'Keep it tactical',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You give them the media-trained version and {mate} clocks it instantly. “Okay,” they say, in the tone of a door not quite closing. The tub goes back half-full.', effects: { savvy: 2, burnout: 2, chainEventId: 'li_enc_bestie_2_pact' } },
+          good: { text: '“Fine — trade.” You swap reads on the villa instead of feelings, which is its own intimacy. {mate}’s reads are excellent. Noted. Filed.', effects: { savvy: 4, chainEventId: 'li_enc_bestie_2_pact' } },
+          incredible: { text: 'Ten minutes in, you two have mapped the entire villa: who’s wobbling, who’s performing, who’s next. It isn’t a friendship yet. It’s better-informed than one.', effects: { savvy: 6, public: 2, chainEventId: 'li_enc_bestie_2_pact' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_bestie_2_ride', act: 2, chainOnly: true, tags: ['encounter', 'chat', 'code'],
+    art: 'li_daybed',
+    context: 'Next morning · the daybed · a two-person institution',
+    prompt: '“Ground rules.” {mate} holds out a croissant like a gavel. “Whatever happens — recouplings, bombshells, all of it — we don’t let this place make us strangers. Deal?” Behind them, the villa glitters with people who will absolutely test that.',
+    choices: {
+      left: {
+        label: 'Deal. No strangers',
+        tags: ['loyal', 'code'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You shake on it with croissant grease, which {mate} declares “binding.” Within the hour the villa tests the treaty with a rumour. It holds. Barely — but it holds.', effects: { loyalty: 3, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'what the daybed heard this morning' } } },
+          good: { text: '“Deal.” The least dramatic pact in villa history, and the only one that will survive the Season. {mate} proves it immediately: what {rival} said at breakfast, verbatim.', effects: { loyalty: 4, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'what they said at breakfast' } } },
+          incredible: { text: 'The pact upgrades on the spot: {mate} has been keeping receipts all week — on everyone — and you are now the second person to see the ledger. Beautiful. Terrifying. Yours.', effects: { loyalty: 5, public: 2, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'the ledger: everything, dated' } } },
+        },
+      },
+      right: {
+        label: 'Add a clause for the vote',
+        tags: ['strategy', 'code'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: '“…and if it comes to a vote?” {mate} looks at you like you’ve brought a spreadsheet to a christening. The pact survives. The romance of it doesn’t, entirely.', effects: { savvy: 2, burnout: 2, addFlag: 'li_bestie' } },
+          good: { text: '“If it’s ever us two on the block, we campaign together.” {mate} grins: “Obviously.” A friendship with a manifesto. Very this show.', effects: { savvy: 4, public: 2, addFlag: 'li_bestie' } },
+          incredible: { text: 'By noon you’ve quietly counted the villa’s votes twice over, together, as a hobby. The firepit doesn’t know it yet, but a bloc was just born.', effects: { savvy: 6, public: 3, addFlag: 'li_bestie' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_bestie_2_pact', act: 2, chainOnly: true, tags: ['encounter', 'strategy'],
+    art: 'li_daybed',
+    context: 'Next morning · the sun loungers · the debrief',
+    prompt: '“Item one.” {mate} doesn’t look up from cleaning their sunglasses. “{rival} did a lap of the boys before breakfast. Item two: somebody cried in the Hut before nine. Item three—” A pause. “You get all this free. First month.”',
+    choices: {
+      left: {
+        label: 'Make it official — allies',
+        tags: ['strategy'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: '“Allies, then.” {mate} nods — and immediately tests you with a small secret. You hold it for a whole day. Just. The probation period continues.', effects: { savvy: 2, burnout: 2, addFlag: 'li_bestie' } },
+          good: { text: 'You shake on the least romantic and most durable arrangement in the villa. The first dividend arrives by lunch: what {rival} is planning for the recoupling.', effects: { savvy: 4, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'their recoupling plan' } } },
+          incredible: { text: 'The alliance is so efficient it frightens you both. Within a day you know everything that moves in this villa — and, better, what’s about to.', effects: { savvy: 6, public: 2, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'what moves next, before it moves' } } },
+        },
+      },
+      right: {
+        label: 'Keep it warm instead',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: '“Or we could just… be mates?” {mate} blinks. Recalculates. “Huh. Yeah, okay.” The intel flow stops. Something better starts — slowly, like all their things.', effects: { loyalty: 3, burnout: -2, addFlag: 'li_bestie' } },
+          good: { text: 'You steer it from tactics to actual talk, and {mate} lets you. The debrief becomes a breakfast. The breakfast becomes a standing thing.', effects: { loyalty: 4, burnout: -3, addFlag: 'li_bestie' } },
+          incredible: { text: '“You’re the only one in here I’m not tired of.” From {mate}, that’s a wedding toast. The villa now contains one couple nobody can dump: you two.', effects: { loyalty: 5, burnout: -4, public: 3, addFlag: 'li_bestie' } },
+        },
+      },
+    },
+  },
+
   // The partner arc opener, in three SHAPES (R7/D1): the same beat window,
   // three different people to be coupled with. Effects and chains match the
   // v2 opener per branch/tier — the shape changes the scene, not the math.
