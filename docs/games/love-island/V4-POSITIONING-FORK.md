@@ -1,8 +1,14 @@
 # Decision brief: short roguelike, or a longer narrative season?
 
-**Status: open — awaiting Viktor's call.** This is a *decision brief*, not a
-landed decision; once chosen it graduates to an ADR (next free number: 0010).
-Companion to [`V4-DESIGN.md` → Pillar 0](./V4-DESIGN.md#pillar-0--length-is-the-substrate-the-season-needs-room-to-breathe).
+**Status: RESOLVED (2026-07-05) — Option C, via engine generalization first.**
+Viktor chose **C** (a longer season built from short "weeks"), and — asked the
+principled "what's best for the engine" question — chose to land it the
+vision-true way: **generalize the engine's run structure to N data-driven
+segments as its own behavior-preserving change (Session 1 / ADR-0010), then build
+the weeks on top (Session 2).** The build spec is
+[`V4-BUILD-CHARTER.md`](./V4-BUILD-CHARTER.md); this brief is retained as the
+rationale. Companion to
+[`V4-DESIGN.md` → Pillar 0](./V4-DESIGN.md#pillar-0--length-is-the-substrate-the-season-needs-room-to-breathe).
 
 ## The fork
 
