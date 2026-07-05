@@ -172,6 +172,12 @@ export const BEAT_REACT: Record<string, BarkDef[]> = {
 // never in the odds. Families are picked by the coupling plugin's outlook.
 
 export const FORECAST: Record<string, BarkDef[]> = {
+  // The held-card telegraph (R4): the lineup where you're carrying the
+  // Rival's live secret — the cash-out is one beat away and he knows it.
+  dynamite: [
+    { id: 'fc_dyn_1', text: 'Our Islander walks to the firepit sitting on dynamite, folks. Whether it goes off before the names are read — that’s tonight’s episode.', priority: 10 },
+    { id: 'fc_dyn_2', text: 'A note from the booth: a secret is only currency while it’s unspent. The firepit takes exact change.', priority: 10 },
+  ],
   bondSafe: [
     { id: 'fb_seatbelt', text: 'Recoupling tonight. That Bond of yours is wearing a seatbelt. Should be fine. Should.' },
     { id: 'fb_wrong', text: 'Forecast: your couple holds. I say that with the confidence of a man who’s been wrong twice this series.' },

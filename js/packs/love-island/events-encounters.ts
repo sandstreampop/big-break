@@ -119,7 +119,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.5, loyalty: 0.5 },
         outcomes: {
           bad: { text: 'You shake. {rival} holds the grip one beat too long, so the cameras get the frame. The deal is real; the photo op was the interest on it.', effects: { savvy: 2, rivalOpinion: 4, rivalMood: 'smug', burnout: 2 } },
-          good: { text: '“Stay out of my couple, I stay out of your edit.” — “Deal.” The most honest contract this villa will see all Season, and no lawyer within a hundred miles.', effects: { savvy: 4, loyalty: 3, rivalOpinion: 8, rivalMood: 'smug' } },
+          good: { text: '“Stay out of my couple, I stay out of your edit.” — “Deal.” The most honest contract this villa will see all Season, and no lawyer within a hundred miles.', effects: { savvy: 4, loyalty: 3, rivalOpinion: 8, rivalMood: 'smug', gainIntel: { about: 'rival', label: 'the game they told you they’re running' } } },
           incredible: { text: '“One thing, since you’re decent—” and {rival}, guard fully down for four seconds, tells you something they absolutely should not have. The handshake becomes a vault.', effects: { savvy: 5, loyalty: 3, rivalOpinion: 10, rivalMood: 'buzzing', surfaceSecret: 'rival', public: 3 } },
         },
       },

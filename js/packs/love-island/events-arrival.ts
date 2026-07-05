@@ -195,8 +195,8 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.6, charisma: 0.4 },
         outcomes: {
           bad: { text: '“Say it to our faces, then.” Your hottest take did one lap of the villa and came home wearing your name. The couple in question is at the door. Both of them.', effects: { savvy: 2, followers: 3, public: -2, burnout: 4, addFlag: 'li_code_broke' } },
-          good: { text: 'You serve one immaculate observation and let the daybed do the rest. Plausible deniability with a garnish.', effects: { followers: 4, savvy: 5 } },
-          incredible: { text: 'Your read is so precise the summit goes quiet, then feral. Tonight’s episode is subtitled with your sentence. Anonymous, for now.', effects: { followers: 7, savvy: 8, graft: 3 } },
+          good: { text: 'You serve one immaculate observation and the summit, honouring the exchange rate, serves back: {rival} has been rehearsing a speech. Plausible deniability with a garnish.', effects: { followers: 4, savvy: 5, gainIntel: { about: 'rival', label: 'they’ve been rehearsing a speech' } } },
+          incredible: { text: 'Your read is so precise the summit goes quiet, then feral — and pays you in kind: everything the daybed knows about {rival}, itemised. Tonight’s episode is subtitled with your sentence.', effects: { followers: 7, savvy: 8, graft: 3, gainIntel: { about: 'rival', label: 'everything the daybed knows, itemised' } } },
         },
       },
     },

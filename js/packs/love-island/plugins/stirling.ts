@@ -132,8 +132,13 @@ function stirlingDealSelect(state: RunState, ev: GameEvent, offset: number): { l
   if (ev.id === 'li_recoup_rescued') return from(BEAT_VERDICT.rescued);
   if (ev.id === 'li_recoup_dumped') return from(BEAT_VERDICT.dumped);
 
-  // The line-up forecast: a qualitative, HONEST read of the real check.
+  // The line-up forecast: a qualitative, HONEST read of the real check —
+  // unless you're carrying the Rival's live secret, in which case the story
+  // IS the dynamite (R4's telegraph; the set-piece stakes keep the odds).
   if (CEREMONY_LINEUP.has(ev.id)) {
+    const holdsSecret = state.rival && (state.secretKnown || []).includes('rival') &&
+      !(state.secretSpent || []).includes('rival');
+    if (holdsSecret) return from(FORECAST.dynamite);
     const o = ceremonyOutlook(state);
     return from(FORECAST[o.bondSafe ? 'bondSafe' : o.publicSafe ? 'publicSafe' : 'danger']);
   }
