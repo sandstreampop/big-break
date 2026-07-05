@@ -20,7 +20,7 @@
 // resume; the sims never render) — variety comes from flavorSeed/cardLog
 // rotation, never the play RNG. Zero golden impact by construction.
 
-import { castById } from './cast.js';
+import { castById, SHAPES } from './cast.js';
 import { characterRead, opinionTier, secretOf, TIER_LABEL, MOODS } from './plugins/characters.js';
 import { ceremonyOutlook } from './plugins/coupling.js';
 import { PATHS, WIN_GATES } from './manifest.js';
@@ -73,6 +73,8 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
         title: `${p.cast.name} — your Partner`,
         lines: [
           `<i>${p.cast.vibe}</i>`,
+          ...((p.cast as any).shape && SHAPES[(p.cast as any).shape]
+            ? [`💞 ${SHAPES[(p.cast as any).shape].label[0].toUpperCase()}${SHAPES[(p.cast as any).shape].label.slice(1)}: ${SHAPES[(p.cast as any).shape].read}`] : []),
           `💘 How it’s going: <b>${PARTNER_TIER[p.tier]}</b>${state.exclusive ? ' — and it’s official. Higher floor, longer drop.' : ''}`,
           ...(p.mood ? [`${MOODS[p.mood].face} Right now: <b>${MOODS[p.mood].label}</b>. Moods pass. Usually.`] : []),
           ...(sec.known && sec.def ? [`🤫 You know their secret: ${sec.def.label}.`] : []),

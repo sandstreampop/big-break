@@ -89,28 +89,40 @@ export interface CastMember {
   vibe: string;       // one-phrase identity, used by presenter flavor
   face: string;        // portrait glyph — the base of the mood-driven portrait
   bombshell?: boolean; // arrives mid-Season, not in the day-one pool
+  // The Partner SHAPE (R7/D1): how this person does a relationship —
+  // sweetheart / gameplayer / slowburner. Shapes select the partner arc's
+  // dialogue variants and the Partner's secret pool, so who you couple with
+  // changes what the Season feels like, not just a name.
+  shape: 'sweetheart' | 'gameplayer' | 'slowburner';
 }
+
+// The three shapes, as the player meets them (stage sheet reads).
+export const SHAPES: Record<string, { label: string; read: string }> = {
+  sweetheart: { label: 'a sweetheart', read: 'All in by day two. The hurt, when it comes, shows from space.' },
+  gameplayer: { label: 'a game-player', read: 'Half of everything is a move. The warm half is real. Guess which half you got.' },
+  slowburner: { label: 'a slow-burner', read: 'Guarded until, quite suddenly, they’re not. Worth the wait. Probably.' },
+};
 
 export const CAST: CastMember[] = [
   // day-one boys
-  { id: 'kai', name: 'Kai', gender: 'boy', vibe: 'golden-retriever scaffolder', face: '🐶' },
-  { id: 'tyler', name: 'Tyler', gender: 'boy', vibe: 'semi-pro winker', face: '😉' },
-  { id: 'reece', name: 'Reece', gender: 'boy', vibe: 'protein-first romantic', face: '💪' },
-  { id: 'dev', name: 'Dev', gender: 'boy', vibe: 'nicest man in any postcode', face: '🫶' },
-  { id: 'marco', name: 'Marco', gender: 'boy', vibe: 'villain with a skincare routine', face: '🧴' },
-  { id: 'jamal', name: 'Jamal', gender: 'boy', vibe: 'aspiring podcast', face: '🎙️' },
+  { id: 'kai', name: 'Kai', gender: 'boy', vibe: 'golden-retriever scaffolder', face: '🐶', shape: 'sweetheart' },
+  { id: 'tyler', name: 'Tyler', gender: 'boy', vibe: 'semi-pro winker', face: '😉', shape: 'gameplayer' },
+  { id: 'reece', name: 'Reece', gender: 'boy', vibe: 'protein-first romantic', face: '💪', shape: 'slowburner' },
+  { id: 'dev', name: 'Dev', gender: 'boy', vibe: 'nicest man in any postcode', face: '🫶', shape: 'sweetheart' },
+  { id: 'marco', name: 'Marco', gender: 'boy', vibe: 'villain with a skincare routine', face: '🧴', shape: 'gameplayer' },
+  { id: 'jamal', name: 'Jamal', gender: 'boy', vibe: 'aspiring podcast', face: '🎙️', shape: 'slowburner' },
   // day-one girls
-  { id: 'priya', name: 'Priya', gender: 'girl', vibe: 'girl-next-door, next door is Surrey', face: '🌷' },
-  { id: 'chloe', name: 'Chloe', gender: 'girl', vibe: 'savage in gel nails', face: '💅' },
-  { id: 'amber', name: 'Amber', gender: 'girl', vibe: 'main character, self-cast', face: '👑' },
-  { id: 'sophia', name: 'Sophia', gender: 'girl', vibe: 'brand deal in human form', face: '🛍️' },
-  { id: 'meg', name: 'Meg', gender: 'girl', vibe: 'funny on purpose, chaotic by accident', face: '🤸' },
-  { id: 'tash', name: 'Tash', gender: 'girl', vibe: 'everyone’s type on paper', face: '📋' },
+  { id: 'priya', name: 'Priya', gender: 'girl', vibe: 'girl-next-door, next door is Surrey', face: '🌷', shape: 'sweetheart' },
+  { id: 'chloe', name: 'Chloe', gender: 'girl', vibe: 'savage in gel nails', face: '💅', shape: 'gameplayer' },
+  { id: 'amber', name: 'Amber', gender: 'girl', vibe: 'main character, self-cast', face: '👑', shape: 'gameplayer' },
+  { id: 'sophia', name: 'Sophia', gender: 'girl', vibe: 'brand deal in human form', face: '🛍️', shape: 'gameplayer' },
+  { id: 'meg', name: 'Meg', gender: 'girl', vibe: 'funny on purpose, chaotic by accident', face: '🤸', shape: 'sweetheart' },
+  { id: 'tash', name: 'Tash', gender: 'girl', vibe: 'everyone’s type on paper', face: '📋', shape: 'slowburner' },
   // bombshells
-  { id: 'luca', name: 'Luca', gender: 'boy', vibe: 'abs with a boat licence', face: '🛥️', bombshell: true },
-  { id: 'ollie', name: 'Ollie', gender: 'boy', vibe: 'rugby lad, feelings pending', face: '🏉', bombshell: true },
-  { id: 'bella', name: 'Bella', gender: 'girl', vibe: 'arrives mid-sentence, stays mid-drama', face: '🌪️', bombshell: true },
-  { id: 'zara', name: 'Zara', gender: 'girl', vibe: 'model, knows your partner from home', face: '📸', bombshell: true },
+  { id: 'luca', name: 'Luca', gender: 'boy', vibe: 'abs with a boat licence', face: '🛥️', bombshell: true, shape: 'gameplayer' },
+  { id: 'ollie', name: 'Ollie', gender: 'boy', vibe: 'rugby lad, feelings pending', face: '🏉', bombshell: true, shape: 'slowburner' },
+  { id: 'bella', name: 'Bella', gender: 'girl', vibe: 'arrives mid-sentence, stays mid-drama', face: '🌪️', bombshell: true, shape: 'sweetheart' },
+  { id: 'zara', name: 'Zara', gender: 'girl', vibe: 'model, knows your partner from home', face: '📸', bombshell: true, shape: 'slowburner' },
 ];
 
 export function castById(id: string | null | undefined): CastMember | null {

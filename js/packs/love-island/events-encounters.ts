@@ -166,31 +166,92 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
   },
 
   // ---------- Act 1 · the Partner, actually met (3 beats, ambient-triggered) ----------
+  // The partner arc opener, in three SHAPES (R7/D1): the same beat window,
+  // three different people to be coupled with. Effects and chains match the
+  // v2 opener per branch/tier — the shape changes the scene, not the math.
   {
-    id: 'li_enc_partner_1', act: 1, weight: 1, tags: ['beat:partnerenc1', 'encounter', 'chat', 'date'],
+    id: 'li_enc_partner_1_sweet', act: 1, weight: 1, tags: ['beat:partnerenc1', 'encounter', 'chat', 'date'],
     art: 'li_pool',
-    requires: { singleIs: false },
-    context: 'Mid-morning · the swing seat · the first real one',
-    prompt: '“Okay, no cameras—” {partner} glances at three cameras. “Fine. Pretend. Tell me one true thing about you that isn’t on your poster.” The swing creaks. The question is a door, ajar.',
+    requires: { singleIs: false, partnerShapeIs: 'sweetheart' },
+    context: 'Mid-morning · the swing seat · the announcement',
+    prompt: '“Right, I’m just going to say it—” {partner} has brought you a tea and a speech, in that order. “I like you. Properly. That’s it. That’s the announcement.” The swing creaks. Somewhere in the gallery a producer whispers <i>stay on them</i>.',
     choices: {
       left: {
-        label: 'Give them a true thing',
+        label: 'Say it back',
         tags: ['loyal', 'chat'],
         governingStats: { loyalty: 0.6, rizz: 0.4 },
         outcomes: {
-          bad: { text: 'You reach for profound and land on “I don’t really like beaches,” on a show that is beaches. {partner} laughs anyway. Mostly at you. It still counts.', effects: { loyalty: 2, bond: 3, burnout: 2, chainEventId: 'li_enc_partner_2_real' } },
-          good: { text: 'You say the true thing, smaller and stranger than you’d planned. “See,” says {partner}, settling in, “THAT person can stay.”', effects: { loyalty: 3, bond: 5, chainEventId: 'li_enc_partner_2_real' } },
-          incredible: { text: 'The true thing lands so cleanly that {partner} goes quiet, then trades you one back — bigger. The swing seat is suddenly the realest place on the island.', effects: { loyalty: 5, bond: 7, public: 3, chainEventId: 'li_enc_partner_2_real' } },
+          bad: { text: 'You say it back one beat too slow — long enough for {partner} to hear the maths. “You had to THINK,” they say, delighted and wounded in exactly equal parts.', effects: { loyalty: 2, bond: 3, burnout: 2, chainEventId: 'li_enc_partner_2_real' } },
+          good: { text: '“Same,” you say, and mean it, and {partner} does a small lap of honour around the swing seat. Subtlety left the villa an hour ago. Nobody misses it.', effects: { loyalty: 3, bond: 5, chainEventId: 'li_enc_partner_2_real' } },
+          incredible: { text: 'You say it back plainly — no bit, no hedge. {partner} goes still, the rare kind. “Okay,” they say, mostly to themselves. “Okay.” The nation has a fan account up by lunch.', effects: { loyalty: 5, bond: 7, public: 3, chainEventId: 'li_enc_partner_2_real' } },
         },
       },
       right: {
-        label: 'Charm past the question',
+        label: 'Pump the brakes, kindly',
         tags: ['flirt', 'banter'],
         governingStats: { rizz: 0.6, charisma: 0.4 },
         outcomes: {
-          bad: { text: 'You deflect with a bit, and {partner}’s smile does a small administrative change — front of house stays open, something behind it shuts.', effects: { rizz: 2, bond: 1, partnerMood: 'torn', burnout: 2, chainEventId: 'li_enc_partner_2_show' } },
-          good: { text: 'You flirt your way around the door instead of through it. Great scene. {partner} laughs on cue and files the non-answer for later.', effects: { rizz: 5, followers: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
-          incredible: { text: 'The deflection is so charming it becomes a running joke by lunch — “not on the poster!” — and the villa adopts it. {partner} enjoys the bit. And clocks it.', effects: { rizz: 8, followers: 5, public: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
+          bad: { text: '“Let’s not label it,” you say, to a person holding a tea with your initials drawn in the foam. The foam survives. Something else doesn’t, quite.', effects: { rizz: 2, bond: 1, partnerMood: 'torn', burnout: 2, chainEventId: 'li_enc_partner_2_show' } },
+          good: { text: '“We’ve got weeks,” you say, gently. {partner} nods like a good sport and quietly weather-proofs their heart. Sensible. Filmed.', effects: { rizz: 5, followers: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
+          incredible: { text: 'You turn the brakes into a bit — “I’m a slow cooker, babe” — and {partner} laughs for real and eases off without a bruise. The kindest not-yet ever aired.', effects: { rizz: 8, followers: 5, public: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_partner_1_game', act: 1, weight: 1, tags: ['beat:partnerenc1', 'encounter', 'chat', 'date'],
+    art: 'li_pool',
+    requires: { singleIs: false, partnerShapeIs: 'gameplayer' },
+    context: 'Mid-morning · the swing seat · the interview',
+    prompt: '“Honest question.” {partner} deals it like a card, eyes on the pool. “What are you actually here for? I’ve seen every season of this show. I know a strategy when I couple up with one.” A beat. “No offence.”',
+    choices: {
+      left: {
+        label: 'Answer it straight',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You answer honestly and watch it get received as a MOVE. “Good line,” says {partner}, approving. Sincerity, filed under tactics. In fairness — their filing system.', effects: { loyalty: 2, bond: 3, burnout: 2, chainEventId: 'li_enc_partner_2_real' } },
+          good: { text: '“I’m here for whatever this is.” {partner} studies you for a long second, then deals the next card face up. Progress, by their rules.', effects: { loyalty: 3, bond: 5, chainEventId: 'li_enc_partner_2_real' } },
+          incredible: { text: 'Your answer is so plainly unstrategic that {partner}’s whole game stalls on it. “Huh,” they say — the exact sound of a spreadsheet catching feelings.', effects: { loyalty: 5, bond: 7, public: 3, chainEventId: 'li_enc_partner_2_real' } },
+        },
+      },
+      right: {
+        label: 'Answer with a question',
+        tags: ['flirt', 'banter'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: '“What are YOU here for?” — “Asked first.” The stalemate runs to lunch and airs as chemistry. It was poker.', effects: { rizz: 2, bond: 1, partnerMood: 'torn', burnout: 2, chainEventId: 'li_enc_partner_2_show' } },
+          good: { text: 'You volley for ten minutes, neither of you conceding one fact. {partner} is delighted. The Beach Hut files it as “the chess episode.”', effects: { rizz: 5, followers: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
+          incredible: { text: 'You bluff so well {partner} stands up and applauds, then re-ranks you two brackets. “Finally,” they say. “An opponent.” From them, it’s a love letter.', effects: { rizz: 8, followers: 5, public: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_partner_1_slow', act: 1, weight: 1, tags: ['beat:partnerenc1', 'encounter', 'chat', 'date'],
+    art: 'li_pool',
+    requires: { singleIs: false, partnerShapeIs: 'slowburner' },
+    context: 'Mid-morning · the swing seat · the almost-sentence',
+    prompt: 'Twenty minutes of comfortable pool noise. Then, quietly, not looking over: “I don’t really do the talking thing on telly,” says {partner}. “But if you wanted to sit here a while. That’d be. Yeah.” The sentence never lands. The invitation does.',
+    choices: {
+      left: {
+        label: 'Sit in it with them',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You sit so long, so respectfully silent, that {partner} eventually checks you’re awake. You were. Mostly. The intent airs, at least.', effects: { loyalty: 2, bond: 3, burnout: 2, chainEventId: 'li_enc_partner_2_real' } },
+          good: { text: 'You match their pace — one question, lots of pool noise. Somewhere in minute forty {partner}’s shoulder arrives against yours. Enormous, by their scale.', effects: { loyalty: 3, bond: 5, chainEventId: 'li_enc_partner_2_real' } },
+          incredible: { text: 'You say nothing until they do — and then it all comes out in one unrehearsed run: home, the fear, the reason they came. The pool noise covers it for everyone but you.', effects: { loyalty: 5, bond: 7, public: 3, chainEventId: 'li_enc_partner_2_real' } },
+        },
+      },
+      right: {
+        label: 'Coax them out',
+        tags: ['flirt', 'banter'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You fill the silence with charm and watch {partner} retreat into it, politely, like a tide. Lovely performance. Empty beach.', effects: { rizz: 2, bond: 1, partnerMood: 'torn', burnout: 2, chainEventId: 'li_enc_partner_2_show' } },
+          good: { text: 'You tease exactly one story out of them — the dog, obviously — and quit while you’re ahead. {partner} notices the quitting-while-ahead. Points for that.', effects: { rizz: 5, followers: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
+          incredible: { text: 'You do the talking for two, and by sundown it’s a double act — them on dry one-liners, you on everything else. The edit cannot believe its luck.', effects: { rizz: 8, followers: 5, public: 3, bond: 2, chainEventId: 'li_enc_partner_2_show' } },
         },
       },
     },
