@@ -8,13 +8,13 @@
     "results": [
       [
         "swipe",
-        1321,
+        1603,
         9
       ],
       [
         "$pageview",
-        144,
-        19
+        161,
+        20
       ],
       [
         "minigame",
@@ -23,22 +23,22 @@
       ],
       [
         "$pageleave",
-        114,
+        124,
         6
       ],
       [
         "run_start",
-        48,
+        60,
         5
       ],
       [
         "trophy",
-        45,
+        59,
         3
       ],
       [
         "run_end",
-        41,
+        49,
         4
       ],
       [
@@ -63,9 +63,9 @@
     "results": [
       [
         "2026-07-02T11:11:48.171000Z",
-        "2026-07-04T06:34:47.805000Z",
-        1859,
-        19
+        "2026-07-05T08:13:49.925000Z",
+        2202,
+        20
       ]
     ]
   },
@@ -77,19 +77,19 @@
     ],
     "results": [
       [
+        "2.2",
+        988,
+        4
+      ],
+      [
         "2.0",
         850,
         6
       ],
       [
-        "2.2",
-        672,
-        4
-      ],
-      [
         null,
-        258,
-        19
+        285,
+        20
       ],
       [
         "2.1",
@@ -123,9 +123,16 @@
       ],
       [
         "2026-07-04",
+        11,
+        6,
+        215,
+        4
+      ],
+      [
+        "2026-07-05",
+        3,
         2,
-        0,
-        8,
+        75,
         3
       ]
     ]
@@ -138,9 +145,9 @@
     ],
     "results": [
       [
-        19,
-        6,
-        19
+        20,
+        8,
+        20
       ]
     ]
   },
@@ -161,8 +168,8 @@
       [
         "prod",
         "false",
-        5,
-        211
+        7,
+        554
       ]
     ]
   },
@@ -176,9 +183,9 @@
     "results": [
       [
         "sandstreampop.github.io",
-        18,
-        1858,
-        41
+        19,
+        2201,
+        49
       ],
       [
         "raw.githack.com",
@@ -197,8 +204,8 @@
     "results": [
       [
         "SE",
-        18,
-        1858
+        19,
+        2201
       ],
       [
         "NL",
@@ -220,8 +227,8 @@
         "Mobile",
         "Mobile Safari",
         "iOS",
-        10,
-        1785
+        11,
+        2128
       ],
       [
         "Mobile",
@@ -257,11 +264,11 @@
         2
       ],
       [
-        3,
+        5,
         1
       ],
       [
-        36,
+        42,
         1
       ]
     ]
@@ -274,11 +281,19 @@
     "results": [
       [
         1,
-        15
+        16
       ],
       [
         2,
-        4
+        2
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
       ]
     ]
   },
@@ -298,6 +313,10 @@
       ],
       [
         "2026-07-04",
+        1
+      ],
+      [
+        "2026-07-05",
         1
       ]
     ]
@@ -437,12 +456,28 @@
         20
       ],
       [
+        "li_casa_held",
+        5,
+        100,
+        0,
+        100,
+        0
+      ],
+      [
         "a2_venue_trouble",
         9,
         89,
         11,
         89,
         0
+      ],
+      [
+        "li_daybed_2",
+        9,
+        89,
+        11,
+        89,
+        22
       ],
       [
         "a1_docu_pitch",
@@ -497,6 +532,14 @@
         6,
         17,
         83,
+        83,
+        0
+      ],
+      [
+        "li_casa_postcard_loyal",
+        6,
+        83,
+        17,
         83,
         0
       ],
@@ -637,6 +680,22 @@
         0
       ],
       [
+        "li_enc_p3_moment",
+        5,
+        20,
+        80,
+        80,
+        0
+      ],
+      [
+        "li_enc_partner_1",
+        5,
+        80,
+        20,
+        80,
+        20
+      ],
+      [
         "a1_fragment",
         9,
         78,
@@ -659,6 +718,14 @@
         25,
         75,
         17
+      ],
+      [
+        "li_arrival",
+        12,
+        75,
+        25,
+        75,
+        33
       ],
       [
         "a1_noise_cop",
@@ -765,6 +832,14 @@
         0
       ],
       [
+        "li_casa_text",
+        10,
+        70,
+        30,
+        70,
+        10
+      ],
+      [
         "a2_merch_line",
         13,
         69,
@@ -781,6 +856,14 @@
         8
       ],
       [
+        "li_bomb1",
+        12,
+        33,
+        67,
+        67,
+        8
+      ],
+      [
         "a1_bloom_amp",
         9,
         67,
@@ -790,6 +873,14 @@
       ],
       [
         "a2_soundcheck_hell",
+        9,
+        67,
+        33,
+        67,
+        0
+      ],
+      [
+        "li_casa_return",
         9,
         67,
         33,
@@ -893,6 +984,22 @@
         0
       ],
       [
+        "li_enc_rival_1",
+        6,
+        67,
+        33,
+        67,
+        33
+      ],
+      [
+        "li_movienight_clean",
+        6,
+        67,
+        33,
+        67,
+        17
+      ],
+      [
         "wt_berlin",
         6,
         33,
@@ -934,6 +1041,14 @@
       ],
       [
         "a1_wedding",
+        10,
+        60,
+        40,
+        60,
+        0
+      ],
+      [
+        "li_casa_night",
         10,
         60,
         40,
@@ -1013,6 +1128,38 @@
         0
       ],
       [
+        "li_bomb2",
+        5,
+        60,
+        40,
+        60,
+        0
+      ],
+      [
+        "li_enc_partner_3close",
+        5,
+        40,
+        60,
+        60,
+        20
+      ],
+      [
+        "li_enc_rival_3_pact",
+        5,
+        60,
+        40,
+        60,
+        20
+      ],
+      [
+        "li_parents",
+        5,
+        40,
+        60,
+        60,
+        40
+      ],
+      [
         "finale_the_call",
         14,
         43,
@@ -1027,134 +1174,6 @@
         57,
         57,
         14
-      ],
-      [
-        "a1_practice_wall",
-        7,
-        57,
-        43,
-        57,
-        0
-      ],
-      [
-        "a2_dance_challenge",
-        7,
-        57,
-        43,
-        57,
-        0
-      ],
-      [
-        "a2_genre_purists",
-        7,
-        57,
-        43,
-        57,
-        0
-      ],
-      [
-        "a2_producer_call",
-        7,
-        57,
-        43,
-        57,
-        14
-      ],
-      [
-        "a2_session_sub",
-        7,
-        57,
-        43,
-        57,
-        14
-      ],
-      [
-        "db_jukebox",
-        7,
-        43,
-        57,
-        57,
-        0
-      ],
-      [
-        "f_secret_set",
-        7,
-        57,
-        43,
-        57,
-        0
-      ],
-      [
-        "a1_music_store",
-        9,
-        56,
-        44,
-        56,
-        11
-      ],
-      [
-        "a2_loadout_race",
-        9,
-        44,
-        56,
-        56,
-        0
-      ],
-      [
-        "db_inspector",
-        9,
-        44,
-        56,
-        56,
-        11
-      ],
-      [
-        "a1_karaoke",
-        10,
-        50,
-        50,
-        50,
-        10
-      ],
-      [
-        "a1_roommate",
-        10,
-        50,
-        50,
-        50,
-        10
-      ],
-      [
-        "a1_clips",
-        8,
-        50,
-        50,
-        50,
-        12
-      ],
-      [
-        "a2_ms_feature",
-        8,
-        50,
-        50,
-        50,
-        0
-      ],
-      [
-        "a1_craigslist",
-        6,
-        50,
-        50,
-        50,
-        17
-      ],
-      [
-        "a2_click_track",
-        6,
-        50,
-        50,
-        50,
-        17
       ]
     ]
   },
@@ -1170,27 +1189,27 @@
     "results": [
       [
         1,
-        389,
-        11,
-        81,
-        7,
+        493,
+        14,
+        79,
+        6,
         1
       ],
       [
         2,
-        507,
-        5,
-        74,
-        20,
+        621,
+        6,
+        73,
+        19,
         1
       ],
       [
         3,
-        381,
-        3,
-        53,
-        44,
-        1
+        445,
+        4,
+        52,
+        43,
+        0
       ]
     ]
   },
@@ -1223,6 +1242,27 @@
         64,
         36,
         0
+      ],
+      [
+        "realthing",
+        4,
+        75,
+        0,
+        25
+      ],
+      [
+        "brand",
+        2,
+        50,
+        50,
+        0
+      ],
+      [
+        "winvilla",
+        2,
+        50,
+        0,
+        50
       ]
     ]
   },
@@ -1239,7 +1279,7 @@
     "results": [
       [
         "success",
-        28,
+        33,
         29,
         161,
         2.7,
@@ -1248,12 +1288,30 @@
       ],
       [
         "partial",
-        13,
+        14,
         30,
         107,
         1.8,
-        54,
+        56,
         2.7
+      ],
+      [
+        "failure",
+        1,
+        27,
+        null,
+        null,
+        78,
+        null
+      ],
+      [
+        "gameover",
+        1,
+        19,
+        null,
+        null,
+        38,
+        null
       ]
     ]
   },
@@ -1265,14 +1323,14 @@
     ],
     "results": [
       [
+        "normal",
+        24,
+        67
+      ],
+      [
         null,
         23,
         65
-      ],
-      [
-        "normal",
-        16,
-        69
       ],
       [
         "comeback",
@@ -1291,7 +1349,12 @@
       "cause",
       "deaths"
     ],
-    "results": []
+    "results": [
+      [
+        "dumped",
+        1
+      ]
+    ]
   },
   "run_length": {
     "columns": [
@@ -1300,12 +1363,16 @@
     ],
     "results": [
       [
+        19,
+        1
+      ],
+      [
         22,
         1
       ],
       [
         27,
-        2
+        3
       ],
       [
         28,
@@ -1313,7 +1380,7 @@
       ],
       [
         29,
-        25
+        26
       ],
       [
         30,
@@ -1321,11 +1388,19 @@
       ],
       [
         31,
-        2
+        4
       ],
       [
         32,
         3
+      ],
+      [
+        33,
+        2
+      ],
+      [
+        34,
+        1
       ]
     ]
   },
@@ -1341,7 +1416,7 @@
     ],
     "results": [
       [
-        19,
+        20,
         7,
         4,
         0,
@@ -1424,6 +1499,18 @@
         100
       ],
       [
+        "retriever_boy",
+        2,
+        26,
+        50
+      ],
+      [
+        "retriever_girl",
+        2,
+        31,
+        100
+      ],
+      [
         "workhorse",
         2,
         31,
@@ -1434,6 +1521,30 @@
         1,
         30,
         100
+      ],
+      [
+        "gameplayer_girl",
+        1,
+        34,
+        100
+      ],
+      [
+        "heartthrob_boy",
+        1,
+        27,
+        0
+      ],
+      [
+        "heartthrob_girl",
+        1,
+        31,
+        100
+      ],
+      [
+        "influencer_boy",
+        1,
+        31,
+        0
       ],
       [
         "kazoo",
@@ -1488,7 +1599,7 @@
     "results": [
       [
         "normal",
-        41,
+        53,
         4
       ],
       [
@@ -1511,14 +1622,14 @@
     ],
     "results": [
       [
+        "none",
+        17,
+        65
+      ],
+      [
         "showman",
         10,
         80
-      ],
-      [
-        "none",
-        9,
-        67
       ],
       [
         null,
@@ -1565,7 +1676,7 @@
     "results": [
       [
         "none",
-        12
+        24
       ],
       [
         null,
@@ -2584,6 +2695,374 @@
         1
       ],
       [
+        "li_arrival",
+        12
+      ],
+      [
+        "li_beach_date",
+        1
+      ],
+      [
+        "li_bomb1",
+        12
+      ],
+      [
+        "li_bomb2",
+        5
+      ],
+      [
+        "li_bomb2_single",
+        1
+      ],
+      [
+        "li_bomb2_steal",
+        3
+      ],
+      [
+        "li_br_catchphrase",
+        2
+      ],
+      [
+        "li_br_sponsor_bait",
+        1
+      ],
+      [
+        "li_br_villain_turn",
+        1
+      ],
+      [
+        "li_breakfast_duty",
+        2
+      ],
+      [
+        "li_casa_betrayed",
+        1
+      ],
+      [
+        "li_casa_held",
+        5
+      ],
+      [
+        "li_casa_night",
+        10
+      ],
+      [
+        "li_casa_postcard_loyal",
+        6
+      ],
+      [
+        "li_casa_postcard_stray",
+        4
+      ],
+      [
+        "li_casa_return",
+        9
+      ],
+      [
+        "li_casa_text",
+        10
+      ],
+      [
+        "li_challenge_couples",
+        1
+      ],
+      [
+        "li_challenge_heartrate",
+        1
+      ],
+      [
+        "li_code_row",
+        1
+      ],
+      [
+        "li_connect_dots",
+        1
+      ],
+      [
+        "li_daybed_1",
+        12
+      ],
+      [
+        "li_daybed_2",
+        9
+      ],
+      [
+        "li_daybed_3",
+        7
+      ],
+      [
+        "li_dressing_room_summit",
+        3
+      ],
+      [
+        "li_dry_spell",
+        1
+      ],
+      [
+        "li_enc_p3_high",
+        3
+      ],
+      [
+        "li_enc_p3_low",
+        2
+      ],
+      [
+        "li_enc_p3_moment",
+        5
+      ],
+      [
+        "li_enc_partner_1",
+        5
+      ],
+      [
+        "li_enc_partner_2_real",
+        4
+      ],
+      [
+        "li_enc_partner_2_show",
+        1
+      ],
+      [
+        "li_enc_partner_3close",
+        5
+      ],
+      [
+        "li_enc_rival_1",
+        6
+      ],
+      [
+        "li_enc_rival_2_open",
+        2
+      ],
+      [
+        "li_enc_rival_2_test",
+        4
+      ],
+      [
+        "li_enc_rival_3_pact",
+        5
+      ],
+      [
+        "li_enc_rival_3_war",
+        1
+      ],
+      [
+        "li_enc_rmove_confront",
+        2
+      ],
+      [
+        "li_enc_rmove_poach",
+        3
+      ],
+      [
+        "li_enc_rmove_rumour",
+        2
+      ],
+      [
+        "li_enc_rmove_show",
+        3
+      ],
+      [
+        "li_ex_arrives",
+        2
+      ],
+      [
+        "li_exclusive",
+        2
+      ],
+      [
+        "li_factor50",
+        4
+      ],
+      [
+        "li_final_brand",
+        2
+      ],
+      [
+        "li_final_dressup",
+        1
+      ],
+      [
+        "li_final_realthing",
+        3
+      ],
+      [
+        "li_final_winvilla",
+        2
+      ],
+      [
+        "li_first_date",
+        2
+      ],
+      [
+        "li_first_row",
+        2
+      ],
+      [
+        "li_gossip_daybed",
+        1
+      ],
+      [
+        "li_hideaway_key",
+        3
+      ],
+      [
+        "li_hut_confess_2",
+        1
+      ],
+      [
+        "li_ick_watch",
+        3
+      ],
+      [
+        "li_kitchen_counter",
+        1
+      ],
+      [
+        "li_last_supper",
+        2
+      ],
+      [
+        "li_legacy_chat",
+        1
+      ],
+      [
+        "li_minimilk",
+        3
+      ],
+      [
+        "li_movienight_clean",
+        6
+      ],
+      [
+        "li_movienight_reveal",
+        3
+      ],
+      [
+        "li_new_boy_graft",
+        2
+      ],
+      [
+        "li_odd_couple",
+        1
+      ],
+      [
+        "li_parents",
+        5
+      ],
+      [
+        "li_parents_messy",
+        2
+      ],
+      [
+        "li_recoup1_choose",
+        4
+      ],
+      [
+        "li_recoup1_exposed",
+        4
+      ],
+      [
+        "li_recoup1_exposed_single",
+        1
+      ],
+      [
+        "li_recoup2_choose",
+        3
+      ],
+      [
+        "li_recoup2_exposed",
+        4
+      ],
+      [
+        "li_recoup_cashout",
+        1
+      ],
+      [
+        "li_recoup_dumped",
+        1
+      ],
+      [
+        "li_recoup_held",
+        4
+      ],
+      [
+        "li_recoup_rescued",
+        3
+      ],
+      [
+        "li_rt_bad_day",
+        1
+      ],
+      [
+        "li_rt_deep_end",
+        1
+      ],
+      [
+        "li_rt_no_cameras",
+        1
+      ],
+      [
+        "li_rumour_mill",
+        2
+      ],
+      [
+        "li_second_wave",
+        1
+      ],
+      [
+        "li_snakewatch",
+        2
+      ],
+      [
+        "li_snog_marry_pie",
+        1
+      ],
+      [
+        "li_swanfloat",
+        3
+      ],
+      [
+        "li_talent_night",
+        2
+      ],
+      [
+        "li_tempt_official",
+        1
+      ],
+      [
+        "li_tempt_terrace",
+        1
+      ],
+      [
+        "li_terrace_debrief",
+        1
+      ],
+      [
+        "li_vote_surge",
+        1
+      ],
+      [
+        "li_wobble_50",
+        3
+      ],
+      [
+        "li_wobble_75",
+        2
+      ],
+      [
+        "li_workout_audience",
+        4
+      ],
+      [
+        "li_wv_nation_darling",
+        1
+      ],
+      [
+        "li_wv_publicity",
+        1
+      ],
+      [
         "m_alliance_pact",
         1
       ],
@@ -3089,6 +3568,16 @@
     ],
     "results": [
       [
+        "brand",
+        "partial",
+        1
+      ],
+      [
+        "brand",
+        "success",
+        1
+      ],
+      [
         "hitfactory",
         "partial",
         4
@@ -3109,6 +3598,11 @@
         13
       ],
       [
+        "realthing",
+        "success",
+        3
+      ],
+      [
         "studio",
         "partial",
         6
@@ -3117,6 +3611,16 @@
         "studio",
         "success",
         8
+      ],
+      [
+        "winvilla",
+        "failure",
+        1
+      ],
+      [
+        "winvilla",
+        "success",
+        1
       ]
     ]
   },
@@ -3128,7 +3632,7 @@
     "results": [
       [
         "none",
-        13
+        25
       ],
       [
         null,
@@ -3207,7 +3711,23 @@
         1
       ],
       [
+        "jamal",
+        1
+      ],
+      [
         "juniper_q",
+        1
+      ],
+      [
+        "kai",
+        1
+      ],
+      [
+        "marco",
+        1
+      ],
+      [
+        "meg",
         1
       ],
       [
@@ -3216,6 +3736,22 @@
       ],
       [
         "petersens",
+        1
+      ],
+      [
+        "priya",
+        1
+      ],
+      [
+        "tash",
+        1
+      ],
+      [
+        "tyler",
+        1
+      ],
+      [
+        "zara",
         1
       ]
     ]
@@ -3228,7 +3764,11 @@
     "results": [
       [
         null,
-        41
+        48
+      ],
+      [
+        "loud",
+        1
       ]
     ]
   },
@@ -3264,6 +3804,22 @@
       ],
       [
         "glow_up",
+        2
+      ],
+      [
+        "li_bond_80",
+        2
+      ],
+      [
+        "li_exclusive_win",
+        2
+      ],
+      [
+        "li_first_season",
+        2
+      ],
+      [
+        "li_loyal_casa",
         2
       ],
       [
@@ -3332,6 +3888,30 @@
       ],
       [
         "i_susan_win",
+        1
+      ],
+      [
+        "li_betrayed_survivor",
+        1
+      ],
+      [
+        "li_dumped",
+        1
+      ],
+      [
+        "li_followers_60",
+        1
+      ],
+      [
+        "li_win_brand",
+        1
+      ],
+      [
+        "li_win_realthing",
+        1
+      ],
+      [
+        "li_win_winvilla",
         1
       ],
       [
@@ -3443,6 +4023,18 @@
         3
       ],
       [
+        "angle_camera",
+        2
+      ],
+      [
+        "angle_strategist",
+        2
+      ],
+      [
+        "angle_type",
+        2
+      ],
+      [
         "cowbell",
         2
       ],
@@ -3465,6 +4057,14 @@
       [
         "stage_cape",
         2
+      ],
+      [
+        "angle_comedy",
+        1
+      ],
+      [
+        "angle_loyal",
+        1
       ],
       [
         "cursed_8track",
