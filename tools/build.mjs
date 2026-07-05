@@ -44,6 +44,12 @@ for (const pack of GAME_PACKS) {
   }
   mkdirSync(resolve(dist, pack.id), { recursive: true });
   copyFileSync(html, resolve(dist, pack.id, 'index.html'));
+  // A game's public-facing docs pages (docs/games/<id>/public/) deploy as
+  // siblings of its index.html — e.g. a roadmap walkthrough at
+  // /<id>/roadmap.html. Data-driven like the html copy above; a game
+  // without a public/ folder copies nothing.
+  const pub = resolve(root, 'docs/games', pack.id, 'public');
+  if (existsSync(pub)) cpSync(pub, resolve(dist, pack.id), { recursive: true });
   entries.push(`${pack.id} at /${pack.id}/`);
 }
 

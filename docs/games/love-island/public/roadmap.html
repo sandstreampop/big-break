@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Villa Game — where it goes next</title>
+<meta name="description" content="A plain-language walkthrough of the plan for our Love Island–style card game: what we learned from players, robot playtests and the market, and what we're building next.">
+<style>
+  :root {
+    --bg: #fffaf5;
+    --card: #ffffff;
+    --ink: #2b2330;
+    --muted: #6f6377;
+    --accent: #e0457b;
+    --accent-soft: #ffe3ee;
+    --sun: #f7a04b;
+    --sun-soft: #fff0dd;
+    --ok: #2e9e6b;
+    --ok-soft: #e2f5ec;
+    --warn: #c2572a;
+    --warn-soft: #fdeadd;
+    --line: #f0e4ea;
+    --shadow: 0 1px 3px rgba(60,20,50,.08), 0 6px 20px rgba(60,20,50,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #191320;
+      --card: #221b2b;
+      --ink: #f3ecf6;
+      --muted: #b3a6bd;
+      --accent: #ff7aa8;
+      --accent-soft: #3a2230;
+      --sun: #f7a04b;
+      --sun-soft: #35281c;
+      --ok: #5fce9c;
+      --ok-soft: #1d3229;
+      --warn: #f09364;
+      --warn-soft: #3a2619;
+      --line: #342a3e;
+      --shadow: 0 1px 3px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.3);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.65;
+    font-size: 17px;
+  }
+  main { max-width: 42rem; margin: 0 auto; padding: 0 1.1rem 4rem; }
+  header.hero {
+    padding: 3.2rem 1.1rem 2.2rem;
+    text-align: center;
+    background:
+      radial-gradient(60rem 22rem at 50% -8rem, var(--accent-soft), transparent 70%),
+      radial-gradient(40rem 18rem at 85% -4rem, var(--sun-soft), transparent 70%);
+  }
+  header.hero .kicker {
+    display: inline-block;
+    font-size: .8rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: .8rem;
+  }
+  h1 { font-size: clamp(1.9rem, 6.5vw, 2.7rem); line-height: 1.15; margin: 0 0 .7rem; }
+  header.hero p.lede { color: var(--muted); max-width: 34rem; margin: 0 auto; font-size: 1.05rem; }
+  h2 {
+    font-size: 1.45rem; line-height: 1.25;
+    margin: 2.8rem 0 .4rem;
+    scroll-margin-top: 1rem;
+  }
+  h2 .no {
+    display: inline-grid; place-items: center;
+    width: 1.7rem; height: 1.7rem; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: .95rem; margin-right: .55rem; transform: translateY(-.12rem);
+  }
+  h3 { font-size: 1.08rem; margin: 1.6rem 0 .3rem; }
+  p { margin: .55rem 0 1rem; }
+  .muted { color: var(--muted); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1rem 1.15rem;
+    margin: 1rem 0;
+    box-shadow: var(--shadow);
+  }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.2rem, 1fr)); gap: .7rem; margin: 1.1rem 0; }
+  .tile {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: .8rem .9rem; box-shadow: var(--shadow);
+  }
+  .tile b { display: block; font-size: 1.45rem; line-height: 1.2; }
+  .tile span { font-size: .82rem; color: var(--muted); }
+  .pill {
+    display: inline-block; font-size: .78rem; font-weight: 700;
+    padding: .12rem .6rem; border-radius: 999px; margin-right: .35rem;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .pill.sun { background: var(--sun-soft); color: var(--warn); }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  .say {
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 0 12px 12px 0;
+    padding: .7rem 1rem; margin: 1rem 0;
+    font-style: italic;
+  }
+  details {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: .55rem .9rem; margin: .8rem 0;
+  }
+  details summary {
+    cursor: pointer; font-weight: 600; color: var(--accent);
+    -webkit-tap-highlight-color: transparent;
+  }
+  details[open] summary { margin-bottom: .4rem; }
+  ul, ol { padding-left: 1.25rem; margin: .5rem 0 1rem; }
+  li { margin: .35rem 0; }
+  .bet {
+    border: 1px solid var(--line); border-radius: 16px;
+    padding: 1rem 1.15rem; margin: 1.1rem 0;
+    background: var(--card); box-shadow: var(--shadow);
+    border-top: 4px solid var(--accent);
+  }
+  .bet.two { border-top-color: var(--sun); }
+  .bet.three { border-top-color: var(--ok); }
+  .bet h3 { margin-top: .1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  .scroll { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--line); border-radius: 12px; }
+  .scroll table { min-width: 26rem; }
+  th, td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--line); }
+  th { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  tr:last-child td { border-bottom: none; }
+  .bar { height: .55rem; border-radius: 999px; background: var(--line); overflow: hidden; margin-top: .25rem; }
+  .bar i { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
+  .who { display: grid; gap: .7rem; grid-template-columns: 1fr; }
+  @media (min-width: 34rem) { .who { grid-template-columns: 1fr 1fr; } }
+  .who .card { margin: 0; }
+  footer {
+    margin-top: 3.5rem; padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    font-size: .85rem; color: var(--muted);
+  }
+  a { color: var(--accent); }
+  .toc { font-size: .92rem; }
+  .toc a { text-decoration: none; }
+  .toc li { margin: .2rem 0; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="kicker">The villa game · the plan, in plain words</span>
+  <h1>Where our little dating-show game goes next 🌴</h1>
+  <p class="lede">We built a game about surviving a season on a reality dating show.
+  About twenty people have played the test version. This page walks through what we
+  learned — and the plan to make it something people come back to every day.
+  No game-industry jargon, promise.</p>
+</header>
+
+<main>
+
+<nav class="card toc" aria-label="Contents">
+  <b>On this page</b>
+  <ol>
+    <li><a href="#what">The game, in one minute</a></li>
+    <li><a href="#today">Where things stand today</a></li>
+    <li><a href="#learned">What we learned (three ways of looking)</a></li>
+    <li><a href="#problems">The three problems worth fixing first</a></li>
+    <li><a href="#bets">The plan: three bets, in order</a></li>
+    <li><a href="#dreams">The dream list</a></li>
+    <li><a href="#who">Who does what — the AI and the human</a></li>
+    <li><a href="#score">How we'll know it's working</a></li>
+  </ol>
+</nav>
+
+<h2 id="what"><span class="no">1</span>The game, in one minute</h2>
+<p>You play one contestant on a <em>Love Island</em>–style TV show. The whole game
+is played by <b>swiping cards left or right</b>, like choosing between two replies
+in a conversation. Each card is a moment from the show — a date, a challenge, a
+juicy rumour, a dreaded text message — and each choice nudges your story:
+how strong your couple is, how much the public likes you, how close you are to
+losing your head.</p>
+<p>One playthrough is one <b>season</b> — about ten minutes on your phone. You pick
+what you're really there for: winning the public's vote, finding actual love, or
+building a following. Get there by the finale and you win. Or get dumped from the
+villa and go home in tears. Then you play another season, and it all goes
+differently.</p>
+<div class="say">The pitch in one sentence: <b>“Reigns, but you're in the villa —
+and every choice is free.”</b> (Reigns is a famous card-swiping game. “Free” is a
+dig at the official Love Island game, which charges real money for the good
+choices. We never will.)</div>
+
+<h2 id="today"><span class="no">2</span>Where things stand today</h2>
+<p>The surprising part: the game is <b>finished</b>, in the sense that everything we
+designed got built. There's a scheming Rival with their own secrets, a
+mid-season loyalty trial, a gossip system where you collect and spend secrets, and
+a sarcastic narrator who comments on everything you do and never repeats himself.</p>
+<div class="tiles">
+  <div class="tile"><b>104</b><span>story cards written</span></div>
+  <div class="tile"><b>78</b><span>narrator one-liners</span></div>
+  <div class="tile"><b>16</b><span>islanders in the cast</span></div>
+  <div class="tile"><b>11</b><span>different endings</span></div>
+  <div class="tile"><b>~20</b><span>people tried the beta</span></div>
+  <div class="tile"><b>42</b><span>seasons played by our biggest fan</span></div>
+</div>
+<p>But “built” isn't “done”. The test period showed us exactly where the cracks
+are — and that's what the rest of this page is about.</p>
+
+<h2 id="learned"><span class="no">3</span>What we learned — three ways of looking</h2>
+
+<h3>👀 Watching real players</h3>
+<p>The game quietly counts anonymous plays (no names, no personal data — just
+“someone swiped this card”). Twenty people opened the game; only five actually
+played a season. That's the loudest finding: <b>most visitors bounce before their
+first swipe</b>. The villa game doesn't introduce itself at all — you're thrown
+into the first card cold. Meanwhile, one person played <em>forty-two</em> seasons,
+which tells us the game can hook someone hard once it gets the chance.</p>
+<p>Also: nearly everyone played on a phone. Whatever we build must feel great
+under a thumb.</p>
+
+<h3>🤖 Robot playtesters</h3>
+<p>Here's a trick human playtests can't do: we had the computer play
+<b>ten thousand complete seasons</b> in under a minute, making human-ish choices,
+and then studied the pile of results. Overall the game is fair — roughly one in
+three seasons ends in a win, which is the sweet spot we aim for. But the robots
+exposed three real imbalances (next section).</p>
+
+<h3>🌍 Looking around the market</h3>
+<ul>
+  <li><b>The show is enormous right now.</b> Love Island USA is breaking streaming
+  records this very month, and its audience is young and phone-first — exactly the
+  people who'd play a game like ours.</li>
+  <li><b>The official game's biggest complaint is paywalls.</b> Players hate that
+  the “good” choices cost money. Our game is free and always will be — that's not
+  a limitation, it's the whole sales pitch.</li>
+  <li><b>Games people replay forever share one trick:</b> every new run shows you
+  something you haven't seen. Ours forgets everything between seasons — an
+  obvious place to grow.</li>
+  <li><b>Small free web games still go viral in one specific way:</b> a shared
+  daily puzzle plus a spoiler-free results card you can paste into the group chat
+  (the Wordle trick). Nobody has done that with a <em>story</em> game yet.</li>
+</ul>
+<details>
+  <summary>Wait — should we worry about the name “Love Island”?</summary>
+  <p>Yes, eventually. “Love Island” is a trademark that ITV licenses to an
+  official game. While we're a tiny free fan project nobody minds, but <b>before
+  we ever promote the game loudly, it needs its own name</b> — keeping the
+  reality-show <em>format</em> (recouplings, bombshells, “I've got a text!” — those
+  are genre conventions, not property), just not the brand. Picking the new name
+  is a human decision; preparing candidates is on the to-do list.</p>
+</details>
+
+<h2 id="problems"><span class="no">4</span>The three problems worth fixing first</h2>
+
+<div class="card">
+  <span class="pill">Problem 1</span> <b>Being nice is too easy.</b>
+  <p>One of the three ways to win is leaving with real love. The robots showed that
+  the “loyal” score you need for it basically fills itself up — in half of all
+  seasons it hits the maximum. A meter that's always full isn't a choice anymore,
+  it's decoration. Fix: make loyal choices count for a little less each, so
+  staying true is something you <em>do</em>, not something that happens to you.</p>
+</div>
+<div class="card">
+  <span class="pill">Problem 2</span> <b>There's only one way to lose.</b>
+  <p>In ten thousand robot seasons, effectively every loss was the same loss:
+  being single when couples re-form. The game also has a stress meter — the
+  voice in your head — that <em>looks</em> scary and rises all season, but it
+  ended a season twice in ten thousand tries. A threat that never bites is a
+  broken promise to the player. Fix: give the stress meter real teeth (rarely,
+  and with fair warning from the narrator).</p>
+</div>
+<div class="card">
+  <span class="pill">Problem 3</span> <b>The influencer path is starved.</b>
+  <p>The third way to win — turning villa fame into a following — fails far more
+  often than the other two, because the charm points it needs mostly arrive as a
+  consolation prize when things go <em>badly</em>. You can't choose your way to
+  it. That's backwards, and it's the path the show's real audience loves most.
+  Fix: let charm be earned by nailing challenges and big camera moments.</p>
+</div>
+<details>
+  <summary>One more, for the connoisseurs: the wasted plot twist</summary>
+  <p>The game's most dramatic designed moment — saving up a rival's dirty secret
+  and detonating it at the couples ceremony — turns out to happen in about
+  <b>1 season in 50</b>, because the stars rarely align. A scene that good should
+  fire far more often. Small tuning, big drama payoff.</p>
+</details>
+
+<h2 id="bets"><span class="no">5</span>The plan: three bets, in order</h2>
+<p>Order matters. There's no point advertising a leaky bucket, so the bets stack:
+first make the game fair and welcoming, then give people a reason to return,
+<em>then</em> invite the world.</p>
+
+<div class="bet">
+  <h3>Bet 1 — Finish the fun 🔧</h3>
+  <p><b>Fix the three imbalances above, and teach the game to say hello.</b>
+  The best idea here: the sarcastic narrator becomes your guide on your very
+  first season — the show itself onboards new viewers through the voiceover, so
+  the game should too. (“That meter? That's the voice in your head, babes.
+  Keep an eye on it.”) No tutorial screens, no manual — the character does it.</p>
+  <p class="muted">Also in this bet: better play-counting instruments, so every
+  later change can be measured instead of guessed at.</p>
+</div>
+
+<div class="bet two">
+  <h3>Bet 2 — The reason to come back tomorrow 📅</h3>
+  <ul>
+    <li><b>The Daily Villa.</b> Every day, one shared season — same cast, same
+    bombshells, same secrets for everyone. At the end you get a spoiler-free
+    little results card (think emoji, not text) made for pasting into the group
+    chat: <i>“Day 33. Survived two ceremonies. Kept the secret. Left with real
+    love.”</i> Your friends see it and have to know what <em>their</em> partner
+    would have done.</li>
+    <li><b>The villa remembers.</b> Play a second season and your ex is still
+    there — and remembers exactly how you left things. The narrator remembers
+    too. Every rerun reveals new lines and grudges, which is the trick every
+    endlessly-replayed game uses.</li>
+    <li><b>More people worth knowing.</b> Partners get personalities (the
+    sweetheart, the player, the slow-burner — each with their own secrets), and
+    the villa finally gets the show's most underrated relationship: <b>your best
+    friend</b>, your ride-or-die, who hears your gossip and has your back at the
+    vote.</li>
+    <li><b>Things to unlock.</b> Finish a season and unlock a new way to play —
+    headline act: <b>starting as the Bombshell</b>, dropped into a villa where
+    everyone's already coupled up.</li>
+  </ul>
+</div>
+
+<div class="bet three">
+  <h3>Bet 3 — Then invite the world 📣</h3>
+  <ul>
+    <li>A front door that actually mentions the villa game (right now it hides
+    behind the music game we built first, with no signpost).</li>
+    <li>The one-sentence pitch everywhere it counts.</li>
+    <li>A new name of our own (see the note above), <em>then</em> promotion.</li>
+    <li>Timing: the show's cultural peak is June–August every year. The smart
+    play is to spend this year making Bets 1 and 2 true, and make the big push
+    when the 2027 season hype arrives.</li>
+  </ul>
+</div>
+
+<h2 id="dreams"><span class="no">6</span>The dream list 🌙</h2>
+<p>Bigger swings, deliberately parked until the bets above prove out:</p>
+<ul>
+  <li><b>Everyone can date everyone.</b> The launch version models the classic
+  boy–girl format. A version where you set who you're into is the most-requested
+  feature in this whole genre — and it deserves its own proper design session,
+  not a bolt-on.</li>
+  <li><b>A villa that lives without you.</b> Right now the drama orbits you. Give
+  the other islanders their own couples that form and shatter off-screen — so
+  gossip can be about <em>them</em> — and the villa starts feeling alive.
+  (Hand-written drama, mind — the industry tried improvising-AI characters last
+  year and players hated the mush.)</li>
+  <li><b>Playable challenges.</b> Tiny games for the show's party games —
+  heart-rate challenge, the lie-detector test.</li>
+  <li><b>Look and feel.</b> Reaction-shot artwork at the big verdicts, a buzz in
+  your hand when a text arrives, confetti when you survive the ceremony.</li>
+</ul>
+
+<h2 id="who"><span class="no">7</span>Who does what — the AI and the human 🤝</h2>
+<p>An unusual fact about this project: almost all of the plan can be executed by
+an AI working alone, because the project checks its own work — a robot referee
+replays thousands of seasons after every change, a taste-checker rejects writing
+that breaks the game's voice, and a battery of tests guards everything else.
+The AI writes, tunes, tests, and ships; the checks catch what slips.</p>
+<div class="who">
+  <div class="card">
+    <b>🤖 The AI handles</b>
+    <ul>
+      <li>All balance tuning (robot playtests are the judge)</li>
+      <li>Writing new scenes &amp; narrator lines (taste-checked)</li>
+      <li>Building the daily mode, memory, unlocks</li>
+      <li>Nightly stats reports &amp; a weekly digest</li>
+    </ul>
+  </div>
+  <div class="card">
+    <b>🧑‍🎨 Viktor decides</b>
+    <ul>
+      <li>Taste: spot-checking ~10% of new writing</li>
+      <li>The new name, and when to go loud</li>
+      <li>Art direction (portrait style, sound)</li>
+      <li>Who gets invited to playtest</li>
+    </ul>
+  </div>
+</div>
+<p class="muted">Rough deal: the AI ships continuously; the human spends about
+fifteen minutes a week on verdicts and decisions.</p>
+
+<h2 id="score"><span class="no">8</span>How we'll know it's working</h2>
+<p>Feelings lie; counters don't. The scoreboard we'll hold ourselves to:</p>
+<div class="scroll">
+<table>
+  <tr><th>What we count</th><th>Today</th><th>After Bet 1</th><th>After Bet 2</th></tr>
+  <tr><td>Visitors who actually start playing</td>
+      <td>~25%<div class="bar"><i style="width:25%"></i></div></td>
+      <td>40%<div class="bar"><i style="width:40%"></i></div></td>
+      <td>50%<div class="bar"><i style="width:50%"></i></div></td></tr>
+  <tr><td>First seasons played to the end</td><td>unknown</td><td>70%</td><td>70%</td></tr>
+  <tr><td>Players who come back another day</td><td>3 of 5</td><td>30%</td><td>40%, with streaks</td></tr>
+  <tr><td>Win rates of the three paths</td><td>49% / 38% / 32%</td><td colspan="2">all three within a few points of each other</td></tr>
+  <tr><td>Daily results cards shared</td><td>impossible</td><td>—</td><td>some, and growing</td></tr>
+</table>
+</div>
+<p>Every number above becomes measurable in Bet 1, and a weekly automated report
+tracks the lot.</p>
+
+<footer>
+  <p>This is the friendly version of a much longer technical report:
+  <a href="https://github.com/sandstreampop/big-break/blob/main/docs/games/love-island/ROADMAP.md">
+  “To the moon — the Love Island advisory report &amp; AI-executable roadmap”</a>
+  (July 2026). Everything here — the player statistics, the ten-thousand-season
+  robot playtests, the market research — is sourced and reproducible there.</p>
+  <p>🎮 Play the beta: <a href="./index.html">the villa game</a> ·
+  <a href="../index.html">the music game</a></p>
+</footer>
+
+</main>
+</body>
+</html>

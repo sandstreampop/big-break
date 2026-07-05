@@ -181,3 +181,13 @@ V1 slice (go/no-go) ─┐
 Keep **V2a and V2b solo** (schema + golden behaviour). V1 is deliberately fat —
 one thin cut through every system — because its only job is the go/no-go.
 
+---
+
+# After v2
+
+All phases above (A–D, V1–V4) are built and green. What comes next — the
+evidence-based design-space survey and the sequenced post-v2 sessions — lives in
+[`ROADMAP.md`](./ROADMAP.md) (expert record) and its plain-language companion
+[`public/roadmap.html`](./public/roadmap.html), deployed at
+`/love-island/roadmap.html`.
+
