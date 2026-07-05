@@ -241,6 +241,18 @@ export const charactersPlugin: Plugin = {
     bombshellActiveIs: (s, arg) => !!s.bombshellId === !!arg,
     // Route encounter variants on the Partner's shape (R7/D1).
     partnerShapeIs: (s, arg) => partnerShape(s) === arg,
+    // Cross-season memory (R9/C4b): is this Partner/Rival a returning face
+    // from the player's past Seasons? Reads the shell's history ledger —
+    // absent in sims, so these gates fail closed there.
+    partnerAgainIs: (s, arg) => {
+      const past = (s.history || []).flatMap((h: any) =>
+        [h.partner, ...String(h.exes || '').split(',')]).filter(Boolean);
+      return (!!s.partner && past.includes(s.partner)) === !!arg;
+    },
+    rivalAgainIs: (s, arg) => {
+      const past = (s.history || []).map((h: any) => h.rival).filter(Boolean);
+      return (!!s.rival && past.includes(s.rival)) === !!arg;
+    },
   },
 
   // The nation watches moments: encounter beats that land pull votes, and a

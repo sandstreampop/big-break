@@ -321,6 +321,7 @@ function startNewRun(daily = false, comeback = false) {
     if (comeback) engine.applyComeback(run);
     run.nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 2; // 3rd+ meeting
     run.firstRun = (meta.runs || 0) === 0; // a pack may key onboarding off this
+    run.history = (meta.history || []).slice(); // the memory ledger (packs author off it; sims never set it)
     save.saveRun(run);
     track('run_start', {
       instrument: inst.id, contract: chosenContract || 'none',
@@ -1977,6 +1978,16 @@ function finishMeta(summary, lp) {
       meta.gauntletResults[summary.gauntlet] = { result: summary.result, path: summary.path, fame: summary.fame || 0 };
     }
   }
+  // The memory ledger: the last five runs' scalar summary fields, kept on
+  // meta and stamped onto future runs (run.history) so a pack can author
+  // remembers-you content. Generic: same flattener as the telemetry props.
+  const compact: any = {};
+  for (const [k, v] of Object.entries(summary)) {
+    if (Array.isArray(v)) { if (v.length <= 8 && v.every((x) => typeof x !== 'object')) compact[k] = v.join(','); }
+    else if (v === null || typeof v !== 'object') compact[k] = v;
+  }
+  meta.history = [...(meta.history || []).slice(-4), compact];
+
   // Lifetime aggregates (Pass 25)
   const lt = meta.lifetime = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
   lt.swipes += (summary.tierLog || []).length;

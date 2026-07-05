@@ -11,6 +11,8 @@
 // Run: node --test test/li-clarity.test.mjs (build first)
 
 import test from 'node:test';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
 import assert from 'node:assert/strict';
 import * as engine from '../dist/js/engine.js';
 import { loveIslandPack } from '../dist/js/packs/love-island/pack.js';
@@ -140,4 +142,15 @@ test('the stage never seats the same islander as Partner and bombshell', () => {
   state.charOpinion = { rival: 30, bombshell: 46 };
   const slots = villaStage(state, null) || [];
   assert.equal(slots.filter((s) => s.name === 'Luca').length, 1);
+});
+
+test('cross-season memory predicates read the history ledger (R9)', () => {
+  const { charactersPlugin } = require('../dist/js/packs/love-island/plugins/characters.js');
+  const s = { partner: 'kai', rival: 'chloe', history: [{ partner: 'kai', rival: 'meg', exes: 'tyler,dev' }] };
+  assert.equal(charactersPlugin.requires.partnerAgainIs(s, true), true, 'kai is a returning partner');
+  assert.equal(charactersPlugin.requires.rivalAgainIs(s, true), false, 'chloe is a fresh rival');
+  assert.equal(charactersPlugin.requires.partnerAgainIs({ ...s, partner: 'reece' }, true), false);
+  assert.equal(charactersPlugin.requires.partnerAgainIs({ ...s, partner: 'dev' }, true), true, 'exes count');
+  // Sims never stamp history — the gates fail closed (meta content stays out of goldens).
+  assert.equal(charactersPlugin.requires.partnerAgainIs({ partner: 'kai' }, true), false);
 });

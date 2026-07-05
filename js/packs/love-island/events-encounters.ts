@@ -166,6 +166,68 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
   },
 
   // ---------- Act 1 · the Partner, actually met (3 beats, ambient-triggered) ----------
+  // ---------- Cross-season memory entries (R9/C4b) ----------
+  // Returning faces open differently. History-gated (run.history — never in
+  // seeded sims); weight outranks the standard openers in the beat window.
+  {
+    id: 'li_enc_partner_1_again', act: 1, weight: 60, tags: ['beat:partnerenc1', 'encounter', 'chat', 'date'],
+    art: 'li_pool',
+    requires: { singleIs: false, partnerAgainIs: true },
+    context: 'Mid-morning · the swing seat · you’ve sat here before',
+    prompt: '“So.” {partner} hands you a tea — your order, unasked, remembered from a different summer. “Take two. Same swing, same us. Are we smarter now, or just tanner?” Somewhere in the gallery, an editor reaches for the flashback reel.',
+    choices: {
+      left: {
+        label: 'Smarter. Prove it',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: '“Smarter,” you say — as the exact same argument you had last Season pulls up a chair. Rerun energy. At least you both know your lines.', effects: { loyalty: 2, bond: 4, burnout: 2, chainEventId: 'li_enc_partner_2_real' } },
+          good: { text: '“We know where the potholes are this time.” {partner} clinks your mug. Same road. Better driving.', effects: { loyalty: 3, bond: 6, chainEventId: 'li_enc_partner_2_real' } },
+          incredible: { text: 'Somewhere in minute ten you both stop performing the reunion and just have it. Two summers of history compress into one very quiet, very solid thing.', effects: { loyalty: 5, bond: 8, public: 3, chainEventId: 'li_enc_partner_2_real' } },
+        },
+      },
+      right: {
+        label: 'Just tanner',
+        tags: ['flirt', 'banter'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: '“Tanner. Definitely tanner.” The joke holds for one drink, and then the history shows up anyway — uninvited, with opinions.', effects: { rizz: 2, bond: 2, partnerMood: 'torn', burnout: 2, chainEventId: 'li_enc_partner_2_show' } },
+          good: { text: 'You keep it light and let the past sit in the sun with you, unbothered. Some sequels don’t need a recap. The nation does one anyway.', effects: { rizz: 5, followers: 3, bond: 3, chainEventId: 'li_enc_partner_2_show' } },
+          incredible: { text: '“New rule: no lore.” — “No lore,” {partner} agrees, delighted. You spend the day inventing brand-new mistakes instead. The fan account changes its bio to SEASON TWO.', effects: { rizz: 8, followers: 5, bond: 3, public: 3, chainEventId: 'li_enc_partner_2_show' } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_rival_1_again', act: 1, weight: 60, tags: ['beat:rivalenc', 'encounter', 'chat'],
+    art: 'li_kitchen',
+    requires: { rivalAgainIs: true },
+    context: 'Dusk · the kitchen · an old opponent pours two coffees',
+    prompt: '“Well, well.” {rival} slides a coffee across like a rematch contract. “The band’s back together. I still owe you for last Season, and I genuinely can’t remember which kind of owe.” Neither can you. That’s the fun bit.',
+    choices: {
+      left: {
+        label: 'Old wars stay buried',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: '“Clean slate?” — “Clean-ish,” says {rival}, which from them is a peace treaty with a footnote. You drink to the footnote.', effects: { loyalty: 2, rivalOpinion: 4, burnout: 2, chainEventId: 'li_enc_rival_2_test' } },
+          good: { text: '“Whatever it was — we’re even.” {rival} considers the ledger, then closes it. “Even,” they agree. Two veterans, one kitchen, zero appetite for reruns.', effects: { loyalty: 3, rivalOpinion: 7, chainEventId: 'li_enc_rival_2_open' } },
+          incredible: { text: 'You toast to last Season’s casualties — both your dignities — and something in the old rivalry quietly retires. What replaces it is almost, appallingly, respect.', effects: { loyalty: 5, rivalOpinion: 9, public: 3, chainEventId: 'li_enc_rival_2_open' } },
+        },
+      },
+      right: {
+        label: 'Settle the score',
+        tags: ['strategy', 'drama'],
+        governingStats: { savvy: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: '“Oh, I remember which kind of owe.” The coffee goes cold between you. Rematch: on, and this time the villa has archive footage.', effects: { savvy: 2, rivalOpinion: -5, rivalMood: 'scheming', addFlag: 'li_rival_active', burnout: 3, chainEventId: 'li_enc_rival_2_test' } },
+          good: { text: '“Best of three, then.” {rival} actually laughs. The feud renews itself on friendlier terms — a derby now, not a war.', effects: { savvy: 4, rivalOpinion: -2, followers: 3, chainEventId: 'li_enc_rival_2_test' } },
+          incredible: { text: 'You lay out exactly what you’ll do differently this time, to their face, over coffee. {rival} listens like a scout. “Finally,” they say. “A worthy season.”', effects: { savvy: 6, rivalOpinion: -3, followers: 5, public: 3, addFlag: 'li_rival_active', chainEventId: 'li_enc_rival_2_test' } },
+        },
+      },
+    },
+  },
+
   // ---------- The Bestie arc (R7/D2): the show's secret spine ----------
   // Same-gender ride-or-die, formed post-Casa. Two lanes: the friendship
   // (loyalty, relief, a witness) or the alliance (savvy, the third intel

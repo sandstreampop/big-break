@@ -13,6 +13,7 @@ import { stirlingPlugin, stirlingDealNote, stirlingStance } from '../dist/js/pac
 import { COUPLING, ceremonyOutlook } from '../dist/js/packs/love-island/plugins/coupling.js';
 import {
   REACT_INCREDIBLE, REACT_BAD, REACT_TAGGED, BEAT_VERDICT, BEAT_REACT, FORECAST, SCENE_STAMP,
+  TUTOR, MEMORY,
 } from '../dist/js/packs/love-island/stirling-lines.js';
 import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';
 import { tasteIssues } from '../tools/taste-core.mjs';
@@ -24,6 +25,8 @@ const ALL_LINES = [
   ...Object.values(BEAT_REACT).flat(),
   ...Object.values(FORECAST).flat(),
   ...Object.values(SCENE_STAMP).flat(),
+  ...Object.values(TUTOR).flat(),
+  ...Object.values(MEMORY).flat(),
 ];
 
 function fresh(seed = 7, persona = 'retriever_girl') {

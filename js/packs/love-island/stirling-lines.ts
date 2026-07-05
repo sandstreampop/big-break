@@ -373,3 +373,27 @@ export const TUTOR: Record<string, BarkDef[]> = {
   exclusive: [{ id: 'tu_excl', text: 'Going exclusive: the Bond locks in higher, the temptations back off, and the drop — should it come — doubles. This show is a mortgage with cameras.', priority: 10 }],
   finale: [{ id: 'tu_final', text: 'The Final. Your declared Intention gets judged, the vote peaks, and the envelope has no memory of your excuses. Good luck, babes. Genuinely.', priority: 10 }],
 };
+
+// ---------- The memory pool (R9/C4a: the villa remembers) ----------
+// Meta-keyed arrival lines for returning players (run.history — the shell's
+// memory ledger; never set in sims, so seeded goldens never see these).
+// Routed by last Season's ending; `many` outranks once you're a regular.
+export const MEMORY: Record<string, BarkDef[]> = {
+  dumped: [
+    { id: 'mem_dumped', text: 'Back again? Last time we did this, you left in a car with your name trending. New summer, same firepit. Go on then.', priority: 10 },
+    { id: 'mem_dumped2', text: 'The villa never forgets a dumping. The villa also never learns — which, returning champion of getting up again, works in your favour.', priority: 10 },
+  ],
+  burnout: [
+    { id: 'mem_walked', text: 'Last visit ended with a suitcase and your own decision — the rare dignified exit. Good to have you back. Watch the meter this time, babes.', priority: 10 },
+  ],
+  success: [
+    { id: 'mem_won', text: 'A champion returns. The nation remembers the envelope. The villa remembers everything else.', priority: 10 },
+  ],
+  any: [
+    { id: 'mem_back', text: 'Back for more? The villa kept your water bottle. That’s not sweet, by the way — that’s evidence retention.', priority: 10 },
+    { id: 'mem_hottub', text: 'Round two. The nation remembers the hot-tub incident even if you’ve chosen not to. Fresh start, though. Officially.', priority: 10 },
+  ],
+  many: [
+    { id: 'mem_staff', text: 'Season five-plus, is it? At this point you’re not a contestant, you’re staff. Grab a lanyard, show the new ones where the Hut is.', priority: 10 },
+  ],
+};

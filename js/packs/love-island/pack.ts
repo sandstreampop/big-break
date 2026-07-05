@@ -48,6 +48,7 @@ declare module '../../types.js' {
     partnerKissedIs?: boolean; angleHas?: string;
     // character-state gates (ADR-0006): opinion tiers gate encounter branches
     opinionAtLeast?: string; opinionBelow?: string; partnerShapeIs?: string;
+    partnerAgainIs?: boolean; rivalAgainIs?: boolean;
     secretHeldIs?: string; bombshellActiveIs?: boolean;
     // gossip gates (ADR-0007)
     intelMin?: number; intelAboutIs?: string;

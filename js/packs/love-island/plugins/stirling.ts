@@ -19,7 +19,7 @@
 
 import {
   BarkDef, REACT_INCREDIBLE, REACT_BAD, REACT_TAGGED,
-  BEAT_VERDICT, BEAT_REACT, FORECAST, SCENE_STAMP, TUTOR,
+  BEAT_VERDICT, BEAT_REACT, FORECAST, SCENE_STAMP, TUTOR, MEMORY,
 } from '../stirling-lines.js';
 import { ceremonyOutlook } from './coupling.js';
 import type { Plugin, RunState, GameEvent } from '../../../types.js';
@@ -121,6 +121,21 @@ function stirlingDealSelect(state: RunState, ev: GameEvent, offset: number): { l
       : ev.finaleCard ? tutor(TUTOR.finale)
       : null;
     if (t) return t;
+  }
+
+  // The villa remembers (R9/C4a): a returning player's arrival gets the
+  // memory line, keyed off the shell's history ledger. Meta-gated — sims
+  // never stamp run.history, so the seeded stream never sees these.
+  if (!state.firstRun && (state.history || []).length && ev.id === 'li_arrival') {
+    const runs = state.history.length;
+    const last = state.history[state.history.length - 1] || {};
+    const pool = runs >= 5 ? MEMORY.many
+      : last.result === 'success' ? MEMORY.success
+      : last.endingKey === 'burnout' ? MEMORY.burnout
+      : last.endingKey === 'dumped' ? MEMORY.dumped
+      : MEMORY.any;
+    const line = dealPick(state, pool.every((l) => (state.stirlingSeen || []).includes(l.id)) ? MEMORY.any : pool, offset);
+    if (line && !(state.stirlingSeen || []).includes(line.id)) return { line, pool };
   }
 
   // The verdict, explained — so held/rescued/dumped reads as earned, not
