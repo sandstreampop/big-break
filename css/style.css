@@ -367,6 +367,10 @@ body {
   flex: 1;
   position: relative;
   display: grid;
+  /* A definite row: with the default auto row the card's `max-height: 100%`
+     has nothing to resolve against, so a tall card silently outgrows the
+     area and slides under the choice buttons on small phones. */
+  grid-template-rows: 100%;
   place-items: center;
   min-height: 0;
   touch-action: none;
@@ -1475,11 +1479,11 @@ body.big-text #app { zoom: 1.18; }
 }
 
 /* Set-piece framing: a ceremonial banner + stakes above the dealt card. */
-#card-area:has(.set-piece) {
+#card-area.has-set-piece {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 8px;
 }
-#card-area:has(.set-piece) .card { flex: 0 1 auto; min-height: 0; }
+#card-area.has-set-piece .card { flex: 0 1 auto; min-height: 0; }
 .set-piece {
   width: min(92%, 372px); flex: none;
   display: flex; flex-direction: column; gap: 4px; text-align: center;
@@ -1533,13 +1537,13 @@ body.big-text #app { zoom: 1.18; }
 
 /* Inside a set-piece the deal-note joins the flow (above the card) instead of
    floating over the banner, and the art yields height to the stakes. */
-#card-area:has(.set-piece) { position: relative; }
-#card-area:has(.set-piece) .set-piece { order: -2; }
-#card-area:has(.set-piece) .overlay-note {
+#card-area.has-set-piece { position: relative; }
+#card-area.has-set-piece .set-piece { order: -2; }
+#card-area.has-set-piece .overlay-note {
   position: static; transform: none; order: -1;
   width: min(92%, 372px); flex: none; margin: 0;
 }
-#card-area:has(.set-piece) .card-art { max-height: 16vh; }
+#card-area.has-set-piece .card-art { max-height: 16vh; }
 
 /* The daily loop's closing note ("come back tomorrow") on the ending screen. */
 .daily-note {
@@ -1614,7 +1618,7 @@ details.recap-fold[open] { display: flex; flex-direction: column; gap: 8px; }
 @media (max-height: 700px) {
   .card { gap: 8px; padding: 12px; }
   .card-prompt { font-size: 14px; }
-  #card-area:has(.set-piece) { gap: 5px; }
+  #card-area.has-set-piece { gap: 5px; }
   #card-area .overlay-note { font-size: 12px; padding: 6px 9px; }
   #stage.stage-compact .stage-face { width: 32px; height: 32px; font-size: 19px; }
   #stage.stage-compact .stage-read { display: none; }
@@ -1624,3 +1628,35 @@ details.recap-fold[open] { display: flex; flex-direction: column; gap: 8px; }
 /* The ambient strip never wraps its act label; counters wrap instead. */
 .hud-act { white-space: nowrap; }
 .hud-counters { flex-wrap: wrap; justify-content: flex-end; }
+
+/* Narrow phones (320px class — iPhone SE 1st gen, small Androids, zoomed
+   display modes): the card tightens so the prompt keeps its no-clip contract
+   (ADR-0009 Tier 1; pinned at 320×568 by test/ui-mobile-matrix.mjs). */
+@media (max-width: 350px) {
+  .card { padding: 11px; gap: 8px; }
+  .card-prompt { font-size: 13.5px; line-height: 1.38; }
+  /* ADR-0009 Tier 1 at its extreme: on the 320px class the ART may yield to
+     zero before the prompt clips — the words are the game. */
+  .card-art { min-height: 0; }
+  .choice-btn { padding: 8px 10px 9px; }
+  .btn-label { font-size: 12.5px; }
+  /* The ambient tiers give the prompt its room, same trade as short phones:
+     tighter counters (fewer wrapped HUD lines), smaller faces, no reads. */
+  .hud-counters {
+    font-size: 13px; gap: 6px;
+    /* One-line HUD (the gear-row pattern): the counters scroll sideways
+       instead of wrapping into a tower that starves the card of height. */
+    flex-wrap: nowrap; justify-content: flex-start;
+    min-width: 0; overflow-x: auto;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(90deg, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent);
+  }
+  .hud-counters::-webkit-scrollbar { display: none; }
+  .hud-counters > * { flex: none; white-space: nowrap; }
+  #stage .stage-face, #stage.stage-compact .stage-face { width: 32px; height: 32px; font-size: 19px; }
+  #stage .stage-read, #stage.stage-compact .stage-read { display: none; }
+  #card-area.has-set-piece { gap: 5px; }
+  #card-area .overlay-note { font-size: 12px; line-height: 1.35; padding: 5px 8px; }
+  .encore-btn { min-height: 36px; padding: 8px 10px; font-size: 12px; }
+}

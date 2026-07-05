@@ -7,8 +7,12 @@
 // Run: node tools/build.mjs   (or: npm run build)
 
 import { execSync } from 'node:child_process';
-import { cpSync, rmSync, existsSync, mkdirSync, copyFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import {
+  cpSync, rmSync, existsSync, mkdirSync, copyFileSync,
+  readFileSync, writeFileSync, appendFileSync, readdirSync,
+} from 'node:fs';
+import { createHash } from 'node:crypto';
+import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -57,4 +61,43 @@ for (const pack of GAME_PACKS) {
   entries.push(`${pack.id} at /${pack.id}/`);
 }
 
-console.log(`build ok -> dist/ (music at /${entries.length ? ', ' + entries.join(', ') : ''})`);
+// 4. Version-stamp the delivery (the CSS↔JS contract + cache-busted URLs).
+// Every mobile client caches somewhere (HTTP cache with Pages' max-age, the
+// PWA service worker, iOS's aggressive disk cache); without fingerprints a
+// flaky connection can pair fresh JS with a months-old stylesheet, and the
+// new markup renders unstyled (the collapsed-phone-layout bug class).
+// Three stamps make that skew both impossible to fetch and self-healing:
+//   a. cssV (style.css content hash) appended to dist/css/style.css as
+//      `--bb-css-v` AND written into dist/js/version.js — the runtime probe
+//      in js/ui.ts compares them at boot and re-pulls a stale stylesheet.
+//   b. every stylesheet/script URL in the shipped HTML gets ?v=<hash>, so a
+//      re-fetched HTML atomically re-fetches matching assets.
+// Pinned end-to-end by test/ui-mobile-matrix.mjs (skew-heal pass).
+const hashOf = (buf) => createHash('sha256').update(buf).digest('hex').slice(0, 12);
+const cssV = hashOf(readFileSync(resolve(dist, 'css/style.css')));
+appendFileSync(resolve(dist, 'css/style.css'), `\n:root { --bb-css-v: "${cssV}"; }\n`);
+writeFileSync(resolve(dist, 'js/version.js'),
+  `// stamped by tools/build.mjs — see js/version.ts\nexport const CSS_CONTRACT = '${cssV}';\n`);
+
+const jsFiles = [];
+(function walk(dir) {
+  for (const d of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, d.name);
+    if (d.isDirectory()) walk(p);
+    else if (d.name.endsWith('.js')) jsFiles.push(p);
+  }
+})(resolve(dist, 'js'));
+const jsV = hashOf(jsFiles.sort().map((p) => p + '\n' + readFileSync(p, 'utf8')).join('\n'));
+
+const htmlEntries = [resolve(dist, 'index.html'),
+  ...GAME_PACKS.filter((p) => p.id !== 'music').map((p) => resolve(dist, p.id, 'index.html'))];
+for (const h of htmlEntries) {
+  if (!existsSync(h)) continue;
+  const stamped = readFileSync(h, 'utf8').replace(
+    /((?:href|src)=")([^"?]+\.(css|js))(")/g,
+    (m, pre, url, ext, post) => `${pre}${url}?v=${ext === 'css' ? cssV : jsV}${post}`,
+  );
+  writeFileSync(h, stamped);
+}
+
+console.log(`build ok -> dist/ (music at /${entries.length ? ', ' + entries.join(', ') : ''}) [css v${cssV}, js v${jsV}]`);

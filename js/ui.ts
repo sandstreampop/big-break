@@ -23,6 +23,7 @@ import { renderShareImage } from './sharecard.js';
 import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from './analytics.js';
 import { playMinigame, minigameById } from './minigames.js';
+import { CSS_CONTRACT } from './version.js';
 
 // The game this session is playing. Defaults to music; boot(pack) sets it so
 // the same UI drives either pack. Taxonomy (PATHS/STAT_META) is read from the
@@ -82,7 +83,34 @@ function show(id) {
 
 // ---------- Title ----------
 
+// The delivery contract, verified at boot: the build stamps the stylesheet's
+// content hash into both css/style.css (--bb-css-v) and js/version.js. When
+// they disagree, this client is running MIXED deploys — typically fresh JS
+// with a stale cached stylesheet (HTTP cache or service worker), which renders
+// new markup unstyled and collapses the phone layout (the unstyled-stage /
+// buttons-over-the-card bug). Self-heal by re-pulling every stylesheet with a
+// cache-busting query; if the network is truly gone the layout stays degraded
+// but we've warned, and the next online visit heals.
+function healStaleStylesheets() {
+  if (CSS_CONTRACT === 'dev') return; // unstamped source build — nothing to verify
+  const readV = () =>
+    (getComputedStyle(document.documentElement).getPropertyValue('--bb-css-v') || '').replace(/["'\s]/g, '');
+  if (readV() === CSS_CONTRACT) return;
+  console.warn(`stylesheet contract mismatch (css "${readV() || 'none'}" ≠ js "${CSS_CONTRACT}") — refetching styles`);
+  for (const link of Array.from(document.querySelectorAll('link[rel="stylesheet"]'))) {
+    const base = (link.getAttribute('href') || '').split('?')[0];
+    if (base) link.setAttribute('href', `${base}?v=${CSS_CONTRACT}&heal=${Date.now()}`);
+  }
+}
+
 export function boot(pack = musicPack) {
+  // Guard the CSS↔JS pairing before anything renders; re-check once the DOM
+  // (and any still-streaming stylesheet) has settled.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', healStaleStylesheets, { once: true });
+  } else {
+    healStaleStylesheets();
+  }
   // Select this session's game. Music keeps the original save keys (existing
   // players' careers survive); other packs get their own namespace so the two
   // games never clobber each other's meta or in-progress run.
@@ -842,6 +870,11 @@ function showSetPieceBeat(sp, cont) {
 function renderDealtCard(ev, sp) {
   const area = $('#card-area');
   area.innerHTML = '';
+  // The set-piece layout keys off a real class, not `:has()` — engines without
+  // :has() support (Safari < 15.4, Chrome < 105) silently drop such rules and
+  // the banner/card stack collapses. The JS that inserts the set-piece is the
+  // source of truth, so it marks the container itself.
+  area.classList.toggle('has-set-piece', !!sp);
   if (sp) {
     area.append(el('div', 'set-piece set-piece-slim ' + (sp.cls || ''),
       `<div class="set-piece-banner">${sp.banner}</div>`));

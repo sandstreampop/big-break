@@ -59,6 +59,17 @@ jobs:
         # needs a browser this job doesn't install; the UI smoke test is run
         # separately (npm run check / the android+ios harness jobs install browsers).
         run: node --test test/*.test.mjs
+      - name: Install Chromium (the browser UI gates below)
+        # The UI suites skip cleanly when no browser exists — which silently
+        # waives the ONLY coverage for phone-layout regressions. Install the
+        # browser so they actually gate the deploy.
+        run: npx playwright install --with-deps chromium
+      - name: UI smoke gate (each game to its finale, headless Chromium)
+        run: node test/ui-smoke.mjs
+      - name: Screen-contract gate (ADR-0009, phone crowding)
+        run: node test/ui-crowding.mjs
+      - name: Mobile-matrix gate (every phone class × legacy engines × stale-CSS delivery)
+        run: node test/ui-mobile-matrix.mjs
       - name: Install docs toolchain (isolated from the engine's pinned tsc)
         working-directory: docs-site
         run: npm ci

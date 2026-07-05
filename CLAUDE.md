@@ -33,11 +33,23 @@
   per-pack goldens are blind to (a core that behaves differently per genre).
 - Before pushing a balance/content change: `npm run build`, then
   `node tools/lint-content.mjs && node tools/simulate.mjs --check &&
-  node --test && node test/ui-smoke.mjs`
+  node --test && node test/ui-smoke.mjs && node test/ui-crowding.mjs &&
+  node test/ui-mobile-matrix.mjs`
   (`npm run check` runs all but `node --test`). The UI smoke test drives each
   game to its finale in headless Chromium — the only coverage the goldens
   don't have. Judge feel with `node tools/simulate.mjs 4000 narrative` (music)
   or `node tools/simulate-pack.mjs <packId> 3000` (any pack, generic driver).
+- **Phones are the platform.** `test/ui-mobile-matrix.mjs` is the
+  phone-playability contract and a CI gate (pages.yml installs Chromium so all
+  three browser suites really run): both games across every phone class down
+  to 320px wide, a legacy-engine pass (CSS with every `:has()` rule stripped),
+  and a stale-stylesheet delivery pass. The rules that keep it green: layout
+  never hangs off `:has()` (the JS that inserts a piece toggles a real class,
+  e.g. `has-set-piece`); shipped stylesheet/script URLs are always
+  version-stamped (`tools/build.mjs` adds `?v=` and the `--bb-css-v` ↔
+  `js/version.js` contract that `js/ui.ts` verifies and self-heals at boot);
+  and on the smallest phones the ambient tiers yield before the prompt clips
+  (ADR-0009 Tier 1).
 - Docs site lives in `docs-site/` (Starlight, isolated toolchain — its own
   `package.json`/`node_modules`, never touches the engine's pinned tsc). It
   deploys as a sibling at `/big-break/docs/` from the same Pages workflow, and

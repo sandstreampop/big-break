@@ -80,6 +80,10 @@ body {
 }
 /* The portrait pair: base face + mood face — a character is a face first. */
 .hud-counters .rel-face { margin: 0 3px 0 2px; }
+/* Narrow phones: slimmer chips so the counter row wraps one line fewer. */
+@media (max-width: 350px) {
+  .hud-counters .hud-rel { padding: 2px 6px; }
+}
 
 /* Mood-driven portraits (the bounded set: 16 faces × these six moods + level).
    A mood is worn as the ring colour + glow; the mood face sits on the

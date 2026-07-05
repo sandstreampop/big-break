@@ -1,7 +1,7 @@
 // BIG BREAK service worker: network-first (updates always win when online),
 // cache fallback (full game works offline once visited).
 
-const CACHE = 'bigbreak-v27';
+const CACHE = 'bigbreak-v28';
 const CORE = [
   './', 'index.html', 'css/style.css', 'manifest.webmanifest',
   'js/main.js', 'js/ui.js', 'js/engine.js', 'js/save.js', 'js/audio.js',
@@ -32,11 +32,18 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request)
       .then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(e.request, copy));
+        // Only cache good responses — a 404/500 must never become the
+        // offline copy of an asset.
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, copy));
+        }
         return res;
       })
       .catch(() => caches.match(e.request, { ignoreSearch: true })
-        .then((hit) => hit || caches.match('./')))
+        // The app-shell fallback is for NAVIGATIONS only. Answering a failed
+        // CSS/JS fetch with cached HTML poisons the page (a stylesheet made
+        // of HTML renders the whole layout unstyled).
+        .then((hit) => hit || (e.request.mode === 'navigate' ? caches.match('./') : Response.error())))
   );
 });
