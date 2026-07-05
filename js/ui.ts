@@ -800,10 +800,13 @@ function dealCard() {
   // A set-piece is a SEQUENCE, not a stack (ADR-0009): the framed moment —
   // banner, scene line, stakes, feel cues — plays first as its own beat,
   // then the card deals with the whole screen to itself. `spSeen` makes the
-  // beat once-per-card (a resumed run goes straight to the card).
+  // beat once per moment — keyed by the pack's arc key when it gives one
+  // (a whole arc beats once, later cards keep the ribbon), else by card id
+  // (a resumed run goes straight to the card).
   const sp = PRES.setPiece?.(run, ev);
-  if (sp && !(run.spSeen || {})[ev.id]) {
-    (run.spSeen = run.spSeen || {})[ev.id] = true;
+  const spKey = sp && (sp.key || ev.id);
+  if (sp && !(run.spSeen || {})[spKey]) {
+    (run.spSeen = run.spSeen || {})[spKey] = true;
     save.saveRun(run);
     showSetPieceBeat(sp, () => renderDealtCard(ev, sp));
     return;

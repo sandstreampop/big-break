@@ -84,6 +84,16 @@ test('the clarity layer produces every surface across seeded seasons', () => {
   assert.ok(HARVEST.size > 80, `suspiciously small harvest (${HARVEST.size})`);
 });
 
+test('the beat grammar is global: act 1 and the produced families all frame (v3.2)', () => {
+  // Act 1's schedule is deterministic (arrival card 1, the Rival by day 3,
+  // the first Bombshell day 6, the Graft day 7), and 40 seeded seasons must
+  // surface the drawn families too.
+  for (const banner of ['DAY ONE', 'THE RIVAL', 'A BOMBSHELL', 'THE GRAFT',
+    'TONIGHT’S CHALLENGE', 'THE BEACH HUT', 'THE POSTCARD']) {
+    assert.ok(HARVEST.has(banner), `set-piece banner "${banner}" never fired across the harvest`);
+  }
+});
+
 test('every clarity string passes the taste floor (VOICE.md)', () => {
   const issues = [];
   for (const [text, where] of HARVEST) {

@@ -418,6 +418,10 @@ export interface Presenter {
     // Optional feel cue the shell plays generically: 'triumph' (confetti,
     // win sting) or 'blow' (shake, heavy haptic). Content-free.
     mood?: 'triumph' | 'blow';
+    // Optional arc key: set-pieces sharing a key play their full-screen beat
+    // once per run (the first card of the arc), and later cards in the arc
+    // wear only the slim continuity ribbon — the frame is taught once.
+    key?: string;
   } | null;
   // The art system's reactive-scene inputs, mapped from this pack's state.
   vibe?: (state: RunState) => { fame: number; network: number; burnout: number };

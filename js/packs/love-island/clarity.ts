@@ -368,7 +368,211 @@ function ceremonyStakes(state: RunState) {
 export function villaSetPiece(state: RunState, ev: GameEvent) {
   if (state.tutorial) return null;
   const id = ev.id || '';
+  const tags: string[] = ev.tags || [];
   const partner = castById(state.partner)?.name || 'your partner';
+
+  // ---- Day One (v3.2: the season opens framed, not dealt cold) ----
+  if (id === 'li_arrival') {
+    return {
+      banner: 'DAY ONE', cls: 'sp-arrival',
+      sub: 'Suitcases on the lawn. A firepit with opinions. The nation presses record.',
+      stakes: [
+        stake('💘 The first coupling happens before the sun cream dries'),
+        stake('📺 Whatever you do next is your personality now', 'sp-risk'),
+      ],
+    };
+  }
+  if (id === 'li_arrival_bomb') {
+    return {
+      banner: 'DAY ONE', cls: 'sp-bomb',
+      sub: 'Their day nine. Your day one. You’re not joining this villa — you’re happening to it.',
+      stakes: [
+        stake('💣 Six settled couples, zero vacancies. Make one', 'sp-risk'),
+        stake('📺 The entrance is the audition'),
+      ],
+    };
+  }
+  if (id === 'li_return_clocked') {
+    return {
+      banner: 'BACK AGAIN', cls: 'sp-arrival',
+      sub: 'Same lawn, same firepit. It remembers you. So does everyone on it.',
+      stakes: [
+        stake('📺 The nation knows how it ended last time', 'sp-risk'),
+        stake('💘 A second chance pays double — if you land it'),
+      ],
+    };
+  }
+
+  // ---- The character arcs, framed at the door (key: beat once, ribbon after) ----
+  if (id.startsWith('li_enc_rival')) {
+    const rival = castById(state.rival)?.name || 'Someone';
+    return {
+      key: 'arc-rival', banner: 'THE RIVAL', cls: 'sp-rival',
+      sub: `${rival} has started saying your name with a face on. Time to hear the audit in person.`,
+      stakes: [
+        stake('⚔️ Warm them up, or hand them a reason', 'sp-risk'),
+        stake('🤫 Rivals keep receipts. So can you'),
+      ],
+    };
+  }
+  if (id.startsWith('li_enc_partner')) {
+    return {
+      key: 'arc-graft', banner: 'THE GRAFT', cls: 'sp-date',
+      sub: `Time to find out whether ${partner} is a person or a plotline.`,
+      stakes: [
+        stake('💘 The Bond grows when you feed it — this is the feeding'),
+        stake('📺 Half the villa is pretending not to listen', 'sp-risk'),
+      ],
+    };
+  }
+  if (id.startsWith('li_enc_bestie')) {
+    return {
+      key: 'arc-bestie', banner: 'THE BESTIE', cls: 'sp-hut',
+      sub: 'Two spoons, one tub, 1 a.m. Somebody in here wants a teammate, not a target.',
+      stakes: [
+        stake('🤝 The villa pairs up twice — hearts, then corners. This is corners'),
+        stake('🎙️ Honest at 1 a.m. is still on mic', 'sp-risk'),
+      ],
+    };
+  }
+  if (id.startsWith('li_enc_rmove')) {
+    const rival = castById(state.rival)?.name || 'Your rival';
+    const sec = secretOf(state, 'rival');
+    return {
+      key: 'arc-rmove', banner: 'THE RIVAL MOVES', cls: 'sp-rival',
+      sub: `${rival} has stopped watching and started walking. Guess where.`,
+      stakes: [
+        stake('⚔️ Your couple is the target', 'sp-risk'),
+        sec.known && !sec.spent
+          ? stake('🤫 You’re holding their secret — remember that', 'sp-safe')
+          : stake(state.partner
+            ? `💘 A poach tests the Bond — yours reads ${PARTNER_TIER[opinionTier(state.bond ?? 0)]}`
+            : '💘 Nothing to poach. That’s its own problem'),
+      ],
+    };
+  }
+  if (id.startsWith('li_enc_p3')) {
+    return {
+      key: 'arc-p3', banner: 'WHERE’S YOUR HEAD AT?', cls: 'sp-final',
+      sub: 'Final Week asks the only question it knows. Tonight it’s asking you.',
+      stakes: [stake(`💘 What you and ${partner} actually are gets said out loud`)],
+    };
+  }
+  if (id === 'li_second_wave') {
+    return {
+      banner: 'THE SECOND WAVE', cls: 'sp-rival',
+      sub: 'The villain seat never stays empty. Production fills vacancies.',
+      stakes: [stake('⚔️ A new rival — fresh notes, and none of your history to spend', 'sp-risk')],
+    };
+  }
+
+  // ---- Bombshells and old business ----
+  if (id === 'li_bomb1') {
+    return {
+      banner: 'A BOMBSHELL', cls: 'sp-bomb',
+      sub: 'Golden hour, and the doors open again. First bombshell of the season.',
+      stakes: [
+        stake('💣 They arrive holding a date card — anyone’s name fits', 'sp-risk'),
+        state.partner
+          ? stake(`💘 ${partner} gets to watch how you watch`)
+          : stake('💘 You’re single. This might be a door', 'sp-safe'),
+      ],
+    };
+  }
+  if (id === 'li_bomb2' || id === 'li_bomb2_single') {
+    return {
+      key: 'bomb2', banner: 'ANOTHER BOMBSHELL', cls: 'sp-bomb',
+      sub: 'Production looked at the calm and ordered against it.',
+      stakes: [
+        id === 'li_bomb2_single'
+          ? stake('💘 You’re the only single one at the welcome drinks. That’s a plot', 'sp-safe')
+          : stake('💣 A private date, and they pick who from the whole lawn', 'sp-risk'),
+      ],
+    };
+  }
+  if (id === 'li_ex_arrives') {
+    return {
+      banner: 'YOUR EX IS HERE', cls: 'sp-bomb',
+      sub: 'A villa has nowhere to put history. Yours is on a sun lounger, four metres from your couple.',
+      stakes: [stake('💣 “A quick word.” No word on this show has ever been quick', 'sp-risk')],
+    };
+  }
+  if (id.startsWith('li_tempt')) {
+    return {
+      key: 'temptation', banner: 'TEMPTATION', cls: 'sp-bomb',
+      sub: 'Late, quiet, and exactly as innocent as it looks.',
+      stakes: [
+        stake('💣 “Can I steal you for a chat?” The verb is doing work', 'sp-risk'),
+        ...(state.partner ? [stake(`💘 ${partner} hears about this by breakfast`, 'sp-risk')] : []),
+      ],
+    };
+  }
+
+  // ---- The produced moments: texts, dates, challenges, the Hut ----
+  if (id === 'li_first_date') {
+    return {
+      banner: 'THE FIRST DATE', cls: 'sp-date',
+      sub: 'Two chairs, two drinks, one wall with a nation behind it.',
+      stakes: [stake(`💘 ${partner}, minus the audience. Mostly`)],
+    };
+  }
+  if (id === 'li_beach_date') {
+    return {
+      banner: 'A DATE OFF-SITE', cls: 'sp-date',
+      sub: 'A car, a coastline, and a drone circling the bay on company money.',
+      stakes: [stake('💘 Off-site dates are the show saying: convince us', 'sp-risk')],
+    };
+  }
+  if (id === 'li_hideaway_key') {
+    return {
+      banner: 'THE HIDEAWAY', cls: 'sp-date',
+      sub: 'The red door opens tonight, and the villa has voted you through it.',
+      stakes: [
+        stake('💘 Big for the couple'),
+        stake('🎙️ The mics stay on. Everyone forgets the mics stay on', 'sp-risk'),
+      ],
+    };
+  }
+  if (tags.includes('challenge')) {
+    return {
+      key: 'challenge', banner: 'TONIGHT’S CHALLENGE', cls: 'sp-challenge',
+      sub: 'Aprons, whiteboards, heart-rate monitors — the format doesn’t care what it costs you.',
+      stakes: [
+        stake('🏆 Played for laughs, scored for keeps', 'sp-risk'),
+        stake('📺 The clip goes home even if you don’t'),
+      ],
+    };
+  }
+  if (id === 'li_hut_confess_1' || id === 'li_hut_confess_2') {
+    return {
+      key: 'hut', banner: 'THE BEACH HUT', cls: 'sp-hut',
+      sub: 'Door shut, mic hot, one chair. The Hut trades in headlines.',
+      stakes: [stake('🎙️ Give it a line and it gives you tomorrow’s', 'sp-risk')],
+    };
+  }
+  if (id === 'li_code_vote_honour' || id === 'li_code_vote_broke') {
+    return {
+      key: 'vote', banner: 'THE VOTE', cls: 'sp-ceremony',
+      sub: 'The Islanders vote tonight. Fairy lights on, knives out.',
+      stakes: [
+        id === 'li_code_vote_broke'
+          ? stake('🗳️ “Biggest game-player.” You’ve been leaving fingerprints', 'sp-risk')
+          : stake('🗳️ “Most trusted.” Kept codes pay out tonight', 'sp-safe'),
+      ],
+    };
+  }
+  if (id === 'li_casa_postcard_loyal' || id === 'li_casa_postcard_stray') {
+    return {
+      key: 'postcard', banner: 'THE POSTCARD', cls: 'sp-casa',
+      sub: 'Morning. One envelope, both villas, no context.',
+      stakes: [
+        stake('📮 One photo each, cropped by a professional', 'sp-risk'),
+        id === 'li_casa_postcard_stray'
+          ? stake(`💌 Across the island, ${partner} is holding your night`, 'sp-risk')
+          : stake(`💌 ${partner}, mid-laugh, somebody’s hand in shot`, 'sp-risk'),
+      ],
+    };
+  }
 
   // The recoupling, exposed side — the stakes screen proper.
   if (id === 'li_recoup1_exposed' || id === 'li_recoup2_exposed' ||
