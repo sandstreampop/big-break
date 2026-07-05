@@ -4,7 +4,17 @@
 // A second genre ships its own manifest; the engine reads whichever is
 // injected. (Numbers stay balance-tuned; the SHAPE is the genre.)
 
-import type { PackManifest, PathDef, StatMeta, FailStateRule } from '../types.js';
+import type { PackManifest, PathDef, StatMeta, FailStateRule, SegmentDef } from '../types.js';
+
+// The run structure (ADR-0010): the classic three-act career — the Garage
+// (ends at the Crossroads, where a summit is committed), the Grind, and the
+// Reckoning, which terminates in the finale. The 8/12/8 lengths are the same
+// numbers that lived in CONFIG.actLengths; the goldens pin them.
+export const SEGMENTS: SegmentDef[] = [
+  { length: 8, crossroads: true },
+  { length: 12 },
+  { length: 8 },
+];
 
 // The four core stats the engine iterates (burnout is tracked alongside but
 // handled by its own block). Phase 3.1 rewires the engine to read this list.
@@ -80,6 +90,7 @@ export const FAIL_STATES: FailStateRule[] = [
 export const musicManifest: PackManifest = {
   stats: STATS,
   resources: RESOURCES,
+  segments: SEGMENTS,
   paths: PATHS,
   winGates: WIN_GATES,
   statMeta: STAT_META,

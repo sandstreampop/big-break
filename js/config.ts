@@ -11,8 +11,8 @@ export const CONFIG = {
   // (starting money lives in the pack manifest's resourceStart — the engine
   // initializes resources generically and names none.)
 
-  // Acts: cards drawn per act
-  actLengths: { 1: 8, 2: 12, 3: 8 },
+  // (cards drawn per segment live in the pack manifest's `segments` — the run
+  // structure is the genre's SHAPE, so the engine hardcodes no act count.)
   // 0-indexed slot within each act where a shop/opportunity card is forced
   // if one is eligible and none has appeared yet this act
   shopSlot: { 1: 2, 2: 4, 3: 2 },

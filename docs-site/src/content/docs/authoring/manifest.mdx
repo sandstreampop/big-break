@@ -12,15 +12,17 @@ is where your genre's *taxonomy* lives — the shape of the game, separated from
 the numeric feel (which stays in `config.ts`). If two packs differ, they differ
 here first.
 
-## The six fields
+## The seven fields
 
 ```ts twoslash
 interface StatMeta { name: string; icon: string; }
 interface PathDef { id: string; name: string; blurb: string; gateLabel: string; icon: string; }
+interface SegmentDef { length: number; crossroads?: boolean; }
 // ---cut---
 interface PackManifest {
   stats: string[];                                  // core stat ids (order matters)
   resources: string[];                              // resource ids (order matters)
+  segments: SegmentDef[];                           // the run structure (acts/weeks)
   paths: Record<string, PathDef>;                   // the summits
   winGates: Record<string, Record<string, number>>; // per-summit target thresholds
   statMeta: Record<string, StatMeta>;               // HUD label + icon per stat
@@ -44,6 +46,24 @@ generic resource slots to its currencies (fame, money, hits, …) via metadata.
 The engine reads both **generically** off the manifest — there is no hardcoded
 `fame` or `skill` anywhere in the core. That's what lets a genre with no "fame"
 run without tripping a branch.
+
+## segments — the run structure
+
+`segments` is the run's macro shape: an ordered, *linear* list of
+[`SegmentDef`](/big-break/docs/reference/types/interfaces/segmentdef/)s the
+engine walks front to back. Each declares how many cards it runs (`length`); a
+segment flagged `crossroads` ends at the commit slot, where the player picks a
+summit; the final segment always terminates in the finale. Three acts and
+thirty weeks are the same machinery — the engine hardcodes no count. Every
+shipped pack currently declares the classic shape:
+
+```ts
+segments: [
+  { length: 8, crossroads: true }, // ends at the crossroads
+  { length: 12 },
+  { length: 8 },                   // terminal — ends in the finale
+],
+```
 
 ## The attrition slot
 

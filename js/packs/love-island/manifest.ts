@@ -4,7 +4,18 @@
 // balance-tuned at Phase D, the SHAPE is the genre.
 // Vocabulary: docs/games/love-island/CONTEXT.md. Decisions: the adr/ folder.
 
-import type { PackManifest, PathDef, StatMeta, FailStateRule } from '../../types.js';
+import type { PackManifest, PathDef, StatMeta, FailStateRule, SegmentDef } from '../../types.js';
+
+// The season's structure (ADR-0010): Arrival (ends at the commit slot — the
+// Summit is picked), The Turn, and Final Week, which terminates in the Final.
+// Same 8/12/8 shape the engine used to hardcode; the goldens pin it. The v4
+// week-structure (Session 2) re-declares this list as N weeks — data, not
+// engine.
+export const SEGMENTS: SegmentDef[] = [
+  { length: 8, crossroads: true },
+  { length: 12 },
+  { length: 8 },
+];
 
 // The four core stats, split on the two tension-axes: romance (Rizz vs.
 // Loyalty) and profile (Savvy vs. Charisma). Order is load-bearing — it fixes
@@ -86,6 +97,7 @@ export const FAIL_STATES: FailStateRule[] = [
 export const loveIslandManifest: PackManifest = {
   stats: STATS,
   resources: RESOURCES,
+  segments: SEGMENTS,
   paths: PATHS,
   winGates: WIN_GATES,
   statMeta: STAT_META,

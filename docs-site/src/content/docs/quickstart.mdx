@@ -112,9 +112,10 @@ const EVENTS: GameEvent[] = [
 ```
 
 <Aside type="note">
-The engine draws `actLengths` cards per act (8 / 12 / 8 by default). Ship a
-deck comfortably larger than the acts once you add `requires` gating; the probe
-runs thin on purpose to keep itself readable.
+The engine draws each segment's declared `length` in cards (the probe declares
+the classic 8 / 12 / 8). Ship a deck comfortably larger than the segments once
+you add `requires` gating; the probe runs thin on purpose to keep itself
+readable.
 </Aside>
 
 ## 4. Assemble the Pack
