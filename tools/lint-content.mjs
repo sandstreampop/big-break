@@ -97,7 +97,8 @@ const DESCRIPTORS = {
     // required-flag reachability check knows they exist.
     pluginFlags: ['li_revealed', 'li_partner_revealed', 'li_betrayed', 'li_sympathy',
       'li_stranded', 'li_came_clean', 'li_dumped_single', 'li_rival_active',
-      'li_fed_the_rival', 'li_secret_detonated'],
+      'li_fed_the_rival', 'li_secret_detonated',
+      'li_comeback'], // set by the redemption-season transform (pack.ts liComeback)
     arcs: [{
       id: 'li_scheduled_beats',
       setup: ['li_bomb1', 'li_bomb2', 'li_bomb2_steal', 'li_bomb2_single',

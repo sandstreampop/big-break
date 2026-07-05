@@ -228,7 +228,7 @@ function renderTitle() {
     '', () => { save.clearRun(); startNewRun(true); }));
   // Comeback mode exists only for packs that ship the transform.
   if (meta.successPaths?.length > 0 && activePack.comeback) {
-    menu.append(btn('🦅 Comeback Run (×1.2 LP)', '', () => { save.clearRun(); startNewRun(false, true); }));
+    menu.append(btn(PRES.comeback?.label || '🦅 Comeback Run (×1.2 LP)', '', () => { save.clearRun(); startNewRun(false, true); }));
   }
   // The Gauntlet builds its weekly loadout from pack data; only packs that
   // declare the mode offer it.
@@ -337,7 +337,7 @@ function startNewRun(daily = false, comeback = false) {
       ? [cMods.forceInstrument]
       : activePack.id === 'music'
       ? save.unlockedInstrumentIds(meta) // music: default + Career-Wall unlocks
-      : activePack.loadouts.filter((i) => i.unlockedByDefault).map((i) => i.id);
+      : activePack.loadouts.filter((i) => i.unlockedByDefault || i.unlockedBy?.(meta)).map((i) => i.id);
     // A pack may offer its whole roster (e.g. persona × gender picks) instead
     // of the seeded three.
     const offered = PRES.offerAllLoadouts
@@ -347,9 +347,9 @@ function startNewRun(daily = false, comeback = false) {
     const keepScroll = s.scrollTop;
     s.innerHTML = '';
     const isMusic = activePack.id === 'music';
-    s.append(el('h2', 'screen-head', comeback ? 'The Second Act' : daily ? `${PRES.daily?.name || 'Daily Grind'} — ${todayStr()}` : (isMusic ? 'Choose your weapon' : 'Choose your player')));
+    s.append(el('h2', 'screen-head', comeback ? (PRES.comeback?.head || 'The Second Act') : daily ? `${PRES.daily?.name || 'Daily Grind'} — ${todayStr()}` : (isMusic ? 'Choose your weapon' : 'Choose your player')));
     s.append(el('p', 'screen-sub', comeback
-      ? 'You were somebody. Start famous, bruised, and 25% burned out already — the industry remembers you, which cuts both ways.'
+      ? (PRES.comeback?.sub || 'You were somebody. Start famous, bruised, and 25% burned out already — the industry remembers you, which cuts both ways.')
       : daily
       ? 'Same run for everyone today: same instruments, same deck, same luck. Only the swipes are yours.'
       : (isMusic ? 'Each one is almost useless. That’s the point.' : 'Who are you, when the cameras are always on?')));
@@ -1969,6 +1969,7 @@ function finishMeta(summary, lp) {
     if (!meta.dailyResults[summary.daily]) {
       meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path, fame: summary.fame || 0 };
     }
+    summary.dailyStreak = dailyStreakFor(summary.daily); // trophies + share read it
   }
   if (summary.gauntlet) {
     meta.gauntletResults = meta.gauntletResults || {};

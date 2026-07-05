@@ -6,6 +6,36 @@ import type { GameEvent } from '../../types.js';
 
 export const ARRIVAL_EVENTS: GameEvent[] = [
   {
+    // The redemption season's recognition scene (R8/C2b) — comeback-gated,
+    // never in seeded sims.
+    id: 'li_return_clocked', act: 1, weight: 3, requires: { flagsAll: ['li_comeback'] },
+    art: 'li_firepit_day',
+    context: 'Day 2 · the firepit · somebody finally says it',
+    prompt: '“Wait. WAIT.” A girl points at you with a spatula. “You’re the one from — the season with the — you CRIED at the—” She stops. Everyone remembers the rest. The villa has been polite about it for a whole day, which for this villa is a record.',
+    choices: {
+      left: {
+        label: 'Own every second of it',
+        tags: ['drama', 'camera'],
+        governingStats: { charisma: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You do the bit about your own exit and it lands wrong — too soon, apparently, for everyone except you. The clip does numbers anyway. Your numbers.', effects: { charisma: 2, followers: 4, burnout: 3 } },
+          good: { text: '“Yes. That was me. The crying, the gate, all of it.” You give it one beat, then the punchline. The lawn cackles. Redemption arcs start with owning the first act.', effects: { charisma: 5, followers: 6, public: 3 } },
+          incredible: { text: 'You retell your own dumping better than the show cut it — with pacing, with a moral, with an impression of the Host. The villa is yours by dessert. Again. Properly, this time.', effects: { charisma: 8, followers: 8, public: 5, graft: 3 } },
+        },
+      },
+      right: {
+        label: 'New summer. Clean slate',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: '“I’d rather not get into it.” Fair, dignified, and precisely the wrong crowd — the not-getting-into-it becomes the thing everyone gets into.', effects: { loyalty: 2, burnout: 4 } },
+          good: { text: '“Different person now. Ask me anything about THIS summer.” A few of them actually do. The reset takes, mostly, which is more than most sequels manage.', effects: { loyalty: 4, public: 3, burnout: -2 } },
+          incredible: { text: 'You answer the spatula girl with such unbothered warmth that the topic dies of natural causes at the table. The villa quietly re-files you: not the meme. The person.', effects: { loyalty: 6, public: 5, bond: 2 } },
+        },
+      },
+    },
+  },
+  {
     id: 'li_first_date', act: 1, tags: ['date', 'flirt'],
     art: 'li_terrace',
     context: 'Day 2 · the terrace · your first date',

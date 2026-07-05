@@ -61,15 +61,31 @@ const TYPES = [
   },
 ];
 
+// The Bombshell (R8/C3a): the fifth playable Type, unlocked by finishing a
+// Season. You skip the mixer — day one is a villa already coupled, and you
+// are the scheduled explosion (producers routes your arrival card).
+const BOMBSHELL_TYPE = {
+  key: 'bombshell', name: 'The Bombshell',
+  flavor: 'Arrives late. On purpose. So does the drama.',
+  modifiers: { rizz: 6, charisma: 6, loyalty: -8 },
+  quirk: {
+    id: 'scheduled_explosion', name: 'Scheduled Explosion',
+    desc: 'You enter a villa already coupled — day one is a steal, not a mixer. Flirt and camera moments roll +8.',
+    hooks: { rollTagBonus: [{ tags: ['flirt', 'camera'], bonus: 8 }], bombshellStart: true },
+  },
+};
+
 // Two personas per Type — the gender pick IS the persona pick.
-export const ISLANDER_TYPES = TYPES.flatMap((t) => (['girl', 'boy'] as const).map((gender) => ({
+export const ISLANDER_TYPES = [...TYPES, BOMBSHELL_TYPE].flatMap((t) => (['girl', 'boy'] as const).map((gender) => ({
   id: `${t.key}_${gender}`,
   name: t.name,
   family: 'islander',
   gender,
   genderLabel: gender === 'girl' ? '♀ girl' : '♂ boy',
   art: `li_type_${t.key}`,
-  unlockedByDefault: true,
+  unlockedByDefault: t.key !== 'bombshell',
+  // Finish one Season (any exit) and the fifth Type opens.
+  ...(t.key === 'bombshell' ? { unlockedBy: (meta: any) => (meta?.runs || 0) >= 1 } : {}),
   flavor: t.flavor,
   modifiers: t.modifiers,
   quirk: t.quirk,

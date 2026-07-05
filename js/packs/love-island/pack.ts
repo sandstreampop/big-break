@@ -83,6 +83,21 @@ const summarize = (state: RunState) => ({
 });
 
 // #region pack
+// The redemption season (R8/C2b): return as a previously-dumped Islander.
+// Notoriety travels — the nation remembers you, the Villain angle is
+// pre-slotted, the Rival starts colder, and you know exactly what this
+// place costs. The engine's ×1.2 LP comeback bonus reads the flag.
+const liComeback = (state: RunState) => {
+  state.public = 20;
+  state.followers = 14;
+  state.graft = 6;
+  state.accessories = ['angle_villain'];
+  state.stats.savvy = Math.min(100, (state.stats.savvy || 0) + 6);
+  state.stats.burnout = 12;
+  if (state.charOpinion) state.charOpinion.rival = Math.max(0, (state.charOpinion.rival ?? 34) - 12);
+  for (const f of ['comeback', 'li_comeback']) if (!state.flags.includes(f)) state.flags.push(f);
+};
+
 export const loveIslandPack: Pack = {
   id: 'love-island',
   manifest: loveIslandManifest,
@@ -112,6 +127,7 @@ export const loveIslandPack: Pack = {
     { id: 'li_wobble_50', burnoutMin: 50 },
   ],
   presenter: loveIslandPresenter,
+  comeback: liComeback,
   summarize,
   // The playable Types (× gender — the persona pick IS the gender pick,
   // ADR-0003). All eight offered at Season start.

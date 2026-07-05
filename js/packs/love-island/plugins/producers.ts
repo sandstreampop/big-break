@@ -56,8 +56,10 @@ export const producersPlugin: Plugin = {
   // rivalMagnet (the Heartthrob's poaching exposure) is stamped here so the
   // coupling plugin's ceremony math stays a pure state read.
   onRunStart(state) {
-    state.rivalMagnet = !!islanderTypeById(state.loadout)?.quirk?.hooks?.rivalMagnet;
-    state.pendingChainId = 'li_arrival';
+    const hooks: any = islanderTypeById(state.loadout)?.quirk?.hooks || {};
+    state.rivalMagnet = !!hooks.rivalMagnet;
+    // The Bombshell persona (R8): no mixer — you arrive INTO a coupled villa.
+    state.pendingChainId = hooks.bombshellStart ? 'li_arrival_bomb' : 'li_arrival';
   },
 
   // Act breaks are where the structure lands (ADR-0002/0003): Casa Amor splits

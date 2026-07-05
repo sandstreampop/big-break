@@ -40,6 +40,37 @@ export const BEAT_EVENTS: GameEvent[] = [
     },
   },
 
+  // The Bombshell persona's arrival (R8/C3a): unlockable-only, so it never
+  // enters seeded sims. Day one is a steal, not a mixer.
+  {
+    id: 'li_arrival_bomb', act: 1, chainOnly: true, tags: ['text', 'camera'],
+    art: 'li_bombshell',
+    context: 'Their day 9 · your day 1 · the lawn goes quiet',
+    prompt: '“Islanders — say hello to your newest arrival. #latecheckin” You walk in slow, the way the promo taught you. Six settled couples look up, and every single one does the same maths at the same time. You’re not joining this villa. You’re happening to it.',
+    choices: {
+      left: {
+        label: 'Pick a target tonight',
+        tags: ['flirt', 'strategy'],
+        governingStats: { rizz: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You pull the best-looking one for a chat and their other half joins it, uninvited, with a smile you’ll be seeing again. Coupled by midnight — surveilled by one.', effects: { couple: true, rizz: 2, followers: 3, addFlag: 'li_rival_active', rivalMood: 'fuming' } },
+          good: { text: '“Sorry — is this seat taken?” It was. It isn’t now. The villa recalculates over dinner; the nation does it faster.', effects: { couple: true, rizz: 5, followers: 5, public: 3 } },
+          incredible: { text: 'One chat. ONE. And the strongest couple on the lawn is suddenly a press release. You didn’t break a rule; you just walked in with better lighting.', effects: { couple: true, rizz: 8, followers: 8, public: 5 } },
+        },
+      },
+      right: {
+        label: 'Let them come to you',
+        tags: ['camera', 'rest'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You hold court at the breakfast bar and nobody quite dares. Respect, at a distance, on camera. The distance is the problem.', effects: { charisma: 2, followers: 3, public: 2 } },
+          good: { text: 'You unpack, slowly, in full view, and let the villa’s nerves do your grafting. Two of them crack by sundown and bring you juice.', effects: { charisma: 5, followers: 5, public: 3 } },
+          incredible: { text: 'By evening there’s a queue — a polite, terrified queue — for “a quick chat.” You’ve been here nine hours and you’re already the storyline.', effects: { charisma: 8, followers: 7, public: 5, graft: 3 } },
+        },
+      },
+    },
+  },
+
   // ---------- Casa Amor (the Act 1→2 chain, ADR-0002) ----------
   {
     id: 'li_casa_text', act: 2, chainOnly: true, tags: ['text', 'casa'],
