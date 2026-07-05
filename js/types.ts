@@ -426,6 +426,12 @@ export interface Presenter {
   art?: Record<string, { e: string; s: string }>;
   // Offer every unlocked persona at run start instead of a random 3.
   offerAllLoadouts?: boolean;
+  // ADR-0009 (the screen contract): opt into the compact HUD. The stat
+  // rail, persona/gear chips, and streak banner leave the permanent screen;
+  // one ambient strip remains (act, counters, salience chips) and the full
+  // picture moves to a tap-open status drawer. Packs that omit this render
+  // the original shell byte-for-byte.
+  compactHud?: boolean;
   // This pack ships the weekly Gauntlet mode (its build draws on pack data).
   gauntlet?: boolean;
   // Daily-mode copy: the mode's display name (title button, persona screen)

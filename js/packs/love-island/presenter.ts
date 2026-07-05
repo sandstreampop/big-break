@@ -389,6 +389,9 @@ export const loveIslandPresenter: Presenter = {
   dms,
   failLabels: { burnout: 'WALKED', dumped: 'DUMPED' },
   offerAllLoadouts: true,
+  // ADR-0009: the villa runs the compact HUD — one ambient strip, the full
+  // picture one tap away. The scene takes space first.
+  compactHud: true,
 
   title: {
     logo: 'THE<br>VILLA',

@@ -394,10 +394,15 @@ body {
 .card-art {
   width: 100%;
   aspect-ratio: 16 / 10;
-  max-height: 32vh; /* short phones: art yields before text does */
+  max-height: 32vh;
   border-radius: 14px;
   object-fit: cover;
-  flex: none;
+  /* ADR-0009 Tier 1: under height pressure the ART yields first (a shrink
+     weight that absorbs the whole deficit before the prompt gives a pixel,
+     floored so a sliver of scene survives). The prompt's scroll remains as
+     the pathological-case fallback only. */
+  flex: 0 999 auto;
+  min-height: 40px;
 }
 /* tall phones: the art grows so the card fills the stage */
 @media (min-height: 780px) { .card-art { aspect-ratio: 16 / 12; } }
@@ -411,7 +416,9 @@ body {
 .card-prompt { font-size: 16.5px; line-height: 1.45; min-height: 0; overflow-y: auto; }
 @media (max-height: 700px) {
   .card-prompt { font-size: 14.5px; line-height: 1.4; }
-  .card-art { max-height: 26vh; }
+  /* Short phones: the art yields before the prompt does (ADR-0009 Tier 1 —
+     the prompt is never clipped; ui-crowding.mjs enforces it at 375×667). */
+  .card-art { max-height: 22vh; }
 }
 
 .swipe-hint {
@@ -1547,3 +1554,73 @@ body.big-text #app { zoom: 1.18; }
   60% { transform: translateX(-4px); } 80% { transform: translateX(2px); }
 }
 @media (prefers-reduced-motion: reduce) { #card-area.sp-blow { animation: none; } }
+
+/* ---------- ADR-0009: the compact HUD, the drawer, the set-piece beat ---------- */
+
+/* Tier-2 salience chips: the danger pip appears only when it matters. */
+.hud-counters .hud-danger {
+  border-radius: 999px; padding: 2px 8px; font-weight: 700; cursor: pointer;
+}
+.hud-counters .hud-danger.warn { background: rgba(255, 179, 92, .2); border: 1px solid rgba(255, 179, 92, .55); }
+.hud-counters .hud-danger.danger { background: rgba(255, 83, 71, .25); border: 1px solid rgba(255, 83, 71, .7); animation: shimmer 1.4s infinite; }
+.hud-counters .hud-streak {
+  border-radius: 999px; padding: 2px 8px;
+  background: rgba(255, 92, 138, .16); border: 1px solid rgba(255, 92, 138, .4);
+}
+.drawer-btn { font-size: 15px; }
+
+/* Tier 3: the status drawer. */
+.drawer-sheet { gap: 10px; }
+.drawer-persona { font-size: 13px; line-height: 1.4; color: var(--dim); }
+.drawer-persona b { color: var(--ink); }
+.drawer-stats { display: flex; flex-direction: column; gap: 6px; }
+.drawer-stat {
+  display: grid; grid-template-columns: 118px 1fr 34px; gap: 8px; align-items: center;
+  font-size: 13px; cursor: pointer; padding: 3px 6px; border-radius: 8px;
+}
+.drawer-stat:active { background: rgba(255, 255, 255, .05); }
+.drawer-stat.warn .drawer-stat-val { color: var(--accent2); font-weight: 800; }
+.drawer-stat.danger .drawer-stat-val { color: var(--bad); font-weight: 800; }
+.drawer-stat-val { text-align: right; font-weight: 700; }
+.drawer-resources { display: flex; flex-wrap: wrap; gap: 7px; }
+
+/* The stage, compact: faces and reads carry it; role labels live in the sheet. */
+#stage.stage-compact .stage-label { display: none; }
+#stage.stage-compact .stage-slot { padding: 4px 4px 4px; gap: 1px; }
+#stage.stage-compact .stage-face { width: 38px; height: 38px; font-size: 22px; }
+#stage.stage-compact .stage-moodface { font-size: 14px; right: -5px; bottom: -5px; }
+#stage.stage-compact .stage-name { font-size: 11.5px; }
+
+/* The set-piece BEAT (its own screen) and the slim ribbon it leaves behind. */
+.sp-beat { text-align: center; gap: 14px; padding: 26px 20px; }
+.sp-beat .sp-beat-banner { font-size: 30px; }
+.sp-beat .sp-beat-sub { font-size: 15px; }
+.sp-beat .sp-beat-stakes { gap: 6px; margin-top: 4px; }
+.sp-beat .sp-stake { font-size: 13.5px; padding: 6px 10px; }
+.set-piece.set-piece-slim { margin-bottom: 2px; }
+.set-piece.set-piece-slim .set-piece-banner { font-size: 13px; letter-spacing: .22em; }
+
+/* The recap's flavour fold (press + inbox behind one tap). */
+details.recap-fold { border: 1px solid #3b3352; border-radius: 12px; padding: 8px 11px; }
+details.recap-fold > summary.recap-fold-head {
+  cursor: pointer; list-style: none; font-size: 12.5px; font-weight: 700;
+  letter-spacing: .06em; color: var(--dim);
+}
+details.recap-fold > summary.recap-fold-head::after { content: ' ▸'; }
+details.recap-fold[open] > summary.recap-fold-head::after { content: ' ▾'; }
+details.recap-fold[open] { display: flex; flex-direction: column; gap: 8px; }
+
+/* Short phones: the ambient tiers shrink further so the scene keeps room. */
+@media (max-height: 700px) {
+  .card { gap: 8px; padding: 12px; }
+  .card-prompt { font-size: 14px; }
+  #card-area:has(.set-piece) { gap: 5px; }
+  #card-area .overlay-note { font-size: 12px; padding: 6px 9px; }
+  #stage.stage-compact .stage-face { width: 32px; height: 32px; font-size: 19px; }
+  #stage.stage-compact .stage-read { display: none; }
+  .set-piece.set-piece-slim .set-piece-banner { font-size: 11px; }
+}
+
+/* The ambient strip never wraps its act label; counters wrap instead. */
+.hud-act { white-space: nowrap; }
+.hud-counters { flex-wrap: wrap; justify-content: flex-end; }
