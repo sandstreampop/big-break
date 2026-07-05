@@ -44,6 +44,10 @@ for (const pack of GAME_PACKS) {
   }
   mkdirSync(resolve(dist, pack.id), { recursive: true });
   copyFileSync(html, resolve(dist, pack.id, 'index.html'));
+  // A pack may ship its own PWA manifest (<id>.webmanifest) — installed as
+  // /<id>/manifest.webmanifest so Add-to-Home-Screen installs THAT game.
+  const wm = resolve(root, `${pack.id}.webmanifest`);
+  if (existsSync(wm)) copyFileSync(wm, resolve(dist, pack.id, 'manifest.webmanifest'));
   // A game's public-facing docs pages (docs/games/<id>/public/) deploy as
   // siblings of its index.html — e.g. a roadmap walkthrough at
   // /<id>/roadmap.html. Data-driven like the html copy above; a game

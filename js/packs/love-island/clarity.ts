@@ -405,9 +405,9 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
     };
   }
   // The verdicts: out the other side, framed.
-  if (id === 'li_recoup_held') return { banner: 'THE VERDICT', cls: 'sp-ceremony sp-held', sub: 'The couple holds.' };
+  if (id === 'li_recoup_held') return { banner: 'THE VERDICT', cls: 'sp-ceremony sp-held', sub: 'The couple holds.', mood: 'triumph' as const };
   if (id === 'li_recoup_rescued') return { banner: 'THE VERDICT', cls: 'sp-ceremony sp-rescued', sub: 'The Bond blinked. The public didn’t.' };
-  if (id === 'li_recoup_dumped') return { banner: 'THE VERDICT', cls: 'sp-ceremony sp-dumped', sub: 'Nobody said your name.' };
+  if (id === 'li_recoup_dumped') return { banner: 'THE VERDICT', cls: 'sp-ceremony sp-dumped', sub: 'Nobody said your name.', mood: 'blow' as const };
 
   // Casa Amor, framed end to end.
   if (id === 'li_casa_text') {
@@ -437,8 +437,8 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
       ],
     };
   }
-  if (id === 'li_casa_held') return { banner: 'THE RETURN', cls: 'sp-casa sp-held', sub: 'They walked out alone.' };
-  if (id === 'li_casa_betrayed') return { banner: 'THE RETURN', cls: 'sp-casa sp-dumped', sub: 'They didn’t.' };
+  if (id === 'li_casa_held') return { banner: 'THE RETURN', cls: 'sp-casa sp-held', sub: 'They walked out alone.', mood: 'triumph' as const };
+  if (id === 'li_casa_betrayed') return { banner: 'THE RETURN', cls: 'sp-casa sp-dumped', sub: 'They didn’t.', mood: 'blow' as const };
 
   // Movie Night: the footage outranks the feelings.
   if (id === 'li_movienight_reveal' || id === 'li_movienight_clean') {

@@ -1539,3 +1539,11 @@ body.big-text #app { zoom: 1.18; }
   font-size: 13.5px; line-height: 1.45; color: var(--dim);
   border: 1px dashed #3b3352; border-radius: 12px; padding: 9px 12px;
 }
+
+/* A set-piece verdict that lands as a blow rocks the whole stage. */
+#card-area.sp-blow { animation: spBlow .45s cubic-bezier(.3,.1,.3,1); }
+@keyframes spBlow {
+  20% { transform: translateX(-7px); } 40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); } 80% { transform: translateX(2px); }
+}
+@media (prefers-reduced-motion: reduce) { #card-area.sp-blow { animation: none; } }

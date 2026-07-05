@@ -415,6 +415,9 @@ export interface Presenter {
   // The honest-forecast contract applies: stakes must reflect real state.
   setPiece?: (state: RunState, ev: GameEvent) => {
     banner: string; sub?: string; stakes?: { html: string; cls?: string }[]; cls?: string;
+    // Optional feel cue the shell plays generically: 'triumph' (confetti,
+    // win sting) or 'blow' (shake, heavy haptic). Content-free.
+    mood?: 'triumph' | 'blow';
   } | null;
   // The art system's reactive-scene inputs, mapped from this pack's state.
   vibe?: (state: RunState) => { fame: number; network: number; burnout: number };
