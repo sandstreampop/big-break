@@ -723,6 +723,31 @@ function spawnConfetti(host) {
   setTimeout(() => box.remove(), 1600);
 }
 
+// The persistent character stage (presenter.stage). Lives between the HUD and
+// the card area; each slot is a face + a short qualitative read, tappable when
+// the pack backs it with an inspector sheet. Genre-neutral: the shell renders
+// slots, the pack decides who is on stage and what their state reads as.
+function renderStage(ev) {
+  let host = $('#stage');
+  if (!host) {
+    host = el('div', '');
+    host.id = 'stage';
+    $('#card-area').before(host);
+  }
+  host.innerHTML = '';
+  const slots = PRES.stage?.(run, ev || null);
+  if (!slots || !slots.length) return;
+  for (const s of slots) {
+    const slot = el('div', 'stage-slot' + (s.cls ? ' ' + s.cls : '') + (s.live ? ' stage-live' : ''));
+    slot.append(el('div', 'stage-label', s.label));
+    slot.append(el('div', 'stage-face', `${s.face}${s.moodFace ? `<span class="stage-moodface">${s.moodFace}</span>` : ''}`));
+    slot.append(el('div', 'stage-name', s.name));
+    if (s.read) slot.append(el('div', 'stage-read', s.read));
+    if (s.sheet) slot.addEventListener('click', () => { sfx.ui(); showInspect(s.sheet); });
+    host.append(slot);
+  }
+}
+
 function dealCard() {
   encoreArmed = false;
   show('#screen-game');
@@ -738,12 +763,32 @@ function dealCard() {
   }
   save.saveRun(run);
 
+  // The persistent character stage (presenter.stage): the run's load-bearing
+  // people as first-class faces, re-read every deal, spotlighting whoever the
+  // scene is about. Packs without one leave the slot empty.
+  renderStage(ev);
+
   const area = $('#card-area');
   area.innerHTML = '';
 
+  // Set-piece framing (presenter.setPiece): a ceremonial banner + explicit
+  // stakes above the card, so a climax reads as a screen, not another card.
+  const sp = PRES.setPiece?.(run, ev);
+  if (sp) {
+    const box = el('div', 'set-piece ' + (sp.cls || ''));
+    box.append(el('div', 'set-piece-banner', sp.banner));
+    if (sp.sub) box.append(el('div', 'set-piece-sub', fillText(sp.sub)));
+    if (sp.stakes?.length) {
+      const st = el('div', 'set-piece-stakes');
+      for (const s of sp.stakes) st.append(el('div', 'sp-stake ' + (s.cls || ''), fillText(s.html)));
+      box.append(st);
+    }
+    area.append(box);
+  }
+
   // A pack may class up a card for its own framing tiers (e.g. a ceremony).
   const packCls = PRES.cardClass?.(ev);
-  const card = el('div', 'card' + (ev.flashpoint ? ' flashpoint' : '') + (packCls ? ' ' + packCls : ''));
+  const card = el('div', 'card' + (ev.flashpoint ? ' flashpoint' : '') + (packCls ? ' ' + packCls : '') + (sp ? ' in-set-piece' : ''));
   ambient(sceneFor(ev.art));
   if (ev.flashpoint) {
     // U2: the moment must be LEGIBLE — foil frame, sting, badge
@@ -1235,16 +1280,35 @@ function showResult(result) {
     setTimeout(() => ov.classList.remove('flash-bad'), 500);
   }
   box.append(el('div', 'tier-badge', TIER_LABEL[result.tier]));
+  // The result beat (presenter.resultStage): the pack's read of HOW this
+  // landed — a reacting portrait front and centre, then qualitative movement
+  // lines below the outcome text. The keys it claims lose their numeric chip.
+  const rs = PRES.resultStage?.(run, result);
+  if (rs?.portrait) {
+    const p = rs.portrait;
+    const po = el('div', 'result-portrait' + (p.cls ? ' ' + p.cls : ''));
+    po.append(el('div', 'result-face', `${p.face}${p.moodFace ? `<span class="stage-moodface">${p.moodFace}</span>` : ''}`));
+    if (p.name) po.append(el('div', 'result-face-name', `${p.name}${p.sub ? `<span class="result-face-sub">${p.sub}</span>` : ''}`));
+    box.append(po);
+  }
   box.append(el('p', 'result-text', fillText(result.text)));
   // The overlay-note channel, result side: a pack plugin's commentary on how
   // this card landed (set on the result during resolution — already seeded).
   if (result.overlayNote) {
     box.append(el('div', 'overlay-note overlay-note-result ' + (result.overlayNote.cls || ''), fillText(result.overlayNote.html)));
   }
+  if (rs?.reads?.length) {
+    const reads = el('div', 'result-reads');
+    for (const r of rs.reads) reads.append(el('div', 'result-read ' + (r.cls || ''), fillText(r.html)));
+    box.append(reads);
+  }
 
-  // Numeric stat deltas: compact uniform chips.
+  // Numeric stat deltas: compact uniform chips (minus any key the pack's
+  // result beat already voiced qualitatively).
+  const hideChips = new Set(rs?.hideChipKeys || []);
   const chips = el('div', 'delta-chips');
   for (const d of result.deltas) {
+    if (hideChips.has(d.key)) continue;
     chips.append(deltaChip(d.key, d.amount));
   }
   box.append(chips);
@@ -1714,13 +1778,29 @@ function actInterstitial(step) {
   const ov = $('#overlay');
   ov.innerHTML = '';
   ov.classList.add('active');
-  const box = el('div', 'result-card act-card');
-  box.append(el('div', 'tier-badge', `ACT ${step.act}`));
-  const intro = PRES.actIntro?.[step.act] || (step.act === 2
-    ? { name: 'THE GRIND', text: 'The garage is behind you. Everything now costs something.' }
-    : { name: 'THE RECKONING', text: 'Higher stakes, fewer excuses. The summit is visible. So is the drop.' });
-  box.append(el('p', 'result-text act-name', intro.name));
-  box.append(el('p', 'result-text', intro.text));
+  // The act recap (presenter.recap): a pack's full-screen "previously on"
+  // takeover — kicker, title, labeled blocks — in place of the default
+  // act-intro copy. The rest of the interstitial (twist note, press, inbox)
+  // still rides below it.
+  const recap = PRES.recap?.(run, step.act, run.flavorSeed || 1);
+  const box = el('div', 'result-card act-card' + (recap ? ' recap-card' : ''));
+  if (recap) {
+    if (recap.kicker) box.append(el('div', 'recap-kicker', recap.kicker));
+    box.append(el('p', 'result-text act-name', recap.title));
+    for (const b of recap.blocks || []) {
+      const blk = el('div', 'recap-block ' + (b.cls || ''));
+      if (b.label) blk.append(el('div', 'recap-label', b.label));
+      blk.append(el('div', 'recap-body', fillText(b.html)));
+      box.append(blk);
+    }
+  } else {
+    box.append(el('div', 'tier-badge', `ACT ${step.act}`));
+    const intro = PRES.actIntro?.[step.act] || (step.act === 2
+      ? { name: 'THE GRIND', text: 'The garage is behind you. Everything now costs something.' }
+      : { name: 'THE RECKONING', text: 'Higher stakes, fewer excuses. The summit is visible. So is the drop.' });
+    box.append(el('p', 'result-text act-name', intro.name));
+    box.append(el('p', 'result-text', intro.text));
+  }
   for (const n of step.notes || []) {
     if (n.startsWith('♪')) continue; // chart news gets its own stage below
     if (n.startsWith('✂️') || n.startsWith('➕')) {

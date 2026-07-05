@@ -365,6 +365,44 @@ export interface Presenter {
   cardCast?: (state: RunState, ev: GameEvent) => {
     name: string; face: string; moodFace?: string | null; sub?: string | null; cls?: string;
   }[] | null;
+
+  // ── The clarity screens: four sibling channels of the overlay note. Each is
+  // a generic presentation SLOT the shell renders when a pack provides it —
+  // the shell knows layout, never content, and a pack that omits one gets the
+  // original shell behavior byte-for-byte. All four MUST be pure reads of
+  // state (deals re-render on resume; the sims never render). ──
+
+  // A persistent row of this run's load-bearing characters, rendered above
+  // the dealt card and re-read every deal. `read` is a short qualitative
+  // state label (a tier, a mood — never a raw number); `live` marks the
+  // slot(s) the current scene is about; `sheet` backs a tap-to-inspect.
+  stage?: (state: RunState, ev: GameEvent | null) => {
+    label: string; name: string; face: string; moodFace?: string | null;
+    read?: string | null; cls?: string; live?: boolean;
+    sheet?: { title: string; lines: string[] };
+  }[] | null;
+  // The result beat: a pack's presentation of HOW the swipe landed, rendered
+  // inside the result overlay — a reacting portrait plus qualitative movement
+  // lines, replacing the numeric chips it claims via hideChipKeys.
+  resultStage?: (state: RunState, result: any) => {
+    portrait?: { face: string; moodFace?: string | null; name?: string; sub?: string | null; cls?: string } | null;
+    reads?: { html: string; cls?: string }[];
+    hideChipKeys?: string[];
+  } | null;
+  // A full-screen act-transition takeover: the pack's own "previously on"
+  // recap (title, kicker, labeled blocks), replacing the default act-intro
+  // copy inside the act interstitial. `seed` is a per-run flavor seed for
+  // line rotation — NOT the play RNG.
+  recap?: (state: RunState, act: number, seed: number) => {
+    kicker?: string; title: string;
+    blocks: { label?: string; html: string; cls?: string }[];
+  } | null;
+  // Set-piece framing on a dealt card: a ceremonial banner plus explicit
+  // stakes-in lines rendered above the card, and a class for scene styling.
+  // The honest-forecast contract applies: stakes must reflect real state.
+  setPiece?: (state: RunState, ev: GameEvent) => {
+    banner: string; sub?: string; stakes?: { html: string; cls?: string }[]; cls?: string;
+  } | null;
   // The art system's reactive-scene inputs, mapped from this pack's state.
   vibe?: (state: RunState) => { fame: number; network: number; burnout: number };
   // Art slots this pack registers with the generated-scene painter:

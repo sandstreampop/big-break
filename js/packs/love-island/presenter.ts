@@ -8,9 +8,9 @@
 import { castById, couplePool, sameGenderPool, islanderTypeById } from './cast.js';
 import { angleById } from './angles.js';
 import { PATHS } from './manifest.js';
-import { characterRead, TIER_LABEL, MOODS } from './plugins/characters.js';
 import { intelCount } from './plugins/gossip.js';
 import { stirlingDealNote } from './plugins/stirling.js';
+import { villaStage, villaResultStage, villaRecap, villaSetPiece } from './clarity.js';
 import { mulberry32 } from '../../engine.js';
 import type { Presenter, RunState } from '../../types.js';
 
@@ -298,60 +298,15 @@ function finalSet(state: RunState) {
   };
 }
 
-// ---------- The people in this scene (portraits on the card) ----------
-// The mood-driven portrait system (V2-DESIGN "presentation"): a bounded set —
-// each Cast member's face × the six moods (worn as a mood face + a mood-tinted
-// frame, styled in love-island.css). Persistent across a scene's beats
-// (ADR-0005's framing), and the line-up puts Partner AND Rival on screen.
-// Pure: a read of characterRead only.
-
-const LINEUP_IDS = new Set([
-  'li_recoup1_exposed', 'li_recoup1_exposed_single',
-  'li_recoup2_exposed', 'li_recoup2_exposed_single', 'li_recoup_cashout',
-]);
-const VERDICT_IDS = new Set(['li_recoup_held', 'li_recoup_rescued', 'li_recoup_dumped']);
-
-function cardCast(state: RunState, ev: any) {
-  const out: any[] = [];
-  const seat = (role: 'partner' | 'rival' | 'bombshell') => {
-    const c = characterRead(state, role);
-    if (!c) return;
-    out.push({
-      name: c.cast.name,
-      face: c.face,
-      moodFace: c.moodFace,
-      sub: c.mood ? MOODS[c.mood]?.label : role === 'partner' ? TIER_LABEL[c.tier] : role,
-      cls: 'cast-' + (c.mood || 'level'),
-    });
-  };
-  const id = ev.id || '';
-  const tags: string[] = ev.tags || [];
-  if (LINEUP_IDS.has(id) || VERDICT_IDS.has(id)) { seat('partner'); seat('rival'); }
-  else if (id.startsWith('li_enc_rival') || id.startsWith('li_enc_rmove') || id === 'li_connect_dots') seat('rival');
-  else if (id.startsWith('li_enc_partner') || id.startsWith('li_enc_p3')) seat('partner');
-  else if (id === 'li_second_wave') seat('rival');
-  else if (id === 'li_kitchen_drop') { seat('partner'); seat('rival'); }
-  else if (id === 'li_casa_held' || id === 'li_parents' || id === 'li_parents_messy') seat('partner');
-  else if (tags.includes('temptation')) seat('bombshell');
-  return out.length ? out : null;
-}
-
 // ---------- HUD counters ----------
 
-// Relationship-forward (V2-DESIGN): the people lead, the meters follow. The
-// Partner is a persistent presence — name, opinion TIER (never the Bond
-// number), mood face, lock; the Rival and any active bombshell ride alongside.
+// The scoreboard row. The PEOPLE moved off these chips and onto the stage
+// (the Clarity Layer's persistent relationship stage — clarity.ts); what's
+// left up here is the show's actual scoreboard: vote, following, capital,
+// held intel, and a banked moment.
 function hudCounters(state: RunState) {
   const out: { html: string; cls?: string }[] = [];
   if ((state.encore || 0) > 0) out.push({ html: `🌟${state.encore > 1 ? '×' + state.encore : ''}`, cls: 'hud-encore' });
-  const p = characterRead(state, 'partner');
-  out.push(p
-    ? { html: `<span class="rel-face">${p.face}</span><b>${p.cast.name}</b> · ${TIER_LABEL[p.tier]}${p.moodFace ? ' ' + p.moodFace : ''}${state.exclusive ? ' 🔒' : ''}`, cls: 'hud-rel hud-rel-partner' }
-    : { html: '💔 single', cls: 'hud-rel hud-rel-partner neg' });
-  const r = characterRead(state, 'rival');
-  if (r) out.push({ html: `⚔️<span class="rel-face">${r.face}</span>${r.cast.name}${r.moodFace ? ' ' + r.moodFace : ''}`, cls: 'hud-rel hud-rel-rival' });
-  const b = characterRead(state, 'bombshell');
-  if (b) out.push({ html: `💣<span class="rel-face">${b.face}</span>${b.cast.name}${b.moodFace ? ' ' + b.moodFace : ''}`, cls: 'hud-rel' });
   const held = intelCount(state);
   if (held) out.push({ html: `🤫 ${held}`, cls: 'hud-rel' });
   out.push({ html: `🗳️ ${state.public ?? 0}`, cls: 'hud-fame' });
@@ -418,8 +373,13 @@ export const loveIslandPresenter: Presenter = {
   // Stirling's deal-time channel: the ceremony forecast, the verdict explain,
   // the scene stamps (ADR-0008). Pure — see stirlingDealNote.
   overlayNote: stirlingDealNote,
-  // The scene's portraits (mood-driven, persistent across encounter beats).
-  cardCast,
+  // The Clarity Layer (v3): the persistent relationship stage, the after-swipe
+  // result beat, the "previously, in the villa" act recap, and set-piece
+  // framing for ceremonies/Casa/Movie Night. All pure reads — clarity.ts.
+  stage: villaStage,
+  resultStage: villaResultStage,
+  recap: villaRecap,
+  setPiece: villaSetPiece,
   vibe: (state: RunState) => ({ fame: state.public ?? 0, network: state.stats?.charisma ?? 0, burnout: state.stats?.burnout ?? 0 }),
 
   encore: {
