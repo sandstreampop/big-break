@@ -10,9 +10,13 @@ into fixed points in this lifecycle.
 
 ## The arc, end to end
 
-A run is **three acts** with a **crossroads** after the first, then a judged
-**finale**. Within an act, the loop is always the same: draw a card, swipe left
-or right, roll to a tier, apply the outcome, repeat until the act is spent.
+A run is an ordered, **linear list of segments** — your manifest's `segments`
+(call them acts, weeks, legs; the word is your genre's) — with an optional
+**crossroads** at a segment boundary, then a judged **finale** after the last.
+Within a segment, the loop is always the same: draw a card, swipe left or
+right, roll to a tier, apply the outcome, repeat until the segment is spent.
+
+Every shipped pack currently declares the classic three-act shape:
 
 ```
 newRun ──▶ ACT 1 ──▶ crossroads ──▶ ACT 2 ──▶ ACT 3 ──▶ finale
@@ -24,9 +28,9 @@ newRun ──▶ ACT 1 ──▶ crossroads ──▶ ACT 2 ──▶ ACT 3 ─�
                                                        failure
 ```
 
-Act lengths default to **8 / 12 / 8** cards (`config.ts` → `actLengths`), though
-a contract or a once-per-run "act twist" can bend a leg a couple of cards
-shorter or longer.
+Each segment declares its own card `length` in the manifest (the shipped packs
+run **8 / 12 / 8**), though a contract or a once-per-run "act twist" can bend a
+leg a couple of cards shorter or longer.
 
 ## 1. Run start
 
@@ -104,11 +108,12 @@ in a fixed order so deltas (and any RNG a subsystem consumes) stay reproducible:
 
 ## 5. Advance, act breaks, and the crossroads
 
-`advance(state)` steps the run forward. When an act ends it runs the **act
-break**: hustle/upkeep income, perks' `onActBreak`, and plugins' `onActBreak`
-(the songs plugin runs a chart week here). After **act 1** the run pauses at the
+`advance(state)` steps the run forward along the manifest's segment list. When
+a segment ends it runs the **act break**: hustle/upkeep income, perks'
+`onActBreak`, and plugins' `onActBreak` (the songs plugin runs a chart week
+here). A segment flagged `crossroads` instead pauses the run at the
 **crossroads**, where `commitPath(state, pathId)` locks in the summit you'll be
-judged against and opens act 2.
+judged against and opens the next segment.
 
 Throughout, **fail states** can end a run early: the attrition stat maxing out,
 a pack-relevant stat bottoming out from act 2, or debt. These thresholds live in
@@ -131,19 +136,20 @@ ending screen.
 
 ## What's fixed, on purpose
 
-Big Break is a **3-act swipe-roguelike SDK**, not a universal game kit. These
-are baked in and not configurable:
+Big Break is a **segmented swipe-roguelike SDK**, not a universal game kit.
+These are baked in and not configurable:
 
-- three acts with one crossroads;
+- a *linear* segment list — no branching act graph;
 - three outcome tiers (`bad` / `good` / `incredible`);
 - the binary left/right swipe;
 - the roll → tier → effect resolution model;
 - a single attrition stat (the `burnout` slot).
 
-Everything else — your stats, resources, summits, cards, verbs, subsystems,
-progression, and flavor — is yours. If your game fits this arc, you'll add it by
-writing new files. If it needs four acts or a different core loop, this isn't
-the engine for it, and that's the honest boundary.
+Everything else — your segment count and lengths, stats, resources, summits,
+cards, verbs, subsystems, progression, and flavor — is yours. If your game fits
+this arc, you'll add it by writing new files. If it needs a branching structure
+or a different core loop, this isn't the engine for it, and that's the honest
+boundary.
 
 Next: [The Pack contract](/big-break/docs/concepts/pack/) — the object that
 carries all of the above.

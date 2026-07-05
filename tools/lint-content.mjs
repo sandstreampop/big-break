@@ -242,7 +242,9 @@ for (const pack of PACKS) {
   //    delivery). Everything else must stay majority-open.
   {
     const arcIds = new Set(ARCS.flatMap((a) => [...a.setup, ...a.payoffs]));
-    for (const act of [1, 2, 3]) {
+    // One check per segment the pack's manifest declares (ADR-0010) — the
+    // linter assumes no act count.
+    for (const act of pack.manifest.segments.map((_, i) => i + 1)) {
       const inAct = EVENTS.filter((e) =>
         !e.chainOnly && !e.finaleCard && !e.flashpoint && !e.pack &&
         (Array.isArray(e.act) ? e.act.includes(act) : e.act === act));

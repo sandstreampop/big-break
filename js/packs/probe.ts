@@ -32,6 +32,14 @@ declare module '../types.js' {
 const manifest: PackManifest = {
   stats: ['focus'],
   resources: ['points'],
+  // The run structure (ADR-0010): the classic three-segment shape, with the
+  // commit slot after the first. The probe's 5-card acts run dry before the
+  // 8/12/8 lengths are reached — the force-advance path the goldens pin.
+  segments: [
+    { length: 8, crossroads: true },
+    { length: 12 },
+    { length: 8 },
+  ],
   paths: {
     finish: {
       id: 'finish',

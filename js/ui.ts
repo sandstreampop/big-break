@@ -2101,7 +2101,7 @@ function renderCrossroads() {
       sfx.commit();
       const notes = engine.commitPath(run, p.id);
       save.saveRun(run);
-      actInterstitial({ kind: 'actStart', act: 2, notes });
+      actInterstitial({ kind: 'actStart', act: run.act, notes });
       show('#screen-game');
     });
     row.append(card);

@@ -27,11 +27,18 @@ export function findEvent(id) {
   return PACK.events.find((e) => e.id === id) || PACK.tutorialEvents.find((e) => e.id === id) || null;
 }
 
-// The number of cards an act runs: the per-act default, which a subsystem may
-// bend (modifyActLength), plus this run's act twist.
+// The run's macro shape: the manifest's ordered segment list (ADR-0010).
+// `state.act` is the 1-indexed position in it; the last segment terminates in
+// the finale. The engine hardcodes no segment count.
+function segments(): import('./types.js').SegmentDef[] {
+  return PACK.manifest.segments;
+}
+
+// The number of cards a segment runs: the manifest's declared length, which a
+// subsystem may bend (modifyActLength), plus this run's act twist.
 export function actLength(state, act) {
   if (state.tutorial) return PACK.tutorialEvents.length;
-  const base = foldActLength(state, act, CONFIG.actLengths[act]);
+  const base = foldActLength(state, act, segments()[act - 1]?.length ?? 0);
   const twist = state.actTwist && state.actTwist.act === act ? state.actTwist.delta : 0;
   return Math.max(3, base + twist);
 }
@@ -159,11 +166,14 @@ export function newRun(pack: Pack, loadoutId, unlockedPacks, rng = Math.random, 
   // onRunStart draws at the tail. Reordering any of these invalidates the
   // entire golden corpus.
   firePlugins('onConstruct', state, rng);
-  // ~25% of runs schedule one flashpoint; ~20% bend an act by ±actTwistDelta.
+  // ~25% of runs schedule one flashpoint; ~20% bend a segment by
+  // ±actTwistDelta. The twist lands on any segment after the first (for the
+  // classic 3-segment shape that's randInt(rng, 2, 3) — the exact draw the
+  // goldens pin).
   state.flashpointAt = rng() < CONFIG.flashpointChance
     ? randInt(rng, CONFIG.flashpointWindow[0], CONFIG.flashpointWindow[1]) : null;
   state.actTwist = rng() < CONFIG.actTwistChance
-    ? { act: randInt(rng, 2, 3), delta: rng() < 0.5 ? -CONFIG.actTwistDelta : CONFIG.actTwistDelta }
+    ? { act: randInt(rng, 2, pack.manifest.segments.length), delta: rng() < 0.5 ? -CONFIG.actTwistDelta : CONFIG.actTwistDelta }
     : null;
   if (inst) {
     for (const [k, v] of Object.entries(inst.modifiers || {})) {
@@ -279,7 +289,7 @@ export function requiresOk(r, state) {
 
 function pathEligible(ev, state) {
   if (!ev.pathAffinity || ev.pathAffinity.length === 0) return true;
-  if (state.act === 1) return false; // path cards never appear pre-commit
+  if (!state.path) return false; // path cards never appear pre-commit
   return ev.pathAffinity.includes(state.path);
 }
 
@@ -790,9 +800,12 @@ export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAcce
   return deltas;
 }
 
-// ---------- Act / phase advancement ----------
+// ---------- Segment / phase advancement ----------
 
-// Call after each resolved card. Returns one of:
+// Call after each resolved card. Walks the manifest's segment list (ADR-0010):
+// a finished non-terminal segment either opens the crossroads (its commit
+// slot) or starts the next segment; the terminal segment queues the path's
+// climax card, then ends in the finale. Returns one of:
 // { kind:'card' } | { kind:'crossroads' } | { kind:'actStart', act, notes } |
 // { kind:'finale' } | { kind:'gameover', endingKey }
 export function advance(state) {
@@ -809,9 +822,10 @@ export function advance(state) {
       state.ending = { key: 'tutorial', result: null };
       return { kind: 'tutorialEnd' };
     }
+    const terminal = state.act >= segments().length;
     // Every run's final card is its path's climax event, queued here so chains
     // and coping interstitials can never displace it.
-    if (state.act === 3 && state.path) {
+    if (terminal && state.path) {
       const climax = PACK.events.find(
         (e) => e.finaleCard && e.pathAffinity?.includes(state.path) && !state.usedEvents.includes(e.id)
       );
@@ -820,23 +834,24 @@ export function advance(state) {
         return { kind: 'card' };
       }
     }
-    if (state.act === 1) {
-      state.phase = 'crossroads';
+    if (terminal) {
+      state.phase = 'finale'; // UI runs the Final Set, then evaluateFinale ends it
+      return { kind: 'finale' };
+    }
+    if (segments()[state.act - 1]?.crossroads) {
+      state.phase = 'crossroads'; // the commit slot; commitPath starts the next segment
       return { kind: 'crossroads' };
     }
-    if (state.act === 2) {
-      const notes = startAct(state, 3);
-      return { kind: 'actStart', act: 3, notes };
-    }
-    state.phase = 'finale'; // UI runs the Final Set, then evaluateFinale ends it
-    return { kind: 'finale' };
+    const next = state.act + 1;
+    const notes = startAct(state, next);
+    return { kind: 'actStart', act: next, notes };
   }
   return { kind: 'card' };
 }
 
 export function commitPath(state, pathId) {
   state.path = pathId;
-  return startAct(state, 2);
+  return startAct(state, state.act + 1);
 }
 
 function startAct(state, act) {

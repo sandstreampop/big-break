@@ -38,6 +38,28 @@ for (const pack of PACKS) {
       'paths and winGates key sets must match');
   });
 
+  // ── Run structure (ADR-0010): the manifest's segment list is the run's
+  // macro shape, and the engine hardcodes no act count — so the list itself
+  // must be well-formed. Linear, at least one segment, every length a positive
+  // integer; a crossroads (the commit slot) can't sit on the terminal segment
+  // (the finale shadows it — a commit with nothing after it is dead data); and
+  // a pack that declares summits must offer a commit slot somewhere, or the
+  // finale judges winGates[null]. ──
+  test(`[${pack.id}] manifest declares a well-formed segment list`, () => {
+    const m = pack.manifest;
+    assert.ok(Array.isArray(m.segments) && m.segments.length >= 1, 'at least one segment');
+    m.segments.forEach((seg, i) => {
+      assert.ok(Number.isInteger(seg.length) && seg.length >= 1,
+        `segment ${i + 1} length must be a positive integer`);
+    });
+    assert.ok(!m.segments[m.segments.length - 1].crossroads,
+      'the terminal segment cannot be a crossroads');
+    if (Object.keys(m.paths).length) {
+      assert.ok(m.segments.some((s) => s.crossroads),
+        'a pack with summits needs a crossroads segment to commit one');
+    }
+  });
+
   // ── Generic readers: every winGates key must resolve through the engine's
   // gateValue (§3.3), with no fame/hits special-case. A key that can't
   // be read is a summit that can never be judged. ──

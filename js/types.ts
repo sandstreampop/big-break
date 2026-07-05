@@ -114,12 +114,27 @@ export interface PathDef {
   icon: string;
 }
 
+// One leg of a run's macro shape (ADR-0010). A run is an ordered, LINEAR list
+// of segments the engine walks front to back — no branching graph. Each
+// segment runs `length` cards (before act twists and plugin overrides); a
+// segment flagged `crossroads` ends at the commit slot (the player picks a
+// path before the next segment starts); the final segment always terminates
+// in the finale. `state.act` is the 1-indexed position in this list.
+export interface SegmentDef {
+  length: number;
+  crossroads?: boolean;
+}
+
 // The pack manifest: the genre's taxonomy, split out from the balance knobs in
 // config. Numbers here are still balance-tuned, but the SHAPE — which stats
 // exist, which gate which path — is what makes a pack a genre.
 export interface PackManifest {
   stats: string[];
   resources: string[];
+  // The run structure: how many segments ("acts", "weeks" — the pack's word),
+  // how long each runs, where the crossroads sits. The engine hardcodes no
+  // count — three acts and thirty weeks are the same machinery.
+  segments: SegmentDef[];
   paths: Record<string, PathDef>;
   winGates: Record<string, Record<string, number>>;
   statMeta: Record<string, StatMeta>;
