@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "batch": "v4 S3 · 3/3 — the ick & the repair",
+  "note": "Session 3 batch 3: the player couple’s own arcs — the ick (per partner shape), betrayal-repair (both directions), and the story ledger’s receipts. OPTIONAL/POST-HOC per the charter.",
+  "items": [
+    {
+      "id": "li_ick_sweet",
+      "type": "card",
+      "context": "Movie night in · the ick arrives on schedule",
+      "prompt": "{partner} cried at the toast. Not the speech — the TOAST, the bread kind, because you made it “like a couple who make each other toast.” Day twelve. Somewhere behind your ribs, a tiny inspector puts down a clipboard and says: too much, too fast, all of it.",
+      "left": "Name it, kindly",
+      "right": "Swallow it"
+    },
+    {
+      "id": "li_ick_sweet_left_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_sweet → “Name it, kindly”",
+      "text": "BAD: “It’s not the toast, it’s—” you start, and {partner}’s face does the wobble, and now you’re consoling them about a feeling you were reporting. The inspector sighs.\n\nGOOD: “I need you to be this keen at about seventy percent volume,” you say. {partner} blinks. Then, slowly: “I can do seventy.” Honest engineering. The ick loosens its grip.\n\nINCREDIBLE: You say the unsayable — “you’re performing us before we exist” — and {partner} goes quiet, then nods like someone finally allowed to exhale. The realest chat the duvet has hosted."
+    },
+    {
+      "id": "li_ick_sweet_right_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_sweet → “Swallow it”",
+      "text": "BAD: You smile at the toast. You smile at the toast SPEECH. Your smile is load-bearing now, and the load is gaining weight nightly.\n\nGOOD: You file it under “week-two energy, will settle.” Maybe it will. The inspector leaves a card on the way out: we’ll be in touch.\n\nINCREDIBLE: You bury it with full honours and a small ceremony. Buried things in this villa have a documented habit of attending Movie Night. Still — gorgeous funeral."
+    },
+    {
+      "id": "li_ick_game",
+      "type": "card",
+      "context": "The dressing room · a rehearsal you weren’t meant to see",
+      "prompt": "Through the mirror you watch {partner} practise a compliment. Your compliment. Twice, with different pauses, checking the angles — “you’re not like anyone in here… no. You’re not like ANYONE in here.” The tiny inspector behind your ribs underlines one word: rehearsed.",
+      "left": "Name it, straight",
+      "right": "Swallow it"
+    },
+    {
+      "id": "li_ick_game_left_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_game → “Name it, straight”",
+      "text": "BAD: “Was that a REHEARSAL?” comes out at row volume. {partner} handles it smoothly, which is exactly the problem, which you now say, less smoothly. Loop detected.\n\nGOOD: “Second take was better,” you say to the mirror. {partner} freezes — then laughs, caught. “Force of habit. Old me.” New you gets one chance at unscripted. Starting now.\n\nINCREDIBLE: “Say it wrong,” you tell them. “Once. For me.” {partner} looks at you, abandons the script, and says something clumsy and true. Worst delivery all season. Best sentence."
+    },
+    {
+      "id": "li_ick_game_right_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_game → “Swallow it”",
+      "text": "BAD: You keep the receipt and hear the pause land on you at dinner, beat-perfect. It works. It absolutely works. That’s the ick, working.\n\nGOOD: Everyone in here performs a bit, you reason. Reasonable. The inspector writes “a bit” in quotation marks and files it where files go.\n\nINCREDIBLE: You watch the performance nightly now, a critic in your own bed. The reviews stay unpublished. For now, the run continues."
+    },
+    {
+      "id": "li_ick_slow",
+      "type": "card",
+      "context": "The terrace, late · the wall came down · then the scaffolding went up",
+      "prompt": "Last night {partner} told you the real stuff — the sister, the fear, the reason for the guard. This morning: “anyway, mad one last night, weren’t it,” and the shutters are DOWN, trading closed, do not reply to this email. The inspector behind your ribs circles a word: whiplash.",
+      "left": "Name it, gently",
+      "right": "Swallow it"
+    },
+    {
+      "id": "li_ick_slow_left_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_slow → “Name it, gently”",
+      "text": "BAD: “You can’t give me that and then go CUSTOMER SERVICE,” you say, too fast. The shutters add a padlock. Great. Now there’s a padlock.\n\nGOOD: “Last night counted,” you say quietly. “You don’t have to un-say it by lunch.” A long pause. “…Noted,” says {partner}, which from them is a sonnet.\n\nINCREDIBLE: “I’ll wait,” you say, “but I won’t pretend I didn’t meet you.” The shutters open one slat. It’s not nothing. In slow-burner currency, it’s a bouquet."
+    },
+    {
+      "id": "li_ick_slow_right_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_slow → “Swallow it”",
+      "text": "BAD: You match the breeziness, badly. Two people now performing “fine” at each other across a fruit bowl. The fruit bowl is the only honest party present.\n\nGOOD: Guarded people un-guard on their own clock, you decide. Patient. Mature. The inspector notes the maturity and, next to it, the cost per night.\n\nINCREDIBLE: You bank last night like a photograph and ask for nothing. Either it was real and returns, or it wasn’t and won’t. The villa respects a clean experiment."
+    },
+    {
+      "id": "li_ick_talk",
+      "type": "card",
+      "context": "The next afternoon · the follow-up nobody schedules",
+      "prompt": "“So.” {partner} sits down with two drinks and the face of someone who has been thinking since yesterday. “The thing you said. I hated it. And you’re right.” Both can be true. In here, both usually are. The daybed waits to see what you build with it.",
+      "left": "Build it together",
+      "right": "Keep it light, keep it moving"
+    },
+    {
+      "id": "li_ick_talk_left_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_talk → “Build it together”",
+      "text": "BAD: You both over-correct into a formal relationship summit with agenda items. Item one: why are we like this. No minutes are kept. Some progress is, barely.\n\nGOOD: Twenty honest minutes, no cameras played to, one actual agreement. The ick, examined in daylight, turns out to be a fixable part. You fix it.\n\nINCREDIBLE: “Nobody’s ever told me the true thing that early,” {partner} says, “and stayed.” You stayed. The nation watches a couple get REALER mid-season — rarer than a proposal."
+    },
+    {
+      "id": "li_ick_talk_right_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_talk → “Keep it light, keep it moving”",
+      "text": "BAD: You deflect with a bit. {partner} watches the bit the way Tash watches everyone — fully. “Okay,” they say, and the okay has a basement.\n\nGOOD: “We’re fine,” you grin, and mean it about 80%. {partner} takes the 80. Couples have run further on less. The remaining 20 waits politely.\n\nINCREDIBLE: You turn the whole ick into a running joke — “SEVENTY percent,” you both say now, in unison, at each other. A wound converted into a catchphrase. Villa alchemy."
+    },
+    {
+      "id": "li_ick_resurface",
+      "type": "card",
+      "context": "Weeks later · the buried thing attends dinner",
+      "prompt": "The thing you buried has compounded. The toast-tears, the rehearsed pause, the shutters — whichever it was, it’s now a full personality trait wearing your patience as a lanyard. Tonight it does the thing AGAIN, at dinner. “What?” asks {partner}, catching your face. “Nothing,” you say. The word creaks under the tonnage.",
+      "left": "Say it. Finally",
+      "right": "Let it curdle"
+    },
+    {
+      "id": "li_ick_resurface_left_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_resurface → “Say it. Finally”",
+      "text": "BAD: It comes out with six weeks of interest attached. “Since WHEN?” asks {partner}, and “week two” is the wrong answer said at the wrong volume. The table studies its plates.\n\nGOOD: You say it late and plainly, and own the lateness. “You sat on this to be NICE?” {partner} is furious at the kindness, which is fair, and moved by it, which is inconvenient.\n\nINCREDIBLE: “I should have said it in week two,” you finish, “I liked you too much to risk you.” The sentence lands somewhere between an apology and a confession. {partner} keeps both."
+    },
+    {
+      "id": "li_ick_resurface_right_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_resurface → “Let it curdle”",
+      "text": "BAD: You say nothing, again, and the nothing is now audible. {partner} asks what’s wrong; “nothing,” you say, in the internationally recognised tone of everything.\n\nGOOD: You swallow it professionally. The inspector behind your ribs quietly upgrades the file from “pending” to “structural.” Structures, famously, hold until they don’t.\n\nINCREDIBLE: You curate the feeling into a small museum only you visit. Admission is free; you pay anyway, nightly. The couple looks perfect from the garden."
+    },
+    {
+      "id": "li_ick_theirs",
+      "type": "card",
+      "context": "The lawn · {partner} watches you work the camera · the radar pings",
+      "prompt": "You’re mid-anecdote — the good one, the tested one — angled twelve degrees toward the nearest lens, and you catch {partner} watching you do it. Not jealous. Worse: CALIBRATING. Everyone in here has a radar for being somebody’s strategy. Yours just got pinged.",
+      "left": "“Yeah. I play up for cameras”",
+      "right": "Perform harder. It’s a SHOW"
+    },
+    {
+      "id": "li_ick_theirs_left_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_theirs → ““Yeah. I play up for cameras””",
+      "text": "BAD: The honesty arrives with jazz hands, which rather undermines it. “Are you performing the apology for performing?” asks {partner}. …Yes. Apparently all the way down.\n\nGOOD: “Twelve degrees,” you admit. “Force of habit.” {partner} snorts despite themselves. “Do the anecdote at ME next time.” Deal. The radar stands down to amber.\n\nINCREDIBLE: You finish the anecdote facing them, back squarely to the lens, worst angle of your season. “Better,” says {partner}. The nation, robbed of your good side, approves anyway."
+    },
+    {
+      "id": "li_ick_theirs_right_outcomes",
+      "type": "outcomes",
+      "context": "li_ick_theirs → “Perform harder. It’s a SHOW”",
+      "text": "BAD: You go full showreel and {partner} quietly relocates to the kitchen, where the people are load-bearing. The clip is great. The wide shot — you, alone, mid-flourish — is the story.\n\nGOOD: The anecdote kills. The lens loves you. {partner} claps with the group, one beat behind it, filing something away in the place feelings keep their receipts.\n\nINCREDIBLE: It’s the best telly you’ve made all week, and you know it, and {partner} knows you know it. Two truths settle over the lawn: you’re a star, and stars get watched — from a distance."
+    },
+    {
+      "id": "li_repair_mine_0",
+      "type": "card",
+      "context": "The morning after your footage · the kitchen, at grovel o’clock",
+      "prompt": "Your footage aired. The villa watched it twice. {partner} is still here — technically, geographically here. “Toast?” they offer, in the tone of a customs officer asking if you packed this bag yourself. The repair manual for this villa is unwritten but everyone knows chapter one: you start with the coffee.",
+      "left": "Start the lap: coffee, daily, publicly",
+      "right": "“We move forward, not backward”"
+    },
+    {
+      "id": "li_repair_mine_0_left_outcomes",
+      "type": "outcomes",
+      "context": "li_repair_mine_0 → “Start the lap: coffee, daily, publicly”",
+      "text": "BAD: You bring the coffee. Wrong order. “Oat,” says {partner}, not looking up. Day one of the lap and you’re already doing a penalty loop.\n\nGOOD: Right order, no speech, set down and walk away. {partner} watches you go. The villa clocks the start of a lap; the nation’s soft wing starts a chant.\n\nINCREDIBLE: Coffee, their towel pre-claimed on the good lounger, and their washing rescued off the line before the sprinklers — all before eight. Actions, the fluent kind. {partner} says nothing. Keeps the coffee."
+    },
+    {
+      "id": "li_repair_mine_0_right_outcomes",
+      "type": "outcomes",
+      "context": "li_repair_mine_0 → ““We move forward, not backward””",
+      "text": "BAD: “Forward,” repeats {partner}, flat as the counter. “Like the footage. Which moved forward. Frame by frame.” The kitchen finds somewhere else to be.\n\nGOOD: You opt for dignity over grovel. It’s a position. The Self-Respect wing nods; the Romantics file you under ‘cold’; {partner} files you under pending.\n\nINCREDIBLE: You deliver the no-grovel manifesto with real poise, and {partner} — to everyone’s surprise including theirs — respects it. Unresolved, but respected. The villa’s strangest truce."
+    },
+    {
+      "id": "li_repair_mine_1",
+      "type": "card",
+      "context": "Days into the lap · the firepit · time to say it where the mics live",
+      "prompt": "Three days of coffee, towels, and shutting up. The villa has watched the lap; now it wants the sentence. You stand up at the firepit — {partner}, the cast, the cameras, the country. “I need to say something,” you say, and the garden goes church-quiet.",
+      "left": "The full re-commitment, no notes",
+      "right": "Hedge it, protect the vote"
+    },
+    {
+      "id": "li_repair_mine_1_left_outcomes",
+      "type": "outcomes",
+      "context": "li_repair_mine_1 → “The full re-commitment, no notes”",
+      "text": "BAD: You mean every word and deliver them in the wrong order, ending on “and that’s why the footage isn’t the real me,” which the footage disputes. {partner} takes the intent. Barely.\n\nGOOD: “I’m not getting to know anyone else. I’m here, for this, out loud.” No hashtag, no hedge. {partner} holds your eye the whole way. The lap is complete; the ledger opens again.\n\nINCREDIBLE: You say it plainly and then — the move — you sit down without waiting for absolution. {partner} lets the silence run a full broadcast minute before taking your hand. Television HALTS."
+    },
+    {
+      "id": "li_repair_mine_1_right_outcomes",
+      "type": "outcomes",
+      "context": "li_repair_mine_1 → “Hedge it, protect the vote”",
+      "text": "BAD: You engineer a sentence with a get-out clause per subordinate phrase. {partner} counts the clauses on their fingers, visibly. The firepit has never felt so contractual.\n\nGOOD: It’s a good speech — measured, likeable, safe. The villa applauds. {partner} smiles the smile that knows the difference between a speech and a sentence. The lap continues, unfinished.\n\nINCREDIBLE: You thread it perfectly: warm enough for the Romantics, spiked enough for the Drama wing, deniable throughout. A masterpiece of nothing. {partner} grades it accordingly: “nice speech.”"
+    },
+    {
+      "id": "li_repair_theirs_0",
+      "type": "card",
+      "context": "Three mornings after their footage · the coffee has been arriving",
+      "prompt": "Since Movie Night, {partner} has served you coffee three mornings running — right order, no speeches — and last night, at the firepit, unprompted: “I’m focusing on one person in here. That’s it. That’s the announcement.” The villa looks at you. Forgiveness has a queue number, and it’s been called.",
+      "left": "Forgive. Properly, out loud",
+      "right": "Make them finish the lap"
+    },
+    {
+      "id": "li_repair_theirs_0_left_outcomes",
+      "type": "outcomes",
+      "context": "li_repair_theirs_0 → “Forgive. Properly, out loud”",
+      "text": "BAD: You forgive them so fast and so fully the villa does the maths in real time. “Day THREE?” mouths {mate} across the garden. The Romantics cheer. The spine wing writes you off.\n\nGOOD: “The coffee counted,” you say. “The sentence counted more. We’re good.” Clean forgiveness, dated and signed. The soft half of the country stands and applauds; the other half respects the paperwork.\n\nINCREDIBLE: “I saw the lap. I’m keeping the person who ran it.” You say it to the group, not just to them — forgiveness with a spine in it. Even the Self-Respect wing has to admit: that’s not a doormat. That’s a decision."
+    },
+    {
+      "id": "li_repair_theirs_0_right_outcomes",
+      "type": "outcomes",
+      "context": "li_repair_theirs_0 → “Make them finish the lap”",
+      "text": "BAD: “Keep going,” you say, and can’t quite keep the judge’s gavel out of it. {partner} nods, hurt and grafting. The villa opens a book on whether this is standards or sport.\n\nGOOD: “Three coffees isn’t a repair, it’s a start,” you say — kindly, clearly. {partner} takes it on the chin: “then I’ll keep starting.” The spine wing makes you their wallpaper.\n\nINCREDIBLE: “I want the boring version,” you tell them. “Weeks of it. Prove it when nobody’s filming.” Which, in here, is the single most radical sentence available. The nation SCREAMS. Respectfully."
+    },
+    {
+      "id": "li_repair_theirs_1",
+      "type": "card",
+      "context": "A week of the boring version later · the lap, audited",
+      "prompt": "They kept it up when the cameras were on the challenge. They kept it up during the Hut queue, the washing-up rota, the 1 a.m. kitchen shift. {mate}, your appointed auditor, files the report: “It’s real, babe. Annoyingly real.” The daybed is free. The verdict is yours.",
+      "left": "Close the ledger. Forgive",
+      "right": "“It’s dead. It died at Movie Night”"
+    },
+    {
+      "id": "li_repair_theirs_1_left_outcomes",
+      "type": "outcomes",
+      "context": "li_repair_theirs_1 → “Close the ledger. Forgive”",
+      "text": "BAD: You forgive them mid-yawn at the wrong moment and have to redo it with eye contact. The second take is real. The first take airs. Both count, apparently.\n\nGOOD: “Ledger’s closed,” you say, and mean it, and the relief that crosses {partner}’s face is the realest thing broadcast this week. Earned forgiveness — the villa’s rarest currency, minted on the daybed.\n\nINCREDIBLE: “You proved it when nobody was filming,” you say. “That’s the whole test. You passed it in the kitchen.” {partner} laughs, wet-eyed, holding the tea they made you unasked. The nation loses its collective mind."
+    },
+    {
+      "id": "li_repair_theirs_1_right_outcomes",
+      "type": "outcomes",
+      "context": "li_repair_theirs_1 → ““It’s dead. It died at Movie Night””",
+      "text": "BAD: You end it on the daybed and immediately doubt it, which shows, which {partner} sees, which makes the ending crueller than the crime. The villa splits down the middle over dinner.\n\nGOOD: “You ran a beautiful lap,” you say. “The track’s closed.” Honest, final, no cruelty in it. {partner} takes it standing. The spine wing salutes; the soft wing mourns; the villa updates its spreadsheets.\n\nINCREDIBLE: You say it with so much grace the break-up scene plays like a graduation. “Whoever gets the fixed version of you,” you finish, “owes me a drink.” The line enters the format’s hall of fame."
+    },
+    {
+      "id": "story_receipts",
+      "type": "recap",
+      "context": "The story ledger’s receipts (📖 “That’s a storyline now.” + the why)",
+      "text": "Kissed at Casa — and said it yourself, badly, before any screen could.\nStrayed, then told the truth to their face. The tested-and-honest arc.\nThe unprompted whole truth — a crack owned before it aired.\nDetonated a secret at the firepit to hold your couple. The nation felt the blast at home.\nDropped at the fire — and caught. A rupture, survived in public.\nThe 3 a.m. maths, done and survived. The nation saw the crack and the staying.\nPacked the suitcase at dawn — and unpacked it. Chose the villa on the hardest morning.\nThe scorched bombshell came for your couple first — and left empty-handed.\nYour couple was the rebound target and never blinked. Tested, publicly, and held.\nYou caught the ick, said it out loud, and the couple survived the saying.\nThe ick arrived, got named, and lost. Realness, on camera, by choice.\nBuried it, carried it, finally said it — the hard version of honest.\nThe buried ick surfaced and got handled like a grown-up. Late counts.\nBetrayed the couple, ran the lap, said it at the firepit — the redemption the nation writes essays about.\nThe public re-commitment, unhedged. Cracked and mended in front of the country.\nCracked, chose it again — fast. The nation argues about you at dinner tables.\nQuestioned it, cracked, chose it again — the arc the envelope loves.\nForgiveness delivered as a verdict, not a surrender. The complete storyline.\nMade them earn it, then meant it. The tested-and-came-back arc, complete.\nThe lap ran its full distance and the forgiveness was EARNED. A storyline with receipts.\nCracked, tested at length, chosen again with the receipts read aloud. The season’s best arc."
+    },
+    {
+      "id": "arc_setpieces",
+      "type": "recap",
+      "context": "The arcs’ framed moments (banner · scene line)",
+      "text": "THE ICK · Love’s internal lie-detector just pinged. It does not offer a snooze button.\nTHE RE-COMMITMENT · Three days of coffee and shutting up. Now the sentence, at the firepit, on the record.\nTHE FORGIVENESS QUESTION · The coffee has been arriving. The sentence got said. The queue number being called is yours."
+    },
+    {
+      "id": "help_story",
+      "type": "villa-copy",
+      "context": "The help sheet, the story-gate line",
+      "text": "📖 Win the Villa also wants a STORY: survive an ick, repair a betrayal, get rescued at a firepit — the nation crowns an arc, never a cruise."
+    }
+  ]
+}

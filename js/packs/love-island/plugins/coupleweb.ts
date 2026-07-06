@@ -66,8 +66,10 @@ export interface ThreadDef {
 // on camera; at 1 + 1 the drama lands inside its window.
 export const THREADS: ThreadDef[] = [
   // Marco (villain with a skincare routine) & Sophia (brand deal in human
-  // form) — the showmance with a wandering eye. The season's loudest B-plot.
-  { id: 'triangle', cast: ['marco', 'sophia'], window: [2, 4], stages: 1, offscreen: 'quiet' },
+  // form), with Amber (main character, self-cast) as the third corner — the
+  // showmance with a wandering eye. The season's loudest B-plot. All three
+  // are guarded: you can't watch a triangle any corner of which you married.
+  { id: 'triangle', cast: ['marco', 'sophia', 'amber'], window: [2, 4], stages: 1, offscreen: 'quiet' },
   // Dev (nicest man in any postcode) & Tash (everyone's type on paper) —
   // the achingly slow real one. The quiet favourite.
   { id: 'slowburn', cast: ['dev', 'tash'], window: [2, 5], stages: 1, offscreen: 'parked' },

@@ -253,11 +253,15 @@ it is what it is             perfect match            110 percent
 living my best life          head over heels          ride or die
 here to make friends         love at first sight      good vibes only
 not here to make friends     sparks flying            live laugh love
-this journey                 sparks fly
-my journey                   whirlwind romance
-incredible journey           follow your heart
-when you know you know       follow my heart
+this journey                 sparks fly               understood the assignment
+my journey                   whirlwind romance        living rent free
+incredible journey           follow your heart        rent free
+when you know you know       follow my heart          said no one ever
 ```
+
+*(v4 S3 growth: the right-hand column's tail — meme-speak the factional and
+couple-web writing kept reaching for. It dates faster than the villa; quoted
+Islander mouths are exempt as ever.)*
 
 ---
 
@@ -315,3 +319,36 @@ The whole deck was converted to this addendum (the v2 voice pass): every card
 reviewed, ~100 prompts/outcomes rewritten to lead with speech wherever the
 scene has a mouth. The encounter files (`events-encounters.ts`,
 `events-gossip.ts`, the ceremony cash-out) are the fullest worked examples.
+
+---
+
+## v4 S3 addendum — the wings and the web
+
+Session 3 adds two card families with their own register hazards. The rules:
+
+1. **The nation speaks as living rooms, never as demographics.** A faction is
+   sofas, group chats, and nans — "🌹 Somewhere, a nan approves", "💅 the
+   spine wing updates your file" — never polling language, never real-world
+   political vocabulary (the audience split is values-based by charter). The
+   wings get NICKNAMES in running copy (the soft wing, the spine-havers, the
+   chaos wing, the popcorn) — coin once, call back, Stirling-style.
+2. **Witness cards are someone else's scene.** The thread cast carry their
+   OWN dialogue (Sophia gets the good lines in Sophia's showdown); the player
+   is a camera with opinions, and the CHOICE is only their relationship to
+   the moment. If the player's option could steer the couple, it's mis-written
+   — witness, don't steer. Thread people stay hyper-specific: Marco's
+   skincare has a suitcase, Dev's tea has a reserved seat, the shade is
+   Marbella Sunset, NOT CORAL.
+3. **The ick is reported by the tiny inspector, deadpan.** Interior dread
+   gets the Narrator's flat face ("a tiny inspector behind your ribs puts
+   down a clipboard"), never sentimental swelling. The partner's dialogue in
+   an ick scene stays SINCERE argot — the two-mouths rule under stress is
+   still the two-mouths rule.
+4. **Repair is logistics, not poetry.** The grovel is coffees, towels, a
+   rescued washing line — small nouns, sustained; the re-commitment is one
+   plain sentence at the firepit. If a repair line reaches for a metaphor
+   before it has named a beverage, cut the metaphor.
+5. **Story beats announce their why.** Every `storyBeat` string is a
+   one-sentence receipt ("Jilted on national television — and back on the
+   horse.") — the ledger is diegetic, so the line must read like the show
+   summarising you, not a quest log.

@@ -37,6 +37,14 @@ export const LOVE_ISLAND_CLICHES = [
   'ride or die',
   'good vibes only',
   'live laugh love',
+  // v4 S3 growth: the internet-speak the factional/couple-web writing kept
+  // reaching for — meme-adjacent filler that dates faster than the villa.
+  // (In quoted Islander mouths it would be exempt anyway; the Narrator and
+  // villa-copy don't get it.)
+  'understood the assignment',
+  'living rent free',
+  'rent free',
+  'said no one ever',
 ];
 
 // The pack's taste config, consumed by tools/taste-core.mjs's checker.

@@ -395,6 +395,12 @@ function whatsComing(state: RunState, week: number): string {
 // on where the three wings actually sit.
 function nationRead(state: RunState): string {
   const tiers = FACTION_KEYS.map((k) => ({ k, meta: FACTION_META[k], tier: factionTier(state[k] ?? 0) }));
+  // Early season, nothing banked anywhere: the nation hasn't DECIDED yet —
+  // "gone off you" is a story about a fall, and there's been nowhere to fall
+  // from. One undecided line instead of three cold chips.
+  if ((state.act || 1) <= 2 && tiers.every((t) => t.tier === 'lost' || t.tier === 'unconvinced')) {
+    return 'Still deciding what you are. Week one is the audition; the wings — 🌹 the soft hearts, 💅 the spines, 🍿 the popcorn — pick their favourites from here.';
+  }
   const chips = tiers.map((t) => `${t.meta.icon} ${t.meta.name.replace('The ', '')}: <b>${t.tier}</b>`).join(' · ');
   const lost = tiers.filter((t) => t.tier === 'lost');
   const warm = tiers.filter((t) => t.tier === 'onside' || t.tier === 'devoted');
