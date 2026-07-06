@@ -1,42 +1,25 @@
-// BIG BREAK — UI: screens, card swipe physics, result presentation.
+// BIG BREAK — UI composition root.
+//
+// The UI is a layered set of modules under js/ui/ — a clean dependency graph:
+//   context   session state (run/meta/pack) as live bindings + pack-aware reads
+//   dom       element factory, overlay engine, screen transition — pure mechanism
+//   gates · feeds · inspectors · hud   leaf render helpers (forward edges only)
+//   nav       the ONE navigation contract every screen calls through (Nav)
+//   card · progression · endings · newrun · menus   the deep screen modules
+// No screen module imports another — they transition through `nav` — so the
+// graph is a DAG. This file is the top of it: it binds every screen renderer
+// into the nav seam (the one place they are named) and boots the app. It is
+// the only module allowed to know all the screens.
 
-import { CONFIG } from './config.js';
-import { INSTRUMENTS } from './data/instruments.js';
-import { rivalById } from './data/rivals.js';
-import { accessoryById } from './data/accessories.js';
-import { equipAccessory } from './packs/plugins/gear.js';
-import { signContract } from './packs/plugins/contract.js';
-import { ensureSongs, releaseSong, flagshipSong } from './songs.js';
-import { EVENTS } from './data/events.js';
 import * as engine from './engine.js';
-import { musicPack } from './packs/music.js';
 import * as save from './save.js';
-import { artFor, sceneFor, registerArt } from './art.js';
-import { buildChart, buildChartWithMovement, playerChartInfo, collabArtistFor } from './charts.js';
-import { CONTRACTS, contractById } from './data/contracts.js';
-import { hustleById } from './data/hustles.js';
-import { offerGenres, genreById } from './data/genres.js';
-import { weatherById } from './data/weather.js';
-import { offerVenues, venueById, VENUE_TIERS } from './data/venues.js';
-import { bandmateById } from './data/band.js';
-import { renderShareImage } from './sharecard.js';
-import { buildDefaultShareText, SHARE_TIER_EMOJI, DEFAULT_FAIL_LABELS } from './share-text.js';
-import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
-import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from './analytics.js';
-import { playMinigame, minigameById } from './minigames.js';
-import {
-  activePack, PATHS, STAT_META, RESOURCE_META, PRES, meta, run,
-  selectPack, setRun, setMeta, metaFor, fillText, itemById, vibeFor, failLabelFor,
-} from './ui/context.js';
-import {
-  $, el, activatable, keyable, btn, reducedMotion, vibrate, show, openOverlay,
-  spawnConfetti, coachMark, todayStr, weekStr, hashStr, healStaleStylesheets,
-} from './ui/dom.js';
-import { pathFit, gateReadout } from './ui/gates.js';
-import { feedTeaser } from './ui/feeds.js';
-import { renderHud, spawnStatFloaters } from './ui/hud.js';
-import { showInspect, showHelp } from './ui/inspectors.js';
-import { nav, routeAdvance, type Nav } from './ui/nav.js';
+import { musicPack } from './packs/music.js';
+import { registerArt } from './art.js';
+import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
+import { initAnalytics, track } from './analytics.js';
+import { PRES, meta, run, selectPack, setMeta } from './ui/context.js';
+import { $, show, healStaleStylesheets } from './ui/dom.js';
+import { nav, type Nav } from './ui/nav.js';
 import { dealCard, commitSwipe } from './ui/card.js';
 import { renderCrossroads, actInterstitial, showBrammies, renderFinalSet } from './ui/progression.js';
 import { renderFinale, renderGameOver } from './ui/endings.js';

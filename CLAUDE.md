@@ -25,6 +25,19 @@
   game's taste data from that game's folder rather than hard-coding it. Extract
   generic mechanism to a testable `tools/*-core.mjs` (see `pack-core`,
   `sim-core`, `taste-core`) rather than growing a shared file with game specifics.
+- **The UI is a layered DAG under `js/ui/`.** `js/ui.ts` is the composition
+  root — it boots the app and, in one typed `Nav` wiring object, is the single
+  place the concrete screens are named. Everything else is a module with a
+  strict downward dependency direction: `context` (session state — `run`/`meta`/
+  the active pack — as ES live bindings + the pack-aware readers) and `dom`
+  (element factory, overlay engine, screen transition — pure mechanism) at the
+  bottom; `gates`/`feeds`/`inspectors`/`hud` are leaf render helpers (forward
+  edges only, never route); `nav` is the ONE `Nav` interface every screen calls
+  through to move between screens; and `card`/`progression`/`endings`/`newrun`/
+  `menus` are the deep screen modules. **No screen module imports another** —
+  transitions go through `nav` (dependency inversion), so the graph stays
+  acyclic. Adding a screen adds one `Nav` method + one module; only the
+  composition root changes.
 - Seeded behavior is pinned by golden masters (music, love-island, and the
   zero-subsystem probe). A golden diff is a bug unless intended — then
   re-baseline deliberately (`tools/gen-golden.mjs`, `tools/gen-li-golden.mjs`,
