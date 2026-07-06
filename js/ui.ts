@@ -1627,10 +1627,26 @@ function showResult(result) {
   else if (result.tier === 'good') sfx.good();
   else { sfx.bad(); vibrate(80); }
 
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
-
+  // Forced-choice paths (shop shelf pick / gear-full chooser) don't arm the
+  // tap-to-continue dismiss — you must pick a button. The normal path advances
+  // on dismiss (tap or Escape). `handled` lets a button do its own routing and
+  // suppress the default advance in onClose.
+  const shelf0 = result.deltas.pendingGearChoices;
+  const pending0 = result.deltas.pendingGear;
+  const forced = !!(shelf0 && shelf0.length) ||
+    (!!pending0 && (run.accessories || []).length >= CONFIG.accessorySlots);
+  let handled = false;
+  const onClose = () => {
+    if (handled) return;
+    routeAdvance(engine.advance(run));
+    meta.coach = meta.coach || {};
+    if (!run.tutorial && !meta.coach.result) {
+      meta.coach.result = true;
+      save.saveMeta(meta);
+      coachMark('Outcomes have three tiers — your stats and gear tilt the roll. Build what your path needs; watch 🔥 Burnout.');
+    }
+  };
+  openOverlay((ov, close) => {
   const box = el('div', `result-card tier-${result.tier}`);
   // Announce the outcome to assistive tech (Epic 7): a swipe result was
   // previously silent for screen-reader users. role="status" makes the card a
@@ -1765,7 +1781,7 @@ function showResult(result) {
     const list = el('div', 'gear-choices');
     for (const acc of shelf) {
       list.append(btn(`${acc.name} — ${acc.blurb}`, '', () => {
-        ov.classList.remove('active');
+        handled = true; close();
         if ((run.accessories || []).length < CONFIG.accessorySlots) {
           equipAccessory(run, acc.id);
           save.saveRun(run);
@@ -1792,7 +1808,7 @@ function showResult(result) {
     } else {
       box.append(el('p', 'gear-blurb', `🧰 <b>${pending.name}</b> is yours — but your ${CONFIG.accessorySlots} slots are full.`));
       box.append(btn('Choose what to keep', 'primary', () => {
-        ov.classList.remove('active');
+        handled = true; close();
         gearChooser(pending, result);
       }));
       ov.append(box);
@@ -1809,20 +1825,7 @@ function showResult(result) {
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
   if (result.deltas.some((d) => d.key === 'money' && d.amount > 0)) sfx.cash();
-
-  const done = () => {
-    ov.classList.remove('active');
-    ov.removeEventListener('click', done);
-    routeAdvance(engine.advance(run));
-    meta.coach = meta.coach || {};
-    if (!run.tutorial && !meta.coach.result) {
-      meta.coach.result = true;
-      save.saveMeta(meta);
-      coachMark('Outcomes have three tiers — your stats and gear tilt the roll. Build what your path needs; watch 🔥 Burnout.');
-    }
-  };
-  ov.removeAttribute('data-armed');
-  setTimeout(() => { ov.addEventListener('click', done); ov.setAttribute('data-armed', '1'); }, 250);
+  }, { dismissable: !forced, armMs: 250, onClose });
 }
 
 function deltaChip(key, amount) {
