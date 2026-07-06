@@ -13,6 +13,7 @@
 import { musicPack } from '../packs/music.js';
 import * as save from '../save.js';
 import { rivalById } from '../data/rivals.js';
+import { accessoryById } from '../data/accessories.js';
 import { genreById } from '../data/genres.js';
 import { venueById } from '../data/venues.js';
 import { collabArtistFor } from '../charts.js';
@@ -50,6 +51,22 @@ export function selectPack(pack: Pack) {
 // re-point for every reader.
 export function setRun(r: RunState | null) { run = r; }
 export function setMeta(m: any) { meta = m; }
+
+// Resolve an equipped-item id through the active pack's catalog (presenter
+// hook), else music's accessories — the original static default.
+export function itemById(id) {
+  return PRES.itemById?.(id) || accessoryById(id);
+}
+
+// The art system's reactive-scene inputs for this run — a pack maps its own
+// meters onto them (presenter.vibe); the default is music's trio. Read by the
+// card art and the ending art, so it lives here below both.
+export function vibeFor() {
+  if (run && PRES.vibe) return PRES.vibe(run);
+  return run
+    ? { fame: run.fame, network: run.stats.network, burnout: run.stats.burnout }
+    : { fame: 0, network: 0, burnout: 0 };
+}
 
 // Display name/icon for ANY taxonomy key — stat, burnout, or resource — read
 // from the pack manifest (Phase G.4). Replaces the old fame/hits label
