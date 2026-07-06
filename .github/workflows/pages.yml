@@ -58,6 +58,14 @@ jobs:
         run: npm ci
       - name: Build dist/ (tsc emit + static copy)
         run: npm run build
+      - name: Strict typecheck gate (engine core — Epic 1)
+        # Full `strict` over the genre-neutral core (js/engine.ts + the boundary
+        # types + config), as its own noEmit pass. The frozen build tsconfig
+        # can't flip `strict` while the shell still carries implicit `any`, so
+        # this enforces it here instead. Type annotations erase at emit, so this
+        # can never move a golden; the `include` glob in tsconfig.strict.json is
+        # the migration frontier — widen it as each module is brought to strict.
+        run: npm run typecheck
       - name: Content lint
         run: node tools/lint-content.mjs
       - name: Balance & reach gate (music, against dist/)

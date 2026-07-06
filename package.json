@@ -6,9 +6,10 @@
   "description": "Big Break — a genre-agnostic swipe-roguelike engine with swappable content packs, powering a music-career game.",
   "scripts": {
     "build": "node tools/build.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.strict.json",
     "lint": "npm run build && node tools/lint-content.mjs",
     "smoke": "npm run build && node test/ui-smoke.mjs",
-    "check": "npm run build && node tools/lint-content.mjs && node tools/simulate.mjs --check && node test/ui-smoke.mjs && node test/ui-crowding.mjs && node test/ui-mobile-matrix.mjs",
+    "check": "npm run build && npm run typecheck && node tools/lint-content.mjs && node tools/simulate.mjs --check && node test/ui-smoke.mjs && node test/ui-crowding.mjs && node test/ui-mobile-matrix.mjs",
     "test": "npm run build && node --test test/*.test.mjs",
     "sim": "npm run build && node tools/simulate.mjs",
     "android": "npm run build && node tools/android/run.mjs",

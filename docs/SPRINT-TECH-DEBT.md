@@ -102,6 +102,24 @@ compiler defends, and it makes the marquee architectural claim — "a typo'd key
 is a compile error" — *true for the run state too*, not just the authored
 content. It de-risks Epics 2, 4 and 5.
 
+**Status — landed (this sprint).** The genre-neutral core (`js/engine.ts` +
+`js/types.ts` + `js/config.ts`) now passes **full `strict`** (incl.
+`noImplicitAny` + `strictNullChecks`). Rather than flip the frozen build
+tsconfig — which would break `npm run build`/the deploy while the shell still
+carries implicit `any`, and risks shifting the golden-policed emit — strictness
+runs as its own `noEmit` gate: `tsconfig.strict.json` extends the build config,
+turns on `strict`, and `include`s only the core. `npm run typecheck` runs it;
+it's wired into `npm run check` and is a CI gate in `pages.yml`. All ~105
+core errors are fixed (annotated params, a typed resource-lookup at three
+`CONFIG` sites, and the null-safety at the finale/climax paths). Emit is
+**code-identical** (only added comments differ; `config.js` byte-identical),
+proven by a diff against the pre-change build and 228/228 goldens green — so
+this closed **Wave (a)** and most of the `strictNullChecks` payoff *without*
+needing the risky `RunState` index-signature narrowing. That narrowing (Wave
+(b)) remains the follow-up: the `tsconfig.strict.json` `include` glob is the
+migration frontier — widen it file-by-file (`save.ts`, `platform.ts`, then the
+packs, then `ui.ts`) as each module is brought up to strict.
+
 ---
 
 ## Epic 2 — Typed, combinator-based plugin dispatch

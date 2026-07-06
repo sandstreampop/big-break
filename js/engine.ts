@@ -2,7 +2,7 @@
 // module runs in the browser and in the sims. It imports no content module.
 
 import { CONFIG } from './config.js';
-import type { Pack, RunState, Plugin } from './types.js';
+import type { Pack, RunState, Plugin, GameEvent, Choice, Side, Requires, Tier } from './types.js';
 
 // ---------- Injected content pack ----------
 // A genre is a Pack, injected at run start (newRun) and re-affirmed at
@@ -23,7 +23,7 @@ export function activePack(): Pack {
 // Tutorial cards live outside PACK.events so they can never enter normal decks;
 // chains and resume still need to find them by id. Exported as a plugin-facing
 // service so a subsystem (seeds) can inspect the deck without importing it.
-export function findEvent(id) {
+export function findEvent(id: string): GameEvent | null {
   return PACK.events.find((e) => e.id === id) || PACK.tutorialEvents.find((e) => e.id === id) || null;
 }
 
@@ -36,7 +36,7 @@ function segments(): import('./types.js').SegmentDef[] {
 
 // The number of cards a segment runs: the manifest's declared length, which a
 // subsystem may bend (modifyActLength), plus this run's act twist.
-export function actLength(state, act) {
+export function actLength(state: RunState, act: number) {
   if (state.tutorial) return PACK.tutorialEvents.length;
   const base = foldActLength(state, act, segments()[act - 1]?.length ?? 0);
   const twist = state.actTwist && state.actTwist.act === act ? state.actTwist.delta : 0;
@@ -47,7 +47,7 @@ export function actLength(state, act) {
 // are recorded, which the goldens pin — so a pack must keep it stable.
 const stats = () => PACK.manifest.stats;
 
-function randInt(rng, min, max) {
+function randInt(rng: () => number, min: number, max: number) {
   return Math.floor(rng() * (max - min + 1)) + min;
 }
 
@@ -55,7 +55,7 @@ function randInt(rng, min, max) {
 // Every run carries a seed + draw counter, so a run replays identically
 // after a tab death, and Daily Grind runs are identical for everyone.
 
-export function mulberry32(a) {
+export function mulberry32(a: number) {
   return function () {
     a |= 0; a = (a + 0x6D2B79F5) | 0;
     let t = Math.imul(a ^ (a >>> 15), 1 | a);
@@ -65,14 +65,14 @@ export function mulberry32(a) {
 }
 
 const rngCache = new WeakMap();
-export function stateRng(state) {
+export function stateRng(state: RunState) {
   if (!state.seed) { // legacy saves: fall back to Math.random
     return Math.random;
   }
   return () => {
     let c = rngCache.get(state);
     if (!c || c.uses !== (state.rngUses || 0) || c.seed !== state.seed) {
-      const gen = mulberry32(state.seed);
+      const gen = mulberry32(state.seed!);
       for (let i = 0; i < (state.rngUses || 0); i++) gen();
       c = { gen, uses: state.rngUses || 0, seed: state.seed };
       rngCache.set(state, c);
@@ -82,20 +82,20 @@ export function stateRng(state) {
     return c.gen();
   };
 }
-function clamp(v, lo, hi) {
+function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
 }
 
 // Read any stat- or resource-key's value generically: core stats live in
 // state.stats, resources live top-level. Every winGates/requires key resolves
 // through here, so the core special-cases no key.
-export function gateValue(state, key): number {
+export function gateValue(state: RunState, key: string): number {
   return (key in state.stats) ? state.stats[key] : (state[key] ?? 0);
 }
 
 // ---------- Run lifecycle ----------
 
-export function offerLoadouts(unlockedLoadoutIds, rng = Math.random) {
+export function offerLoadouts(unlockedLoadoutIds: string[], rng: () => number = Math.random) {
   const pool = PACK.loadouts.filter((i) => unlockedLoadoutIds.includes(i.id));
   const picks = [];
   const bag = [...pool];
@@ -105,7 +105,7 @@ export function offerLoadouts(unlockedLoadoutIds, rng = Math.random) {
   return picks;
 }
 
-export function newRun(pack: Pack, loadoutId, unlockedPacks, rng = Math.random, perks = []) {
+export function newRun(pack: Pack, loadoutId: string, unlockedPacks: string[], rng: () => number = Math.random, perks: string[] = []) {
   PACK = pack; // this run's content pack; also settable via useContentPack
   const inst = PACK.loadoutById(loadoutId);
   // Roll each core stat in manifest order, then burnout. Manifest order fixes
@@ -207,12 +207,12 @@ export function newTutorialRun(pack: Pack, rng = Math.random) {
 // A pack-provided run transform applied when the player has unlocked it (music's
 // comeback mode restarts a career as a faded name). It hardcodes the pack's own
 // stats, so the engine only dispatches to it; a pack without one is a no-op.
-export function applyComeback(state) {
+export function applyComeback(state: RunState) {
   PACK.comeback?.(state);
 }
 
 // Loadout mastery (earned across runs): +level to every core stat
-export function applyMastery(state, level) {
+export function applyMastery(state: RunState, level: number) {
   const lv = Math.max(0, Math.min(3, level | 0));
   if (!lv) return;
   state.mastery = lv;
@@ -221,11 +221,11 @@ export function applyMastery(state, level) {
 
 // ---------- Deck assembly ----------
 
-export function actMatches(ev, act) {
+export function actMatches(ev: GameEvent, act: number) {
   return Array.isArray(ev.act) ? ev.act.includes(act) : ev.act === act;
 }
 
-function meetsRequires(ev, state) {
+function meetsRequires(ev: GameEvent, state: RunState) {
   return requiresOk(ev.requires, state);
 }
 
@@ -253,7 +253,7 @@ function requiresPredicates(): Record<string, (state: any, arg: any) => boolean>
 
 // Evaluate a Requires gate. Exported as a plugin-facing service so a subsystem
 // can test its own conditions with the same semantics.
-export function requiresOk(r, state) {
+export function requiresOk(r: Requires | null | undefined, state: RunState) {
   if (!r) return true;
   // anyOf: alternative gates — the card fires if ANY branch is satisfied.
   if (r.anyOf && !r.anyOf.some((alt) => requiresOk(alt, state))) return false;
@@ -287,13 +287,13 @@ export function requiresOk(r, state) {
   return true;
 }
 
-function pathEligible(ev, state) {
+function pathEligible(ev: GameEvent, state: RunState) {
   if (!ev.pathAffinity || ev.pathAffinity.length === 0) return true;
   if (!state.path) return false; // path cards never appear pre-commit
   return ev.pathAffinity.includes(state.path);
 }
 
-export function eligibleEvents(state) {
+export function eligibleEvents(state: RunState) {
   return PACK.events.filter(
     (ev) =>
       !ev.chainOnly &&
@@ -305,7 +305,7 @@ export function eligibleEvents(state) {
   );
 }
 
-export function drawNextCard(state, rng = Math.random) {
+export function drawNextCard(state: RunState, rng: () => number = Math.random) {
   // Resuming a saved run mid-card: re-deal the same card
   if (state.currentEventId) {
     const ev = findEvent(state.currentEventId);
@@ -356,7 +356,7 @@ export function drawNextCard(state, rng = Math.random) {
   const seen = state.seenCards ? new Set(state.seenCards) : null;
   let total = 0;
   const weights = pool.map((ev) => {
-    const affine = ev.pathAffinity && ev.pathAffinity.includes(state.path);
+    const affine = ev.pathAffinity && ev.pathAffinity.includes(state.path as string);
     let w = (ev.weight || 1) *
       (affine ? CONFIG.pathWeightMult : 1) *
       (seen && !seen.has(ev.id) ? CONFIG.noveltyWeightMult : 1);
@@ -379,7 +379,7 @@ export function drawNextCard(state, rng = Math.random) {
 
 // ---------- Resolution ----------
 
-export function tagsIntersect(a, b) {
+export function tagsIntersect(a?: string[], b?: string[]) {
   return a && b && a.some((t) => b.includes(t));
 }
 
@@ -415,53 +415,53 @@ function firePlugins(hook: PluginHook, ...args: any[]): void {
 // sources stay subsystems it never names. ──
 
 // Additive roll bonus, summed across plugins.
-function sumRollBonus(state, choice, ctx): number {
+function sumRollBonus(state: RunState, choice: Choice, ctx: any): number {
   let bonus = 0;
   for (const p of orderedPlugins()) bonus += p.modifyRoll?.(state, choice, ctx) ?? 0;
   return bonus;
 }
 // Fold each plugin's transform of the roll's jitter band.
-function foldJitter(state, jitter: [number, number], ctx): [number, number] {
+function foldJitter(state: RunState, jitter: [number, number], ctx: any): [number, number] {
   for (const p of orderedPlugins()) if (p.modifyJitter) jitter = p.modifyJitter(state, jitter, ctx);
   return jitter;
 }
 // The per-resolution gain-multiplier bags plugins contribute, applied by the
 // stat/burnout loops after the loadout's own (core).
-function gainBags(state): any[] {
+function gainBags(state: RunState): any[] {
   const bags: any[] = [];
   for (const p of orderedPlugins()) { const b = p.gainHooks?.(state); if (b) bags.push(b); }
   return bags;
 }
 // Does any plugin disable the Encore mechanic this run?
-function encoreDisabled(state): boolean {
+function encoreDisabled(state: RunState): boolean {
   for (const p of orderedPlugins()) if (p.blocksEncore?.(state)) return true;
   return false;
 }
 // Fold each plugin's burnout-delta adjustment, between the loadout's own burnout
 // hooks and the gain-multiplier bags.
-function foldBurnout(state, v: number, ctx): number {
+function foldBurnout(state: RunState, v: number, ctx: any): number {
   for (const p of orderedPlugins()) if (p.modifyBurnout) v = p.modifyBurnout(state, v, ctx);
   return v;
 }
 // Fold each plugin's deck-weight multiplier.
-function foldDeckWeight(state, ev, weight: number): number {
+function foldDeckWeight(state: RunState, ev: GameEvent, weight: number): number {
   for (const p of orderedPlugins()) if (p.weightDeck) weight = p.weightDeck(state, ev, weight);
   return weight;
 }
 // Let each plugin force a scheduled category into the draw pool.
-function foldDeckPool(state, pool, ctx): any[] {
+function foldDeckPool(state: RunState, pool: GameEvent[], ctx: any): any[] {
   for (const p of orderedPlugins()) if (p.refineDeck) pool = p.refineDeck(state, pool, ctx);
   return pool;
 }
 // Product of each plugin's Legacy Points multiplier. Starts at 1 (identity), so
 // a run with no multipliers scores float-exactly the unmultiplied base.
-function scoreMult(state): number {
+function scoreMult(state: RunState): number {
   let mult = 1;
   for (const p of orderedPlugins()) mult *= p.scoreMult?.(state) ?? 1;
   return mult;
 }
 // Fold each plugin's act-length override.
-function foldActLength(state, act, base: number): number {
+function foldActLength(state: RunState, act: number, base: number): number {
   for (const p of orderedPlugins()) if (p.modifyActLength) base = p.modifyActLength(state, act, base);
   return base;
 }
@@ -470,22 +470,22 @@ function foldActLength(state, act, base: number): number {
 // The active run's perk definitions, looked up from the pack's perk table. The
 // engine knows no perk id; it sums/applies whatever the perks declare at the
 // matching lifecycle point.
-function activePerks(state): import('./types.js').PerkDef[] {
+function activePerks(state: RunState): import('./types.js').PerkDef[] {
   const table = PACK.perks || {};
-  return (state.perks || []).map((id) => table[id]).filter(Boolean);
+  return (state.perks || []).map((id: string) => table[id]).filter(Boolean);
 }
 // Product of a numeric perk knob across the active perks (default 1 → identity).
-function perkMult(state, key: string): number {
+function perkMult(state: RunState, key: string): number {
   return activePerks(state).reduce((m, p) => m * ((p as any)[key] ?? 1), 1);
 }
 // Sum of a numeric perk knob across the active perks (default 0).
-function perkSum(state, key: string): number {
+function perkSum(state: RunState, key: string): number {
   return activePerks(state).reduce((n, p) => n + ((p as any)[key] ?? 0), 0);
 }
 
 // Roll components for a choice; used by both resolution and the risk tell.
 // opts.encore adds the armed-Encore bonus so odds and rolls stay in sync.
-export function rollComponents(state, choice, opts: any = {}) {
+export function rollComponents(state: RunState, choice: Choice, opts: any = {}) {
   const gs: Record<string, number> = choice.governingStats || {};
   let sum = 0, wsum = 0;
   for (const [stat, w] of Object.entries(gs)) {
@@ -497,7 +497,7 @@ export function rollComponents(state, choice, opts: any = {}) {
   // Items whose roll bonus fired this card, recorded by a plugin's modifyRoll
   // via rollCtx.applied; resolution reads them back for lose-on-bad and burnout
   // side effects.
-  const applied = [];
+  const applied: any[] = [];
 
   const inst = PACK.loadoutById(state.loadout);
   let quirkBonus = 0;
@@ -538,14 +538,14 @@ export function incredibleTargets(): string[] {
 
 // Rolls compress above the soft cap, so a maxed-out build still sweats the
 // jitter instead of auto-clearing the INCREDIBLE bar every card.
-function softCap(roll) {
+function softCap(roll: number) {
   return roll > CONFIG.rollSoftCap
     ? CONFIG.rollSoftCap + (roll - CONFIG.rollSoftCap) * 0.5
     : roll;
 }
 
 // Risk tell: probability each tier fires, given uniform jitter.
-export function choiceOdds(state, choice, opts: any = {}) {
+export function choiceOdds(state: RunState, choice: Choice, opts: any = {}) {
   const c = rollComponents(state, choice, opts);
   const base = c.base;
   const [jMin, jMax] = c.jitter;
@@ -559,8 +559,8 @@ export function choiceOdds(state, choice, opts: any = {}) {
   return { bad: bad / span, good: (span - bad - incredible) / span, incredible: incredible / span };
 }
 
-export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
-  const ev = findEvent(state.currentEventId);
+export function resolveSwipe(state: RunState, side: Side, rng: () => number = Math.random, opts: any = {}) {
+  const ev = findEvent(state.currentEventId)!;
   const choice = ev.choices[side];
   const useEncore = !!opts.encore && (state.encore || 0) > 0 && !encoreDisabled(state);
   if (useEncore) state.encore -= 1;
@@ -585,7 +585,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   const c = rollComponents(state, choice, { encore: useEncore, bonus: opts.bonus || 0 });
   const jitter = randInt(rng, c.jitter[0], c.jitter[1]);
   const roll = softCap(c.base + jitter);
-  let tier;
+  let tier: Tier;
   if (roll < CONFIG.tierBadBelow) tier = 'bad';
   else if (roll >= CONFIG.tierIncredibleAt) tier = 'incredible';
   else tier = 'good';
@@ -615,7 +615,10 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   }
 
   const outcome = choice.outcomes[tier];
-  const effects = { ...outcome.effects };
+  // Open record: the generic INCREDIBLE-scaling and quirk-bonus blocks below
+  // write manifest-keyed verbs the closed `Effect` type deliberately doesn't
+  // enumerate, so the working payload is indexed by string here.
+  const effects: Record<string, any> = { ...outcome.effects };
   // Rarer × bigger: INCREDIBLE scales the magnitude payloads — every core stat
   // plus the manifest's designated magnitude resources (incredibleTargets).
   // Structural/story counters (a pack's hits, momentum, rivalry) are not in that
@@ -654,7 +657,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   if ((state.promises || []).length) {
     const kept = [], remaining = [];
     for (const p of state.promises) {
-      if (tagsIntersect(p.tags, choice.tags) && tier !== 'declined') {
+      if (tagsIntersect(p.tags, choice.tags) && (tier as string) !== 'declined') {
         kept.push(p);
       } else if (p.remaining <= 1) {
         (result.promisesBroken = result.promisesBroken || []).push(p);
@@ -671,7 +674,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
       applyEffects(state, p.penalty || {}, null, null, rng).forEach((d) => deltas.push(d));
     }
   }
-  if (effects.addPromise && tier !== 'declined') {
+  if (effects.addPromise && (tier as string) !== 'declined') {
     state.promises = state.promises || [];
     if (state.promises.length < 2) { // at most two open promises
       state.promises.push({ ...effects.addPromise, remaining: effects.addPromise.cards });
@@ -688,7 +691,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   if (tier === 'bad' && !activePerks(state).some((p) => p.keepGearOnBad)) {
     for (const acc of c.appliedAccessories) {
       if (acc.loseOnBad && state.accessories.includes(acc.id)) {
-        state.accessories = state.accessories.filter((a) => a !== acc.id);
+        state.accessories = state.accessories.filter((a: string) => a !== acc.id);
         result.gearLost = acc;
       }
     }
@@ -720,7 +723,7 @@ export function resolveSwipe(state, side, rng = Math.random, opts: any = {}) {
   return result;
 }
 
-function finishCard(state, ev) {
+function finishCard(state: RunState, ev: GameEvent) {
   if (!state.usedEvents.includes(ev.id)) state.usedEvents.push(ev.id);
   state.cardsPlayedInAct += 1;
   if (ev.shop) state.shopPlayedInAct = true;
@@ -730,13 +733,13 @@ function finishCard(state, ev) {
 
 // Applies an effects payload; returns display deltas [{key, amount}]. Exported
 // so a plugin can apply its own payload through the full resolution pipeline.
-export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAccessories = [], mg = null) {
+export function applyEffects(state: RunState, effects: any, ev: GameEvent | null, choice: Choice | null, rng: () => number, tier?: any, appliedAccessories: any[] = [], mg: any = null): any[] {
   const deltas: any = [];
   const inst = PACK.loadoutById(state.loadout);
   const hooks: Record<string, any> = inst?.quirk?.hooks || {};
   const tags = choice?.tags || [];
 
-  const push = (key, amount) => { if (amount) deltas.push({ key, amount }); };
+  const push = (key: string, amount: number) => { if (amount) deltas.push({ key, amount }); };
 
   // The per-resolution gain-multiplier bags plugins contribute, applied by the
   // stat/burnout loops right after the loadout's own — the core keeps the
@@ -808,7 +811,7 @@ export function applyEffects(state, effects, ev, choice, rng, tier?, appliedAcce
 // climax card, then ends in the finale. Returns one of:
 // { kind:'card' } | { kind:'crossroads' } | { kind:'actStart', act, notes } |
 // { kind:'finale' } | { kind:'gameover', endingKey }
-export function advance(state) {
+export function advance(state: RunState) {
   const failed = checkFailStates(state);
   if (failed) {
     state.phase = 'ended';
@@ -827,7 +830,7 @@ export function advance(state) {
     // and coping interstitials can never displace it.
     if (terminal && state.path) {
       const climax = PACK.events.find(
-        (e) => e.finaleCard && e.pathAffinity?.includes(state.path) && !state.usedEvents.includes(e.id)
+        (e) => e.finaleCard && e.pathAffinity?.includes(state.path!) && !state.usedEvents.includes(e.id)
       );
       if (climax) {
         state.pendingChainId = climax.id;
@@ -849,17 +852,17 @@ export function advance(state) {
   return { kind: 'card' };
 }
 
-export function commitPath(state, pathId) {
+export function commitPath(state: RunState, pathId: string) {
   state.path = pathId;
   return startAct(state, state.act + 1);
 }
 
-function startAct(state, act) {
+function startAct(state: RunState, act: number) {
   state.act = act;
   state.cardsPlayedInAct = 0;
   state.shopPlayedInAct = false;
   state.phase = 'card';
-  const notes = [];
+  const notes: string[] = [];
   // Pack-declared perks that fire at every act break.
   for (const p of activePerks(state)) p.onActBreak?.(state, notes);
   // Act-break plugins, fired in registration order — load-bearing, because a
@@ -874,7 +877,7 @@ function startAct(state, act) {
   return notes;
 }
 
-export function checkFailStates(state) {
+export function checkFailStates(state: RunState) {
   if (state.tutorial) return null; // the tutorial can't end a run
   // The one universal fail: the engine owns the burnout slot, so every pack
   // fails when it maxes out. Every other fail is pack-declared (manifest
@@ -895,13 +898,13 @@ export function checkFailStates(state) {
 
 // ---------- Finale ----------
 
-export function evaluateFinale(state) {
+export function evaluateFinale(state: RunState) {
   state.phase = 'ended';
   // Fire the finale hook so plugins can run their last-tick payout; the engine
   // owns none of it.
   firePlugins('onFinale', state);
   const mr = PACK.manifest.momentumResource;
-  const gates = PACK.manifest.winGates[state.path] as Record<string, number>;
+  const gates = PACK.manifest.winGates[state.path!] as Record<string, number>;
   const readings = Object.entries(gates).map(([key, target]) => {
     const value = gateValue(state, key);
     return { key, target, value, met: value >= target, ratio: Math.min(1, value / target) };
@@ -929,7 +932,7 @@ export function evaluateFinale(state) {
 
 // ---------- Legacy Points ----------
 
-export function legacyPoints(state) {
+export function legacyPoints(state: RunState) {
   const s = state.stats;
   // Sum the pack's core stats generically off manifest.stats, so the score is
   // correct for any genre's stat set.
@@ -953,7 +956,7 @@ export function legacyPoints(state) {
 // owns. Every genre-specific field (a rival, a chart peak, a contract, a home
 // venue) is contributed by the pack's summarize capability, so the core names
 // no subsystem.
-export function runSummary(state) {
+export function runSummary(state: RunState) {
   const summary: Record<string, any> = {
     endingKey: state.ending?.key ?? null,
     result: state.ending?.result ?? null,

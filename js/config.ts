@@ -15,7 +15,7 @@ export const CONFIG = {
   // structure is the genre's SHAPE, so the engine hardcodes no act count.)
   // 0-indexed slot within each act where a shop/opportunity card is forced
   // if one is eligible and none has appeared yet this act
-  shopSlot: { 1: 2, 2: 4, 3: 2 },
+  shopSlot: { 1: 2, 2: 4, 3: 2 } as Record<number, number>,
 
   // Resolution
   // roll = rollBase + aptitude*aptitudeScale + gear + quirks + pity
@@ -37,7 +37,7 @@ export const CONFIG = {
   jitterMax: 15,
   // Jitter widens with the acts — late game keeps both tails alive.
   // Loadout/contract jitter overrides still win.
-  jitterByAct: { 1: [-15, 15], 2: [-18, 18], 3: [-22, 22] },
+  jitterByAct: { 1: [-15, 15], 2: [-18, 18], 3: [-22, 22] } as Record<number, [number, number]>,
   // Pity: each consecutive Bad adds a stacking roll bonus (bad-luck brake)
   pityPerBad: 6,
   pityCap: 18,
@@ -90,10 +90,10 @@ export const CONFIG = {
   // down even when things go well, so rest stays a real decision.
   // Acts 2–3 wear harder; the coping interstitials and the fear
   // content behind high burnout are authored and deserve an audience.
-  actWear: { 1: 0, 2: 2, 3: 3 },
+  actWear: { 1: 0, 2: 2, 3: 3 } as Record<number, number>,
 
   // Legacy Points
   lpStatDivisor: 10,
-  lpEndingBonus: { success: 50, partial: 20, failure: 5, failstate: 5 },
+  lpEndingBonus: { success: 50, partial: 20, failure: 5, failstate: 5 } as Record<string, number>,
   lpFirstTimeMilestone: 15, // first time reaching each ending kind per path
 };

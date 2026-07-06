@@ -1,0 +1,31 @@
+{
+  // STRICT typecheck gate (Epic 1 — the type-safety foundation).
+  //
+  // The build tsconfig is FROZEN and toolchain-pinned: its emit is what the
+  // golden masters police, so it must never gain a checking flag that could
+  // change behavior — and it can't flip `strict` while ui.ts et al. still carry
+  // implicit `any`, or `npm run build` (and the deploy) would break.
+  //
+  // This config solves that: it EXTENDS the frozen build config, adds full
+  // `strict` checking, and emits NOTHING (`noEmit`). It runs as its own CI gate
+  // (`tsc --noEmit -p tsconfig.strict.json`). Type annotations are erased at
+  // emit, so nothing here can move a golden — it is purely a compiler-enforced
+  // safety net.
+  //
+  // The `include` glob is the migration frontier: it starts at the genre-neutral
+  // core (engine + the boundary types + balance knobs) and widens file-by-file
+  // as each module is brought up to strict. Adding a file here that isn't clean
+  // fails the gate — which is the point.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noEmit": true
+  },
+  "include": [
+    "js/engine.ts",
+    "js/types.ts",
+    "js/config.ts"
+  ]
+}
