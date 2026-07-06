@@ -584,10 +584,14 @@ function startGauntlet() {
     run.genre = genre.id;
     signContract(run, contract.id);
     save.saveRun(run);
+    // Same shape as the normal run_start: neutral spine + the pack's own props
+    // via PRES.runProps. The gauntlet run carries instrument/contract/genre/
+    // mastery on `run` (venue unset → 'none'), so music's runProps reproduces
+    // the exact keys this used to inline.
     track('run_start', {
-      instrument: inst.id, contract: contract.id,
-      genre: genre.id, venue: 'none',
-      mode: 'gauntlet', mastery: masteryLevel(inst.id), career_runs: meta.runs || 0,
+      mode: 'gauntlet',
+      career_runs: meta.runs || 0,
+      ...(PRES.runProps?.(run, 'start') || {}),
     });
     dealCard();
   });
