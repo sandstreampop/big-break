@@ -12,7 +12,7 @@
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { skipUnlessRequired } from './require-browser.mjs';
@@ -94,6 +94,28 @@ async function clickJS(page, sel, timeout = 10000) {
   await page.evaluate((s) => document.querySelector(s)?.click(), sel);
 }
 
+// axe-core a11y gate (Epic 7 / decision 3). Inject the bundled axe source into
+// the page and scan the current screen for WCAG 2 A/AA violations. We gate on
+// SERIOUS + CRITICAL only (the ones that actually lock out AT/keyboard users);
+// minor/moderate are reported but don't fail, so the gate is meaningful without
+// being a wall. REPORT_ONLY=1 prints findings without failing (calibration).
+const AXE_SRC = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
+const AXE_REPORT_ONLY = !!process.env.AXE_REPORT_ONLY;
+async function axeScan(page, label, where) {
+  await page.evaluate((src) => {
+    if (!window.axe) { const s = document.createElement('script'); s.textContent = src; document.head.appendChild(s); }
+  }, AXE_SRC);
+  const res = await page.evaluate(async () => await window.axe.run(document, {
+    resultTypes: ['violations'],
+    runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+  }));
+  const bad = (res.violations || []).filter((v) => v.impact === 'serious' || v.impact === 'critical');
+  const fmt = (vs) => vs.map((v) => `${v.id} (${v.impact}) ×${v.nodes.length}: ${v.help}`).join('\n    ');
+  if (res.violations?.length) console.log(`  a11y @ ${label}/${where}: ${res.violations.length} rule(s); serious+critical: ${bad.length}\n    ${fmt(res.violations)}`);
+  if (bad.length && !AXE_REPORT_ONLY) throw new Error(`[${label}] axe serious/critical a11y violations @ ${where}:\n    ${fmt(bad)}`);
+  return bad.length;
+}
+
 async function playToFinale(page, label, pathIndex = 0) {
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
@@ -114,6 +136,7 @@ async function playToFinale(page, label, pathIndex = 0) {
   // #overlay, but their listener attaches on a 250ms timeout, so wait first.
   const deadline = Date.now() + 90000;
   let guard = 0;
+  let scannedCard = false;
   while (Date.now() < deadline && guard++ < 800) {
     if (errors.length) break;
     const k = await page.evaluate(() => {
@@ -149,6 +172,7 @@ async function playToFinale(page, label, pathIndex = 0) {
       }, idx);
       await page.waitForTimeout(60);
     } else if (k === 'card') {
+      if (!scannedCard) { await axeScan(page, label, 'game-card'); scannedCard = true; }
       await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
       await page.waitForTimeout(60);
     } else {
@@ -157,6 +181,7 @@ async function playToFinale(page, label, pathIndex = 0) {
   }
 
   const reached = !!(await page.$('#screen-ending.active'));
+  if (reached) await axeScan(page, label, 'ending');
   if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
   if (!reached) throw new Error(`[${label}] never reached #screen-ending (finale) within budget`);
   const hasVerdict = await page.$('#screen-ending .verdict, #screen-ending .ending-title');
