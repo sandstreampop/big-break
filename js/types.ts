@@ -166,6 +166,11 @@ export interface PackManifest {
   // resource. Pack-declared so the core ships no genre's joke; a pack that
   // omits it gets the engine's default line.
   declineText?: string;
+  // The finale success rate the balance gate holds the pack to (percent of all
+  // runs that end in a `success` outcome). Pack-declared so the generic balance
+  // driver (tools/simulate-pack.mjs --check) names no genre's numbers; a pack
+  // that omits it falls back to the tool's default band.
+  balanceBand?: { successMin: number; successMax: number };
 }
 
 // ---------- Plugin framework ----------

@@ -168,4 +168,8 @@ export const loveIslandManifest: PackManifest = {
   failStates: FAIL_STATES,
   declinePenalty: { public: -1 },
   declineText: 'You haven’t got the Graft for it. You announce you’re “keeping your options open.” The options heard you.',
+  // Balance gate (tools/simulate-pack.mjs --check): a villa season should be
+  // winnable but losable. The narrative model sits at ~31% success; the band
+  // holds it in 25–40% with margin, matching music's own --check band.
+  balanceBand: { successMin: 25, successMax: 40 },
 };

@@ -10,15 +10,20 @@ import { PACKS } from '../dist/js/packs/registry.js';
 import { simulatePackRun } from './pack-core.mjs';
 
 const args = process.argv.slice(2);
-const packId = args[0];
+const positional = args.filter((a) => !a.startsWith('--'));
+const CHECK = args.includes('--check');
+const packId = positional[0];
 const pack = PACKS.find((p) => p.id === packId);
 if (!pack) {
   console.error(`unknown pack '${packId}' — registered: ${PACKS.map((p) => p.id).join(', ')}`);
   process.exit(1);
 }
-const RUNS = parseInt(args[1] || '2000', 10);
+// --check is the CI balance gate: a pinned seed + run count so the verdict is
+// reproducible run-to-run, then hard thresholds that exit non-zero on breach.
+const CHECK_SEED = 0xC0DA; // pinned for the gate
+const RUNS = parseInt(positional[1] || (CHECK ? '3000' : '2000'), 10);
 const seedArg = args.find((a) => a.startsWith('--seed='));
-const BASE_SEED = seedArg ? parseInt(seedArg.split('=')[1], 10) : 0x5EED;
+const BASE_SEED = CHECK ? CHECK_SEED : (seedArg ? parseInt(seedArg.split('=')[1], 10) : 0x5EED);
 
 const seedGen = engine.mulberry32(BASE_SEED);
 const nextSeed = () => Math.floor(seedGen() * 1e9) + 1;
@@ -96,3 +101,35 @@ const under5 = rows.filter((r) => r.runs > 0 && r.runs / RUNS < 0.05);
 console.log(`\ncard reach: ${rows.length - never.length}/${rows.length} appeared · never ${never.length} (${neverOpen.length} ungated) · under 5%: ${under5.length}`);
 if (never.length) for (const r of never) console.log(`  never: ${r.gated ? '[gated]' : '[OPEN ⚠️]'} ${r.id}`);
 if (under5.length) console.log('  under 5%: ' + under5.map((r) => `${r.id}(${(100 * r.runs / RUNS).toFixed(1)}%)`).join(', '));
+
+if (CHECK) {
+  // ── Balance gate ── genre-neutral by construction: the success band comes
+  // from the pack's own manifest (a pack names its own numbers), and the other
+  // two are universal health invariants any pack must hold — no ungated card is
+  // dead (unreachable authored content), and the deck never runs dry. A breach
+  // exits non-zero so the deploy workflow blocks, exactly like music's --check.
+  const band = pack.manifest.balanceBand || { successMin: 25, successMax: 40 };
+  const successPct = (100 * rollup.success) / RUNS;
+  const checks = [
+    { name: `success band ${band.successMin}–${band.successMax}%`,
+      ok: successPct >= band.successMin && successPct <= band.successMax,
+      detail: `${successPct.toFixed(1)}%` },
+    { name: 'never-drawn ungated cards = 0',
+      ok: neverOpen.length === 0,
+      detail: `${neverOpen.length}` },
+    { name: 'deck-dry events = 0',
+      ok: tally.dry === 0,
+      detail: `${tally.dry}` },
+  ];
+  console.log(`\n=== ${pack.id} --check gates (seed=${BASE_SEED}, ${RUNS} runs) ===`);
+  let failed = 0;
+  for (const c of checks) {
+    console.log(`  ${c.ok ? '✓' : '✗ FAIL'}  ${c.name}  (${c.detail})`);
+    if (!c.ok) failed++;
+  }
+  if (failed) {
+    console.error(`\n✗ ${failed} gate(s) breached — deploy blocked.\n`);
+    process.exit(1);
+  }
+  console.log(`\n✓ all ${checks.length} gates passed.\n`);
+}

@@ -78,6 +78,11 @@ jobs:
         run: node tools/lint-content.mjs
       - name: Balance & reach gate (music, against dist/)
         run: node tools/simulate.mjs --check
+      - name: Balance gate (love-island, generic driver against dist/)
+        # An LI success-band or dead-card regression now blocks the deploy like
+        # music's does. Success band is pack-declared (manifest.balanceBand); the
+        # dead-card / deck-dry gates are universal.
+        run: node tools/simulate-pack.mjs love-island --check
       - name: Golden-master regression (music + probe, against dist/)
         # The golden/invariant oracles (DOM-free, no browser). The browser
         # suites live under test/ui/ (explicit paths below), so this top-level
