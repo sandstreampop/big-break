@@ -11,6 +11,7 @@ export const TURN_EVENTS: GameEvent[] = [
     requires: { singleIs: false, exclusiveIs: false },
     context: 'Late · the terrace · just you and a bombshell',
     prompt: 'Everyone else has gone to bed, allegedly. {bombshell} is beside you on the terrace saying quiet, dangerous things: “I just think, if you weren’t coupled up…” Oh no. Oh no no no. That sentence has never once ended well on this programme, and it knows it — look at it, hanging there, warming its hands over your whole situation.',
+    recap: 'Late on the terrace, just you and {bombshell} saying dangerous things.',
     choices: {
       left: {
         label: 'Shut it down',
@@ -40,6 +41,7 @@ export const TURN_EVENTS: GameEvent[] = [
     requires: { singleIs: false, exclusiveIs: true },
     context: 'Night · the kitchen · exclusive, and yet',
     prompt: 'You’re exclusive. It’s official. There was a small speech. And yet {bombshell} is leaning on the counter at 1 a.m. explaining, with troubling eye contact, that “official isn’t married, though, is it.” A philosopher. At one in the morning. By the hob.',
+    recap: 'You’re official — and {bombshell} is leaning on the counter at 1 a.m.',
     choices: {
       left: {
         label: 'Walk away now',
@@ -70,6 +72,7 @@ export const TURN_EVENTS: GameEvent[] = [
     requires: { singleIs: false, exclusiveIs: false, min: { bond: 45 } },
     context: 'Sunset · the roof terrace · a speech in your pocket',
     prompt: 'It’s going well. Suspiciously well. Well enough that the villa keeps asking The Question, and The Question has started following you around with a wee notebook: are you two going to make it official? Closing off means no more options — and a much longer way down.',
+    recap: 'It’s going suspiciously well, and the villa keeps asking The Question.',
     choices: {
       left: {
         label: 'Ask them to be exclusive',
@@ -98,6 +101,7 @@ export const TURN_EVENTS: GameEvent[] = [
     art: 'li_firepit_day',
     context: 'Afternoon · {mate}’s couple is on fire · not the good kind',
     prompt: '{mate}’s partner has been grafting on a bombshell all day in plain sight, and now {mate} is crying in the toilet and the villa is choosing sides with its feet. You know things. Saying them helps {mate} and torches a boy. Girl code has a clause for this. It’s just expensive.',
+    recap: '{mate}’s partner is grafting in plain sight, and {mate}’s crying in the loo.',
     choices: {
       left: {
         label: 'Back your mate',
@@ -127,6 +131,7 @@ export const TURN_EVENTS: GameEvent[] = [
     requires: { flagsAll: ['li_code_honour'] },
     context: 'Evening · “I’VE GOT A TEXT!!” · a vote among the Islanders',
     prompt: '“Islanders. Tonight, the girls and the boys will each vote for the Islander they most trust. The winners receive a dinner date on the beach. #trustissues” — A popularity contest disguised as a virtue contest, which is this show’s entire genome. You’ve kept the code. Time to collect.',
+    recap: 'Got a text — the Islanders vote for who they most trust.',
     choices: {
       left: {
         label: 'Campaign quietly',
@@ -156,6 +161,7 @@ export const TURN_EVENTS: GameEvent[] = [
     requires: { flagsAll: ['li_code_broke'] },
     context: 'Evening · “I’VE GOT A TEXT!!” · a vote among the Islanders',
     prompt: '“Islanders. Tonight, the girls and the boys will each vote for the Islander playing the biggest game. That Islander loses their next date. #calledout” — A firing squad with fairy lights. And you, lately, have been leaving fingerprints.',
+    recap: 'Got a text — the Islanders vote for who’s playing the biggest game.',
     choices: {
       left: {
         label: 'Get ahead of it',
@@ -184,6 +190,7 @@ export const TURN_EVENTS: GameEvent[] = [
     art: 'li_challenge',
     context: 'The lawn · “Snog, Marry, Pie” · aprons on',
     prompt: 'The rules: snog the one you fancy, marry the one you trust, and put a custard pie in the face of the one you don’t. Everyone is smiling. Nobody is safe. Your partner is watching which way you walk.',
+    recap: 'Snog, Marry, Pie on the lawn — and {partner} is watching where you walk.',
     choices: {
       left: {
         label: 'Play it honest',
@@ -212,6 +219,7 @@ export const TURN_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'Morning · a rumour is loose · it has your name in it',
     prompt: 'Somewhere between the dressing room and the gym, a sentence about you got a haircut and new shoes. The version now circulating says you called your couple “a stepping stone.” You said “next steps.” Once. About a salad.',
+    recap: 'A rumour’s loose: it says you called your couple ‘a stepping stone.’',
     choices: {
       left: {
         label: 'Trace it to the source',
@@ -241,6 +249,7 @@ export const TURN_EVENTS: GameEvent[] = [
     requires: { singleIs: false },
     context: '“I’VE GOT A TEXT!!” · a date off-site · an actual beach',
     prompt: '“{partner} and you are going on a date. Please get ready to leave the villa. #offgrid” — A car, a coastline, a table set for two by people you’ll never meet. Off-site dates are the show saying: convince us. There’s even a drone, circling the bay so romantically it should have a chaperone.',
+    recap: 'Got a text — an off-site beach date, just you and {partner}.',
     choices: {
       left: {
         label: 'Go all in on them',
@@ -270,6 +279,7 @@ export const TURN_EVENTS: GameEvent[] = [
     requires: { flagsAll: ['li_rival_active'] },
     context: 'Afternoon · old business · new volume',
     prompt: 'The thing about villas is there’s nowhere to put history. Yours is currently sunbathing four metres from your couple, radiating unfinished sentences. {ex} wants “a quick word.” No word on this show has ever been quick.',
+    recap: '{ex} is sunbathing near your couple and wants ‘a quick word.’',
     choices: {
       left: {
         label: 'Have the conversation',
@@ -298,6 +308,7 @@ export const TURN_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'Night · the dressing room · state of the nation',
     prompt: 'Full dressing-room summit: every girl, every grievance, one shared mirror. Tonight’s agenda is the boys — collectively, individually, and one in particular whose name keeps arriving with a sigh attached. The room wants your reading.',
+    recap: 'A full dressing-room summit — tonight’s agenda is the boys.',
     choices: {
       left: {
         label: 'Hold the room together',
@@ -326,6 +337,7 @@ export const TURN_EVENTS: GameEvent[] = [
     art: 'li_challenge',
     context: 'The lawn · the couples’ quiz · “How well do you REALLY know each other?”',
     prompt: 'Whiteboards out. “What is your partner’s biggest fear?” The couples who’ve done the work smirk. The couples who haven’t begin, quietly, to perspire. You’re about to find out which one you are, in front of everyone.',
+    recap: 'The couples’ quiz — ‘{partner}’s biggest fear?’ on a whiteboard.',
     choices: {
       left: {
         label: 'Trust what you know',
@@ -354,6 +366,7 @@ export const TURN_EVENTS: GameEvent[] = [
     art: 'li_beachhut',
     context: 'The Beach Hut · a producer question with teeth',
     prompt: 'Beach Hut, routine check-in, and then the producer’s voice asks, mildly: “Some viewers say your couple is a game plan. What would you say to them?” The chair is suddenly very upright. The question is a gift, a trap, or both. It’s both.',
+    recap: 'Beach Hut — the producer asks if your couple is ‘a game plan.’',
     choices: {
       left: {
         label: 'Answer from the heart',
@@ -383,6 +396,7 @@ export const TURN_EVENTS: GameEvent[] = [
     requires: { singleIs: false },
     context: 'Midday · a bombshell is grafting · on YOUR partner',
     prompt: '{bombshell} has taken {partner} for “a chat,” which is currently entering its second bottle of water. From the daybed you have a clear view of the body language, and the body language is fluent. The villa watches you watch.',
+    recap: '{bombshell} took {partner} for ‘a chat,’ and the villa watches you watch.',
     choices: {
       left: {
         label: 'Trust your couple',

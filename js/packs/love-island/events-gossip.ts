@@ -12,6 +12,7 @@ export const GOSSIP_EVENTS: GameEvent[] = [
     art: 'li_beachhut',
     context: 'The Beach Hut · a leading question',
     prompt: '“So,” says the producer voice, light as anything. “Tell us about {rival}.” The chair creaks. The Hut knows exactly what it’s doing — it trades. You give it a headline, it gives you tomorrow’s.',
+    recap: 'The Beach Hut asks you, all innocent, to tell them about {rival}.',
     choices: {
       left: {
         label: 'Name names',
@@ -40,6 +41,7 @@ export const GOSSIP_EVENTS: GameEvent[] = [
     art: 'li_beachhut',
     context: 'The Beach Hut · Final Week · the pointed question',
     prompt: '“Final Week,” says the voice. “Is it real?” Straight for the ribs. And then, conversationally: “Because {partner} sat in that exact chair yesterday, said your name, and then said ‘I’m terrified, if I’m honest.’” The chair holds its breath. So, annoyingly, do you.',
+    recap: 'The Hut asks if it’s real — and says {partner} sat there terrified.',
     choices: {
       left: {
         label: 'Ask what they said',
@@ -72,6 +74,7 @@ export const GOSSIP_EVENTS: GameEvent[] = [
     requires: { intelAboutIs: 'rival:true', secretHeldIs: 'rival:false' },
     context: 'The dressing room · your notes, assembling themselves',
     prompt: 'Alone with what you’ve gathered on {rival}: the whisper, the timeline, the one thing they said that never fit. It assembles the way these things do — suddenly, and all at once. There’s a shape here. One more pull and it has a name.',
+    recap: 'Alone with everything you’ve gathered on {rival} — nearly a full picture.',
     choices: {
       left: {
         label: 'Pull the thread',
@@ -101,6 +104,7 @@ export const GOSSIP_EVENTS: GameEvent[] = [
     requires: { intelMin: 1, singleIs: false },
     context: 'The kitchen · low voices · what you know, itching',
     prompt: 'What you know has been doing laps of your head all day. {partner} is on the daybed; {rival} is making a smoothie with meaningful eye contact. Information is only power while it’s moving. Or is it while it’s still? One of those.',
+    recap: 'You’re sitting on what you know — {partner}’s near, {rival}’s watching.',
     choices: {
       left: {
         label: 'Tell {partner} everything',

@@ -16,6 +16,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_allages",
     "context": "The Elks Hall, 5 p.m. sharp",
     "prompt": "All-ages matinee. Every hand in the room has an X in marker, the merch table is a card table, and the show MUST end by eight because of bingo.",
+    "recap": "An all-ages matinee at the Elks Hall, done by eight for bingo.",
     "tags": [
       "live"
     ],
@@ -103,6 +104,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_access_tv",
     "context": "Channel 98, “Community Corner,” 6:15 a.m.",
     "prompt": "Public access television. Your slot is between a zoning update and a segment about a dog who votes. The host, Barb, has done this show for thirty-one years and misses nothing.",
+    "recap": "Public access TV, 6:15 a.m., between a zoning update and a voting dog.",
     "tags": [
       "live",
       "social"
@@ -194,6 +196,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_group_chat",
     "context": "Your phone. 214 unread. You were just added.",
     "prompt": "Someone added you to THE group chat — the one where every show in this town is actually born. The last message is a venue, a date, and the word “who?”",
+    "recap": "Added to the group chat where every show in town is born.",
     "tags": [
       "social",
       "network"
@@ -283,6 +286,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_chat_fest",
     "context": "The group chat, planning at light speed",
     "prompt": "The chat has decided: YARDFEST. Six bands, one backyard, ten days, zero budget. Jobs are being assigned faster than anyone can decline them.",
+    "recap": "The chat decreed YARDFEST: six bands, one backyard, zero budget.",
     "tags": [
       "live",
       "social"
@@ -375,6 +379,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_wrong_cover",
     "context": "Request night. A regular holds up a napkin.",
     "prompt": "The napkin says a classic everyone knows. You learned it years ago from a free tab site, and you are realizing — live, mid-count-in — that your version has a bridge that does not exist.",
+    "recap": "A napkin request, and your version has a bridge that doesn’t exist.",
     "tags": [
       "live"
     ],
@@ -461,6 +466,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_amp_bus",
     "context": "The 7:40 crosstown. The amp takes up a seat.",
     "prompt": "The gig is nine stops away and your ride fell through. The driver eyes the amp. House rule, apparently: “If it wears a seatbelt, it rides.”",
+    "recap": "The crosstown bus, nine stops to the gig, and an amp needing a seat.",
     "tags": [
       "live",
       "work"
@@ -545,6 +551,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_lesson_flyer",
     "context": "The library corkboard, next to a missing cat",
     "prompt": "A parent calls the number on a flyer you barely remember posting. Their kid saw you play and “won’t shut up about it.” They want weekly lessons. You have never taught anything except a dog to sit, partially.",
+    "recap": "A parent calls the lesson flyer you barely remember posting.",
     "tags": [
       "work",
       "practice"
@@ -635,6 +642,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_corner_notebook",
     "context": "Your notebook. Page 31: “CORNERS, RANKED.”",
     "prompt": "Months of busking produced a document: foot traffic by hour, echo quality, shade windows, which barista brings out mistakes. Word got out. Three buskers want copies. One is offering cash.",
+    "recap": "Your ranked atlas of busking corners, and three buskers who want copies.",
     "tags": [
       "busk",
       "deal"
@@ -729,6 +737,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_gentle_chord",
     "context": "After the quiet set. A person with a laptop lanyard.",
     "prompt": "“That last chord. The soft one, at the end.” The app developer holds their phone like evidence. “People wake up violently. Sirens, beeps, dread. Your chord could fix mornings. I want to license it.”",
+    "recap": "An app developer wants to license your soft closing chord for alarms.",
     "tags": [
       "deal",
       "tone"
@@ -819,6 +828,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_heat_brownout",
     "context": "The venue. 104° outside. One overworked fuse.",
     "prompt": "Heatwave night. The venue’s wiring can run the AC or your amp — not both. The crowd is melting, the promoter is sweating through a second shirt, and somebody has to choose.",
+    "recap": "Heatwave night: the wiring runs the AC or your amp, not both.",
     "tags": [
       "live"
     ],
@@ -913,6 +923,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_off_season_pier",
     "context": "A boardwalk bar, boarded neighbors, six regulars",
     "prompt": "Off-season. The tourist town is a ghost of itself — shuttered fudge shops, one open bar, six regulars who live here year-round. The owner shrugs: “Summer people tip. Winter people LISTEN.”",
+    "recap": "Off-season ghost town, one open bar, six year-round regulars.",
     "tags": [
       "live",
       "rest"
@@ -1007,6 +1018,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_venue_polaroid",
     "context": "{venue}, an hour before doors",
     "prompt": "The wall behind the bar at {venue} is polaroids — decades of regulars and lifers, curling at the corners. Tonight the owner is holding the camera and looking at you. “It’s time.”",
+    "recap": "The owner’s polaroid wall, camera up, pointed at you.",
     "tags": [
       "live",
       "home"
@@ -1102,6 +1114,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_estate_sale",
     "context": "A driveway. Forty years of wedding gigs, priced to move.",
     "prompt": "The bandleader of The Satin Tones is retiring, and his driveway is a museum with price stickers — road-worn gear that has played a thousand first dances. His wife supervises from a lawn chair, adjusting prices with a look.",
+    "recap": "A retiring bandleader’s driveway of road-worn wedding gear.",
     "tags": [
       "shop"
     ],
@@ -1189,6 +1202,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_receipt_song",
     "context": "Register 2, hour six of eight",
     "prompt": "The melody arrives mid-shift, uninvited and perfect, while you ring up someone’s forty-nine-cent bananas. The only paper within reach is the receipt tape. Your manager is on break for eleven more minutes.",
+    "recap": "A perfect melody arrives mid-shift at register 2.",
     "tags": [
       "write",
       "work"
@@ -1277,6 +1291,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_argument_song",
     "context": "The couple upstairs, through the ceiling, at volume",
     "prompt": "The couple upstairs argues in what you slowly realize is perfect meter. Call, response, a recurring phrase that lands like a chorus: “you ALWAYS say that.” It is, structurally, a better song than anything you wrote this month.",
+    "recap": "The couple upstairs arguing in perfect meter.",
     "tags": [
       "write",
       "home"
@@ -1366,6 +1381,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_amp_tech",
     "context": "Hums & Buzzes Repair, est. “a while”",
     "prompt": "The tech diagnoses your amp by smell, fixes it in nine minutes, then plugs in a dusty bass “to test the output.” The test riff is disgusting. In the good way. In the best way.",
+    "recap": "The repair tech plugs in a dusty bass to test the output.",
     "tags": [
       "band",
       "network"
@@ -1454,6 +1470,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_piano_today",
     "context": "A porch two streets over. A sign: FREE PIANO.",
     "prompt": "A free upright, tuned and lovely, with one condition taped to the lid: GONE BY SUNDOWN. You own no truck, one dolly with a personality, and three friends of varying reliability.",
+    "recap": "A free upright, tuned and lovely, gone by sundown.",
     "tags": [
       "home",
       "network"
@@ -1543,6 +1560,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_borrowed_rig",
     "context": "Your rig: five owners, none of them you",
     "prompt": "An audit of your setup: Dee’s amp, Marcus’s pedal, a cable of disputed origin, a stand from a church. Dee wants her amp back Friday. Your show is Friday.",
+    "recap": "Your whole rig is borrowed, and Dee wants her amp back Friday.",
     "tags": [
       "home",
       "deal"
@@ -1630,6 +1648,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_church_gig",
     "context": "Pastor Ruth, who heard you through the fence",
     "prompt": "“Contemporary service. Sundays, nine a.m., forty dollars and all the pancakes the deacons can make.” Pastor Ruth heard you practicing through the fence and has already decided you are the answer to a staffing prayer.",
+    "recap": "Pastor Ruth’s nine a.m. service: forty dollars and pancakes.",
     "tags": [
       "work",
       "live"
@@ -1735,6 +1754,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_retirement_home",
     "context": "Sunset Pines. The activities director has a headset.",
     "prompt": "Two p.m. slot between chair yoga and bingo. The activities director briefs you like a black-ops handler: “Eleanor, front row, sang professionally. She has ended better acts than you. Good luck.”",
+    "recap": "Sunset Pines, two p.m., and Eleanor in the front row.",
     "tags": [
       "live"
     ],
@@ -1825,6 +1845,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_plasma",
     "context": "The plasma center. The TV plays smooth jazz AT you.",
     "prompt": "The studio deposit is $90 and your account is a rounding error. The plasma center pays $45 a visit, plus juice. The intake form asks your occupation. You write “musician” and the clerk nods like a doctor confirming a diagnosis.",
+    "recap": "The plasma center pays $45 and the studio deposit is $90.",
     "tags": [
       "work"
     ],
@@ -1916,6 +1937,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_tent_sale",
     "context": "BIG RIG SUNDAY. A tent, a PA, a polo shirt in your size.",
     "prompt": "The car dealership pays $80 for four hours of “upbeat vibes only.” Your bandmate is an inflatable tube man. He never stops dancing. He never gets tired. He is honestly kind of inspiring.",
+    "recap": "Dealership tent gig, $80 for four hours of upbeat vibes.",
     "tags": [
       "work",
       "live"
@@ -2007,6 +2029,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_unwritten_rules",
     "context": "A scene elder, waiting by the load-out door",
     "prompt": "You played eleven minutes over your slot. Nobody said anything. Now Vess — who has been in every band this town ever produced — is waiting by the door with the patient face of someone about to explain the constitution.",
+    "recap": "Eleven minutes over your slot, and Vess waiting by the door.",
     "tags": [
       "live",
       "social"
@@ -2093,6 +2116,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_copy_shop",
     "context": "CopyTown, 1 a.m., self-serve",
     "prompt": "You feed the machine your show flyer. The overnight clerk, Oz, looks at it for three seconds and says “your date is smaller than your fonts are fighting.” Oz is unnervingly correct.",
+    "recap": "Oz the overnight clerk, judging your show flyer at CopyTown.",
     "tags": [
       "social",
       "work"
@@ -2179,6 +2203,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_demo_club",
     "context": "The record store back room, Thursdays, one rule",
     "prompt": "The demo listening club: five people, folding chairs, total honesty, no exceptions. They play submissions anonymously and dissect them like surgeons. Tonight, yours is in the pile.",
+    "recap": "The demo listening club plays your track, anonymous and honest.",
     "tags": [
       "record",
       "social"
@@ -2264,6 +2289,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_scene_photog",
     "context": "Mika, who shoots every show for free",
     "prompt": "Mika has photographed every show in this town for years, unpaid, unfailing. They show you one frame: you, mid-jump, lit like a prophecy. It looks like a career. Mika needs help hanging their first gallery show this weekend.",
+    "recap": "Mika’s one perfect frame of you, and a gallery to hang.",
     "tags": [
       "social",
       "network"
@@ -2351,6 +2377,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_quiet_night",
     "context": "THE QUIET NIGHT. Amps checked at the door, politely.",
     "prompt": "A listening night with one rule: nothing louder than a voice. No amps, no monitors, no hiding. The room is so silent you can hear your own pulse deciding whether to cooperate.",
+    "recap": "The Quiet Night: no amps, nothing louder than a voice.",
     "tags": [
       "live",
       "tone"
@@ -2439,6 +2466,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_radio_contest",
     "context": "K-ROCK’s “Local Legend” line, ringing",
     "prompt": "Caller nine wins a free studio day. You have a phone, your roommate’s phone, and a landline that technically belongs to the apartment. The DJ’s voice is pure chaos: “Lines are OPEN, people.”",
+    "recap": "K-ROCK’s caller-nine contest for a free studio day.",
     "tags": [
       "social"
     ],
@@ -2529,6 +2557,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_permit_office",
     "context": "City Hall, window 4: PERFORMANCE PERMITS (& FISHING)",
     "prompt": "The busking permit costs $30 and, per a bylaw nobody can locate, requires a “demonstration of craft.” The clerk gestures at the marble lobby. The marble lobby has the reverb of a cathedral. Two security guards look up, interested.",
+    "recap": "City Hall’s busking permit needs a demonstration of craft.",
     "tags": [
       "busk",
       "work"
@@ -2618,6 +2647,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_house_party",
     "context": "A birthday party. A guitar you did not bring appears.",
     "prompt": "A friend-of-a-friend’s birthday. Someone learns what you do and a guitar materializes from a closet, slightly out of tune, radiating expectation. The room is 60% strangers, 40% cake.",
+    "recap": "A birthday party, a borrowed guitar, a room half strangers.",
     "tags": [
       "live",
       "social"
@@ -2707,6 +2737,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_park_circle",
     "context": "The gazebo, Sunday. Folding chairs in a circle.",
     "prompt": "The old-timers jam every Sunday: fiddle, banjo, a dobro older than the park. They pick fast and nod slow. Without breaking rhythm, the fiddle player tilts her head at the empty chair. Your move.",
+    "recap": "The Sunday gazebo jam, and the fiddle player’s nod to the chair.",
     "tags": [
       "roots",
       "live"
@@ -2796,6 +2827,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_car_studio",
     "context": "Your cousin’s sedan: the best vocal booth in the county",
     "prompt": "Discovery: your cousin’s sedan, parked in the garage with blankets over the windows, is acoustically perfect. Dead quiet, warm, intimate. One catch — the dome light times out, and every take costs phone battery you cannot spare.",
+    "recap": "Your cousin’s blanketed sedan, an acoustically perfect booth.",
     "tags": [
       "record",
       "home"
@@ -2883,6 +2915,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_dollar_bin",
     "context": "The dollar bin. A record with no cover, a name in pen.",
     "prompt": "Between water-damaged holiday albums: a private-press record from 1974, no sleeve, one name handwritten on the label. You drop the needle at the listening station and your entire spine pays attention. Nobody has ever heard of this. It sounds like your future.",
+    "recap": "A coverless 1974 private-press record from the dollar bin.",
     "tags": [
       "record",
       "roots"
@@ -2970,6 +3003,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_diner_close",
     "context": "The Starlite Diner, 1:30 a.m., the scene’s living room",
     "prompt": "Every show in this town ends at the Starlite: pancakes, postmortems, three sceneful booths of opinion. Tonight, for the first time, the big corner booth scoots over and makes a you-shaped space.",
+    "recap": "The Starlite at 1:30, and the corner booth making room for you.",
     "tags": [
       "social",
       "rest"
@@ -3055,6 +3089,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_building_vote",
     "context": "The lobby noticeboard. AGENDA ITEM 3: “the music”",
     "prompt": "The building meeting will vote on your practice hours. The evidence against you: Tuesdays. The evidence for you: also Tuesdays, according to a surprising faction in 3C who calls it “the free concert.”",
+    "recap": "The building meeting will vote on your Tuesday practice hours.",
     "tags": [
       "home",
       "social"
@@ -3143,6 +3178,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_street_piano",
     "context": "A public piano, painted by third graders",
     "prompt": "“PLAY ME” in six colors of kid handwriting. The piano has weathered two winters and a parade; a third of the keys have opinions and the D above middle C is purely decorative. Lunch crowd inbound.",
+    "recap": "The kid-painted street piano, a third of the keys with opinions.",
     "tags": [
       "busk",
       "live"
@@ -3233,6 +3269,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_weekly_column",
     "context": "The free weekly. “Around Town,” sixty words, no photo.",
     "prompt": "The columnist who covers everything from zoning to zucchini contests wants sixty words on “the young music scene.” Sixty words, in the paper everyone reads at the laundromat. She uncaps a pen that has ended aldermen.",
+    "recap": "Sixty words on the young scene for the free weekly.",
     "tags": [
       "social",
       "fame"
@@ -3320,6 +3357,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_barter_yard",
     "context": "Mr. Okafor’s garage: dry, quiet, wired since 1988",
     "prompt": "Your neighbor’s garage is everything your apartment is not: detached, insulated, empty. Mr. Okafor names his price without looking up from his roses: “Leaves now. Gutters in October. We shake on it or we don’t.”",
+    "recap": "Mr. Okafor’s garage, offered for leaves now and gutters in October.",
     "tags": [
       "home",
       "deal"
@@ -3413,6 +3451,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_earplug_lecture",
     "context": "The old sound guy, holding two orange foam earplugs",
     "prompt": "He has mixed everyone who ever came through this town, and he has watched you run yourself ragged for weeks. He holds out two foam earplugs like communion. “Sit down. This is the talk. Everybody gets it once.”",
+    "recap": "The old sound guy, two foam earplugs out like communion.",
     "tags": [
       "rest",
       "social"
@@ -3502,6 +3541,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_blues_jam",
     "context": "Jam night. The house band tunes without looking at their hands.",
     "prompt": "Thursday jam. The house band has two hundred years of combined mileage and a strict liturgy: you wait, you watch, and if the bandleader nods, you get one song. The nod comes. The key is announced, not negotiated.",
+    "recap": "Thursday jam, the bandleader’s nod, one song in a chosen key.",
     "tags": [
       "blues",
       "live"
@@ -3591,6 +3631,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_student_film",
     "context": "A film student named Reza, holding a thumb drive",
     "prompt": "“Eleven minutes. It’s about my grandfather’s hands. The score is the whole movie and I have no money and the deadline is Sunday.” Reza says all of this in one breath, then holds out the drive like a dare.",
+    "recap": "Reza’s eleven-minute film about his grandfather’s hands.",
     "tags": [
       "record",
       "write"
@@ -3681,6 +3722,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_own_sale",
     "context": "Your possessions, on a blanket, in the sun",
     "prompt": "The mixing day costs $100 and the only asset you have is everything you own that does not make sound. The blanket is laid out. The neighborhood circles. A man is already lowballing you on a lamp you loved.",
+    "recap": "Everything you own that makes no sound, out on a blanket.",
     "tags": [
       "home",
       "deal"
@@ -3768,6 +3810,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_last_minute_opener",
     "context": "A touring band’s van, idling. Their phone, at 2%.",
     "prompt": "A DIY band you have never heard of — four states from home, opener canceled, doors in three hours — got your name from “someone at the diner.” They need a local to open. Or a floor. Ideally both, but they are too polite to say so.",
+    "recap": "A stranded touring band needs a local opener in three hours.",
     "tags": [
       "live",
       "tour"
@@ -3857,6 +3900,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_soundboard_lesson",
     "context": "The sound guy, gesturing at the board like a piano",
     "prompt": "An hour before doors, unprompted: “Come here. If you learn what these knobs do, you’ll stop asking me for ‘more vocal’ like it’s a MOOD.” He pats the stool beside him. This is either detention or an apprenticeship.",
+    "recap": "The sound guy, an hour before doors, offering the desk.",
     "tags": [
       "work",
       "tone"
@@ -3947,6 +3991,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n1_lost_pedal",
     "context": "The lost and found box. Something glints.",
     "prompt": "Closing time after your show. In the venue’s lost and found, between a scarf and a retainer: a genuinely nice tuner pedal. The bartender shrugs: “Been there a month. Box rules say it’s anyone’s.” The box has rules now, apparently.",
+    "recap": "A nice tuner pedal in the venue’s lost and found.",
     "tags": [
       "social",
       "deal"
@@ -4031,6 +4076,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_college_radio",
     "context": "KDIV, 3 a.m. graveyard slot",
     "prompt": "The college station wants a live in-studio session. Airtime is 3 a.m., audience is “insomniacs and one professor,” and the intern keeps calling you “the band” regardless of how many of you showed up.",
+    "recap": "KDIV wants a live session in the 3 a.m. graveyard slot.",
     "tags": [
       "record",
       "indie"
@@ -4120,6 +4166,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_first_tour",
     "context": "Six cities, one map, zero guarantees",
     "prompt": "Your first real tour: six cities you have never played, booked on optimism and a spreadsheet. The van is packed. Somebody forgot the merch. It was you.",
+    "recap": "Your first tour: six cities, and you forgot the merch.",
     "tags": [
       "tour",
       "live"
@@ -4215,6 +4262,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_karaoke_host",
     "context": "The bar owner, holding a laminated binder",
     "prompt": "“My karaoke guy quit. You’re a musician, you’ve got a mic voice. Thursdays. Cash, plus you keep the room.” The binder is heavy with power.",
+    "recap": "The bar owner hands you the karaoke binder for Thursdays.",
     "tags": [
       "live",
       "work"
@@ -4308,6 +4356,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_pedal_flipping",
     "context": "A cardboard box of broken pedals, $5 the lot",
     "prompt": "Somebody’s garage sale has a box of dead effects pedals. You know a cold solder joint when you see one. You also know what “boutique vintage” sells for.",
+    "recap": "A garage-sale box of dead pedals, $5 the lot.",
     "tags": [
       "deal",
       "work"
@@ -4396,6 +4445,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_hold_music",
     "context": "Tri-County Savings & Loan, licensing office",
     "prompt": "A regional bank needs new hold music. “Something soothing. Something that says ‘your call is important’ without lying too obviously.” The check is real. The exposure is four hundred callers a day, all annoyed.",
+    "recap": "A regional bank needs soothing hold music, real check.",
     "tags": [
       "deal",
       "record"
@@ -4486,6 +4536,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_supper_club",
     "context": "The Rotisserie Room, white tablecloths",
     "prompt": "A supper club wants standards at dinner volume, four nights, tips folded into the piano lid like secrets. The maître d’ calls you “the entertainment,” which stings and pays.",
+    "recap": "The Rotisserie Room wants standards at dinner volume, four nights.",
     "tags": [
       "live",
       "work"
@@ -4580,6 +4631,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_ringtone_shop",
     "context": "Your DMs, filling up",
     "prompt": "That guy who wanted his riff as a ringtone? He told his friends. Now there are eleven requests, each wanting forty seconds of something in your voice, on their phone, unbearable to everyone around them.",
+    "recap": "Eleven people now want their own forty-second ringtone.",
     "tags": [
       "deal",
       "social"
@@ -4671,6 +4723,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_opener_slot",
     "context": "A touring act, one rung up",
     "prompt": "A band a size bigger than you offers the opening slot. Thirty minutes, an unfamiliar crowd, and the specific terror of playing to people who came to see someone else.",
+    "recap": "A bigger band offers thirty minutes to an unfamiliar crowd.",
     "tags": [
       "live",
       "network"
@@ -4764,6 +4817,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_van_upgrade",
     "context": "Honest Al’s Used Vans & Redemption",
     "prompt": "The current van has opinions and a check-engine light that qualifies as a band member. Al has a “barely pre-owned” fifteen-passenger with a working heater. It costs money you almost have.",
+    "recap": "Honest Al’s fifteen-passenger van, with a working heater.",
     "tags": [
       "deal",
       "shop"
@@ -4855,6 +4909,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_hometown_return",
     "context": "The room where you started",
     "prompt": "You come back to play the town that watched you learn. Everyone who ever doubted you and everyone who never did are in the same room, holding the same beer.",
+    "recap": "Back to the room where you started, doubters and believers both.",
     "tags": [
       "live",
       "home"
@@ -4949,6 +5004,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_first_press",
     "context": "An actual journalist, an actual recorder",
     "prompt": "A real music site wants a real feature. The writer is smart, underpaid, and has clearly listened to everything. The first question is “so, who are you?” and it is not small talk.",
+    "recap": "A real music journalist, a recorder, and the question ‘so, who are you?’",
     "tags": [
       "social",
       "network"
@@ -5040,6 +5096,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_sync_ad",
     "context": "An ad agency, a very specific brief",
     "prompt": "An agency wants your song in a commercial for a mattress that “disrupts sleep.” The fee would pay your rent for a year. The mattress, they clarify, is fine. The disruption is the good kind.",
+    "recap": "An agency wants your song for a mattress that ‘disrupts sleep.’",
     "tags": [
       "deal",
       "mainstream"
@@ -5131,6 +5188,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_release_single",
     "context": "The demo, finished, waiting",
     "prompt": "You have a demo good enough to be a single. The question every artist eventually faces: release it now while you feel it, or polish it until the feeling’s gone.",
+    "recap": "A demo good enough to be a single, waiting on your call.",
     "tags": [
       "record",
       "write"
@@ -5227,6 +5285,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_push_the_single",
     "context": "The song is charting. Now what.",
     "prompt": "Your song, {song}, is on the chart and could climb — or slide. There’s a window to push it, and pushing means favors, posts, and pretending you’re not refreshing the numbers hourly.",
+    "recap": "{song} is charting, and the window to push it won’t stay open.",
     "tags": [
       "social",
       "deal"
@@ -5315,6 +5374,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_session_call",
     "context": "A studio, someone else’s record",
     "prompt": "A better-known artist needs a player for an afternoon. Union scale, no credit guaranteed, and the strong sense that you’re being auditioned for something bigger without being told what.",
+    "recap": "A session for a bigger artist: union scale, no credit, quiet audition.",
     "tags": [
       "studio",
       "work"
@@ -5408,6 +5468,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_rival_split_bill",
     "context": "One stage, two names on the poster",
     "prompt": "The promoter bills you and {rival} as “co-headliners,” which means one of you goes on last and both of you know it matters. {rival} — {rivalVibe} — is already in the good dressing room.",
+    "recap": "You and {rival} share a poster billed ‘co-headliners.’ One goes on last.",
     "tags": [
       "live",
       "rival"
@@ -5506,6 +5567,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_rival_truce_offer",
     "context": "A text from {rival}, unexpectedly",
     "prompt": "{rival} texts: “this feud is exhausting and neither of us is winning. Beer?” It could be a genuine olive branch. It could be reconnaissance. With {rival}, it’s usually both.",
+    "recap": "{rival} texts: ‘this feud is exhausting. Beer?’ Olive branch, or recon.",
     "tags": [
       "network",
       "rival"
@@ -5600,6 +5662,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_weather_dance_craze",
     "context": "Fifteen seconds ruling the earth",
     "prompt": "There’s a dance. It has a hand-thing. Every song that fits it is exploding and every song that doesn’t is invisible. A choreographer offers to build the hand-thing around your chorus.",
+    "recap": "A viral dance with a hand-thing, and a choreographer eyeing your chorus.",
     "tags": [
       "social",
       "mainstream"
@@ -5692,6 +5755,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_weather_payola",
     "context": "The playlist editor is “on sabbatical”",
     "prompt": "The subpoenas hit the mailroom and suddenly every playlist editor is “taking time.” The gatekeepers vanished overnight and the gates are just… open. Briefly. For anyone honest enough to walk through.",
+    "recap": "Subpoenas emptied the mailroom; every playlist gate is briefly open.",
     "tags": [
       "deal",
       "social"
@@ -5779,6 +5843,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_merch_math",
     "context": "A box of shirts, a spreadsheet, a decision",
     "prompt": "Merch is where touring bands actually make money, which nobody tells you until you’re standing behind a folding table at midnight doing arithmetic on shirt margins.",
+    "recap": "A box of shirts, a folding table, and midnight math on margins.",
     "tags": [
       "deal",
       "work"
@@ -5867,6 +5932,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_producer_offer",
     "context": "A producer with a real console",
     "prompt": "A producer with actual credits wants to make your record. The catch: their sound is their sound, and it’s a good sound, and it might swallow yours whole.",
+    "recap": "A producer with real credits wants your record — and has their own sound.",
     "tags": [
       "studio",
       "deal"
@@ -5961,6 +6027,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_burnout_wall_early",
     "context": "The van, a gas station, 2 a.m.",
     "prompt": "You catch your reflection in the gas-station glass and don’t entirely recognize the person touring this hard. The tank is full. You are not. There’s a night off available if you take it.",
+    "recap": "2 a.m. at a gas station, not recognizing your reflection. A night off is there.",
     "tags": [
       "rest",
       "home"
@@ -6049,6 +6116,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_write_the_grief",
     "context": "A hard week, a blank page",
     "prompt": "Something in your life broke this week — quietly, the way real things do. The notebook is open. You could write around it, or write straight into it.",
+    "recap": "Something broke this week, quietly. The notebook is open.",
     "tags": [
       "write",
       "home"
@@ -6138,6 +6206,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_scene_politics",
     "context": "A group chat, on fire",
     "prompt": "Two bands you like are feuding and the whole scene is choosing sides in a group chat that will not stop buzzing. Everyone’s waiting to see where you land, which is its own kind of pressure.",
+    "recap": "Two bands you like are feuding, and the group chat wants your side.",
     "tags": [
       "social",
       "network"
@@ -6225,6 +6294,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_bs_ox",
     "context": "Ox, after load-in, quietly",
     "prompt": "Ox carried the entire backline up three flights again, alone, and apologized for taking up the stairwell. Tonight he asks for one thing, so gently you almost miss it: “could we maybe get a hand truck?”",
+    "recap": "Ox hauled the whole backline up three flights, then asked for a hand truck.",
     "tags": [
       "band",
       "work"
@@ -6314,6 +6384,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_bs_dot",
     "context": "Dot, with a spreadsheet and a look",
     "prompt": "Dot has been quietly keeping the band’s books, and tonight she sits everyone down with a spreadsheet. “So,” she says, in the voice of someone who found something. “We need to talk about where the merch money goes.”",
+    "recap": "Dot sat everyone down with a spreadsheet about the merch money.",
     "tags": [
       "band",
       "deal"
@@ -6405,6 +6476,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_festival_slot",
     "context": "A mid-tier festival, a noon slot",
     "prompt": "You get a festival slot: noon, second stage, opposite a beloved act on the main stage. The crowd is whoever wandered over. Your job is to make them glad they did.",
+    "recap": "Noon on the second stage, opposite a beloved act on the main one.",
     "tags": [
       "live",
       "tour"
@@ -6493,6 +6565,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_old_friend",
     "context": "A friend from before, at the merch table",
     "prompt": "A friend from before the music shows up at your merch table. They’re proud of you and a little wounded that you left, and both of those things are in every sentence they say.",
+    "recap": "A friend from before turns up at the merch table, proud and a little hurt.",
     "tags": [
       "home",
       "network"
@@ -6579,6 +6652,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_radio_promise",
     "context": "A community station benefit",
     "prompt": "The little station that played you first is struggling. The DJ who championed you asks, half-joking, if you’d headline a benefit to keep the lights on. Everyone in the room heard the ask.",
+    "recap": "The little station that played you first needs a benefit headliner.",
     "tags": [
       "live",
       "network"
@@ -6714,6 +6788,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_gear_theft",
     "context": "The van, a broken window, a gap where gear was",
     "prompt": "Someone smashed the van window overnight and took what they could carry. There’s a show tonight. There’s a hole where your rig used to be. The scene, when it hears, tends to close ranks.",
+    "recap": "The van window’s smashed, the gear’s gone, and there’s a show tonight.",
     "tags": [
       "work",
       "network"
@@ -6801,6 +6876,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_the_algorithm",
     "context": "A dashboard that knows you better than you do",
     "prompt": "The platform’s analytics dashboard tells you exactly which fifteen seconds of which song people replay. It’s not the part you’re proud of. It’s never the part you’re proud of.",
+    "recap": "The dashboard knows the exact fifteen seconds people replay.",
     "tags": [
       "social",
       "write"
@@ -6892,6 +6968,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_genre_gatekeep",
     "context": "A purist, at the bar, cornering you",
     "prompt": "Someone deep in the {genre} scene informs you, unprompted, that you’re “doing it wrong.” They have a very long definition of the genre and you are apparently outside it.",
+    "recap": "A {genre} purist at the bar explains, unprompted, that you’re doing it wrong.",
     "tags": [
       "social",
       "indie"
@@ -6980,6 +7057,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_venue_regular",
     "context": "{venue}, which knows you now",
     "prompt": "You’ve played {venue} enough that the staff know your order and the sound guy pre-sets your levels. Tonight the owner floats an idea: a monthly residency, your night, your rules.",
+    "recap": "{venue} knows your order now, and the owner floats a monthly residency.",
     "tags": [
       "live",
       "home"
@@ -7074,6 +7152,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_broke_stretch",
     "context": "The bank app, refreshing to the same number",
     "prompt": "The tour’s momentum is real but the bank account is a rumor. Rent is due, the van needs tires, and there’s a corporate gig offer that pays great and dents your soul slightly.",
+    "recap": "Rent’s due, the van needs tires, and a corporate gig pays too well.",
     "tags": [
       "deal",
       "work"
@@ -7164,6 +7243,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_music_video",
     "context": "A film student with a camera and a dream",
     "prompt": "A film student wants to make a music video for you, free, in exchange for “the reel.” Their ideas are either genius or unhinged and it is genuinely impossible to tell which.",
+    "recap": "A film student offers a free video for ‘the reel’ — genius or unhinged, unclear.",
     "tags": [
       "social",
       "work"
@@ -7250,6 +7330,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_the_ask",
     "context": "A younger band, wide-eyed, at your show",
     "prompt": "A band a year behind where you are asks you to take them on tour as your opener. You remember being them. You also remember how thin the money already is.",
+    "recap": "A band a year behind you asks to open. The money’s already thin.",
     "tags": [
       "network",
       "live"
@@ -7342,6 +7423,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_label_sniff",
     "context": "An A&R rep, three drinks in, at your show",
     "prompt": "A label A&R is at your show, which is either everything or nothing. They love you tonight. They love four bands a night. The trick is knowing which kind of love this is before you sign anything.",
+    "recap": "An A&R rep is at your show, loving you like they love four bands a night.",
     "tags": [
       "deal",
       "network"
@@ -7433,6 +7515,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_cover_gone_big",
     "context": "Your cover, outrunning your originals",
     "prompt": "A cover you posted on a whim is doing better than anything you wrote. It’s a nice problem and a real one: lean into being the cover person, or use the attention to point back home.",
+    "recap": "A cover you posted on a whim is outrunning everything you wrote.",
     "tags": [
       "social",
       "write"
@@ -7525,6 +7608,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_bandmate_doubt",
     "context": "A bandmate, at the diner, serious",
     "prompt": "One of your bandmates has been quiet all tour, and over bad diner coffee it comes out: they’re not sure they can keep doing this. Not the music. The everything-else that comes with the music.",
+    "recap": "Over bad diner coffee, a bandmate admits they’re not sure they can go on.",
     "tags": [
       "band",
       "home"
@@ -7613,6 +7697,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_hustle_audit_two",
     "context": "Tax season, a shoebox of receipts",
     "prompt": "You have enough side hustles now that tax season is genuinely confusing. An accountant looks at your shoebox of income streams and says, with respect, “you’re a small business having a breakdown.”",
+    "recap": "Tax season, a shoebox of receipts, and an accountant’s pity.",
     "tags": [
       "deal",
       "work"
@@ -7699,6 +7784,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_tighten_the_set",
     "context": "Rehearsal, the night before a big one",
     "prompt": "A big show tomorrow, and tonight the set is close but not tight. You can drill it until it’s a machine, or leave a little room for the chaos that sometimes becomes magic.",
+    "recap": "The night before a big show, the set is close but not yet tight.",
     "tags": [
       "practice",
       "live"
@@ -7785,6 +7871,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_streaming_check",
     "context": "The quarterly royalty statement",
     "prompt": "Your first real streaming royalty check arrives. You had a hundred thousand streams. The check is for an amount that would embarrass a vending machine. The math of modern music, in one envelope.",
+    "recap": "A hundred thousand streams, and a check that embarrasses a vending machine.",
     "tags": [
       "deal",
       "social"
@@ -7872,6 +7959,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_encore_demand",
     "context": "The crowd, not leaving",
     "prompt": "The set’s over, the lights should be up, but the room is stomping for more and you didn’t plan an encore because you didn’t dare assume. You have maybe one more song in the tank and a decision to make.",
+    "recap": "The set’s over, the room’s stomping, and you didn’t plan an encore.",
     "tags": [
       "live",
       "fame"
@@ -7965,6 +8053,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_documentary_pitch",
     "context": "A filmmaker with a treatment and a hunger",
     "prompt": "A documentary filmmaker wants to follow you for a year. “Warts and all,” they say, which always means mostly warts. It could be a beautiful record of this run, or a camera watching you fail in HD.",
+    "recap": "A filmmaker wants to follow you for a year — ‘warts and all.’",
     "tags": [
       "social",
       "work"
@@ -8055,6 +8144,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_reissue_offer",
     "context": "A small label, a nostalgic idea",
     "prompt": "An indie label wants to press {fadedSong} — the one that charted and vanished — onto vinyl as a “deluxe reissue.” It’s a little soon to be nostalgic about yourself, but the offer’s real.",
+    "recap": "An indie label wants to press {fadedSong} on vinyl as a ‘deluxe reissue.’",
     "tags": [
       "deal",
       "record"
@@ -8146,6 +8236,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_award_nom",
     "context": "An email with the word “nominee” in it",
     "prompt": "A regional music award nominated you. It’s a small award. It’s also the first time an institution has ever said your name in a sentence with “best.” The ceremony is next month, in a hotel ballroom.",
+    "recap": "A regional award named you a nominee — first time anyone said ‘best.’",
     "tags": [
       "fame",
       "network"
@@ -8233,6 +8324,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_late_night_write",
     "context": "4 a.m., a melody that won’t leave",
     "prompt": "It’s 4 a.m. and a melody arrived uninvited and complete, the kind that feels less like writing and more like taking dictation. You’re exhausted. The melody does not care.",
+    "recap": "4 a.m., and a finished melody arrived uninvited.",
     "tags": [
       "write",
       "home"
@@ -8323,6 +8415,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n2_two_three_bridge",
     "context": "A crossroads you didn’t plan for",
     "prompt": "The momentum is undeniable now, and with it comes the offers that force the question you’ve been dodging: what are you actually building toward? Everyone wants to know. Increasingly, so do you.",
+    "recap": "The momentum forces the question: what are you building toward?",
     "tags": [
       "deal",
       "network"
@@ -8411,6 +8504,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_legacy_act",
     "context": "A festival, the “legends” slot",
     "prompt": "The festival slots you in the afternoon “heritage” block, between two acts older than your parents. It’s an honor shaped exactly like being told you’re no longer new.",
+    "recap": "The festival files you into the afternoon ‘heritage’ block.",
     "tags": [
       "live",
       "fame"
@@ -8506,6 +8600,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_body_keeps_score",
     "context": "A doctor’s office, finally",
     "prompt": "The years of it — the vans, the 3 a.m. loads, the ignored aches — arrive all at once. The doctor is kind and specific: “You can keep going like this, but the body is keeping score, and it does not forgive.”",
+    "recap": "At the doctor’s, finally: the body has been keeping score.",
     "tags": [
       "rest",
       "home"
@@ -8597,6 +8692,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_faded_returns",
     "context": "A TV show, a needle drop",
     "prompt": "A prestige TV show uses {fadedSong} — your one that charted and vanished — in its emotional season finale. Overnight, a song you’d made peace with losing is everywhere again, attached to a scene you didn’t write.",
+    "recap": "A prestige TV finale drops {fadedSong}, and it’s everywhere again.",
     "tags": [
       "social",
       "deal"
@@ -8692,6 +8788,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_hometown_institution",
     "context": "{venue}, which is basically yours now",
     "prompt": "{venue} — the room you built up show by show — wants to put your name on something permanent. A plaque, a booth, the whole back wall. The owner asks, a little emotional, what you want it to say.",
+    "recap": "{venue} wants your name on something permanent — a plaque, the back wall.",
     "tags": [
       "home",
       "live"
@@ -8785,6 +8882,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_famous_and_broke",
     "context": "The ATM, declining, while a fan asks for a photo",
     "prompt": "A stranger recognizes you and asks for a photo, thrilled, while the ATM behind you declines your card for the second time. Famous and broke at once — the industry’s specialty. You smile for the photo.",
+    "recap": "A fan wants a photo while the ATM declines your card again.",
     "tags": [
       "deal",
       "work"
@@ -8876,6 +8974,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_nemesis_toast",
     "context": "{rival}, at a podium, glass raised, third career running",
     "prompt": "Third career, same face across the room. At an industry dinner, {rival} — {rivalVibe} — is asked to toast you, and rises with a grin that is sixty percent warmth and forty percent open threat. Everyone leans in.",
+    "recap": "At an industry dinner, {rival} rises to toast you, grinning like a threat.",
     "tags": [
       "fame",
       "rival"
@@ -8970,6 +9069,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_ghost_sessions",
     "context": "A locked studio, an NDA, a very famous act",
     "prompt": "Word gets around that you play exactly the part nobody else can nail. Now the calls come with NDAs attached — anonymous session work for artists you cannot name, paying more than your own tours. The catch is the silence.",
+    "recap": "Anonymous session work with NDAs attached, paying more than your tours.",
     "tags": [
       "studio",
       "work"
@@ -9065,6 +9165,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_sample_packs",
     "context": "A folder of field recordings and kitchen sounds",
     "prompt": "You’ve been recording everything for years — the good faucet, the specific rain, that one broken amp. A distributor says producers worldwide would pay for your library of sounds. Your junk drawer is, apparently, an asset.",
+    "recap": "A distributor wants your library of field recordings and kitchen sounds.",
     "tags": [
       "deal",
       "record"
@@ -9159,6 +9260,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_the_album",
     "context": "The vault, full, waiting for a decision",
     "prompt": "You have a vault of finished demos and the industry’s eternal question: dribble them out as singles for maximum chart mileage, or drop the whole thing at once as a real album and dare people to sit with it.",
+    "recap": "A vault of finished demos: singles, or the whole album at once.",
     "tags": [
       "record",
       "deal"
@@ -9255,6 +9357,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_push_the_hit",
     "context": "{hitSong}, near the top, one push from #1",
     "prompt": "{hitSong} is climbing and there’s a real shot at #1 — the impossible thing, the summit of the summit. It would take everything: every favor, every dollar, every ounce of shame you have left. One push.",
+    "recap": "{hitSong} is one push from #1, and it would cost everything.",
     "tags": [
       "social",
       "deal"
@@ -9345,6 +9448,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_write_from_the_top",
     "context": "A blank page, and everything to lose",
     "prompt": "You’ve made it far enough that writing feels different now — there’s an audience waiting, expectations to meet or defy. The blank page used to be freedom. Now it’s freedom AND a mirror. You sit down anyway.",
+    "recap": "The blank page again, but now with an audience waiting.",
     "tags": [
       "write",
       "home"
@@ -9441,6 +9545,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_polish_the_vault",
     "context": "The best unreleased thing you have",
     "prompt": "There’s a demo in the vault you know is special, the kind that only comes once every few years. It’s not ready. It could be, with the kind of obsessive attention you rarely let yourself afford anymore.",
+    "recap": "The special demo in the vault that isn’t ready yet.",
     "tags": [
       "studio",
       "write"
@@ -9533,6 +9638,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_bs_cassette",
     "context": "Cassette, in front of the wall of flops",
     "prompt": "Cassette’s apartment is a shrine to commercial failures — walls of records that flopped and shouldn’t have. Tonight they pull one down, then point at your own catalog on the shelf below. “Same energy,” they say. “Wanna know why these died?”",
+    "recap": "Cassette’s wall of flops, and your catalog on the shelf below.",
     "tags": [
       "band",
       "record"
@@ -9627,6 +9733,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_bs_gus",
     "context": "Gus, at the board, the biggest night yet",
     "prompt": "Gus mixed every band in town for a decade before joining yours, and tonight — the biggest show of your life — he’s finally at the board for YOU. He cracks his knuckles. “Been waiting my whole career to make this room sound like you deserve.”",
+    "recap": "Biggest show of your life, and Gus is finally at the board.",
     "tags": [
       "band",
       "tone"
@@ -9722,6 +9829,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_biopic_offer",
     "context": "A producer, a treatment, an actor already attached",
     "prompt": "Someone wants to make a movie about you. There’s a treatment, a name actor circling, and a version of your life on the page that is eighty percent true and one hundred percent flattering. It is deeply strange to read your own myth.",
+    "recap": "A biopic treatment, an actor circling, your myth on the page.",
     "tags": [
       "deal",
       "fame"
@@ -9813,6 +9921,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_young_band_furniture",
     "context": "Backstage, being talked past",
     "prompt": "A hot young band shares the bill and treats you like part of the venue’s decor — polite, dismissive, certain they invented all of this. You recognize the certainty. You wore it once. It looks different from this side.",
+    "recap": "A hot young band on the bill treats you like the venue’s decor.",
     "tags": [
       "live",
       "network"
@@ -9904,6 +10013,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_coast_temptation",
     "context": "The easy road, clearly marked",
     "prompt": "You could coast now. Play the hits, take the safe bookings, ride the name you built for a comfortable decade. The offer is right there, warm and undemanding. The other road is uphill and unmarked and yours.",
+    "recap": "The comfortable road, warm and undemanding, versus the uphill one.",
     "tags": [
       "deal",
       "work"
@@ -9995,6 +10105,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_gear_indulgence",
     "context": "The vintage shop you could never afford",
     "prompt": "The high-end vintage shop — the one you used to press your face against — now knows your name. There’s a piece in the window you’ve wanted your entire life. You can, at last, actually afford it. Probably. Mostly.",
+    "recap": "The grail in the vintage-shop window you can finally afford.",
     "tags": [
       "deal",
       "shop"
@@ -10089,6 +10200,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_legacy_medley",
     "context": "A career’s worth of songs, and forty minutes",
     "prompt": "A retrospective show, and you have to distill years of songs into one set. Every song you cut is a fan’s favorite. Every song you keep is a version of yourself you’re choosing to be, one more night.",
+    "recap": "A retrospective set: years of songs down to forty minutes.",
     "tags": [
       "live",
       "fame"
@@ -10183,6 +10295,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_streaming_empire",
     "context": "A dashboard of a dozen income streams",
     "prompt": "The side hustles have quietly compounded into something that looks alarmingly like a small business. An advisor suggests you could formalize it — an LLC, a brand, an empire of little revenue streams. You just wanted to play music.",
+    "recap": "The side hustles have compounded into something like a business.",
     "tags": [
       "deal",
       "work"
@@ -10274,6 +10387,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_fan_generations",
     "context": "A parent and a kid, both wearing your shirt",
     "prompt": "A parent brings their kid to your show, both in your merch across two decades. The parent found you in college; the kid found you last month. You are now, somehow, a thing that gets handed down. It’s a lot to hold.",
+    "recap": "A parent and their kid at your show, both in your merch.",
     "tags": [
       "live",
       "family"
@@ -10368,6 +10482,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_the_offer_to_quit",
     "context": "A great job, a clean exit, right now",
     "prompt": "An old friend offers you a real job — good pay, health insurance, a door you could walk through today and never load a van again. It’s not a trap. It’s a genuinely good life, held out with genuine care. You could just… stop.",
+    "recap": "An old friend offers a real job — pay, insurance, a clean exit.",
     "tags": [
       "deal",
       "home"
@@ -10457,6 +10572,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_tribute_night",
     "context": "A bar advertising “A Tribute To You”",
     "prompt": "You walk past a bar with a sign: a whole night of local bands covering your songs. You weren’t invited; you weren’t supposed to see it. Do you slip in the back and witness your own influence, or protect the mystery?",
+    "recap": "A bar sign: a night of local bands covering your songs.",
     "tags": [
       "live",
       "social"
@@ -10545,6 +10661,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_final_collab",
     "context": "A hero, aging, extends a hand",
     "prompt": "An artist you idolized your whole life — now old, now mortal — reaches out to make one song together while there’s still time. It’s the collaboration your teenage self would not have survived hearing about. The stakes are your whole heart.",
+    "recap": "The hero you idolized, now old, wants one song before it’s too late.",
     "tags": [
       "studio",
       "write"
@@ -10639,6 +10756,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_the_interview_hard",
     "context": "A journalist, a hard question, a recorder running",
     "prompt": "A serious profile, and the journalist asks the question you’ve dodged your whole career — about the compromise you made early, the one everyone suspects and nobody’s proven. The recorder is running. Honesty has a cost and so does the dodge.",
+    "recap": "A profile, a recorder running, the early compromise you’ve dodged.",
     "tags": [
       "social",
       "network"
@@ -10728,6 +10846,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_off_the_grid_write",
     "context": "A cabin, no signal, one guitar",
     "prompt": "You rent a cabin with no signal to write, the way the legends supposedly did. It’s just you, an instrument, and the terrifying quiet where the internet used to be. The songs, if there are songs, will have to come from you alone.",
+    "recap": "A cabin with no signal, one guitar, and the terrifying quiet.",
     "tags": [
       "write",
       "rest"
@@ -10817,6 +10936,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_scene_elder",
     "context": "The scene, asking you to lead",
     "prompt": "The scene that raised you is in trouble — venues closing, rents rising, the ecosystem fraying. People look to you now, the one who made it, to do something. You have the platform. You did not ask for the responsibility.",
+    "recap": "The scene that raised you is fraying, and it’s looking to you.",
     "tags": [
       "network",
       "home"
@@ -10907,6 +11027,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_last_van_show",
     "context": "The old van, one more time",
     "prompt": "You could fly to the next show like the artist you’ve become, or take the old van one last time down the highway you started on. The band’s split on it. The van, if it has a vote, votes van.",
+    "recap": "Fly to the next show, or take the old van one last time.",
     "tags": [
       "tour",
       "home"
@@ -10998,6 +11119,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_definitive_statement",
     "context": "The record you were building toward all along",
     "prompt": "You feel it: the record you’ve been circling your whole career is finally in reach. The definitive statement. It could be the thing they remember you for — or the overreach they whisper about. Only one way to find out.",
+    "recap": "The definitive record you’ve circled your whole career, in reach.",
     "tags": [
       "record",
       "write"
@@ -11090,6 +11212,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_royalty_windfall",
     "context": "A surprise check with too many zeros",
     "prompt": "A check arrives from somewhere unexpected — {fadedSong} got licensed for something enormous overseas, or the publishing math finally tipped your way. It’s more money than you’ve seen at once. It feels almost fake.",
+    "recap": "A surprise check with too many zeros, from {fadedSong} overseas.",
     "tags": [
       "deal",
       "work"
@@ -11182,6 +11305,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_two_three_flag",
     "context": "A choice that echoes",
     "prompt": "A booking agent wants an answer today on a career-defining routing decision, and there’s no obviously right answer — just the version of the next year you’re willing to live inside. You realize you’ve been avoiding exactly this call.",
+    "recap": "A booking agent wants an answer today on the next year’s routing.",
     "tags": [
       "deal",
       "tour"
@@ -11278,6 +11402,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_greatest_fear",
     "context": "The mirror, 3 a.m., the summit in sight",
     "prompt": "This close to everything you wanted, and the fear arrives in full: what if you get it and it’s not enough? What if the summit is just another parking lot? The burnout has stripped away every comfortable lie. Only the honest question is left.",
+    "recap": "3 a.m., the summit in sight: what if it isn’t enough?",
     "tags": [
       "rest",
       "home"
@@ -11370,6 +11495,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_comeback_kid",
     "context": "The second act, being written now",
     "prompt": "Everyone loves a comeback, and you’re living one — the faded name, back in the room, refusing the ending the industry wrote for you. There’s a narrative forming around your return. You get to decide if you fulfill it or defy it.",
+    "recap": "You’re living a comeback, and a redemption narrative is forming.",
     "tags": [
       "fame",
       "network"
@@ -11460,6 +11586,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_signature_move",
     "context": "The thing only you do",
     "prompt": "You have a signature — a move, a sound, a trick that’s become shorthand for you. Audiences wait for it. It’s a gift and a cage. Tonight you can give them the thing they came for, or finally retire it and see who you are without it.",
+    "recap": "Your signature move — the thing audiences wait for, gift and cage.",
     "tags": [
       "live",
       "creativity"
@@ -11554,6 +11681,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_protege_surpasses",
     "context": "Someone you helped, now bigger than you",
     "prompt": "Someone you mentored, championed, gave an opener slot to years ago, just went supernova. They’re bigger than you now, and gracious about it, and every interview mentions you as “a formative influence.” Past tense. It’s complicated in your chest.",
+    "recap": "Someone you mentored just went supernova. Bigger than you now.",
     "tags": [
       "network",
       "fame"
@@ -11643,6 +11771,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_final_lesson",
     "context": "A kid at the stage door, wide open",
     "prompt": "A kid waits at the stage door with a beat-up instrument and the exact look you had at their age — all hunger, no map. They ask the question you once asked someone: “How do I do what you did?” You have one honest minute to answer.",
+    "recap": "A kid at the stage door: “How do I do what you did?”",
     "tags": [
       "home",
       "network"
@@ -11731,6 +11860,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_genre_pioneer",
     "context": "The sound you helped invent, everywhere now",
     "prompt": "The {genre} sound you were doing when nobody cared is suddenly everywhere, and a dozen younger acts are getting rich off a wave you helped start. Pioneers rarely profit from their frontiers. You get to decide how to feel about that.",
+    "recap": "The {genre} sound you pioneered is everywhere, minting younger acts.",
     "tags": [
       "social",
       "creativity"
@@ -11822,6 +11952,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_the_reunion_offer",
     "context": "The old lineup, a lucrative what-if",
     "prompt": "A promoter dangles enormous money for a reunion of your earliest lineup — the people you started with, some of whom you haven’t spoken to in years, some of whom you left on bad terms. The check could fix everything except the reasons you split.",
+    "recap": "A promoter dangles huge money to reunite your earliest lineup.",
     "tags": [
       "deal",
       "band"
@@ -11912,6 +12043,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_teaching_offer",
     "context": "A university, a named chair, a steady chair",
     "prompt": "A music school offers you a professorship — a named chair, a steady salary, summers off, and the chance to shape a generation. It’s the security the road never gave you. It’s also, quietly, an ending dressed as a beginning.",
+    "recap": "A university offers a named chair — steady salary, summers off.",
     "tags": [
       "deal",
       "work"
@@ -12006,6 +12138,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_one_more_song",
     "context": "Late, empty room, one idea left",
     "prompt": "It’s late and the room is empty and there’s one more idea knocking that you could chase or let go. You’ve made it far enough that you don’t have to write anything ever again. Which is exactly why what you do next actually means something.",
+    "recap": "Late, the room empty, one more idea knocking to be chased.",
     "tags": [
       "write",
       "home"
@@ -12096,6 +12229,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_n3_the_encore_of_encores",
     "context": "The crowd won’t leave. They never want to.",
     "prompt": "The show should be over. The crowd knows every word to everything and won’t stop, a wall of sound demanding you stay, stay, stay. You’ve got maybe one great encore left in your body tonight. How do you want to end this one?",
+    "recap": "The crowd won’t leave, and you’ve one great encore left tonight.",
     "tags": [
       "live",
       "fame"
@@ -12190,6 +12324,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms2_stylist",
     "context": "A stylist with a mood board and opinions",
     "prompt": "A stylist wants to “develop your look.” They have a mood board, a budget, and a vision of you that is 20% more famous than you feel. The image, they insist, comes before the fame, not after.",
+    "recap": "A stylist with a mood board wants to develop your look.",
     "tags": [
       "fame",
       "social"
@@ -12281,6 +12416,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms2_arena_support",
     "context": "An arena tour wants an opener",
     "prompt": "A stadium act offers you the support slot on their arena run — twenty thousand strangers a night who came for someone else. It’s the biggest rooms you’ll ever have played, and none of the crowd is yours. Yet.",
+    "recap": "An arena act offers the opener slot — twenty thousand a night.",
     "tags": [
       "live",
       "tour"
@@ -12375,6 +12511,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms2_first_viral",
     "context": "A clip, escaping containment",
     "prompt": "A thirty-second clip of you does the thing — it’s everywhere overnight, millions of strangers, most of whom will forget you by lunch. The window is open. It closes fast. What you do in the next 48 hours matters more than the last two years.",
+    "recap": "A thirty-second clip of you is suddenly everywhere overnight.",
     "tags": [
       "social",
       "fame"
@@ -12468,6 +12605,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms2_brand_deal",
     "context": "A brand, a big number, a small compromise",
     "prompt": "A major brand wants you as the face of a campaign. The money is life-changing and the association is slightly embarrassing and the reach is enormous. This is the exact fork every famous person faces. Now it’s yours.",
+    "recap": "A major brand wants you as the face of a campaign.",
     "tags": [
       "deal",
       "mainstream"
@@ -12564,6 +12702,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms2_stan_army",
     "context": "A fandom, organizing, slightly feral",
     "prompt": "You’ve got a real fandom now — devoted, organized, and increasingly willing to fight strangers on your behalf. It’s flattering and a little frightening. They love you enough to be a problem. Managing them is a new job you didn’t apply for.",
+    "recap": "A real fandom now — devoted, organized, willing to fight for you.",
     "tags": [
       "social",
       "fame"
@@ -12655,6 +12794,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms2_rival_climb",
     "context": "{rival}, climbing the same ladder",
     "prompt": "{rival} is chasing the same fame you are, and there’s a magazine spread with room for exactly one rising star. The editor loves you both and can only pick one. {rival} — {rivalVibe} — is already emailing the editor daily.",
+    "recap": "A magazine spread with room for one rising star. {rival} wants it too.",
     "tags": [
       "fame",
       "rival"
@@ -12753,6 +12893,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms2_late_show",
     "context": "A late-night TV booking, four minutes",
     "prompt": "A late-night show books you — four minutes, one song, a national audience, and a green room with your name misspelled on the door. It’s the biggest single moment your career has had. There are no second takes on live TV.",
+    "recap": "Late-night TV: four minutes, one song, no second takes.",
     "tags": [
       "live",
       "fame"
@@ -12851,6 +12992,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms2_paparazzi",
     "context": "A camera in a bush, outside your apartment",
     "prompt": "You’re famous enough now that someone’s photographing you buying groceries. The private-life tax of fame has come due, all at once. There’s a photo of you looking tired and it’s somehow news. This is what you wanted, technically.",
+    "recap": "Someone’s photographing you buying groceries now.",
     "tags": [
       "social",
       "fame"
@@ -12944,6 +13086,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms2_headline_first",
     "context": "Your name, on top of the poster, first time",
     "prompt": "For the first time, YOU are the headliner — your name biggest, others opening for you. The room is mid-sized and the responsibility is enormous. Every person in there paid to see you specifically. There’s no one bigger to hide behind now.",
+    "recap": "First time your name tops the poster; everyone paid for you.",
     "tags": [
       "live",
       "fame"
@@ -13039,6 +13182,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st2_first_call",
     "context": "The phone, ringing at 8 a.m., always for a session",
     "prompt": "You’re getting the calls now — session work, real sessions, real players. There’s a hierarchy in this world: the first-call players get the good dates and the respect. You’re on the list. The question is how high you want to climb it.",
+    "recap": "The session calls are coming in — real dates, real players.",
     "tags": [
       "studio",
       "work"
@@ -13134,6 +13278,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st2_tone_quest",
     "context": "A producer chasing a sound only you can hear",
     "prompt": "A producer describes the tone they want in pure metaphor — “warmer, but sadder, like a Sunday” — and everyone in the room looks at you. This is the real job of the studio legend: translating feelings into frequencies nobody else can find.",
+    "recap": "A producer wants a tone in pure metaphor: “warmer, but sadder.”",
     "tags": [
       "studio",
       "tone"
@@ -13230,6 +13375,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st2_ghost_solo",
     "context": "A famous record, a nameless part",
     "prompt": "A superstar’s record needs the solo of the year and their guy can’t get it. You can. The catch, as always in this world: your name won’t be on it. Play it, and everyone hears you and nobody knows it’s you.",
+    "recap": "A superstar’s record, the solo of the year, and no credit.",
     "tags": [
       "studio",
       "work"
@@ -13324,6 +13470,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st2_bandleader",
     "context": "A session where you’re suddenly in charge",
     "prompt": "The bandleader doesn’t show and the producer looks at you: “You run it.” Suddenly you’re not just playing the parts, you’re calling them — the arrangement, the players, the whole feel. It’s a promotion nobody announced.",
+    "recap": "The bandleader’s a no-show, and the producer points at you.",
     "tags": [
       "studio",
       "network"
@@ -13420,6 +13567,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st2_chart_ghost",
     "context": "A hit on the radio, secretly yours",
     "prompt": "A song you played on is climbing the chart, and every time it comes on the radio you feel the specific pride and specific invisibility of the session legend. {song} is out there charting. Your hands are all over it. Your name is nowhere.",
+    "recap": "A song you played on is climbing the chart, uncredited.",
     "tags": [
       "studio",
       "social"
@@ -13509,6 +13657,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st2_union",
     "context": "A picket line, a scab date, a choice",
     "prompt": "The session players’ union is striking for fair rates, and there’s a lucrative non-union date being offered to anyone who’ll cross. It pays double. Crossing would follow you forever in a world that remembers everything. Not crossing costs rent.",
+    "recap": "The players’ union is striking; a non-union date pays double.",
     "tags": [
       "studio",
       "deal"
@@ -13598,6 +13747,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st2_rival_session",
     "context": "{rival}, booked on the same date",
     "prompt": "The producer double-booked and now you and {rival} are both in the same session, both up for the same featured part. {rival} — {rivalVibe} — is warming up in the corner, loudly, playing the exact passage the producer keeps humming.",
+    "recap": "Double-booked with {rival}, both up for the featured part.",
     "tags": [
       "studio",
       "rival"
@@ -13700,6 +13850,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st2_masterclass",
     "context": "A room of students, and you at the front",
     "prompt": "A music school asks you to teach a masterclass. It’s recognition that you’ve arrived — you’re someone worth learning from now. It’s also a whole afternoon of explaining things you do by instinct to people who need them made explicit.",
+    "recap": "A music school wants you to teach a masterclass.",
     "tags": [
       "work",
       "network"
@@ -13794,6 +13945,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf2_first_topline",
     "context": "A track, a booth, a blank melody to fill",
     "prompt": "A producer hands you an instrumental and a deadline: write the topline, the melody and hook that turns a beat into a song. This is the hit factory’s core skill. There’s a session singer waiting to record whatever you come up with.",
+    "recap": "An instrumental, a deadline, and a topline to write.",
     "tags": [
       "write",
       "studio"
@@ -13890,6 +14042,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf2_splits_meeting",
     "context": "Eleven writers, one song, one pie",
     "prompt": "The splits meeting: eleven people in a room deciding who gets what percentage of a song that four of them actually wrote. You’re one of the four. The other seven have lawyers. The pie is only so big and everyone brought a fork.",
+    "recap": "Eleven people, one song’s splits, seven of them lawyered up.",
     "tags": [
       "deal",
       "write"
@@ -13981,6 +14134,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf2_write_camp",
     "context": "A writing camp, a mansion, a deadline",
     "prompt": "A writing camp: a rented mansion, a dozen writers, a superstar arriving Friday to pick the songs. Three days to write something they’ll take. It’s a pressure cooker and a networking event and a marathon, all at once.",
+    "recap": "A writing camp: a mansion, a superstar arriving Friday.",
     "tags": [
       "write",
       "network"
@@ -14082,6 +14236,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf2_the_placement",
     "context": "A superstar wants one of your songs",
     "prompt": "A superstar’s people heard one of your demos and want it — for them, as a single, with your name in tiny print. It would be a smash in their voice and a paycheck in your pocket and a song you wrote leaving home forever.",
+    "recap": "A superstar wants your demo, with your name in tiny print.",
     "tags": [
       "deal",
       "write"
@@ -14180,6 +14335,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf2_trend_arb",
     "context": "A sound about to blow up, if you move now",
     "prompt": "You’ve spotted the next sound before it breaks — you can hear it forming in the margins. Write in it now and you’re ahead of the wave; wait and you’re just another follower. Trend arbitrage is a hit factory superpower, and a gamble on your own ears.",
+    "recap": "You can hear the next sound forming before it breaks.",
     "tags": [
       "write",
       "social"
@@ -14279,6 +14435,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf2_vault_build",
     "context": "A hard drive filling with unreleased gold",
     "prompt": "You’re writing faster than you can place, and the vault is filling with songs — some good, some great, all homeless. A hit factory’s real wealth is its catalog. The question is whether to hoard the gems or flood the market.",
+    "recap": "The vault fills with unplaced songs faster than you can place them.",
     "tags": [
       "write",
       "deal"
@@ -14371,6 +14528,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf2_the_muse",
     "context": "A voice that makes everything you write better",
     "prompt": "You find a session singer whose voice turns your decent demos into undeniable ones. Every writer eventually finds their muse — the voice that unlocks their best work. Do you build around them, or keep your options open?",
+    "recap": "A session singer whose voice turns your demos undeniable.",
     "tags": [
       "write",
       "network"
@@ -14471,6 +14629,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf2_instant_classic",
     "context": "A song that arrives fully formed",
     "prompt": "Once in a while a song just arrives — whole, perfect, like you’re taking dictation from somewhere better than yourself. You have one of those right now, humming complete in your head. These are the ones careers are built on. Don’t drop it.",
+    "recap": "A song arrived whole, complete, humming in your head.",
     "tags": [
       "write",
       "studio"
@@ -14570,6 +14729,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf2_rival_writer",
     "context": "{rival}, in the next writing room",
     "prompt": "{rival} is writing for the same artists you are, and word is they landed the cut you were promised. {rivalVibe}, and now they’re in the room next door at the same camp, and you can hear, faintly, that their hook is good. Annoyingly good.",
+    "recap": "{rival} landed the cut you were promised, one room over.",
     "tags": [
       "write",
       "rival"
@@ -14671,6 +14831,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms3_world_tour",
     "context": "A map with your name in cities you’ve never seen",
     "prompt": "The world tour: continents, time zones, arenas full of people singing your words back in accents you don’t recognize. It’s the dream, fully realized, and it will take everything you have and possibly a little more than that.",
+    "recap": "The world tour: continents, time zones, arenas of strangers.",
     "tags": [
       "tour",
       "live"
@@ -14770,6 +14931,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms3_the_persona",
     "context": "The mask, and the face underneath it",
     "prompt": "The fame persona you built has calcified — the public you is so big and so specific that the private you barely fits behind it anymore. You catch yourself performing the character even alone. It’s a question every megastar eventually faces: who’s left under there?",
+    "recap": "The public persona has calcified; the private you barely fits.",
     "tags": [
       "fame",
       "home"
@@ -14864,6 +15026,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms3_stadium_anthem",
     "context": "A song that a whole stadium could sing",
     "prompt": "You have a shot at writing the thing every megastar dreams of: an anthem. A song built for a hundred thousand voices, simple and huge and impossible to forget. Anthems are a different craft — bigger, blunter, and much easier to get wrong.",
+    "recap": "A shot at the anthem — a song for a hundred thousand voices.",
     "tags": [
       "write",
       "live"
@@ -14966,6 +15129,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms3_award_show",
     "context": "The big award show, your name a nominee",
     "prompt": "The biggest awards night, and you’re nominated in the categories that matter. Cameras everywhere, the whole industry watching, and a performance slot that could define your year. Win or lose, tonight is a stage the size of the culture.",
+    "recap": "The biggest awards night, and you’re nominated where it counts.",
     "tags": [
       "fame",
       "live"
@@ -15060,6 +15224,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms3_sell_out_show",
     "context": "The biggest room in the world, sold out, tonight",
     "prompt": "The venue you dreamed about as a kid — the legendary one — sold out, tonight, your name on the marquee in letters visible from space. Everyone you ever knew is watching. This is the summit made literal. All you have to do is walk out there.",
+    "recap": "The legendary venue, sold out, your name on the marquee.",
     "tags": [
       "live",
       "fame"
@@ -15155,6 +15320,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms3_rival_summit",
     "context": "{rival}, at the top with you now",
     "prompt": "You and {rival} both made it to the top, against all odds, together. {rivalVibe}, and now you’re both headlining the same mega-festival on the same night, on different stages, at the same time. The promoter did this on purpose. The fans have to choose.",
+    "recap": "You and {rival} headlining the same festival, same night.",
     "tags": [
       "live",
       "rival"
@@ -15258,6 +15424,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_ms3_legacy_choice",
     "context": "The top, and the question of what it was for",
     "prompt": "You’re as famous as you ever dreamed, and the strange quiet question arrives: now what is it FOR? You have a platform the size of the sky. You can point it at yourself, or at something bigger than yourself. Megastars are remembered for this choice.",
+    "recap": "As famous as you dreamed, and the question of what it’s for.",
     "tags": [
       "fame",
       "social"
@@ -15355,6 +15522,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st3_first_call_king",
     "context": "The phone, ringing before 8 a.m., always for you",
     "prompt": "You’re THE first call now — the player producers describe by pointing at your chair. But there are only so many hours, and the requests have outstripped them. Being the best means constantly disappointing people who want the best. A good problem, mostly.",
+    "recap": "You’re THE first call now, with more requests than hours.",
     "tags": [
       "studio",
       "work"
@@ -15452,6 +15620,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st3_signature_sound",
     "context": "A sound so yours that producers name it after you",
     "prompt": "You’ve developed a sound so distinctive that producers request it by your name — “give me that thing you do.” It’s the ultimate studio-legend achievement and a subtle trap: the thing that made you can also cage you into repeating yourself forever.",
+    "recap": "Producers request your sound by name — “that thing you do.”",
     "tags": [
       "studio",
       "tone"
@@ -15553,6 +15722,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st3_the_masters",
     "context": "A living legend, asking YOU to play on their comeback",
     "prompt": "One of the actual masters — a name in every history book — is making a comeback record and wants you on it. It’s the ultimate validation and the ultimate pressure: playing for someone you studied, who is now studying you back.",
+    "recap": "An actual master wants you on their comeback record.",
     "tags": [
       "studio",
       "work"
@@ -15648,6 +15818,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st3_own_studio",
     "context": "An empty room that could become YOUR room",
     "prompt": "You could build your own studio now — a room designed around your ears, where you call every shot and the best players come to you. It’s the studio legend’s castle. It’s also a mortgage, a business, and a bet that people will make the pilgrimage.",
+    "recap": "An empty room that could become your own studio.",
     "tags": [
       "deal",
       "studio"
@@ -15749,6 +15920,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st3_credit_finally",
     "context": "A lifetime of anonymous work, and a chance to sign it",
     "prompt": "A documentary about a legendary album wants to finally credit the anonymous players who made it — including you, on the solo everyone knows and nobody knew was yours. After a career in the shadows, someone’s offering to turn on the light.",
+    "recap": "A documentary wants to finally credit the anonymous players.",
     "tags": [
       "social",
       "studio"
@@ -15840,6 +16012,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_st3_last_session",
     "context": "A session that feels like a culmination",
     "prompt": "A session comes along that feels like everything you’ve learned pointing at one moment — the perfect song, the perfect players, the perfect room. You could play it safe and flawless, or reach for something transcendent and risk the flaw.",
+    "recap": "The perfect song, players, and room, all in one session.",
     "tags": [
       "studio",
       "tone"
@@ -15933,6 +16106,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf3_the_machine",
     "context": "A songwriting operation running like a factory",
     "prompt": "You’ve built it — a genuine hit-making operation, writers and producers and a pipeline that turns out chart-toppers with alarming regularity. It’s an achievement and an existential question: are you still an artist, or have you become a machine that makes them?",
+    "recap": "You’ve built a hit-making operation that runs like a factory.",
     "tags": [
       "write",
       "deal"
@@ -16031,6 +16205,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf3_number_one",
     "context": "A song with #1 written all over it",
     "prompt": "You’ve got one in the chamber that feels like a guaranteed #1 — the hook, the timing, the artist all aligned. Hit factories live for this. The only question is whose name goes on it: give it to the superstar for a lock, or bet on a rising act for a bigger legend.",
+    "recap": "A guaranteed #1 in the chamber, and whose name goes on it.",
     "tags": [
       "write",
       "deal"
@@ -16134,6 +16309,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf3_the_album_hf",
     "context": "A vault deep enough to be an album",
     "prompt": "You’ve written enough to make a full statement — but a hit factory faces a choice most writers never do: release these as YOUR album and finally step out front, or place them all with other artists and stay the invisible architect. Ego versus empire.",
+    "recap": "Enough songs for an album: release your own, or place them all.",
     "tags": [
       "record",
       "write"
@@ -16230,6 +16406,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf3_legacy_catalog",
     "context": "A publisher, offering a fortune for your songs",
     "prompt": "A major publisher offers a staggering sum to buy your entire catalog — every song you’ve written and every one you ever will. It’s generational money and the total surrender of your life’s work to a spreadsheet. Writers agonize over this exact call.",
+    "recap": "A publisher offers a fortune for your entire catalog.",
     "tags": [
       "deal",
       "write"
@@ -16324,6 +16501,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf3_write_your_own",
     "context": "For once, a song for nobody but you",
     "prompt": "After a career writing for everyone else, you sit down to write one that’s only for you — no artist, no brief, no market. It’s terrifying. Without the target, you’re not sure you remember how to write for the one audience you never served: yourself.",
+    "recap": "After writing for everyone else, a song only for you.",
     "tags": [
       "write",
       "home"
@@ -16424,6 +16602,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf3_the_reveal",
     "context": "A chance to finally get public credit",
     "prompt": "A journalist has connected the dots — realized how many of the last few years’ biggest hits trace back to you — and wants to run the story that turns you from invisible architect to public name. The ghost could become famous. Or stay a ghost, powerfully.",
+    "recap": "A journalist connected the dots on the hits tracing to you.",
     "tags": [
       "social",
       "fame"
@@ -16516,6 +16695,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf3_rival_credit",
     "context": "{rival}, claiming a song you wrote",
     "prompt": "{rival} — {rivalVibe} — is publicly taking credit for a hit you know you wrote, or mostly wrote, in a co-write that’s gotten fuzzy in the retelling. The song is huge. The credit is disputed. And {rival} is telling the story louder than you.",
+    "recap": "{rival} is publicly claiming a hit you know you wrote.",
     "tags": [
       "deal",
       "rival"
@@ -16621,6 +16801,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_np_hf3_final_hit",
     "context": "One more, and it could be the one they remember",
     "prompt": "You’ve written more hits than you can count, and you can feel one more forming — the kind that could be your signature, the song they’ll play to explain what you were. After a whole career of hits for others, this one could be the definitive statement of the hit factory itself.",
+    "recap": "One more forming — the song they’ll play to explain you.",
     "tags": [
       "write",
       "studio"
@@ -16722,6 +16903,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_mentor_meet",
     "context": "A washed regional legend, at the bar, unimpressed",
     "prompt": "A local legend — huge here in 1987, invisible everywhere else since — watches your set with his arms crossed, then corners you at the bar. “You’ve got something,” he says, “and you’re wasting most of it. Sit down.”",
+    "recap": "A washed regional legend corners you at the bar.",
     "tags": [
       "network",
       "home"
@@ -16817,6 +16999,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_mentor_lesson",
     "context": "The mentor, at his kitchen table, no instrument in sight",
     "prompt": "He calls you over “for a lesson,” but there’s no instrument out — just coffee and a long silence. “The music’s the easy part,” he finally says. “Today I’m teaching you the thing that actually ends careers. Sit.”",
+    "recap": "The mentor calls you over — coffee, silence, no instrument.",
     "tags": [
       "home",
       "network"
@@ -16909,6 +17092,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_mentor_favor",
     "context": "The mentor, on the phone, calling in his last chip",
     "prompt": "He calls, uncharacteristically nervous. “I’ve got one favor left with anybody who matters, and it’s been sitting in a drawer for fifteen years. I want to spend it on you.” It’s his last real connection to the industry that forgot him.",
+    "recap": "The mentor wants to spend his last industry favor on you.",
     "tags": [
       "network",
       "deal"
@@ -17003,6 +17187,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_mentor_last",
     "context": "The mentor’s last show, and an empty spot on the bill",
     "prompt": "He’s playing his last show — he’s decided, and he means it this time — and he’s asked you to be on the bill. Not to open. To close. “Send me off,” he says. “Play me out. I want the last thing that room hears to be what I helped make.”",
+    "recap": "The mentor’s last show, and he’s asked you to close it.",
     "tags": [
       "live",
       "home"
@@ -17098,6 +17283,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_copycat_clip",
     "context": "A suburban teenager, covering you, going viral",
     "prompt": "A fifteen-year-old in a bedroom two states away is covering your songs — badly, beautifully, and virally. Their cover of your deepest cut has more views than your original. They clearly worship you. It is deeply strange to be someone’s hero.",
+    "recap": "A fifteen-year-old’s viral cover of your deepest cut.",
     "tags": [
       "social"
     ],
@@ -17192,6 +17378,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_copycat_duet",
     "context": "The kid, older now, actually good",
     "prompt": "The kid you boosted is eighteen now and, it turns out, genuinely talented — the imitation burned off and left something real underneath. They ask, terrified, if you’d do a proper duet. The student wants to stand next to the teacher.",
+    "recap": "The kid you boosted is eighteen, good, and wants a duet.",
     "tags": [
       "live",
       "network"
@@ -17295,6 +17482,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_copycat_rise",
     "context": "The kid, signed, big now, in a magazine",
     "prompt": "The kid made it — really made it, bigger than you now — and the profile is out. There’s a paragraph about early influences, and there’s your name, in a sentence that’s either a tribute or a footnote depending on how you read it. You read it several times.",
+    "recap": "The kid made it bigger than you; your name’s in the profile.",
     "tags": [
       "social",
       "fame"
@@ -17388,6 +17576,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_copycat_mirror",
     "context": "The kid’s diss track, and it’s good",
     "prompt": "The kid you shut down years ago never forgot it, and now they’re big and their new single is, unmistakably, about you — a diss track, sharp and specific and, infuriatingly, excellent. It’s climbing. Everyone’s asking if you’ll respond.",
+    "recap": "The kid you shut down is big now, with a diss track about you.",
     "tags": [
       "social",
       "rival"
@@ -17482,6 +17671,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_lost_tape",
     "context": "A pawn-shop crate, a nameless demo tape",
     "prompt": "Digging through a pawn-shop crate, you find an unlabeled cassette. You play it in the van and it stops you cold — a local band, 1983, no name, no fame, and songs better than most of what charts now. The world forgot something extraordinary.",
+    "recap": "A pawn-shop crate, an unlabeled cassette, 1983, no name.",
     "tags": [
       "record",
       "roots"
@@ -17576,6 +17766,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_tape_hunt",
     "context": "A trail of clues to a vanished band",
     "prompt": "You’ve been chasing the tape’s origins — a scratched-out name, a studio that closed, a phone number that rings a hardware store now. Tonight a lead pans out: one of the band members is alive, in town, and has no idea their tape survived.",
+    "recap": "A lead panned out: a bandmate from the tape is alive and in town.",
     "tags": [
       "network",
       "home"
@@ -17670,6 +17861,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_tape_release",
     "context": "The 1983 songs, and a choice about whose name goes on them",
     "prompt": "You can bring the lost songs to the world at last. Reissue the tape under the original band’s name, giving vanished artists their due — or interpolate the best song into your own work, where it’ll reach far more people, under yours. History, or reach.",
+    "recap": "The lost 1983 songs, and whose name goes on them.",
     "tags": [
       "record",
       "deal"
@@ -17770,6 +17962,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_tape_owner",
     "context": "The songwriter, now a crossing guard, and the radio",
     "prompt": "The person who wrote those 1983 songs works a school crossing now, orange vest, forty years from the last time anyone cared. You arranged for their song to play on the radio at 8:15 a.m., right at their corner. You’re parked across the street to watch.",
+    "recap": "The songwriter works a school crossing. Their song hits the radio at 8:15.",
     "tags": [
       "home",
       "social"
@@ -17858,6 +18051,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_intern_meet",
     "context": "A label intern, whispering, risking their job",
     "prompt": "A label intern corners you after a showcase, glancing over their shoulder. “Nobody upstairs gets what you’re doing, but I do, and I’m going to help even though it’s absolutely not my job.” They have the specific bright-eyed idealism the industry usually kills by year two.",
+    "recap": "A label intern corners you after the showcase, ready to help off the books.",
     "tags": [
       "network",
       "deal"
@@ -17951,6 +18145,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_intern_leak",
     "context": "The intern, with a stolen shortlist",
     "prompt": "The intern slides you a folded paper: the label’s confidential A&R shortlist for the next big signing, and your name is on the bubble. “You didn’t get this from me,” they whisper, terrified and thrilled. It’s genuinely valuable and genuinely stolen.",
+    "recap": "The intern slides you the confidential A&R shortlist. Your name’s on it.",
     "tags": [
       "deal",
       "network"
@@ -18042,6 +18237,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_intern_fired",
     "context": "The intern, jobless, on your doorstep",
     "prompt": "The intern got fired — for you, ultimately, for one advocacy too many on your behalf. They’re on your doorstep with a box of desk stuff and a brave face that isn’t holding. They bet their career on believing in you. The bet just came due.",
+    "recap": "The intern got fired over you, box of desk stuff in hand.",
     "tags": [
       "home",
       "network"
@@ -18137,6 +18333,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_intern_desk",
     "context": "The intern, behind a big desk now, with power",
     "prompt": "The intern has a corner office now — climbed all the way to the chair where the real decisions get made. They call you in, grinning, and slide a contract across the desk. “Remember when I had to sneak you demos? Now I sign the checks. Let me do this right.”",
+    "recap": "The intern runs a corner office now, sliding you a contract.",
     "tags": [
       "deal",
       "network"
@@ -18224,6 +18421,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_van_named",
     "context": "The band, in a parking lot, naming the van",
     "prompt": "The van has earned a name. It’s carried you through three tours and two breakdowns and one memorable incident with a raccoon, and tonight the band decides it deserves an identity. Naming it makes it a member. Members you don’t abandon.",
+    "recap": "Three tours, two breakdowns, one raccoon. The van has earned a name.",
     "tags": [
       "band",
       "tour"
@@ -18319,6 +18517,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_van_breakdown",
     "context": "3 a.m., forty miles from anywhere, hazards blinking",
     "prompt": "The van dies at 3 a.m. on an empty highway, forty miles from the next town and eight hours from the show. Hazards blinking, breath fogging, everyone looking at you. This is the test every touring band eventually faces alone in the dark.",
+    "recap": "The van dies at 3 a.m., forty miles from anywhere, hazards blinking.",
     "tags": [
       "tour",
       "band"
@@ -18417,6 +18616,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_van_odometer",
     "context": "The odometer, about to roll 300,000",
     "prompt": "The odometer is about to tick over 300,000 miles — mid-drive, on a highway, with the whole band watching the numbers like a countdown. Every one of those miles was a show, a fight, a sunrise, a life. The van is about to hit a milestone no rational vehicle should reach.",
+    "recap": "The odometer is about to roll 300,000, mid-drive.",
     "tags": [
       "tour",
       "band"
@@ -18509,6 +18709,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_van_museum",
     "context": "A collector, offering real money for the van",
     "prompt": "You’re famous enough now that a collector wants to buy the van — as memorabilia, for a music museum, real money, climate-controlled display, a plaque telling its story. It would be preserved forever. It would also never drive again. It’s still running fine, by the way. It always is.",
+    "recap": "A collector offers real money for the van, for a museum.",
     "tags": [
       "deal",
       "home"
@@ -18597,6 +18798,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_first_letter",
     "context": "A paper letter, from a town you’ve never played",
     "prompt": "An actual paper letter arrives — stamped, handwritten, from a town you’ve never played. A stranger heard your music somehow and needed to tell you what it meant to them, in ink, the slow way. Nobody writes letters anymore. This one did.",
+    "recap": "A handwritten letter, from a town you’ve never played.",
     "tags": [
       "social",
       "home"
@@ -18691,6 +18893,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_letter_two",
     "context": "The second letter, which knows too much",
     "prompt": "The pen pal’s letters keep coming, and this one stops you cold — they’ve heard something in your music you didn’t know you put there, named a grief you never told anyone, described your own song back to you truer than you understood it. A stranger knows you through the work.",
+    "recap": "The pen pal’s new letter names a grief you never told anyone.",
     "tags": [
       "social",
       "home"
@@ -18785,6 +18988,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_letter_town",
     "context": "Finally routing through the pen pal’s town",
     "prompt": "After years of letters, the tour finally routes through their town — the one on the return address, the one you’ve pictured a hundred times. You could meet them at last. You could also keep them perfect and unmet, a friendship that lives entirely in ink.",
+    "recap": "The tour finally routes through the pen pal’s town.",
     "tags": [
       "live",
       "home"
@@ -18877,6 +19081,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_letter_last",
     "context": "The letters stopped. Then one came in a different hand.",
     "prompt": "The letters stopped a while ago, and you told yourself people get busy. Then one arrives in unfamiliar handwriting: the pen pal’s kid. The letters, they explain, were the thing they and their parent did together — every one read aloud, every reply a family event. Their parent is gone. They wanted you to know what it meant.",
+    "recap": "A letter in a new hand: the pen pal’s kid. The letters have stopped.",
     "tags": [
       "home",
       "social"
@@ -18966,6 +19171,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_critic_pan",
     "context": "The alt-weekly, one critic, one brutal review",
     "prompt": "The local alt-weekly’s only critic reviewed your show and it’s a pan — witty, cruel, and upsettingly accurate about the exact weaknesses you were hoping nobody noticed. It’s the first time anyone took you seriously enough to be mean. It stings precisely because it’s not wrong.",
+    "recap": "The alt-weekly’s critic panned your show, witty and accurate.",
     "tags": [
       "social"
     ],
@@ -19070,6 +19276,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_critic_reread",
     "context": "The old pan, aging into a rave",
     "prompt": "Someone digs up the critic’s old pan of you and posts it next to your latest glowing coverage — the review has aged like milk, and the internet is dunking on the critic who “didn’t get it.” The critic hasn’t acknowledged it. They’re watching, though. Everyone is.",
+    "recap": "The critic’s old pan resurfaces, and the internet is dunking on it.",
     "tags": [
       "social",
       "network"
@@ -19170,6 +19377,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_critic_book",
     "context": "The critic’s book, with a chapter on you",
     "prompt": "The critic wrote a book about the scene, the definitive history, and there’s a whole chapter with your name on it. You get an advance copy. The chapter could be a coronation or a hit job or, this being them, both. Your hands are a little unsteady opening it.",
+    "recap": "The critic’s scene history has a whole chapter on you.",
     "tags": [
       "social",
       "network"
@@ -19262,6 +19470,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_critic_quit",
     "context": "The paper folds. The critic’s goodbye column is about you.",
     "prompt": "The alt-weekly is dead — print finally lost — and the critic gets one last column. You expect a career retrospective. Instead, the whole farewell is about you: the artist they panned, feuded with, and, it turns out, watched more closely than anyone. It’s the realest thing they ever wrote.",
+    "recap": "The alt-weekly folds. The critic’s farewell column is about you.",
     "tags": [
       "social",
       "home"
@@ -19351,6 +19560,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_jingle_gig",
     "context": "A waterpark, a pseudonym, a paycheck",
     "prompt": "Splashtown Waterpark needs a jingle and can pay real money, and you can write it under a fake name so nobody in the scene ever knows you sold thirty seconds of your soul for the rent. It’s beneath you. The rent is also beneath you, and due Friday.",
+    "recap": "Splashtown Waterpark needs a jingle. The rent is due Friday.",
     "tags": [
       "deal",
       "work"
@@ -19446,6 +19656,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_jingle_spreads",
     "context": "Kids singing your jingle at your own show",
     "prompt": "The Splashtown jingle is regionally enormous now — kids sing it on playgrounds, it’s a local earworm, and tonight, horrifyingly, someone in YOUR crowd shouts a request for “the waterpark song” because word has leaked that Chip Waverly is you.",
+    "recap": "A fan shouts for “the waterpark song.” Word’s out that Chip Waverly is you.",
     "tags": [
       "live",
       "social"
@@ -19540,6 +19751,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_jingle_remix",
     "context": "A famous DJ flips the waterpark jingle",
     "prompt": "A famous DJ found the Splashtown jingle, thought it was hilarious and secretly great, and flipped it into a club track that’s actually charting. Now there’s a decision: claim it as yours and cash in, or let Chip Waverly keep the credit and stay a mystery.",
+    "recap": "A famous DJ flipped the Splashtown jingle into a charting club track.",
     "tags": [
       "deal",
       "social"
@@ -19635,6 +19847,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_jingle_waterpark",
     "context": "Splashtown’s 25th anniversary, and they want both of you",
     "prompt": "Splashtown is turning 25 and wants to book you for the celebration — you, the famous artist, AND Chip Waverly, whom they still think might be a different person. The park that paid your rent when nobody knew your name wants to honor its anniversary with its most famous alumnus. It’s absurd. It’s also, somehow, moving.",
+    "recap": "Splashtown turns 25 and wants you and Chip Waverly both.",
     "tags": [
       "live",
       "home"
@@ -19731,6 +19944,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_ghost_note",
     "context": "A setlist suggestion nobody wrote",
     "prompt": "Every venue has a ghost story, and yours starts small: a setlist appears in the green room with an unfamiliar song order and one addition in handwriting nobody recognizes. The sound guy swears he didn’t. Probably a draft. Probably.",
+    "recap": "A setlist in the green room, one song added in a hand nobody knows.",
     "tags": [
       "live",
       "home"
@@ -19826,6 +20040,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_ghost_request",
     "context": "The suggestions get specific. And good.",
     "prompt": "The green-room notes have gotten specific — a chord substitution here, a key change there, a lyric tweak that’s unmistakably better than yours. Whoever or whatever is leaving them has genuine ears. Tonight’s note just says: “the bridge wants to be quieter. trust me.”",
+    "recap": "The green-room notes are getting good. Tonight: “the bridge wants to be quieter.”",
     "tags": [
       "write",
       "home"
@@ -19922,6 +20137,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_ghost_encore",
     "context": "The biggest show yet, and four bars nobody cued",
     "prompt": "The biggest show of your career, in the room where it all started, and during the encore the PA plays four bars of something — a melody you’ve never recorded, in a voice you’ve never heard — that nobody in the booth cued. The whole band freezes. The crowd thinks it’s part of the show.",
+    "recap": "Mid-encore, the PA plays four bars nobody in the booth cued.",
     "tags": [
       "live",
       "home"
@@ -20017,6 +20233,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_ghost_settled",
     "context": "The ghost’s own song, finally played",
     "prompt": "You’ve pieced it together over the years — the fragments in the green room, the phantom melody, the story of the player who never left — into a whole song. THEIR song, the one they never finished. Tonight, in their room, you could finally play it start to finish. The green room, you notice, is very still.",
+    "recap": "You’ve pieced together the ghost’s own unfinished song.",
     "tags": [
       "live",
       "home"
@@ -20109,6 +20326,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_dog_adopt",
     "context": "A dog, outside the venue, choosing you",
     "prompt": "A dog is waiting by the van after the show — no collar, no owner, and a look of having made a decision. It watches you load out, walks to the passenger door, and sits. It has, apparently, joined the band. It has opinions about the setlist already, you can tell.",
+    "recap": "A dog waits by the van after the show, and sits at the passenger door.",
     "tags": [
       "tour",
       "home"
@@ -20205,6 +20423,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_dog_mascot",
     "context": "The dog is on the merch. The dog outsells you.",
     "prompt": "You put the dog on a t-shirt as a joke and it’s outselling every other piece of merch you have, by a lot. Fans come to shows with signs for the dog. Someone made a fan account for the dog with more followers than yours. The dog remains completely unbothered by fame.",
+    "recap": "The dog on a t-shirt outsells all your other merch.",
     "tags": [
       "deal",
       "social"
@@ -20297,6 +20516,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_dog_cover",
     "context": "The album cover question, answering itself",
     "prompt": "It’s time to shoot the album cover for the biggest record of your career, and everyone in the room keeps glancing at the dog asleep in the corner. Nobody wants to say it. The dog, sensing the moment, opens one eye. The label wants your face. Your heart wants the dog.",
+    "recap": "Album-cover day, and everyone keeps glancing at the dog.",
     "tags": [
       "deal",
       "record"
@@ -20392,6 +20612,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_dog_vet",
     "context": "The vet bill vs. the gear fund",
     "prompt": "The dog is sick — nothing tragic, but a real bill, the kind that would clean out the money you’d earmarked for the gear upgrade that could level up your whole sound. It’s the coldest arithmetic there is: your career, or your dog’s comfort. The dog puts its head on your knee.",
+    "recap": "The dog’s vet bill would clean out the gear-upgrade fund.",
     "tags": [
       "deal",
       "home"
@@ -20482,6 +20703,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_sibling_call",
     "context": "Your sibling, who chose the sensible life, calling",
     "prompt": "Your sibling — the one who chose the stable job and the mortgage and the quiet judgment of your choices — calls out of nowhere. “So,” they say, awkward, “the kid started playing. Your instrument. Won’t put it down. And I, uh. I didn’t know who else to call.” It’s an olive branch shaped like a phone call.",
+    "recap": "Your sensible sibling calls: the kid picked up your instrument.",
     "tags": [
       "home",
       "family"
@@ -20586,6 +20808,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_sibling_recital",
     "context": "The kid’s first recital vs. a real gig, same night",
     "prompt": "The kid’s first recital is the same night as a gig that actually matters for your career. Your sibling didn’t ask you to come — would never ask — but the kid mentioned, shyly, that they’re playing a song they learned by watching your videos. Both things are at 7 p.m. Two hours apart, ninety minutes of driving between them.",
+    "recap": "The kid’s first recital and a career-making gig, same night.",
     "tags": [
       "home",
       "family"
@@ -20681,6 +20904,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_sibling_verse",
     "context": "Writing the kid into a song",
     "prompt": "The bridge with your sibling held, and grew, and now the kid is genuinely good and genuinely family. You’re writing your biggest song yet, and there’s a space in it that the kid — their story, their fearless little hands on your instrument — fits perfectly. You could put them in it. Forever.",
+    "recap": "There’s a space in your biggest song where the kid fits perfectly.",
     "tags": [
       "write",
       "family"
@@ -20781,6 +21005,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_sibling_thaw",
     "context": "Your sibling, alone, at the back of a show",
     "prompt": "The rift never fully healed — too many years, too much unsaid — but tonight, at your biggest hometown show, you spot them: your sibling, alone, at the very back, no kid, no reason to be there except that they came. They didn’t tell you. They’re half-hidden, like they’re not sure they’re allowed.",
+    "recap": "At your hometown show, your sibling stands alone at the very back.",
     "tags": [
       "live",
       "family"
@@ -20873,6 +21098,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_open_tab",
     "context": "The bartender, sliding you a drink you can’t pay for",
     "prompt": "Your first real venue, and you’re broke after a show that barely drew. The bartender — grizzled, kind, has seen a thousand of you — slides you a drink and waves off your empty wallet. “Start a tab,” they say. “Pay me when you’re somebody.” It’s a bet on you from someone with no reason to make it.",
+    "recap": "The bartender waves off your empty wallet: “Pay me when you’re somebody.”",
     "tags": [
       "home",
       "network"
@@ -20965,6 +21191,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_tab_called",
     "context": "The bar is dying. The tab comes due.",
     "prompt": "The bar that ran your tab is dying — rent hike, changing neighborhood, the usual slow murder of good rooms. The bartender hasn’t asked for anything, would never, but you know the tab is still open, and you know a benefit show could save the place. The ask hangs in the air, unasked.",
+    "recap": "The bar that ran your tab is dying. Your tab is still open.",
     "tags": [
       "live",
       "home"
@@ -21109,6 +21336,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_tab_wall",
     "context": "Your unpaid tab, framed on the wall",
     "prompt": "You walk into the old bar — saved, still standing — and stop cold: your original unpaid tab, the scrap of paper with your name and a two-dollar drink, is framed on the wall like a relic. The bartender grins. “Best investment I ever made. Left it open on purpose. Some tabs you don’t close.”",
+    "recap": "Your unpaid two-dollar tab, framed on the bar wall like a relic.",
     "tags": [
       "home",
       "social"
@@ -21203,6 +21431,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nm_tab_pour",
     "context": "The bartender retires. Last pour, on the house.",
     "prompt": "The bartender is finally retiring, and on their last night behind the bar they pour you a drink — on the house, one last time — and slide it over with the same grin from all those years ago. “First one was on me, so’s the last,” they say. “One request. Play me something. Whatever you want. Just play.”",
+    "recap": "The bartender retires, pours you one last drink, and asks for a song.",
     "tags": [
       "live",
       "home"
@@ -21303,6 +21532,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_eclipse",
     "context": "The Eclipse Festival. Totality at 2:14 p.m. Your set: 1:45.",
     "prompt": "The festival scheduled you against the moon. At 2:14 the sky goes out for three minutes and forty-one seconds, and every astronomer on site agrees: nobody will be looking at you. The stage manager shrugs. “Play through it or plan around it. The moon doesn’t do soundcheck.”",
+    "recap": "Your festival set at 1:45, and totality goes dark at 2:14.",
     "tags": [
       "live",
       "risky"
@@ -21403,6 +21633,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_gorefeast",
     "context": "BLOODMOOT FESTIVAL. The poster says GOREFEAST. You are not Gorefeast.",
     "prompt": "The booking email said “Gorefest, right?” and you said yes, because a festival is a festival. It is now clear that the metal festival expected Gorefeast — nine albums, corpse paint, a song called “Marrow Silo” — and got you. The tent holds two thousand people warming up a pit. Your entire catalog is in a major key.",
+    "recap": "A metal festival booked Gorefeast and got you. Two thousand wait.",
     "tags": [
       "live",
       "risky"
@@ -21504,6 +21735,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_anthem",
     "context": "The stadium tunnel. A man in a team polo with a stopwatch.",
     "prompt": "The local team wants a seventh-inning song. “Forty seconds. Team name early and often. Thirty thousand people will sing it drunk for the next fifty years or never again — no middle.” The current anthem is an organ riff from 1974 and its composer’s grandchildren still get checks.",
+    "recap": "The team wants a seventh-inning song. Forty seconds, name early and often.",
     "tags": [
       "write",
       "deal"
@@ -21604,6 +21836,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_wax",
     "context": "The Hall of Notable Figures (regional). A velvet rope. A shape.",
     "prompt": "The wax museum made a you. The unveiling is tonight and you’re contractually “encouraged” to attend. You have seen a preview photo. It is… close. The eyes are yours. The smile belongs to a realtor. It is holding your instrument almost correctly, the way a crab might.",
+    "recap": "The wax museum made a you. The eyes are right; the smile is a realtor’s.",
     "tags": [
       "fame",
       "social"
@@ -21704,6 +21937,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_broadcast",
     "context": "Live radio session, take four. Then: the tone.",
     "prompt": "Mid-take, every speaker in the station erupts: THIS IS A TEST OF THE EMERGENCY BROADCAST SYSTEM. The tone holds a perfect concert A under your whole second verse, then stops. The engineer goes pale: takes one through three are gone — a tape machine older than everyone present ate them. The only surviving take is the one with the government singing harmony.",
+    "recap": "Mid-take, the emergency tone holds a concert A under your whole verse.",
     "tags": [
       "studio",
       "record"
@@ -21804,6 +22038,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_yacht",
     "context": "A wedding planner with a briefcase and a nondisclosure agreement",
     "prompt": "A billionaire’s child is getting married on a yacht in water too expensive to name. The fee has a comma where you’ve never had a comma. The terms: phones confiscated, no photos, no setlist approval, and your name appears nowhere, ever — legally, you were never aboard. “Think of it,” the planner says, “as the best show nobody will believe you played.”",
+    "recap": "A yacht wedding, a fee with a new comma, and your name nowhere, ever.",
     "tags": [
       "deal",
       "live"
@@ -21904,6 +22139,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_sinkhole",
     "context": "Load-in, 4 p.m. The street in front of the venue: gone.",
     "prompt": "A sinkhole opens in front of the venue with a sound like the earth clearing its throat. Thirty feet across, geologically smug, and — per the fire marshal — “stable-ish.” The show is in five hours. The promoter, a visionary under pressure, has already changed the marquee: TONIGHT — THE SINKHOLE SHOW.",
+    "recap": "A thirty-foot sinkhole out front, five hours to showtime.",
     "tags": [
       "live",
       "risky"
@@ -22005,6 +22241,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_parade",
     "context": "A float shaped like a giant vinyl record. A live mic. Main Street.",
     "prompt": "Your hometown made you grand marshal. The float is moving at four miles an hour past every person who ever knew you — your dentist, your algebra teacher, the guy who fired you from the movie theater, three exes spaced with cruel evenness along the route. The mic is live. The whole town is listening. The float cannot be stopped.",
+    "recap": "Grand marshal on a vinyl-record float, past everyone who knew you.",
     "tags": [
       "live",
       "family"
@@ -22109,6 +22346,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_terminal",
     "context": "Gate B12. Delay: 9 hours. New estimate: also 9 hours.",
     "prompt": "The board says DELAYED in a font that has given up. Nine hours, gate B12, and fate has stacked the room: you with your instrument, and — sprawled across four gates like a shipwreck — an entire touring orchestra, sixty strong, missing the same connection. Their concertmaster catches you looking at your case. She raises an eyebrow that contains a whole contract.",
+    "recap": "Gate B12, a nine-hour delay, and a stranded sixty-piece orchestra.",
     "tags": [
       "live",
       "social"
@@ -22211,6 +22449,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nfp_lookalike",
     "context": "The bar’s chalkboard: your name, listed twice, 9 and 11",
     "prompt": "For two towns and eight months, someone has been gigging AS you — your name, your setlist, your stage banter down to the pause. Tonight, through a booking accident with the shape of destiny, you are both on the bill at the same bar. They’re at the counter. They have your haircut. They are, you notice with genuine outrage, tuning your way.",
+    "recap": "Someone’s been gigging as you — now you’re both on the bill.",
     "tags": [
       "live",
       "rival"
@@ -22310,6 +22549,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nw_first_dance",
     "context": "A café booth. A couple. A shoebox of ticket stubs.",
     "prompt": "They want an original for their first dance and they’ve brought evidence: ticket stubs, the receipt from the night they met, a voicemail he never deleted. Budget: $150 and veto power. “It just has to sound like us,” she says, as if that were a key.",
+    "recap": "A couple wants a first-dance original. Budget: $150 and veto power.",
     "tags": [
       "write",
       "deal"
@@ -22408,6 +22648,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nw_uncle_bill",
     "context": "An uncle. A hundred-dollar bill, folded lengthwise like a tiny canoe.",
     "prompt": "He materializes at the lip of the stage holding the hundred like a fishing lure. The request: a song he cannot name, from “the summer of ’88, maybe ’89,” which goes — and here he hums four notes that describe at least two hundred songs and one national anthem. “You know the one,” he says. He believes this completely.",
+    "recap": "An uncle waves a hundred for a song he can only hum.",
     "tags": [
       "live",
       "social"
@@ -22501,6 +22742,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nw_cousins",
     "context": "A double reception. One tent divider. Through it: a saxophone, confident.",
     "prompt": "Two receptions, one huge tent, a canvas divider doing the work of a national border. On the other side: The Cousins — matching burgundy suits, four generations of wedding-band royalty, a horn section with a pension plan. Their bandleader pokes his head around the divider: “Volume situation. We can do this civilized, or we can do this GOOD.”",
+    "recap": "A tent divider away: The Cousins, a wedding band with a horn section.",
     "tags": [
       "live",
       "band"
@@ -22601,6 +22843,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nw_divorce_party",
     "context": "Same ballroom. Same disco ball. A banner: FREE AT LAST (glitter)",
     "prompt": "Seven years ago you played this exact ballroom for this exact woman’s wedding. Tonight she’s booked you for the divorce party — same venue, same playlist, “but,” she specifies over the phone with terrifying calm, “new energy.” Her deposit arrived instantly. The first request on the sheet is the first-dance song, annotated: FASTER.",
+    "recap": "Same ballroom you played her wedding — now the divorce party.",
     "tags": [
       "live",
       "social"
@@ -22698,6 +22941,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nw_officiant",
     "context": "A garden aisle, seated guests, no officiant. All eyes rotate to you.",
     "prompt": "The couple booked you as the surprise — the famous-ish musician at cousin Dana’s wedding. Then the officiant’s car dies two counties away, and it surfaces that you are technically ordained from a website, years ago, as a bit. The wedding planner grips your arm with the strength of the truly desperate: “You talk for a living. TALK.”",
+    "recap": "The officiant’s stranded, and you’re technically ordained online.",
     "tags": [
       "live",
       "social"
@@ -22799,6 +23043,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ncr_buffet",
     "context": "The Neptune Lounge, which is also, structurally, the buffet",
     "prompt": "Your “stage” shares a wall with the omelet station and the acoustics of a sneeze guard. The room’s natural soundscape: tongs, ice machine, the soft-serve unit’s low B-flat drone, a man announcing shrimp. The cruise director beams: “Two sets a night. The dinner crowd is very honest.”",
+    "recap": "The Neptune Lounge shares a wall with the omelet station.",
     "tags": [
       "live",
       "work"
@@ -22896,6 +23141,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ncr_captain",
     "context": "The bridge. The captain, holding your album like a summons.",
     "prompt": "Every night at eight the captain addresses the ship, and every night he ends with a song request for the lounge act. Tonight he summons you to the bridge, taps your album, and makes it known — with the gravity of a man legally empowered to perform marriages and burials — that tomorrow he would like to SING one. With you. Over the all-ship PA.",
+    "recap": "The captain summons you to the bridge and wants to sing.",
     "tags": [
       "live",
       "social"
@@ -22996,6 +23242,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ncr_storm_deck",
     "context": "Deck 11. Weather advisory. Nine passengers who did not get the memo, or got it and came anyway.",
     "prompt": "The deck party is canceled — forty-knot gusts, horizontal drizzle, the ocean in a mood. But nine passengers are already up there, gripping the rail, and something in how they’re standing tells you the truth: it’s the grief cruise crowd. The widower from deck 4. The sisters scattering their mother Tuesday. They didn’t come for a party. They came because the cabin was too quiet.",
+    "recap": "Deck 11 in a storm, nine passengers from the grief cruise waiting.",
     "tags": [
       "live",
       "family"
@@ -23097,6 +23344,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ncr_talent_show",
     "context": "The Poseidon Theater. Judges’ table. A scorecard and a complimentary lanyard.",
     "prompt": "You’re judging the passenger talent show between a juggler, a comedy hypnotist, and the cruise director’s niece (interpretive dance, heavily favored, related to management). Then contestant eight: a silver-haired retiree in orthopedic sneakers plugs in a road-worn guitar and, without preamble, SHREDS — real, vicious, dust-blowing-off-of-it shredding. The theater loses its mind. The cruise director’s smile does not reach his eyes.",
+    "recap": "Judging the talent show, and contestant eight plugs in a road case.",
     "tags": [
       "social",
       "live"
@@ -23196,6 +23444,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ncr_intl_waters",
     "context": "Twelve nautical miles out. The ship photographer’s cabin studio. A flag app, consulted.",
     "prompt": "The ship’s photographer moonlights as an engineer and has built a shockingly good rig in his cabin. His pitch, delivered at whisper volume: “We’re in international waters. No publishing law applies out here.” This is not really how any of that works, and you both know it, and the rig is warm, and the sea is flat, and you have a song that’s been circling the boat for days.",
+    "recap": "The ship photographer’s cabin studio, twelve miles out. “No law here.”",
     "tags": [
       "studio",
       "record"
@@ -23300,6 +23549,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nr_split_bill",
     "context": "A promoter, avoiding eye contact. A poster with two names in the same font size.",
     "prompt": "The promoter double-booked the night and has rebranded the accident as a “CO-HEADLINE EVENT”: you and {rival}, one stage, one green room, one deli tray with a single sad sandwich already missing. {rival} arrives, reads the poster, reads the room, and sets their case down on exactly half of the couch.",
+    "recap": "One stage double-booked, rebranded a “co-headline event” with {rival}.",
     "tags": [
       "live",
       "rival"
@@ -23405,6 +23655,7 @@ export const EVENTS2: GameEvent[] = [
       "rivalIs": "understudy"
     },
     "prompt": "The Understudy has announced a show for next week performing — per the flyer, in your exact setlist font — songs from YOUR unreleased set. The set you’ve played for no one. The set that exists in your notebook, your practice room, and the ears of maybe five trusted people. The Understudy learned your act by watching. Apparently they’ve been watching somewhere very, very close.",
+    "recap": "The Understudy announces a show of your unreleased set.",
     "tags": [
       "rival",
       "social"
@@ -23507,6 +23758,7 @@ export const EVENTS2: GameEvent[] = [
       "rivalIs": "kudzu"
     },
     "prompt": "DJ Kudzu has released a remix of your soundcheck — the aimless noodling you played to test the monitors, secretly recorded from the floor, chopped over a beat, and titled like it was a collaboration. It is, and this is the infuriating part, GOOD. It’s charting-adjacent. Playlists have found it. Your name is in the credits as “source (organic).”",
+    "recap": "DJ Kudzu chopped your soundcheck into a charting remix.",
     "tags": [
       "rival",
       "record"
@@ -23613,6 +23865,7 @@ export const EVENTS2: GameEvent[] = [
       "rivalryMax": 2
     },
     "prompt": "The feud cooled a while ago; what’s left is something neither of you has named. Now {rival} is at your door with a hard drive and a speech they’ve clearly rehearsed in the car: they want YOU to produce their record. “You’re the only one who hates my bad habits as much as I do,” they say. “That’s producing, right?” It is. That’s exactly what it is.",
+    "recap": "{rival} at your door with a hard drive, asking you to produce.",
     "tags": [
       "rival",
       "studio"
@@ -23718,6 +23971,7 @@ export const EVENTS2: GameEvent[] = [
       "songsMin": 1
     },
     "prompt": "{rival} has moved their album to YOUR release week — confirmed by their own label’s newsletter, which uses the word “showdown” twice and a boxing glove emoji once. “{song}” versus their lead single, same Friday, same chart, on purpose. Your phone is a casino floor. The scene has already printed unofficial fight posters. Somebody is taking actual bets.",
+    "recap": "{rival} moved their album to your release week. On purpose.",
     "tags": [
       "rival",
       "fame"
@@ -23822,6 +24076,7 @@ export const EVENTS2: GameEvent[] = [
       "nemesis": true
     },
     "prompt": "Three careers, same face across the room. Tonight the industry is toasting YOU, and the organizers — historians of nothing — have invited {rival} to speak. They rise, {rivalVibe} to the last thread, and deliver a toast that is 60% threat by volume: “To the only one who ever made me better… by making everything harder. May the last act be worthy of the first.” Every eye in the room swings to you. Your glass is already in your hand.",
+    "recap": "The industry toasts you, and {rival} takes the mic to speak.",
     "tags": [
       "rival",
       "fame"
@@ -23926,6 +24181,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ng_bandcamp_friday",
     "context": "The one day the platform waives its cut",
     "prompt": "It’s the platform’s no-fee day — the one Friday a month it waives its cut and fans go out of their way to buy direct. Everyone in the scene drops something. The window is 24 hours and the goodwill is real but finite.",
+    "recap": "The platform’s no-fee Friday. A 24-hour window.",
     "tags": [
       "record",
       "social"
@@ -24014,6 +24270,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ng_open_mic_host",
     "context": "The open mic you came up through needs a host",
     "prompt": "The open mic that gave you your first stage lost its host, and they’re asking you to run it — the sign-up sheet, the encouragement, the gentle management of the guy who always plays too long. It pays nothing and matters enormously.",
+    "recap": "The open mic that gave you your start lost its host.",
     "tags": [
       "live",
       "home"
@@ -24102,6 +24359,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ng_gear_swap",
     "context": "A parking-lot gear swap meet",
     "prompt": "A gear swap meet in a parking lot — tables of cables, amps, and instruments with stories. Someone’s selling exactly the thing your sound has been missing, and someone else wants exactly the thing gathering dust in your van. Deals are made on vibes.",
+    "recap": "A parking-lot gear swap, deals made on vibes.",
     "tags": [
       "deal",
       "tone"
@@ -24192,6 +24450,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ng_house_concert",
     "context": "A living room, forty folding chairs, total silence",
     "prompt": "A fan offers to host a house concert — their living room, forty invited guests, a hat passed at the end, and the specific terrifying intimacy of playing to people close enough to see your hands shake. No stage to hide behind here.",
+    "recap": "A living room, forty folding chairs, no stage to hide behind.",
     "tags": [
       "live",
       "home"
@@ -24285,6 +24544,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ng_local_news",
     "context": "The morning news, a fluff segment, 6:40 a.m.",
     "prompt": "The local morning news wants you for a 6:40 a.m. “community spotlight” segment between the weather and a story about a raccoon. The anchors are relentlessly upbeat and have not listened to your music. Four hundred thousand groggy locals are watching.",
+    "recap": "A 6:40 a.m. news spot, between the weather and a raccoon.",
     "tags": [
       "social",
       "live"
@@ -24376,6 +24636,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ng_setlist_gamble",
     "context": "The setlist, ten minutes to doors",
     "prompt": "Ten minutes to doors and the setlist is still a question: play the crowd-pleasers you know land, or open with the deep cut you’ve been dying to try live. The crowd tonight is a wildcard — a mix of diehards and first-timers who wandered in.",
+    "recap": "Ten minutes to doors, the setlist still a question.",
     "tags": [
       "live",
       "practice"
@@ -24470,6 +24731,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ng_collab_dm",
     "context": "A DM from an artist in a totally different genre",
     "prompt": "An artist from a completely different corner of music — someone whose world barely overlaps yours — slides into your DMs with a collab idea that’s either brilliant or a disaster. The genres shouldn’t mix. That’s exactly why it might be great.",
+    "recap": "A DM from an artist whose genre shouldn’t mix with yours.",
     "tags": [
       "network",
       "write"
@@ -24561,6 +24823,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_ng_the_quiet_win",
     "context": "A small, private moment of arrival",
     "prompt": "No crowd, no chart, no camera — just a quiet moment when you realize you can do the thing you couldn’t a year ago. The progress that no one claps for. You’re alone with an instrument and, for once, the doubt is silent. What do you do with the quiet?",
+    "recap": "Alone with an instrument, the doubt finally quiet.",
     "tags": [
       "home",
       "practice"

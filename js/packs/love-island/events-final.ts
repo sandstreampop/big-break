@@ -13,6 +13,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_challenge',
     context: 'Final Week · “I’VE GOT A TEXT!!” · the villa Prom',
     prompt: '“Islanders, tonight is the villa Prom. Suits, gowns, corsages — and each of you will make a gesture for the person you’re coupled up with. #promnight” — The last big set-piece before the Final. Fairy lights, a slow song, and a lawn full of people about to say things they’ll be quoted on forever.',
+    recap: 'Got a text — the villa Prom, and a gesture owed to {partner}.',
     choices: {
       left: {
         label: 'Make it about them',
@@ -41,6 +42,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_phone',
     context: 'Evening · the outside world leaks in',
     prompt: 'A dumped Islander’s exit interview has aired, and with it, a rumour of the standings: your couple is “in the conversation.” The villa pretends not to care about the vote the way cats pretend not to care about the fridge.',
+    recap: 'Word leaks in: your couple is ‘in the conversation’ for the vote.',
     choices: {
       left: {
         label: 'Keep doing what works',
@@ -69,6 +71,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Night · the villa cooks for itself · last proper dinner',
     prompt: 'One long table, everyone still standing, and a lasagne with structural issues. It’s the last dinner before the Final and the villa knows it: the banter keeps snagging on sincerity. Somebody clinks a glass. Speeches are coming.',
+    recap: 'The last dinner before the Final — someone clinks a glass for speeches.',
     choices: {
       left: {
         label: 'Give the speech',
@@ -97,6 +100,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'Afternoon · suitcases have appeared · everyone is weird about it',
     prompt: 'Production has quietly delivered everyone’s suitcases “for the Final,” and the sight of them has made the villa mortal. Out there: rent, exes, daylight that isn’t graded. “Weird, isn’t it,” says {partner}, looking at their case like a verdict, not laughing.',
+    recap: 'The suitcases arrived ‘for the Final,’ and the villa’s gone mortal.',
     choices: {
       left: {
         label: 'Talk about the outside',
@@ -125,6 +129,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'The last day · outfits · war paint',
     prompt: 'Final prep. The dressing room is a Formula 1 pit lane of steamers and setting spray. Your outfit for tonight is either “timeless” or “a lot,” depending which mirror you ask. The mirrors are split. The nation will not be.',
+    recap: 'Final prep — your outfit for tonight is ‘timeless’ or ‘a lot.’',
     choices: {
       left: {
         label: 'Timeless',
@@ -153,6 +158,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Morning · Final Week nerves · a spark near the petrol',
     prompt: 'Final Week pressure does strange chemistry: two Islanders who’ve been fine for weeks are suddenly not fine, loudly, over toast. Toast, mate. It’s the wobbly lounger all over again. Alliances are being audited in real time — yours included — and neutrality has three days left to live.',
+    recap: 'Final Week — two Islanders who were fine are suddenly not, over toast.',
     choices: {
       left: {
         label: 'Defuse it',
@@ -181,6 +187,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_beachhut',
     context: 'The Beach Hut · the retrospective question',
     prompt: 'The Beach Hut wants the retrospective: “Looking back at your Season — the coupling, the drama, all of it — what would you tell the person who walked in on Day 1?” The chair creaks. Somewhere in the question is the version of you the nation will keep.',
+    recap: 'Beach Hut wants the retrospective — a message back to Day 1 you.',
     choices: {
       left: {
         label: 'Be honest about it',
@@ -209,6 +216,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Afternoon · an unlikely friendship files its paperwork',
     prompt: 'Somewhere along the Season, you and {rival} stopped circling, and today it tips over. “You’re alright, you know,” they say, one genuinely nice poolside hour deep, to their designated antagonist. The villa doesn’t know what to do with it. Neither does the edit.',
+    recap: 'You and {rival} stopped circling — today the friendship tips over.',
     choices: {
       left: {
         label: 'Make peace official',
@@ -239,6 +247,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'The couple audit · the nation is grading',
     prompt: 'A challenge leaks the couples’ approval rankings, and yours is close enough to the top to taste it. Winning the villa is not a montage, mate — it’s three straight weeks of being the couple the sofa points at and says “them.” Consistency is the campaign.',
+    recap: 'The couples’ approval rankings leaked, and yours is near the top.',
     choices: {
       left: {
         label: 'Be the steady couple',
@@ -267,6 +276,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_phone',
     context: 'A twist · questions from the public',
     prompt: '“Islanders, tonight the public have sent in questions. You will answer them at the firepit. #askthemanything” — The envelope with your name is thick. The public asks what it actually wants to know, which is never what you rehearsed.',
+    recap: 'Got a text — the public sent questions to answer at the firepit.',
     choices: {
       left: {
         label: 'Answer everything straight',
@@ -295,6 +305,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_firepit_day',
     context: 'Final stretch · the favourites stumble',
     prompt: 'The bookies’ favourite couple just had a firepit row about, of all things, a jet-ski. A JET-SKI. The lane to the front is suddenly open. The nation loves a late surge almost as much as it loves the couple that doesn’t chase one.',
+    recap: 'The favourites just rowed over a jet-ski — the lane to the front’s open.',
     choices: {
       left: {
         label: 'Stay above it',
@@ -323,6 +334,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'Night · the terrace · past the small talk',
     prompt: 'Somewhere past midnight the conversation with {partner} runs out of shallow water. “Okay,” they say, quieter. “Actual question.” Family. The thing with the dad. The reason for the wall. This is the chat that decides whether you’re a couple or a coupling.',
+    recap: 'Past midnight, {partner} goes quiet: ‘Actual question.’ Family. The wall.',
     choices: {
       left: {
         label: 'Go first',
@@ -352,6 +364,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     requires: { singleIs: false },
     context: 'A grey day · {partner} is off · properly off',
     prompt: '{partner} has been quiet since breakfast — not sulking, just somewhere else, behind their own eyes. The villa’s official toolkit for this is “a chat on the swing seat.” The real test is whether you can be useful to someone at their worst on a show that only films bests.',
+    recap: '{partner}’s been somewhere else behind their eyes since breakfast.',
     choices: {
       left: {
         label: 'Sit with it',
@@ -380,6 +393,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Dawn · a camera blind spot · allegedly',
     prompt: 'There’s a corner of the garden the Islanders swear the cameras can’t see. It can’t possibly be true. But at 5 a.m., with {partner} and two mugs of tea, you’re both willing to believe in it — one conversation with no audience, real or imagined.',
+    recap: '5 a.m. in the villa’s alleged blind spot — you, {partner}, no audience.',
     choices: {
       left: {
         label: 'Say the thing you’ve been swallowing',
@@ -408,6 +422,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_phone',
     context: 'A challenge with a logo on it',
     prompt: 'Today’s challenge is transparently sponsored — a smoothie brand has bought the morning, and the winner gets “a year’s supply.” Nobody needs a year of smoothies. Everybody needs what you can do with a branded segment and thirty seconds of camera.',
+    recap: 'A smoothie brand bought the morning challenge — a year’s supply on the line.',
     choices: {
       left: {
         label: 'Win it properly',
@@ -436,6 +451,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'An ordinary Tuesday · a star is workshopping',
     prompt: 'Every Islander who ever built an empire left this place with a catchphrase, and you don’t have one yet. You’ve got a shortlist. The villa is your focus group, whether it knows it or not. (It must never know it.)',
+    recap: 'Every villa legend leaves with a catchphrase. You’re still auditioning yours.',
     choices: {
       left: {
         label: 'Seed it naturally',
@@ -464,6 +480,7 @@ export const FINAL_EVENTS: GameEvent[] = [
     art: 'li_firepit_day',
     context: 'The edit is knocking · villain hours',
     prompt: 'The show has started cutting to you whenever anything spicy happens — the edit is auditioning you for villain, and villains, historically, out-earn winners. The role is right there. It just costs the thing roles always cost.',
+    recap: 'The edit keeps cutting to you for the spicy bits — villain casting, basically.',
     choices: {
       left: {
         label: 'Take the role',

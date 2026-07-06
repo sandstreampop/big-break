@@ -16,6 +16,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_arrival',
     context: 'Day 1 · the lawn · “TEXT! I’VE GOT A TEXT!!”',
     prompt: '“Islanders, it’s time to couple up. Step forward for the person you want. #shootyourshot” — Six strangers in swimwear are arranged like a menu. The nation is already deciding what you are. So, in the next thirty seconds, are you.',
+    recap: 'Day 1 on the lawn — first pick of who to couple up with.',
     choices: {
       left: {
         label: 'Go with your gut',
@@ -47,6 +48,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_bombshell',
     context: 'Their day 9 · your day 1 · the lawn goes quiet',
     prompt: '“Islanders — say hello to your newest arrival. #latecheckin” You walk in slow, the way the promo taught you. Six settled couples look up, and every single one does the same maths at the same time. You’re not joining this villa. You’re happening to it.',
+    recap: 'You arrive on their day 9 — six settled couples, and you’re the new energy.',
     choices: {
       left: {
         label: 'Pick a target tonight',
@@ -79,6 +81,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_casa_text',
     context: 'Dawn · the villa · “I’VE GOT A TEXT!!”',
     prompt: '“Islanders, the villa is splitting. One group will spend the next few days at Casa Amor — with six brand-new arrivals. Pack a bag. #outofsightoutofmind” — Your couple gets ninety seconds to say goodbye. Somebody’s already crying. Nothing has happened yet. Nothing ever needs to.',
+    recap: 'The villa splits for Casa Amor — ninety seconds to say goodbye.',
     choices: {
       left: {
         label: 'Say a proper goodbye',
@@ -107,6 +110,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_casa_night',
     context: 'Casa Amor · night 2 · six new faces',
     prompt: 'Six new arrivals, one duvet each, and a partner one postcode and one production decision away. Everything you do here, they’ll find out about. Not tonight. But they will.',
+    recap: 'Casa Amor, night two — six new faces and {partner} a postcode away.',
     choices: {
       left: {
         label: 'Stay loyal',
@@ -135,6 +139,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_casa_postcard',
     context: 'Casa Amor · morning · “I’ve got a text! A postcard from the villa…”',
     prompt: 'One photo. Your partner, mid-laugh, somebody’s hand somewhere ambiguous, cropped by a producer who knows exactly what they’re doing. You stayed loyal. This is what you stayed loyal to. Probably. The crop makes it hard to say.',
+    recap: 'A cropped postcard lands — {partner} mid-laugh, a hand somewhere.',
     choices: {
       left: {
         label: 'Trust them',
@@ -163,6 +168,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_casa_postcard',
     context: 'Casa Amor · morning · “I’ve got a text! The villa got a postcard…”',
     prompt: 'The postcard went the other way too. Somewhere across the island, your partner is holding a photo of your night. You know exactly what the crop shows, because you did it. The only question left is who tells them — you, or Movie Night.',
+    recap: 'Your Casa night went home on a postcard — {partner} has seen it.',
     choices: {
       left: {
         label: 'Come clean at the return',
@@ -191,6 +197,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_casa_return',
     context: 'The firepit · the return · the Host is here in person',
     prompt: '“Islanders. Welcome home. Those of you at Casa Amor had a decision to make — and so did the ones who stayed. Stand by the firepit. Let’s see who did what.” — The gate opens in ten seconds. Whoever you walk in holding hands with is the answer.',
+    recap: 'Casa Amor’s over — walk back through the gate and show who you chose.',
     choices: {
       left: {
         label: 'Stand alone, faithful',
@@ -219,6 +226,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_casa_held',
     context: 'The firepit · the gate opens',
     prompt: 'The gate opens and your partner walks in alone. Alone. Three days, six strangers, one narrow single bed of temptation — and they held. The look you exchange does more for the vote than any speech could.',
+    recap: '{partner} walks in alone — three days at Casa and they held.',
     choices: {
       left: {
         label: 'Run to them',
@@ -247,6 +255,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_casa_betrayed',
     context: 'The firepit · the gate opens',
     prompt: 'The gate opens and your partner walks in holding somebody else’s hand. You stayed loyal for this. The camera finds your face and stays there, because your face is now the show.',
+    recap: 'The gate opens and {partner} walks in holding someone else’s hand.',
     choices: {
       left: {
         label: 'Take it with grace',
@@ -283,6 +292,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     ] },
     context: 'The lawn · a cinema screen that wasn’t there this morning',
     prompt: '“Islanders. Grab a drink. Tonight, you’re watching a film. It’s about all of you.” — The Host has a remote. The screen is enormous. The villa has a cinema now; nobody asked for a cinema. Somewhere on that screen is footage somebody at this firepit has been praying doesn’t exist.',
+    recap: 'Movie Night — the villa’s got a cinema and your footage is in the reel.',
     choices: {
       left: {
         label: 'Front it out',
@@ -312,6 +322,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { flagsNone: ['li_casa_kiss', 'li_head_turned', 'li_strayed_official'], partnerKissedIs: false },
     context: 'The lawn · a cinema screen that wasn’t there this morning',
     prompt: '“Islanders. Grab a drink. Tonight, you’re watching a film. It’s about all of you.” — The reel starts. Clip after clip, it’s everyone else. You check twice. Nothing with your name on it. Movie Night, for once, is a spectator sport.',
+    recap: 'Movie Night rolls and none of it’s got your name on it.',
     choices: {
       left: {
         label: 'Hold hands and watch',
@@ -342,6 +353,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_bombshell',
     context: 'Golden hour · “I’VE GOT A TEXT!!”',
     prompt: '“Islanders, please welcome your first bombshell. {bombshell} arrives tonight — and will be taking one of you on a date. #newenergy” — A newcomer walks in like the villa is theirs and everyone else is subletting. Your couple suddenly has an audience.',
+    recap: '{bombshell} arrives tonight and is taking one of you on a date.',
     choices: {
       left: {
         label: 'Say hi first',
@@ -371,6 +383,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { singleIs: false },
     context: 'Afternoon · “I’VE GOT A TEXT!!”',
     prompt: '“Islanders, {bombshell} enters the villa tonight — and gets to steal one Islander for a private date. #spicy” — The new arrival reads the lawn like a wine list. Your partner is on it. So, to be fair, are you.',
+    recap: '{bombshell} enters and can steal one for a date — {partner}’s on the list.',
     choices: {
       left: {
         label: 'Make your couple boring',
@@ -400,6 +413,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { singleIs: false },
     context: 'The firepit · night · the Host walks in unannounced',
     prompt: '“Islanders. Tonight, our new arrival doesn’t get a date. They get a choice. In sixty seconds, {bombshell} will couple up with one of you — and whoever’s left over is single. Immediately.” — Sixty seconds. Every couple on this lawn is doing the same maths.',
+    recap: 'Sixty seconds till {bombshell} couples up — and someone’s left single.',
     choices: {
       left: {
         label: 'Close ranks',
@@ -429,6 +443,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { singleIs: true },
     context: 'Afternoon · “I’VE GOT A TEXT!!”',
     prompt: '“Islanders, {bombshell} enters the villa tonight. #newenergy” — A new arrival, and you’re the only single person at the welcome drinks. The villa watches you approach the situation the way nature documentaries watch anything.',
+    recap: '{bombshell} arrives and you’re the only single at the welcome drinks.',
     choices: {
       left: {
         label: 'Shoot your shot',
@@ -460,6 +475,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { genderIs: 'girl', singleIs: false },
     context: 'The firepit · night · “I’VE GOT A TEXT!!”',
     prompt: '“Tonight, there will be a recoupling. The girls will choose. #ladiesfirst” — The power is yours, which sounds better than it feels. Keep what you have, or reset everything for a fresh face — with the whole lawn, and the nation, taking notes.',
+    recap: 'Recoupling — the girls choose, and you decide whether to keep {partner}.',
     choices: {
       left: {
         label: 'Stick with {partner}',
@@ -489,6 +505,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { genderIs: 'girl', singleIs: true },
     context: 'The firepit · night · “I’VE GOT A TEXT!!”',
     prompt: '“Tonight, there will be a recoupling. The girls will choose. #ladiesfirst” — You’re single, and you pick first. The boys arrange themselves around the firepit like options. One of them has been practising his surprised face.',
+    recap: 'Recoupling and you’re single — the girls pick first, the boys lined up.',
     choices: {
       left: {
         label: 'Pick with your heart',
@@ -518,6 +535,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { genderIs: 'boy', singleIs: false },
     context: 'The firepit · night · “I’VE GOT A TEXT!!”',
     prompt: '“Tonight, there will be a recoupling. The girls will choose. The boy not chosen will be dumped from the Island. #decisiontime” — You don’t pick tonight. You stand there, with everything you’ve built, and find out what it was worth. The fire crackles. It would.',
+    recap: 'Recoupling — the girls choose, the unpicked boy goes home. You wait.',
     choices: {
       left: {
         label: 'Trust the graft',
@@ -547,6 +565,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { genderIs: 'boy', singleIs: true },
     context: 'The firepit · night · “I’VE GOT A TEXT!!”',
     prompt: '“Tonight, there will be a recoupling. The girls will choose. The boy not chosen will be dumped from the Island. #decisiontime” — You’re single going in. No Connection to protect you tonight — only whatever the last few weeks bought you with the girls, and with the nation.',
+    recap: 'Recoupling, and you’re single going in — the girls hold your fate.',
     choices: {
       left: {
         label: 'Trust the friendships',
@@ -577,6 +596,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
     prompt: '“Tonight, there will be a recoupling. The boys will choose. #judgementweek” — Final Week, and the power lands in your hands. No pressure, but whoever you’re holding at the end of tonight is who you’re holding at the Final. In the photos. Forever. Laminated.',
+    recap: 'Final Week recoupling — the boys choose who they take to the Final.',
     choices: {
       left: {
         label: 'Stick with {partner}',
@@ -608,6 +628,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
     prompt: '“Tonight, there will be a recoupling. The boys will choose. #judgementweek” — You walk into Final Week single, and you pick first. One good sentence between you and a place at the Final.',
+    recap: 'Final Week and you’re single — pick first for a place at the Final.',
     choices: {
       left: {
         label: 'Pick with your heart',
@@ -636,6 +657,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
     prompt: '“Tonight, there will be a recoupling. The boys will choose. The girl not chosen will be dumped from the Island. #judgementweek” — More girls than places: a maths problem with feelings. No move left tonight. Only what you’ve built — the Connection, or the vote.',
+    recap: 'Final Week — the boys choose, the unpicked girl’s dumped. You wait it out.',
     choices: {
       left: {
         label: 'Trust the graft',
@@ -666,6 +688,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'Final Week opens · the firepit · “I’VE GOT A TEXT!!”',
     prompt: '“Tonight, there will be a recoupling. The boys will choose. The girl not chosen will be dumped from the Island. #judgementweek” — You’re single, in Final Week, at a ceremony where somebody goes home. No partner to protect you. Only the last three weeks, and the nation.',
+    recap: 'Single in Final Week — the boys choose, and someone goes home tonight.',
     choices: {
       left: {
         label: 'Stand on what you built',
@@ -698,6 +721,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'The firepit · a beat before the choosing · what you know, burning',
     prompt: '“Before anyone says a name—” The Host lets the pause stretch. In your pocket: everything you know about {rival}. One sentence, said out loud at this fire, and tonight’s board changes. Said sentences don’t come back, mind. {rival} watches you the way you watch weather.',
+    recap: 'A beat before the names — all you know about {rival}, in your pocket.',
     choices: {
       left: {
         label: 'Say it. Out loud.',
@@ -728,6 +752,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'The firepit · the choosing',
     prompt: '“I want to couple up with this person because…” — and it’s your name, first, before the because. The Connection held. Across the fire, somebody who worked the room all week is discovering what rooms are worth.',
+    recap: 'Your name, said first, before the because — the Connection held.',
     choices: {
       left: {
         label: 'Cross the fire to them',
@@ -756,6 +781,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'The firepit · the choosing',
     prompt: 'The names go round the fire and none of them is your partner’s voice saying yours. Then — a beat before the Host moves on — someone else says it. Someone you weren’t building with. The nation’s favourite gets caught, not dropped. New couple. New everything.',
+    recap: '{partner}’s voice never said your name — but someone else’s did.',
     choices: {
       left: {
         label: 'Take the hand offered',
@@ -784,6 +810,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_dumped',
     context: 'The firepit · after the choosing · the Host, gently',
     prompt: '“I’m sorry. You haven’t been chosen — which means, tonight, you’ve been dumped from the Island. Say your goodbyes.” — You already knew. You knew at the second name. The others do the thing where they hold your hand harder to feel better about themselves.',
+    recap: 'Not chosen — the Host says goodbye, and you already knew.',
     choices: {
       left: {
         label: 'Leave with grace',
@@ -815,6 +842,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { singleIs: false, flagsNone: ['li_revealed', 'li_partner_revealed'] },
     context: 'Final Week · the families arrive',
     prompt: 'Prosecco on the lawn and your partner’s mum walking towards you with the smile of a woman who has watched every episode. The families are the last gate before the Final. They have opinions. They have watched you sleep.',
+    recap: 'Final Week — the families are on the lawn and they’ve watched everything.',
     choices: {
       left: {
         label: 'Be exactly yourselves',
@@ -844,6 +872,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     requires: { singleIs: false, anyOf: [{ flagsAll: ['li_revealed'] }, { flagsAll: ['li_partner_revealed'] }] },
     context: 'Final Week · the families arrive · they’ve seen the footage',
     prompt: 'The families arrive smiling, and the smiles have footnotes. They watched Movie Night from their sofas. Somebody’s mum has the exact clip queued on her phone, and a question she has been rehearsing on the plane.',
+    recap: 'The families arrive with footnotes — they watched Movie Night from the sofa.',
     choices: {
       left: {
         label: 'Own all of it',
@@ -874,6 +903,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'The daybed · afternoon lull',
     prompt: 'Sun’s out. Half the villa is asleep and the other half is deciding your reputation for you. You’ve banked a little goodwill — enough, maybe, to start becoming a <i>thing</i>. Every reality show is really about becoming a thing.',
+    recap: 'The daybed lull — enough goodwill banked to start becoming a thing.',
     choices: {
       left: {
         label: 'Invest in the edit',
@@ -903,6 +933,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'The daybed · The Turn · reputations hardening',
     prompt: 'Week three. The nation has sorted the villa into characters, and the characters are hardening like cement. If you want a say in what you set as, this is the window. The daybed is where edits are negotiated.',
+    recap: 'Week three — the nation’s sorting the villa into characters.',
     choices: {
       left: {
         label: 'Invest in the edit',
@@ -932,6 +963,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'The daybed · Final Week · last chance to be a thing',
     prompt: 'Final Week. Whatever you are by Friday is what you’ll be at the reunion, on the podcasts, in the headlines under your engagement announcement or your gym launch. One more push, or make peace with the edit you’ve got.',
+    recap: 'Final Week on the daybed — one last push at what you’ll be remembered as.',
     choices: {
       left: {
         label: 'One last push',
@@ -963,6 +995,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_beachhut',
     context: 'The Beach Hut · door closed',
     prompt: 'It’s all got a bit loud in there — the villa, the vote, the voice doing laps in your head at 4 a.m. The Beach Hut door shuts and, for one camera-shaped moment, it’s just you and the truth.',
+    recap: 'Beach Hut, door shut — the 4 a.m. voice finally has you alone.',
     choices: {
       left: {
         label: 'Let it all out',
@@ -991,6 +1024,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_beachhut',
     context: 'The bedroom · 3 a.m. · everyone asleep but you',
     prompt: 'You’re lying in a room of sleeping people, wide awake, doing the maths on whether you can actually do this. The voice in your head has stopped doing laps and started doing commentary. One more bad day and you’ll walk. You can feel it.',
+    recap: '3 a.m. in the bedroom, wide awake, one bad day from walking.',
     choices: {
       left: {
         label: 'Wake your favourite',
@@ -1023,6 +1057,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_beachhut',
     context: 'Dawn · the end of the garden · packing distance from the gate',
     prompt: 'You’re up before the sun, sitting on your suitcase — when did you pack the suitcase? — doing the one sum the villa can’t edit: stay or go. Somewhere above you a camera whirs awake. Whatever you decide, you have to decide it now.',
+    recap: 'Dawn on your suitcase — the one sum they can’t edit: stay or go.',
     choices: {
       left: {
         label: 'Tough it out',
@@ -1053,6 +1088,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_final',
     context: 'The Final · the villa in fairy lights · the Host in evening wear',
     prompt: '“Islanders. Tonight, the public decide.” — The lawn has a stage now; the stage has fairy lights; the lights, somehow, have a sponsor. Millions of thumbs hover over two names. One is yours. Make the last look count.',
+    recap: 'The Final — millions of thumbs hovering, one last look to the nation.',
     choices: {
       left: {
         label: 'Speak to the nation',
@@ -1081,6 +1117,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_final',
     context: 'The Final · the terrace · one quiet minute before the ceremony',
     prompt: 'In an hour there’ll be a stage, a cheque, and a decision that isn’t yours. But right now it’s just the two of you on the terrace where it started, and one question that is: is this real out there, where the cameras aren’t?',
+    recap: 'The Final terrace — one quiet minute, and one question: is this real out there.',
     choices: {
       left: {
         label: 'Say the whole thing',
@@ -1109,6 +1146,7 @@ export const BEAT_EVENTS: GameEvent[] = [
     art: 'li_final',
     context: 'The Final · backstage · your phone returned for one supervised hour',
     prompt: 'They hand your phone back for the finale, warm from a producer’s pocket. Four hundred thousand people you’ve never met have opinions, offers, and one very keen energy-drink brand. The villa was the audition. This hour is the career.',
+    recap: 'Your phone’s back for an hour — the offers, the press, the career.',
     choices: {
       left: {
         label: 'Post the perfect goodbye',

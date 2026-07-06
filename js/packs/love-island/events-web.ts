@@ -22,6 +22,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_firepit_day',
     context: 'Golden hour · the firepit · a chat that isn’t about protein',
     prompt: 'Marco has pulled Amber — main character, self-cast — for a chat, angled so the cameras get his good side and Sophia gets the back of his head. From the kitchen, Sophia watches over a smoothie she has stopped drinking. “Interesting,” she says, to nobody. To you, actually.',
+    recap: 'Marco pulls Amber at the firepit while Sophia watches from the kitchen.',
     choices: {
       left: {
         label: 'Join Sophia at the counter',
@@ -51,6 +52,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'The terrace · word travels · it travelled to you',
     prompt: '“Right, don’t say I said,” says {mate}, saying it, “but Marco told the Beach Hut that Sophia is — quote — ‘a great business decision.’” A sentence like that doesn’t stay in a booth. It’s currently in your hands, ticking.',
+    recap: '{mate} leaks that Marco called Sophia ‘a great business decision.’',
     choices: {
       left: {
         label: 'Tell Sophia what he said',
@@ -80,6 +82,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'The firepit · receipts hour · Sophia has the floor',
     prompt: '“Quick chat, everyone.” Sophia has assembled the villa the way you assemble a jury. “Marco. The Beach Hut. ‘A great business decision.’ Ring a bell?” Marco’s skincare has never looked so alone. Someone drops a fork; nobody picks it up.',
+    recap: 'Sophia gathers the villa to confront Marco over his ‘business decision’ line.',
     choices: {
       left: {
         label: 'Stand where she can see you',
@@ -109,6 +112,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'The lawn · the row that didn’t happen',
     prompt: 'It resolves the way villa storms sometimes do: no thunder, just pressure. Marco brings Sophia a smoothie with an apology’s posture; she takes it without warmth. “We’re good,” she announces to the garden. The garden does not believe her.',
+    recap: 'Marco and Sophia call a truce nobody in the garden quite believes.',
     choices: {
       left: {
         label: 'Debrief with {mate}',
@@ -140,6 +144,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Six-fifty a.m. · the kitchen · two teas, one theory',
     prompt: 'Dev is up first again, making two teas. One is his. The other sits on the wall by the roof stairs until it goes cold, because Tash might come up, and has, twice, ever. “It’s just tea,” Dev tells you, in the voice of a man holding a ring box.',
+    recap: 'Dev makes Tash a tea every morning and leaves it on the wall to go cold.',
     choices: {
       left: {
         label: '“Just say it to her”',
@@ -169,6 +174,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'The daybed · Dev has a question · it has been loading all week',
     prompt: '“Honest answer.” Dev sits down with the gravity of a man about to discuss mortgages. “Tash. Do I… embarrass her? She went quiet when I did the thing with the melon.” He means the fruit-ninja bit. Everyone laughed. One person didn’t, and he noticed the one.',
+    recap: 'Dev asks whether his fruit-ninja melon bit embarrasses Tash.',
     choices: {
       left: {
         label: '“Quiet isn’t no. Ask her”',
@@ -198,6 +204,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'The firepit · Dev stands up · the villa stops breathing',
     prompt: '“Tash.” Dev’s voice does a thing it’s never done: it stays level. “I’m not good at speeches. I make you tea you don’t drink. I’d like to keep making it. That’s the whole speech.” Silence. Then Tash, quietly: “I drink them on the stairs, you muppet.”',
+    recap: 'Dev stands up at the firepit to finally say it to Tash.',
     choices: {
       left: {
         label: 'Lead the applause',
@@ -227,6 +234,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'The lawn · the almost · filed under later',
     prompt: 'It happens at the gate after the challenge: Dev opens his mouth, Tash tilts her head — and a producer calls her name for the Beach Hut. By the time she’s back, the sentence has lost its nerve. “Another time,” Dev says. The villa’s saddest two words.',
+    recap: 'A producer pulls Tash for the Beach Hut before Dev can finish.',
     choices: {
       left: {
         label: 'Tell him it’s not over',
@@ -258,6 +266,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_pool',
     context: 'The pool · day six of the Kai & Chloe show',
     prompt: 'Kai has learned Chloe’s coffee order, her nan’s birthday, and the exact name of the gel shade (“Marbella Sunset, not CORAL”). Chloe, to the Beach Hut, glowing: “He’s SO sweet.” Then, softer, to herself, doing the maths: “…he’s so sweet.”',
+    recap: 'Kai’s learned Chloe’s whole life while she quietly does the maths.',
     choices: {
       left: {
         label: 'Flag it to Kai, gently',
@@ -287,6 +296,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'The daybed · {mate} has brought a spreadsheet · a verbal one',
     prompt: '“Okay, hear me out.” {mate} lowers their voice. “Chloe mentions Kai in the Hut on vote days. ONLY vote days. I’ve been counting.” The maths sits between you on the daybed, sunning itself, undeniable.',
+    recap: '{mate} clocks that Chloe only praises Kai on vote days.',
     choices: {
       left: {
         label: 'Show Kai the pattern',
@@ -316,6 +326,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Breakfast · Kai asks the question · with the good spine',
     prompt: '“Chloe.” Kai puts the spatula down, which for Kai is a gavel. “Do you like me, or do you like Tuesdays?” The kitchen goes still. Chloe opens her mouth for the usual — and nothing arrives. For once the gel nails drum no answer.',
+    recap: 'Kai asks Chloe outright: does she like him, or like the votes?',
     choices: {
       left: {
         label: 'Give Kai the nod',
@@ -345,6 +356,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'The firepit · Chloe makes an announcement · check the calendar',
     prompt: '“Everyone? Quick thing.” Chloe stands, takes Kai’s hand, and goes exclusive AT him, publicly, radiantly — the night before a vote. Kai beams like a lighthouse. Behind her smile, you can see the spreadsheet updating in real time.',
+    recap: 'Chloe makes it exclusive with Kai — the night before a vote.',
     choices: {
       left: {
         label: 'Toast the happy couple',
@@ -376,6 +388,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'The lawn · the sunglasses incident · day three of the cold front',
     prompt: 'It started with borrowed sunglasses returned with a thumbprint. It is now a war. {rival} has moved sun loungers to establish a border; {mate} has annexed the good corner of the kitchen. Both of them, separately, today, said to you: “You’ve seen how they are.”',
+    recap: 'The sunglasses feud splits the villa and both sides want you onside.',
     choices: {
       left: {
         label: 'Back {mate}, openly',
@@ -405,6 +418,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'The kitchen · the toastie summit · a treaty is signed',
     prompt: 'It ends at midnight over toasties, because everything in this villa ends over toasties. {rival} concedes the thumbprint; {mate} concedes the Hut segment. They shake on it like heads of state, then immediately gang up on how YOU chaired the talks.',
+    recap: '{rival} and {mate} sign a midnight toastie truce, then turn on you.',
     choices: {
       left: {
         label: 'Take the roasting',
@@ -434,6 +448,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'The lawn · the villa formalises its borders',
     prompt: 'No explosion. Worse: paperwork. The villa quietly reorganises itself into two zones — {rival}’s end has the good loungers, {mate}’s has the kettle. Traffic between them requires a reason and, ideally, a chaperone. You hold dual citizenship, which is exhausting.',
+    recap: 'The villa quietly splits into two zones and you belong to both.',
     choices: {
       left: {
         label: 'Run the corridor',
@@ -465,6 +480,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'Golden hour · the terrace · Sophia wears the good perfume',
     prompt: 'Sophia — newly single, freshly furious, immaculately composed — has chosen a seat. It is next to {partner}. “I just think,” she says, at a volume calibrated for exactly you, “some people in here actually LISTEN.” {partner} nods along, oblivious as a labrador.',
+    recap: 'Newly single Sophia parks next to {partner}, aiming her volume at you.',
     choices: {
       left: {
         label: 'Trust them. Watch anyway',
@@ -494,6 +510,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'Drinks on the lawn · Sophia has an announcement voice on',
     prompt: '“Can I say something?” Sophia doesn’t wait. “Marco wasted my time — I won’t waste mine.” She crosses the lawn and pulls the tallest available singleton for a chat, holding eye contact with the entire villa on the way. It’s not a chat. It’s a press conference.',
+    recap: 'Sophia pulls the tallest singleton like a full press conference.',
     choices: {
       left: {
         label: 'Front row, drink up',
@@ -523,6 +540,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_firepit_day',
     context: 'Morning · the firepit · Sophia, unbothered, moisturised',
     prompt: '“I’m gonna say this once.” Sophia, morning light, no notes. “I came here for something real. That wasn’t it. And I’m not jumping straight into the next thing to prove a point — I’m just gonna enjoy my summer, me.” She sits down and eats a peach like punctuation.',
+    recap: 'Sophia says her piece: no rebound, just enjoying her summer.',
     choices: {
       left: {
         label: 'Tell her that was elite',
@@ -554,6 +572,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_challenge',
     context: 'Challenge day · the reenactment round',
     prompt: '“Islanders! Today’s challenge: REENACT THE SEASON’S BIGGEST MOMENTS.” The first card out of the box is the firepit showdown. Everyone turns to you — you were IN frame. Casting has opinions, and casting is six people in swimwear holding a smoothie prop.',
+    recap: 'Challenge day: the villa must reenact the firepit showdown you were in.',
     choices: {
       left: {
         label: 'Play Sophia. Fully',
@@ -583,6 +602,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Morning · the institution formerly known as the wall tea',
     prompt: 'Dev and Tash now make tea for the WHOLE villa every morning, a two-person institution with a rota and, rumour has it, a stairs-based origin story they refuse to confirm. “Yours,” says Tash, handing you a mug that is somehow exactly right. The bar in here keeps rising.',
+    recap: 'Dev and Tash now run the villa’s morning tea rota for everyone.',
     choices: {
       left: {
         label: 'Raise your own bar',
@@ -612,6 +632,7 @@ export const WEB_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'The daybed · Kai, reborn, has advice now',
     prompt: 'Kai — post-spine, insufferably serene — has taken up dispensing relationship wisdom from the daybed like a lifeguard of the heart. “The thing about boundaries,” he begins, to YOU, the person who taught him the word. {mate} is already recording it on an invisible phone.',
+    recap: 'Kai dispenses boundary advice from the daybed — to you, who taught him.',
     choices: {
       left: {
         label: 'Let him have it',

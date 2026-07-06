@@ -14,6 +14,7 @@ export const NATION_EVENTS: GameEvent[] = [
     art: 'li_beachhut',
     context: 'The Beach Hut · the producer’s favourite question',
     prompt: '“So,” says the voice behind the camera, warm as a trap, “the fans are split on you. Half think you’re here for love. Half think you’re here for the ride.” A pause you could park a jet-ski in. “Which half is right?”',
+    recap: 'The Beach Hut asks whether you’re here for love or for the ride.',
     choices: {
       left: {
         label: '“For love. Watch me”',
@@ -42,6 +43,7 @@ export const NATION_EVENTS: GameEvent[] = [
     art: 'li_challenge',
     context: 'Challenge day · “Snog, Marry, Pie” · the pie is real',
     prompt: '“SNOG, MARRY, PIE!” The whiteboard says so, so it’s law. You’re up, holding a paper plate of shaving-foam justice, and the villa arranges itself into targets. The nation, famously, has never once agreed about a pie.',
+    recap: 'Snog, Marry, Pie — and the foam plate is in your hand.',
     choices: {
       left: {
         label: 'Pie {rival}. Ceremonially',
@@ -70,6 +72,7 @@ export const NATION_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'The lawn · a joke lands on you · the nation watches your spine',
     prompt: 'Marco, mid-holding-court: “—and honestly, half the villa is furniture. No offence.” He gestures at your lounger. At YOU, technically. The lawn does its little “oooh.” Somewhere in a living room, a wing of the nation leans forward: what are you going to do about that?',
+    recap: 'Marco calls you furniture in front of the whole lawn.',
     choices: {
       left: {
         label: 'Laugh along. Keep the peace',
@@ -99,6 +102,7 @@ export const NATION_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'The terrace · a producer “mentions” something · course-correction hour',
     prompt: '“Off the record,” says the producer, on the record, “the love-story crowd has gone off you a bit. Too much game, not enough garden.” They let it sit. Tonight there’s a free evening and a spare picnic basket, if anyone were the type to be visibly, deliberately soft.',
+    recap: 'A producer hints the love crowd’s cooled — there’s a spare picnic basket.',
     choices: {
       left: {
         label: 'The visible date. Full garden',
@@ -127,6 +131,7 @@ export const NATION_EVENTS: GameEvent[] = [
     art: 'li_phone',
     context: 'Evening · “TEXT! I’VE GOT A TEXT!!” · the app has spoken',
     prompt: '“Islanders. The public have been voting in tonight’s poll. The categories: MOST GENUINE and BEST TELLY. The results will be read aloud. Immediately. #nowheretohide” — You place second in both, which the villa agrees is somehow worse than last.',
+    recap: 'Got a text: you placed second in both Most Genuine and Best Telly.',
     choices: {
       left: {
         label: 'Campaign for genuine',
@@ -155,6 +160,7 @@ export const NATION_EVENTS: GameEvent[] = [
     art: 'li_beachhut',
     context: 'Final Week · the Beach Hut · your closing argument',
     prompt: '“Last one,” says the producer, and for once the warmth isn’t a trap. “The vote’s live all week. Thirty seconds. Why you?” The chair creaks. The little red light waits. Every wing of the nation is holding a remote.',
+    recap: 'Final week — thirty seconds in the Beach Hut to make your case.',
     choices: {
       left: {
         label: 'Pitch the love story',
