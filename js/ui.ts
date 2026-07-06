@@ -105,9 +105,15 @@ function reducedMotion() {
 
 // ---------- Screen router ----------
 
-function show(id) {
-  document.querySelectorAll('.screen').forEach((s) => s.classList.remove('active'));
-  $(id).classList.add('active');
+// Direction-aware screen transition (Epic 6): forward navigation rises in from
+// below, going back drops in from above — a sense of place instead of one flat
+// cross-fade. Vertical-only (no horizontal travel) so it can't trip the phone
+// no-h-overflow contract; disabled under prefers-reduced-motion via CSS.
+function show(id, dir: 'forward' | 'back' = 'forward') {
+  document.querySelectorAll('.screen').forEach((s) => s.classList.remove('active', 'nav-back'));
+  const s = $(id);
+  if (dir === 'back') s.classList.add('nav-back');
+  s.classList.add('active');
 }
 
 // ---------- Overlay engine (Epic 4) ----------
@@ -633,7 +639,7 @@ function startGauntlet() {
   sheet.append(card);
   s.append(sheet);
   const menu = el('div', 'menu');
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
+  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
   s.append(menu);
   show('#screen-instruments');
 }
@@ -1927,7 +1933,7 @@ function renderTutorialEnd() {
   if (firstTime) wrap.append(el('p', 'lp-award', '+15 Legacy Points — walk-in money for the Career Wall'));
   const menu = el('div', 'menu');
   menu.append(btn(PRES.tutorial?.end.next || '▶ Start your real career', 'primary', () => startNewRun()));
-  menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title'); }));
+  menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title', 'back'); }));
   wrap.append(menu);
   s.append(wrap);
   show('#screen-ending');
@@ -2692,7 +2698,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   }
   menu.append(btn('▶ Run It Back', 'primary', () => startNewRun()));
   menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', renderWall));
-  menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title'); }));
+  menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title', 'back'); }));
   wrap.append(menu);
   s.append(wrap);
   show('#screen-ending');
@@ -2768,7 +2774,7 @@ function renderWall() {
   }
   s.append(list);
   const menu = el('div', 'menu');
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
+  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
   s.append(menu);
   show('#screen-wall');
   s.scrollTop = keepScroll;
@@ -2833,7 +2839,7 @@ function renderTrophies() {
     s.append(hist);
   }
   const menu = el('div', 'menu');
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
+  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
   s.append(menu);
   show('#screen-trophies');
 }
@@ -2881,7 +2887,7 @@ function renderResume() {
   }
   s.append(list);
   const menu = el('div', 'menu');
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
+  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
   s.append(menu);
   show('#screen-settings');
 }
@@ -2980,7 +2986,7 @@ function renderSettings() {
       return;
     }
   }));
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title'); }));
+  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
   s.append(menu);
   if (activePack.id === 'music') s.append(el('p', 'title-foot', 'BIG BREAK v5 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.'));
   show('#screen-settings');

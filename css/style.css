@@ -72,9 +72,13 @@ body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-.screen.active { display: flex; animation: screenIn .22s ease-out; }
-@keyframes screenIn { from { opacity: 0; transform: translateY(6px); } }
-@media (prefers-reduced-motion: reduce) { .screen.active { animation: none; } }
+.screen.active { display: flex; animation: screenIn .24s cubic-bezier(.22,.7,.3,1); }
+/* Direction-aware (Epic 6): forward rises from below, back drops from above.
+   Vertical-only travel so a mid-animation frame never overflows horizontally. */
+@keyframes screenIn { from { opacity: 0; transform: translateY(16px); } }
+.screen.active.nav-back { animation: screenInBack .24s cubic-bezier(.22,.7,.3,1); }
+@keyframes screenInBack { from { opacity: 0; transform: translateY(-16px); } }
+@media (prefers-reduced-motion: reduce) { .screen.active, .screen.active.nav-back { animation: none; } }
 
 /* ---------- Title ---------- */
 .title-logo {
