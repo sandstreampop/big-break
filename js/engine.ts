@@ -2,7 +2,7 @@
 // module runs in the browser and in the sims. It imports no content module.
 
 import { CONFIG } from './config.js';
-import type { Pack, RunState, Plugin, GameEvent, Choice, Side, Requires, Tier, GainBag } from './types.js';
+import type { Pack, RunState, Plugin, GameEvent, Choice, Side, Requires, Tier, GainBag, RollCtx, BurnoutCtx, DeckRefineCtx, SwipeResult } from './types.js';
 
 // ---------- Injected content pack ----------
 // A genre is a Pack, injected at run start (newRun) and re-affirmed at
@@ -465,7 +465,7 @@ function sumRollBonus(state: RunState, choice: Choice, ctx: any): number {
   return sum((p) => p.modifyRoll?.(state, choice, ctx));
 }
 // Fold each plugin's transform of the roll's jitter band.
-function foldJitter(state: RunState, jitter: [number, number], ctx: any): [number, number] {
+function foldJitter(state: RunState, jitter: [number, number], ctx: RollCtx): [number, number] {
   return foldChain(jitter, (p, j) => p.modifyJitter?.(state, j, ctx));
 }
 // The per-resolution gain-multiplier bags plugins contribute, applied by the
@@ -479,7 +479,7 @@ function encoreDisabled(state: RunState): boolean {
 }
 // Fold each plugin's burnout-delta adjustment, between the loadout's own burnout
 // hooks and the gain-multiplier bags.
-function foldBurnout(state: RunState, v: number, ctx: any): number {
+function foldBurnout(state: RunState, v: number, ctx: BurnoutCtx): number {
   return foldChain(v, (p, x) => p.modifyBurnout?.(state, x, ctx));
 }
 // Fold each plugin's deck-weight multiplier.
@@ -487,7 +487,7 @@ function foldDeckWeight(state: RunState, ev: GameEvent, weight: number): number 
   return foldChain(weight, (p, w) => p.weightDeck?.(state, ev, w));
 }
 // Let each plugin force a scheduled category into the draw pool.
-function foldDeckPool(state: RunState, pool: GameEvent[], ctx: any): GameEvent[] {
+function foldDeckPool(state: RunState, pool: GameEvent[], ctx: DeckRefineCtx): GameEvent[] {
   return foldChain(pool, (p, pl) => p.refineDeck?.(state, pl, ctx));
 }
 // Product of each plugin's Legacy Points multiplier. Starts at 1 (identity), so
@@ -552,7 +552,7 @@ export function rollComponents(state: RunState, choice: Choice, opts: any = {}) 
   const pityBonus = Math.min((state.badStreak || 0) * pityPer, CONFIG.pityCap + perkSum(state, 'pityCapBonus'));
   // Subsystem roll bonuses, folded in in registration order; rollCtx.applied
   // collects the items whose bonus fired.
-  const rollCtx: any = { applied, tags: choice.tags };
+  const rollCtx: RollCtx = { applied, tags: choice.tags };
   const pluginRollBonus = sumRollBonus(state, choice, rollCtx);
   const encoreBonus = opts.encore && !encoreDisabled(state) ? CONFIG.encoreBonus : 0;
   // Performance bonus: a minigame result (UI-side skill) folded into the roll.
@@ -686,7 +686,7 @@ export function resolveSwipe(state: RunState, side: Side, rng: () => number = Ma
   firePlugins('modifyEffects', state, effects, cardCtx);
 
   const deltas = applyEffects(state, effects, ev, choice, rng, tier, c.appliedAccessories, opts.mgDetail || null);
-  const result: any = {
+  const result: SwipeResult = {
     tier, roll: Math.round(roll), text: outcome.text, deltas, event: ev, side,
     encoreEarned, encoreSpent: useEncore, encoreRefunded,
     hotStreak: state.hotStreak, streakWasHot,

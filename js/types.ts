@@ -210,6 +210,52 @@ export interface GainBag {
   burnoutHealMult?: number;              // scales burnout RELIEF (negative deltas)
 }
 
+// ---------- The modify-hook contexts ----------
+// The engine builds a small per-mechanic context for the fold hooks, distinct
+// from the resolution-time PluginContext above. Previously each was `any`;
+// these type exactly the fields the hooks read/write.
+
+// Built in rollComponents, handed to modifyRoll/modifyJitter: `applied` is the
+// array a plugin pushes the items whose bonus fired onto (read back for
+// lose-on-bad + burnout side-effects); `tags` are the current choice's tags.
+export interface RollCtx {
+  applied: any[];
+  tags?: string[]; // the choice's tags (optional, straight off Choice.tags)
+}
+// Handed to modifyBurnout: the choice tags plus the accessories whose roll
+// bonus fired (for per-item burnout side-effects).
+export interface BurnoutCtx {
+  tags: string[];
+  appliedAccessories: any[];
+}
+// Handed to refineDeck: whether a shop was already forced into this draw.
+export interface DeckRefineCtx {
+  shopDue: boolean;
+}
+
+// The rich object resolveSwipe builds and hands to afterResolve. The core
+// resolution fields are typed here; subsystem plugins annotate it with their
+// own UI-render hints (gearLost, venueLeveled, overlayNote, songDebuts, …) via
+// the index signature, so the shared type names no genre while the core shape
+// stays checked. Was `result: any`.
+export interface SwipeResult {
+  tier: Tier | 'declined';
+  roll: number;
+  text: string;
+  deltas: any[];
+  event: GameEvent | null;
+  side: Side;
+  encoreEarned?: boolean;
+  encoreSpent?: boolean;
+  encoreRefunded?: boolean;
+  hotStreak?: number;
+  streakWasHot?: boolean;
+  promisesKept?: any[];
+  promisesBroken?: any[];
+  promiseMade?: any;
+  [key: string]: any; // plugin-added resolution annotations
+}
+
 export interface Plugin {
   id: string;
   // Plugins fire in ascending priority (default 0), ties broken by registration
@@ -244,7 +290,7 @@ export interface Plugin {
   // Apply the plugin's own effect keys.
   onEffect?(state: RunState, effects: Effect, ctx: PluginContext): void;
   // React after a card resolves.
-  afterResolve?(state: RunState, result: any, ctx: PluginContext): void;
+  afterResolve?(state: RunState, result: SwipeResult, ctx: PluginContext): void;
   // Act-break work; push notes.
   onActBreak?(state: RunState, act: number, notes: string[]): void;
   // A periodic tick; push notes.
@@ -260,10 +306,10 @@ export interface Plugin {
   // array a plugin pushes the items whose bonus fired onto (read back for
   // lose-on-bad and burnout side-effects). Consumes no rng and is called for the
   // risk-tell too, so keep it pure.
-  modifyRoll?(state: RunState, choice: Choice, ctx: any): number;
+  modifyRoll?(state: RunState, choice: Choice, ctx: RollCtx): number;
   // Transform the roll's jitter band [lo,hi] — a plugin may override or widen it.
   // Returns the new band.
-  modifyJitter?(state: RunState, jitter: [number, number], ctx: any): [number, number];
+  modifyJitter?(state: RunState, jitter: [number, number], ctx: RollCtx): [number, number];
   // Override the number of cards an act runs.
   modifyActLength?(state: RunState, act: number, base: number): number;
   // A Legacy Points multiplier this plugin contributes, folded into the score
@@ -276,7 +322,7 @@ export interface Plugin {
   // shop slot works. Returns a narrowed pool, or the pool unchanged. `ctx.shopDue`
   // says a shop was already forced this draw. Fired after the shop slot, before
   // weighting.
-  refineDeck?(state: RunState, pool: GameEvent[], ctx: any): GameEvent[];
+  refineDeck?(state: RunState, pool: GameEvent[], ctx: DeckRefineCtx): GameEvent[];
   // A per-resolution "gain hooks" bag { statGainMult?, burnoutGainMult?,
   // burnoutHealMult? } a plugin contributes, applied by the engine's stat/burnout
   // loops in registration order right after the loadout's own — the core keeps
@@ -287,7 +333,7 @@ export interface Plugin {
   // Adjust the burnout delta a card lands, between the loadout's own burnout
   // hooks and the gain-multiplier bags. `ctx.tags` are the choice tags,
   // `ctx.appliedAccessories` the items whose roll bonus fired.
-  modifyBurnout?(state: RunState, v: number, ctx: any): number;
+  modifyBurnout?(state: RunState, v: number, ctx: BurnoutCtx): number;
   // The run-state slots this plugin owns, with their fresh-run defaults. newRun
   // applies these generically (arrays copied per run) so the engine's state
   // literal names no genre.
