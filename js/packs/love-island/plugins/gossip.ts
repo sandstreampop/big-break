@@ -38,10 +38,7 @@ export function intelCount(state: RunState): number {
   return h.feelings.length + h.secrets.length;
 }
 
-const note = (pctx: any, cls: string, html: string) => {
-  const d = pctx.deltas;
-  (d.notices = d.notices || []).push({ cls, html });
-};
+import { note } from '../note.js';
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const moveOpinion = (state: RunState, role: 'rival' | 'bombshell', v: number) => {
   if (!roleCastId(state, role)) return;

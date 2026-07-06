@@ -104,10 +104,7 @@ export function litThreads(state: RunState): string[] {
     !threadBroken(state, t.id)).map((t) => t.id);
 }
 
-const note = (pctx: any, cls: string, html: string) => {
-  const d = pctx?.deltas;
-  if (d) (d.notices = d.notices || []).push({ cls, html });
-};
+import { note } from '../note.js';
 
 // Bank a beat of the player couple's own arc. Exported for tests; cards
 // reach it through the storyBeat verb.

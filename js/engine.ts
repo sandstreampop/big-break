@@ -2,7 +2,7 @@
 // module runs in the browser and in the sims. It imports no content module.
 
 import { CONFIG } from './config.js';
-import type { Pack, RunState, Plugin, GameEvent, Choice, Side, Requires, Tier, GainBag, RollCtx, BurnoutCtx, DeckRefineCtx, SwipeResult } from './types.js';
+import type { Pack, RunState, Plugin, GameEvent, Choice, Side, Requires, Tier, GainBag, RollCtx, BurnoutCtx, DeckRefineCtx, SwipeResult, AdvanceStep } from './types.js';
 
 // ---------- Injected content pack ----------
 // A genre is a Pack, injected at run start (newRun) and re-affirmed at
@@ -66,11 +66,21 @@ export function mulberry32(a: number) {
 
 const rngCache = new WeakMap();
 export function stateRng(state: RunState) {
-  if (!state.seed) { // legacy saves: fall back to Math.random
+  // seed:null falls back to Math.random. This is CORRECT for legacy saves
+  // (predating seeded runs) but is also a silent trap: a tool/driver that
+  // builds a fresh run and forgets to set state.seed gets a NON-deterministic
+  // run — no golden, no repro — with no warning. newRun/newTutorialRun set a
+  // seed; anything constructing state by hand must too.
+  if (!state.seed) {
     return Math.random;
   }
   return () => {
     let c = rngCache.get(state);
+    // Cold cache-miss (first call, or a resumed/cloned run whose counter moved
+    // out from under us): rebuild the generator by REPLAYING the whole history
+    // — O(rngUses) draws to fast-forward to the current position. Bounded and
+    // correct (a run makes a few hundred draws); the WeakMap makes steady-state
+    // O(1). Determinism depends only on (seed, rngUses), not on cache liveness.
     if (!c || c.uses !== (state.rngUses || 0) || c.seed !== state.seed) {
       const gen = mulberry32(state.seed!);
       for (let i = 0; i < (state.rngUses || 0); i++) gen();
@@ -592,7 +602,7 @@ export function incredibleTargets(): string[] {
 // jitter instead of auto-clearing the INCREDIBLE bar every card.
 function softCap(roll: number) {
   return roll > CONFIG.rollSoftCap
-    ? CONFIG.rollSoftCap + (roll - CONFIG.rollSoftCap) * 0.5
+    ? CONFIG.rollSoftCap + (roll - CONFIG.rollSoftCap) * CONFIG.rollSoftCapSlope
     : roll;
 }
 
@@ -854,9 +864,9 @@ export function applyEffects(state: RunState, effects: any, ev: GameEvent | null
 // a finished non-terminal segment either opens the crossroads (its commit
 // slot) or starts the next segment; the terminal segment queues the path's
 // climax card, then ends in the finale. Returns one of:
-// { kind:'card' } | { kind:'crossroads' } | { kind:'actStart', act, notes } |
-// { kind:'finale' } | { kind:'gameover', endingKey }
-export function advance(state: RunState) {
+// Returns the next flow step (see the AdvanceStep union): card | crossroads |
+// actStart | finale | gameover | tutorialEnd.
+export function advance(state: RunState): AdvanceStep {
   const failed = checkFailStates(state);
   if (failed) {
     state.phase = 'ended';

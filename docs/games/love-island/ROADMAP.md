@@ -719,6 +719,10 @@ recommended order; dependencies are noted.
 - **R10. The rename, staged** *(S execution + ⚖️ human pick; F1)* — candidate
   list with collision checks, one staged PR (strings, manifest, URL alias,
   redirect), merged on Viktor's word. Blocks the public push, nothing else.
+  *(Partly shipped: the in-fiction `bond → "Connection"` display rename landed
+  in v4 — statMeta, gate labels, presenter copy all read "Connection" while the
+  `bond` id is unchanged. What remains is the public-facing GAME-name pick + its
+  URL alias/redirect, still a human decision.)*
 - **R11. Feel pass** *(S×3; E2 haptics, E3 juice, E4 PWA manifest)* —
   independent afternoons, all golden-safe.
 

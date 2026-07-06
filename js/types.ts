@@ -622,6 +622,17 @@ export interface Pack {
   summarize?: (state: RunState) => Record<string, any>;
 }
 
+// The flow step advance() returns — what the UI should render next. A
+// discriminated union so a consumer's switch is exhaustively checkable (the
+// old untyped return had a doc-comment that even omitted the tutorialEnd case).
+export type AdvanceStep =
+  | { kind: 'card' }
+  | { kind: 'crossroads' }
+  | { kind: 'actStart'; act: number; notes: string[] }
+  | { kind: 'finale' }
+  | { kind: 'gameover'; endingKey: string }
+  | { kind: 'tutorialEnd' };
+
 // ---------- Runtime run state ----------
 // A song, first-class citizen of the charts subsystem.
 export interface Song {

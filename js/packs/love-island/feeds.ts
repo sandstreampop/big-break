@@ -23,7 +23,6 @@
 // not move. Same moment → same feed, every render.
 
 import type { RunState, GameEvent, FeedBundle, FeedChannel, FeedPost, FeedMoment, Tier, Side } from '../../types.js';
-import { castById, islanderTypeById } from './cast.js';
 import { FACTION_KEYS, factionTier, type FactionTier } from './plugins/factions.js';
 import { mulberry32 } from '../../engine.js';
 

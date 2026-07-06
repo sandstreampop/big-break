@@ -130,10 +130,7 @@ export function setFactions(state: RunState, values: Record<FactionKey, number>)
   recomputePublic(state);
 }
 
-const note = (pctx: any, cls: string, html: string) => {
-  const d = pctx?.deltas;
-  if (d) (d.notices = d.notices || []).push({ cls, html });
-};
+import { note } from '../note.js';
 
 export const factionsPlugin: Plugin = {
   id: 'factions',

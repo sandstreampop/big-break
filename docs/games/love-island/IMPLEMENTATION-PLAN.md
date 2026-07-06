@@ -1,5 +1,11 @@
 # Implementation plan — Love Island Pack
 
+> **Superseded by [`ROADMAP.md`](./ROADMAP.md).** This plan sequenced the
+> original build; the Pack has shipped (v3 + v4) and ongoing work is tracked in
+> the ROADMAP's horizons (R1–R17). Kept as a historical stratum — read it for
+> how the Pack was bootstrapped, not for what to do next. (Commands below
+> predate the `test/ui/` move; see `CLAUDE.md` for the current gate.)
+
 How to build the Pack across sessions, once the design record ([`grill.md`](./grill.md),
 [`CONTEXT.md`](./CONTEXT.md), [`adr/`](./adr/)) is on `main`. This is a sequencing
 plan, not a spec — each session's *what* comes from the design record.

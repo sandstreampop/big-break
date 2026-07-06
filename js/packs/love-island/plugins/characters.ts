@@ -145,10 +145,7 @@ export function characterRead(state: RunState, role: CharRole) {
   };
 }
 
-const note = (pctx: any, cls: string, html: string) => {
-  const d = pctx.deltas;
-  (d.notices = d.notices || []).push({ cls, html });
-};
+import { note } from '../note.js';
 
 // Fill the bombshell seat with a seeded draw from the pool: fresh opinion,
 // fresh secret, no history. Used by the bombshellEnters verb and by the

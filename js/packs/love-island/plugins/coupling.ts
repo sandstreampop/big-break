@@ -74,10 +74,7 @@ const MY_DIRT = ['li_casa_kiss', 'li_head_turned', 'li_strayed_official'];
 const hasDirt = (s: RunState) => MY_DIRT.some((f) => s.flags.includes(f));
 const clearDirt = (s: RunState) => { s.flags = s.flags.filter((f) => !MY_DIRT.includes(f)); };
 
-const note = (pctx: any, cls: string, html: string) => {
-  const d = pctx.deltas;
-  (d.notices = d.notices || []).push({ cls, html });
-};
+import { note } from '../note.js';
 const pushDelta = (pctx: any, key: string, amount: number) => {
   if (amount) pctx.deltas.push({ key, amount });
 };

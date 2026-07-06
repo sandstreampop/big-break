@@ -30,7 +30,8 @@ export const CONFIG = {
   // so a maxed build still sweats jitter. Rarer × bigger (see
   // incrediblePayloadMult) ≈ same EV, more variance.
   tierIncredibleAt: 80,
-  rollSoftCap: 90,         // roll above this is halved (soft diminishing)
+  rollSoftCap: 90,         // roll above this is compressed (soft diminishing)
+  rollSoftCapSlope: 0.5,   // how much of the over-cap roll still counts (0.5 = halved)
   incrediblePayloadMult: 1.3, // positive stat/fame/money gains on Incredible
   burnoutCoeff: 0.4,       // penalty = -(burnout * coeff)
   jitterMin: -15,
