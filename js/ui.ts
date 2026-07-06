@@ -1426,13 +1426,17 @@ const FEED_MOOD_LINE = {
 
 function feedTeaser(bundle, inOverlay) {
   const wrap = el('div', 'feed-teaser');
+  // A tap-through guard on the whole banner: tapping anywhere on it opens the
+  // feeds rather than continuing (the result overlay dismisses on tap).
+  if (inOverlay) wrap.addEventListener('click', (e) => e.stopPropagation());
+  wrap.append(el('div', 'feed-teaser-kicker', '📲 The second screen'));
   wrap.append(el('div', 'feed-teaser-line', fillText(bundle.teaser)));
   const chips = el('div', 'feed-teaser-chips');
   for (const ch of bundle.channels) {
     chips.append(el('span', 'feed-chip ' + ch.skin, `${ch.icon}<span class="feed-chip-dot">${FEED_MOOD_DOT[ch.mood] || '⚪'}</span>`));
   }
   wrap.append(chips);
-  const b = el('button', 'btn feed-open-btn', `📲 See what the nation’s saying`);
+  const b = el('button', 'btn feed-open-btn', `Read the feeds  →`);
   b.addEventListener('click', (e) => { if (inOverlay) e.stopPropagation(); sfx.ui(); openFeedBrowser(bundle); });
   wrap.append(b);
   return wrap;
@@ -1580,6 +1584,14 @@ function showResult(result) {
     box.append(reads);
   }
 
+  // ADR-0014 — the second screen. The outside world reacts to this beat. It
+  // sits directly UNDER the result (the outcome is what matters first), but
+  // above the mechanical chips/notices so it's a prominent, tappable
+  // invitation — not a footnote below the fold. On the big moments only;
+  // ambient cards return null and stay quiet.
+  const feedBundle = PRES.feeds?.(run, { kind: 'result', ev: result.event, tier: result.tier, side: result.side });
+  if (feedBundle) box.append(feedTeaser(feedBundle, true));
+
   // Numeric stat deltas: compact uniform chips (minus any key the pack's
   // result beat already voiced qualitatively).
   const hideChips = new Set(rs?.hideChipKeys || []);
@@ -1686,12 +1698,6 @@ function showResult(result) {
       return; // wait for chooser
     }
   }
-
-  // ADR-0014 — the second screen. The outside world reacts to this beat; a
-  // teaser + button, the browser opens above the result. Ambient cards return
-  // null and stay quiet — the contrast is the point.
-  const feedBundle = PRES.feeds?.(run, { kind: 'result', ev: result.event, tier: result.tier, side: result.side });
-  if (feedBundle) box.append(feedTeaser(feedBundle, true));
 
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);

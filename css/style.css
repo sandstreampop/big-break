@@ -1692,27 +1692,38 @@ details.recap-fold[open] { display: flex; flex-direction: column; gap: 8px; }
    (genre-neutral, dormant for any pack that ships no presenter.feeds); the
    per-platform SKINS are the pack's, in its own stylesheet. */
 
-/* The teaser embedded in a result/recap/ending card — Tier 0. */
+/* The teaser embedded in a result/recap/ending card — Tier 0. A SECONDARY
+   element: it sits under the result (which leads), quiet by default, but
+   always reachable and clearly tappable. It must never out-shout the outcome. */
 .feed-teaser {
-  margin-top: 4px;
-  padding: 11px 12px;
-  border-radius: 15px;
+  margin: 2px 0;
+  padding: 10px 12px;
+  border-radius: 14px;
   border: 1px solid #3b3352;
-  background: linear-gradient(160deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
-  display: flex; flex-direction: column; gap: 9px;
+  background: linear-gradient(160deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+  display: flex; flex-direction: column; gap: 8px;
+  cursor: pointer;
 }
-.feed-teaser-line { font-size: 13.5px; line-height: 1.4; color: #cfc7e0; font-style: italic; }
+.feed-teaser-kicker {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .05em;
+  color: #9a90b4; text-transform: uppercase;
+}
+.feed-teaser-line { font-size: 13px; line-height: 1.4; color: #c8c0da; font-style: italic; }
 .feed-teaser-chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .feed-chip {
-  position: relative; font-size: 16px; line-height: 1;
-  width: 30px; height: 30px; border-radius: 9px;
+  position: relative; font-size: 15px; line-height: 1;
+  width: 28px; height: 28px; border-radius: 8px;
   display: grid; place-items: center;
   background: #241f33; border: 1px solid #3b3352;
 }
 .feed-chip-dot { position: absolute; right: -3px; bottom: -3px; font-size: 8px; }
+/* A secondary (ghost/outline) button — a clear tap target that stays visually
+   below the result and the primary continue action. */
 .feed-open-btn {
-  align-self: stretch; min-height: 40px; font-weight: 700; font-size: 13.5px;
-  border-radius: 12px;
+  align-self: stretch; min-height: 40px; font-weight: 700; font-size: 13px;
+  border-radius: 11px; letter-spacing: .01em;
+  background: rgba(255,255,255,.05); border: 1px solid #4a4266; color: #d6cfe6;
 }
 
 /* The browser layer — fixed above everything, its own scroll. */
