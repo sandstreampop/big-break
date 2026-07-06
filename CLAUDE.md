@@ -33,13 +33,14 @@
   per-pack goldens are blind to (a core that behaves differently per genre).
 - Before pushing a balance/content change: `npm run build`, then
   `node tools/lint-content.mjs && node tools/simulate.mjs --check &&
-  node --test && node test/ui-smoke.mjs && node test/ui-crowding.mjs &&
-  node test/ui-mobile-matrix.mjs`
-  (`npm run check` runs all but `node --test`). The UI smoke test drives each
+  node --test && node test/ui/smoke.mjs && node test/ui/crowding.mjs &&
+  node test/ui/mobile-matrix.mjs`
+  (`npm run check` runs all but `node --test`; `npm run ci` runs both, and
+  `npm run test:ui` runs just the three browser suites). The UI smoke test drives each
   game to its finale in headless Chromium — the only coverage the goldens
   don't have. Judge feel with `node tools/simulate.mjs 4000 narrative` (music)
   or `node tools/simulate-pack.mjs <packId> 3000` (any pack, generic driver).
-- **Phones are the platform.** `test/ui-mobile-matrix.mjs` is the
+- **Phones are the platform.** `test/ui/mobile-matrix.mjs` is the
   phone-playability contract and a CI gate (pages.yml installs Chromium so all
   three browser suites really run): both games across every phone class down
   to 320px wide, a legacy-engine pass (CSS with every `:has()` rule stripped),

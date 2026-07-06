@@ -79,10 +79,10 @@ jobs:
       - name: Balance & reach gate (music, against dist/)
         run: node tools/simulate.mjs --check
       - name: Golden-master regression (music + probe, against dist/)
-        # Scope to the golden/invariant oracles (DOM-free, no browser). Newer
-        # Node test-runner globs otherwise also sweep in test/ui-smoke.mjs, which
-        # needs a browser this job doesn't install; the UI smoke test is run
-        # separately (npm run check / the android+ios harness jobs install browsers).
+        # The golden/invariant oracles (DOM-free, no browser). The browser
+        # suites live under test/ui/ (explicit paths below), so this top-level
+        # test/*.test.mjs glob can never sweep a browser suite that needs a
+        # browser this step doesn't install — nor miss a new engine test.
         run: node --test test/*.test.mjs
       - name: Cache Playwright browsers
         # The browser binaries were re-downloaded cold every run — the single
@@ -102,15 +102,15 @@ jobs:
         # REQUIRE_BROWSER=1 turns the suite's browserless skip into a hard
         # failure: with a browser installed above, "no browser found" here can
         # only mean the install broke — never silently waive the coverage.
-        run: node test/ui-smoke.mjs
+        run: node test/ui/smoke.mjs
         env:
           REQUIRE_BROWSER: '1'
       - name: Screen-contract gate (ADR-0009, phone crowding)
-        run: node test/ui-crowding.mjs
+        run: node test/ui/crowding.mjs
         env:
           REQUIRE_BROWSER: '1'
       - name: Mobile-matrix gate (every phone class × legacy engines × stale-CSS delivery)
-        run: node test/ui-mobile-matrix.mjs
+        run: node test/ui/mobile-matrix.mjs
         env:
           REQUIRE_BROWSER: '1'
       - name: Install docs toolchain (isolated from the engine's pinned tsc)

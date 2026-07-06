@@ -72,7 +72,7 @@ for (const pack of GAME_PACKS) {
 //      in js/ui.ts compares them at boot and re-pulls a stale stylesheet.
 //   b. every stylesheet/script URL in the shipped HTML gets ?v=<hash>, so a
 //      re-fetched HTML atomically re-fetches matching assets.
-// Pinned end-to-end by test/ui-mobile-matrix.mjs (skew-heal pass).
+// Pinned end-to-end by test/ui/mobile-matrix.mjs (skew-heal pass).
 const hashOf = (buf) => createHash('sha256').update(buf).digest('hex').slice(0, 12);
 const cssV = hashOf(readFileSync(resolve(dist, 'css/style.css')));
 appendFileSync(resolve(dist, 'css/style.css'), `\n:root { --bb-css-v: "${cssV}"; }\n`);

@@ -7,7 +7,7 @@
 //   4. compact mode is actually on (no permanent stat rail).
 // A future card, pool, or feature that re-crowds the screen turns this red.
 //
-// Run: npm run build && node test/ui-crowding.mjs
+// Run: npm run build && node test/ui/crowding.mjs
 
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
@@ -15,7 +15,7 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { skipUnlessRequired } from './ui-require-browser.mjs';
+import { skipUnlessRequired } from './require-browser.mjs';
 
 const require = createRequire(import.meta.url);
 function loadChromium() {
@@ -29,7 +29,7 @@ const chromium = loadChromium();
 if (!chromium) {
   skipUnlessRequired('⚠ Playwright not found — skipping UI crowding test.');
 }
-const root = fileURLToPath(new URL('../dist', import.meta.url));
+const root = fileURLToPath(new URL('../../dist', import.meta.url));
 if (!existsSync(root)) { console.error('dist/ not found — run `npm run build` first.'); process.exit(1); }
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.webmanifest': 'application/manifest+json' };

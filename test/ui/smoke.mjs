@@ -6,7 +6,7 @@
 // that threw on a missing ending key before the Presenter landed).
 //
 // Playwright + Chromium are provided by the environment (global install). Run:
-//   npm run build && node test/ui-smoke.mjs
+//   npm run build && node test/ui/smoke.mjs
 // Exits non-zero on any failure so it can gate alongside the sims.
 
 import { createRequire } from 'node:module';
@@ -15,7 +15,7 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { skipUnlessRequired } from './ui-require-browser.mjs';
+import { skipUnlessRequired } from './require-browser.mjs';
 
 const require = createRequire(import.meta.url);
 
@@ -40,7 +40,7 @@ if (!chromium) {
   skipUnlessRequired('⚠ Playwright not found — skipping UI smoke test (install Playwright + Chromium to run it).');
 }
 
-const root = fileURLToPath(new URL('../dist', import.meta.url));
+const root = fileURLToPath(new URL('../../dist', import.meta.url));
 if (!existsSync(root)) {
   console.error('dist/ not found — run `npm run build` first.');
   process.exit(1);

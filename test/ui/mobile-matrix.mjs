@@ -27,8 +27,8 @@
 //   - overlays (result cards / set-piece beats) fit the viewport;
 //   - picker cards never overflow horizontally.
 //
-// Run: npm run build && node test/ui-mobile-matrix.mjs        (full matrix)
-//      node test/ui-mobile-matrix.mjs quick                    (2 viewports)
+// Run: npm run build && node test/ui/mobile-matrix.mjs        (full matrix)
+//      node test/ui/mobile-matrix.mjs quick                    (2 viewports)
 // Exits non-zero on any failure so it gates alongside the other UI suites.
 
 import { createRequire } from 'node:module';
@@ -37,7 +37,7 @@ import { readFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { skipUnlessRequired } from './ui-require-browser.mjs';
+import { skipUnlessRequired } from './require-browser.mjs';
 
 const require = createRequire(import.meta.url);
 function loadChromium() {
@@ -48,7 +48,7 @@ function loadChromium() {
   return null;
 }
 
-const root = fileURLToPath(new URL('../dist', import.meta.url));
+const root = fileURLToPath(new URL('../../dist', import.meta.url));
 if (!existsSync(root)) { console.error('dist/ not found — run `npm run build` first.'); process.exit(1); }
 
 // ---- static gate: the delivery stamp must exist and agree everywhere ----
