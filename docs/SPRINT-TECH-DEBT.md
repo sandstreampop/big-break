@@ -583,6 +583,20 @@ context cost, merge-conflict surface), and it's the rare high-value / low-risk
 item — the golden master makes the whole thing *auditable in one command*. The
 rest completes patterns the codebase already believes in.
 
+**Status — duplicate-id guard landed.** `lint-content.mjs` now fails on any
+repeated event id within a pack — the deck draws in declaration order
+subtracting weights, so a dup silently doubles a card's presence and weight, a
+bug the per-pack goldens are blind to and the one invariant a two-file,
+two-namespace deck (music's `a1_`/`n1_`/`nm_`/`np_`) most needed. Music passes
+clean today (711 events, 0 dups); the guard logic was verified to fire on a
+synthetic dup. **Follow-up (the headline):** the `events2.ts` JSON-pretty →
+compact reformat (~26k → ~9k lines, byte-identical `dist/`, verifiable by a
+zero-diff `gen-golden.mjs`) needs a real formatter/codemod and is too large to
+guarantee byte-safe in a single pass; likewise a *calibrated* music
+`taste.mjs`/`VOICE.md` (a strict cliché checker over 34k unaudited lines would
+turn the green lint red until tuned), the shared `cardFamily`/`feeds-core`
+refactors, and the `sim-core`→`pack-core` convergence.
+
 ---
 
 ## Appendix — findings that didn't make the cut

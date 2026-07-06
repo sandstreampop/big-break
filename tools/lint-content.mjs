@@ -151,6 +151,20 @@ for (const pack of PACKS) {
   const tag = (msg) => issues.push(`[${pack.id}] ${msg}`);
   totalEvents += EVENTS.length;
 
+  // Duplicate-id guard: the deck draws by iterating events in declaration order
+  // and subtracting weights (engine.drawNextCard), so a repeated id silently
+  // DOUBLES that card's presence and total weight in the pool — a bug the
+  // per-pack goldens are blind to. Music's deck alone spans events.ts + the
+  // 26k-line events2.ts with two divergent id namespaces (a1_/n1_/nm_/np_) and
+  // nothing else enforcing uniqueness.
+  {
+    const seenIds = new Set();
+    for (const ev of EVENTS) {
+      if (seenIds.has(ev.id)) tag(`duplicate event id '${ev.id}' (doubles its deck weight)`);
+      seenIds.add(ev.id);
+    }
+  }
+
   const KNOWN_REQ = knownReqFor(pack);
   const checkRequires = (evId, r) => {
     for (const k of Object.keys(r || {})) {
