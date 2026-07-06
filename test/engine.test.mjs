@@ -36,15 +36,20 @@ test('mulberry32 is deterministic and stays in [0, 1)', () => {
   }
 });
 
-test('gateValue: stats from state.stats, resources top-level, unknown key throws', () => {
+test('gateValue: stats + resources resolve; an unknown key reports and falls back to 0', () => {
   const s = freshMusic();
   s.stats.skill = 37;
   s.fame = 88;
   assert.equal(engine.gateValue(s, 'skill'), 37);
   assert.equal(engine.gateValue(s, 'fame'), 88);
-  // A typo'd key used to launder to a silent 0 (unreachable/trivial gate);
-  // now it fails loud.
-  assert.throws(() => engine.gateValue(s, 'no_such_key'), /unknown key/);
+  // A typo'd key must NOT crash a run (protect the experience): it reports the
+  // anomaly (telemetry catches it) and falls back to a graceful 0. The loud,
+  // dev-facing catch is the build-time invariant, not a runtime throw.
+  const seen = [];
+  engine.setGateAnomalyReporter((k) => seen.push(k));
+  assert.equal(engine.gateValue(s, 'no_such_key'), 0);
+  assert.deepEqual(seen, ['no_such_key']);
+  engine.setGateAnomalyReporter(() => {}); // reset so other tests aren't affected
 });
 
 test('applyEffects: stat deltas apply, clamp to 0..100, and are reported', () => {

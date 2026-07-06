@@ -184,6 +184,28 @@ for (const pack of PACKS) {
     }
   });
 
+  // ── Every DECLARED gate key resolves to a real stat or resource. ──
+  // This is the loud, developer-facing catch that lets gateValue fall back
+  // gracefully at runtime (a typo reads 0 + reports telemetry instead of
+  // crashing a player's run): a mistyped winGates/failStates key fails HERE,
+  // pre-ship, instead of silently making a gate unreachable in production.
+  test(`[${pack.id}] all winGates/failStates keys resolve to a stat or resource`, () => {
+    const m = pack.manifest;
+    // Resolvable = a stat, universal burnout, a manifest resource, OR a plugin
+    // stateDefault field (materialized top-level on state, so gateValue reads it
+    // via `key in state` — e.g. LI's `story`, owned by the couple-web plugin).
+    const known = new Set([...(m.stats || []), 'burnout', ...(m.resources || [])]);
+    for (const p of pack.plugins || []) for (const k of Object.keys(p.stateDefaults || {})) known.add(k);
+    for (const [path, gate] of Object.entries(m.winGates || {})) {
+      for (const key of Object.keys(gate)) {
+        assert.ok(known.has(key), `winGates.${path}.${key} is not a declared stat/resource`);
+      }
+    }
+    for (const rule of m.failStates || []) {
+      assert.ok(known.has(rule.key), `failState '${rule.ending}' key '${rule.key}' is not a declared stat/resource`);
+    }
+  });
+
   // ── Plugin registration order (per-pack, seeded-stream-critical). ──
   test(`[${pack.id}] plugin registration order is stable`, () => {
     const ids = (pack.plugins || []).map((p) => p.id);

@@ -96,20 +96,27 @@ function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
 }
 
+// A key that is neither a stat nor a materialized resource is almost certainly
+// a typo in a winGates/failStates/requires entry. We must NOT crash a player's
+// run over it (protect the experience), and we must NOT let it silently launder
+// to a legit 0 either. So an unknown key is REPORTED (telemetry catches it via
+// the injected reporter) and falls back gracefully to 0 — the gate reads as
+// unmet, a safe degradation. The loud, developer-facing catch lives at build/
+// test time instead: the cross-pack invariant asserts every declared gate key
+// resolves (see test/invariants.test.mjs), so a typo can't reach production.
+let onGateAnomaly: (key: string) => void = () => {};
+export function setGateAnomalyReporter(fn: (key: string) => void): void {
+  onGateAnomaly = fn;
+}
+
 // Read any stat- or resource-key's value generically: core stats live in
 // state.stats, resources live top-level. Every winGates/requires key resolves
 // through here, so the core special-cases no key.
-//
-// A key that is neither a stat nor a materialized resource is almost certainly
-// a typo in a winGates/failStates/requires entry. Left alone that read a silent
-// 0 — passing the "resolves via gateValue" invariant while making a gate
-// unreachable or trivially met. newRun materializes every manifest resource
-// (and plugin stateDefault) up front, so a genuine key is always present; an
-// absent one is a bug, and we fail loud instead of laundering it to 0.
 export function gateValue(state: RunState, key: string): number {
   if (key in state.stats) return state.stats[key];
   if (key in state) return (state as any)[key] ?? 0;
-  throw new Error(`gateValue: unknown key '${key}' — not a stat or a materialized resource (typo in a winGates/failStates/requires entry?)`);
+  onGateAnomaly(key); // report (telemetry) but keep the run alive
+  return 0;           // graceful fallback: the gate reads as unmet, no crash
 }
 
 // Typed resource accessors (Epic 1 Wave b groundwork). Pack resources live

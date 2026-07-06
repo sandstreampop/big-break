@@ -219,6 +219,13 @@ export function boot(pack = musicPack) {
   meta = save.loadMeta();
   engine.useContentPack(pack); // this game's content; set before any engine call
   initAnalytics(meta.settings, pack.id);
+  // Protect the run: an unresolvable gate key (a content typo) falls back to 0
+  // in the engine rather than crashing; the shell routes the anomaly to
+  // telemetry so it's caught, and warns in the console for dev visibility.
+  engine.setGateAnomalyReporter((key) => {
+    track('gate_anomaly', { key });
+    try { console.error(`[gate] unresolved key '${key}' — read as 0 (content typo?)`); } catch { /* noop */ }
+  });
   setSoundEnabled(meta.settings.sound);
   setMusicEnabled(meta.settings.music !== false);
   music.setMood('title');
