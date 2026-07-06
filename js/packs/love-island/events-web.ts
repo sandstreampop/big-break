@@ -15,13 +15,13 @@ import type { GameEvent } from '../../types.js';
 
 export const WEB_EVENTS: GameEvent[] = [
 
-  // ---------- THE TRIANGLE — Marco & Sophia, plus whoever's newest ----------
+  // ---------- THE TRIANGLE — Marco & Sophia, plus Amber (the third corner) ----------
   {
     id: 'li_web_tri_0', act: [1, 2], tags: ['web:triangle', 'encounter', 'chat'],
     requires: { threadStageIs: 'triangle:0' },
     art: 'li_firepit_day',
     context: 'Golden hour · the firepit · a chat that isn’t about protein',
-    prompt: 'Marco has pulled {bombshell} for a chat, angled so the cameras get his good side and Sophia gets the back of his head. From the kitchen, Sophia watches over a smoothie she has stopped drinking. “Interesting,” she says, to nobody. To you, actually.',
+    prompt: 'Marco has pulled Amber — main character, self-cast — for a chat, angled so the cameras get his good side and Sophia gets the back of his head. From the kitchen, Sophia watches over a smoothie she has stopped drinking. “Interesting,” she says, to nobody. To you, actually.',
     choices: {
       left: {
         label: 'Join Sophia at the counter',

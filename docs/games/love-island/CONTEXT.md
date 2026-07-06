@@ -300,3 +300,24 @@ One reputation trait you're becoming known for (*The Loyal One*, *Comedy Gold*,
 *The Villain*, *Everyone's Type*). A persistent, tag-matched modifier that boosts
 matching villa moments and leans you toward a Summit. The engine's *accessory*.
 _Avoid_: trait, perk, item
+
+**The wings** (v4 S3, ADR-0012):
+The nation's three audiences — **the Romantics** 🌹 (stick together, forgive),
+**the Self-Respect crowd** 💅 (backbone, never a doormat), **the Drama-lovers**
+🍿 (chaos; will adopt a villain). Running copy nicknames: the soft wing, the
+spine-havers, the chaos wing. Public is their average; the **surge** is net
+approval (wings onside minus wings lost) — the finale clutch.
+_Avoid_: demographics, voter blocs, any real-world political vocabulary
+
+**Thread** (v4 S3, ADR-0013):
+One NPC couple's storyline in the couple-web — lit (foregrounded, max two),
+beat, resolution, callback; overdue threads resolve offscreen and the recap
+reports it. The player witnesses, nudges, and gets dragged in — never steers.
+_Avoid_: quest, sidequest, mission
+
+**A Story** (v4 S3, ADR-0013):
+The season's ledger of the player couple's own arc — survived ruptures,
+redemptions, tested-and-came-backs (📖 "That's a storyline now."). Win the
+Villa's third gate: the crown demands a narrative; a cruise books the
+Runners-Up.
+_Avoid_: quest log, achievement, points
