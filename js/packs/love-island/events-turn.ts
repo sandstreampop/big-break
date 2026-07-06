@@ -18,7 +18,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“So to be clear — and there are several parts to this—” Your shutdown speech runs so long it technically counts as a chat. The clock logs forty minutes. Explaining that number takes sixty.', effects: { bond: 2, burnout: 3, loyalty: 2 } },
-          good: { text: '“Flattering. No.” Two sentences, one smile, exit. The Beach Hut replays it approvingly. Loyalty with good footwork.', effects: { bond: 4, loyalty: 4, burnout: -2 } },
+          good: { text: '“Flattering — but no. I’m cracking on with my person, I’m loyal, that’s just me.” One smile, exit. The Beach Hut replays it approvingly. Loyalty with good footwork.', effects: { bond: 4, loyalty: 4, burnout: -2 } },
           incredible: { text: 'You decline so warmly you turn a head-turn into an ally. {bombshell} tells the boys you’re “annoyingly solid.” The nation embroiders it on a cushion.', effects: { bond: 6, loyalty: 6, public: 5 } },
         },
       },
@@ -47,7 +47,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“Night!” You leave so abruptly you take their drink with you by accident. Loyal, yes. Smooth, no. The kitchen cam has the whole heist.', effects: { bond: 3, burnout: 2, loyalty: 2 } },
-          good: { text: '“It’s not married. It’s better. Night.” You’re in bed before the counter’s stopped smirking. Exclusive means the exits are rehearsed.', effects: { bond: 5, loyalty: 4, burnout: -2 } },
+          good: { text: '“It’s not married, no — but I’m not cracking on with anyone but them. Night.” You’re in bed before the counter’s stopped smirking. Exclusive means the exits are rehearsed.', effects: { bond: 5, loyalty: 4, burnout: -2 } },
           incredible: { text: '“And THEN — ‘official isn’t married, though, is it’ —” You narrate the entire attempt to {partner} before breakfast, together, crying laughing. A couple that debriefs together is bulletproof.', effects: { bond: 7, loyalty: 6, public: 5 } },
         },
       },
@@ -77,7 +77,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.7, rizz: 0.3 },
         outcomes: {
           bad: { text: '“Will you — GET OFF — will you be—” A wasp attends the speech at the worst possible clause. They say yes between swats. Officially official, with an asterisk shaped like a wasp.', effects: { loyalty: 2, exclusive: 1, bond: 4, burnout: 2 } },
-          good: { text: 'You close off, out loud, on the terrace where it started. The villa toasts you with whatever was nearest. No more options. That’s the point.', effects: { loyalty: 4, exclusive: 1, bond: 6, public: 3 } },
+          good: { text: '“I wanna close myself off. Just us, no one else.” You say it out loud, on the terrace where it started. The villa toasts you with whatever was nearest. No more options. That’s the point.', effects: { loyalty: 4, exclusive: 1, bond: 6, public: 3 } },
           incredible: { text: 'The speech is short, specific, and lands so cleanly the Beach Hut cries about it in three separate confessionals. The Season has its couple.', effects: { loyalty: 6, exclusive: 1, bond: 8, public: 6 } },
         },
       },
@@ -87,7 +87,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { savvy: 1 },
         outcomes: {
           bad: { text: '“What are we?” arrives at midnight, as scheduled. Your answer contains the word “journey-adjacent.” The silence afterwards has a postcode.', effects: { bond: -3, burnout: 4, savvy: 2 } },
-          good: { text: 'You keep it undefined with enough warmth to sting less. Flexibility is a strategy; it just photographs like doubt.', effects: { savvy: 5, followers: 3, burnout: 2 } },
+          good: { text: '“I just wanna keep my options open a bit longer, if that’s alright.” Warm enough to sting less. Flexibility is a strategy; it just photographs like doubt.', effects: { savvy: 5, followers: 3, burnout: 2 } },
           incredible: { text: 'You name the stakes honestly — the game, the vote, the outside — and somehow leave the couple stronger and unlocked. A negotiation the reunion will study.', effects: { savvy: 8, followers: 5, bond: 2 } },
         },
       },
@@ -400,7 +400,7 @@ export const TURN_EVENTS: GameEvent[] = [
         governingStats: { rizz: 0.5, charisma: 0.5 },
         outcomes: {
           bad: { text: 'You arrive with three drinks nobody asked for and a smile with too many teeth. The chat pauses, politely, until you leave. The daybed grades your entrance a four.', effects: { rizz: 2, bond: 1, burnout: 4, followers: 2 } },
-          good: { text: '“Just grabbing these,” you say, and leave with {partner} and both waters, ninety seconds in. Clean extraction. The bombshell reviews their notes.', effects: { bond: 4, rizz: 5, followers: 2 } },
+          good: { text: '“Sorry, can I borrow this one?” you say — “I know grafting when I see it, babe” — and leave with {partner} and both waters, ninety seconds in. Clean extraction. The bombshell reviews their notes.', effects: { bond: 4, rizz: 5, followers: 2 } },
           incredible: { text: 'You sit down, befriend the bombshell, and matchmake them with someone else live in the same conversation. Threat converted to subplot. The producers send champagne.', effects: { rizz: 5, bond: 5, savvy: 3, public: 5, followers: 4 } },
         },
       },

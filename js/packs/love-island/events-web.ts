@@ -30,7 +30,7 @@ export const WEB_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“I’m FINE,” says Sophia, machine-gun cheerful, and hands you the smoothie like a subpoena. You are now holding her feelings and a mango situation.', effects: { threadBeat: 'triangle', addFlag: 'li_web_tri_close', loyalty: 2, burnout: 2 } },
           good: { text: '“He does this,” she says, calm as an invoice. “Watch.” You watch. He does this. You and Sophia are allies now, which she decides without asking.', effects: { bond: 4, threadBeat: 'triangle', addFlag: 'li_web_tri_close', loyalty: 5, romantics: 2 } },
-          incredible: { text: 'You say nothing and slice a lime like it’s support. “You’re the only one in here who doesn’t narrate,” Sophia says. In this villa, that’s a friendship contract.', effects: { bond: 5, threadBeat: 'triangle', addFlag: 'li_web_tri_close', loyalty: 8, romantics: 3, graft: 2 } },
+          incredible: { text: 'You say nothing and slice a lime like it’s support. “You’re the only one in here who’s actually loyal, you know that?” Sophia says. In this villa, that’s a friendship contract.', effects: { bond: 5, threadBeat: 'triangle', addFlag: 'li_web_tri_close', loyalty: 8, romantics: 3, graft: 2 } },
         },
       },
       right: {
@@ -265,7 +265,7 @@ export const WEB_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.5, savvy: 0.5 },
         outcomes: {
           bad: { text: '“Pace yourself how?” Kai asks, sincerely, holding a smoothie he made her from memory. Explaining weather to sunshine. You leave the forecast unfinished.', effects: { threadBeat: 'lovebomb', addFlag: 'li_web_love_warn', loyalty: 2, burnout: 2 } },
-          good: { text: '“Keep one thing for yourself, mate,” you say. “Just one.” Kai thinks hard. “…I do like my scaffolding stories.” Keep the scaffolding stories, Kai.', effects: { bond: 4, threadBeat: 'lovebomb', addFlag: 'li_web_love_warn', loyalty: 5, selfrespect: 2 } },
+          good: { text: '“You’re putting all your eggs in one basket, mate. Keep one thing back — just one.” Kai thinks hard. “…I do like my scaffolding stories.” Keep the scaffolding stories, Kai.', effects: { bond: 4, threadBeat: 'lovebomb', addFlag: 'li_web_love_warn', loyalty: 5, selfrespect: 2 } },
           incredible: { text: '“She’s worth the full deck,” you say, “but deal it slower — people bank what arrives free.” Kai absorbs it like a man reading his first terms and conditions.', effects: { bond: 5, threadBeat: 'lovebomb', addFlag: 'li_web_love_warn', loyalty: 8, selfrespect: 3, savvy: 2 } },
         },
       },
@@ -304,7 +304,7 @@ export const WEB_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.7, charisma: 0.3 },
         outcomes: {
           bad: { text: '“You ADMIRE it?” {mate} stares. You do, a bit. The mics catch the bit. Chloe finds out she has a fan and winks at you across the pool. Complicated.', effects: { threadBeat: 'lovebomb', drama: 2, burnout: 2 } },
-          good: { text: '“It’s a masterclass,” you admit. “Terrible ethics, gorgeous technique.” {mate} snorts. The daybed becomes a commentary box for the rest of the afternoon.', effects: { followers: 2, charisma: 3, threadBeat: 'lovebomb', drama: 3, savvy: 5 } },
+          good: { text: '“She’s playing an absolute blinder, I’m not gonna lie,” you admit. “Bang out of order — but a blinder.” {mate} snorts. The daybed becomes a commentary box for the rest of the afternoon.', effects: { followers: 2, charisma: 3, threadBeat: 'lovebomb', drama: 3, savvy: 5 } },
           incredible: { text: 'You break the game down like a pundit — the vote-day cadence, the nan’s birthday, the shade name. “She should coach,” you conclude. The Hut runs it as analysis.', effects: { charisma: 4, threadBeat: 'lovebomb', drama: 4, savvy: 8, followers: 5 } },
         },
       },
@@ -522,7 +522,7 @@ export const WEB_EVENTS: GameEvent[] = [
     requires: { threadStageIs: 'scorched:1', flagsNone: ['li_web_sco_guard'] },
     art: 'li_firepit_day',
     context: 'Morning · the firepit · Sophia, unbothered, moisturised',
-    prompt: '“I’m going to say this once.” Sophia, morning light, no notes. “I came here for something real. That wasn’t it. I’m not auditioning for the next one either — I’m going to enjoy my summer.” She sits down and eats a peach like punctuation.',
+    prompt: '“I’m gonna say this once.” Sophia, morning light, no notes. “I came here for something real. That wasn’t it. And I’m not jumping straight into the next thing to prove a point — I’m just gonna enjoy my summer, me.” She sits down and eats a peach like punctuation.',
     choices: {
       left: {
         label: 'Tell her that was elite',

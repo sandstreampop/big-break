@@ -6,29 +6,32 @@ import type { GameEvent } from '../../types.js';
 
 export const FINAL_EVENTS: GameEvent[] = [
   {
-    id: 'li_baby_challenge', act: 3, tags: ['challenge', 'loyal'],
+    // Retheme (Hillevi: the baby challenge is retired — "they don't really do
+    // it anymore, scrap that"). Replaced with a current Final-Week staple: the
+    // villa Prom. Same shape and effects — a couple gesture, sincere vs content.
+    id: 'li_final_prom', act: 3, tags: ['challenge', 'loyal'],
     art: 'li_challenge',
-    context: 'Morning · “I’VE GOT A TEXT!!” · the baby challenge',
-    prompt: '“Islanders, today you become parents. Your babies arrive in one hour. They cry. #familyplanning” — Robot infants, distributed one per couple, each programmed with the sleep schedule of a car alarm. Final Week always does this, and Final Week is never sorry.',
+    context: 'Final Week · “I’VE GOT A TEXT!!” · the villa Prom',
+    prompt: '“Islanders, tonight is the villa Prom. Suits, gowns, corsages — and each of you will make a gesture for the person you’re coupled up with. #promnight” — The last big set-piece before the Final. Fairy lights, a slow song, and a lawn full of people about to say things they’ll be quoted on forever.',
     choices: {
       left: {
-        label: 'Take it seriously',
+        label: 'Make it about them',
         tags: ['loyal', 'challenge'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: '“He goes DOWN at seven,” you hiss — your couple’s first real argument, about a doll’s nap schedule. The doll records everything. Dolls do.', effects: { loyalty: 2, bond: 1, burnout: 4 } },
-          good: { text: '“Your shift,” you whisper at 3 a.m., executing the handover like a relay team. Feeds logged, shifts split. The villa’s loudest couple watches your rota with naked envy.', effects: { loyalty: 5, bond: 6, public: 4 } },
-          incredible: { text: 'Your robot baby is the only one still “alive” by sundown, and {partner} has started saying “our little guy” unironically. The nation melts on schedule.', effects: { bond: 8, public: 6, loyalty: 8 } },
+          bad: { text: '“Right, I wrote something down—” Your speech is all heart and no order, and you land it on “…anyway, you know what I mean.” {partner} does know. Just about.', effects: { loyalty: 2, bond: 1, burnout: 4 } },
+          good: { text: '“I’m not being funny, I’ve never felt like this about anyone. On paper, off paper, all of it — it’s you.” No notes, all nerve. {partner} goes properly quiet. The lawn “awws” as one.', effects: { loyalty: 5, bond: 6, public: 4 } },
+          incredible: { text: 'You do the whole thing — the corsage, the one true sentence, the slow dance nobody choreographed. “That’s my person, that is,” {partner} tells the villa, wet-eyed. The nation melts on schedule.', effects: { bond: 8, public: 6, loyalty: 8 } },
         },
       },
       right: {
-        label: 'Make it content',
+        label: 'Make it a moment for the cameras',
         tags: ['banter', 'camera'],
         governingStats: { charisma: 1 },
         outcomes: {
-          bad: { text: 'You give the baby a villain arc and a tiny pair of sunglasses. Funny for an hour. Then the battery dies mid-bit and the metaphor writes itself, publicly.', effects: { charisma: 2, followers: 3, bond: -2, burnout: 3 } },
-          good: { text: 'Your baby gets a name, a backstory, and a small business. The lawn is in bits. Somewhere a producer prints “BABY’S FIRST BRAND DEAL” on a card.', effects: { followers: 6, charisma: 5 } },
-          incredible: { text: 'The baby bit escalates into a full villa mockumentary with talking heads. It’s the best episode of the Season and everyone in it knows.', effects: { followers: 10, public: 5, charisma: 8 } },
+          bad: { text: 'You go big — confetti cannon, a bit, a wink at the fixed cam — and the confetti jams on the one word that mattered. Funny. {partner}’s face, less so.', effects: { charisma: 2, followers: 3, bond: -2, burnout: 3 } },
+          good: { text: 'You turn the promposal into a full production and the lawn eats it up. Somewhere a producer prints “PROM ROYALTY” on a card. Content: banked.', effects: { followers: 6, charisma: 5 } },
+          incredible: { text: 'Your prom bit escalates into a villa-wide musical number with you at the centre of it. Best telly of the week, and everyone in it knows.', effects: { followers: 10, public: 5, charisma: 8 } },
         },
       },
     },

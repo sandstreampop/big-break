@@ -156,7 +156,7 @@ export const DAY_EVENTS: GameEvent[] = [
     id: 'li_you_good', act: 2, tags: ['chat', 'code'],
     art: 'li_firepit',
     context: 'After the ceremony · the firepit · everyone performing fine-ness',
-    prompt: 'The fire pit is doing its post-ceremony theatre — everyone laughing one notch too loud. Across the flames, {mate} catches your eye and mouths, “you good?” The first person all night to ask.',
+    prompt: 'The fire pit is doing its post-ceremony theatre — everyone laughing one notch too loud. Across the flames, {mate} catches your eye and mouths, “oi — where’s your head at?” The first person all night to actually ask.',
     choices: {
       left: {
         label: 'Tell the truth. Quietly',

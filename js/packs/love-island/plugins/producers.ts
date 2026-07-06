@@ -29,12 +29,16 @@ import type { Plugin } from '../../../types.js';
 // 'end-1' = one earlier, for tentpoles whose verdict chains one more card and
 // should still close the week). Order is chronological = priority order.
 const BEATS: { key: string; act: number; at: number | 'end' | 'end-1' }[] = [
-  // W1 — Arrival: the Rival established early, the week peaks on a Bombshell.
-  { key: 'rivalenc', act: 1, at: 1 },
+  // W1 — Arrival: you MEET your partner and start building the connection first
+  // (Hillevi's core note: too much rival, too little partner — so the season's
+  // first authored scene is your couple, not an antagonist). Week peaks on a
+  // Bombshell.
+  { key: 'partnerenc1', act: 1, at: 1 },
   { key: 'bomb1', act: 1, at: 'end' },
-  // W2 — The Graft: the Partner actually met; the week peaks on the first
-  // big Challenge, and the Crossroads (the commit slot) follows it.
-  { key: 'partnerenc1', act: 2, at: 1 },
+  // W2 — The Graft: NOW the Rival surfaces — as one thread in the villa, not
+  // the season's opening antagonist. Week peaks on the first big Challenge, and
+  // the Crossroads (the commit slot) follows it.
+  { key: 'rivalenc', act: 2, at: 1 },
   { key: 'challenge1', act: 2, at: 'end' },
   // W3 — Casa Amor: the split lands late and the 5-card arc overruns the
   // nominal length, so the week closes on the return verdict.

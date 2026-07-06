@@ -66,4 +66,35 @@ export const LOVE_ISLAND_TASTE = {
     promptMinShare: 0.6,
     outcomeMinShare: 0.35,
   },
+  // POSITIVE-PRESENCE floor (the counterpart to the cliché blocklist above).
+  // Hillevi's load-bearing note (docs V4-DESIGN §"slang that must be present"
+  // + §"the idiom of the head"): the villa's REAL dialect must actually live in
+  // its characters' mouths, or the deck slides back into clever-narrator wit
+  // with no authentic Islander voice. Scanned over QUOTED spans only (character
+  // dialogue) — the narrator/Stirling/Host never get this argot; the Islanders
+  // must. The head idiom is the one Hillevi flagged as central and "THE Casa
+  // Amor question", so it carries the highest floor. Regexes match the pack's
+  // curly apostrophe (’). Grown deliberately, like the blocklist.
+  requiredArgot: [
+    { label: 'the “head” idiom (where’s your head at / head turned)', min: 4, patterns: [
+      /where[’']s your head/i, /head[’']s (been |proper been |not been |already been )?turn/i,
+      /turn my head/i, /turned my head/i, /head[’']s gone/i, /head could be turned/i,
+      /my head[’']s (all over|been|not)/i, /head might (get )?turn/i, /it[’']d take a lot to turn/i ] },
+    { label: 'pull [someone] for a chat', min: 2, patterns: [
+      /pull (you|him|her|them|me|us)?\s*(in |aside )?for a (little |quick |proper )?chat/i,
+      /pull (you|him|her|them|me) aside/i, /pull you for a/i ] },
+    { label: 'cracking on / crack on', min: 2, patterns: [ /crack(ing)? on/i ] },
+    { label: 'closed off / keeping open (coupling state)', min: 2, patterns: [
+      /closed off/i, /close myself off/i, /keeping (myself |my options )?open/i, /keep my options open/i ] },
+    { label: 'doing bits', min: 1, patterns: [ /doing bits/i ] },
+    { label: 'on paper', min: 3, patterns: [ /on paper/i ] },
+    { label: 'the ick (in Islander mouths)', min: 3, patterns: [ /\bick\b/i ] },
+    { label: 'grafting / graft on someone', min: 2, patterns: [ /graft(ing)?( on| for)?/i ] },
+    { label: 'all my eggs in one basket', min: 1, patterns: [ /eggs in one basket/i ] },
+    { label: 'mugged off / mug / muggy', min: 2, patterns: [ /mugged off/i, /mugged me off/i, /\bmug\b/i, /\bmuggy\b/i ] },
+    { label: 'over-affirmation (100% / a hundred percent)', min: 3, patterns: [ /100\s?%/i, /hundred percent/i, /1000\s?%/i ] },
+    { label: 'I’m not being funny', min: 2, patterns: [ /not being funny/i ] },
+    { label: 'my type (on paper)', min: 2, patterns: [ /my type/i ] },
+    { label: 'loyal (in Islander mouths)', min: 4, patterns: [ /loyal/i ] },
+  ],
 };

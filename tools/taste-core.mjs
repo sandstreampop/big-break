@@ -59,6 +59,46 @@ export function hasDialogue(text) {
   return /[“”]/.test(text || '');
 }
 
+// The inverse of stripQuoted: the concatenation of a string's quoted spans —
+// i.e. only what CHARACTERS say. The positive-presence argot check scans this,
+// because a genre's dialect belongs in its characters' mouths, never the
+// narrator's (see a pack's VOICE.md § Islander-argot). Mirrors stripQuoted's
+// curly/straight handling so the two stay consistent.
+export function quotedSpans(text) {
+  if (!text) return '';
+  const dbl = text.match(/[“"][^”"]*[”"]/g) || [];
+  const sgl = text.match(/[‘'][^’']*[’']/g) || [];
+  return [...dbl, ...sgl].join(' ');
+}
+
+// Positive-presence floor — the counterpart to the cliché blocklist. A genre's
+// REAL argot MUST actually appear in its characters' dialogue, or the villa has
+// quietly forgotten how to talk (the exact regression this guards: clever
+// narrator wit colonising every mouth while the authentic dialect vanishes).
+// `required` is [{ label, patterns:[RegExp|string], min }]; counts matches
+// across the supplied spoken text (quotedSpans of the whole corpus) and flags
+// any requirement under its floor. Genre-neutral mechanism; the data lives with
+// the game (its taste.requiredArgot, mirroring VOICE.md).
+export function argotPresenceIssues(spokenText, required) {
+  if (!required?.length) return [];
+  const hay = spokenText || '';
+  const out = [];
+  for (const item of required) {
+    let n = 0;
+    for (const p of item.patterns || []) {
+      if (typeof p === 'string') {
+        n += hay.toLowerCase().split(p.toLowerCase()).length - 1;
+      } else {
+        const flags = p.flags.includes('g') ? p.flags : p.flags + 'g';
+        n += (hay.match(new RegExp(p.source, flags)) || []).length;
+      }
+    }
+    const min = item.min || 1;
+    if (n < min) out.push(`argot under floor: "${item.label}" spoken ${n}× (needs ${min}) — the villa's dialect must live in its characters' mouths`);
+  }
+  return out;
+}
+
 // Run the whole floor over one authored string. `outcome` = apply the length
 // cap (outcomes only). Returns a flat list of issue strings.
 export function tasteIssues(text, taste, { outcome = false } = {}) {

@@ -104,7 +104,7 @@ export const ARC_EVENTS: GameEvent[] = [
     id: 'li_ick_talk', act: [1, 2, 3], chainOnly: true, tags: ['ick', 'encounter', 'chat'],
     art: 'li_daybed',
     context: 'The next afternoon · the follow-up nobody schedules',
-    prompt: '“So.” {partner} sits down with two drinks and the face of someone who has been thinking since yesterday. “The thing you said. I hated it. And you’re right.” Both can be true. In here, both usually are. The daybed waits to see what you build with it.',
+    prompt: '“So.” {partner} sits down with two drinks and the face of someone who’s been thinking since yesterday. “That thing you said — that I was giving you the ick. I’m not gonna lie, I hated it. And you’re 100% right.” Both can be true. In here, both usually are. The daybed waits to see what you build with it.',
     choices: {
       left: {
         label: 'Build it together',

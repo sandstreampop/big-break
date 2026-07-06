@@ -47,7 +47,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.7, savvy: 0.3 },
         outcomes: {
           bad: { text: '“So what do you actually do?” Three questions about his job; he answers all three. It is the most anyone has learned about pipe fitting on this network.', effects: { loyalty: 2, bond: 2, public: 1 } },
-          good: { text: 'Easy, warm, no fireworks. “I could actually talk to you,” they say. In here, that’s a diamond ring.', effects: { loyalty: 3, bond: 4, public: 3 } },
+          good: { text: 'Easy, warm, no fireworks. “On paper you’re so my type it’s stupid — but I could actually talk to you,” they say. In here, that’s a diamond ring.', effects: { loyalty: 3, bond: 4, public: 3 } },
           incredible: { text: 'You don’t perform. They notice. “You’re not what I expected,” they say, meaning it. The Connection does the loud part for you.', effects: { loyalty: 5, bond: 6, public: 5, graft: 3 } },
         },
       },
@@ -246,7 +246,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'The Hideaway is 90% cushions and 10% performance anxiety. You spend the evening arranging both. Lovely chat, though.', effects: { rizz: 2, bond: 2, burnout: 3 } },
           good: { text: '“Don’t ask,” you both say at breakfast, wearing matching smugness. A night off from the villa’s surround-sound opinions.', effects: { bond: 5, rizz: 5 } },
-          incredible: { text: '“SO?” demands the breakfast interrogation. “Lovely candles,” you say. Nothing else, ever. In this villa the scandal isn’t the night — it’s the discretion.', effects: { rizz: 8, bond: 7, public: 5, followers: 4 } },
+          incredible: { text: '“SO? Were you two doing bits or WHAT?” demands the breakfast interrogation. “Lovely candles,” you say. Nothing else, ever. In this villa the scandal isn’t the night — it’s the discretion.', effects: { rizz: 8, bond: 7, public: 5, followers: 4 } },
         },
       },
       right: {
@@ -322,7 +322,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     id: 'li_ick_watch', act: 1, tags: ['chat', 'drama'],
     art: 'li_bedroom',
     context: 'The dressing room · an ick has been declared',
-    prompt: 'Emergency session in the dressing room: somebody’s caught the ick, and the ick is contagious once named. “He claps when the food arrives,” says {mate}, in the tone of a war crimes tribunal. All eyes turn to you for a verdict.',
+    prompt: 'Emergency session in the dressing room: somebody’s caught the ick, and the ick is contagious once named. “He’s proper given me the ick, I can’t even explain it,” says {mate}. “He claps. When the food arrives. He CLAPS.” The tone is a war crimes tribunal. All eyes turn to you for a verdict.',
     choices: {
       left: {
         label: 'Talk her down',
