@@ -113,6 +113,47 @@ export function argotPresenceIssues(spokenText, required) {
   return out;
 }
 
+// Feed corpus floor (ADR-0014 — the second screen). A pack's social-feed
+// content isn't in pack.events, so the deck checker never sees it; this runs
+// the right floor over it. Post BODIES are quoted mouths (the public speaking),
+// so — like Islander dialogue — they are cliché- and bang-EXEMPT (loud
+// platforms shout on purpose), but keep the structural floor: curly
+// apostrophes, no double spaces, a length cap, valid {tokens}, and NO
+// duplicates. CHROME (teaser lines) is the Narrator's voice and keeps the house
+// rules (≤1 '!', no blocklist cliché). Genre-neutral mechanism; the pack
+// supplies the corpus and the taste.feeds config.
+export function feedIssues({ bodies = [], chrome = [], taste = {}, knownTokens = [] } = {}) {
+  const out = [];
+  const cfg = taste.feeds || {};
+  const cap = cfg.maxBody || 280;
+  const tokens = new Set([...knownTokens, ...(cfg.extraTokens || [])]);
+  const seen = new Set();
+  for (const b of bodies) {
+    if (!b) continue;
+    if (/\w'\w/.test(b)) out.push(`feed body straight apostrophe: ${snippet(b)}`);
+    if (b.includes('  ')) out.push(`feed body double space: ${snippet(b)}`);
+    if (b.length > cap) out.push(`feed body too long (${b.length} > ${cap}): ${snippet(b)}`);
+    for (const m of b.matchAll(/\{(\w+)\}/g)) {
+      if (!tokens.has(m[1])) out.push(`feed body unknown token {${m[1]}}: ${snippet(b)}`);
+    }
+    const key = b.toLowerCase();
+    if (seen.has(key)) out.push(`duplicate feed body: ${snippet(b)}`);
+    seen.add(key);
+  }
+  for (const c of chrome) {
+    if (!c) continue;
+    const bang = bangIssue(c);
+    if (bang) out.push(`feed teaser ${bang}`);
+    out.push(...clicheIssues(c, taste.cliches).map((i) => `feed teaser ${i}`));
+    out.push(...tellIssues(c, taste.tells).map((i) => `feed teaser ${i}`));
+    if (/\w'\w/.test(c)) out.push(`feed teaser straight apostrophe: ${snippet(c)}`);
+  }
+  if (cfg.minBodies && bodies.length < cfg.minBodies) {
+    out.push(`feed corpus thin: ${bodies.length} bodies (< ${cfg.minBodies}) — the nation went quiet`);
+  }
+  return out;
+}
+
 // Run the whole floor over one authored string. `outcome` = apply the length
 // cap (outcomes only). Returns a flat list of issue strings.
 export function tasteIssues(text, taste, { outcome = false } = {}) {

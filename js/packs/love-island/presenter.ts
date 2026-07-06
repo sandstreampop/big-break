@@ -12,6 +12,7 @@ import { PATHS } from './manifest.js';
 import { intelCount } from './plugins/gossip.js';
 import { stirlingDealNote } from './plugins/stirling.js';
 import { villaStage, villaResultStage, villaRecap, villaSetPiece } from './clarity.js';
+import { villaFeeds } from './feeds.js';
 import { mulberry32 } from '../../engine.js';
 import type { Presenter, RunState } from '../../types.js';
 
@@ -464,6 +465,9 @@ export const loveIslandPresenter: Presenter = {
   resultStage: villaResultStage,
   recap: villaRecap,
   setPiece: villaSetPiece,
+  // ADR-0014 — the second screen: the nation's five feeds at every pivotal
+  // moment. Pure read of state; the shell renders the teaser + browser.
+  feeds: villaFeeds,
   vibe: (state: RunState) => ({ fame: state.public ?? 0, network: state.stats?.charisma ?? 0, burnout: state.stats?.burnout ?? 0 }),
 
   tutorial: {

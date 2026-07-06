@@ -393,3 +393,97 @@ Session 3 adds two card families with their own register hazards. The rules:
    one-sentence receipt ("Jilted on national television — and back on the
    horse.") — the ledger is diegetic, so the line must read like the show
    summarising you, not a quest log.
+
+---
+
+## v4 S4 addendum — the second screen (five platform mouths)
+
+ADR-0014 gives the nation feeds. The feeds are a **sixth register**: the
+public's own mouths, one dialect per community. The governing rule is the
+Islander-argot rule wearing a different lanyard: **every poster is sincere,
+self-serious, and funniest when they don't know they're funny.** A feed post
+is a diegetic quote — the platform's real dialect turned up a notch (the tics
+amplified: the ellipses, the over-capitalisation, the essay nobody asked for)
+but always TRUE TO LIFE. The moment a post reads like Stirling wrote it, it
+is wrong: the Narrator never posts. The COMMUNITY is the character; the
+individual poster is one synapse of it.
+
+Because posts are quoted mouths, the **cliché blocklist does not apply inside
+them** — meme-speak is these communities' authentic argot, same exemption as
+Islander dialogue. The structural floor still does (curly quotes, no double
+spaces, length caps, valid tokens), plus the feed floors in `taste.mjs`
+(`feeds`: per-pool coverage minimums, uniqueness). The ≤1-`!` house rule is
+**waived per channel** where the platform genuinely shouts (the mums, the
+clock app, the bird app mid-scandal) — loudness is characterisation here, not
+hype: a mum's `!!` is her being a mum, not the copy selling itself.
+
+One more line we hold (from ADR-0012's settlement): the parody targets each
+platform's **register**, never a demographic's identity. Mums are a *tone*
+(ellipses, wrong names, unconditional warmth), not a gender politics; the
+forum's spine is a *value*, not a faction of real people. Punch across, at
+the platforms — never down, at the posters. And no real platform or brand
+names: the channels wear the fandom's epithets (the bird app, the clock app,
+the forum, the grid, the mums' group), which is how the audience actually
+talks anyway.
+
+### The five mouths
+
+1. **The bird app** (🍿 drama's home) — present tense, zero patience,
+   maximum certainty. ALL CAPS for emphasis, verdicts issued mid-scene,
+   instant nicknames, fake authority ("as a body language expert (I watch a
+   lot of telly)"). Every take is final until the next one. Screenshots
+   described, never shown. The funniest posts are the ones already wrong.
+   - ✅ “she said ‘i’m being so genuine right now’ NOBODY GENUINE HAS EVER
+     SAID THAT. anyway stream tonight’s episode”
+   - ❌ “An incisive observation about the couple’s dynamic.” *(the Narrator
+     in a trench coat)*
+2. **The forum** (💅 the spine wing’s home) — long-form, procedural,
+   footnoted outrage. Thread titles with square-bracket tags, “Unpopular
+   opinion:” (it is the popular opinion), timestamped receipts, the EDIT
+   ritual (“EDIT: spelling. EDIT 2: to the person in my DMs — no.”),
+   moderator officialese applied to heartbreak. They are doing scholarship
+   about a dating show and they know it and they will not stop.
+   - ✅ “[DISCUSSION] Timeline of the duvet incident, with sources (long)”
+   - ❌ a forum post that’s just a tweet with more words
+3. **The mums’ group** (🌹 the soft wing’s home) — light mode, boundless
+   warmth, punctuation as weather… Names reliably wrong (Kai becomes “Kyle,”
+   the show becomes “the island programme”), technology visibly fought
+   (“replying from my other glasses”), prayers and crying-laughing deployed
+   sincerely, fierce protectiveness of whichever couple was lovely in week
+   one. The group has RULES (“no spoilers before 10pm ❤️ Admin”).
+   - ✅ “I don’t care what anyone says that girl reminds me of our Gemma and
+     if that Kyle hurts her he will answer to the group…… 🙏🙏😂”
+   - ❌ anything spelled correctly on purpose
+4. **The grid** (📱 the brand’s home) — the official post’s comment section:
+   relentless positivity with money underneath. Fan edit accounts, emoji
+   strings as complete sentences, brands arriving like seagulls
+   (“obsessed 😍 (we sell teeth)”), engagement bait, the one comment asking a
+   question the caption already answered.
+   - ✅ “the way she carried that whole recoupling on her BACK 😭😭 edit
+     coming tonight”
+   - ❌ a brand comment that’s actually clever *(brands are never clever;
+     that’s the joke)*
+5. **The clock app** (the blend — surge’s home) — 3 a.m. comment-section
+   intimacy. Fragments, lowercase, parasocial devotion measured in rewatches
+   (“part 47 of watching the airport story”), grief and comedy in the same
+   sentence, the pinned comment as throne. Nobody has ever finished a
+   thought here and nobody needed to.
+   - ✅ “not me explaining the couple web to my nan like it’s the news”
+   - ❌ complete sentences with a thesis
+
+### Craft rules for feed posts
+
+- **The wrongness is loving.** Every community is us. The mums’ typos, the
+  forum’s essays, the bird app’s certainty — written from inside, never
+  sneering down. If a post could be a screenshot in a “normies ruin
+  everything” compilation, cut it.
+- **Specificity beats scale, still.** Not “everyone is talking about it” —
+  “Sandra has printed the postcard.” Not “this is dramatic” — “I have been
+  refreshing since the recoupling and my dinner is ruined.”
+- **The player is a character they invented.** Each community coins its own
+  nickname for you off your Type and keeps the bill running — coin once per
+  channel, call back. The communities disagree about you; that disagreement
+  IS the instrument the player reads.
+- **Posts are weather reports from sofas.** They react to what actually
+  happened (the moment, the tier, the wings, the flags) — an honest
+  instrument, never generic filler that would fit any episode.

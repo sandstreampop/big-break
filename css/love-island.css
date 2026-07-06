@@ -172,3 +172,91 @@ body {
 .recap-block.recap-couple { border-color: rgba(255, 92, 138, .4); }
 .recap-block.recap-intention { border-color: rgba(255, 179, 92, .4); }
 .recap-block.recap-threat { border-color: rgba(255, 99, 120, .45); }
+
+/* ---------- The Second Screen (ADR-0014): the five platform skins ----------
+   The generic feed chrome lives in style.css; these are the villa's parody
+   communities — each a real platform's REGISTER in visual form (never a
+   demographic; ADR-0012's settlement holds). The skin class is set by the
+   channel data (feeds.ts). Loudness is characterisation here. */
+
+/* Teaser chips, tinted per platform so the row previews the five at a glance. */
+.feed-chip.feed-bird { background: #0b1620; border-color: #1d9bf0; }
+.feed-chip.feed-forum { background: #1a1410; border-color: #ff5722; }
+.feed-chip.feed-mums { background: #e9f0fb; border-color: #4267b2; }
+.feed-chip.feed-grid { background: #1a0f18; border-color: #e1306c; }
+.feed-chip.feed-clock { background: #0a0a0f; border-color: #25f4ee; }
+
+/* Active tabs pick up the platform accent. */
+.feed-tab.feed-bird.active { border-color: #1d9bf0; background: #0b2233; }
+.feed-tab.feed-forum.active { border-color: #ff5722; background: #2a1710; }
+.feed-tab.feed-mums.active { border-color: #4267b2; background: #26324a; }
+.feed-tab.feed-grid.active { border-color: #e1306c; background: #2a0f22; }
+.feed-tab.feed-clock.active { border-color: #25f4ee; background: #06232a; }
+
+/* 1 · the bird app — dark, blue, terse, ratios. */
+.feed-body.feed-bird { background: #070d14; }
+.feed-body.feed-bird .feed-post { background: #0c151d; border-color: #17303f; border-radius: 10px; }
+.feed-body.feed-bird .feed-author { color: #eaf3fb; }
+.feed-body.feed-bird .feed-author::after { content: ' ✓'; color: #1d9bf0; font-size: 11px; }
+.feed-body.feed-bird .feed-avatar { background: #0b2233; border-color: #1d9bf0; }
+.feed-body.feed-bird .feed-post-meta { color: #6b95b3; }
+.feed-body.feed-bird .feed-header { color: #1d9bf0; }
+
+/* 2 · the forum — orange upvote rail, flair, receipts, monospaced meta. */
+.feed-body.feed-forum { background: #0d0b09; }
+.feed-body.feed-forum .feed-post {
+  background: #14100c; border-color: #2e2114; border-radius: 8px;
+  border-left: 3px solid #ff5722;
+}
+.feed-body.feed-forum .feed-avatar { background: #241708; border-color: #ff5722; border-radius: 8px; }
+.feed-body.feed-forum .feed-author { color: #ffd7a8; font-family: ui-monospace, monospace; font-size: 12px; }
+.feed-body.feed-forum .feed-post-meta { color: #c67a3a; font-family: ui-monospace, monospace; font-size: 11px; }
+.feed-body.feed-forum .feed-header { color: #ff7043; }
+
+/* 3 · the mums' group — LIGHT MODE. The big contrast: a warm, bright feed
+   inside the dark app. Boundless warmth, punctuation as weather. */
+.feed-body.feed-mums { background: #eef1f6; }
+.feed-body.feed-mums .feed-header { color: #4267b2; }
+.feed-body.feed-mums .feed-post {
+  background: #ffffff; border-color: #d3dae6; border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(40,60,100,.08);
+}
+.feed-body.feed-mums .feed-post.feed-pinned { border-color: #4267b2; box-shadow: 0 0 0 1px rgba(66,103,178,.25); }
+.feed-body.feed-mums .feed-avatar { background: #dbe4f3; border-color: #b7c6e2; }
+.feed-body.feed-mums .feed-author { color: #1c2a44; }
+.feed-body.feed-mums .feed-post-body { color: #2a3550; }
+.feed-body.feed-mums .feed-post-meta { color: #7a88a0; }
+.feed-body.feed-mums .feed-pin-tag { color: #4267b2; }
+.feed-body.feed-mums .feed-replies { border-left-color: #d3dae6; }
+.feed-body.feed-mums .feed-reply { color: #47536e; }
+.feed-body.feed-mums .feed-reply-author { color: #1c2a44; }
+.feed-body.feed-mums .feed-more { border-top-color: #d3dae6; }
+.feed-body.feed-mums .feed-more-head { color: #4267b2; }
+.feed-body.feed-mums .feed-foot { color: #9aa4ba; }
+
+/* 4 · the grid — the official post's comment section: gradient accent, brands. */
+.feed-body.feed-grid { background: #0c070b; }
+.feed-body.feed-grid .feed-header {
+  background: linear-gradient(90deg, #feda75, #fa7e1e, #d62976, #962fbf);
+  -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 800;
+}
+.feed-body.feed-grid .feed-post { background: #160f14; border-color: #35182a; border-radius: 13px; }
+.feed-body.feed-grid .feed-avatar {
+  background: #1a0f18;
+  border: 2px solid transparent;
+  background-image: linear-gradient(#1a0f18,#1a0f18), linear-gradient(45deg,#feda75,#d62976,#962fbf);
+  background-origin: border-box; background-clip: content-box, border-box;
+}
+.feed-body.feed-grid .feed-author { color: #ffd9ec; }
+.feed-body.feed-grid .feed-post-meta { color: #c76a99; }
+
+/* 5 · the clock app — near-black, cyan/pink, 3 a.m. comment intimacy. */
+.feed-body.feed-clock { background: #050509; }
+.feed-body.feed-clock .feed-post { background: #0c0c14; border-color: #1c1c2c; border-radius: 12px; }
+.feed-body.feed-clock .feed-post.feed-pinned { border-color: #25f4ee; box-shadow: 0 0 0 1px rgba(37,244,238,.25); }
+.feed-body.feed-clock .feed-avatar { background: #10101c; border-color: #fe2c55; }
+.feed-body.feed-clock .feed-author { color: #eaf7ff; font-size: 12.5px; }
+.feed-body.feed-clock .feed-post-body { color: #dfe6f0; }
+.feed-body.feed-clock .feed-post-meta { color: #6ad; }
+.feed-body.feed-clock .feed-header { color: #25f4ee; }
+.feed-body.feed-clock .feed-pin-tag { color: #25f4ee; }

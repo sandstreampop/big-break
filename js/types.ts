@@ -310,6 +310,51 @@ export interface TutorialStart {
   resources?: Record<string, number>;
 }
 
+// ---------- The second screen (ADR-0014): pack-supplied social feeds ----------
+// A generic presentation surface: at a pivotal moment the shell asks the pack
+// for the OUTSIDE WORLD's reaction, rendered as platform-skinned social feeds
+// the player can open (progressive disclosure) to gauge public standing. The
+// shell knows the shape and the chrome; the pack owns every word and which
+// community says it. Pure reads of state, like recap/setPiece — no genre is
+// named here, and a pack that omits Presenter.feeds renders no second screen.
+
+// One post in a feed. `body` is a diegetic quote (a member of the public
+// speaking), so it carries the same cliché-exemption as quoted dialogue.
+export interface FeedPost {
+  author: string;         // display handle / name
+  avatar?: string;        // an emoji glyph for the poster
+  body: string;           // the post text
+  meta?: string;          // a secondary line (timestamp, flair, "OP")
+  reactions?: string;     // a flavour reaction tally ("2.4k · 88 replies")
+  pinned?: boolean;       // rendered first, styled as pinned / top comment
+  replies?: FeedPost[];   // one level of nested replies (comments)
+}
+// One community's feed. `skin` selects the platform styling; `mood` is a
+// temperature cue the shell may colour. `more` posts sit behind a fold.
+export interface FeedChannel {
+  id: string;
+  name: string;           // display name ("the bird app")
+  handle?: string;        // channel chrome sub-label ("v/TheVilla · 2.1M")
+  icon: string;           // emoji badge for the tab
+  skin: string;           // css skin class ("feed-bird", "feed-forum", …)
+  mood?: 'up' | 'down' | 'split' | 'feral' | 'soft';
+  header?: string;        // a chrome line (group rules, subreddit banner)
+  posts: FeedPost[];
+  more?: FeedPost[];
+}
+// The bundle the shell renders: a one-line teaser (Tier 0) plus the channels
+// the browser opens to (Tiers 1–3).
+export interface FeedBundle {
+  teaser: string;
+  headline?: string;
+  channels: FeedChannel[];
+}
+// Which pivotal window the shell is asking about.
+export type FeedMoment =
+  | { kind: 'result'; ev: GameEvent; tier: Tier | 'declined'; side: Side }
+  | { kind: 'recap'; act: number }
+  | { kind: 'ending'; endingKey: string };
+
 // The Presenter: the genre's UI-facing flavor, provided by the pack so the UI
 // shell reads it instead of statically importing one genre's content. Fields are
 // optional; the UI falls back to neutral behavior when a pack omits one.
@@ -464,6 +509,16 @@ export interface Presenter {
   // Comeback-mode copy (title button, persona-screen header/sub); the
   // TRANSFORM stays Pack.comeback. Music's Second Act is the default.
   comeback?: { label: string; head: string; sub: string };
+
+  // ADR-0014 (the second screen): the outside world's reaction at a pivotal
+  // moment, as platform-skinned social feeds. The shell renders a teaser +
+  // "read the feeds" button; tapping opens the feed browser (one tab per
+  // channel, a per-channel fold). MUST be a pure read of state — deals
+  // re-render on resume and the sims never render — so derive off flavorSeed
+  // and the run's own ledger, never the play RNG. `moment` says which window
+  // this is (a card result, an act recap, or the ending). Return null to show
+  // no feeds for a given moment (the shell then renders exactly as before).
+  feeds?: (state: RunState, moment: FeedMoment) => FeedBundle | null;
 }
 
 export interface Pack {

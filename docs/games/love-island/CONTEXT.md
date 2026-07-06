@@ -203,6 +203,17 @@ The confessional: where an Islander speaks privately to camera. A presentation
 device for surfacing your private read of a moment (and your In-Your-Head state).
 _Avoid_: diary room, confessional booth
 
+**The Second Screen**:
+The nation's social-media feeds, surfaced to the PLAYER (never the Islanders —
+their phones are in a drawer) at every pivotal moment: five communities, each a
+parody of a platform's register — **the bird app**, **the forum**, **the mums'
+group**, **the grid**, **the clock app**. A community wears a wing of the
+factional public (or a resource), so reading the feeds is reading the nation.
+The engine's *feeds* presenter hook (ADR-0014); opened via a teaser (progressive
+disclosure), never auto-shown.
+_Avoid_: socials, Twitter/Reddit/etc (the channels wear epithets, never real
+platform names — ADR-0012's settlement), notifications
+
 ## Fail states
 
 Ways a Season ends badly before or at the Final. The engine's *fail states*.

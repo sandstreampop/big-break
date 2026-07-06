@@ -31,9 +31,12 @@ import { generateHeadlines } from '../dist/js/headlines.js';
 import { buildEpilogue } from '../dist/js/epilogue.js';
 import { WEATHER } from '../dist/js/data/weather.js';
 import { ARCS as MUSIC_ARCS } from '../dist/js/data/arcs.js';
-import { bangIssue, tasteIssues, hasDialogue, quotedSpans, argotPresenceIssues, tellIssues } from './taste-core.mjs';
+import { bangIssue, tasteIssues, hasDialogue, quotedSpans, argotPresenceIssues, tellIssues, feedIssues } from './taste-core.mjs';
 // Each pack's taste DATA lives with the game; the checker above is genre-neutral.
 import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';
+// The second screen's content (ADR-0014) isn't in pack.events, so import its
+// flat corpus so the feed floor can lint it (bodies + Narrator chrome).
+import { feedBodyCorpus, feedChromeCorpus } from '../dist/js/packs/love-island/feeds.js';
 
 // The engine's NEUTRAL deck-eligibility vocabulary (the core Requires type);
 // each pack adds the predicate keys its own plugins register (Plugin.requires),
@@ -99,6 +102,8 @@ const DESCRIPTORS = {
       'li_stranded', 'li_came_clean', 'li_dumped_single', 'li_rival_active',
       'li_fed_the_rival', 'li_secret_detonated',
       'li_comeback'], // set by the redemption-season transform (pack.ts liComeback)
+    // ADR-0014: the second screen's content, linted via the feed floor below.
+    feedBodies: feedBodyCorpus, feedChrome: feedChromeCorpus,
     arcs: [{
       id: 'li_scheduled_beats',
       setup: ['li_bomb1', 'li_bomb2', 'li_bomb2_steal', 'li_bomb2_single',
@@ -250,6 +255,18 @@ for (const pack of PACKS) {
       for (const t of texts) if (t) spoken += ' ' + quotedSpans(t);
     }
     for (const iss of argotPresenceIssues(spoken, desc.taste.requiredArgot)) tag(iss);
+  }
+
+  // ── The second-screen feed floor (ADR-0014, a pack's taste.feeds) ──
+  // Feed content lives in the presenter, not the deck, so it's linted from the
+  // pack's exported corpus: post bodies as quoted mouths (cliché/bang exempt),
+  // teaser chrome as narration (house rules), plus length/token/uniqueness and
+  // a coverage floor. See VOICE.md § the second screen.
+  if (desc.feedBodies && desc.taste?.feeds) {
+    for (const iss of feedIssues({
+      bodies: desc.feedBodies(), chrome: (desc.feedChrome || (() => []))(),
+      taste: desc.taste, knownTokens: [...knownTokens],
+    })) tag(iss);
   }
 
   // ── M3 authoring rules (Reach & Rush §3) ──

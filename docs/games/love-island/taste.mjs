@@ -117,4 +117,19 @@ export const LOVE_ISLAND_TASTE = {
     { label: 'my type (on paper)', min: 2, patterns: [ /my type/i ] },
     { label: 'loyal (in Islander mouths)', min: 4, patterns: [ /loyal/i ] },
   ],
+  // The second screen (ADR-0014 / VOICE.md v4-S4 addendum). Feed POST BODIES
+  // are quoted mouths — the public speaking — so they carry the same cliché-
+  // and bang-exemption as Islander dialogue (loud platforms shout on purpose).
+  // They still obey the structural floor (curly apostrophes, no double spaces,
+  // a generous length cap) and must be unique — no copy-pasted posts. The feed
+  // CHROME (the Narrator's teaser lines) is narration and keeps the house
+  // rules (≤1 '!', no blocklist cliché). `minBodies` guards against the corpus
+  // being gutted — the nation must stay loud.
+  feeds: {
+    maxBody: 300,
+    minBodies: 120,
+    // Feed-internal token the browser fills with each channel's nickname for
+    // the player; legal only inside feed copy.
+    extraTokens: ['me'],
+  },
 };

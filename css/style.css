@@ -1685,3 +1685,133 @@ details.recap-fold[open] { display: flex; flex-direction: column; gap: 8px; }
   #card-area .overlay-note { font-size: 12px; line-height: 1.35; padding: 5px 8px; }
   .encore-btn { min-height: 36px; padding: 8px 10px; font-size: 12px; }
 }
+
+/* ---------- The Second Screen (ADR-0014): generic feed chrome ----------
+   The feed BROWSER is a shell feature (js/ui.ts): a phone-shaped layer that
+   floats above the result/recap overlay. Layout + neutral styling live here
+   (genre-neutral, dormant for any pack that ships no presenter.feeds); the
+   per-platform SKINS are the pack's, in its own stylesheet. */
+
+/* The teaser embedded in a result/recap/ending card — Tier 0. */
+.feed-teaser {
+  margin-top: 4px;
+  padding: 11px 12px;
+  border-radius: 15px;
+  border: 1px solid #3b3352;
+  background: linear-gradient(160deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  display: flex; flex-direction: column; gap: 9px;
+}
+.feed-teaser-line { font-size: 13.5px; line-height: 1.4; color: #cfc7e0; font-style: italic; }
+.feed-teaser-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.feed-chip {
+  position: relative; font-size: 16px; line-height: 1;
+  width: 30px; height: 30px; border-radius: 9px;
+  display: grid; place-items: center;
+  background: #241f33; border: 1px solid #3b3352;
+}
+.feed-chip-dot { position: absolute; right: -3px; bottom: -3px; font-size: 8px; }
+.feed-open-btn {
+  align-self: stretch; min-height: 40px; font-weight: 700; font-size: 13.5px;
+  border-radius: 12px;
+}
+
+/* The browser layer — fixed above everything, its own scroll. */
+.feed-layer {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; place-items: center; padding: 14px;
+  background: rgba(8, 6, 14, .8);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  animation: feed-fade .18s ease-out;
+}
+@keyframes feed-fade { from { opacity: 0; } }
+.feed-phone {
+  width: min(100%, 400px);
+  height: min(90vh, 780px); height: min(90dvh, 780px);
+  display: flex; flex-direction: column;
+  background: #12101a;
+  border: 1px solid #3b3352; border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0,0,0,.6);
+  animation: feed-rise .24s cubic-bezier(.2,.9,.3,1.12);
+}
+@keyframes feed-rise { from { transform: translateY(26px) scale(.98); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .feed-layer, .feed-phone { animation: none; }
+}
+.feed-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; border-bottom: 1px solid #2b2540;
+  background: #17141f;
+}
+.feed-bar-title { font-weight: 800; font-size: 15px; letter-spacing: .01em; }
+.feed-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid #3b3352; background: #221d30; color: #cfc7e0;
+  font-size: 15px; line-height: 1; cursor: pointer;
+}
+.feed-tabs {
+  display: flex; gap: 6px; padding: 9px 10px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid #2b2540; background: #14111d;
+  scrollbar-width: none;
+}
+.feed-tabs::-webkit-scrollbar { display: none; }
+.feed-tab {
+  flex: none; display: flex; align-items: center; gap: 5px;
+  padding: 7px 11px; border-radius: 999px;
+  border: 1px solid #332c48; background: #1d1930; color: #b6adc9;
+  font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+  transition: transform .08s ease, background .15s ease;
+}
+.feed-tab .feed-tab-ico { font-size: 15px; }
+.feed-tab .feed-tab-dot { font-size: 8px; }
+.feed-tab.active { color: #fff; border-color: #6a5da0; background: #2a2442; transform: translateY(-1px); }
+@media (max-width: 360px) { .feed-tab .feed-tab-name { display: none; } }
+
+.feed-body {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 12px; display: flex; flex-direction: column; gap: 10px;
+  background: #100e18;
+}
+.feed-header {
+  font-size: 11px; letter-spacing: .02em; text-transform: uppercase;
+  color: #8b83a3; padding: 2px 2px 4px; font-weight: 700;
+}
+.feed-post {
+  border-radius: 14px; padding: 11px 12px;
+  background: #1b1726; border: 1px solid #2c2640;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.feed-post.feed-pinned { border-color: #6a5da0; box-shadow: 0 0 0 1px rgba(120,100,190,.25); }
+.feed-post-head { display: flex; align-items: center; gap: 8px; }
+.feed-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 16px;
+  background: #2a2440; border: 1px solid #3b3352; flex: none;
+}
+.feed-idw { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; min-width: 0; }
+.feed-author { font-weight: 800; font-size: 13px; color: #efeaf7; }
+.feed-pin-tag { font-size: 10px; color: #b8aee0; font-weight: 700; }
+.feed-post-body { font-size: 14px; line-height: 1.44; color: #e4dff0; overflow-wrap: anywhere; }
+.feed-post-meta { font-size: 11.5px; color: #8b83a3; font-weight: 600; }
+.feed-replies { margin-top: 3px; border-left: 2px solid #2c2640; padding-left: 9px; display: flex; flex-direction: column; gap: 5px; }
+.feed-reply { font-size: 12.5px; line-height: 1.38; color: #c3bcd6; }
+.feed-reply-author { font-weight: 800; color: #d8d1ea; margin-right: 5px; }
+.feed-more { border-top: 1px dashed #2c2640; padding-top: 8px; }
+.feed-more-head {
+  cursor: pointer; font-size: 12.5px; font-weight: 700; color: #a99fce;
+  padding: 5px 2px; list-style: none;
+}
+.feed-more-head::-webkit-details-marker { display: none; }
+.feed-more-head::before { content: '▸ '; }
+.feed-more[open] .feed-more-head::before { content: '▾ '; }
+.feed-more[open] { display: flex; flex-direction: column; gap: 10px; }
+.feed-foot { text-align: center; font-size: 11px; color: #6f6788; padding: 8px 0 2px; font-style: italic; }
+.feed-moodline {
+  font-size: 11.5px; font-weight: 700; letter-spacing: .01em;
+  padding: 6px 10px; border-radius: 999px; align-self: flex-start;
+  background: #1b1726; border: 1px solid #2c2640; color: #b6adc9;
+}
+.feed-moodline.mood-up { color: #7fe0a6; border-color: #2c5a3f; }
+.feed-moodline.mood-split { color: #ffcf8a; border-color: #5a4a2c; }
+.feed-moodline.mood-down { color: #ff8a80; border-color: #5a2c2c; }
