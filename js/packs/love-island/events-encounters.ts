@@ -62,7 +62,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You match their confession and overshoot by one childhood story. “Wow,” says {rival}, meaning <i>stop</i>. Still — a trade’s a trade, and they started it.', effects: { loyalty: 2, rivalOpinion: 3, burnout: 2, chainEventId: 'li_enc_rival_3_pact' } },
           good: { text: '“Me too, honestly. Different plan, same wobble.” {rival} nods slowly, promoting you from obstacle to person.', effects: { loyalty: 3, rivalOpinion: 6, chainEventId: 'li_enc_rival_3_pact' } },
-          incredible: { text: 'You say the true thing you haven’t even told {partner} yet. {rival} holds it carefully, visibly surprised to be trusted. Day two, and the villa’s realest chat has no couple in it.', effects: { loyalty: 5, rivalOpinion: 9, public: 3, chainEventId: 'li_enc_rival_3_pact' } },
+          incredible: { text: '“I nearly didn’t get on the plane, if I’m honest — bottled it in the airport bogs for twenty minutes.” You haven’t told {partner} that. {rival} holds it carefully. Day two, and the realest chat in here has no couple in it.', effects: { loyalty: 5, rivalOpinion: 9, public: 3, chainEventId: 'li_enc_rival_3_pact' } },
         },
       },
       right: {
@@ -119,7 +119,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.5, loyalty: 0.5 },
         outcomes: {
           bad: { text: 'You shake. {rival} holds the grip one beat too long, so the cameras get the frame. The deal is real; the photo op was the interest on it.', effects: { savvy: 2, rivalOpinion: 4, rivalMood: 'smug', burnout: 2 } },
-          good: { text: '“Stay away from my couple, I’ll stay out your way.” — “Deal, babe.” The most honest chat this villa will see all Season, and not a script in sight.', effects: { savvy: 4, loyalty: 3, rivalOpinion: 8, rivalMood: 'smug', gainIntel: { about: 'rival', label: 'the game they told you they’re running' } } },
+          good: { text: '“Stay away from my couple, I’ll stay out your way.” — “Deal, babe.” The most honest chat this villa will see all Season, and not a script in sight.', effects: { savvy: 4, loyalty: 3, rivalOpinion: 8, rivalMood: 'smug', gainIntel: { about: 'rival', label: 'they’re here to win the show, not fall in love — their words' } } },
           incredible: { text: '“One thing, since you’re decent—” and {rival}, guard fully down for four seconds, tells you something they absolutely should not have. The handshake becomes a vault.', effects: { savvy: 5, loyalty: 3, rivalOpinion: 10, rivalMood: 'buzzing', surfaceSecret: 'rival', public: 3 } },
         },
       },
@@ -245,7 +245,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You get four sentences in before the tears arrive — yours, embarrassingly. {mate} doesn’t flinch, just hands you the tub. “Keep going.” You do. It airs. You don’t care.', effects: { loyalty: 3, burnout: -4, addFlag: 'li_code_honour', chainEventId: 'li_enc_bestie_2_ride' } },
           good: { text: '“Finally,” says {mate}, around a spoon. You talk until the spoons stand up on their own. Somewhere in there it stops being telly and starts being a friendship.', effects: { loyalty: 3, burnout: -5, addFlag: 'li_code_honour', chainEventId: 'li_enc_bestie_2_ride' } },
-          incredible: { text: 'You tell them the whole unedited thing — and get the whole unedited thing back. By 2 a.m. you have what nobody else in here has: a witness.', effects: { loyalty: 5, burnout: -6, public: 2, addFlag: 'li_code_honour', chainEventId: 'li_enc_bestie_2_ride' } },
+          incredible: { text: 'You tell them the lot — the ex who still “just checks in,” the reason you nearly said no to this whole thing — and get theirs back, all of it. By 2 a.m. you have what nobody else in here has: a witness.', effects: { loyalty: 5, burnout: -6, public: 2, addFlag: 'li_code_honour', chainEventId: 'li_enc_bestie_2_ride' } },
         },
       },
       right: {
@@ -271,8 +271,8 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         tags: ['loyal', 'code'],
         governingStats: { loyalty: 1 },
         outcomes: {
-          bad: { text: 'You shake on it with croissant grease, which {mate} declares “binding.” Within the hour the villa tests the treaty with a rumour. It holds. Barely — but it holds.', effects: { loyalty: 3, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'what the daybed heard this morning' } } },
-          good: { text: '“Deal.” The least dramatic pact in villa history, and the only one that will survive the Season. {mate} proves it immediately: what {rival} said at breakfast, verbatim.', effects: { loyalty: 4, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'what they said at breakfast' } } },
+          bad: { text: 'You shake on it with croissant grease, which {mate} declares “binding.” Within the hour the villa tests the treaty with a rumour. It holds. Barely — but it holds.', effects: { loyalty: 3, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'the girls have been calling your couple “convenient”' } } },
+          good: { text: '“Deal.” The least dramatic pact in villa history, and the only one that will survive the Season. {mate} proves it immediately: what {rival} said at breakfast, verbatim.', effects: { loyalty: 4, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'they called your couple “a strategy” over the eggs' } } },
           incredible: { text: 'The pact upgrades on the spot: {mate} has been keeping receipts all week — on everyone — and you are now the second person to see the ledger. Beautiful. Terrifying. Yours.', effects: { loyalty: 5, public: 2, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'the ledger: everything, dated' } } },
         },
       },
@@ -300,8 +300,8 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         governingStats: { savvy: 1 },
         outcomes: {
           bad: { text: '“Allies, then.” {mate} nods — and immediately tests you with a small secret. You hold it for a whole day. Just. The probation period continues.', effects: { savvy: 2, burnout: 2, addFlag: 'li_bestie' } },
-          good: { text: 'You shake on the least romantic and most durable arrangement in the villa. The first dividend arrives by lunch: what {rival} is planning for the recoupling.', effects: { savvy: 4, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'their recoupling plan' } } },
-          incredible: { text: 'The alliance is so efficient it frightens you both. Within a day you know everything that moves in this villa — and, better, what’s about to.', effects: { savvy: 6, public: 2, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'what moves next, before it moves' } } },
+          good: { text: 'You shake on the least romantic and most durable arrangement in the villa. The first dividend arrives by lunch: what {rival} is planning for the recoupling.', effects: { savvy: 4, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'they’re planning to pull your partner at the recoupling' } } },
+          incredible: { text: 'The alliance is so efficient it frightens you both. Within a day you know everything that moves in this villa — and, better, what’s about to.', effects: { savvy: 6, public: 2, addFlag: 'li_bestie', gainIntel: { about: 'rival', label: 'who they’re pulling next — before they do it' } } },
         },
       },
       right: {
@@ -429,8 +429,8 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.6, rizz: 0.4 },
         outcomes: {
           bad: { text: '“What about you, then?” lands more deposition than curiosity. {partner} answers carefully, both of you now negotiators in swimwear.', effects: { savvy: 2, bond: 2, burnout: 2, chainEventId: 'li_enc_partner_3close' } },
-          good: { text: 'You flip it, and {partner} takes the invitation at a run — the story about the nan, the fear about the outside. You’re learning the manual. Lovely, and useful.', effects: { savvy: 5, bond: 4, gainIntel: { about: 'partner', label: 'the thing they fear about the outside' }, chainEventId: 'li_enc_partner_3close' } },
-          incredible: { text: 'The question you ask is so exactly right that {partner} stops mid-sip. “Nobody’s asked me that. Ever.” The answer runs long. You remember all of it.', effects: { savvy: 8, bond: 6, gainIntel: { about: 'partner', label: 'the answer nobody else has heard' }, chainEventId: 'li_enc_partner_3close' } },
+          good: { text: 'You turn it round: “Nah — what about you, though?” And {partner} goes at a run: the nan who raised them, gone this March; the fear that out there, off the telly, they go back to being no one. “Never said that bit out loud,” they add.', effects: { savvy: 5, bond: 4, gainIntel: { about: 'partner', label: 'off the telly, they’re scared they’re no one' }, chainEventId: 'li_enc_partner_3close' } },
+          incredible: { text: '“When were you last properly happy — before all this?” {partner} stops mid-sip. “Nobody’s ever asked me that.” Ten minutes: a nan’s caravan, a dog called Biscuit, one summer that ended and never quite started again. You keep all of it.', effects: { savvy: 8, bond: 6, gainIntel: { about: 'partner', label: 'the caravan, the dog called Biscuit, the summer that ended' }, chainEventId: 'li_enc_partner_3close' } },
         },
       },
     },
@@ -577,7 +577,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You open negotiations and immediately reveal your whole hand, including cards you didn’t know you held. {rival} thanks you for the audit and pays in compliments.', effects: { savvy: 2, rivalOpinion: 2, rivalMood: 'scheming', burnout: 3 } },
           good: { text: 'Two strategists, one sunset, terms agreed without a single term said aloud. You leave with your couple ringfenced and a professional courtesy neither of you will admit to.', effects: { savvy: 5, rivalOpinion: 4, bond: 2 } },
-          incredible: { text: 'The negotiation is so enjoyable it becomes a friendship-shaped problem. “Ugh,” says {rival}, meaning it. “I liked you better as furniture.” The villa’s two sharpest, allied. Terrifying.', effects: { savvy: 8, rivalOpinion: 8, rivalMood: 'smug', followers: 3, graft: 3, gainIntel: { about: 'rival', label: 'what they’ll trade for a Final seat' } } },
+          incredible: { text: 'The negotiation is so enjoyable it becomes a friendship-shaped problem. “Ugh,” says {rival}, meaning it. “I liked you better as furniture.” The villa’s two sharpest, allied. Terrifying.', effects: { savvy: 8, rivalOpinion: 8, rivalMood: 'smug', followers: 3, graft: 3, gainIntel: { about: 'rival', label: 'they’d bin their own couple for a Final seat' } } },
         },
       },
     },

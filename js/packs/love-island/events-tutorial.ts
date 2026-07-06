@@ -85,7 +85,7 @@ export const LI_TUTORIAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“I’m FINE,” she says — to you, the person she summoned. You hold the tissue anyway. It counts. Somewhere in the gallery, a producer sighs at the lack of fireworks.', effects: { loyalty: 2, burnout: 2 } },
           good: { text: '“You’re the only normal one here,” she sniffs, which after nine hours is both a compliment and a warning. You’ve made your first friend. Friends are load-bearing in here.', effects: { loyalty: 3, public: 2 } },
-          incredible: { text: 'You say the exact right thing, once, quietly — and she laughs mid-sob, ugly and real. The whole firepit exhales. The edit has found its first keeper.', effects: { loyalty: 4, public: 3, graft: 2 } },
+          incredible: { text: 'You say, “You don’t have to be okay in here, you know” — once, quietly — and she laughs mid-sob, ugly and real. The whole firepit exhales. The edit has found its first keeper.', effects: { loyalty: 4, public: 3, graft: 2 } },
         },
       },
       right: {

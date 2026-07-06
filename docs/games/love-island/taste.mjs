@@ -47,9 +47,29 @@ export const LOVE_ISLAND_CLICHES = [
   'said no one ever',
 ];
 
+// SHOW-DON'T-TELL blocklist: meta-summary phrases that point at a moment
+// instead of rendering it — the villa's recurring AI-ism (a screenshot of
+// "the thing they fear about the outside. Filed." and "you flip it" is what
+// prompted this). The rule, and the through-line of all villa writing: SHOW
+// the line said, the gesture made, the actual fear NAMED — never gesture at
+// content the outcome should render. Scanned over the NARRATING voice only
+// (an Islander may say "that thing you said" in dialogue; the narrator may not
+// summarise the beat away). Grown deliberately as new tells surface.
+export const LOVE_ISLAND_TELLS = [
+  'you flip it',
+  'the exact right thing',
+  'the thing they fear',
+  'the thing you fear',
+  'learning the manual',
+  'the unbroadcastable thing',
+  'said something interesting',
+  'the answer nobody',
+];
+
 // The pack's taste config, consumed by tools/taste-core.mjs's checker.
 export const LOVE_ISLAND_TASTE = {
   cliches: LOVE_ISLAND_CLICHES,
+  tells: LOVE_ISLAND_TELLS,
   maxOutcomeLen: 240,
   // The one place exuberance is encouraged: the receiving-a-text shout.
   // Islanders scream it — all caps and stacked "!" are on-brand HERE (and only

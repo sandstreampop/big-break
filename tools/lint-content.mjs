@@ -31,7 +31,7 @@ import { generateHeadlines } from '../dist/js/headlines.js';
 import { buildEpilogue } from '../dist/js/epilogue.js';
 import { WEATHER } from '../dist/js/data/weather.js';
 import { ARCS as MUSIC_ARCS } from '../dist/js/data/arcs.js';
-import { bangIssue, tasteIssues, hasDialogue, quotedSpans, argotPresenceIssues } from './taste-core.mjs';
+import { bangIssue, tasteIssues, hasDialogue, quotedSpans, argotPresenceIssues, tellIssues } from './taste-core.mjs';
 // Each pack's taste DATA lives with the game; the checker above is genre-neutral.
 import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';
 
@@ -184,6 +184,9 @@ for (const pack of PACKS) {
         for (const iss of tasteIssues(t, desc.taste, { outcome: outcomeTexts.has(t) })) {
           tag(`${ev.id}: ${iss}`);
         }
+        // Show-don't-tell: meta-summary phrases that point at a moment instead
+        // of rendering it (scanned over narration; dialogue is exempt).
+        for (const iss of tellIssues(t, desc.taste.tells)) tag(`${ev.id}: ${iss}`);
       } else {
         const bang = bangIssue(t);
         if (bang) tag(`${ev.id}: ${bang}`);

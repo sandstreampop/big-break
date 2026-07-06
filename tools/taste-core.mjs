@@ -42,6 +42,20 @@ export function clicheIssues(text, cliches) {
     .map((c) => `cliché "${c}": ${snippet(text)}`);
 }
 
+// Show-don't-tell blocklist: meta-summary phrases that GESTURE at a moment
+// instead of rendering it ("you flip it", "the exact right thing", "the thing
+// they fear", "learning the manual"). These are the AI-ism the villa keeps
+// sliding into — the narrator pointing at content it should show. Scanned over
+// the narrating voice only (an Islander MAY refer to "the thing you said" in
+// dialogue; the narrator may not summarise the beat away). Whole-phrase, ci.
+export function tellIssues(text, tells) {
+  if (!text || !tells?.length) return [];
+  const bare = stripQuoted(text).toLowerCase();
+  return tells
+    .filter((t) => bare.includes(t.toLowerCase()))
+    .map((t) => `show-don't-tell "${t}" — render the moment, don't point at it: ${snippet(text)}`);
+}
+
 // Outcome-length cap — villa outcomes land the turn and get out. (Prompts set a
 // scene and may run longer; this caps outcome text only.)
 export function lengthIssue(text, cap) {

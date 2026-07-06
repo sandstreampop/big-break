@@ -39,16 +39,16 @@ export const GOSSIP_EVENTS: GameEvent[] = [
     id: 'li_hut_confess_2', act: 3, tags: ['camera', 'chat'],
     art: 'li_beachhut',
     context: 'The Beach Hut · Final Week · the pointed question',
-    prompt: '“Final Week,” says the voice. “Is it real?” Straight for the ribs. And then, conversationally: “Because {partner} said something interesting in here yesterday.” The chair holds its breath. So, annoyingly, do you.',
+    prompt: '“Final Week,” says the voice. “Is it real?” Straight for the ribs. And then, conversationally: “Because {partner} sat in that exact chair yesterday, said your name, and then said ‘I’m terrified, if I’m honest.’” The chair holds its breath. So, annoyingly, do you.',
     choices: {
       left: {
         label: 'Ask what they said',
         tags: ['drama', 'chat'],
         governingStats: { savvy: 0.5, loyalty: 0.5 },
         outcomes: {
-          bad: { text: 'The Hut plays you four seconds — a laugh, half a sentence, your name. Out of context it could mean anything. In your head, all night, it means everything.', effects: { savvy: 2, burnout: 5, gainIntel: { about: 'partner', label: 'the clip of the half-sentence' } } },
-          good: { text: 'The voice gives you the shape of it: {partner}, asked about the outside, went quiet first. Useful. Heavy, but useful.', effects: { savvy: 5, burnout: 2, gainIntel: { about: 'partner', label: 'they went quiet about the outside' } } },
-          incredible: { text: 'You get the whole quote, and it’s… lovely, actually. They said the thing you’d hoped. You walk out lighter, and armed.', effects: { savvy: 6, bond: 3, burnout: -2, gainIntel: { about: 'partner', label: 'what they said about you in here' } } },
+          bad: { text: 'The Hut plays you four seconds: a laugh, your name, then “…I don’t know, do I.” Out of context it could mean anything. In your head, all night, it means everything.', effects: { savvy: 2, burnout: 5, gainIntel: { about: 'partner', label: 'the clip: your name, then “I don’t know, do I”' } } },
+          good: { text: 'The voice tells you: asked if you’d last on the outside, {partner} said “I hope so” — not “yes.” Useful. Heavy, but useful.', effects: { savvy: 5, burnout: 2, gainIntel: { about: 'partner', label: 'asked if you’ll last outside, they said “I hope so”' } } },
+          incredible: { text: 'You get the whole quote: “They’re the first one I’ve not had to be ‘on’ for.” It’s lovely, actually. You walk out lighter, and armed.', effects: { savvy: 6, bond: 3, burnout: -2, gainIntel: { about: 'partner', label: '“the first one I’ve not had to be ‘on’ for”' } } },
         },
       },
       right: {

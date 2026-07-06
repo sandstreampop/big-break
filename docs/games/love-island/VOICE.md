@@ -223,6 +223,23 @@ a wink.
 
 These cut across registers. When a line feels off, it's almost always one of these.
 
+**SHOW, don't tell — the through-line of every line we write.** The villa's
+worst habit (and the AI-ism we fight hardest) is *gesturing at a moment instead
+of rendering it*: naming that a thing was said without saying it, filing a
+"receipt" that names nothing, summarising the player's choice back at them. If a
+line points at content, replace the pointer with the content — the actual words,
+the named fear, the concrete gesture. This is enforced (`taste.mjs` `tells`,
+scanned over narration) *and* it is the standard every outcome is held to.
+✅ “You turn it round: ‘Nah — what about you?’ And they go at a run: the nan who raised them, gone this March; the fear that off the telly, they’re no one.”
+❌ “You flip it, and {partner} takes the invitation at a run — the story about the nan, the fear about the outside. You’re learning the manual.” *(points at three beats, renders none)*
+✅ Intel filed: “off the telly, they’re scared they’re no one.”
+❌ Intel filed: “the thing they fear about the outside.” *(a receipt that names nothing)*
+✅ “‘I fancied you before I had a game plan,’ you say, and it lands on the lawn.”
+❌ “You say one true sentence, and the true sentence lands on the lawn.” *(which sentence?)*
+The one licensed exception is a **deliberate comedic withhold** — the joke IS the
+restraint (“‘Lovely candles,’ you say. Nothing else, ever.”). That's showing a
+*choice not to tell*, which is not the same as failing to show.
+
 **Specificity beats scale.**
 ✅ “He brought her a Mini Milk. In this villa, that’s a diamond ring.”
 ❌ “He did something really romantic for her.”

@@ -49,7 +49,7 @@ export const DAY_EVENTS: GameEvent[] = [
         tags: ['rest', 'chat'],
         governingStats: { loyalty: 0.5, savvy: 0.5 },
         outcomes: {
-          bad: { text: 'You’re mid-sentence about something true when the garden mics crackle on. “Save it,” {mate} says gently. You bank it instead. Even the quiet here has a schedule.', effects: { loyalty: 2, burnout: -2 } },
+          bad: { text: 'You’re mid-sentence — something about your mum, the real version, not the audition one — when the garden mics crackle on. “Save it,” {mate} says gently. You bank it. Even the quiet here has a schedule.', effects: { loyalty: 2, burnout: -2 } },
           good: { text: 'Twenty minutes, no cameras worth performing for, one conversation you’d have had in the real world. Your head files a complaint, then quietly drops it.', effects: { loyalty: 4, burnout: -6, graft: 2 } },
           incredible: { text: '“You’re alright, you know,” {mate} says at the exact moment the sun clears the wall, and the show can’t use any of it because nothing happened. Perfect.', effects: { loyalty: 6, burnout: -9, graft: 3 } },
         },
