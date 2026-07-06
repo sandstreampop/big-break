@@ -34,6 +34,7 @@ import { ARCS as MUSIC_ARCS } from '../dist/js/data/arcs.js';
 import { bangIssue, tasteIssues, hasDialogue, quotedSpans, argotPresenceIssues, tellIssues, feedIssues } from './taste-core.mjs';
 // Each pack's taste DATA lives with the game; the checker above is genre-neutral.
 import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';
+import { MUSIC_TASTE } from '../docs/games/music/taste.mjs';
 // The second screen's content (ADR-0014) isn't in pack.events, so import its
 // flat corpus so the feed floor can lint it (bodies + Narrator chrome).
 import { feedBodyCorpus, feedChromeCorpus } from '../dist/js/packs/love-island/feeds.js';
@@ -58,6 +59,9 @@ const DESCRIPTORS = {
   music: {
     tokens: ['song', 'hitSong', 'fadedSong', 'venue', 'rival', 'rivalVibe', 'genre', 'collabArtist'],
     weatherIds: WEATHER.map((w) => w.id),
+    // Music's taste floor (cliché blocklist + outcome-length cap) — the game's
+    // own data (docs/games/music/taste.mjs, mirroring its VOICE.md).
+    taste: MUSIC_TASTE,
     // Story-arc data now lives in the music seeds plugin's data module, not on
     // the Pack (WP7), so the linter reads it from the descriptor.
     arcs: MUSIC_ARCS,
