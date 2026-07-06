@@ -1870,9 +1870,10 @@ function routeAdvance(step) {
     case 'card': dealCard(); break;
     case 'crossroads': renderCrossroads(); break;
     case 'actStart':
-      // The Brammies (Pass 44): awards night before the final act,
-      // if you've made enough noise to be nominated
-      if (step.act === 3 && run.fame >= 25 && !run.brammy) showBrammies(step);
+      // A pack may intercept the act-start with its own special overlay
+      // (music's Brammies before the final act); the trigger condition lives
+      // in the pack's presenter, not hardcoded here.
+      if (PRES.actStartOverlay?.(run)) showBrammies(step);
       else actInterstitial(step);
       break;
     case 'finale': renderFinalSet(); break;

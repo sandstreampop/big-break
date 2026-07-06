@@ -454,6 +454,12 @@ export interface Presenter {
   // 1-indexed act names (HUD strip, scrapbook) + act-break interstitial copy.
   actNames?: string[];
   actIntro?: Record<number, { name: string; text: string }>;
+  // Whether the pack wants to intercept an act-start with its own special
+  // overlay (music's Brammies) instead of the default act interstitial. The
+  // shell no longer hardcodes the genre's trigger (music's "act 3, fame ≥ 25")
+  // — the pack owns the condition; a pack that omits this always gets the
+  // default interstitial.
+  actStartOverlay?: (state: RunState) => boolean;
   // The pack's noun for a run segment ("ACT", "WEEK" — ADR-0010: the count is
   // data, and so is the word). The shell renders it wherever it numbers a
   // segment; packs that omit it get the original 'ACT'.

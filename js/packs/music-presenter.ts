@@ -24,6 +24,11 @@ export const musicPresenter: Presenter = {
   // genres), so the mode is this pack's to declare.
   gauntlet: true,
 
+  // The Brammies (Pass 44): awards night before the final act, once you've made
+  // enough noise to be nominated. The trigger used to be hardcoded in the shell
+  // (step.act === 3 && run.fame >= 25); it's this pack's condition now.
+  actStartOverlay: (s: any) => s.act === 3 && s.fame >= 25 && !s.brammy,
+
   // Music's own telemetry taxonomy (Epic 5). The shell emits the neutral spine
   // (mode, outcome, cards, burnout, lp, career_runs) and the pack's summarize
   // fields; these are music's props that AREN'T in summarize — instrument,
