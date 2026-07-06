@@ -94,7 +94,7 @@ function show(id) {
 // here a stale listener is torn down on open, and close() is idempotent.
 function openOverlay(
   build: (ov: HTMLElement, close: () => void) => void,
-  opts: { armMs?: number; onClose?: () => void } = {},
+  opts: { armMs?: number; onClose?: () => void; dismissable?: boolean } = {},
 ) {
   const ov = $('#overlay');
   const stale = (ov as any)._bbClose;
@@ -127,12 +127,18 @@ function openOverlay(
   (ov as any)._bbClose = close;
   document.addEventListener('keydown', onKey);
   ov.focus?.();
-  setTimeout(() => {
-    ov.addEventListener('click', close);
-    // Real "listener is live" signal so tests can waitForFunction on it
-    // instead of racing a fixed sleep against this same arm delay.
-    ov.setAttribute('data-armed', '1');
-  }, opts.armMs ?? 200);
+  // A forced-choice overlay (dismissable:false) never arms backdrop-click
+  // dismissal — the player must pick a button (Escape still cancels). Others
+  // arm the tap-to-dismiss listener after a short delay so the opening tap
+  // can't immediately close it.
+  if (opts.dismissable !== false) {
+    setTimeout(() => {
+      ov.addEventListener('click', close);
+      // Real "listener is live" signal so tests can waitForFunction on it
+      // instead of racing a fixed sleep against this same arm delay.
+      ov.setAttribute('data-armed', '1');
+    }, opts.armMs ?? 200);
+  }
   return close;
 }
 
@@ -1798,29 +1804,26 @@ function deltaChip(key, amount) {
 }
 
 function gearChooser(newAcc, result) {
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
-  const box = el('div', 'result-card');
-  box.append(el('div', 'tier-badge', 'GEAR FULL'));
-  box.append(el('p', 'result-text', `Swap something out for the <b>${newAcc.name}</b>?`));
-  const list = el('div', 'gear-choices');
-  for (const id of run.accessories || []) {
-    const acc = itemById(id);
-    if (!acc) continue;
-    list.append(btn(`Drop ${acc.name}`, '', () => {
-      equipAccessory(run, newAcc.id, id);
-      save.saveRun(run);
-      ov.classList.remove('active');
-      routeAdvance(engine.advance(run));
-    }));
-  }
-  list.append(btn(`Leave the ${newAcc.name} behind`, 'ghost', () => {
-    ov.classList.remove('active');
-    routeAdvance(engine.advance(run));
-  }));
-  box.append(list);
-  ov.append(box);
+  // Forced choice: no backdrop dismiss. Each button does its own setup then
+  // close(); the shared advance runs once, on close (Escape = leave behind).
+  openOverlay((ov, close) => {
+    const box = el('div', 'result-card');
+    box.append(el('div', 'tier-badge', 'GEAR FULL'));
+    box.append(el('p', 'result-text', `Swap something out for the <b>${newAcc.name}</b>?`));
+    const list = el('div', 'gear-choices');
+    for (const id of run.accessories || []) {
+      const acc = itemById(id);
+      if (!acc) continue;
+      list.append(btn(`Drop ${acc.name}`, '', () => {
+        equipAccessory(run, newAcc.id, id);
+        save.saveRun(run);
+        close();
+      }));
+    }
+    list.append(btn(`Leave the ${newAcc.name} behind`, 'ghost', () => close()));
+    box.append(list);
+    ov.append(box);
+  }, { dismissable: false, onClose: () => routeAdvance(engine.advance(run)) });
 }
 
 // ---------- Flow routing ----------
@@ -1946,24 +1949,15 @@ function showBrammies(step) {
       deltas = '★ +5 Fame · 🤟 +5 Cred · 📱 +4 Network';
     }
     save.saveRun(run);
-    const ov = $('#overlay');
-    ov.innerHTML = '';
-    ov.classList.add('active');
-    const box = el('div', `result-card tier-${youWin ? 'incredible' : 'good'}`);
-    if (youWin) { spawnConfetti(ov); sfx.win(); } else sfx.good();
-    box.append(el('div', 'tier-badge', youWin ? 'AND THE BRAMMY GOES TO... YOU' : `AND THE BRAMMY GOES TO... ${rival.name.toUpperCase()}`));
-    box.append(el('p', 'result-text', text));
-    box.append(el('p', 'pick-mods', deltas));
-    box.append(el('p', 'tap-hint', 'tap to continue'));
-    ov.append(box);
-    const done = () => {
-      ov.classList.remove('active');
-      ov.removeEventListener('click', done);
-      actInterstitial(step);
-      show('#screen-game');
-    };
-    ov.removeAttribute('data-armed');
-    setTimeout(() => { ov.addEventListener('click', done); ov.setAttribute('data-armed', '1'); }, 300);
+    openOverlay((ov) => {
+      const box = el('div', `result-card tier-${youWin ? 'incredible' : 'good'}`);
+      if (youWin) { spawnConfetti(ov); sfx.win(); } else sfx.good();
+      box.append(el('div', 'tier-badge', youWin ? 'AND THE BRAMMY GOES TO... YOU' : `AND THE BRAMMY GOES TO... ${rival.name.toUpperCase()}`));
+      box.append(el('p', 'result-text', text));
+      box.append(el('p', 'pick-mods', deltas));
+      box.append(el('p', 'tap-hint', 'tap to continue'));
+      ov.append(box);
+    }, { armMs: 300, onClose: () => { actInterstitial(step); show('#screen-game'); } });
   };
 
   const speech = el('div', 'pick-card path-card');
@@ -2078,6 +2072,29 @@ function renderFinalSet() {
 }
 
 // The pre-finale choice screen shell: gate readout + up to three closers.
+// The ✓/✗ stat/resource-vs-target bar readout, shared by the crossroads,
+// final-set, and ending screens (the gate-row DOM was hand-duplicated 3×).
+// `metOf` decides the pass state (some callers carry r.met, others compare
+// value>=target); `prefix` toggles the ✓/✗ before the name (crossroads omits it).
+function gateReadout(readings, opts: { className?: string; prefix?: boolean; metOf?: (r: any) => boolean } = {}) {
+  const { className = 'gate-readout', prefix = true, metOf = (r: any) => r.value >= r.target } = opts;
+  const gates = el('div', className);
+  for (const r of readings) {
+    const met = metOf(r);
+    const grow = el('div', 'gate-row' + (met ? ' met' : ''));
+    const name = metaFor(r.key).name;
+    grow.append(el('span', 'gate-name', prefix ? `${met ? '✓' : '✗'} ${name}` : name));
+    const bar = el('div', 'gate-bar');
+    const fill = el('div', 'gate-fill');
+    fill.style.width = `${Math.round(r.ratio * 100)}%`;
+    bar.append(fill);
+    grow.append(bar);
+    grow.append(el('span', 'gate-nums', `${r.value}/${r.target}`));
+    gates.append(grow);
+  }
+  return gates;
+}
+
 function renderFinalSetScreen(head, sub, options) {
   const s = $('#screen-crossroads'); // reuse the 3-option screen
   s.innerHTML = '';
@@ -2087,20 +2104,8 @@ function renderFinalSetScreen(head, sub, options) {
 
   // Gate readout for the committed path, so the choice is informed
   const { readings } = pathFit(run.path);
-  const gates = el('div', 'gate-readout compass finalset-gates');
-  gates.append(el('div', 'trades-head', `🎯 ${pathName.toUpperCase()} — WHAT YOU STILL NEED`));
-  for (const r of readings) {
-    const grow = el('div', 'gate-row' + (r.value >= r.target ? ' met' : ''));
-    const name = metaFor(r.key).name;
-    grow.append(el('span', 'gate-name', `${r.value >= r.target ? '✓' : '✗'} ${name}`));
-    const bar = el('div', 'gate-bar');
-    const fill = el('div', 'gate-fill');
-    fill.style.width = `${Math.round(r.ratio * 100)}%`;
-    bar.append(fill);
-    grow.append(bar);
-    grow.append(el('span', 'gate-nums', `${r.value}/${r.target}`));
-    gates.append(grow);
-  }
+  const gates = gateReadout(readings, { className: 'gate-readout compass finalset-gates' });
+  gates.prepend(el('div', 'trades-head', `🎯 ${pathName.toUpperCase()} — WHAT YOU STILL NEED`));
   if ((run.pathProgress || 0) > 0) {
     gates.append(el('p', 'momentum-note', `▲ Momentum ×${run.pathProgress} — near-met gates can still upgrade to a win.`));
   }
@@ -2129,9 +2134,7 @@ function renderFinalSetScreen(head, sub, options) {
 }
 
 function actInterstitial(step) {
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
+ openOverlay((ov) => {
   // The act recap (presenter.recap): a pack's full-screen "previously on"
   // takeover — kicker, title, labeled blocks — in place of the default
   // act-intro copy. The rest of the interstitial (twist note, press, inbox)
@@ -2247,13 +2250,7 @@ function actInterstitial(step) {
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
   if (crowns.length) { spawnConfetti(ov); sfx.win(); vibrate([30, 40, 30, 40, 80]); }
-  const done = () => {
-    ov.classList.remove('active');
-    ov.removeEventListener('click', done);
-    dealCard();
-  };
-  ov.removeAttribute('data-armed');
-  setTimeout(() => { ov.addEventListener('click', done); ov.setAttribute('data-armed', '1'); }, 250);
+ }, { armMs: 250, onClose: () => dealCard() });
 }
 
 // ---------- Crossroads (spec §7.2) ----------
@@ -2287,19 +2284,7 @@ function renderCrossroads() {
     card.append(head);
     card.append(el('p', 'pick-flavor', p.blurb));
     const { readings } = fits.find((f) => f.id === p.id);
-    const gates = el('div', 'gate-readout compass');
-    for (const r of readings) {
-      const grow = el('div', 'gate-row' + (r.value >= r.target ? ' met' : ''));
-      const name = metaFor(r.key).name;
-      grow.append(el('span', 'gate-name', name));
-      const bar = el('div', 'gate-bar');
-      const fill = el('div', 'gate-fill');
-      fill.style.width = `${Math.round(r.ratio * 100)}%`;
-      bar.append(fill);
-      grow.append(bar);
-      grow.append(el('span', 'gate-nums', `${r.value}/${r.target}`));
-      gates.append(grow);
-    }
+    const gates = gateReadout(readings, { className: 'gate-readout compass', prefix: false });
     card.append(gates);
     card.addEventListener('click', () => {
       sfx.commit();
@@ -2486,29 +2471,29 @@ function renderGameOver(endingKey) {
 
 // The Exit Interview (Pass 45): one final choice inside a fail state
 function showExitInterview(endingKey, interview) {
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
-  const box = el('div', 'result-card');
-  box.append(el('div', 'tier-badge', 'ONE LAST QUESTION'));
-  box.append(el('p', 'card-context', interview.context));
-  box.append(el('p', 'result-text', interview.prompt));
-  const list = el('div', 'gear-choices');
-  for (const side of ['left', 'right']) {
-    const opt = interview[side];
-    list.append(btn(opt.label, side === 'left' ? 'primary' : '', () => {
-      run.exitChoice = opt.exit;
-      run.exitLpBonus = opt.lp;
-      run.exitText = opt.text;
-      meta.exitSeen = meta.exitSeen || [];
-      if (!meta.exitSeen.includes(endingKey)) meta.exitSeen.push(endingKey);
-      save.saveMeta(meta);
-      ov.classList.remove('active');
-      renderGameOver(endingKey);
-    }));
-  }
-  box.append(list);
-  ov.append(box);
+  // Forced choice: no backdrop dismiss. Each button records its exit then
+  // close()s; the game-over screen renders once, on close (Escape skips it).
+  openOverlay((ov, close) => {
+    const box = el('div', 'result-card');
+    box.append(el('div', 'tier-badge', 'ONE LAST QUESTION'));
+    box.append(el('p', 'card-context', interview.context));
+    box.append(el('p', 'result-text', interview.prompt));
+    const list = el('div', 'gear-choices');
+    for (const side of ['left', 'right']) {
+      const opt = interview[side];
+      list.append(btn(opt.label, side === 'left' ? 'primary' : '', () => {
+        run.exitChoice = opt.exit;
+        run.exitLpBonus = opt.lp;
+        run.exitText = opt.text;
+        meta.exitSeen = meta.exitSeen || [];
+        if (!meta.exitSeen.includes(endingKey)) meta.exitSeen.push(endingKey);
+        save.saveMeta(meta);
+        close();
+      }));
+    }
+    box.append(list);
+    ov.append(box);
+  }, { dismissable: false, onClose: () => renderGameOver(endingKey) });
 }
 
 const TIER_EMOJI = SHARE_TIER_EMOJI;
@@ -2582,19 +2567,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   // Scoreboard first (how you were judged), memorabilia after
   if (evalr) {
     wrap.append(el('h3', 'wall-tier', 'The Judgment'));
-    const gates = el('div', 'gate-readout');
-    for (const r of evalr.readings) {
-      const row = el('div', 'gate-row' + (r.met ? ' met' : ''));
-      const name = metaFor(r.key).name;
-      row.append(el('span', 'gate-name', `${r.met ? '✓' : '✗'} ${name}`));
-      const bar = el('div', 'gate-bar');
-      const fill = el('div', 'gate-fill');
-      fill.style.width = `${Math.round(r.ratio * 100)}%`;
-      bar.append(fill);
-      row.append(bar);
-      row.append(el('span', 'gate-nums', `${r.value}/${r.target}`));
-      gates.append(row);
-    }
+    const gates = gateReadout(evalr.readings, { metOf: (r) => r.met });
     if (evalr.momentum >= CONFIG.momentumForUpgrade &&
         summary?.result === 'success' && !evalr.readings.every((r) => r.met)) {
       const mr = activePack.manifest.momentumResource;
