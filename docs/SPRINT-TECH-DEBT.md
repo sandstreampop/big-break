@@ -516,6 +516,20 @@ plugin registration order per pack.
 "and here's *why* the new value is correct," and closes the unnerving gap where
 the flagship game's resolution engine is verified only by proxy.
 
+**Status — engine unit suite landed.** New `test/engine.test.mjs` (10 tests,
+swept into `node --test test/*.test.mjs` and the CI golden step) asserts the
+core *arithmetic* against the music pack: `mulberry32` determinism + range,
+`gateValue` stat/resource/unknown resolution, `applyEffects` clamp + reporting,
+`choiceOdds` as a valid distribution *and* monotone in the governing stat,
+`evaluateFinale` gate success/failure **and** the momentum-clutch (isolated so
+only momentum differs), `legacyPoints` finiteness + the comeback ×1.2 (guarding
+the Epic 3 move), `checkFailStates` burnout, and `incredibleTargets` coverage.
+Expectations derive from the manifest, so they survive balance tuning and only
+break if a mechanic does — 238/238 green. **Follow-up:** `save.ts` load/migrate
+tests, a music `sharecard` snapshot, `test/li-feeds.test.mjs`, a
+`simulate-pack.mjs --check` balance gate for Love Island, and the shared
+`test/li-harness.mjs` extraction.
+
 ---
 
 ## Epic 10 — De-bloat & unify the content layer
