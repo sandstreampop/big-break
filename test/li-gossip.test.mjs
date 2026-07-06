@@ -11,13 +11,7 @@ import { loveIslandPack } from '../dist/js/packs/love-island/pack.js';
 import { gossipPlugin, heldIntel, intelCount, GOSSIP } from '../dist/js/packs/love-island/plugins/gossip.js';
 import { moodOf, opinionOf } from '../dist/js/packs/love-island/plugins/characters.js';
 
-function fresh(seed = 7) {
-  const state = engine.newRun(loveIslandPack, 'retriever_girl', [], engine.mulberry32(seed), []);
-  state.seed = seed + 2;
-  return state;
-}
-const apply = (state, effects, seed = 99) =>
-  engine.applyEffects(state, effects, null, null, engine.mulberry32(seed), 'good');
+import { fresh, apply } from './li-harness.mjs';
 
 test('gainIntel gathers a feeling; the cap makes old news go stale', () => {
   const s = fresh();

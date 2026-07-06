@@ -26,14 +26,12 @@ import { simulatePackRun } from '../tools/pack-core.mjs';
 
 const web = loveIslandPack.plugins.find((p) => p.id === 'coupleweb');
 
+import { fresh as baseFresh, apply } from './li-harness.mjs';
 function fresh(seed = 7) {
-  const state = engine.newRun(loveIslandPack, 'retriever_girl', [], engine.mulberry32(seed), []);
-  state.seed = seed + 2;
+  const state = baseFresh(seed);
   state.partner = 'kai'; // a fixed couple so the guard logic is deterministic
   return state;
 }
-const apply = (state, effects, seed = 99) =>
-  engine.applyEffects(state, effects, null, null, engine.mulberry32(seed), 'good');
 const week = (state, n) => { state.act = n; web.onActBreak(state, n, []); };
 
 // ---------- PACING ----------

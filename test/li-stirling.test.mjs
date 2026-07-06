@@ -29,11 +29,7 @@ const ALL_LINES = [
   ...Object.values(MEMORY).flat(),
 ];
 
-function fresh(seed = 7, persona = 'retriever_girl') {
-  const state = engine.newRun(loveIslandPack, persona, [], engine.mulberry32(seed), []);
-  state.seed = seed + 2;
-  return state;
-}
+import { fresh } from './li-harness.mjs';
 const findEv = (id) => loveIslandPack.events.find((e) => e.id === id);
 
 test('every Stirling line passes the taste floor (VOICE.md register 1)', () => {

@@ -12,13 +12,7 @@ import { loveIslandPack } from '../dist/js/packs/love-island/pack.js';
 import { couplingPlugin, COUPLING } from '../dist/js/packs/love-island/plugins/coupling.js';
 import { moodOf } from '../dist/js/packs/love-island/plugins/characters.js';
 
-function fresh(seed = 7) {
-  const state = engine.newRun(loveIslandPack, 'retriever_girl', [], engine.mulberry32(seed), []);
-  state.seed = seed + 2;
-  return state;
-}
-const apply = (state, effects) =>
-  engine.applyEffects(state, effects, null, null, engine.mulberry32(99), 'good');
+import { fresh, apply } from './li-harness.mjs';
 
 // Resolve a card whose landed outcome carries the given effects, through the
 // coupling plugin's afterResolve (the ceremony router).

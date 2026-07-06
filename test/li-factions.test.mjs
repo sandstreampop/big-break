@@ -15,13 +15,7 @@ import {
   movePublicFactional, recomputePublic, setFactions,
 } from '../dist/js/packs/love-island/plugins/factions.js';
 
-function fresh(seed = 7) {
-  const state = engine.newRun(loveIslandPack, 'retriever_girl', [], engine.mulberry32(seed), []);
-  state.seed = seed + 2;
-  return state;
-}
-const apply = (state, effects, seed = 99, choice = null) =>
-  engine.applyEffects(state, effects, null, choice, engine.mulberry32(seed), 'good');
+import { fresh, apply } from './li-harness.mjs';
 
 test('public starts as the mean of the three wings, and stays derived', () => {
   const s = fresh();

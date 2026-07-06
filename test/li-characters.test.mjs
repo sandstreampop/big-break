@@ -13,13 +13,7 @@ import {
   CHARACTERS, RIVAL_SECRETS, PARTNER_SECRETS,
 } from '../dist/js/packs/love-island/plugins/characters.js';
 
-function fresh(seed = 7, persona = 'retriever_girl') {
-  const state = engine.newRun(loveIslandPack, persona, [], engine.mulberry32(seed), []);
-  state.seed = seed + 2;
-  return state;
-}
-const apply = (state, effects, seed = 99) =>
-  engine.applyEffects(state, effects, null, null, engine.mulberry32(seed), 'good');
+import { fresh, apply } from './li-harness.mjs';
 
 test('opinion tiers map the whole 0–100 range', () => {
   assert.equal(opinionTier(0), 'cold');

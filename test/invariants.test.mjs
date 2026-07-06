@@ -21,6 +21,17 @@ function freshRun(pack) {
   return engine.newRun(pack, persona, [], engine.mulberry32(1), []);
 }
 
+// Plugin registration order is load-bearing: the engine folds hooks in array
+// order, and several plugins draw RNG in onConstruct/onRunStart/onActBreak, so
+// a reorder silently shifts the whole seeded stream. The packs' own comments
+// say "order matters" but nothing asserted it — a reorder would surface only as
+// a cryptic golden diff. Pin the known-good order per pack so it fails LOUDLY
+// (re-baseline the goldens deliberately if a reorder is intended).
+const EXPECTED_PLUGIN_ORDER = {
+  music: ['venue', 'rival', 'seeds', 'contract', 'weather', 'genre', 'loadout', 'gear', 'hustle', 'band', 'songs', 'economy'],
+  'love-island': ['coupling', 'profile', 'characters', 'gossip', 'factions', 'coupleweb', 'producers', 'stirling'],
+};
+
 for (const pack of PACKS) {
   // ── Manifest coherence: the taxonomy has to be internally consistent, or
   // the HUD/finale read undefined. ──
@@ -170,6 +181,18 @@ for (const pack of PACKS) {
         }
       }
       assert.ok(Number.isFinite(run.lp) && run.lp >= 1, `LP=${run.lp} not a finite ≥1 number`);
+    }
+  });
+
+  // ── Plugin registration order (per-pack, seeded-stream-critical). ──
+  test(`[${pack.id}] plugin registration order is stable`, () => {
+    const ids = (pack.plugins || []).map((p) => p.id);
+    assert.equal(new Set(ids).size, ids.length, 'duplicate plugin ids');
+    for (const id of ids) assert.ok(id, 'a plugin is missing an id');
+    const expected = EXPECTED_PLUGIN_ORDER[pack.id];
+    if (expected) {
+      assert.deepEqual(ids, expected,
+        'plugin order changed — this shifts the seeded RNG stream; re-baseline the goldens deliberately if intended');
     }
   });
 }

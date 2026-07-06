@@ -20,6 +20,7 @@ import { weatherById } from './data/weather.js';
 import { offerVenues, venueById, VENUE_TIERS } from './data/venues.js';
 import { bandmateById } from './data/band.js';
 import { renderShareImage } from './sharecard.js';
+import { buildDefaultShareText, SHARE_TIER_EMOJI, DEFAULT_FAIL_LABELS } from './share-text.js';
 import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from './analytics.js';
 import { playMinigame, minigameById } from './minigames.js';
@@ -2506,13 +2507,12 @@ function showExitInterview(endingKey, interview) {
   ov.append(box);
 }
 
-const TIER_EMOJI = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
+const TIER_EMOJI = SHARE_TIER_EMOJI;
 
 // Short verdict labels for the pack's fail-state endings (ribbon, history,
 // share). Music's trio is the default; a pack overrides via presenter.
 function failLabelFor(endingKey) {
-  const labels = PRES.failLabels ||
-    { burnout: 'BURNED OUT', cancelled: 'CANCELLED', debt: 'REPOSSESSED' };
+  const labels = PRES.failLabels || DEFAULT_FAIL_LABELS;
   return labels[endingKey];
 }
 
@@ -2528,16 +2528,17 @@ function dailyStreakFor(d) {
 
 function shareTextFor(summary, lp) {
   if (PRES.shareText) return PRES.shareText(summary, lp);
+  // The genre-specific pieces are resolved here (loadout name, the genre-prefixed
+  // path label); the neutral template lives in share-text.ts and is snapshot-tested.
   const inst = activePack.loadoutById(summary.loadout);
-  const head = summary.gauntlet ? `BIG BREAK Gauntlet ${summary.gauntlet}`
-    : summary.daily ? `BIG BREAK Daily ${summary.daily}` : 'BIG BREAK';
   const genre = summary.genre ? genreById(summary.genre) : null;
   const pathName = (genre ? genre.name + ' ' : '') + (summary.path ? PATHS[summary.path].name : 'the void');
-  const res = summary.result ? summary.result.toUpperCase()
-    : failLabelFor(summary.endingKey) || 'GAME OVER';
-  const line = (summary.tierLog || []).map((t) => TIER_EMOJI[t] || '⬜').join('');
-  const peak = summary.chartPeak ? ` · Hot 10 #${summary.chartPeak}` : '';
-  return `${head}\n${inst ? inst.name : '?'} → ${pathName} → ${res}\n${line}\n★${summary.fame}${peak} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/`;
+  return buildDefaultShareText(summary, lp, {
+    loadoutName: inst ? inst.name : null,
+    pathName,
+    failLabels: PRES.failLabels,
+    url: 'https://sandstreampop.github.io/big-break/',
+  });
 }
 
 function renderEndingScreen(ending, lp, trophies, evalr, summary) {
