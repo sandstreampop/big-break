@@ -592,8 +592,16 @@ body.big-text #app { zoom: 1.18; }
   display: flex; flex-direction: column; gap: 12px;
   animation: rise .28s cubic-bezier(.2,.9,.3,1.15);
 }
+/* Shared-element morph (Epic 6): a good/incredible result springs in from the
+   side the card was swiped (--morph-dx set from JS), so the flying card reads
+   as BECOMING the result card. Overshoot easing gives it the spring the flick
+   throws away. Bad/declined keep their shake; reduced-motion disables it. */
+.result-card.morph-in { animation: morphIn .44s cubic-bezier(.22,.9,.28,1.12); }
+@keyframes morphIn {
+  from { transform: translate3d(var(--morph-dx, 0), 20px, 0) scale(.9); opacity: 0; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .result-card { animation: none; }
+  .result-card, .result-card.morph-in { animation: none; }
   .card, .stat-fill, .gate-fill { transition: none !important; }
 }
 @keyframes rise { from { transform: translateY(26px); opacity: 0; } }

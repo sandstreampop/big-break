@@ -835,6 +835,8 @@ function accActive(acc) {
 let currentCard = null;
 let currentEvent = null; // the event behind currentCard (minigame lookup)
 let encoreArmed = false;
+let lastSwipeSide = null; // Epic 6 morph: the direction the last card flew, so
+                          // the result card can spring in from that same side
 let prevStats = null; // for stat-rail delta floaters
 
 function vibrate(pattern) {
@@ -1252,6 +1254,7 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
   if (!currentCard) return;
   const card = currentCard;
   currentCard = null;
+  lastSwipeSide = side; // the result card will spring in from this side (morph)
   sfx.swipe();
 
   const armed = encoreArmed;
@@ -1657,6 +1660,12 @@ function showResult(result) {
     box.classList.add('shake');
     ov.classList.add('flash-bad');
     setTimeout(() => ov.classList.remove('flash-bad'), 500);
+  } else if (!reducedMotion() && lastSwipeSide) {
+    // Shared-element morph (Epic 6): the swiped card just flew off in a
+    // direction — the result card springs in from that same side, so the two
+    // moments read as one continuous gesture instead of two separate reveals.
+    box.classList.add('morph-in');
+    box.style.setProperty('--morph-dx', `${(lastSwipeSide === 'left' ? -1 : 1) * 34}px`);
   }
   box.append(el('div', 'tier-badge', TIER_LABEL[result.tier]));
   // The recap strip: ground the outcome in what it answered. A player who put
