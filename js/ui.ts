@@ -1429,6 +1429,26 @@ function showResult(result) {
     setTimeout(() => ov.classList.remove('flash-bad'), 500);
   }
   box.append(el('div', 'tier-badge', TIER_LABEL[result.tier]));
+  // The recap strip: ground the outcome in what it answered. A player who put
+  // the phone down mid-run reads the moment they were in and the call they
+  // made, on the same screen as how it landed. `recap` is the authored one-
+  // line summary; `context` (the scene label) is the fallback. The chosen
+  // choice's label is the "what I chose" half — declined cards keep the recap
+  // (you still made a call) but have no landed choice to echo.
+  const rev = result.event;
+  if (rev) {
+    const recapText = rev.recap || rev.context;
+    const chosen = result.side && rev.choices?.[result.side]?.label;
+    if (recapText || chosen) {
+      const recap = el('div', 'result-recap');
+      if (recapText) recap.append(el('div', 'recap-event', fillText(recapText)));
+      if (chosen) {
+        recap.append(el('div', 'recap-choice',
+          `<span class="recap-you">You chose</span> ${fillText(chosen)}`));
+      }
+      box.append(recap);
+    }
+  }
   // The result beat (presenter.resultStage): the pack's read of HOW this
   // landed — a reacting portrait front and centre, then qualitative movement
   // lines below the outcome text. The keys it claims lose their numeric chip.
