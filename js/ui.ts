@@ -36,8 +36,31 @@ import { pathFit, gateReadout } from './ui/gates.js';
 import { feedTeaser } from './ui/feeds.js';
 import { renderHud, spawnStatFloaters } from './ui/hud.js';
 import { showInspect, showHelp } from './ui/inspectors.js';
+import { nav, routeAdvance, type Nav } from './ui/nav.js';
+
+// The composition root: bind every screen renderer into the navigation seam.
+// This is the ONE place the concrete screens are named — the `: Nav` annotation
+// makes a missing or misnamed transition a compile error. Every other module
+// calls through `nav`, never each other.
+const wiring: Nav = {
+  dealCard,
+  crossroads: renderCrossroads,
+  actInterstitial,
+  brammies: showBrammies,
+  finalSet: renderFinalSet,
+  finale: renderFinale,
+  gameOver: renderGameOver,
+  tutorialEnd: renderTutorialEnd,
+  newRun: startNewRun,
+  startTutorial,
+  startGauntlet,
+  resumeRun,
+  title: renderTitle,
+  wall: renderWall,
+};
 
 export function boot(pack = musicPack) {
+  Object.assign(nav, wiring);
   // Guard the CSS↔JS pairing before anything renders; re-check once the DOM
   // (and any still-streaming stylesheet) has settled.
   if (document.readyState === 'loading') {
@@ -73,7 +96,7 @@ export function boot(pack = musicPack) {
     if (e.key === 'ArrowLeft') commitSwipe('left');
     else if (e.key === 'ArrowRight') commitSwipe('right');
   });
-  renderTitle();
+  nav.title();
   show('#screen-title');
   installBackGuard();
   installPersistOnHide();
@@ -118,7 +141,7 @@ function installBackGuard() {
     if (!$('#screen-title').classList.contains('active')) {
       try { history.pushState({ bb: 1 }, ''); } catch (e) {}
       show('#screen-title');
-      renderTitle();
+      nav.title();
       sfx.ui();
       return;
     }
@@ -164,24 +187,24 @@ function renderTitle() {
   if (saved) {
     menu.append(btn('▶ Resume Run', 'primary', () => {
       setRun(saved);
-      resumeRun();
+      nav.resumeRun();
     }));
     menu.append(btn('✚ New Run (abandon current)', '', () => {
       save.clearRun();
-      startNewRun();
+      nav.newRun();
     }));
   } else if (!meta.tutorialDone && (meta.runs || 0) === 0 && activePack.tutorialEvents.length) {
     // First install: the game opens with a playable lesson, not a manual.
     // (Only packs that ship a tutorial deck; labels are the pack's.)
-    menu.append(btn(PRES.tutorial?.offer || '▶ Play — Your First Gig', 'primary', startTutorial));
+    menu.append(btn(PRES.tutorial?.offer || '▶ Play — Your First Gig', 'primary', nav.startTutorial));
     menu.append(btn(PRES.tutorial?.skip || 'Skip the gig — I know the drill', 'ghost', () => {
       track('tutorial_skip', {});
       meta.tutorialDone = true;
       save.saveMeta(meta);
-      startNewRun();
+      nav.newRun();
     }));
   } else {
-    menu.append(btn('▶ New Run', 'primary', () => startNewRun()));
+    menu.append(btn('▶ New Run', 'primary', () => nav.newRun()));
   }
   const today = todayStr();
   const dailyDone = meta.dailyResults?.[today];
@@ -190,10 +213,10 @@ function renderTitle() {
     dailyDone
       ? `📅 ${dailyName} ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
       : `📅 ${dailyName} — ${today}`,
-    '', () => { save.clearRun(); startNewRun(true); }));
+    '', () => { save.clearRun(); nav.newRun(true); }));
   // Comeback mode exists only for packs that ship the transform.
   if (meta.successPaths?.length > 0 && activePack.comeback) {
-    menu.append(btn(PRES.comeback?.label || '🦅 Comeback Run (×1.2 LP)', '', () => { save.clearRun(); startNewRun(false, true); }));
+    menu.append(btn(PRES.comeback?.label || '🦅 Comeback Run (×1.2 LP)', '', () => { save.clearRun(); nav.newRun(false, true); }));
   }
   // The Gauntlet builds its weekly loadout from pack data; only packs that
   // declare the mode offer it.
@@ -204,9 +227,9 @@ function renderTitle() {
       gDone
         ? `⚔️ The Gauntlet ✓ (${gDone.result ? gDone.result.toUpperCase() : 'DNF'} — replay?)`
         : `⚔️ The Gauntlet — ${week}`,
-      '', () => { save.clearRun(); startGauntlet(); }));
+      '', () => { save.clearRun(); nav.startGauntlet(); }));
   }
-  if ((PRES.wallItems || []).length) menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', renderWall));
+  if ((PRES.wallItems || []).length) menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', nav.wall));
   menu.append(btn('🎖 Trophy Room', '', renderTrophies));
   if (meta.runs > 0) menu.append(btn('📊 The Résumé', '', renderResume));
   menu.append(btn('⚙ Settings', '', renderSettings));
@@ -270,7 +293,7 @@ function startNewRun(daily = false, comeback = false) {
       career_runs: meta.runs || 0,
       ...(PRES.runProps?.(run, 'start') || {}),
     });
-    dealCard();
+    nav.dealCard();
   };
 
   const buildScreen = () => {
@@ -401,9 +424,9 @@ function modsText(mods) {
 }
 
 function resumeRun() {
-  if (run.phase === 'crossroads') renderCrossroads();
-  else if (run.phase === 'finale') renderFinalSet();
-  else dealCard();
+  if (run.phase === 'crossroads') nav.crossroads();
+  else if (run.phase === 'finale') nav.finalSet();
+  else nav.dealCard();
 }
 
 // The Gauntlet (Pass 28): one fixed, seeded build per ISO week — same
@@ -450,13 +473,13 @@ function startGauntlet() {
       career_runs: meta.runs || 0,
       ...(PRES.runProps?.(run, 'start') || {}),
     });
-    dealCard();
+    nav.dealCard();
   });
   keyable(card, inst.name);
   sheet.append(card);
   s.append(sheet);
   const menu = el('div', 'menu');
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
+  menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
   s.append(menu);
   show('#screen-instruments');
 }
@@ -1149,33 +1172,13 @@ function gearChooser(newAcc, result) {
   }, { dismissable: false, onClose: () => routeAdvance(engine.advance(run)) });
 }
 
-// ---------- Flow routing ----------
-
-function routeAdvance(step) {
-  save.saveRun(run);
-  switch (step.kind) {
-    case 'card': dealCard(); break;
-    case 'crossroads': renderCrossroads(); break;
-    case 'actStart':
-      // A pack may intercept the act-start with its own special overlay
-      // (music's Brammies before the final act); the trigger condition lives
-      // in the pack's presenter, not hardcoded here.
-      if (PRES.actStartOverlay?.(run)) showBrammies(step);
-      else actInterstitial(step);
-      break;
-    case 'finale': renderFinalSet(); break;
-    case 'gameover': renderGameOver(step.endingKey); break;
-    case 'tutorialEnd': renderTutorialEnd(); break;
-  }
-}
-
 function startTutorial() {
   const seed = Math.floor(Math.random() * 1e9) + 1;
   setRun(engine.newTutorialRun(activePack, engine.mulberry32(seed)));
   run.seed = seed + 2;
   save.saveRun(run);
   track('tutorial_start', { replay: !!meta.tutorialDone });
-  dealCard();
+  nav.dealCard();
 }
 
 // The First Gig wrap-up: lessons recapped in-fiction, walk-in LP, and the
@@ -1220,8 +1223,8 @@ function renderTutorialEnd() {
   wrap.append(list);
   if (firstTime) wrap.append(el('p', 'lp-award', '+15 Legacy Points — walk-in money for the Career Wall'));
   const menu = el('div', 'menu');
-  menu.append(btn(PRES.tutorial?.end.next || '▶ Start your real career', 'primary', () => startNewRun()));
-  menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title', 'back'); }));
+  menu.append(btn(PRES.tutorial?.end.next || '▶ Start your real career', 'primary', () => nav.newRun()));
+  menu.append(btn('🏠 Title', '', () => { nav.title(); show('#screen-title', 'back'); }));
   wrap.append(menu);
   s.append(wrap);
   show('#screen-ending');
@@ -1281,7 +1284,7 @@ function showBrammies(step) {
       box.append(el('p', 'pick-mods', deltas));
       box.append(el('p', 'tap-hint', 'tap to continue'));
       ov.append(box);
-    }, { armMs: 300, onClose: () => { actInterstitial(step); show('#screen-game'); } });
+    }, { armMs: 300, onClose: () => { nav.actInterstitial(step); show('#screen-game'); } });
   };
 
   const speech = el('div', 'pick-card path-card');
@@ -1426,7 +1429,7 @@ function renderFinalSetScreen(head, sub, options) {
     card.addEventListener('click', () => {
       sfx.commit();
       opt.apply(run);
-      renderFinale();
+      nav.finale();
     });
     keyable(card, opt.title);
     row.append(card);
@@ -1552,7 +1555,7 @@ function actInterstitial(step) {
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
   if (crowns.length) { spawnConfetti(ov); sfx.win(); vibrate([30, 40, 30, 40, 80]); }
- }, { armMs: 250, onClose: () => dealCard() });
+ }, { armMs: 250, onClose: () => nav.dealCard() });
 }
 
 // ---------- Crossroads (spec §7.2) ----------
@@ -1582,7 +1585,7 @@ function renderCrossroads() {
       sfx.commit();
       const notes = engine.commitPath(run, p.id);
       save.saveRun(run);
-      actInterstitial({ kind: 'actStart', act: run.act, notes });
+      nav.actInterstitial({ kind: 'actStart', act: run.act, notes });
       show('#screen-game');
     });
     keyable(card, p.name);
@@ -1786,7 +1789,7 @@ function showExitInterview(endingKey, interview) {
     }
     box.append(list);
     ov.append(box);
-  }, { dismissable: false, onClose: () => renderGameOver(endingKey) });
+  }, { dismissable: false, onClose: () => nav.gameOver(endingKey) });
 }
 
 const TIER_EMOJI = SHARE_TIER_EMOJI;
@@ -1951,9 +1954,9 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     });
     menu.append(shareBtn);
   }
-  menu.append(btn('▶ Run It Back', 'primary', () => startNewRun()));
-  menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', renderWall));
-  menu.append(btn('🏠 Title', '', () => { renderTitle(); show('#screen-title', 'back'); }));
+  menu.append(btn('▶ Run It Back', 'primary', () => nav.newRun()));
+  menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', nav.wall));
+  menu.append(btn('🏠 Title', '', () => { nav.title(); show('#screen-title', 'back'); }));
   wrap.append(menu);
   s.append(wrap);
   show('#screen-ending');
@@ -2029,7 +2032,7 @@ function renderWall() {
   }
   s.append(list);
   const menu = el('div', 'menu');
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
+  menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
   s.append(menu);
   show('#screen-wall');
   s.scrollTop = keepScroll;
@@ -2094,7 +2097,7 @@ function renderTrophies() {
     s.append(hist);
   }
   const menu = el('div', 'menu');
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
+  menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
   s.append(menu);
   show('#screen-trophies');
 }
@@ -2142,7 +2145,7 @@ function renderResume() {
   }
   s.append(list);
   const menu = el('div', 'menu');
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
+  menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
   s.append(menu);
   show('#screen-settings');
 }
@@ -2236,12 +2239,12 @@ function renderSettings() {
     if (confirm('Wipe every unlock, trophy, and Legacy Point? The industry forgets fast.')) {
       save.resetAll();
       setMeta(save.loadMeta());
-      renderTitle();
+      nav.title();
       show('#screen-title');
       return;
     }
   }));
-  menu.append(btn('← Back', '', () => { renderTitle(); show('#screen-title', 'back'); }));
+  menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
   s.append(menu);
   if (activePack.id === 'music') s.append(el('p', 'title-foot', 'BIG BREAK v5 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.'));
   show('#screen-settings');
