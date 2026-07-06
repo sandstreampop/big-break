@@ -97,6 +97,21 @@ declare module '../types.js' {
     bandMin?: number; bandMax?: number; bandHas?: string;
     demoMin?: number; chartingMin?: number; songsMin?: number; fadedMin?: number;
   }
+  // The music genre's own run-state fields (WP: narrow RunState). Merged onto
+  // the shared RunState from THIS file so the core type names no music resource
+  // or subsystem — the sibling of the Effect/Requires augmentations above.
+  interface RunState {
+    // resources
+    fame?: number; money?: number; hits?: number; rivalry?: number;
+    // subsystems: venue · band · hustle · genre · rival · weather · songs · Brammies · seeds
+    venue?: string | null; venueLevel?: number; venueShows?: number;
+    band?: string[]; hustles?: string[];
+    genre?: string | null; contract?: string | null;
+    rival?: string; nemesis?: boolean; rivalMagnet?: boolean;
+    weather?: string; lastChartWeek?: any;
+    chartTitles?: any; seeds?: any;
+    brammy?: string;
+  }
 }
 // #endregion effect-augmentation
 

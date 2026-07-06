@@ -68,6 +68,27 @@ declare module '../../types.js' {
     // own love life.
     threadStageIs?: string; threadOutcomeIs?: string; webCoupleIs?: string;
   }
+  // Love Island's own run-state fields (WP: narrow RunState). Merged from THIS
+  // file so the core RunState names no villa resource or subsystem — the
+  // sibling of the Effect/Requires augmentations above.
+  interface RunState {
+    // resources (public = derived factional aggregate; three wings authorable)
+    public?: number; followers?: number; bond?: number; graft?: number;
+    romantics?: number; selfrespect?: number; drama?: number; surge?: number;
+    // coupling / profile
+    partner?: string | null; partnerLoyal?: any; exclusive?: any;
+    exes?: string[]; bestie?: string; gender?: string;
+    // character state (ADR-0006)
+    charMood?: any; charOpinion?: any; charPartnerWas?: any; charSecret?: any;
+    bombshellId?: string;
+    // gossip (ADR-0007)
+    intel?: any[]; intelDeployed?: any;
+    secretKnown?: any; secretSpent?: any; secretSurfacedCount?: number;
+    // ceremony / couple-web (ADR-0013) / stirling / feeds
+    story?: number; ceremonyPending?: any; lastCeremony?: any;
+    threads?: any; webRedeemed?: any; spSeen?: any;
+    stirlingCool?: number; stirlingSecretSeen?: any; stirlingSeen?: any;
+  }
 }
 // #endregion effect-augmentation
 

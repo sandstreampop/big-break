@@ -658,24 +658,63 @@ export interface Song {
   viral?: boolean;
 }
 
-// The mutable per-run state. The engine reads/writes many string-keyed subsystem
-// fields, so typing here stays light: the load-bearing types are the authored
-// content boundary above. Known fields are typed; the index signature keeps the
-// dynamic subsystem fields ergonomic.
+// The mutable per-run state. The genre-neutral runtime fields are declared here;
+// each pack adds its OWN subsystem fields (resources, subsystem slots) by
+// declaration-merging this interface in the pack's own file — the same pattern
+// Effect/Requires use — so this type names no genre's resource and the index
+// signature that used to launder every typo through `any` is gone.
 export interface RunState {
+  // ── engine core ──
   version: number;
+  packId?: string;                  // which genre this run belongs to (save guard)
   phase: string;
   act: number;
-  stats: Record<string, number>;
-  // Resources are pack-defined and initialized generically from
-  // manifest.resources — they live on the index signature, not as fixed fields,
-  // so this type names no genre's resource.
+  stats: Record<string, number>;    // pack stats, resolved by name
   flags: string[];
-  songs?: Song[];
   seed: number | null;
   rngUses?: number;
   path: string | null;
-  [key: string]: any;
+  loadout: string;                  // the run's persona/instrument id
+  perks?: string[];
+  usedEvents: string[];
+  seenCards?: string[] | null;      // novelty steering across runs (UI sets from meta)
+  cardLog?: any[];                  // per-swipe ledger (summary/scrapbook)
+  tierLog?: string[];               // outcome tiers, for the share grid
+  ending?: { key?: string | null; result?: string | null } | null;
+  // ── run structure / flow ──
+  cardsPlayedInAct: number;
+  shopPlayedInAct?: boolean;
+  currentEventId: string | null;
+  pendingChainId: string | null;
+  flashpointAt?: number | null;
+  flashpointSeen?: boolean;
+  actTwist?: { act: number; delta: number } | null;
+  flavorSeed?: number;
+  copingSeen?: string[];
+  // ── generic mechanics ──
+  encore?: number;
+  encoreChained?: boolean;
+  hotStreak?: number;
+  badStreak?: number;
+  pathProgress?: number;            // momentum toward the committed path
+  promises?: any[];
+  mastery?: number;
+  accessories?: string[];           // equipped item ids (gear / edit; pack-owned data)
+  songs?: Song[];
+  // ── mode / meta ──
+  gauntlet?: string | number | null;
+  daily?: string | null;
+  tutorial?: boolean;
+  firstRun?: boolean;
+  firstLoadout?: string;            // id of the run's first loadout (swap detection)
+  swappedLoadout?: boolean;
+  coached?: boolean;
+  history?: any[];
+  unlockedPacks?: string[];
+  // ── exit interview (generic shell) ──
+  exitChoice?: string;
+  exitLpBonus?: number;
+  exitText?: string;
 }
 
 export interface GameEvent {

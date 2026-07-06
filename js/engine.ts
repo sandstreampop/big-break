@@ -197,7 +197,7 @@ export function newRun(pack: Pack, loadoutId: string, unlockedPacks: string[], r
   // onConstruct (below) may then overwrite a slot with a seeded draw.
   for (const p of orderedPlugins()) {
     if (!p.stateDefaults) continue;
-    for (const [k, v] of Object.entries(p.stateDefaults)) state[k] = Array.isArray(v) ? v.slice() : v;
+    for (const [k, v] of Object.entries(p.stateDefaults)) (state as any)[k] = Array.isArray(v) ? v.slice() : v;
   }
   // Seeded construction draws, in FROZEN order: flavorSeed above, then the
   // plugins' onConstruct draws, then flashpoint and actTwist here, then the
@@ -237,7 +237,7 @@ export function newTutorialRun(pack: Pack, rng = Math.random) {
   const state = newRun(pack, t?.loadout ?? pack.loadouts[0].id, [], rng, []);
   state.tutorial = true;
   if (t?.stats) state.stats = { ...t.stats } as RunState['stats'];
-  if (t?.resources) for (const [k, v] of Object.entries(t.resources)) state[k] = v;
+  if (t?.resources) for (const [k, v] of Object.entries(t.resources)) (state as any)[k] = v;
   state.pendingChainId = PACK.tutorialEvents[0].id;
   return state;
 }
@@ -337,7 +337,7 @@ export function eligibleEvents(state: RunState) {
       !ev.chainOnly &&
       actMatches(ev, state.act) &&
       !state.usedEvents.includes(ev.id) &&
-      (!ev.pack || state.unlockedPacks.includes(ev.pack)) &&
+      (!ev.pack || (state.unlockedPacks || []).includes(ev.pack)) &&
       pathEligible(ev, state) &&
       meetsRequires(ev, state)
   );
@@ -629,15 +629,15 @@ export function choiceOdds(state: RunState, choice: Choice, opts: any = {}) {
 }
 
 export function resolveSwipe(state: RunState, side: Side, rng: () => number = Math.random, opts: any = {}) {
-  const ev = findEvent(state.currentEventId)!;
+  const ev = findEvent(state.currentEventId!)!;
   const choice = ev.choices[side];
   const useEncore = !!opts.encore && (state.encore || 0) > 0 && !encoreDisabled(state);
-  if (useEncore) state.encore -= 1;
+  if (useEncore) state.encore = (state.encore ?? 0) - 1;
 
   // Shop affordability: a declined card is comedy, not a roll. The currency is
   // the manifest's cost-resource role, not a named one.
   const costResource = PACK.manifest.costResource;
-  if (choice.cost && costResource && state[costResource] < choice.cost) {
+  if (choice.cost && costResource && getRes(state, costResource) < choice.cost) {
     (state.tierLog = state.tierLog || []).push('declined');
     (state.cardLog = state.cardLog || []).push({ e: ev.id, t: 'declined', a: state.act, s: side });
     const result: any = {
@@ -725,7 +725,7 @@ export function resolveSwipe(state: RunState, side: Side, rng: () => number = Ma
   // the deadline lapsing breaks. Checked before this card's own addPromise.
   if ((state.promises || []).length) {
     const kept = [], remaining = [];
-    for (const p of state.promises) {
+    for (const p of state.promises || []) {
       if (tagsIntersect(p.tags, choice.tags) && (tier as string) !== 'declined') {
         kept.push(p);
       } else if (p.remaining <= 1) {
@@ -979,7 +979,7 @@ export function evaluateFinale(state: RunState) {
     result = avg >= CONFIG.partialRatio ? 'partial' : 'failure';
     // Momentum clutch: a near-miss with enough of the manifest's momentum
     // resource still summits. A pack that designates none can't clutch.
-    const momentum = mr ? (state[mr] ?? 0) : 0;
+    const momentum = mr ? getRes(state, mr) : 0;
     if (
       result === 'partial' &&
       readings.every((r) => r.ratio >= CONFIG.nearMissRatio) &&
@@ -989,7 +989,7 @@ export function evaluateFinale(state: RunState) {
     }
   }
   state.ending = { key: state.path, result };
-  return { result, readings, momentum: mr ? (state[mr] ?? 0) : 0 };
+  return { result, readings, momentum: mr ? getRes(state, mr) : 0 };
 }
 
 // ---------- Legacy Points ----------
