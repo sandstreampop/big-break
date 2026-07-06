@@ -17,6 +17,15 @@ name: CI + Deploy to GitHub Pages
 # toolchain isolated from the engine's pinned tsc). Push to main → both go
 # live. The docs build is also a gate in the check job, so docs drift blocks
 # the deploy like any other regression.
+#
+# Artifact ownership: the `check` job PRODUCES the Pages artifact (after the
+# gates pass, main only) and `deploy` only calls deploy-pages to publish it.
+# Two reasons: (1) what deploys is byte-for-byte the artifact that passed the
+# gates — not a second independent rebuild in the deploy job; (2) a transient
+# Pages-backend deploy failure retries as a cheap deploy-ONLY rerun, with no
+# rebuild and, crucially, no second `github-pages` artifact — deploy-pages@v4
+# aborts when a run has two artifacts of that name (the exact trap a naive
+# "rerun the deploy job" hits when the deploy job also uploads).
 
 on:
   push:
@@ -81,46 +90,44 @@ jobs:
         working-directory: docs-site
         run: npm run build
 
+      # --- Pages artifact (main only) ---
+      # Assembled and uploaded HERE, after every gate above has passed, so the
+      # deployed bytes ARE the tested bytes. Skipped on PR/branch runs (which
+      # stop at the gate) via the shared deploy-condition below.
+      - name: Place docs under dist/docs (sibling of the games)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        # The engine build wiped and repopulated dist/ above, so this copy runs
+        # after it. The docs deploy at /big-break/docs/ (astro base), sharing the
+        # one Pages artifact with the game at the root.
+        run: |
+          mkdir -p dist/docs
+          cp -r docs-site/dist/. dist/docs/
+      - name: Configure Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload the Pages artifact (the gated dist/)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Ship the built site, not the source tree.
+          path: dist
+
   deploy:
     needs: check
-    # Deploy only from main — PR/branch runs stop at the check gate.
+    # Deploy only from main — PR/branch runs stop at the check gate. Publishes
+    # the single artifact `check` uploaded; it does NOT rebuild or re-upload, so
+    # a transient Pages failure is a cheap, safe deploy-only rerun.
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install pinned toolchain
-        run: npm ci
-      - name: Build dist/ (tsc emit + static copy)
-        run: npm run build
-      - name: Install docs toolchain
-        working-directory: docs-site
-        run: npm ci
-      - name: Build docs site
-        working-directory: docs-site
-        run: npm run build
-      - name: Place docs under dist/docs (sibling of the games)
-        # The engine build wipes and repopulates dist/, so this copy must run
-        # AFTER it. The docs deploy at /big-break/docs/ (astro base), sharing the
-        # one Pages artifact with the game at the root.
-        run: |
-          mkdir -p dist/docs
-          cp -r docs-site/dist/. dist/docs/
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          # Ship the built site, not the source tree.
-          path: dist
       - id: deployment
         uses: actions/deploy-pages@v4
         with:
           # Pages' deploy queue sometimes stalls for minutes platform-side;
-          # wait out slow patches instead of aborting at the 10-min default.
-          timeout: 1200000
+          # 600000ms (10 min) is the action's max — wait it out rather than abort.
+          timeout: 600000
