@@ -100,6 +100,7 @@ function openOverlay(
   if (stale) { ov.removeEventListener('click', stale); (ov as any)._bbClose = null; }
   ov.innerHTML = '';
   ov.classList.add('active');
+  ov.removeAttribute('data-armed'); // set once the dismiss listener is live (below)
   // Accessibility (Epic 7): the modal announces itself, takes focus, closes on
   // Escape, and restores focus to whatever opened it. Screen-reader + keyboard
   // users got none of this before.
@@ -125,7 +126,12 @@ function openOverlay(
   (ov as any)._bbClose = close;
   document.addEventListener('keydown', onKey);
   ov.focus?.();
-  setTimeout(() => ov.addEventListener('click', close), opts.armMs ?? 200);
+  setTimeout(() => {
+    ov.addEventListener('click', close);
+    // Real "listener is live" signal so tests can waitForFunction on it
+    // instead of racing a fixed sleep against this same arm delay.
+    ov.setAttribute('data-armed', '1');
+  }, opts.armMs ?? 200);
   return close;
 }
 
@@ -1439,7 +1445,8 @@ function showChart() {
     ov.classList.remove('active');
     ov.removeEventListener('click', done);
   };
-  setTimeout(() => ov.addEventListener('click', done), 200);
+  ov.removeAttribute('data-armed');
+  setTimeout(() => { ov.addEventListener('click', done); ov.setAttribute('data-armed', '1'); }, 200);
   save.saveRun(run); // chartTitles may have been generated
 }
 
@@ -1760,7 +1767,8 @@ function showResult(result) {
       coachMark('Outcomes have three tiers — your stats and gear tilt the roll. Build what your path needs; watch 🔥 Burnout.');
     }
   };
-  setTimeout(() => ov.addEventListener('click', done), 250);
+  ov.removeAttribute('data-armed');
+  setTimeout(() => { ov.addEventListener('click', done); ov.setAttribute('data-armed', '1'); }, 250);
 }
 
 function deltaChip(key, amount) {
@@ -1949,7 +1957,8 @@ function showBrammies(step) {
       actInterstitial(step);
       show('#screen-game');
     };
-    setTimeout(() => ov.addEventListener('click', done), 300);
+    ov.removeAttribute('data-armed');
+    setTimeout(() => { ov.addEventListener('click', done); ov.setAttribute('data-armed', '1'); }, 300);
   };
 
   const speech = el('div', 'pick-card path-card');
@@ -2238,7 +2247,8 @@ function actInterstitial(step) {
     ov.removeEventListener('click', done);
     dealCard();
   };
-  setTimeout(() => ov.addEventListener('click', done), 250);
+  ov.removeAttribute('data-armed');
+  setTimeout(() => { ov.addEventListener('click', done); ov.setAttribute('data-armed', '1'); }, 250);
 }
 
 // ---------- Crossroads (spec §7.2) ----------

@@ -214,7 +214,13 @@ async function driveSeason(browser, base, game, vp, tag) {
       });
       if (k === 'ending') { await audit('ending'); break; }
       if (k === 'overlay') {
-        await page.waitForTimeout(320); // the dismiss listener attaches on a timeout
+        // Wait for the dismiss listener to go live (data-armed) or a gear
+        // button to click, instead of racing the fixed arm delay.
+        await page.waitForFunction(() => {
+          const ov = document.querySelector('#overlay.active');
+          if (!ov) return true;
+          return ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+        }, { timeout: 5000 });
         await audit('overlay');
         await page.evaluate(() => {
           const ov = document.querySelector('#overlay.active');

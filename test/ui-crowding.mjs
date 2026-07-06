@@ -101,10 +101,14 @@ for (const vp of VIEWPORTS) {
     if (k === 'ending') break;
     if (k === 'beat') {
       beatsSeen++;
-      await page.waitForTimeout(320);
+      await page.waitForFunction(() => document.querySelector('#overlay.active[data-armed]'), { timeout: 5000 });
       await page.evaluate(() => document.querySelector('#overlay.active')?.click());
     } else if (k === 'overlay') {
-      await page.waitForTimeout(320);
+      await page.waitForFunction(() => {
+        const ov = document.querySelector('#overlay.active');
+        if (!ov) return true;
+        return ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+      }, { timeout: 5000 });
       await page.evaluate(() => {
         const ov = document.querySelector('#overlay.active');
         (ov?.querySelector('.gear-choices button') || ov)?.click();

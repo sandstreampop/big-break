@@ -126,7 +126,14 @@ async function playToFinale(page, label, pathIndex = 0) {
     });
     if (k === 'ending') break;
     if (k === 'overlay') {
-      await page.waitForTimeout(300); // let the dismiss listener attach
+      // Wait for the overlay to be dismissable rather than racing a fixed
+      // sleep against the arm delay: either the click-to-dismiss listener is
+      // live (data-armed) or there's a gear button we click directly.
+      await page.waitForFunction(() => {
+        const ov = document.querySelector('#overlay.active');
+        if (!ov) return true;
+        return ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+      }, { timeout: 5000 });
       await page.evaluate(() => {
         const ov = document.querySelector('#overlay.active');
         if (!ov) return;
