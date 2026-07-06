@@ -19,6 +19,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'Movie night in · the ick arrives on schedule',
     prompt: '{partner} cried at the toast. Not the speech — the TOAST, the bread kind, because you made it “like a couple who make each other toast.” Day twelve. Somewhere behind your ribs, a tiny inspector puts down a clipboard and says: too much, too fast, all of it.',
+    recap: '{partner} cried over the toast you made, and the ick clocks in.',
     choices: {
       left: {
         label: 'Name it, kindly',
@@ -48,6 +49,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'The dressing room · a rehearsal you weren’t meant to see',
     prompt: 'Through the mirror you watch {partner} practise a compliment. Your compliment. Twice, with different pauses, checking the angles — “you’re not like anyone in here… no. You’re not like ANYONE in here.” The tiny inspector behind your ribs underlines one word: rehearsed.',
+    recap: 'Through the mirror you catch {partner} rehearsing a compliment for you.',
     choices: {
       left: {
         label: 'Name it, straight',
@@ -77,6 +79,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'The terrace, late · the wall came down · then the scaffolding went up',
     prompt: 'Last night {partner} told you the real stuff — the sister who stopped speaking to them, the fear they’re only lovable on telly, why the guard never fully drops. This morning: “anyway, mad one last night, weren’t it,” and the shutters are DOWN, trading closed, do not reply to this email. The inspector behind your ribs circles a word: whiplash.',
+    recap: '{partner} opened up last night, then slammed the shutters by morning.',
     choices: {
       left: {
         label: 'Name it, gently',
@@ -105,6 +108,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'The next afternoon · the follow-up nobody schedules',
     prompt: '“So.” {partner} sits down with two drinks and the face of someone who’s been thinking since yesterday. “That thing you said — that I was giving you the ick. I’m not gonna lie, I hated it. And you’re 100% right.” Both can be true. In here, both usually are. The daybed waits to see what you build with it.',
+    recap: '{partner} sits down with two drinks to say you were right about the ick.',
     choices: {
       left: {
         label: 'Build it together',
@@ -134,6 +138,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'Weeks later · the buried thing attends dinner',
     prompt: 'The thing you buried has compounded. The toast-tears, the rehearsed pause, the shutters — whichever it was, it’s now a full personality trait wearing your patience as a lanyard. Tonight it does the thing AGAIN, at dinner. “What?” asks {partner}, catching your face. “Nothing,” you say. The word creaks under the tonnage.',
+    recap: 'The ick you buried resurfaces at dinner, bigger than before.',
     choices: {
       left: {
         label: 'Say it. Finally',
@@ -167,6 +172,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'The lawn · {partner} watches you work the camera · the radar pings',
     prompt: 'You’re mid-anecdote — the good one, the tested one — angled twelve degrees toward the nearest lens, and you catch {partner} watching you do it. Not jealous. Worse: CALIBRATING. Everyone in here has a radar for being somebody’s strategy. Yours just got pinged.',
+    recap: '{partner} catches you playing to the cameras and starts calibrating.',
     choices: {
       left: {
         label: '“Yeah. I play up for cameras”',
@@ -198,6 +204,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'The morning after your footage · the kitchen, at grovel o’clock',
     prompt: 'Your footage aired. The villa watched it twice. {partner} is still here — technically, geographically here. “Toast?” they offer, in the tone of a customs officer asking if you packed this bag yourself. The repair manual for this villa is unwritten but everyone knows chapter one: you start with the coffee.',
+    recap: 'Your footage aired, and {partner} offers a very cautious toast.',
     choices: {
       left: {
         label: 'Start the lap: coffee, daily, publicly',
@@ -227,6 +234,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'Days into the lap · the firepit · time to say it where the mics live',
     prompt: 'Three days of coffee, towels, and shutting up. The villa has watched the lap; now it wants the sentence. You stand up at the firepit — {partner}, the cast, the cameras, the country. “I need to say something,” you say, and the garden goes church-quiet.',
+    recap: 'After days of grovelling, the firepit wants the sentence out loud.',
     choices: {
       left: {
         label: 'The full re-commitment, no notes',
@@ -256,6 +264,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Three mornings after their footage · the coffee has been arriving',
     prompt: 'Since Movie Night, {partner} has served you coffee three mornings running — right order, no speeches — and last night, at the firepit, unprompted: “I’m focusing on one person in here. That’s it. That’s the announcement.” The villa looks at you. Forgiveness has a queue number, and it’s been called.',
+    recap: '{partner}’s done three mornings of coffee and named you at the firepit.',
     choices: {
       left: {
         label: 'Forgive. Properly, out loud',
@@ -285,6 +294,7 @@ export const ARC_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'A week of the boring version later · the lap, audited',
     prompt: 'They kept it up when the cameras were on the challenge. They kept it up during the Hut queue, the washing-up rota, the 1 a.m. kitchen shift. {mate}, your appointed auditor, files the report: “It’s real, babe. Annoyingly real.” The daybed is free. The verdict is yours.',
+    recap: 'A week on, {mate} audits {partner}’s repair and finds it real.',
     choices: {
       left: {
         label: 'Close the ledger. Forgive',

@@ -547,6 +547,13 @@ export interface GameEvent {
   shop?: boolean;
   prompt?: string;
   promptAlt?: string;   // an alternate prompt the presenter/UI may show in place of `prompt`
+  // A short, plain restatement of the situation this card posed — the reminder
+  // the result beat shows so a player never loses the thread of what they were
+  // reacting to. Distinct from `context` (the card's scene/speaker label): a
+  // recap summarises the MOMENT ("The open mic sign-up sheet is in front of
+  // you"), phrased to read cleanly on the after-swipe screen. The shell falls
+  // back to `context` when a card hasn't authored one.
+  recap?: string;
   context?: string;
   art?: string;
   coach?: string;      // tutorial coaching text

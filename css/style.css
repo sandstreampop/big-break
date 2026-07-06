@@ -1504,6 +1504,27 @@ body.big-text #app { zoom: 1.18; }
 .sp-stake.sp-risk { border-color: rgba(255, 99, 120, .55); }
 @media (max-height: 700px) { .set-piece-banner { font-size: 17px; } .sp-stake { font-size: 11.5px; padding: 3px 8px; } }
 
+/* The recap strip: the moment you answered + the call you made, so the outcome
+   never lands context-free. Quiet by design — it grounds, it doesn't shout. */
+.result-recap {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 11px; border-radius: 12px;
+  background: #17131f; border: 1px solid #2c2540;
+  border-left: 3px solid #4b4066;
+}
+.recap-event { font-size: 12.5px; line-height: 1.35; color: var(--dim); font-style: italic; }
+.recap-choice { font-size: 13.5px; line-height: 1.35; color: var(--ink); font-weight: 700; }
+.recap-you {
+  font-size: 10px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--dim); margin-right: 6px; font-style: normal;
+}
+/* Shortest phones (ADR-0009): the recap yields first — trim its padding before
+   the outcome text or reads have to. */
+@media (max-height: 640px) {
+  .result-recap { padding: 6px 10px; }
+  .recap-event { font-size: 12px; }
+}
+
 /* The result beat: the reacting portrait + qualitative movement reads. */
 .result-portrait { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: -4px; }
 .result-face {

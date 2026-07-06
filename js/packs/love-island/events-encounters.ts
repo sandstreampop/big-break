@@ -25,6 +25,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Dusk · the kitchen counter · two glasses, one agenda',
     prompt: '“Come here — let me pull you for a chat.” {rival} pours you a drink like it matters. “I’m not being funny, but everyone in here’s been fake nice since we walked in, and it’s day two. I can’t be doing with it. So be honest with me — where’s your head really at?” Behind the smile, they’re clocking every word.',
+    recap: '{rival} pours you a drink and asks where your head’s really at.',
     choices: {
       left: {
         label: 'Answer straight',
@@ -54,6 +55,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'Later · the swing seat · guard half down',
     prompt: '“Between us?” {rival} checks the garden for boom mics and misses two. “I didn’t come in here for a fairy tale. I came in with a plan, and it’s already going wrong.” A true thing, said out loud, sitting between you like a dropped key.',
+    recap: '{rival} admits on the swing seat they came in with a plan — and it’s slipping.',
     choices: {
       left: {
         label: 'Trade something real',
@@ -83,6 +85,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Next morning · the lawn · a test, disguised as banter',
     prompt: 'At breakfast, loudly: “Go on then — tell everyone the plan. The one you told me last night.” {rival} beams at you across the granola. The lawn turns. That’s not banter; that’s a live demonstration, and you’re the exhibit.',
+    recap: 'At breakfast {rival} dares you, loudly, to tell the lawn last night’s plan.',
     choices: {
       left: {
         label: 'Own it, louder',
@@ -112,6 +115,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'Sunset · the terrace · the terms',
     prompt: '“Listen, right.” {rival} leans on the rail, a proper truce on the table. “I’m gonna graft, I’m gonna play my game, that’s just me. And you’re gonna be all loved-up and sincere — fair play to you, honestly. We can stay out of each other’s lane. Or not. Up to you, babe.”',
+    recap: 'On the terrace {rival} offers a truce: separate lanes, no interference.',
     choices: {
       left: {
         label: 'Shake on it',
@@ -141,6 +145,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_firepit_day',
     context: 'Night · the firepit, after hours · just you two and the embers',
     prompt: '“Let’s not pretend.” {rival} sits down uninvited, holding two marshmallows like a peace offering they intend to eat alone. “You don’t rate me. I don’t rate you. But there’s one {partner}-shaped thing we both rate. So.”',
+    recap: 'Firepit embers — {rival} names the {partner}-shaped thing you both want.',
     choices: {
       left: {
         label: 'De-escalate',
@@ -175,6 +180,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { singleIs: false, partnerAgainIs: true },
     context: 'Mid-morning · the swing seat · you’ve sat here before',
     prompt: '“So.” {partner} hands you a tea — your order, unasked, remembered from a different summer. “Take two. Same swing, same us. Are we smarter now, or just tanner?” Somewhere in the gallery, an editor reaches for the flashback reel.',
+    recap: 'Same swing, different summer — {partner} asks if you’re smarter this time.',
     choices: {
       left: {
         label: 'Smarter. Prove it',
@@ -204,6 +210,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { rivalAgainIs: true },
     context: 'Dusk · the kitchen · an old opponent pours two coffees',
     prompt: '“Well, well.” {rival} slides a coffee across like a rematch contract. “The band’s back together. I still owe you for last Season, and I genuinely can’t remember which kind of owe.” Neither can you. That’s the fun bit.',
+    recap: 'An old rival from last Season slides you a coffee and a rematch.',
     choices: {
       left: {
         label: 'Old wars stay buried',
@@ -237,6 +244,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'The kitchen · 1 a.m. · two spoons, one tub',
     prompt: '“Right.” {mate} appears with a tub of ice cream and two spoons, which in villa law is a summons. “Everyone in here is performing except possibly you. Don’t make me regret this tub. What’s actually going on with you?”',
+    recap: '{mate} brings ice cream and two spoons and asks what’s really going on.',
     choices: {
       left: {
         label: 'Actually tell them',
@@ -265,6 +273,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'Next morning · the daybed · a two-person institution',
     prompt: '“Ground rules.” {mate} holds out a croissant like a gavel. “Whatever happens — recouplings, bombshells, all of it — we don’t let this place make us strangers. Deal?” Behind them, the villa glitters with people who will absolutely test that.',
+    recap: '{mate} wants a pact: whatever the villa throws, you two stay close.',
     choices: {
       left: {
         label: 'Deal. No strangers',
@@ -293,6 +302,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'Next morning · the sun loungers · the debrief',
     prompt: '“Item one.” {mate} doesn’t look up from cleaning their sunglasses. “{rival} did a lap of the boys before breakfast. Item two: somebody cried in the Hut before nine. Item three—” A pause. “You get all this free. First month.”',
+    recap: '{mate} delivers the morning gossip and floats making the alliance official.',
     choices: {
       left: {
         label: 'Make it official — allies',
@@ -326,6 +336,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { singleIs: false, partnerShapeIs: 'sweetheart' },
     context: 'Mid-morning · the swing seat · the announcement',
     prompt: '“Right, I’m just gonna say it—” {partner} has brought you a tea and a speech, in that order. “I like you. Properly. I’ve got a lot of time for you, genuinely. That’s it, that’s the announcement.” The swing creaks. Somewhere in the gallery a producer whispers <i>stay on them</i>.',
+    recap: '{partner} brings a tea and a speech: they like you, properly.',
     choices: {
       left: {
         label: 'Say it back',
@@ -355,6 +366,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { singleIs: false, partnerShapeIs: 'gameplayer' },
     context: 'Mid-morning · the swing seat · the interview',
     prompt: '“Can I ask you something, and don’t take this the wrong way.” {partner} deals it like a card, eyes on the pool. “What are you actually here for? ’Cause I’ve watched every series, and I clock a game-player a mile off. On paper you’re my type. I just need to know your head’s in it.” A beat. “No offence.”',
+    recap: '{partner} asks, dead calm, whether you’re a game-player or the real thing.',
     choices: {
       left: {
         label: 'Answer it straight',
@@ -384,6 +396,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { singleIs: false, partnerShapeIs: 'slowburner' },
     context: 'Mid-morning · the swing seat · the almost-sentence',
     prompt: 'Twenty minutes of comfortable pool noise. Then, quietly, not looking over: “I don’t really do the talking thing on telly,” says {partner}. “But if you wanted to sit here a while. That’d be. Yeah.” The sentence never lands. The invitation does.',
+    recap: '{partner} can’t do telly talk, but wants you to just sit a while.',
     choices: {
       left: {
         label: 'Sit in it with them',
@@ -412,6 +425,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'That night · two teas · the follow-up questions',
     prompt: '“Right, follow-up round.” {partner} slides you a tea made exactly wrong, first attempt, noted for correction. “The thing you said earlier. Does anyone out there know that about you?” Out there. The words do a little weather.',
+    recap: '{partner} asks if anyone out there knows the thing you told them earlier.',
     choices: {
       left: {
         label: 'Let them all the way in',
@@ -440,6 +454,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Afternoon · the lawn · your couple, performing well',
     prompt: '“We’re good at this,” {partner} murmurs mid-photogenic-laugh, eyes bright and unreadable. “The couple thing. Everyone thinks so.” A beat. “Is it a thing, though? For you?” Delivered smiling, straight down the middle of the bit.',
+    recap: 'Mid-photo-laugh, {partner} asks quietly if the couple thing is real for you.',
     choices: {
       left: {
         label: 'Drop the act, live',
@@ -468,6 +483,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'Lights out · the whispered inventory',
     prompt: 'The room breathes around you. “Honest answer, yeah?” whispers {partner}, one duvet-width away. “Day one — was I your type on paper? Off the line-up, hand on heart, no messing.” The moment arrives quietly, at whisper volume, the way the real ones do.',
+    recap: 'Lights out — {partner} whispers: were they your type on paper, day one?',
     choices: {
       left: {
         label: 'The honest answer',
@@ -500,6 +516,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { singleIs: false, anyOf: [{ flagsAll: ['li_rival_active'] }, { opinionBelow: 'rival:cool' }] },
     context: 'Midday · the poach · in broad, deliberate daylight',
     prompt: '“Borrowing this one!” {rival} announces, already steering {partner} towards the daybed by the elbow, sunniest voice on the island. To the villa: banter. To you, over the shoulder, one look: <i>your move</i>.',
+    recap: '{rival} steers {partner} off to the daybed with a look that says your move.',
     choices: {
       left: {
         label: 'Walk over, smiling',
@@ -530,6 +547,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { opinionAtLeast: 'rival:cool', flagsNone: ['li_rival_active'] },
     context: 'Morning · a rumour in circulation · familiar fingerprints',
     prompt: 'By breakfast it’s everywhere: your couple is “tactical.” The word is too clean, too placed — a professional’s rumour. And there’s exactly one professional in here who knows your game well enough to price it. The pact, it seems, has small print.',
+    recap: 'A too-clean rumour says your couple’s ‘tactical’ — a pro planted it.',
     choices: {
       left: {
         label: 'Trace it quietly',
@@ -559,6 +577,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_firepit_day',
     context: 'That evening · the follow-up · {rival} finds you first',
     prompt: '“That, earlier?” {rival} materialises beside you with two drinks and gives you one, which is how aggression works here. “Nothing personal. Final Week seats are Final Week seats.” A pause. “You’d do the same.” Would you? They’re watching you decide.',
+    recap: '{rival} hands you a drink and calls the poach nothing personal.',
     choices: {
       left: {
         label: '“Try it again. See.”',
@@ -588,6 +607,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'Dusk · the terrace · the rumour, priced',
     prompt: '“So.” {rival} leans on the rail beside you, watching the villa metabolise their rumour below. “Everyone believes what they already believed. That’s all a rumour is — a mirror.” They turn. “Question is what you do with yours.”',
+    recap: '{rival} watches the villa swallow their rumour and asks what you’ll do.',
     choices: {
       left: {
         label: 'Kill it with the couple',
@@ -620,6 +640,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { singleIs: false, opinionAtLeast: 'partner:warm' },
     context: 'Final Week · the terrace · the outside, discussed',
     prompt: '“Real talk.” {partner} pulls a blanket over both your knees like a treaty. “A week from now this is a flat, a commute, and my mum’s opinions. No producers arranging our dates.” They look at you. “What does Tuesday look like? Actual Tuesday.”',
+    recap: 'Final Week — {partner} asks what real life, actual Tuesday, looks like.',
     choices: {
       left: {
         label: 'Build Tuesday, out loud',
@@ -650,6 +671,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { singleIs: false, opinionBelow: 'partner:warm' },
     context: 'Final Week · the daybed · the couple, buffering',
     prompt: '“Are we okay?” {partner} asks it at the worst possible time, which is how you know it’s real. “Because from the outside we look great. And from in here—” they gesture at the six inches between you, “—there’s this.” The six inches say nothing.',
+    recap: '{partner} asks ‘are we okay?’ — great outside, six inches apart in here.',
     choices: {
       left: {
         label: 'Fight for it, now',
@@ -678,6 +700,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_hideaway',
     context: 'Later · the roof terrace · the Season, weighed',
     prompt: 'The villa sleeps. {partner} finds you on the roof terrace with two mugs and the face of someone who has decided something. “Whatever happens Friday — the envelope, the vote, all of it.” They hand you a mug. “I need you to know where I land.” And they tell you.',
+    recap: 'On the roof, {partner} has decided something and needs you to know it.',
     choices: {
       left: {
         label: 'Land in the same place',
@@ -712,6 +735,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     requires: { singleIs: false, anyOf: [{ flagsAll: ['li_secret_detonated'] }, { opinionAtLeast: 'rival:warm' }] },
     context: 'Final Week · “I’VE GOT A TEXT!!” · nature abhors a vacuum',
     prompt: '“Islanders, please welcome a late arrival. #neverover” — With {rival} out of the villain business, the villa had a vacancy, and production fills vacancies. The newcomer surveys the lawn, finds the strongest couple, and smiles at it. It’s yours. Congratulations.',
+    recap: '‘Got a text!’ — a late {bombshell} lands and eyes up your couple.',
     choices: {
       left: {
         label: 'Meet the threat head on',

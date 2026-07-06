@@ -158,7 +158,7 @@ for (const pack of PACKS) {
     // Outcome texts get the length cap too; keep them tagged so the taste floor
     // can tell an outcome from a scene-setting prompt.
     const outcomeTexts = new Set();
-    const texts = [ev.prompt, ev.promptNemesis, ev.context];
+    const texts = [ev.prompt, ev.promptNemesis, ev.recap, ev.context];
     for (const side of ['left', 'right']) {
       const c = ev.choices?.[side];
       if (!c) continue;

@@ -12,6 +12,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_firepit_day',
     context: 'Day 2 · the firepit · somebody finally says it',
     prompt: '“Wait. WAIT.” A girl points at you with a spatula. “You’re the one from — the season with the — you CRIED at the—” She stops. Everyone remembers the rest. The villa has been polite about it for a whole day, which for this villa is a record.',
+    recap: 'Day 2, and someone clocks you — you’re the one who cried last season.',
     choices: {
       left: {
         label: 'Own every second of it',
@@ -40,6 +41,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'Day 2 · the terrace · your first date',
     prompt: 'Two chairs, two drinks the colour of a warning label. “So,” manages {partner}, looking at you like a question. “Hi.” Behind the wall, the nation is deciding whether you have a personality. So, apparently, are you.',
+    recap: 'Day 2 on the terrace — your first date with {partner}.',
     choices: {
       left: {
         label: 'Keep it light',
@@ -68,6 +70,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_pool',
     context: 'Midday · the pool · thirty-one degrees',
     prompt: '{partner} holds up the factor 50 and turns around. It’s the villa’s oldest ritual: part sunscreen, part territory, all broadcast. Four people are pretending not to watch. One of them is holding her breath.',
+    recap: 'By the pool, {partner} holds up the factor 50 — the villa’s oldest ritual.',
     choices: {
       left: {
         label: 'Do it properly',
@@ -96,6 +99,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Late · the kitchen counter · two mugs',
     prompt: 'Past midnight, the villa’s one honest location: the kitchen counter. {mate} can’t sleep either. What starts as “do you want a tea” is turning into the kind of conversation the day never allows.',
+    recap: 'Past midnight at the kitchen counter — {mate} can’t sleep either.',
     choices: {
       left: {
         label: 'Open up first',
@@ -126,6 +130,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_challenge',
     context: 'The lawn · challenge o’clock · “I’VE GOT A TEXT!!”',
     prompt: '“Islanders, tonight you’ll each perform for the villa — while everyone wears a heart-rate monitor. The results will be read out. #pulsecheck” — A dance-off where the scoreboard is everyone’s actual heart. Science, weaponised for chaos.',
+    recap: 'Got a text — a dance-off with everyone’s heart rate read out loud.',
     choices: {
       left: {
         label: 'Perform for your partner',
@@ -154,6 +159,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_pool',
     context: 'Afternoon · the pool · one (1) inflatable swan',
     prompt: 'There is one swan float and eleven Islanders. {partner} is holding it and looking at you. This is not about the swan. Nothing in this villa is ever about the swan.',
+    recap: 'One inflatable swan, eleven Islanders, and {partner} holding it.',
     choices: {
       left: {
         label: 'Claim the swan together',
@@ -182,6 +188,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Morning · the kitchen · someone has to',
     prompt: 'Eggs for twelve. Nobody asked you to, which is exactly why it counts. In the villa, breakfast is never breakfast: it’s a campaign stop with toast.',
+    recap: 'Eggs for twelve, and nobody asked you to make them.',
     choices: {
       left: {
         label: 'Feed the villa',
@@ -210,6 +217,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_daybed',
     context: 'The daybed · four girls · lowered voices',
     prompt: '“Right — honest read,” says {mate}, patting the daybed. The summit is in session and today’s agenda is a couple that isn’t yours. Yet. Whatever you say next will be quoted, misquoted, and eventually read back to you at a firepit, with sources.',
+    recap: 'The daybed summit convenes — today’s agenda is a couple that isn’t yours.',
     choices: {
       left: {
         label: 'Keep it kind',
@@ -238,6 +246,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_hideaway',
     context: 'Evening · “I’VE GOT A TEXT!!” · the Hideaway is open',
     prompt: '“Tonight, one couple will spend the night in the Hideaway. The villa must decide who. #privacyplease” — The villa, a democracy of stirrers, votes for your couple with indecent speed. The door is red. The candles are lit. The mics — and this is the bit everyone forgets — stay on.',
+    recap: 'Got a text — the villa voted your couple into the Hideaway tonight.',
     choices: {
       left: {
         label: 'Take the night',
@@ -266,6 +275,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'The terrace · {rival} is being friendly',
     prompt: '{rival} has started laughing at {partner}’s jokes. All of them. Including the sat-nav joke — the sat-nav joke, mate, currently nil-for-eleven this season and still touring. You know grafting when you see it. You invented half these moves.',
+    recap: '{rival} is suddenly laughing at every one of {partner}’s jokes.',
     choices: {
       left: {
         label: 'Mark your territory',
@@ -295,6 +305,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_challenge',
     context: 'Night · the stage by the pool · talent show',
     prompt: 'The villa talent show: a sacred format where confidence outnumbers talent nine to one. {mate} has a whistle routine. {rival} is doing “spoken word.” The bar is on the floor and the cameras are ravenous.',
+    recap: 'Talent-show night by the pool — {mate}’s got a whistle routine.',
     choices: {
       left: {
         label: 'Do the sincere thing',
@@ -323,6 +334,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'The dressing room · an ick has been declared',
     prompt: 'Emergency session in the dressing room: somebody’s caught the ick, and the ick is contagious once named. “He’s proper given me the ick, I can’t even explain it,” says {mate}. “He claps. When the food arrives. He CLAPS.” The tone is a war crimes tribunal. All eyes turn to you for a verdict.',
+    recap: 'Emergency dressing-room session: {mate} has declared the ick.',
     choices: {
       left: {
         label: 'Talk her down',
@@ -351,6 +363,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Morning · the outdoor gym · an audience assembles',
     prompt: 'You’re mid-workout when you notice the daybed has rotated, as one, to watch. In the villa, exercising is never exercising: it’s a press conference with dumbbells.',
+    recap: 'Mid-workout, and the daybed has rotated as one to watch you.',
     choices: {
       left: {
         label: 'Put on a show',
@@ -379,6 +392,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'A slow day · nothing is happening · NOTHING',
     prompt: 'Day six. Nothing is happening. NOTHING. People are napping competitively. Somebody has organised the condiments by emotional significance. Days like this are when the nation drifts — or when the smart money quietly reloads.',
+    recap: 'Day six and nothing is happening. Nothing. The villa is napping.',
     choices: {
       left: {
         label: 'Manufacture a moment',
@@ -407,6 +421,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_firepit_day',
     context: 'Evening · raised voices by the pool · it’s 7 p.m.',
     prompt: '“It’s not about the LOUNGER, it’s about RESPECT—” It is about the lounger. Not even the good one — the wobbly one, the WOBBLY one — then “energy,” then, somehow, night two. Your name hasn’t come up. Yet. That “yet” is load-bearing.',
+    recap: 'A 7 p.m. row over the wobbly lounger — your name’s not in it. Yet.',
     choices: {
       left: {
         label: 'Step in and settle it',
@@ -435,6 +450,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Hottest day yet · the freezer has been raided',
     prompt: 'The ice-lolly supply is down to one Mini Milk, and {partner} just handed it to you without a word. Eleven people watched it happen. In this villa, that’s not a lolly — that’s a declaration with a wrapper.',
+    recap: 'Down to one Mini Milk, and {partner} just handed it to you. Eleven watched.',
     choices: {
       left: {
         label: 'Split it, obviously',
@@ -463,6 +479,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'The terrace · post-date debrief · mandatory',
     prompt: '“Sit. Talk. EVERYTHING.” You’re barely through the door before the terrace convenes: full debrief, no detail spared, the girls arranged like a panel show. Refusal is not on the menu. It never has been.',
+    recap: 'Post-date debrief — the terrace convenes, no detail spared.',
     choices: {
       left: {
         label: 'Give them everything',

@@ -15,6 +15,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Morning · the kitchen · day four',
     prompt: '{partner} slides an iced coffee across the counter before you’ve said a word. “Oat, no sugar. I listen.” Four days in, and somebody has learned your order.',
+    recap: 'Day four and {partner} already knows your coffee order by heart.',
     choices: {
       left: {
         label: 'Take it. Let it land',
@@ -43,6 +44,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'Six a.m. · the roof terrace · nobody else up',
     prompt: 'You’re awake first, which never happens. On the terrace, {mate} is already sitting with two teas, one of them yours. “Couldn’t sleep either. Don’t tell anyone I do sincerity.”',
+    recap: 'Six a.m. on the roof — {mate}’s got your tea and a rare sincere streak.',
     choices: {
       left: {
         label: 'Stay till the sun’s up',
@@ -71,6 +73,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Two p.m. · the lawn · the wobbly lounger',
     prompt: 'There is one wobbly sun lounger, and a rota for avoiding it that nobody wrote down but everybody knows. {rival} has just moved your towel onto it. “Oh — was that yours?”',
+    recap: '{rival} has ‘accidentally’ moved your towel onto the wobbly lounger.',
     choices: {
       left: {
         label: 'Laugh it off, loudly',
@@ -99,6 +102,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'Evening · the dressing room · exhibit A',
     prompt: 'It got cold on the terrace last night and now you own {partner}’s hoodie, in the sense that it is on your body and you have no plans. “Looks better on you,” they said. A trap, or a fact. Or both.',
+    recap: 'You’ve ended up with {partner}’s hoodie and no plans to give it back.',
     choices: {
       left: {
         label: 'Give it back washed, folded',
@@ -129,6 +133,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_kitchen',
     context: 'Four a.m. · the kitchen · one lamp on',
     prompt: 'You come down for water and {partner} is already there, sitting on the counter in the dark. “Couldn’t switch it off,” they say, tapping their temple. “Don’t make it a thing.”',
+    recap: '4 a.m., one lamp — {partner}’s up in the dark, can’t switch their head off.',
     choices: {
       left: {
         label: 'Make it a thing. Gently',
@@ -157,6 +162,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_firepit',
     context: 'After the ceremony · the firepit · everyone performing fine-ness',
     prompt: 'The fire pit is doing its post-ceremony theatre — everyone laughing one notch too loud. Across the flames, {mate} catches your eye and mouths, “oi — where’s your head at?” The first person all night to actually ask.',
+    recap: 'Post-ceremony firepit, everyone too loud — {mate} mouths ‘where’s your head?’',
     choices: {
       left: {
         label: 'Tell the truth. Quietly',
@@ -185,6 +191,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Mid-morning · the washing line · pegs and intelligence',
     prompt: 'You’re pegging out swimwear with {mate} when two voices drift over the hedge, discussing a couple that is not theirs. Yours, possibly. The pegging slows to surveillance speed.',
+    recap: 'Pegging out swimwear with {mate} when the hedge starts gossiping about you.',
     choices: {
       left: {
         label: 'Keep pegging. Keep it',
@@ -213,6 +220,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_lawn',
     context: 'Dinner · the big table · callback incoming',
     prompt: 'Somebody at dinner says the word “allegedly” and {partner} catches your eye across the table, already fighting a grin — it’s the thing, from the thing, that only you two were there for.',
+    recap: 'Someone says ‘allegedly’ at dinner and {partner} clocks the inside joke.',
     choices: {
       left: {
         label: 'Keep it between you',
@@ -243,6 +251,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_terrace',
     context: 'Dawn · the roof terrace · the last quiet one',
     prompt: '“Get up,” {partner} whispers, at an hour that is technically a crime. “It’s the last one where nobody knows anything yet.” The terrace, two blankets, a sky going from grey to gold over a villa that ends this week.',
+    recap: 'Dawn on the roof — {partner} wakes you for the villa’s last quiet sunrise.',
     choices: {
       left: {
         label: 'Say nothing. Watch it',
@@ -271,6 +280,7 @@ export const DAY_EVENTS: GameEvent[] = [
     art: 'li_bedroom',
     context: 'Final Week · the dressing room · suitcases out',
     prompt: 'The suitcases are out on the beds, which makes it real in a way no ceremony has. {mate} holds up a single orphaned flip-flop. “Whose IS this? It’s been here since week one. It has seniority.”',
+    recap: 'Final week — the suitcases come out and leaving suddenly feels real.',
     choices: {
       left: {
         label: 'Pack properly. Talk properly',
