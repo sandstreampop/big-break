@@ -69,31 +69,58 @@ function stripComments(src) {
     .replace(/(^|[^:])\/\/[^\n]*/g, '$1'); // avoid eating "://" in urls
 }
 
-const enginePath = resolve(root, 'js/engine.ts');
-// Strip comments, then blank out `PACK.<name>` capability dispatches — the
-// engine feature-detecting an optional pack hook is generic, not a leak; a
-// genre concept named anywhere ELSE (a stat access, a flag string literal) is.
-const code = stripComments(readFileSync(enginePath, 'utf8')).replace(PACK_CAPABILITY_OK, ' PACK ');
+// The shared boundary types (js/types.ts) get the same guard, minus a small
+// allowlist of tokens the type layer INTENTIONALLY enumerates. Unlike engine
+// LOGIC, the `Effect` interface deliberately lists the resource verbs the packs
+// use (they're declaration-merging siblings — a hallucinated key is a compile
+// error precisely because they're enumerated). The `vibe` reactive-scene
+// signature also still names music's trio (a known residual pending Epic 4's
+// shell genericization). Everything else in types.ts must stay genre-neutral,
+// so a NEW genre token leaking onto a shared type trips this.
+const TYPES_ALLOW = new Set([
+  'fame', 'money', 'hits', 'pathProgress', 'rivalry', // Effect resource enumerations
+  'network',                                          // vibe() reactive-scene signature (residual)
+  'comeback',                                         // an optional Pack/Presenter capability HOOK name
+]);                                                   // (the PACK.comeback the engine feature-detects — not the flag literal)
 
-const hits = [];
-for (const [token, why] of blocked) {
-  const re = new RegExp(`\\b${token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
-  // Report every offending line for a precise diff.
+// Scan one file's CODE (comments stripped, PACK.<name> dispatches blanked) for
+// any blocked token not in this file's allowlist. Returns the offending lines.
+function scanFile(path, extraAllow) {
+  const code = stripComments(readFileSync(path, 'utf8')).replace(PACK_CAPABILITY_OK, ' PACK ');
   const lines = code.split('\n');
-  lines.forEach((line, i) => {
-    if (re.test(line)) hits.push({ token, why, line: i + 1, text: line.trim().slice(0, 90) });
-  });
+  const hits = [];
+  for (const [token, why] of blocked) {
+    if (extraAllow.has(token)) continue;
+    const re = new RegExp(`\\b${token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+    lines.forEach((line, i) => {
+      if (re.test(line)) hits.push({ token, why, line: i + 1, text: line.trim().slice(0, 90) });
+    });
+  }
+  return hits;
 }
 
-if (hits.length) {
-  console.error(`ENGINE NEUTRALITY: ${hits.length} genre leak(s) in js/engine.ts`);
-  console.error('The genre-agnostic core must name no pack stat/resource/verb/flag.\n');
-  for (const h of hits) {
-    console.error(`  engine.ts:${h.line}  "${h.token}" (${h.why})`);
-    console.error(`      ${h.text}`);
+const TARGETS = [
+  { label: 'js/engine.ts', path: resolve(root, 'js/engine.ts'), allow: new Set() },
+  { label: 'js/types.ts', path: resolve(root, 'js/types.ts'), allow: TYPES_ALLOW },
+];
+
+let failed = 0;
+for (const t of TARGETS) {
+  const hits = scanFile(t.path, t.allow);
+  if (hits.length) {
+    failed += hits.length;
+    console.error(`ENGINE NEUTRALITY: ${hits.length} genre leak(s) in ${t.label}`);
+    console.error('The genre-agnostic core must name no pack stat/resource/verb/flag.\n');
+    for (const h of hits) {
+      console.error(`  ${t.label}:${h.line}  "${h.token}" (${h.why})`);
+      console.error(`      ${h.text}`);
+    }
+    console.error('');
   }
-  console.error('\nMove the genre-specific logic into the owning pack plugin (see Epic 3).');
+}
+if (failed) {
+  console.error('Move the genre-specific logic into the owning pack plugin (see Epic 3).');
   process.exit(1);
 }
 
-console.log(`ENGINE NEUTRAL — js/engine.ts names none of ${blocked.size} pack tokens across ${GAME_PACKS.length} packs.`);
+console.log(`ENGINE NEUTRAL — js/engine.ts + js/types.ts name none of ${blocked.size} pack tokens across ${GAME_PACKS.length} packs (types allowlist: ${TYPES_ALLOW.size}).`);

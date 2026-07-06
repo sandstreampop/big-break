@@ -5,7 +5,7 @@
 // Influencer's Followers-on-drama quirk is read off pctx.hooks
 // (`followersOnDrama`) — a pack-custom key the engine never names.
 
-import { tagsIntersect } from '../../../engine.js';
+import { tagsIntersect, perkFlag } from '../../../engine.js';
 import { ANGLES, angleById } from '../angles.js';
 import type { Plugin } from '../../../types.js';
 
@@ -61,6 +61,20 @@ export const profilePlugin: Plugin = {
       return state.graft - before;
     }
     return undefined; // bond is the coupling plugin's
+  },
+
+  // "Exposed": an Angle flagged loseOnBad that fired this card is stripped when
+  // the card goes Bad (LI has no keepGearOnBad perk, so it always applies). Each
+  // pack owns dropping its own applied items — this used to be hardwired in the
+  // engine's resolveSwipe.
+  afterResolve(state, result, ctx) {
+    if (ctx.tier !== 'bad' || perkFlag(state, 'keepGearOnBad')) return;
+    for (const a of ctx.applied || []) {
+      if (a.loseOnBad && state.accessories.includes(a.id)) {
+        state.accessories = state.accessories.filter((id: string) => id !== a.id);
+        result.gearLost = a;
+      }
+    }
   },
 
   // The build pays out (R1/A3): an equipped Angle with a per-act stat grant

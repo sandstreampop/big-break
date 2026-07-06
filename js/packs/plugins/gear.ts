@@ -5,7 +5,7 @@
 // draws ctx.rng, so its position in the seeded stream is load-bearing.
 
 import { accessoryById, ACCESSORIES, gearPool, accessoryActive, equippedActive } from '../../data/accessories.js';
-import { applyEffects, tagsIntersect } from '../../engine.js';
+import { applyEffects, tagsIntersect, perkFlag } from '../../engine.js';
 import { CONFIG } from '../../config.js';
 import type { Plugin } from '../../types.js';
 
@@ -109,6 +109,20 @@ export const gearPlugin: Plugin = {
       } else {
         const acc = resolveGearGrant(state, effects.grantGear, rng);
         if (acc) deltas.pendingGear = acc; // UI equips (or swaps) it; sim auto-equips
+      }
+    }
+  },
+
+  // Lose-on-bad: an applied item flagged loseOnBad is dropped when the card
+  // goes Bad, unless a perk keeps gear bolted down. Reads the accessories whose
+  // bonus fired this card off cardCtx.applied (exposed generically by the core);
+  // this used to be hardwired in the engine's resolveSwipe.
+  afterResolve(state, result, ctx) {
+    if (ctx.tier !== 'bad' || perkFlag(state, 'keepGearOnBad')) return;
+    for (const acc of ctx.applied || []) {
+      if (acc.loseOnBad && state.accessories.includes(acc.id)) {
+        state.accessories = state.accessories.filter((a: string) => a !== acc.id);
+        result.gearLost = acc;
       }
     }
   },

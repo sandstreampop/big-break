@@ -36,13 +36,15 @@ test('mulberry32 is deterministic and stays in [0, 1)', () => {
   }
 });
 
-test('gateValue: stats from state.stats, resources top-level, unknown key = 0', () => {
+test('gateValue: stats from state.stats, resources top-level, unknown key throws', () => {
   const s = freshMusic();
   s.stats.skill = 37;
   s.fame = 88;
   assert.equal(engine.gateValue(s, 'skill'), 37);
   assert.equal(engine.gateValue(s, 'fame'), 88);
-  assert.equal(engine.gateValue(s, 'no_such_key'), 0);
+  // A typo'd key used to launder to a silent 0 (unreachable/trivial gate);
+  // now it fails loud.
+  assert.throws(() => engine.gateValue(s, 'no_such_key'), /unknown key/);
 });
 
 test('applyEffects: stat deltas apply, clamp to 0..100, and are reported', () => {

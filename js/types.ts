@@ -189,6 +189,10 @@ export interface PluginContext {
   hooks?: Record<string, any>;
   accs?: any[];
   mg?: any;
+  // The accessories whose roll bonus fired this card, exposed on the per-card
+  // ctx so a plugin (gear's lose-on-bad) can read them. Generic name — the core
+  // names no gear concept; a non-gear pack simply never sets or reads it.
+  applied?: any[];
   // Per-resolution scratch a plugin stashes for itself across the hooks of ONE
   // card: the engine hands the same context object to modifyEffects/onEffect/
   // afterResolve of a card, so a plugin needs no module-level state. Opaque to

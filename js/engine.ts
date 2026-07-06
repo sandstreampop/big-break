@@ -89,8 +89,17 @@ function clamp(v: number, lo: number, hi: number) {
 // Read any stat- or resource-key's value generically: core stats live in
 // state.stats, resources live top-level. Every winGates/requires key resolves
 // through here, so the core special-cases no key.
+//
+// A key that is neither a stat nor a materialized resource is almost certainly
+// a typo in a winGates/failStates/requires entry. Left alone that read a silent
+// 0 — passing the "resolves via gateValue" invariant while making a gate
+// unreachable or trivially met. newRun materializes every manifest resource
+// (and plugin stateDefault) up front, so a genuine key is always present; an
+// absent one is a bug, and we fail loud instead of laundering it to 0.
 export function gateValue(state: RunState, key: string): number {
-  return (key in state.stats) ? state.stats[key] : (state[key] ?? 0);
+  if (key in state.stats) return state.stats[key];
+  if (key in state) return (state as any)[key] ?? 0;
+  throw new Error(`gateValue: unknown key '${key}' — not a stat or a materialized resource (typo in a winGates/failStates/requires entry?)`);
 }
 
 // ---------- Run lifecycle ----------
@@ -507,6 +516,12 @@ function perkMult(state: RunState, key: string): number {
 function perkSum(state: RunState, key: string): number {
   return activePerks(state).reduce((n, p) => n + ((p as any)[key] ?? 0), 0);
 }
+// True if any active perk carries a truthy value at `key`. Generic: the engine
+// names no perk flag; a plugin passes its own key (e.g. the gear plugin reads
+// its keepGearOnBad here rather than the core naming a gear concept).
+export function perkFlag(state: RunState, key: string): boolean {
+  return activePerks(state).some((p) => !!(p as any)[key]);
+}
 
 // Roll components for a choice; used by both resolution and the risk tell.
 // opts.encore adds the armed-Encore bonus so odds and rolls stay in sync.
@@ -708,19 +723,12 @@ export function resolveSwipe(state: RunState, side: Side, rng: () => number = Ma
   }
 
   // Let plugins react after the card resolves, sharing the same cardCtx as
-  // modifyEffects so a per-card snapshot survives across the two hooks.
+  // modifyEffects so a per-card snapshot survives across the two hooks. The
+  // accessories whose bonus fired this card are exposed generically as
+  // cardCtx.applied so a plugin (gear's lose-on-bad) can read them — the core
+  // names no gear concept.
+  cardCtx.applied = c.appliedAccessories;
   firePlugins('afterResolve', state, result, cardCtx);
-
-  // An applied item flagged loseOnBad is dropped when the card goes Bad, unless
-  // a perk keeps gear bolted down.
-  if (tier === 'bad' && !activePerks(state).some((p) => p.keepGearOnBad)) {
-    for (const acc of c.appliedAccessories) {
-      if (acc.loseOnBad && state.accessories.includes(acc.id)) {
-        state.accessories = state.accessories.filter((a: string) => a !== acc.id);
-        result.gearLost = acc;
-      }
-    }
-  }
 
   if (effects.chainEventId) state.pendingChainId = effects.chainEventId;
 
