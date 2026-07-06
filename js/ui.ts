@@ -1722,6 +1722,11 @@ function showResult(result) {
     }
   }
 
+  // Unbounded staggered reveal (Epic 6): number every chip and notice in
+  // document order so the CSS cascade (--ri) keeps flowing across the whole
+  // result — the old nth-child ladder silently stopped after the first few.
+  [...box.querySelectorAll('.chip, .notice')].forEach(
+    (e, i) => (e as HTMLElement).style.setProperty('--ri', String(i)));
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
   if (result.deltas.some((d) => d.key === 'money' && d.amount > 0)) sfx.cash();

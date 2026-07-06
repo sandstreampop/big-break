@@ -392,7 +392,9 @@ body {
   touch-action: none;
 }
 .card.dragging { cursor: grabbing; transition: none; }
-.card:not(.dragging) { transition: transform .3s cubic-bezier(.2,.9,.3,1.2); }
+/* Springier snap-back (Epic 6): a touch more overshoot + time so a released
+   drag settles with a satisfying rebound instead of a flat glide. */
+.card:not(.dragging) { transition: transform .34s cubic-bezier(.34, 1.45, .45, 1); }
 .card.deal-in { transform: translate3d(0, 40px, 0) scale(.92); opacity: 0; }
 
 .card-art {
@@ -736,6 +738,9 @@ body.big-text #app { zoom: 1.18; }
   background: #1c1729;
   border-left: 3px solid #3b3352;
   animation: chipIn .3s backwards;
+  /* Staggered cascade driven by --ri (set from JS per element), so the reveal
+     keeps flowing past the old nth-child(3) cap however many rows land. */
+  animation-delay: calc(var(--ri, 0) * .055s);
 }
 .notice b { font-weight: 800; }
 .notice-good { border-left-color: var(--good); }
@@ -746,17 +751,14 @@ body.big-text #app { zoom: 1.18; }
   background: linear-gradient(135deg, #241e33, #2a1e3a);
   color: #e8dcff;
 }
-.notice:nth-child(2) { animation-delay: .07s; }
-.notice:nth-child(3) { animation-delay: .14s; }
 .chip {
   font-size: 12.5px; font-weight: 700;
   padding: 5px 10px; border-radius: 999px;
   animation: chipIn .3s backwards;
+  /* Unbounded stagger — index set from JS (see showResult), replacing the
+     nth-child ladder that silently stopped at the 5th chip. */
+  animation-delay: calc(var(--ri, 0) * .055s);
 }
-.chip:nth-child(2) { animation-delay: .07s; }
-.chip:nth-child(3) { animation-delay: .14s; }
-.chip:nth-child(4) { animation-delay: .21s; }
-.chip:nth-child(5) { animation-delay: .28s; }
 @keyframes chipIn { from { transform: scale(.6); opacity: 0; } }
 .chip-good { background: #1e3c2b; color: var(--good); }
 .chip-bad { background: #4a2030; color: var(--bad); }

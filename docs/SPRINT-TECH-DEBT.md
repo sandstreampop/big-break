@@ -368,6 +368,17 @@ stays behind the existing `reducedMotion()` guard.
 (reduced-motion discipline, easing vocabulary, existing juice) is already
 strong, so the polish lands cleanly and the game *feels* like a different tier.
 
+**Status — first polish landed.** Two safe, behaviorally-inert wins shipped:
+(1) the result reveal now uses an **unbounded** staggered cascade — the CSS
+`--ri` custom property drives `animation-delay`, set per element from JS in
+`showResult`, replacing the dead `nth-child(3/5)` ladder that silently stopped
+the stagger after a few rows; (2) a **springier card snap-back** — the release
+transition gains a touch more overshoot and time (`cubic-bezier(.34,1.45,.45,1)`
+over `.34s`). `ui-smoke` green on both games. **Follow-up:** the flagship
+shared-element card→result morph, the HUD delta-flights, and direction-aware
+screen transitions remain the big-ticket items (they need the `showResult`
+overlay migrated to `openOverlay` and a FLIP/spring primitive).
+
 ---
 
 ## Epic 7 — Accessibility pass
