@@ -53,6 +53,34 @@ const el = (tag, cls?, html?) => {
   return n;
 };
 
+// Make a click-only div/span keyboard-operable (Epic 7): a real button role,
+// focusable, and Enter/Space activates it exactly like a click. Copies the
+// risk-dot aria-label pattern. Returns the element. Use in place of a bare
+// `node.addEventListener('click', handler)` on non-<button> interactive elements.
+function activatable<T extends HTMLElement>(node: T, handler: (e: Event) => void, label?: string): T {
+  node.setAttribute('role', 'button');
+  node.setAttribute('tabindex', '0');
+  if (label) node.setAttribute('aria-label', label);
+  node.addEventListener('click', handler);
+  node.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(e); }
+  });
+  return node;
+}
+
+// Same keyboard operability for an element whose click handler is ALREADY
+// wired (multi-line handlers we don't want to restructure): Enter/Space just
+// synthesizes the click. Returns the element.
+function keyable<T extends HTMLElement>(node: T, label?: string): T {
+  node.setAttribute('role', 'button');
+  node.setAttribute('tabindex', '0');
+  if (label) node.setAttribute('aria-label', label);
+  node.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); node.click(); }
+  });
+  return node;
+}
+
 // Fill {token} placeholders with this run's identities. A pack that ships its
 // own token vocabulary provides presenter.fillTokens; the default resolves the
 // music tokens ({rival}/{genre}/{song}/{venue}…) exactly as before.
@@ -530,7 +558,7 @@ function renderInstrumentRow(s, offered, chosenId, onPick) {
     card.append(el('p', 'pick-mods', modsText(inst.modifiers) + (lv ? ` · Mastery +${lv} to all stats` : '')));
     // A pack's loadouts may not carry a signature quirk.
     if (inst.quirk) card.append(el('p', 'pick-quirk', `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`));
-    card.addEventListener('click', () => { sfx.ui(); onPick(inst.id); });
+    activatable(card, () => { sfx.ui(); onPick(inst.id); }, inst.name);
     row.append(card);
   }
   s.append(row);
@@ -601,6 +629,7 @@ function startGauntlet() {
     });
     dealCard();
   });
+  keyable(card, inst.name);
   sheet.append(card);
   s.append(sheet);
   const menu = el('div', 'menu');
@@ -689,7 +718,7 @@ function renderHud() {
     const v = run.stats[key];
     const item = el('div', 'stat' + (key === 'burnout' ? ' stat-burnout' : ''));
     item.dataset.stat = key;
-    item.addEventListener('click', () => { sfx.ui(); showInspectStat(key); });
+    activatable(item, () => { sfx.ui(); showInspectStat(key); });
     if (key === 'burnout' && v >= 70) item.classList.add('danger');
     else if (key === 'burnout' && v >= 45) item.classList.add('warn');
     item.title = STAT_META[key].name;
@@ -708,7 +737,7 @@ function renderHud() {
   const gearRow = el('div', 'gear-row');
   const chip = (cls, html, sheet) => {
     const c = el('span', cls, html);
-    c.addEventListener('click', () => { sfx.ui(); showInspect(sheet); });
+    activatable(c, () => { sfx.ui(); showInspect(sheet); });
     gearRow.append(c);
   };
   const inst = activePack.loadoutById(run.loadout);
@@ -866,7 +895,7 @@ function renderStage(ev) {
     slot.append(el('div', 'stage-face', `${s.face}${s.moodFace ? `<span class="stage-moodface">${s.moodFace}</span>` : ''}`));
     slot.append(el('div', 'stage-name', s.name));
     if (s.read) slot.append(el('div', 'stage-read', s.read));
-    if (s.sheet) slot.addEventListener('click', () => { sfx.ui(); showInspect(s.sheet); });
+    if (s.sheet) activatable(slot, () => { sfx.ui(); showInspect(s.sheet); });
     host.append(slot);
   }
 }
@@ -1306,7 +1335,7 @@ function showStatusDrawer() {
     (bar.querySelector('.stat-fill') as HTMLElement).style.width = `${v}%`;
     row.append(bar);
     row.append(el('span', 'drawer-stat-val', String(v)));
-    row.addEventListener('click', (e) => { e.stopPropagation(); sfx.ui(); showInspectStat(key); });
+    activatable(row, (e) => { e.stopPropagation(); sfx.ui(); showInspectStat(key); });
     list.append(row);
   }
   box.append(list);
@@ -1428,6 +1457,7 @@ function showChart() {
       else state = s.quality >= 68 ? 'demo — might be undeniable' : s.quality >= 52 ? 'demo — something’s there' : s.quality >= 38 ? 'demo — rough but honest' : 'demo — it exists';
       row.innerHTML = `<b>“${s.title}”</b><span class="sb-state">${state}</span>`;
       // tap a song to unfold its biography
+      keyable(row, s.title);
       row.addEventListener('click', (e) => {
         e.stopPropagation();
         const open = row.nextElementSibling?.classList?.contains('sb-detail');
@@ -2127,6 +2157,7 @@ function renderFinalSetScreen(head, sub, options) {
       opt.apply(run);
       renderFinale();
     });
+    keyable(card, opt.title);
     row.append(card);
   }
   s.append(row);
@@ -2293,6 +2324,7 @@ function renderCrossroads() {
       actInterstitial({ kind: 'actStart', act: run.act, notes });
       show('#screen-game');
     });
+    keyable(card, p.name);
     row.append(card);
   }
   s.append(row);
@@ -2869,7 +2901,7 @@ function renderSettings() {
       ? `<span class="switch-pill${value ? ' on' : ''}">${pillText}</span>`
       : `<span class="switch${value ? ' on' : ''}"></span>`;
     row.innerHTML = `<span>${label}</span>${sw}`;
-    row.addEventListener('click', () => { onTap(); save.saveMeta(meta); renderSettings(); });
+    activatable(row, () => { onTap(); save.saveMeta(meta); renderSettings(); });
     menu.append(row);
   };
 
