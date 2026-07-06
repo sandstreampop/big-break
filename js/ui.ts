@@ -100,17 +100,31 @@ function openOverlay(
   if (stale) { ov.removeEventListener('click', stale); (ov as any)._bbClose = null; }
   ov.innerHTML = '';
   ov.classList.add('active');
+  // Accessibility (Epic 7): the modal announces itself, takes focus, closes on
+  // Escape, and restores focus to whatever opened it. Screen-reader + keyboard
+  // users got none of this before.
+  const prevFocus = document.activeElement as HTMLElement | null;
+  ov.setAttribute('role', 'dialog');
+  ov.setAttribute('aria-modal', 'true');
+  ov.setAttribute('tabindex', '-1');
   let closed = false;
+  const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
   const close = () => {
     if (closed) return;
     closed = true;
     ov.classList.remove('active');
     ov.removeEventListener('click', close);
+    document.removeEventListener('keydown', onKey);
+    ov.removeAttribute('aria-modal');
+    ov.removeAttribute('role');
     (ov as any)._bbClose = null;
+    prevFocus?.focus?.();
     opts.onClose?.();
   };
   build(ov, close);
   (ov as any)._bbClose = close;
+  document.addEventListener('keydown', onKey);
+  ov.focus?.();
   setTimeout(() => ov.addEventListener('click', close), opts.armMs ?? 200);
   return close;
 }
@@ -1557,6 +1571,10 @@ function showResult(result) {
   ov.classList.add('active');
 
   const box = el('div', `result-card tier-${result.tier}`);
+  // Announce the outcome to assistive tech (Epic 7): a swipe result was
+  // previously silent for screen-reader users. role="status" makes the card a
+  // polite live region, so the tier + text + deltas are read on reveal.
+  box.setAttribute('role', 'status');
   if (result.tier === 'incredible') spawnConfetti(ov);
   if ((result.tier === 'bad' || result.tier === 'declined') && !reducedMotion()) {
     box.classList.add('shake');

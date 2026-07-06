@@ -407,6 +407,16 @@ run so a11y regressions gate like everything else.
 **Why it's satisfying.** It pairs naturally with Epic 4's overlay work (one
 place to fix focus), and it widens who can actually play a phone-first game.
 
+**Status — overlay a11y + result announce landed.** `openOverlay` (Epic 4) now
+sets `role="dialog"` + `aria-modal`, moves focus into the modal, closes on
+**Escape**, and restores focus to whatever opened it — so all five migrated
+overlays are keyboard-dismissable and screen-reader-announced in one place. The
+result card gains `role="status"`, making the swipe outcome (tier + text +
+deltas) a polite live region instead of silent. `ui-smoke` green.
+**Follow-up:** real `<button>`/`role`/`tabindex` + key handlers for the
+click-`div` interactive elements (pick-cards, stat rows, path cards, chart
+rows), and an axe-core pass wired into the smoke run.
+
 ---
 
 ## Epic 8 — Faster, sturdier CI
