@@ -49,11 +49,13 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm' # cache ~/.npm keyed on package-lock.json — cold npm ci was uncached
       - name: Install pinned toolchain
         run: npm ci
       - name: Build dist/ (tsc emit + static copy)
@@ -82,10 +84,19 @@ jobs:
         # needs a browser this job doesn't install; the UI smoke test is run
         # separately (npm run check / the android+ios harness jobs install browsers).
         run: node --test test/*.test.mjs
+      - name: Cache Playwright browsers
+        # The browser binaries were re-downloaded cold every run — the single
+        # largest wall-clock item. Cache them keyed on the pinned Playwright
+        # version; a miss just downloads as before.
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - name: Install Chromium (the browser UI gates below)
         # The UI suites skip cleanly when no browser exists — which silently
         # waives the ONLY coverage for phone-layout regressions. Install the
-        # browser so they actually gate the deploy.
+        # browser so they actually gate the deploy. On a cache hit the binaries
+        # are already present, so this only fetches missing system deps.
         run: npx playwright install --with-deps chromium
       - name: UI smoke gate (each game to its finale, headless Chromium)
         run: node test/ui-smoke.mjs

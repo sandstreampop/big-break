@@ -450,6 +450,17 @@ retiring the naming-convention hack; add a combined `npm run ci` that runs both
 minutes per push) for almost no risk, and it closes the "green while testing
 nothing" footgun that undermines trust in the gate.
 
+**Status — caching landed.** `cache: 'npm'` added to every `setup-node`
+(pages check, android, ios, posthog-pull), a Playwright-browser cache
+(`~/.cache/ms-playwright`, keyed on the lockfile) added before each browser
+install (chromium in pages + android, webkit in ios), and `timeout-minutes`
+added to the check/android/ios jobs. (The redundant deploy rebuild was already
+removed upstream — `check` now produces the Pages artifact and `deploy` only
+publishes it.) All five workflow files re-validated as parseable YAML.
+**Follow-up:** the loud-skip `REQUIRE_BROWSER` flag, replacing fixed
+`waitForTimeout` sleeps with `waitForFunction`, and retiring the `*.test.mjs`
+glob convention remain.
+
 ---
 
 ## Epic 9 — The test suite we never wrote

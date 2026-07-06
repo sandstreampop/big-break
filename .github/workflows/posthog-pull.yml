@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
+        with: { node-version: 22, cache: 'npm' }
       # coverage.md diffs observed play against the BUILT content catalogs
       # (dist/) — the pinned toolchain, same as every other consumer.
       - name: Build content catalogs
