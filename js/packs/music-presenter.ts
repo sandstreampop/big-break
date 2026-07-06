@@ -23,4 +23,31 @@ export const musicPresenter: Presenter = {
   // The weekly Gauntlet builds its fixed loadout from music data (contracts,
   // genres), so the mode is this pack's to declare.
   gauntlet: true,
+
+  // Music's own telemetry taxonomy (Epic 5). The shell emits the neutral spine
+  // (mode, outcome, cards, burnout, lp, career_runs) and the pack's summarize
+  // fields; these are music's props that AREN'T in summarize — instrument,
+  // genre/venue/contract picks and mastery at start; the fame/hits meters, the
+  // chart peak and equipped gear at end. Emitting the same keys the shell used
+  // to hardcode, so the existing PostHog insights keep working.
+  runProps: (state, moment) => {
+    if (moment === 'start') {
+      return {
+        instrument: state.loadout,
+        contract: state.contract || 'none',
+        genre: state.genre || 'none',
+        venue: state.venue || 'none',
+        mastery: state.mastery || 0,
+      };
+    }
+    const chartPeak = (state.songs || []).reduce(
+      (best: number | null, s: any) => (s.peak && (!best || s.peak < best) ? s.peak : best), null);
+    return {
+      instrument: state.loadout,
+      fame: state.fame,
+      hits: state.hits,
+      chart_peak: chartPeak || null,
+      gear: (state.accessories || []).slice().sort().join(','),
+    };
+  },
 };

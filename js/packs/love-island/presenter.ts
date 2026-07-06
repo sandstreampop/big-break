@@ -610,4 +610,19 @@ export const loveIslandPresenter: Presenter = {
     li_end_walk: { e: '🚕', s: 'street' },
     li_end_dumped: { e: '🧳', s: 'crisis' },
   },
+
+  // The villa's own telemetry taxonomy (Epic 5). The shell owns the neutral
+  // spine and flattens `summarize` (partner/bond/gender/rival/casaOutcome…); this
+  // adds the props NOT in summarize — the persona at start, and the public-facing
+  // meters at end. The villa no longer reports music's instrument/genre/venue.
+  runProps: (state, moment) => {
+    if (moment === 'start') {
+      return { persona: state.loadout, gender: state.gender || 'none' };
+    }
+    return {
+      persona: state.loadout,
+      followers: state.followers ?? 0,
+      public_vote: state.public ?? 0,
+    };
+  },
 };

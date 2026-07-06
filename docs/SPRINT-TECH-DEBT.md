@@ -314,6 +314,19 @@ streams are legible.
 principle is silently broken, and it immediately makes Love Island's playtest
 data actually measure Love Island — turning a stream of `none`s into signal.
 
+**Status — landed.** `Presenter.runProps(state, moment)` shipped. The shell's
+`run_start`/`run_end` now emit only the genre-neutral spine (mode, outcome,
+path, cause, cards, burnout, lp, career_runs, last_card) plus the pack's
+`summarize` fields (already generic) plus `...PRES.runProps`. Music's presenter
+returns its exact former keys (`instrument/contract/genre/venue/mastery` at
+start; `instrument/fame/hits/chart_peak/gear` at end) so every existing PostHog
+insight keeps working — verified key-by-key for parity, with 228 goldens and
+`ui-smoke` green. Love Island now reports `persona/gender/followers/public_vote`
++ its own `summarize` taxonomy instead of music's `genre:'none'`/`fame:undefined`
+noise. `docs/telemetry.md` updated to the neutral-spine + pack-props schema.
+**Follow-up:** the gauntlet `run_start` (music-only mode) still inlines its
+props; routing it through the hook is a small consistency tidy.
+
 ---
 
 ## Epic 6 — Gorgeous transitions & choreography

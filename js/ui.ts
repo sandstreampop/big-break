@@ -385,11 +385,12 @@ function startNewRun(daily = false, comeback = false) {
     run.firstRun = (meta.runs || 0) === 0; // a pack may key onboarding off this
     run.history = (meta.history || []).slice(); // the memory ledger (packs author off it; sims never set it)
     save.saveRun(run);
+    // Genre-neutral spine only; the pack contributes its own taxonomy
+    // (music: instrument/contract/genre/venue/mastery) via PRES.runProps.
     track('run_start', {
-      instrument: inst.id, contract: chosenContract || 'none',
-      genre: chosenGenre || 'none', venue: chosenVenue || 'none',
       mode: daily ? 'daily' : comeback ? 'comeback' : 'normal',
-      mastery: lv, career_runs: meta.runs || 0,
+      career_runs: meta.runs || 0,
+      ...(PRES.runProps?.(run, 'start') || {}),
     });
     dealCard();
   };
@@ -2377,10 +2378,11 @@ function runMode(r) {
 // members, gear, and hustles players actually meet). Lists are sorted,
 // comma-joined strings so HogQL can splitByChar+arrayJoin them.
 function runContentProps(r, summary) {
-  const join = (a) => (a || []).slice().sort().join(',');
   // The pack's own run-summary fields ride run_end generically (R3/G2):
   // scalars as-is, arrays joined, objects skipped — a pack instruments its
-  // subsystems by extending its summarize, never this file.
+  // subsystems by extending its summarize, never this file. Genre-specific
+  // props NOT in summarize (music's gear/instrument/chart_peak) come from
+  // PRES.runProps; only the genre-neutral run-meta keys live here now.
   const packProps = {};
   if (activePack.summarize) {
     for (const [k, v] of Object.entries(activePack.summarize(r))) {
@@ -2390,10 +2392,6 @@ function runContentProps(r, summary) {
     }
   }
   return {
-    rival: r.rival || 'none',
-    band: join(summary.band),
-    gear: join(r.accessories),
-    hustles: join(r.hustles),
     career_runs: meta.runs || 0,
     last_card: (r.cardLog || [])[r.cardLog?.length - 1]?.e || 'none',
     ...packProps,
@@ -2419,10 +2417,9 @@ function renderFinale() {
   const ending = PRES.endings[run.path][evalr.result];
   track('run_end', {
     outcome: evalr.result, path: run.path, cause: 'finale', mode: runMode(run),
-    cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
-    burnout: run.stats.burnout, lp, instrument: summary.loadout,
-    contract: summary.contract || 'none', chart_peak: summary.chartPeak || null,
+    cards: (summary.cardLog || []).length, burnout: run.stats.burnout, lp,
     ...runContentProps(run, summary),
+    ...(PRES.runProps?.(run, 'end') || {}),
   });
   if (evalr.result === 'success') sfx.winPath(run.path); else if (evalr.result === 'failure') sfx.gameover(); else sfx.good();
   renderEndingScreen(ending, lp, earned, evalr, summary);
@@ -2440,11 +2437,10 @@ function renderGameOver(endingKey) {
   const earned = finishMeta(summary, lp);
   track('run_end', {
     outcome: 'gameover', path: run.path || null, cause: endingKey, mode: runMode(run),
-    cards: (summary.cardLog || []).length, fame: summary.fame, hits: summary.hits,
-    burnout: run.stats.burnout, lp, instrument: summary.loadout,
-    contract: summary.contract || 'none', chart_peak: summary.chartPeak || null,
+    cards: (summary.cardLog || []).length, burnout: run.stats.burnout, lp,
     exit: run.exitChoice || 'none',
     ...runContentProps(run, summary),
+    ...(PRES.runProps?.(run, 'end') || {}),
   });
   sfx.gameover();
   renderEndingScreen(PRES.endings[endingKey], lp, earned, null, summary);

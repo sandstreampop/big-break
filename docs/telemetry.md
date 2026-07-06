@@ -26,16 +26,22 @@ Three ways to read the data:
 
 All properties are game state — no PII. `properties.` prefix in HogQL.
 
-| event | properties |
-|---|---|
-| `run_start` | `instrument, contract, genre, venue, mode(normal\|daily\|comeback\|gauntlet), mastery, career_runs` |
-| `swipe` | `card, side(left\|right), tier(bad\|good\|incredible\|declined), act, path, tutorial, encore_armed, burnout` |
-| `run_end` | `outcome(success\|partial\|failure\|gameover), path, cause(finale\|burnout\|cancelled\|debt), mode, cards, fame, hits, lp, instrument, contract, chart_peak, rival, exit(gameover only), band, gear, hustles` |
-| `minigame` | `id, card, score(null when skipped), bonus, skipped` |
-| `trophy` | `id` (one event per trophy earned) |
-| `tutorial_start` | `replay` |
-| `tutorial_complete` | `first_time` |
-| `tutorial_skip` | — |
+The shell owns each event's **genre-neutral spine**; the active pack contributes
+its OWN taxonomy via `Presenter.runProps(state, moment)` (Epic 5), so a second
+game reports its concepts instead of music's. The music keys below are unchanged
+(these insights keep working); Love Island reports `persona, gender,
+followers, public_vote` plus its `summarize` fields instead.
+
+| event | neutral spine (shell) | pack props (music, via `runProps`) |
+|---|---|---|
+| `run_start` | `mode(normal\|daily\|comeback\|gauntlet), career_runs` | `instrument, contract, genre, venue, mastery` |
+| `swipe` | `card, side(left\|right), tier(bad\|good\|incredible\|declined), act, path, tutorial, encore_armed, burnout` | — (all engine concepts) |
+| `run_end` | `outcome(success\|partial\|failure\|gameover), path, cause(finale\|burnout\|cancelled\|debt), mode, cards, burnout, lp, career_runs, last_card, exit(gameover only)` | `instrument, fame, hits, chart_peak, gear` + `summarize` fields (`rival, contract, band, hustles, chartPeak, genre, venue, …`) |
+| `minigame` | `id, card, score(null when skipped), bonus, skipped` | |
+| `trophy` | `id` (one event per trophy earned) | |
+| `tutorial_start` | `replay` | |
+| `tutorial_complete` | `first_time` | |
+| `tutorial_skip` | — | |
 
 Every event also carries `app_version` and, since the unique-player pass,
 three non-PII identity super-properties: `install_id` (a random UUID

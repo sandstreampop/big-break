@@ -434,6 +434,14 @@ export interface Presenter {
   finalSet?: (state: RunState) => { head: string; sub: string; options: any[] };
   // Share text for a finished run.
   shareText?: (summary: any, lp: number) => string;
+  // Pack-owned telemetry props (Epic 5). The shell owns the genre-NEUTRAL spine
+  // of the run_start / run_end events (mode, outcome, path, cards, burnout, lp,
+  // career_runs) and merges the pack's OWN taxonomy here — so a second game
+  // reports ITS concepts (its persona, its meters) instead of music's
+  // instrument/genre/venue/fame/hits. A pure read of state; `moment` is
+  // 'start' | 'end'. (The pack's summarize() fields already ride run_end
+  // generically; this is for the props that aren't in summarize.)
+  runProps?: (state: RunState, moment: 'start' | 'end') => Record<string, any>;
   // Short verdict labels for the pack's fail-state endings (ribbon/history).
   failLabels?: Record<string, string>;
   // The act-twist note (engine pushes a neutral marker; packs word it).
