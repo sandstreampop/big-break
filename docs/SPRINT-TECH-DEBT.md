@@ -257,6 +257,20 @@ stage on **every single card deal** (`dealCard:808` → `renderHud:548`).
 file, turns "adding a third pack" into genuinely *new files only*, and is the
 prerequisite that unlocks Epics 5, 6 and 7.
 
+**Status — overlay engine landed.** The centerpiece `openOverlay(build, {armMs,
+onClose})` helper shipped (near `show()`), and the five overlays that share the
+exact simple pattern — `showInspect`, `showStatusDrawer`, `showHelp`,
+`showScrapbook`, `showSetPieceBeat` — now use it, deleting their duplicated
+clear/activate/`done`/`setTimeout` boilerplate. The helper also fixes the
+latent stale-listener bug (a prior overlay's click handler left armed on the
+shared node is now torn down on open; `close()` is idempotent). Verified by
+`ui-smoke` (both games to finale, no page errors). **Follow-up:** the five
+overlays with bespoke internal close logic (`showResult`, `gearChooser`,
+`showBrammies`, `actInterstitial`, `showExitInterview`) and the file split into
+`ui/{overlay,card,hud,screens}` remain — plus the `renderHud` full-rebuild-per-
+deal and moving the hardcoded music surfaces behind presenter hooks (Brammies,
+chart-week, notices cascade), which dovetails with Epic 5.
+
 ---
 
 ## Epic 5 — Pack-owned telemetry

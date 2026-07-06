@@ -81,6 +81,40 @@ function show(id) {
   $(id).classList.add('active');
 }
 
+// ---------- Overlay engine (Epic 4) ----------
+// Every simple modal was a verbatim copy of the same five lines: clear the
+// shared #overlay, activate it, build content, then — after a short delay so
+// the tap that OPENED it doesn't immediately dismiss it — arm a
+// tap-anywhere-to-close listener. This centralizes that. `build` receives the
+// overlay node and a `close()` it may wire to its own buttons; `onClose` runs
+// after close; `armMs` overrides the dismiss-arm delay. It also fixes a latent
+// bug the copies shared: opening a new overlay during the arm window used to
+// leave the previous overlay's click listener attached to the shared node —
+// here a stale listener is torn down on open, and close() is idempotent.
+function openOverlay(
+  build: (ov: HTMLElement, close: () => void) => void,
+  opts: { armMs?: number; onClose?: () => void } = {},
+) {
+  const ov = $('#overlay');
+  const stale = (ov as any)._bbClose;
+  if (stale) { ov.removeEventListener('click', stale); (ov as any)._bbClose = null; }
+  ov.innerHTML = '';
+  ov.classList.add('active');
+  let closed = false;
+  const close = () => {
+    if (closed) return;
+    closed = true;
+    ov.classList.remove('active');
+    ov.removeEventListener('click', close);
+    (ov as any)._bbClose = null;
+    opts.onClose?.();
+  };
+  build(ov, close);
+  (ov as any)._bbClose = close;
+  setTimeout(() => ov.addEventListener('click', close), opts.armMs ?? 200);
+  return close;
+}
+
 // ---------- Title ----------
 
 // The delivery contract, verified at boot: the build stamps the stylesheet's
@@ -845,24 +879,21 @@ function dealCard() {
 // The framed moment: full-screen banner + stakes, one tap to the card.
 // The feel cues (R11's mood contract) play here, at the beat.
 function showSetPieceBeat(sp, cont) {
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
-  vibrate(sp.mood === 'blow' ? [60, 40, 90] : [12, 30, 12]);
-  const box = el('div', 'result-card sp-beat ' + (sp.cls || ''));
-  if (sp.mood === 'triumph') { spawnConfetti(ov); sfx.win(); }
-  if (sp.mood === 'blow' && !reducedMotion()) box.classList.add('shake');
-  box.append(el('div', 'set-piece-banner sp-beat-banner', sp.banner));
-  if (sp.sub) box.append(el('div', 'set-piece-sub sp-beat-sub', fillText(sp.sub)));
-  if (sp.stakes?.length) {
-    const st = el('div', 'set-piece-stakes sp-beat-stakes');
-    for (const stake of sp.stakes) st.append(el('div', 'sp-stake ' + (stake.cls || ''), fillText(stake.html)));
-    box.append(st);
-  }
-  box.append(el('p', 'tap-hint', 'tap to continue'));
-  ov.append(box);
-  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); cont(); };
-  setTimeout(() => ov.addEventListener('click', done), 250);
+  openOverlay((ov) => {
+    vibrate(sp.mood === 'blow' ? [60, 40, 90] : [12, 30, 12]);
+    const box = el('div', 'result-card sp-beat ' + (sp.cls || ''));
+    if (sp.mood === 'triumph') { spawnConfetti(ov); sfx.win(); }
+    if (sp.mood === 'blow' && !reducedMotion()) box.classList.add('shake');
+    box.append(el('div', 'set-piece-banner sp-beat-banner', sp.banner));
+    if (sp.sub) box.append(el('div', 'set-piece-sub sp-beat-sub', fillText(sp.sub)));
+    if (sp.stakes?.length) {
+      const st = el('div', 'set-piece-stakes sp-beat-stakes');
+      for (const stake of sp.stakes) st.append(el('div', 'sp-stake ' + (stake.cls || ''), fillText(stake.html)));
+      box.append(st);
+    }
+    box.append(el('p', 'tap-hint', 'tap to continue'));
+    ov.append(box);
+  }, { armMs: 250, onClose: cont });
 }
 
 // The card, alone on its screen (ADR-0009 Tier 1); a set-piece card keeps
@@ -1208,18 +1239,15 @@ const STAT_INFO = {
 };
 
 function showInspect(sheet) {
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
-  const box = el('div', 'result-card');
-  box.append(el('div', 'tier-badge', 'INSPECT'));
-  if (sheet.art) box.append(artFor(sheet.art, 'inspect-art'));
-  box.append(el('p', 'result-text', `${sheet.emoji ? sheet.emoji + ' ' : ''}<b>${sheet.title}</b>`));
-  for (const line of sheet.lines || []) box.append(el('p', 'gear-blurb', line));
-  box.append(el('p', 'tap-hint', 'tap to close'));
-  ov.append(box);
-  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
-  setTimeout(() => ov.addEventListener('click', done), 200);
+  openOverlay((ov) => {
+    const box = el('div', 'result-card');
+    box.append(el('div', 'tier-badge', 'INSPECT'));
+    if (sheet.art) box.append(artFor(sheet.art, 'inspect-art'));
+    box.append(el('p', 'result-text', `${sheet.emoji ? sheet.emoji + ' ' : ''}<b>${sheet.title}</b>`));
+    for (const line of sheet.lines || []) box.append(el('p', 'gear-blurb', line));
+    box.append(el('p', 'tap-hint', 'tap to close'));
+    ov.append(box);
+  });
 }
 
 // The status drawer (ADR-0009 Tier 3): the full picture the compact HUD
@@ -1227,9 +1255,7 @@ function showInspect(sheet) {
 // items. Generic: rendered entirely from manifest + run state; tapping a
 // stat row opens its inspector.
 function showStatusDrawer() {
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
+  openOverlay((ov) => {
   const box = el('div', 'result-card drawer-sheet');
   box.append(el('div', 'tier-badge', 'THE FULL PICTURE'));
 
@@ -1271,8 +1297,7 @@ function showStatusDrawer() {
 
   box.append(el('p', 'tap-hint', 'tap to close'));
   ov.append(box);
-  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
-  setTimeout(() => ov.addEventListener('click', done), 200);
+  });
 }
 
 function showInspectStat(key) {
@@ -1286,9 +1311,7 @@ function showInspectStat(key) {
 // ---------- Help sheet + first-run coach marks (Pass 12) ----------
 
 function showHelp() {
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
+  openOverlay((ov) => {
   const box = el('div', 'result-card help-sheet');
   box.append(el('div', 'tier-badge', 'HOW THIS WORKS'));
   box.append(el('p', 'help-block',
@@ -1315,8 +1338,7 @@ function showHelp() {
   for (const b of helpBlocks) box.append(el('p', 'help-block', b));
   box.append(el('p', 'tap-hint', 'tap to close'));
   ov.append(box);
-  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
-  setTimeout(() => ov.addEventListener('click', done), 200);
+  });
 }
 
 // Coach marks stay up until the player taps them — reading speed is the
@@ -2640,9 +2662,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
 // ---------- Scrapbook (Pass 11) ----------
 
 function showScrapbook(summary) {
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
+  openOverlay((ov) => {
   const box = el('div', 'result-card scrapbook');
   box.append(el('div', 'tier-badge', 'THE SCRAPBOOK'));
   let lastAct = 0;
@@ -2664,8 +2684,7 @@ function showScrapbook(summary) {
   }
   box.append(el('p', 'tap-hint', 'tap to close'));
   ov.append(box);
-  const done = () => { ov.classList.remove('active'); ov.removeEventListener('click', done); };
-  setTimeout(() => ov.addEventListener('click', done), 200);
+  });
 }
 
 // ---------- Career Wall ----------
