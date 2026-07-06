@@ -191,6 +191,16 @@ export interface PluginContext {
   venueThisCard?: any;         // venue: the room as it was before adoptVenue could fire this card
   hostedThisCard?: boolean;    // venue: did the adopted room host this card's show?
 }
+// A per-resolution "gain-multiplier bag" a plugin contributes via gainHooks.
+// The engine's stat/burnout loops apply these right after the loadout's own
+// multipliers, in registration order. Every field is optional and multiplicative
+// (identity 1), so a plugin returning an empty bag changes nothing.
+export interface GainBag {
+  statGainMult?: Record<string, number>; // per-stat positive-gain multiplier
+  burnoutGainMult?: number;              // scales burnout GAIN (positive deltas)
+  burnoutHealMult?: number;              // scales burnout RELIEF (negative deltas)
+}
+
 export interface Plugin {
   id: string;
   // Plugins fire in ascending priority (default 0), ties broken by registration
@@ -262,7 +272,7 @@ export interface Plugin {
   // burnoutHealMult? } a plugin contributes, applied by the engine's stat/burnout
   // loops in registration order right after the loadout's own — the core keeps
   // the multiplier mechanic while the sources stay plugins.
-  gainHooks?(state: RunState): any;
+  gainHooks?(state: RunState): GainBag | null | undefined;
   // Whether this plugin disables the Encore mechanic this run. OR'd across plugins.
   blocksEncore?(state: RunState): boolean;
   // Adjust the burnout delta a card lands, between the loadout's own burnout

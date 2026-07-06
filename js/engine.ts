@@ -2,7 +2,7 @@
 // module runs in the browser and in the sims. It imports no content module.
 
 import { CONFIG } from './config.js';
-import type { Pack, RunState, Plugin, GameEvent, Choice, Side, Requires, Tier } from './types.js';
+import type { Pack, RunState, Plugin, GameEvent, Choice, Side, Requires, Tier, GainBag } from './types.js';
 
 // ---------- Injected content pack ----------
 // A genre is a Pack, injected at run start (newRun) and re-affirmed at
@@ -410,60 +410,85 @@ function firePlugins(hook: PluginHook, ...args: any[]): void {
   }
 }
 
-// ── The modify-hook folds. Each gathers the plugins' contribution to one core
-// mechanic in registration order, so the core keeps the mechanic while the
-// sources stay subsystems it never names. ──
+// ── Plugin-fold combinators. The five ways the engine combines a plugin hook's
+// contribution to a core mechanic, each iterating orderedPlugins() ONCE, in
+// registration/priority order. Every modify-fold below is a one-line adapter
+// over one of these — so "how does the engine combine plugin X?" is answered in
+// exactly one place, and the core keeps the mechanic while never naming a
+// plugin. A hook that returns undefined (i.e. the plugin didn't implement it)
+// contributes the combinator's identity. ──
+
+// Σ of a numeric hook (identity 0).
+function sum(fn: (p: Plugin) => number | undefined): number {
+  let n = 0;
+  for (const p of orderedPlugins()) n += fn(p) ?? 0;
+  return n;
+}
+// Π of a numeric hook (identity 1) — float-exact, so no-multiplier runs are unchanged.
+function product(fn: (p: Plugin) => number | undefined): number {
+  let m = 1;
+  for (const p of orderedPlugins()) m *= fn(p) ?? 1;
+  return m;
+}
+// OR of a predicate hook (identity false), short-circuiting.
+function some(fn: (p: Plugin) => boolean | undefined): boolean {
+  for (const p of orderedPlugins()) if (fn(p)) return true;
+  return false;
+}
+// Gather each plugin's truthy contribution into a list.
+function collect<T>(fn: (p: Plugin) => T | undefined | null): T[] {
+  const out: T[] = [];
+  for (const p of orderedPlugins()) { const v = fn(p); if (v) out.push(v); }
+  return out;
+}
+// Thread an accumulator through the plugins that implement the hook — each
+// receives the running value and returns the next (undefined = leave unchanged).
+function foldChain<T>(seed: T, fn: (p: Plugin, acc: T) => T | undefined): T {
+  let acc = seed;
+  for (const p of orderedPlugins()) { const next = fn(p, acc); if (next !== undefined) acc = next; }
+  return acc;
+}
+
+// ── The modify-folds: one adapter per core mechanic, over the combinators above. ──
 
 // Additive roll bonus, summed across plugins.
 function sumRollBonus(state: RunState, choice: Choice, ctx: any): number {
-  let bonus = 0;
-  for (const p of orderedPlugins()) bonus += p.modifyRoll?.(state, choice, ctx) ?? 0;
-  return bonus;
+  return sum((p) => p.modifyRoll?.(state, choice, ctx));
 }
 // Fold each plugin's transform of the roll's jitter band.
 function foldJitter(state: RunState, jitter: [number, number], ctx: any): [number, number] {
-  for (const p of orderedPlugins()) if (p.modifyJitter) jitter = p.modifyJitter(state, jitter, ctx);
-  return jitter;
+  return foldChain(jitter, (p, j) => p.modifyJitter?.(state, j, ctx));
 }
 // The per-resolution gain-multiplier bags plugins contribute, applied by the
 // stat/burnout loops after the loadout's own (core).
-function gainBags(state: RunState): any[] {
-  const bags: any[] = [];
-  for (const p of orderedPlugins()) { const b = p.gainHooks?.(state); if (b) bags.push(b); }
-  return bags;
+function gainBags(state: RunState): GainBag[] {
+  return collect((p) => p.gainHooks?.(state));
 }
 // Does any plugin disable the Encore mechanic this run?
 function encoreDisabled(state: RunState): boolean {
-  for (const p of orderedPlugins()) if (p.blocksEncore?.(state)) return true;
-  return false;
+  return some((p) => p.blocksEncore?.(state));
 }
 // Fold each plugin's burnout-delta adjustment, between the loadout's own burnout
 // hooks and the gain-multiplier bags.
 function foldBurnout(state: RunState, v: number, ctx: any): number {
-  for (const p of orderedPlugins()) if (p.modifyBurnout) v = p.modifyBurnout(state, v, ctx);
-  return v;
+  return foldChain(v, (p, x) => p.modifyBurnout?.(state, x, ctx));
 }
 // Fold each plugin's deck-weight multiplier.
 function foldDeckWeight(state: RunState, ev: GameEvent, weight: number): number {
-  for (const p of orderedPlugins()) if (p.weightDeck) weight = p.weightDeck(state, ev, weight);
-  return weight;
+  return foldChain(weight, (p, w) => p.weightDeck?.(state, ev, w));
 }
 // Let each plugin force a scheduled category into the draw pool.
-function foldDeckPool(state: RunState, pool: GameEvent[], ctx: any): any[] {
-  for (const p of orderedPlugins()) if (p.refineDeck) pool = p.refineDeck(state, pool, ctx);
-  return pool;
+function foldDeckPool(state: RunState, pool: GameEvent[], ctx: any): GameEvent[] {
+  return foldChain(pool, (p, pl) => p.refineDeck?.(state, pl, ctx));
 }
 // Product of each plugin's Legacy Points multiplier. Starts at 1 (identity), so
 // a run with no multipliers scores float-exactly the unmultiplied base.
 function scoreMult(state: RunState): number {
-  let mult = 1;
-  for (const p of orderedPlugins()) mult *= p.scoreMult?.(state) ?? 1;
-  return mult;
+  return product((p) => p.scoreMult?.(state));
 }
 // Fold each plugin's act-length override.
 function foldActLength(state: RunState, act: number, base: number): number {
-  for (const p of orderedPlugins()) if (p.modifyActLength) base = p.modifyActLength(state, act, base);
-  return base;
+  return foldChain(base, (p, b) => p.modifyActLength?.(state, act, b));
 }
 
 // ---------- Perks (pack-declared run modifiers) ----------
