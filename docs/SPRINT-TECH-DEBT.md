@@ -197,6 +197,26 @@ fails CI instead of surviving to review.
 **Why it's satisfying.** It makes the repo's central thesis *self-defending*.
 The architecture stops relying on discipline and starts relying on a gate.
 
+**Status — first pass landed.** The enforcing centerpiece shipped:
+`tools/check-engine-neutrality.mjs` derives its blocklist from every registered
+pack's manifest (stats + resources) and plugins (effect verbs + requires keys)
+— 101 tokens across the two packs today — and fails if any appears in
+`js/engine.ts` logic (comments stripped; `PACK.<capability>` dispatches exempt,
+since feature-detecting an optional pack hook is the architecture, not a leak).
+It's self-maintaining: a third genre is policed the moment it's registered.
+Wired into `npm run check` + `npm run neutrality` and a CI gate in `pages.yml`.
+The `'comeback'` ×1.2 scoring leak (`engine.legacyPoints`) is moved into the
+music `economyPlugin`'s `scoreMult` — mathematically identical (the engine
+already folds every plugin `scoreMult` into the score product), verified by
+228/228 goldens + the balance gate unchanged. **Residual (follow-up):** two
+leaks remain — the gear lose-on-bad block in `resolveSwipe` (names
+`state.accessories`/`gearLost`) and the music scratch fields in the shared
+`PluginContext` (`chartTitleHandled`/`venueThisCard`/`hostedThisCard`). Both are
+byte-fragile to relocate (the lose-on-bad ordering and the two-ctx
+`chartTitleHandled` handshake), so they're deferred rather than rushed; neither
+is a manifest token, so the guard is clean today. Widening the guard to `types.ts`
+and closing these two is the remainder of the epic.
+
 ---
 
 ## Epic 4 — Decompose the UI shell into a genre-neutral kit

@@ -16,6 +16,12 @@ import type { Plugin } from '../../types.js';
 export const economyPlugin: Plugin = {
   id: 'economy',
 
+  // The comeback-mode Legacy Points bonus. A run restarted as a faded name
+  // (Pack.comeback sets the 'comeback' flag) scores ×1.2. This lives with the
+  // pack because 'comeback' is a music flag — the engine folds every plugin's
+  // scoreMult into the score product (identity 1) and names no flag.
+  scoreMult: (state) => ((state.flags || []).includes('comeback') ? 1.2 : 1),
+
   // The economy eligibility predicates: fame and money are music resources, so
   // their gates live with the pack, not the shared Requires. (Cards author
   // `fameMin`/`moneyMin`; a generic pack would use the neutral `min: { fame: n }`

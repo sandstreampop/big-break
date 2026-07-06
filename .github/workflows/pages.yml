@@ -66,6 +66,12 @@ jobs:
         # can never move a golden; the `include` glob in tsconfig.strict.json is
         # the migration frontier — widen it as each module is brought to strict.
         run: npm run typecheck
+      - name: Engine neutrality gate (Epic 3)
+        # The genre-agnostic core (js/engine.ts) must name no pack stat/resource/
+        # effect-verb/flag. The blocklist is DERIVED from every registered pack's
+        # manifest + plugins, so a third genre is policed automatically. Runs
+        # against the built registry in dist/.
+        run: node tools/check-engine-neutrality.mjs
       - name: Content lint
         run: node tools/lint-content.mjs
       - name: Balance & reach gate (music, against dist/)

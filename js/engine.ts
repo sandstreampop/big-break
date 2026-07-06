@@ -968,10 +968,10 @@ export function legacyPoints(state: RunState) {
   const base = Math.round((resSum + statSum) / CONFIG.lpStatDivisor);
   const result = state.ending?.result;
   const bonus = result ? CONFIG.lpEndingBonus[result] : CONFIG.lpEndingBonus.failstate;
-  // Plugin score multipliers, folded in registration order. The comeback bonus
-  // is flag-based and genre-neutral, so it stays in the core.
-  let mult = scoreMult(state);
-  if ((state.flags || []).includes('comeback')) mult *= 1.2;
+  // Plugin score multipliers, folded in registration order. Every genre-specific
+  // scoring rule — music's comeback ×1.2 among them — lives in a pack plugin's
+  // scoreMult (identity 1), so the core names no flag.
+  const mult = scoreMult(state);
   return Math.max(1, Math.round((base + bonus) * mult));
 }
 
