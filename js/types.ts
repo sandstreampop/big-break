@@ -708,7 +708,7 @@ export interface RunState {
   firstRun?: boolean;
   firstLoadout?: string;            // id of the run's first loadout (swap detection)
   swappedLoadout?: boolean;
-  coached?: boolean;
+  coached?: string[];               // tutorial: ids of cards whose coach mark has shown
   history?: any[];
   unlockedPacks?: string[];
   // ── exit interview (generic shell) ──

@@ -25,27 +25,13 @@ import { sfx, music, ambient, setSoundEnabled, setMusicEnabled, initAudio } from
 import { initAnalytics, track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from './analytics.js';
 import { playMinigame, minigameById } from './minigames.js';
 import { CSS_CONTRACT } from './version.js';
-
-// The game this session is playing. Defaults to music; boot(pack) sets it so
-// the same UI drives either pack. Taxonomy (PATHS/STAT_META) is read from the
-// active pack's manifest, resolved in boot() after the pack is chosen.
-let activePack = musicPack;
-let PATHS = musicPack.manifest.paths;
-let STAT_META = musicPack.manifest.statMeta;
-let RESOURCE_META = musicPack.manifest.resourceMeta || {};
-// The active pack's Presenter: endings, exit interviews, wall, trophies, and
-// flavor generators. The UI reads this instead of importing music's meta and
-// flavor modules, so any pack renders its own endings (Phase G).
-let PRES = musicPack.presenter;
-let meta = save.loadMeta();
-let run = null;
+import {
+  activePack, PATHS, STAT_META, RESOURCE_META, PRES, meta, run,
+  selectPack, setRun, setMeta, metaFor, fillText,
+} from './ui/context.js';
 
 const $ = (sel) => document.querySelector(sel);
 
-// Display name/icon for ANY taxonomy key — stat, burnout, or resource — read
-// from the pack manifest (Phase G.4). Replaces the old fame/hits label
-// special-cases so a genre whose gates name any stat or resource renders them.
-const metaFor = (key) => STAT_META[key] || RESOURCE_META[key] || { name: key, icon: '' };
 const el = (tag, cls?, html?) => {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
@@ -79,23 +65,6 @@ function keyable<T extends HTMLElement>(node: T, label?: string): T {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); node.click(); }
   });
   return node;
-}
-
-// Fill {token} placeholders with this run's identities. A pack that ships its
-// own token vocabulary provides presenter.fillTokens; the default resolves the
-// music tokens ({rival}/{genre}/{song}/{venue}…) exactly as before.
-function fillText(s) {
-  if (!s || !run) return s;
-  if (PRES.fillTokens) return PRES.fillTokens(run, s);
-  const r = rivalById(run.rival);
-  const g = genreById(run.genre);
-  return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe)
-    .replaceAll('{genre}', g ? g.name : 'your genre')
-    .replaceAll('{collabArtist}', collabArtistFor(run))
-    .replaceAll('{song}', flagshipSong(run)?.title || 'the song')
-    .replaceAll('{hitSong}', (run.songs || []).find((x) => x.crowned)?.title || 'the hit')
-    .replaceAll('{fadedSong}', (run.songs || []).find((x) => x.status === 'faded' && x.peak)?.title || 'your old single')
-    .replaceAll('{venue}', venueById(run.venue)?.name || 'the venue');
 }
 
 function reducedMotion() {
@@ -209,14 +178,10 @@ export function boot(pack = musicPack) {
   // Select this session's game. Music keeps the original save keys (existing
   // players' careers survive); other packs get their own namespace so the two
   // games never clobber each other's meta or in-progress run.
-  activePack = pack;
-  PATHS = pack.manifest.paths;
-  STAT_META = pack.manifest.statMeta;
-  RESOURCE_META = pack.manifest.resourceMeta || {};
-  PRES = pack.presenter || musicPack.presenter;
+  selectPack(pack);
   registerArt(PRES.art); // a pack's own art slots join the scene painter
   save.setSaveNamespace(pack.id === 'music' ? '' : pack.id);
-  meta = save.loadMeta();
+  setMeta(save.loadMeta());
   engine.useContentPack(pack); // this game's content; set before any engine call
   initAnalytics(meta.settings, pack.id);
   // Protect the run: an unresolvable gate key (a content typo) falls back to 0
@@ -328,7 +293,7 @@ function renderTitle() {
   const menu = el('div', 'menu');
   if (saved) {
     menu.append(btn('▶ Resume Run', 'primary', () => {
-      run = saved;
+      setRun(saved);
       resumeRun();
     }));
     menu.append(btn('✚ New Run (abandon current)', '', () => {
@@ -434,7 +399,7 @@ function startNewRun(daily = false, comeback = false) {
     if (!inst) return;
     sfx.commit();
     const lv = masteryLevel(inst.id);
-    run = engine.newRun(activePack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+    setRun(engine.newRun(activePack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta)));
     engine.applyMastery(run, lv);
     run.seed = seed + 2;
     run.daily = daily ? todayStr() : null;
@@ -623,7 +588,7 @@ function startGauntlet() {
     `${contract.icon} <b>${contract.name}</b> ×${contract.lpMult} LP — ${contract.desc}`));
   card.addEventListener('click', () => {
     sfx.commit();
-    run = engine.newRun(activePack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta));
+    setRun(engine.newRun(activePack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta)));
     engine.applyMastery(run, masteryLevel(inst.id));
     run.seed = seed + 2;
     run.gauntlet = week;
@@ -1903,7 +1868,7 @@ function routeAdvance(step) {
 
 function startTutorial() {
   const seed = Math.floor(Math.random() * 1e9) + 1;
-  run = engine.newTutorialRun(activePack, engine.mulberry32(seed));
+  setRun(engine.newTutorialRun(activePack, engine.mulberry32(seed)));
   run.seed = seed + 2;
   save.saveRun(run);
   track('tutorial_start', { replay: !!meta.tutorialDone });
@@ -3000,7 +2965,7 @@ function renderSettings() {
   menu.append(btn('⚠ Reset all progress', 'danger', () => {
     if (confirm('Wipe every unlock, trophy, and Legacy Point? The industry forgets fast.')) {
       save.resetAll();
-      meta = save.loadMeta();
+      setMeta(save.loadMeta());
       renderTitle();
       show('#screen-title');
       return;
