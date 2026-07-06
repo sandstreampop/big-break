@@ -26,6 +26,7 @@
   "include": [
     "js/engine.ts",
     "js/types.ts",
-    "js/config.ts"
+    "js/config.ts",
+    "js/platform.ts"
   ]
 }

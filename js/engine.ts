@@ -102,6 +102,18 @@ export function gateValue(state: RunState, key: string): number {
   throw new Error(`gateValue: unknown key '${key}' — not a stat or a materialized resource (typo in a winGates/failStates/requires entry?)`);
 }
 
+// Typed resource accessors (Epic 1 Wave b groundwork). Pack resources live
+// top-level on state, initialized in manifest order by newRun. The generic
+// manifest-order loops funnel their reads/writes through these, so when
+// RunState's `[key: string]: any` index signature is eventually narrowed away,
+// only these two sites carry the cast — not every loop.
+function getRes(state: RunState, key: string): number {
+  return (state as any)[key] ?? 0;
+}
+function setRes(state: RunState, key: string, value: number): void {
+  (state as any)[key] = value;
+}
+
 // ---------- Run lifecycle ----------
 
 export function offerLoadouts(unlockedLoadoutIds: string[], rng: () => number = Math.random) {
@@ -162,7 +174,7 @@ export function newRun(pack: Pack, loadoutId: string, unlockedPacks: string[], r
   };
   // Resources initialized from the manifest (0, or a declared resourceStart),
   // in manifest order — so the core names no genre's resource.
-  for (const r of pack.manifest.resources) state[r] = pack.manifest.resourceStart?.[r] ?? 0;
+  for (const r of pack.manifest.resources) setRes(state, r, pack.manifest.resourceStart?.[r] ?? 0);
   // Each plugin's run-state slots, applied generically from its stateDefaults
   // (arrays copied per run) so the core state literal declares no genre's field.
   // onConstruct (below) may then overwrite a slot with a seeded draw.
@@ -824,7 +836,7 @@ export function applyEffects(state: RunState, effects: any, ev: GameEvent | null
     }
     if (handled) continue;
     const v = effects[res] || 0;
-    if (v) { state[res] = (state[res] || 0) + v; push(res, v); }
+    if (v) { setRes(state, res, getRes(state, res) + v); push(res, v); }
   }
 
   // Plugin effect handlers, fired at this exact ordinal so their deltas and any
@@ -1004,6 +1016,6 @@ export function runSummary(state: RunState) {
     gauntlet: state.gauntlet || null,
     flags: [...(state.flags || [])],
   };
-  for (const r of PACK.manifest.resources) summary[r] = state[r] ?? 0;
+  for (const r of PACK.manifest.resources) summary[r] = getRes(state, r);
   return Object.assign(summary, PACK.summarize?.(state) || {});
 }
