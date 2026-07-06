@@ -31,7 +31,7 @@ import { generateHeadlines } from '../dist/js/headlines.js';
 import { buildEpilogue } from '../dist/js/epilogue.js';
 import { WEATHER } from '../dist/js/data/weather.js';
 import { ARCS as MUSIC_ARCS } from '../dist/js/data/arcs.js';
-import { bangIssue, tasteIssues, hasDialogue } from './taste-core.mjs';
+import { bangIssue, tasteIssues, hasDialogue, quotedSpans, argotPresenceIssues } from './taste-core.mjs';
 // Each pack's taste DATA lives with the game; the checker above is genre-neutral.
 import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';
 
@@ -227,6 +227,26 @@ for (const pack of PACKS) {
     if (d.outcomeMinShare && outs && outsSpeak / outs < d.outcomeMinShare) {
       tag(`dialogue floor: only ${(100 * outsSpeak / outs).toFixed(0)}% of outcomes speak (< ${100 * d.outcomeMinShare}%)`);
     }
+  }
+
+  // ── Positive-presence argot floor (a pack's taste.requiredArgot) ──
+  // The counterpart to the cliché blocklist: a genre's REAL dialect must
+  // actually appear in its characters' mouths, or the villa has quietly
+  // forgotten how to talk. Scanned over QUOTED spans corpus-wide (the narrator
+  // never gets this argot; the Islanders must). See the pack's VOICE.md.
+  if (desc.taste?.requiredArgot) {
+    let spoken = '';
+    for (const ev of EVENTS) {
+      const texts = [ev.prompt, ev.context];
+      for (const side of ['left', 'right']) {
+        const c = ev.choices?.[side];
+        if (!c) continue;
+        texts.push(c.label);
+        for (const t of ['bad', 'good', 'incredible']) texts.push(c.outcomes?.[t]?.text);
+      }
+      for (const t of texts) if (t) spoken += ' ' + quotedSpans(t);
+    }
+    for (const iss of argotPresenceIssues(spoken, desc.taste.requiredArgot)) tag(iss);
   }
 
   // ── M3 authoring rules (Reach & Rush §3) ──

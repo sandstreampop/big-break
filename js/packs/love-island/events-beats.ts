@@ -114,7 +114,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You sleep on the daybed to be safe. You wake up stiff, righteous, and quietly furious at no one in particular.', effects: { loyalty: 2, chainEventId: 'li_casa_postcard_loyal', casaLoyaltyDraw: true, bond: 3, burnout: 3, addFlag: 'li_loyal_casa' } },
-          good: { text: 'You talk about your other half until the new arrivals give up. One calls you “boring.” You take it as a compliment, because it is one.', effects: { loyalty: 5, chainEventId: 'li_casa_postcard_loyal', casaLoyaltyDraw: true, bond: 5, public: 4, addFlag: 'li_loyal_casa' } },
+          good: { text: '“My head’s not been turned, not even a bit,” you tell the new lot, till they give up. One calls you “boring.” You take it as a compliment, because it is one.', effects: { loyalty: 5, chainEventId: 'li_casa_postcard_loyal', casaLoyaltyDraw: true, bond: 5, public: 4, addFlag: 'li_loyal_casa' } },
           incredible: { text: 'You don’t waver, and on camera it reads as strength, not fear. The public falls a little in love with you, which was not the plan, and helps enormously.', effects: { loyalty: 8, chainEventId: 'li_casa_postcard_loyal', casaLoyaltyDraw: true, bond: 6, public: 6, graft: 4, addFlag: 'li_loyal_casa' } },
         },
       },
@@ -198,7 +198,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You walk in alone, heart first. It’s a forty-metre walk. By metre ten the villa knows. By metre thirty, the nation. The last ten are purely for the drone.', effects: { casaReturn: true, loyalty: 2, burnout: 3 } },
-          good: { text: 'You walk in alone and the Host says, “Alone?” and you say, “I know what I have.” The firepit crackles supportively.', effects: { casaReturn: true, loyalty: 5, public: 3 } },
+          good: { text: 'You walk in alone and the Host says, “Alone?” and you say, “Yeah. I stayed loyal. I know what I’ve got at home.” The firepit crackles supportively.', effects: { casaReturn: true, loyalty: 5, public: 3 } },
           incredible: { text: 'You walk in alone to an audible “aww” from people who were betting against you an hour ago. The nation adjusts its favourites.', effects: { casaReturn: true, loyalty: 8, public: 6 } },
         },
       },
@@ -467,7 +467,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“I’m coupling up with…” — you get the name right, but your speech includes the word “comfortable” twice. Comfortable, twice, is a warning light.', effects: { loyalty: 2, bond: 2, burnout: 3 } },
-          good: { text: '“Him. Every time. Him.” You keep the speech short and mean every word. Somewhere at home a mum says “oh, I LIKE her,” and that, statistically, is the vote.', effects: { loyalty: 5, bond: 5, public: 3 } },
+          good: { text: '“Him. Every time. I’m loyal, and I know what I want.” You keep the speech short and mean every word. Somewhere at home a mum says “oh, I LIKE her,” and that, statistically, is the vote.', effects: { loyalty: 5, bond: 5, public: 3 } },
           incredible: { text: 'Your speech gets an actual round of applause and one audible sniffle. The couples that were wobbling look suddenly, visibly, worse.', effects: { loyalty: 8, bond: 7, public: 6 } },
         },
       },

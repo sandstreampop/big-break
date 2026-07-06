@@ -161,25 +161,43 @@ so its copy should **feel like an instruction from above**, not a character talk
 ### 4. Islander-argot
 
 How the contestants actually talk. **This is where the clichés live — on purpose.** Villa
-argot is a real dialect ("my head's been turned", "I'm grafting", "putting all my eggs in
-one basket", "I've got a lot of love for you", "loyal", "100%", "on paper", "the ick",
-"mugged off", "coupled up", "muggy", "I'm buzzing", "it is what it is"). Rendered as
-**quoted dialogue**, it is *exempt* from the cliché blocklist — because in an Islander's
-mouth it's authentic, not lazy. The Narrator using the same phrase would be a failure; the
-Islander using it is characterisation.
+argot is a real dialect ("my head's been turned", "where's your head at?", "I'm grafting",
+"putting all my eggs in one basket", "I've got a lot of love for you", "loyal", "100%",
+"on paper", "the ick", "mugged off", "cracking on", "closed off", "doing bits", "coupled
+up", "muggy", "I'm buzzing", "it is what it is"). Rendered as **quoted dialogue**, it is
+*exempt* from the cliché blocklist — because in an Islander's mouth it's authentic, not
+lazy. The Narrator using the same phrase would be a failure; the Islander using it is
+characterisation.
 
-- **Does:** use the real dialect fluently; over-affirm ("literally", "genuinely", "no
-  word of a lie"); hedge romance with therapy-speak ("I need to protect my energy"); one
-  `!` for genuine excitement.
+**This is the pack's most-corrected register, and the calibration that matters most for
+authenticity (Hillevi's note): every named character — Partner, Rival, Mate, the bombshell,
+the whole thread cast — MUST speak this dialect. A bit parodical (the tics turned up a
+notch: the tautology, the over-affirmation, the therapy-speak, the malapropism) but always
+TRUE TO LIFE and earnest. The failure mode we keep sliding into is giving the Islanders the
+Narrator's clever, meta-aware quips — a witty author ventriloquising every mouth. That is
+the single worst register error in the pack. When a character line could have been said by
+the voiceover, it is wrong: rewrite it as something a real, sincere contestant would
+actually say.**
+
+- **Does:** use the real dialect fluently and a touch heightened; open on the villa's
+  filler ("I'm not gonna lie", "I'm not being funny but", "listen", "d'you know what I
+  mean", "genuinely", "babe"); over-affirm ("100%", "literally", "hand on heart", "no word
+  of a lie", "swear down"); talk in the head-idiom for loyalty/temptation ("my head's not
+  been turned", "it'd take a lot to turn my head", "where's your head at?"); hedge romance
+  with therapy-speak ("I need to protect my energy", "I've come here to be the best version
+  of me").
 - **Never:** be witty in the Narrator's way. Islanders are sincere, self-serious, and
   funniest when they don't know they're being funny. Don't write them jokes; write them
-  earnestness.
+  earnestness. No irony, no meta ("this'll make good telly"), no authorial cleverness —
+  that voice belongs to Stirling and the narration, one layer up, never to a contestant.
 
 | ✅ good | ❌ bad |
 |---|---|
 | “I’m not being funny, but my head has been turned. And I feel like that’s growth.” | “I have developed romantic feelings for another contestant.” |
 | “On paper, we make sense. But my heart’s doing bits for someone else, if I’m honest.” | *(a self-aware quip — Islanders don’t know they’re on a show)* |
 | “I came in here to be loyal. 100%. That’s just me as a person.” | “At the end of the day it is what it is,” *the Narrator observed.* ← cliché in the WRONG mouth |
+| “Where’s your head at, babe? ’Cause mine’s all over the place, I’m not gonna lie.” | “I’m going to play this place like a fruit machine.” ← a character talking like a screenwriter |
+| “I’ve got so much love for her, genuinely. She’s my person. Like — my type on paper AND off it.” | “In this villa, that’s basically an engagement.” ← Narrator wit in an Islander’s mouth |
 
 ### 5. Villa-copy
 
@@ -277,6 +295,12 @@ authored card, activating the moment the pack registers (Phase B1). Logic and te
   “I’VE GOT A TEXT!!” is supposed to be loud.
 - **Cliché blocklist** (Love Island): the phrases above, scanned over the narrating voice
   with quoted dialogue stripped out.
+- **Required-argot floor** (Love Island): the *counterpart* to the blocklist. The villa's
+  real dialect — the mandatory slang and, above all, the "head" idiom (Hillevi's central
+  note) — MUST actually appear in the characters' quoted dialogue, at minimum counts
+  (`taste.mjs` `requiredArgot`). This is the guardrail against the register regressing to
+  clever-narrator wit with no authentic Islander voice: if the villa forgets how to talk,
+  the lint fails. Scanned over quoted spans only (the narrator never gets this argot).
 - **Outcome-length cap** (Love Island): outcome text ≤ 240 characters — villa outcomes
   land the turn and get out.
 - (Inherited structural checks: curly apostrophes only, no double spaces, known tokens.)

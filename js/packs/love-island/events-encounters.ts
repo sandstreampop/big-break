@@ -24,7 +24,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     id: 'li_enc_rival_1', act: 1, weight: 1, tags: ['beat:rivalenc', 'encounter', 'chat'],
     art: 'li_kitchen',
     context: 'Dusk · the kitchen counter · two glasses, one agenda',
-    prompt: '“Right. You and me. Wee chat.” {rival} pours you a drink like it’s a contract signing. “Everyone’s being fake nice and it’s day two. I don’t do fake. So — what’s your actual plan here?” Behind the smile, an audit is running.',
+    prompt: '“Come here — let me pull you for a chat.” {rival} pours you a drink like it matters. “I’m not being funny, but everyone in here’s been fake nice since we walked in, and it’s day two. I can’t be doing with it. So be honest with me — where’s your head really at?” Behind the smile, they’re clocking every word.',
     choices: {
       left: {
         label: 'Answer straight',
@@ -32,8 +32,8 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: '“Honestly? I just like {partner}.” — “Honestly,” {rival} repeats, tasting the word for cracks. Your glass gets topped up, which in this kitchen is a caution, not a kindness.', effects: { loyalty: 2, rivalOpinion: 3, burnout: 2, chainEventId: 'li_enc_rival_2_test' } },
-          good: { text: '“I’m here for something real. Laugh if you want.” {rival} doesn’t laugh. “Huh,” they say, and you can hear you being recalibrated upward.', effects: { loyalty: 3, rivalOpinion: 6, chainEventId: 'li_enc_rival_2_open' } },
-          incredible: { text: '“Same plan as yours. I’m just not lying about it.” A beat. Then {rival} grins — the first true face of the night. “Okay. You, I’ll watch.”', effects: { loyalty: 5, rivalOpinion: 8, public: 3, chainEventId: 'li_enc_rival_2_open' } },
+          good: { text: '“I’m here for something real. 100%. Laugh if you want.” {rival} doesn’t laugh. “Huh,” they say, and you can hear yourself being recalibrated upward.', effects: { loyalty: 3, rivalOpinion: 6, chainEventId: 'li_enc_rival_2_open' } },
+          incredible: { text: '“Same as you, if I’m honest — I’m just not gonna lie about it.” A beat. Then {rival} grins, the first real one all night. “See, now I’ve got a lot of time for you. I’ll be watching.”', effects: { loyalty: 5, rivalOpinion: 8, public: 3, chainEventId: 'li_enc_rival_2_open' } },
         },
       },
       right: {
@@ -43,7 +43,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“My plan? Watching yours.” It sounded cooler in your head. {rival} smiles at the counter and files you under <i>threat, small</i>.', effects: { savvy: 2, rivalOpinion: -3, burnout: 3, chainEventId: 'li_enc_rival_2_test' } },
           good: { text: '“You didn’t pour that for the chat. You poured it for the tell.” {rival} laughs once, on purpose. “Sharp. Annoying, but sharp.”', effects: { savvy: 5, rivalOpinion: 4, followers: 2, chainEventId: 'li_enc_rival_2_test' } },
-          incredible: { text: '“Two glasses, one agenda. Ask the real question.” The kitchen goes quiet the way rooms do when a script gets skipped. Respect, at knifepoint.', effects: { savvy: 8, rivalOpinion: 6, public: 3, chainEventId: 'li_enc_rival_2_open' } },
+          incredible: { text: '“Two drinks and all these questions — just ask me what you actually wanna know, babe.” The kitchen goes quiet the way rooms do when someone skips the small talk. Respect, at knifepoint.', effects: { savvy: 8, rivalOpinion: 6, public: 3, chainEventId: 'li_enc_rival_2_open' } },
         },
       },
     },
@@ -101,7 +101,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“At least I’ve got one.” Too sharp, too early, too breakfast. The lawn does the group “ooh” and {rival} banks the clip.', effects: { savvy: 2, rivalOpinion: -5, rivalMood: 'fuming', burnout: 3, chainEventId: 'li_enc_rival_3_war' } },
           good: { text: '“Funny — you talk about my game a lot more than I play it.” {rival} touches their nose, once. First blood, yours.', effects: { savvy: 5, rivalOpinion: -2, followers: 3, chainEventId: 'li_enc_rival_3_war' } },
-          incredible: { text: '“You’re auditioning me for villain. Get in line.” The lawn howls. {rival} laughs too — the only available exit — and files the whole scene under <i>later</i>.', effects: { savvy: 8, followers: 5, public: 3, rivalOpinion: -3, rivalMood: 'scheming', chainEventId: 'li_enc_rival_3_war' } },
+          incredible: { text: '“You’re trying to make me the bad guy, babe. Get in the queue.” The lawn howls. {rival} laughs too — the only available exit — and files the whole scene under <i>later</i>.', effects: { savvy: 8, followers: 5, public: 3, rivalOpinion: -3, rivalMood: 'scheming', chainEventId: 'li_enc_rival_3_war' } },
         },
       },
     },
@@ -111,7 +111,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     id: 'li_enc_rival_3_pact', act: 1, chainOnly: true, tags: ['encounter', 'chat', 'strategy'],
     art: 'li_terrace',
     context: 'Sunset · the terrace · the terms',
-    prompt: '“Look.” {rival} leans on the rail, an actual truce on the table. “I’m going to play this place like a fruit machine, and you’re going to be annoyingly sincere at it. We can stay out of each other’s way. Or not. Your call.”',
+    prompt: '“Listen, right.” {rival} leans on the rail, a proper truce on the table. “I’m gonna graft, I’m gonna play my game, that’s just me. And you’re gonna be all loved-up and sincere — fair play to you, honestly. We can stay out of each other’s lane. Or not. Up to you, babe.”',
     choices: {
       left: {
         label: 'Shake on it',
@@ -119,7 +119,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         governingStats: { savvy: 0.5, loyalty: 0.5 },
         outcomes: {
           bad: { text: 'You shake. {rival} holds the grip one beat too long, so the cameras get the frame. The deal is real; the photo op was the interest on it.', effects: { savvy: 2, rivalOpinion: 4, rivalMood: 'smug', burnout: 2 } },
-          good: { text: '“Stay out of my couple, I stay out of your edit.” — “Deal.” The most honest contract this villa will see all Season, and no lawyer within a hundred miles.', effects: { savvy: 4, loyalty: 3, rivalOpinion: 8, rivalMood: 'smug', gainIntel: { about: 'rival', label: 'the game they told you they’re running' } } },
+          good: { text: '“Stay away from my couple, I’ll stay out your way.” — “Deal, babe.” The most honest chat this villa will see all Season, and not a script in sight.', effects: { savvy: 4, loyalty: 3, rivalOpinion: 8, rivalMood: 'smug', gainIntel: { about: 'rival', label: 'the game they told you they’re running' } } },
           incredible: { text: '“One thing, since you’re decent—” and {rival}, guard fully down for four seconds, tells you something they absolutely should not have. The handshake becomes a vault.', effects: { savvy: 5, loyalty: 3, rivalOpinion: 10, rivalMood: 'buzzing', surfaceSecret: 'rival', public: 3 } },
         },
       },
@@ -325,7 +325,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_pool',
     requires: { singleIs: false, partnerShapeIs: 'sweetheart' },
     context: 'Mid-morning · the swing seat · the announcement',
-    prompt: '“Right, I’m just going to say it—” {partner} has brought you a tea and a speech, in that order. “I like you. Properly. That’s it. That’s the announcement.” The swing creaks. Somewhere in the gallery a producer whispers <i>stay on them</i>.',
+    prompt: '“Right, I’m just gonna say it—” {partner} has brought you a tea and a speech, in that order. “I like you. Properly. I’ve got a lot of time for you, genuinely. That’s it, that’s the announcement.” The swing creaks. Somewhere in the gallery a producer whispers <i>stay on them</i>.',
     choices: {
       left: {
         label: 'Say it back',
@@ -333,7 +333,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, rizz: 0.4 },
         outcomes: {
           bad: { text: 'You say it back one beat too slow — long enough for {partner} to hear the maths. “You had to THINK,” they say, delighted and wounded in exactly equal parts.', effects: { loyalty: 2, bond: 3, burnout: 2, chainEventId: 'li_enc_partner_2_real' } },
-          good: { text: '“Same,” you say, and mean it, and {partner} does a small lap of honour around the swing seat. Subtlety left the villa an hour ago. Nobody misses it.', effects: { loyalty: 3, bond: 5, chainEventId: 'li_enc_partner_2_real' } },
+          good: { text: '“Same, babe. 100%,” you say, and mean it, and {partner} does a small lap of honour around the swing seat. Subtlety left the villa an hour ago. Nobody misses it.', effects: { loyalty: 3, bond: 5, chainEventId: 'li_enc_partner_2_real' } },
           incredible: { text: 'You say it back plainly — no bit, no hedge. {partner} goes still, the rare kind. “Okay,” they say, mostly to themselves. “Okay.” The nation has a fan account up by lunch.', effects: { loyalty: 5, bond: 7, public: 3, chainEventId: 'li_enc_partner_2_real' } },
         },
       },
@@ -354,7 +354,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     art: 'li_pool',
     requires: { singleIs: false, partnerShapeIs: 'gameplayer' },
     context: 'Mid-morning · the swing seat · the interview',
-    prompt: '“Honest question.” {partner} deals it like a card, eyes on the pool. “What are you actually here for? I’ve seen every season of this show. I know a strategy when I couple up with one.” A beat. “No offence.”',
+    prompt: '“Can I ask you something, and don’t take this the wrong way.” {partner} deals it like a card, eyes on the pool. “What are you actually here for? ’Cause I’ve watched every series, and I clock a game-player a mile off. On paper you’re my type. I just need to know your head’s in it.” A beat. “No offence.”',
     choices: {
       left: {
         label: 'Answer it straight',
@@ -467,7 +467,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
     id: 'li_enc_partner_3close', act: 1, chainOnly: true, tags: ['encounter', 'date'],
     art: 'li_bedroom',
     context: 'Lights out · the whispered inventory',
-    prompt: 'The room breathes around you. “Honest answer,” whispers {partner}, one duvet-width away. “Day one, would you have picked me? Off the line-up, no context.” The moment arrives quietly, at whisper volume, the way the real ones do.',
+    prompt: 'The room breathes around you. “Honest answer, yeah?” whispers {partner}, one duvet-width away. “Day one — was I your type on paper? Off the line-up, hand on heart, no messing.” The moment arrives quietly, at whisper volume, the way the real ones do.',
     choices: {
       left: {
         label: 'The honest answer',
