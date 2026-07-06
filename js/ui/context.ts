@@ -18,6 +18,7 @@ import { genreById } from '../data/genres.js';
 import { venueById } from '../data/venues.js';
 import { collabArtistFor } from '../charts.js';
 import { flagshipSong } from '../songs.js';
+import { DEFAULT_FAIL_LABELS } from '../share-text.js';
 import type { Pack, Presenter, StatMeta, RunState } from '../types.js';
 
 // The game this session is playing. Defaults to music; selectPack() sets it so
@@ -66,6 +67,14 @@ export function vibeFor() {
   return run
     ? { fame: run.fame, network: run.stats.network, burnout: run.stats.burnout }
     : { fame: 0, network: 0, burnout: 0 };
+}
+
+// Short verdict label for the pack's fail-state endings (ribbon, history,
+// share). Music's trio is the default; a pack overrides via presenter. Read by
+// both the ending screen and the trophy room's history, so it lives here.
+export function failLabelFor(endingKey) {
+  const labels = PRES.failLabels || DEFAULT_FAIL_LABELS;
+  return labels[endingKey];
 }
 
 // Display name/icon for ANY taxonomy key — stat, burnout, or resource — read
