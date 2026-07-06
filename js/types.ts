@@ -191,10 +191,10 @@ export interface PluginContext {
   mg?: any;
   // Per-resolution scratch a plugin stashes for itself across the hooks of ONE
   // card: the engine hands the same context object to modifyEffects/onEffect/
-  // afterResolve of a card, so a plugin needs no module-level state.
-  chartTitleHandled?: boolean; // songs: has the engine's hits block minted the chartTitle already?
-  venueThisCard?: any;         // venue: the room as it was before adoptVenue could fire this card
-  hostedThisCard?: boolean;    // venue: did the adopted room host this card's show?
+  // afterResolve of a card, so a plugin needs no module-level state. Opaque to
+  // the core — a plugin owns its own keys, so the shared type names no genre
+  // (music formerly leaked chartTitleHandled/venueThisCard/hostedThisCard here).
+  scratch?: Record<string, unknown>;
 }
 // A per-resolution "gain-multiplier bag" a plugin contributes via gainHooks.
 // The engine's stat/burnout loops apply these right after the loadout's own

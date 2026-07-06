@@ -665,7 +665,7 @@ export function resolveSwipe(state: RunState, side: Side, rng: () => number = Ma
   // One per-card context object, handed to modifyEffects/onEffect/afterResolve
   // of this card so a plugin can stash per-card scratch without module-level
   // state (module scope would be unsafe if runs were ever concurrent).
-  const cardCtx: any = { ev, choice, tier, rng };
+  const cardCtx: any = { ev, choice, tier, rng, scratch: {} };
 
   // Let plugins mutate the effects payload before it lands.
   firePlugins('modifyEffects', state, effects, cardCtx);
@@ -807,7 +807,7 @@ export function applyEffects(state: RunState, effects: any, ev: GameEvent | null
   // arithmetic (every clamp/multiplier lives in the owning plugin). A resource
   // no plugin claims applies as a plain additive default, so a novel resource is
   // never silently dropped. pctx is the per-resolution context the handlers read.
-  const pctx: any = { ev, choice, tier, rng, deltas, hooks, mg, chartTitleHandled: false };
+  const pctx: any = { ev, choice, tier, rng, deltas, hooks, mg, scratch: {} };
   for (const res of PACK.manifest.resources) {
     let handled = false;
     for (const p of orderedPlugins()) {

@@ -30,11 +30,11 @@ export const venuePlugin: Plugin = {
   // both modifyEffects and afterResolve — not on module scope, so it
   // is correct even if two runs resolve at once.
   modifyEffects(state, effects, ctx) {
-    ctx.venueThisCard = venueById(state.venue); // snapshot before adoptVenue can fire
-    ctx.hostedThisCard = false;
-    const venue = ctx.venueThisCard;
+    ctx.scratch.venueThisCard = venueById(state.venue); // snapshot before adoptVenue can fire
+    ctx.scratch.hostedThisCard = false;
+    const venue: any = ctx.scratch.venueThisCard;
     if (venue && ctx.tier !== 'bad' && ctx.tier !== 'declined' && tagsIntersect(venue.tags, ctx.choice?.tags)) {
-      ctx.hostedThisCard = true;
+      ctx.scratch.hostedThisCard = true;
       const bonus = VENUE_TIERS[state.venueLevel]?.showBonus || 0;
       if (bonus) {
         effects.fame = (effects.fame || 0) + bonus;
@@ -57,14 +57,14 @@ export const venuePlugin: Plugin = {
   // up. ×0.75 so a home room becomes an institution within one career. Uses the
   // snapshot from modifyEffects so a just-adopted venue doesn't level this card.
   afterResolve(state, result, ctx) {
-    const venue = ctx.venueThisCard;
+    const venue: any = ctx.scratch.venueThisCard;
     if (venue && tagsIntersect(venue.tags, ctx.choice?.tags)) {
       state.venueShows = (state.venueShows || 0) + 1;
       const newLevel = Math.min(VENUE_TIERS.length - 1, Math.floor(state.venueShows * 0.75));
       if (newLevel > state.venueLevel) {
         state.venueLevel = newLevel;
         result.venueLeveled = { venue, level: newLevel, tier: VENUE_TIERS[newLevel] };
-      } else if (ctx.hostedThisCard && (VENUE_TIERS[state.venueLevel]?.showBonus || 0) > 0) {
+      } else if (ctx.scratch.hostedThisCard && (VENUE_TIERS[state.venueLevel]?.showBonus || 0) > 0) {
         result.venueHosted = { venue, tier: VENUE_TIERS[state.venueLevel] };
       }
     }

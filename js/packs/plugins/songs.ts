@@ -66,7 +66,7 @@ export const songsPlugin: Plugin = {
       if (!s.crowned) crown(state, s); // the instant classic always counts — one hits site
       (deltas.songDebuts = deltas.songDebuts || []).push({ title: s.title, pos: s.pos, hit: true, viral: !!s.viral });
     }
-    ctx.chartTitleHandled = !!effects.chartTitle;
+    ctx.scratch.chartTitleHandled = !!effects.chartTitle;
     return n;
   },
   // #endregion apply-resource
@@ -74,7 +74,7 @@ export const songsPlugin: Plugin = {
   onEffect(state, effects, ctx) {
     const { deltas, hooks = {}, mg = null, tier, rng, ev } = ctx;
     const accs = equippedActive(state);
-    if (effects.chartTitle && !ctx.chartTitleHandled) {
+    if (effects.chartTitle && !ctx.scratch.chartTitleHandled) {
       const tierQ = tier === 'incredible' ? 66 : tier === 'good' ? 58 : 50;
       const s = addSong(state, {
         title: effects.chartTitle.replace('{collabArtist}', collabArtistFor(state)),
@@ -145,7 +145,7 @@ export const songsPlugin: Plugin = {
       });
       deltas.songWritten = { title: s.title, quality: s.quality, fromHook: grabbedHooks.length > 0 };
     }
-    ctx.chartTitleHandled = false; // reset the per-resolution handshake
+    ctx.scratch.chartTitleHandled = false; // reset the per-resolution handshake
   },
 
   // #region act-break
