@@ -76,7 +76,7 @@ export const ARC_EVENTS: GameEvent[] = [
     requires: { singleIs: false, partnerShapeIs: 'slowburner', flagsNone: ['li_ick_named', 'li_ick_buried'] },
     art: 'li_bedroom',
     context: 'The terrace, late · the wall came down · then the scaffolding went up',
-    prompt: 'Last night {partner} told you the real stuff — the sister, the fear, the reason for the guard. This morning: “anyway, mad one last night, weren’t it,” and the shutters are DOWN, trading closed, do not reply to this email. The inspector behind your ribs circles a word: whiplash.',
+    prompt: 'Last night {partner} told you the real stuff — the sister who stopped speaking to them, the fear they’re only lovable on telly, why the guard never fully drops. This morning: “anyway, mad one last night, weren’t it,” and the shutters are DOWN, trading closed, do not reply to this email. The inspector behind your ribs circles a word: whiplash.',
     choices: {
       left: {
         label: 'Name it, gently',

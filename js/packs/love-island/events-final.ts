@@ -21,7 +21,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“Right, I wrote something down—” Your speech is all heart and no order, and you land it on “…anyway, you know what I mean.” {partner} does know. Just about.', effects: { loyalty: 2, bond: 1, burnout: 4 } },
           good: { text: '“I’m not being funny, I’ve never felt like this about anyone. On paper, off paper, all of it — it’s you.” No notes, all nerve. {partner} goes properly quiet. The lawn “awws” as one.', effects: { loyalty: 5, bond: 6, public: 4 } },
-          incredible: { text: 'You do the whole thing — the corsage, the one true sentence, the slow dance nobody choreographed. “That’s my person, that is,” {partner} tells the villa, wet-eyed. The nation melts on schedule.', effects: { bond: 8, public: 6, loyalty: 8 } },
+          incredible: { text: 'You do the whole thing — the corsage, the line you practised (“you’re the first person I’ve not tried to impress”), the slow dance nobody choreographed. “That’s my person, that is,” {partner} tells the villa, wet-eyed.', effects: { bond: 8, public: 6, loyalty: 8 } },
         },
       },
       right: {
@@ -76,7 +76,7 @@ export const FINAL_EVENTS: GameEvent[] = [
         governingStats: { charisma: 0.6, loyalty: 0.4 },
         outcomes: {
           bad: { text: 'Your toast starts strong, tours the whole Season, and gets lost around Casa. Somebody coughs “speeeech” at your speech. The lasagne cools in solidarity.', effects: { charisma: 2, burnout: 3, public: 1 } },
-          good: { text: '“We were strangers with matching water bottles—” You say the true thing about this strange, sunburnt family, and land it before the tears do. Glasses up. Even {rival} drinks to it.', effects: { charisma: 3, public: 5, loyalty: 2, bond: 2 } },
+          good: { text: '“We were strangers with matching water bottles, and now I’d take a bullet for the lot of you—” You land the whole daft, sunburnt truth of it before the tears do. Glasses up. Even {rival} drinks to it.', effects: { charisma: 3, public: 5, loyalty: 2, bond: 2 } },
           incredible: { text: 'Your toast makes the villa cry, laugh, and toast the LASAGNE, in that order. The clip becomes how the Season is remembered. No pressure on the Final at all.', effects: { charisma: 8, public: 7, followers: 5, bond: 2 } },
         },
       },
@@ -382,12 +382,12 @@ export const FINAL_EVENTS: GameEvent[] = [
     prompt: 'There’s a corner of the garden the Islanders swear the cameras can’t see. It can’t possibly be true. But at 5 a.m., with {partner} and two mugs of tea, you’re both willing to believe in it — one conversation with no audience, real or imagined.',
     choices: {
       left: {
-        label: 'Say the unbroadcastable thing',
+        label: 'Say the thing you’ve been swallowing',
         tags: ['loyal', 'chat'],
         governingStats: { loyalty: 1 },
         outcomes: {
           bad: { text: 'You say it, and a bird lands on the wall, and you both jump like it’s a boom mic with feathers. The moment survives. Your dignity negotiates.', effects: { loyalty: 2, bond: 4, burnout: 2 } },
-          good: { text: 'You say the thing you’d never say on camera, in the spot where there might not be one. “Say it again,” they ask, quietly. Whether it airs stops mattering halfway through. That’s how you know.', effects: { bond: 7, loyalty: 5 } },
+          good: { text: '“I’ve stopped rehearsing what to say around you — that’s never once happened to me.” You say it where there might be no camera. “Say it again,” they ask, quietly, and whether it airs stops mattering halfway through.', effects: { bond: 7, loyalty: 5 } },
           incredible: { text: 'Whatever was said at 5 a.m. in the blind spot, neither of you will ever repeat it, on the show or after it. The nation never finds out. The Connection never forgets.', effects: { bond: 10, loyalty: 8 } },
         },
       },

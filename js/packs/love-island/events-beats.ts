@@ -497,7 +497,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You pick the connection you felt on Tuesday. He stands up wearing the smile of someone who felt a different Tuesday.', effects: { couple: true, burnout: 3, rizz: 2 } },
           good: { text: 'You say a name you actually mean, and he crosses the firepit like he’s been waiting for the sentence to end. “Finally,” breathes the lawn.', effects: { couple: true, rizz: 5, public: 3 } },
-          incredible: { text: 'Your speech is half a joke and one true sentence, and the true sentence lands on the whole lawn at once. New couple; instant favourites.', effects: { couple: true, rizz: 8, public: 6 } },
+          incredible: { text: 'Your speech is half a joke and one true sentence — “I fancied you before I had a game plan” — and it lands on the whole lawn at once. New couple; instant favourites.', effects: { couple: true, rizz: 8, public: 6 } },
         },
       },
       right: {
@@ -585,7 +585,7 @@ export const BEAT_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You recommit with a speech that peaks at “she’s a great girl,” a phrase last used warmly by a driving instructor. She accepts. The bar was low.', effects: { loyalty: 2, bond: 2, burnout: 3 } },
           good: { text: 'Her name first, the explaining after — the right order. “Good speech,” she says, taking your hand, meaning the order.', effects: { loyalty: 5, bond: 5, public: 3 } },
-          incredible: { text: 'Your speech is one sentence long and it detonates quietly: the truest thing said at this firepit all Season. The Final just got a favourite.', effects: { loyalty: 8, bond: 7, public: 6 } },
+          incredible: { text: 'Your speech is one sentence long — “I’d still pick her with every camera switched off” — and it detonates quietly. The truest thing said at this firepit all Season. The Final just got a favourite.', effects: { loyalty: 8, bond: 7, public: 6 } },
         },
       },
       right: {
