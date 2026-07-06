@@ -99,11 +99,20 @@ jobs:
         # are already present, so this only fetches missing system deps.
         run: npx playwright install --with-deps chromium
       - name: UI smoke gate (each game to its finale, headless Chromium)
+        # REQUIRE_BROWSER=1 turns the suite's browserless skip into a hard
+        # failure: with a browser installed above, "no browser found" here can
+        # only mean the install broke — never silently waive the coverage.
         run: node test/ui-smoke.mjs
+        env:
+          REQUIRE_BROWSER: '1'
       - name: Screen-contract gate (ADR-0009, phone crowding)
         run: node test/ui-crowding.mjs
+        env:
+          REQUIRE_BROWSER: '1'
       - name: Mobile-matrix gate (every phone class × legacy engines × stale-CSS delivery)
         run: node test/ui-mobile-matrix.mjs
+        env:
+          REQUIRE_BROWSER: '1'
       - name: Install docs toolchain (isolated from the engine's pinned tsc)
         working-directory: docs-site
         run: npm ci

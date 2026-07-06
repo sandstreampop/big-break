@@ -37,6 +37,7 @@ import { readFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { skipUnlessRequired } from './ui-require-browser.mjs';
 
 const require = createRequire(import.meta.url);
 function loadChromium() {
@@ -295,14 +296,12 @@ if (stamp.errs.length) {
 
 const chromium = loadChromium();
 if (!chromium) {
-  console.log('⚠ Playwright not found — skipping the browser matrix (static delivery checks ran).');
-  process.exit(failed ? 1 : 0);
+  skipUnlessRequired('⚠ Playwright not found — skipping the browser matrix (static delivery checks ran).', { code: failed ? 1 : 0 });
 }
 let browser;
 try { browser = await chromium.launch({ headless: true }); }
 catch {
-  console.log('⚠ Chromium binary not installed — skipping the browser matrix (static delivery checks ran).');
-  process.exit(failed ? 1 : 0);
+  skipUnlessRequired('⚠ Chromium binary not installed — skipping the browser matrix (static delivery checks ran).', { code: failed ? 1 : 0 });
 }
 
 const PORT = 8213;

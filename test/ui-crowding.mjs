@@ -15,6 +15,7 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { skipUnlessRequired } from './ui-require-browser.mjs';
 
 const require = createRequire(import.meta.url);
 function loadChromium() {
@@ -26,8 +27,7 @@ function loadChromium() {
 }
 const chromium = loadChromium();
 if (!chromium) {
-  console.log('⚠ Playwright not found — skipping UI crowding test.');
-  process.exit(0);
+  skipUnlessRequired('⚠ Playwright not found — skipping UI crowding test.');
 }
 const root = fileURLToPath(new URL('../dist', import.meta.url));
 if (!existsSync(root)) { console.error('dist/ not found — run `npm run build` first.'); process.exit(1); }
@@ -57,7 +57,7 @@ const AMBIENT_BUDGET = 190; // px: hud strip + stage, per ADR-0009
 
 let browser;
 try { browser = await chromium.launch({ headless: true }); }
-catch { console.log('⚠ Chromium binary not installed — skipping UI crowding test.'); server.close(); process.exit(0); }
+catch { skipUnlessRequired('⚠ Chromium binary not installed — skipping UI crowding test.', { cleanup: () => server.close() }); }
 
 const VIEWPORTS = [
   { w: 390, h: 844, label: 'iPhone-15-ish' },

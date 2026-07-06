@@ -15,6 +15,7 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { skipUnlessRequired } from './ui-require-browser.mjs';
 
 const require = createRequire(import.meta.url);
 
@@ -36,8 +37,7 @@ function loadChromium() {
 }
 const chromium = loadChromium();
 if (!chromium) {
-  console.log('⚠ Playwright not found — skipping UI smoke test (install Playwright + Chromium to run it).');
-  process.exit(0);
+  skipUnlessRequired('⚠ Playwright not found — skipping UI smoke test (install Playwright + Chromium to run it).');
 }
 
 const root = fileURLToPath(new URL('../dist', import.meta.url));
@@ -167,9 +167,7 @@ let browser;
 try {
   browser = await chromium.launch({ headless: true });
 } catch (e) {
-  console.log('⚠ Chromium browser binary not installed — skipping UI smoke test (run `npx playwright install chromium` to run it).');
-  server.close();
-  process.exit(0);
+  skipUnlessRequired('⚠ Chromium browser binary not installed — skipping UI smoke test (run `npx playwright install chromium` to run it).', { cleanup: () => server.close() });
 }
 
 const GAMES = [
