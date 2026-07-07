@@ -137,7 +137,7 @@ export const CAST: CastMember[] = [
   { id: 'priya', name: 'Priya', gender: 'girl', vibe: 'girl-next-door, next door is Surrey', face: '🌷', shape: 'sweetheart' },
   { id: 'chloe', name: 'Chloe', gender: 'girl', vibe: 'savage in gel nails', face: '💅', shape: 'gameplayer' },
   { id: 'amber', name: 'Amber', gender: 'girl', vibe: 'main character, self-cast', face: '👑', shape: 'gameplayer',
-    appearance: 'Black British woman, athletic curvy build, glossy sun-kissed skin, slicked-back high ponytail, laminated brows, glossy nude lips, small gold hoop earrings, layered gold necklaces, a bikini top under a loose white linen shirt, fresh manicure, a touch of under-eye tiredness from villa life' },
+    appearance: 'Black British woman, athletic curvy build, glossy sun-kissed skin, slicked-back high ponytail with controlled edges, laminated brows, glossy nude lips, small gold hoop earrings, layered gold necklaces, a bikini top under a loose white linen shirt, fresh manicure' },
   { id: 'sophia', name: 'Sophia', gender: 'girl', vibe: 'brand deal in human form', face: '🛍️', shape: 'gameplayer' },
   { id: 'meg', name: 'Meg', gender: 'girl', vibe: 'funny on purpose, chaotic by accident', face: '🤸', shape: 'sweetheart' },
   { id: 'tash', name: 'Tash', gender: 'girl', vibe: 'everyone’s type on paper', face: '📋', shape: 'slowburner' },
