@@ -11,7 +11,7 @@ import { FACTIONS, movePublicFactional } from './plugins/factions.js';
 import { PATHS } from './manifest.js';
 import { intelCount } from './plugins/gossip.js';
 import { stirlingDealNote } from './plugins/stirling.js';
-import { villaStage, villaResultStage, villaRecap, villaSetPiece } from './clarity.js';
+import { villaStage, villaResultStage, villaRecap, villaSetPiece, villaEndingPortraits, villaRoster } from './clarity.js';
 import { villaFeeds } from './feeds.js';
 import { mulberry32 } from '../../engine.js';
 import type { Presenter, RunState } from '../../types.js';
@@ -479,6 +479,10 @@ export const loveIslandPresenter: Presenter = {
   resultStage: villaResultStage,
   recap: villaRecap,
   setPiece: villaSetPiece,
+  // The finale's reacting faces (who you leave beside / behind) and the
+  // browsable "Meet the Cast" roster off the title screen — both pure reads.
+  endingPortraits: villaEndingPortraits,
+  roster: villaRoster,
   // ADR-0014 — the second screen: the nation's five feeds at every pivotal
   // moment. Pure read of state; the shell renders the teaser + browser.
   feeds: villaFeeds,

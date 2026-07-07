@@ -20,7 +20,8 @@
 // resume; the sims never render) — variety comes from flavorSeed/cardLog
 // rotation, never the play RNG. Zero golden impact by construction.
 
-import { castById, SHAPES } from './cast.js';
+import { castById, CAST, SHAPES } from './cast.js';
+import { portraitSrc } from './portraits.js';
 import { characterRead, opinionTier, secretOf, TIER_LABEL, MOODS } from './plugins/characters.js';
 import { ceremonyOutlook } from './plugins/coupling.js';
 import { FACTION_KEYS, FACTION_META, factionTier } from './plugins/factions.js';
@@ -73,6 +74,8 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
       cls: 'stage-partner mood-' + (p.mood || 'level'), live: live.has('partner'),
       sheet: {
         title: `${p.cast.name} — your Partner`,
+        name: p.cast.name, face: p.face, moodFace: p.moodFace, portraitSrc: p.portraitSrc,
+        faceCls: 'mood-' + (p.mood || 'level'), faceSub: p.cast.vibe,
         lines: [
           `<i>${p.cast.vibe}</i>`,
           ...((p.cast as any).shape && SHAPES[(p.cast as any).shape]
@@ -90,6 +93,7 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
       read: 'single', cls: 'stage-partner stage-single', live: live.has('partner'),
       sheet: {
         title: 'Single',
+        face: '💔',
         lines: [
           '💔 No Partner, no Connection — at a recoupling only the public can save you.',
           'Couple up at the next ceremony, or make the nation love you fast.',
@@ -108,6 +112,8 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
       cls: 'stage-rival mood-' + (r.mood || 'level') + (active ? ' stage-threat' : ''), live: live.has('rival'),
       sheet: {
         title: `${r.cast.name} — the Rival`,
+        name: r.cast.name, face: r.face, moodFace: r.moodFace, portraitSrc: r.portraitSrc,
+        faceCls: 'mood-' + (r.mood || 'level') + (active ? ' stage-threat' : ''), faceSub: r.cast.vibe,
         lines: [
           `<i>${r.cast.vibe}</i>`,
           `⚔️ Rates you: <b>${TIER_LABEL[r.tier]}</b>. ${r.tier === 'warm' || r.tier === 'smitten' ? 'The knives stay in the block.' : 'Warm them up and the knives get smaller.'}`,
@@ -127,6 +133,8 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
       cls: 'stage-bombshell mood-' + (b.mood || 'level'), live: live.has('bombshell'),
       sheet: {
         title: `${b.cast.name} — the bombshell`,
+        name: b.cast.name, face: b.face, moodFace: b.moodFace, portraitSrc: b.portraitSrc,
+        faceCls: 'mood-' + (b.mood || 'level') + ' stage-bombshell', faceSub: b.cast.vibe,
         lines: [
           `<i>${b.cast.vibe}</i>`,
           `💣 Reads you as: <b>${TIER_LABEL[b.tier]}</b>.`,
@@ -922,4 +930,57 @@ export function villaSetPiece(state: RunState, ev: GameEvent) {
     };
   }
   return null;
+}
+
+// ── The finale's faces (presenter.endingPortraits) ─────────────────────────
+// Who you walk out beside, and who you left behind. The season ends on the
+// people, not just the scene: the Partner you finished coupled with (and, if
+// they were live, the Rival who spent the summer circling). Pure read of the
+// finished run — mood and portrait resolve exactly as they did on the stage.
+export function villaEndingPortraits(_summary: any, state: RunState) {
+  if (state.tutorial) return null;
+  const out: any[] = [];
+  const p = characterRead(state, 'partner');
+  if (p) {
+    out.push({
+      label: state.exclusive ? 'YOUR COUPLE' : 'COUPLED WITH',
+      name: p.cast.name, face: p.face, moodFace: p.moodFace, portraitSrc: p.portraitSrc,
+      sub: p.cast.vibe, cls: 'stage-partner mood-' + (p.mood || 'level'),
+    });
+  }
+  const r = characterRead(state, 'rival');
+  if (r && state.flags.includes('li_rival_active')) {
+    out.push({
+      label: 'THE RIVAL', name: r.cast.name, face: r.face, moodFace: r.moodFace, portraitSrc: r.portraitSrc,
+      sub: r.cast.vibe, cls: 'stage-rival mood-' + (r.mood || 'level'),
+    });
+  }
+  return out.length ? out : null;
+}
+
+// ── Meet the Cast (presenter.roster) ────────────────────────────────────────
+// The whole villa, browsable from the title screen — the fixed roster of 16 as
+// enlargeable profile pics, grouped the way the villa fills up (the day-one
+// boys and girls, then the bombshells who arrive to blow it apart). Each read
+// is their one-line vibe plus how they do a relationship (the SHAPE the player
+// meets on the stage sheet). Pure data — no run needed.
+export function villaRoster(_meta: any) {
+  const shapeSub = (c: any) => (c.shape && SHAPES[c.shape]) ? SHAPES[c.shape].label : null;
+  const toMember = (c: any) => ({
+    name: c.name, face: c.face, portraitSrc: portraitSrc(c.id),
+    note: c.vibe, sub: shapeSub(c),
+    cls: c.gender === 'girl' ? 'roster-girl' : 'roster-boy',
+  });
+  const boys = CAST.filter((c) => c.gender === 'boy' && !c.bombshell).map(toMember);
+  const girls = CAST.filter((c) => c.gender === 'girl' && !c.bombshell).map(toMember);
+  const bombs = CAST.filter((c) => c.bombshell).map(toMember);
+  return {
+    title: 'Meet the Cast',
+    sub: 'The villa, in full. Tap a face to see them properly.',
+    groups: [
+      { label: 'The Boys', members: boys },
+      { label: 'The Girls', members: girls },
+      { label: 'Bombshells', members: bombs },
+    ].filter((g) => g.members.length),
+  };
 }

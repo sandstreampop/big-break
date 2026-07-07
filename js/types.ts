@@ -572,6 +572,10 @@ export interface Presenter {
   // characters simply omits it.
   cardCast?: (state: RunState, ev: GameEvent) => {
     name: string; face: string; moodFace?: string | null; sub?: string | null; cls?: string;
+    // A real portrait image (a pack's generated cast); when present the shell
+    // shows it as the profile pic and taps it through to a full-size lightbox,
+    // else it renders the emoji `face`. Same "real asset wins" rule as scene art.
+    portraitSrc?: string;
   }[] | null;
 
   // ── Result / card hooks (the pack's own outcome presentation). The shell
@@ -622,13 +626,23 @@ export interface Presenter {
   stage?: (state: RunState, ev: GameEvent | null) => {
     label: string; name: string; face: string; moodFace?: string | null;
     read?: string | null; cls?: string; live?: boolean;
-    sheet?: { title: string; lines: string[] };
+    // A real portrait image for this character; the shell shows it in place of
+    // the emoji `face` and (via the inspect sheet) taps it through to a
+    // full-size lightbox. Absent → emoji glyph, byte-identical to before.
+    portraitSrc?: string;
+    // `sheet` backs a tap-to-inspect. It may carry the character's face so the
+    // inspector leads with an enlargeable profile pic (name/portraitSrc/moodFace).
+    sheet?: {
+      title: string; lines: string[];
+      name?: string; face?: string; moodFace?: string | null; portraitSrc?: string;
+      faceCls?: string; faceSub?: string | null; faceNote?: string | null;
+    };
   }[] | null;
   // The result beat: a pack's presentation of HOW the swipe landed, rendered
   // inside the result overlay — a reacting portrait plus qualitative movement
   // lines, replacing the numeric chips it claims via hideChipKeys.
   resultStage?: (state: RunState, result: any) => {
-    portrait?: { face: string; moodFace?: string | null; name?: string; sub?: string | null; cls?: string } | null;
+    portrait?: { face: string; moodFace?: string | null; name?: string; sub?: string | null; cls?: string; portraitSrc?: string } | null;
     reads?: { html: string; cls?: string }[];
     hideChipKeys?: string[];
   } | null;
@@ -639,6 +653,27 @@ export interface Presenter {
   recap?: (state: RunState, act: number, seed: number) => {
     kicker?: string; title: string;
     blocks: { label?: string; html: string; cls?: string }[];
+  } | null;
+  // The finale's reacting faces: who you leave the season standing beside (and
+  // who you left in your wake). Rendered as a row of enlargeable portraits on
+  // the ending screen, above the prose. Pure read of the finished run; a pack
+  // without a cast omits it and the ending screen shows scene art alone.
+  endingPortraits?: (summary: any, state: RunState) => {
+    label?: string; name: string; face?: string; moodFace?: string | null;
+    portraitSrc?: string; sub?: string | null; cls?: string;
+  }[] | null;
+  // "Meet the Cast": the pack's full roster as a browsable gallery reachable
+  // from the title screen. Grouped sections (e.g. the boys / the girls /
+  // bombshells), each member an enlargeable profile pic + a one-line read. The
+  // shell renders the gallery and the tap-to-enlarge; the pack owns who's in it
+  // and how they're described. A pack without a fixed cast omits this and no
+  // roster button appears.
+  roster?: (meta: any) => {
+    title: string; sub?: string;
+    groups: {
+      label: string;
+      members: { name: string; face?: string; portraitSrc?: string; note?: string | null; sub?: string | null; cls?: string }[];
+    }[];
   } | null;
   // Set-piece framing on a dealt card: a ceremonial banner plus explicit
   // stakes-in lines rendered above the card, and a class for scene styling.

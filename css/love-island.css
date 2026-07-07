@@ -120,12 +120,15 @@ body {
 /* The stage: the villa's people, mood worn as the ring (same palette as the
    old cast-chips — the six moods are the whole vocabulary). */
 .stage-slot .stage-face { border-color: #4b4066; }
-.stage-slot.mood-buzzing .stage-face, .result-face.mood-buzzing { border-color: #ff5c8a; box-shadow: 0 0 10px rgba(255, 92, 138, .55); }
-.stage-slot.mood-smug .stage-face, .result-face.mood-smug { border-color: #ffb35c; box-shadow: 0 0 10px rgba(255, 179, 92, .45); }
-.stage-slot.mood-fuming .stage-face, .result-face.mood-fuming { border-color: #ff5347; box-shadow: 0 0 12px rgba(255, 83, 71, .55); }
-.stage-slot.mood-wounded .stage-face, .result-face.mood-wounded { border-color: #6fa8ff; box-shadow: 0 0 10px rgba(111, 168, 255, .45); }
-.stage-slot.mood-scheming .stage-face, .result-face.mood-scheming { border-color: #ba7aff; box-shadow: 0 0 10px rgba(186, 122, 255, .5); }
-.stage-slot.mood-torn .stage-face, .result-face.mood-torn { border-color: #9aa0b0; box-shadow: 0 0 8px rgba(154, 160, 176, .4); filter: saturate(.7); }
+.stage-slot.mood-buzzing .stage-face, .result-face.mood-buzzing, .inspect-face.mood-buzzing, .ending-face.mood-buzzing { border-color: #ff5c8a; box-shadow: 0 0 10px rgba(255, 92, 138, .55); }
+.stage-slot.mood-smug .stage-face, .result-face.mood-smug, .inspect-face.mood-smug, .ending-face.mood-smug { border-color: #ffb35c; box-shadow: 0 0 10px rgba(255, 179, 92, .45); }
+.stage-slot.mood-fuming .stage-face, .result-face.mood-fuming, .inspect-face.mood-fuming, .ending-face.mood-fuming { border-color: #ff5347; box-shadow: 0 0 12px rgba(255, 83, 71, .55); }
+.stage-slot.mood-wounded .stage-face, .result-face.mood-wounded, .inspect-face.mood-wounded, .ending-face.mood-wounded { border-color: #6fa8ff; box-shadow: 0 0 10px rgba(111, 168, 255, .45); }
+.stage-slot.mood-scheming .stage-face, .result-face.mood-scheming, .inspect-face.mood-scheming, .ending-face.mood-scheming { border-color: #ba7aff; box-shadow: 0 0 10px rgba(186, 122, 255, .5); }
+.stage-slot.mood-torn .stage-face, .result-face.mood-torn, .inspect-face.mood-torn, .ending-face.mood-torn { border-color: #9aa0b0; box-shadow: 0 0 8px rgba(154, 160, 176, .4); filter: saturate(.7); }
+/* Roster gallery: girls run pink, boys blue, so the gender split reads at a glance. */
+.roster-cell.roster-girl .roster-face { border-color: rgba(255, 92, 138, .5); }
+.roster-cell.roster-boy .roster-face { border-color: rgba(111, 168, 255, .5); }
 
 /* Seat flavour: the Rival runs violet; a Rival on the move signals it. */
 .stage-slot.stage-rival { border-color: rgba(186, 122, 255, .35); }

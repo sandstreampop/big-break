@@ -7,7 +7,7 @@
 // data. (A pack's bespoke screens — music's Hot 10 — live in the pack.) None
 // route the game forward, so they sit safely below the flow.
 
-import { openOverlay, el, activatable } from './dom.js';
+import { openOverlay, openPortrait, el, activatable } from './dom.js';
 import { activePack, run, STAT_META, PRES, metaFor, itemById, genderLabelFor } from './context.js';
 import { sfx } from '../audio.js';
 import { artFor } from '../art.js';
@@ -17,6 +17,27 @@ export function showInspect(sheet) {
     const box = el('div', 'result-card');
     box.append(el('div', 'tier-badge', 'INSPECT'));
     if (sheet.art) box.append(artFor(sheet.art, 'inspect-art'));
+    // A character sheet leads with their face. When a real portrait is wired
+    // (a pack's cast) it renders as the profile pic and taps through to the
+    // full-size lightbox; otherwise the emoji glyph carries it. The mood emoji
+    // rides on top as a badge either way. Generic: the shell only knows the
+    // shape {portraitSrc?, face?, moodFace?}; the pack fills it.
+    if (sheet.portraitSrc || sheet.face) {
+      const badge = sheet.moodFace ? `<span class="stage-moodface">${sheet.moodFace}</span>` : '';
+      const face = el('div', 'inspect-face' + (sheet.faceCls ? ' ' + sheet.faceCls : ''),
+        (sheet.portraitSrc
+          ? `<img class="face-portrait" src="${sheet.portraitSrc}" alt="" draggable="false">`
+          : (sheet.face || '')) + badge);
+      if (sheet.portraitSrc) {
+        face.classList.add('inspect-face-tappable');
+        activatable(face, (e) => {
+          e.stopPropagation();
+          sfx.ui();
+          openPortrait(sheet.portraitSrc, { name: sheet.name || sheet.title, sub: sheet.faceSub, note: sheet.faceNote });
+        }, `Enlarge ${sheet.name || sheet.title || 'portrait'}`);
+      }
+      box.append(face);
+    }
     box.append(el('p', 'result-text', `${sheet.emoji ? sheet.emoji + ' ' : ''}<b>${sheet.title}</b>`));
     for (const line of sheet.lines || []) box.append(el('p', 'gear-blurb', line));
     box.append(el('p', 'tap-hint', 'tap to close'));

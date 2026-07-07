@@ -3,4 +3,21 @@
 // served from docs/games/love-island/public/ → dist/love-island/. Empty until
 // portraits are generated; an empty map means every face falls back to its
 // emoji glyph (identical to pre-art behaviour), so this file is golden-safe.
-export const PORTRAITS: Record<string, string> = {};
+export const PORTRAITS: Record<string, string> = {
+  "amber": "art/cast/amber.png",
+  "bella": "art/cast/bella.png",
+  "chloe": "art/cast/chloe.png",
+  "dev": "art/cast/dev.png",
+  "jamal": "art/cast/jamal.png",
+  "kai": "art/cast/kai.png",
+  "luca": "art/cast/luca.png",
+  "marco": "art/cast/marco.png",
+  "meg": "art/cast/meg.png",
+  "ollie": "art/cast/ollie.png",
+  "priya": "art/cast/priya.png",
+  "reece": "art/cast/reece.png",
+  "sophia": "art/cast/sophia.png",
+  "tash": "art/cast/tash.png",
+  "tyler": "art/cast/tyler.png",
+  "zara": "art/cast/zara.png"
+};

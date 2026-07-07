@@ -1525,6 +1525,81 @@ body.big-text #app { zoom: 1.18; }
 .face-portrait {
   width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;
 }
+/* A real portrait invites a press — see it full-size. Emoji faces stay inert. */
+.cast-chip-tappable, .result-face-tappable, .inspect-face-tappable,
+.ending-face-tappable, .roster-cell-tappable { cursor: pointer; }
+.result-face-tappable, .inspect-face-tappable, .ending-face-tappable {
+  transition: transform .18s ease;
+}
+.result-face-tappable:active, .inspect-face-tappable:active, .ending-face-tappable:active { transform: scale(.94); }
+@media (prefers-reduced-motion: reduce) {
+  .result-face-tappable, .inspect-face-tappable, .ending-face-tappable { transition: none; }
+}
+
+/* The portrait lightbox: press a face, see it properly. A large rounded image
+   with an optional name/sub/note caption; tap anywhere to close. */
+.portrait-lightbox { display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 92vw; }
+.portrait-lightbox-frame {
+  position: relative;
+  width: min(78vw, 360px); aspect-ratio: 1 / 1;
+  border-radius: 22px; overflow: hidden;
+  border: 3px solid var(--accent, #4b4066);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .55);
+  background: rgba(0, 0, 0, .3);
+}
+.portrait-lightbox-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.portrait-lightbox-mood {
+  position: absolute; right: 10px; bottom: 8px; font-size: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .7));
+}
+.portrait-lightbox-cap { text-align: center; }
+.portrait-lightbox-name { font-size: 20px; font-weight: 900; }
+.portrait-lightbox-sub { display: block; font-size: 13px; font-weight: 600; color: var(--dim); margin-top: 2px; }
+.portrait-lightbox-note { font-size: 13.5px; font-style: italic; color: var(--dim); margin-top: 4px; }
+@media (max-height: 700px) { .portrait-lightbox-frame { width: min(58vw, 260px); } }
+
+/* The inspect sheet's lead portrait: an enlargeable profile pic above the read. */
+.inspect-face {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 88px; height: 88px; margin: 2px auto 8px; font-size: 48px; border-radius: 50%;
+  background: rgba(0, 0, 0, .3); border: 3px solid #4b4066;
+}
+.inspect-face .stage-moodface { font-size: 28px; right: -6px; bottom: -2px; }
+
+/* Meet the Cast: the roster gallery. */
+.roster-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 10px; margin: 4px 0 14px;
+}
+.roster-cell {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+  background: rgba(255, 255, 255, .04); border: 1px solid #3b3352; border-radius: 14px;
+  padding: 10px 6px 9px; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.roster-cell-tappable:active { transform: scale(.97); }
+.roster-cell:hover { border-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .roster-cell { transition: none; } }
+.roster-face {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 72px; height: 72px; font-size: 40px; border-radius: 50%;
+  background: rgba(0, 0, 0, .3); border: 2px solid #4b4066;
+}
+.roster-name { font-size: 13px; font-weight: 800; line-height: 1.1; }
+.roster-shape { font-size: 10px; font-weight: 700; letter-spacing: .04em; color: var(--dim); text-transform: uppercase; }
+.roster-note { font-size: 11px; font-style: italic; color: var(--dim); line-height: 1.25; }
+
+/* The finale's reacting faces: who you leave beside / behind. */
+.ending-portraits { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 6px 0 10px; }
+.ending-portrait { display: flex; flex-direction: column; align-items: center; gap: 3px; max-width: 150px; }
+.ending-face {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 84px; height: 84px; font-size: 46px; border-radius: 50%;
+  background: rgba(0, 0, 0, .3); border: 3px solid #4b4066;
+}
+.ending-face .stage-moodface { font-size: 26px; right: -6px; bottom: -2px; }
+.ending-portrait-label { font-size: 9px; font-weight: 800; letter-spacing: .14em; color: var(--dim); }
+.ending-portrait-name { font-size: 13px; font-weight: 800; }
+.ending-portrait-sub { display: block; font-size: 11px; font-weight: 500; color: var(--dim); font-style: italic; }
 .stage-name { font-size: 12px; font-weight: 700; line-height: 1.1; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .stage-read { font-size: 10px; color: var(--dim); line-height: 1.1; }
 @media (max-height: 700px) {

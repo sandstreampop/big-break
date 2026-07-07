@@ -9,7 +9,7 @@
 import * as save from '../save.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled } from '../audio.js';
 import { track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from '../analytics.js';
-import { el, $, activatable, btn, show, reducedMotion, hashStr, todayStr, weekStr } from './dom.js';
+import { el, $, activatable, btn, show, openPortrait, reducedMotion, hashStr, todayStr, weekStr } from './dom.js';
 import { activePack, PATHS, PRES, meta, run, setRun, setMeta, failLabelFor } from './context.js';
 import { showHelp } from './inspectors.js';
 import { nav } from './nav.js';
@@ -85,6 +85,8 @@ export function renderTitle() {
       '', () => { save.clearRun(); PRES.startGauntlet?.(); }));
   }
   if ((PRES.wallItems || []).length) menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', nav.wall));
+  // Packs with a fixed named cast (the villa's 16) offer a browsable gallery.
+  if (PRES.roster) menu.append(btn('👥 Meet the Cast', '', renderRoster));
   menu.append(btn('🎖 Trophy Room', '', renderTrophies));
   if (meta.runs > 0) menu.append(btn('📊 The Résumé', '', renderResume));
   menu.append(btn('⚙ Settings', '', renderSettings));
@@ -207,6 +209,46 @@ function renderTrophies() {
   menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
   s.append(menu);
   show('#screen-trophies');
+}
+
+// ---------- Meet the Cast (the roster gallery) ----------
+// A browsable gallery of a pack's fixed cast (the villa's 16). Genre-neutral:
+// the shell renders grouped face cards from PRES.roster and taps each through
+// to the full-size lightbox; the pack owns who's in it and how they read. Only
+// shown for packs that declare a roster (music has none).
+
+function renderRoster() {
+  const data = PRES.roster?.(meta);
+  const s = $('#screen-roster');
+  s.innerHTML = '';
+  if (!data) { nav.title(); show('#screen-title', 'back'); return; }
+  s.append(el('h2', 'screen-head', data.title));
+  if (data.sub) s.append(el('p', 'screen-sub', data.sub));
+  for (const group of data.groups) {
+    if (!group.members.length) continue;
+    s.append(el('h3', 'wall-tier', group.label));
+    const grid = el('div', 'roster-grid');
+    for (const m of group.members) {
+      const cell = el('div', 'roster-cell' + (m.cls ? ' ' + m.cls : ''));
+      const face = el('div', 'roster-face',
+        m.portraitSrc ? `<img class="face-portrait" src="${m.portraitSrc}" alt="" draggable="false">` : (m.face || ''));
+      cell.append(face);
+      cell.append(el('div', 'roster-name', m.name));
+      if (m.sub) cell.append(el('div', 'roster-shape', m.sub));
+      if (m.note) cell.append(el('div', 'roster-note', m.note));
+      // Tap the whole card to enlarge; emoji-only faces still open a caption.
+      if (m.portraitSrc) {
+        cell.classList.add('roster-cell-tappable');
+        activatable(cell, () => { sfx.ui(); openPortrait(m.portraitSrc, { name: m.name, sub: m.sub, note: m.note }); }, `Enlarge ${m.name}`);
+      }
+      grid.append(cell);
+    }
+    s.append(grid);
+  }
+  const menu = el('div', 'menu');
+  menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
+  s.append(menu);
+  show('#screen-roster');
 }
 
 // ---------- The Résumé (lifetime stats, Pass 25) ----------

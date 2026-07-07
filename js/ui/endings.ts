@@ -14,7 +14,7 @@ import { CONFIG } from '../config.js';
 import { artFor } from '../art.js';
 import { sfx, music } from '../audio.js';
 import { track } from '../analytics.js';
-import { el, $, btn, show, openOverlay, todayStr } from './dom.js';
+import { el, $, btn, show, openOverlay, openPortrait, activatable, todayStr } from './dom.js';
 import { activePack, run, PRES, PATHS, meta, metaFor, fillText, vibeFor, failLabelFor } from './context.js';
 import { gateReadout } from './gates.js';
 import { feedTeaser } from './feeds.js';
@@ -242,6 +242,28 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   const finalPress = (PRES.headlines?.(run, 1) || [])[0];
   if (finalPress) {
     wrap.append(el('p', 'trades-row ending-press', `<b>${finalPress.text}</b><span>— ${finalPress.src}</span>`));
+  }
+  // The people the season ended on (presenter.endingPortraits): who you leave
+  // beside, who you left behind — enlargeable profile pics above the prose.
+  // Feature-detected; a pack without a cast shows scene art alone.
+  const endPortraits = PRES.endingPortraits?.(summary, run) || null;
+  if (endPortraits && endPortraits.length) {
+    const row = el('div', 'ending-portraits');
+    for (const c of endPortraits) {
+      const chip = el('div', 'ending-portrait' + (c.cls ? ' ' + c.cls : ''));
+      const badge = c.moodFace ? `<span class="stage-moodface">${c.moodFace}</span>` : '';
+      const face = el('div', 'ending-face',
+        (c.portraitSrc ? `<img class="face-portrait" src="${c.portraitSrc}" alt="" draggable="false">` : (c.face || '')) + badge);
+      if (c.portraitSrc) {
+        face.classList.add('ending-face-tappable');
+        activatable(face, (e) => { e.stopPropagation(); sfx.ui(); openPortrait(c.portraitSrc, { name: c.name, sub: c.sub }); }, `Enlarge ${c.name}`);
+      }
+      chip.append(face);
+      if (c.label) chip.append(el('div', 'ending-portrait-label', c.label));
+      chip.append(el('div', 'ending-portrait-name', c.name + (c.sub ? `<span class="ending-portrait-sub">${c.sub}</span>` : '')));
+      row.append(chip);
+    }
+    wrap.append(row);
   }
   wrap.append(el('p', 'ending-text', ending.text));
 

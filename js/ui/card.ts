@@ -15,7 +15,7 @@ import { artFor, sceneFor } from '../art.js';
 import { sfx, ambient } from '../audio.js';
 import { track } from '../analytics.js';
 import {
-  el, $, activatable, btn, reducedMotion, vibrate, openOverlay,
+  el, $, activatable, btn, reducedMotion, vibrate, openOverlay, openPortrait,
   spawnConfetti, coachMark, show,
 } from './dom.js';
 import {
@@ -162,9 +162,19 @@ function renderDealtCard(ev, sp) {
   if (cast && cast.length) {
     const strip = el('div', 'card-cast');
     for (const c of cast) {
-      strip.append(el('div', 'cast-chip' + (c.cls ? ' ' + c.cls : ''),
-        `<span class="cast-face">${c.face}${c.moodFace ? `<span class="cast-moodface">${c.moodFace}</span>` : ''}</span>` +
-        `<span class="cast-id"><span class="cast-name">${c.name}</span>${c.sub ? `<span class="cast-sub">${c.sub}</span>` : ''}</span>`));
+      const inner = c.portraitSrc
+        ? `<img class="face-portrait" src="${c.portraitSrc}" alt="" draggable="false">`
+        : (c.face || '');
+      const chip = el('div', 'cast-chip' + (c.cls ? ' ' + c.cls : ''),
+        `<span class="cast-face">${inner}${c.moodFace ? `<span class="cast-moodface">${c.moodFace}</span>` : ''}</span>` +
+        `<span class="cast-id"><span class="cast-name">${c.name}</span>${c.sub ? `<span class="cast-sub">${c.sub}</span>` : ''}</span>`);
+      // A real portrait taps through to the full-size lightbox; emoji faces
+      // stay inert (nothing to enlarge).
+      if (c.portraitSrc) {
+        chip.classList.add('cast-chip-tappable');
+        activatable(chip, (e) => { e.stopPropagation(); sfx.ui(); openPortrait(c.portraitSrc, { name: c.name, sub: c.sub }); }, `Enlarge ${c.name}`);
+      }
+      strip.append(chip);
     }
     card.append(strip);
   }
@@ -523,7 +533,13 @@ function showResult(result) {
   if (rs?.portrait) {
     const p = rs.portrait;
     const po = el('div', 'result-portrait' + (p.cls ? ' ' + p.cls : ''));
-    po.append(el('div', 'result-face', faceInner(p)));
+    const face = el('div', 'result-face', faceInner(p));
+    // Press the reacting face to see it full-size (real portraits only).
+    if (p.portraitSrc) {
+      face.classList.add('result-face-tappable');
+      activatable(face, (e) => { e.stopPropagation(); sfx.ui(); openPortrait(p.portraitSrc, { name: p.name, sub: p.sub }); }, `Enlarge ${p.name || 'portrait'}`);
+    }
+    po.append(face);
     if (p.name) po.append(el('div', 'result-face-name', `${p.name}${p.sub ? `<span class="result-face-sub">${p.sub}</span>` : ''}`));
     box.append(po);
   }

@@ -137,6 +137,36 @@ export function openOverlay(
   return close;
 }
 
+// ---------- Portrait lightbox ----------
+// Press a face → see it big. A genre-neutral overlay that enlarges a single
+// portrait image with an optional caption block (name / sub / note). Pure
+// mechanism: the shell knows how to blow up an <img> and label it; the pack
+// decides which faces carry a `portraitSrc` worth enlarging. Falls back to
+// nothing when there's no real image (an emoji glyph has no "bigger" form),
+// so callers can wire it unconditionally and it no-ops on emoji-only faces.
+export function openPortrait(
+  src?: string,
+  cap: { name?: string; sub?: string | null; note?: string | null; mood?: string | null } = {},
+): void {
+  if (!src) return;
+  openOverlay((ov) => {
+    const box = el('div', 'portrait-lightbox');
+    const frame = el('div', 'portrait-lightbox-frame',
+      `<img class="portrait-lightbox-img" src="${src}" alt="${cap.name || ''}" draggable="false">`);
+    if (cap.mood) frame.append(el('span', 'portrait-lightbox-mood', cap.mood));
+    box.append(frame);
+    if (cap.name || cap.sub || cap.note) {
+      const capBox = el('div', 'portrait-lightbox-cap');
+      if (cap.name) capBox.append(el('div', 'portrait-lightbox-name',
+        cap.name + (cap.sub ? `<span class="portrait-lightbox-sub">${cap.sub}</span>` : '')));
+      if (cap.note) capBox.append(el('div', 'portrait-lightbox-note', cap.note));
+      box.append(capBox);
+    }
+    box.append(el('div', 'tap-hint', 'tap to close'));
+    ov.append(box);
+  });
+}
+
 export function spawnConfetti(host) {
   if (reducedMotion()) return;
   const box = el('div', 'confetti-box');
