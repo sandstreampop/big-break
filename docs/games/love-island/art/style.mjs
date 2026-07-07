@@ -18,16 +18,17 @@ export const STYLE_PREAMBLE = [
   'Lighting: bright, even, commercial beauty lighting — soft frontal key light, minimal harsh shadows, strong catchlights in the eyes, glossy highlights on cheekbones, forehead, lips and shoulders; warm "sun-kissed" skin from studio light (not natural sunlight).',
   'Retouching: heavy but reality-TV believable — smooth clean skin with reduced blemishes, brightened eyes and teeth, enhanced contrast around the features, very polished hair, makeup that reads clearly even at thumbnail size; aspirational but not fashion-editorial surreal, and NOT over-airbrushed plastic.',
   'Colour: pop-TV promo grade — extremely saturated, high contrast, warm orange/gold skin tones against a turquoise/aqua tropical villa-and-pool background (skin pushed warm, background pushed cyan). Glossy summer dating-show branding.',
+  'CRUCIAL — this is a BRITISH ITV2-style villa cast, UK high-street reality-TV glam, NOT American: attractive but not Hollywood-surgically-perfect, with strong individual facial features and slight natural asymmetry (no ultra-symmetrical faces, no perfect veneers, no glass skin). Think "night out in Manchester / Essex / Liverpool / Newcastle / London" — funny, warm, sharp, approachable — rather than serene LA-model calm.',
 ].join(' ');
 
 // Pose + expression — controlled and "castable", personality-tuned.
 export const HERO_EXPRESSION =
-  'Pose: direct eye contact with the camera, a confident camera-ready smile or a soft smoulder, chin slightly down or neutral, shoulders squared or subtly angled — controlled and castable (approachable, attractive, competitive), no candid chaos. Let their personality and vibe (above) decide smile vs. smoulder';
+  'Pose: direct eye contact with the camera, chin slightly down or neutral, shoulders squared or subtly angled — controlled and castable, no candid chaos. Expression is confident, playful and a little cheeky (a knowing half-smile or a sharp smoulder), warm and approachable rather than serene model-calm. Let their personality and vibe (above) decide smile vs. smoulder';
 
 // Styling baseline (villa-summer glam). Gender + vibe + any cast.ts `appearance`
 // differentiate the person.
 export const STYLING =
-  'polished natural-glam styling: glossy sun-kissed skin, sleek styled hair, subtle gold jewellery; villa SWIMWEAR only — a bikini top for women, bare-chested for men — bare shoulders framed in a chest-up crop, tasteful and PG-13; aspirational, groomed and camera-ready';
+  'British high-street reality-TV glam (NOT LA influencer): warm bronzed fake tan, full lashes, laminated/shaped brows, bronzer and contour, glossy lips with a visible nude lip liner, straightened hair or extensions / a slick bun with slightly darker roots, gold hoops; villa SWIMWEAR only — a bikini top for women, bare-chested for men — bare shoulders framed in a chest-up crop, tasteful and PG-13; strong individual features, groomed and camera-ready, not Hollywood-perfect';
 
 // Never-wants — the anti-candid guards (mirrors the direction's negative prompt).
 export const NEGATIVE = [
@@ -36,6 +37,9 @@ export const NEGATIVE = [
   'low saturation', 'gritty realism', 'over-airbrushed plastic skin', 'exaggerated body proportions',
   'doll-like face', 'official Love Island logos or branding', 'recognisable real contestants or celebrity likeness',
   'text', 'watermark', 'captions',
+  'LA influencer', 'American pageant or Bachelor-style contestant', 'Hollywood blowout', 'perfect veneers',
+  'glass skin', 'ultra-symmetrical face', 'luxury fashion editorial', 'serene model expression',
+  'Kardashian-style face', 'generic Instagram model', 'California beach girl', 'professional fashion campaign',
 ].join(', ');
 
 // Mood → expression, still within the controlled promo look (keys MUST match
@@ -52,9 +56,9 @@ export const MOOD_EXPRESSIONS = {
 
 // Partner-SHAPE flavour (cast.ts `shape`) — an energy nudge, not a face change.
 export const SHAPE_HINTS = {
-  sweetheart: 'warm, open, approachable energy',
-  gameplayer: 'sharp, self-assured, competitive energy',
-  slowburner: 'cooler, more guarded, mysterious energy',
+  sweetheart: 'sweet girl-/boy-next-door energy — softer, warmer makeup with less contour, freckles showing through the tan, a warm approachable smile',
+  gameplayer: 'sharp, fiery, competitive energy — full high glam, arched brow, sharp direct eye contact, a cheeky or knowing look',
+  slowburner: 'cooler, guarded, mysterious energy — understated glam and a slow smoulder',
 };
 
 // mid-20s villa contestants.
