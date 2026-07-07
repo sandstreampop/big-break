@@ -8,16 +8,10 @@
 // routes the game forward.
 
 import { el, $, activatable, reducedMotion } from './dom.js';
-import { activePack, run, PRES, STAT_META, itemById } from './context.js';
+import { activePack, run, PRES, STAT_META } from './context.js';
 import { sfx, music } from '../audio.js';
 import { CONFIG } from '../config.js';
-import { showInspect, showInspectStat, showStatusDrawer, showChart, showHelp } from './inspectors.js';
-import { weatherById } from '../data/weather.js';
-import { contractById } from '../data/contracts.js';
-import { genreById } from '../data/genres.js';
-import { venueById, VENUE_TIERS } from '../data/venues.js';
-import { bandmateById } from '../data/band.js';
-import { hustleById } from '../data/hustles.js';
+import { showInspect, showInspectStat, showStatusDrawer, showHelp } from './inspectors.js';
 
 let prevStats = null; // for stat-rail delta floaters
 
@@ -39,13 +33,12 @@ export function renderHud() {
   actWrap.append(el('span', 'hud-act', run.tutorial
     ? (PRES.tutorial?.hud || 'FIRST GIG · The Rubber Room')
     : `${PRES.actWord || 'ACT'} ${run.act} · ${actNames[run.act]}`));
-  // The Hot 10 belongs to the songs subsystem — only runs that carry it get
-  // the chart button.
-  if (!run.tutorial && run.songs) {
-    const chartingN = (run.songs || []).filter((s) => s.status === 'charting' && s.pos).length;
-    const chartBtn = el('button', 'chart-btn', chartingN ? `📈<span class="chart-badge">${chartingN}</span>` : '📈');
-    chartBtn.addEventListener('click', () => { sfx.ui(); showChart(); });
-    actWrap.append(chartBtn);
+  // Pack-contributed HUD buttons (e.g. music's Hot 10). The shell always shows
+  // Help below; the pack adds its own screens.
+  for (const b of PRES.hudButtons?.(run) || []) {
+    const bEl = el('button', 'chart-btn', b.badge ? `${b.icon}<span class="chart-badge">${b.badge}</span>` : b.icon);
+    bEl.addEventListener('click', () => { sfx.ui(); b.onTap(); });
+    actWrap.append(bEl);
   }
   const helpBtn = el('button', 'chart-btn', '❓');
   helpBtn.addEventListener('click', () => { sfx.ui(); showHelp(); });
@@ -58,15 +51,7 @@ export function renderHud() {
   }
   top.append(actWrap);
   const counters = el('span', 'hud-counters');
-  if (PRES.hudCounters) {
-    for (const c of PRES.hudCounters(run)) counters.append(el('span', c.cls || 'hud-fame', c.html));
-  } else {
-    if (run.encore > 0) counters.append(el('span', 'hud-encore', `🎇${run.encore > 1 ? '×' + run.encore : ''}`));
-    if (run.pathProgress > 0 && run.path) counters.append(el('span', 'hud-momentum', `▲${run.pathProgress}`));
-    counters.append(el('span', 'hud-fame', `★ ${run.fame}`));
-    counters.append(el('span', 'hud-money' + (run.money < 0 ? ' neg' : ''), `$${run.money}`));
-    if (run.path === 'hitfactory' || run.hits > 0) counters.append(el('span', 'hud-hits', `♪ ${run.hits} hit${run.hits === 1 ? '' : 's'}`));
-  }
+  for (const c of PRES.hudCounters?.(run) || []) counters.append(el('span', c.cls || 'hud-counter', c.html));
   if (compact) {
     // Salience over permanence (ADR-0009): the danger meter earns a chip
     // only once it matters; the hot streak rides as a small chip, not a
@@ -115,83 +100,16 @@ export function renderHud() {
   }
   hud.append(rail);
 
+  // The gear row: the pack's persona + acquired kit as tappable inspect chips.
+  // The shell renders whatever descriptors the pack returns; it names none of
+  // the kit (instrument, venue, contract, hustle…).
   const gearRow = el('div', 'gear-row');
-  const chip = (cls, html, sheet) => {
-    const c = el('span', cls, html);
-    activatable(c, () => { sfx.ui(); showInspect(sheet); });
-    gearRow.append(c);
-  };
-  const inst = activePack.loadoutById(run.loadout);
-  chip('gear-chip inst-chip', inst.name, {
-    art: inst.art, title: inst.name, lines: [
-      inst.flavor,
-      ...(inst.quirk ? [`<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`] : []),
-      ...(inst.family ? [`Family: ${inst.family} — gear with a family requirement only works when it matches.`] : []),
-    ],
-  });
-  // Scene Weather (M2): the era this career happens inside
-  const weather = weatherById(run.weather);
-  if (weather && !run.tutorial) chip('gear-chip weather-chip', `${weather.icon} ${weather.name}`, {
-    emoji: weather.icon, title: `${weather.name} (scene weather)`,
-    lines: [weather.flavor, `<b>This run:</b> ${weather.blurb}`,
-      'Rolled once per career. Dailies and Gauntlets share theirs with everyone.'],
-  });
-  const contract = contractById(run.contract);
-  if (contract) chip('gear-chip contract-chip-mini', `${contract.icon} ${contract.name}`, {
-    emoji: contract.icon, title: `${contract.name} (contract, ×${contract.lpMult} LP)`, lines: [contract.desc],
-  });
-  const genre = genreById(run.genre);
-  if (genre) chip('gear-chip genre-chip-mini', `${genre.icon} ${genre.name}`, {
-    emoji: genre.icon, title: `${genre.name} (your sound)`, lines: [genre.flavor, `<b>Effect:</b> ${genre.blurb}`],
-  });
-  const venue = venueById(run.venue);
-  if (venue) {
-    const tier = VENUE_TIERS[run.venueLevel] || VENUE_TIERS[0];
-    chip('gear-chip venue-chip-mini', `${venue.icon} ${'★'.repeat(run.venueLevel)}${'☆'.repeat(3 - run.venueLevel)}`, {
-      emoji: venue.icon, title: `${venue.name} — ${tier.name}`,
-      lines: [venue.flavor,
-        `<b>Home crowd:</b> ${venue.tags.join('/')} shows here add +${tier.showBonus} Fame (and half that Cred). ${run.venueShows || 0} shows played.`,
-        run.venueLevel < 3 ? 'Play more shows here to build it toward a local institution.' : 'This room is a local institution. It’s yours.'],
-    });
-  }
-  for (const id of run.accessories || []) {
-    const acc = itemById(id);
-    if (!acc) continue;
-    const active = accActive(acc);
-    chip('gear-chip' + (active ? '' : ' inert'), acc.name + (active ? '' : ' 💤'), {
-      art: acc.art, title: acc.name, lines: [
-        acc.flavor, `<b>Effect:</b> ${acc.blurb}`,
-        active ? '' : '💤 <b>Dormant:</b> this item doesn’t fit your current instrument’s family.',
-      ].filter(Boolean),
-    });
-  }
-  for (const p of run.promises || []) {
-    chip('gear-chip promise-chip', `🤞 ${p.label} (${p.remaining})`, {
-      emoji: '🤞', title: `Promise: ${p.label}`,
-      lines: [`Play a <b>${p.tags.join(' or ')}</b> choice within <b>${p.remaining}</b> card${p.remaining === 1 ? '' : 's'} to keep it.`,
-        'Kept promises pay off. Broken ones cost you.'],
-    });
-  }
-  for (const bid of run.band || []) {
-    const bm = bandmateById(bid);
-    if (bm) chip('gear-chip band-chip-mini', `${bm.icon} ${bm.name}`, {
-      emoji: bm.icon, title: `${bm.name} — ${bm.role}`,
-      lines: [bm.flavor, `<b>In the band:</b> ${bm.quirkDesc}`],
-    });
-  }
-  for (const id of run.hustles || []) {
-    const h = hustleById(id);
-    if (h) chip('gear-chip hustle-chip', `${h.icon} +$${h.moneyPerAct}/act`, {
-      emoji: h.icon, title: `${h.name} (side hustle)`,
-      lines: [h.blurb, `<b>Pays:</b> $${h.moneyPerAct} at every act break and at the finale.`],
-    });
+  for (const c of PRES.gearChips?.(run) || []) {
+    const chip = el('span', c.cls, c.html);
+    activatable(chip, () => { sfx.ui(); showInspect(c.sheet); });
+    gearRow.append(chip);
   }
   hud.append(gearRow);
-}
-
-function accActive(acc) {
-  if (acc.compatibility?.universal) return true;
-  return (acc.compatibility?.families || []).includes(activePack.loadoutById(run.loadout).family);
 }
 
 // Floating +N/−N chips over the stat rail when values changed since last card
@@ -210,5 +128,7 @@ export function spawnStatFloaters() {
   prevStats = cur;
 }
 function snapshotStats() {
-  return { ...run.stats, fame: run.fame, money: run.money };
+  // The floaters spawn over the stat rail (.stat items keyed by stat id), so
+  // only the manifest stats matter here — a genre-neutral snapshot.
+  return { ...run.stats };
 }

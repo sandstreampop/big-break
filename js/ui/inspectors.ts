@@ -2,26 +2,15 @@
 //
 // The tap-to-inspect surfaces: a generic detail sheet (showInspect), the stat
 // inspector, the status drawer (ADR-0009 Tier 3 — the full picture the compact
-// HUD stopped force-feeding), the how-to-play help, and the Hot 10 chart +
-// songbook. All are self-contained overlays the HUD and card screens open;
-// none of them route the game forward, so they sit safely below the flow.
+// HUD stopped force-feeding), and the how-to-play help. All are genre-neutral:
+// they render from the manifest + run state + presenter copy, never a genre's
+// data. (A pack's bespoke screens — music's Hot 10 — live in the pack.) None
+// route the game forward, so they sit safely below the flow.
 
-import { openOverlay, el, activatable, keyable, $ } from './dom.js';
+import { openOverlay, el, activatable } from './dom.js';
 import { activePack, run, STAT_META, PRES, metaFor, itemById } from './context.js';
 import { sfx } from '../audio.js';
 import { artFor } from '../art.js';
-import { playerChartInfo, buildChartWithMovement } from '../charts.js';
-import { ensureSongs } from '../songs.js';
-import { EVENTS } from '../data/events.js';
-import * as save from '../save.js';
-
-const STAT_INFO = {
-  skill: 'Raw musicianship. Feeds the <b>Studio Legend</b> gate and steadies live/studio choices.',
-  cred: 'Industry respect — the floor under every path. Hits 0 in Act 2+ and you’re cancelled.',
-  creativity: 'Original ideas. Feeds the <b>Hit Factory</b> gate and weird/indie choices.',
-  network: 'Who owes you a favor. Feeds the <b>Megastar</b> gate and every deal.',
-  burnout: 'The danger stat. Every point drags all rolls down; at 100 you quit music for a fintech. Rest cards and coping moments push it back.',
-};
 
 export function showInspect(sheet) {
   openOverlay((ov) => {
@@ -89,7 +78,7 @@ export function showInspectStat(key) {
   showInspect({
     emoji: STAT_META[key].icon,
     title: `${STAT_META[key].name}: ${run.stats[key]}`,
-    lines: [(PRES.statInfo || STAT_INFO)[key]].filter(Boolean),
+    lines: [PRES.statInfo?.[key]].filter(Boolean),
   });
 }
 
@@ -114,92 +103,11 @@ export function showHelp() {
   box.append(el('p', 'help-block', 'The dot next to each choice is your <b>risk tell</b>:'));
   box.append(legend);
   // The subsystem cheat-sheet is the pack's (its meters, its banked-bonus
-  // flavor); the music trio is the default.
-  const helpBlocks = PRES.helpBlocks || [
-    '🔥 <b>Burnout</b> is the danger stat: it drags every roll down and ends your career at 100. Rest is a real decision.',
-    '🎇 Rolling an INCREDIBLE banks an <b>Encore</b> — arm it later to boost the swipe that matters.',
-    '▲ <b>Momentum</b> from big wins can push a near-miss finale over the line. ★ Fame and $ money are score and fuel, not stats.',
-  ];
-  for (const b of helpBlocks) box.append(el('p', 'help-block', b));
+  // flavor) — presenter.helpBlocks. The intro above is the universal swipe
+  // mechanic, so it stays in the shell.
+  for (const b of PRES.helpBlocks || []) box.append(el('p', 'help-block', b));
   box.append(el('p', 'tap-hint', 'tap to close'));
   ov.append(box);
   });
 }
 
-// ---------- The Hot 10 chart overlay (Pass 6) ----------
-
-export function showChart() {
-  const ov = $('#overlay');
-  ov.innerHTML = '';
-  ov.classList.add('active');
-  const box = el('div', 'result-card chart-card');
-  box.append(el('div', 'tier-badge', 'THE BIG BREAK HOT 10'));
-  const info = playerChartInfo(run);
-  box.append(el('p', 'chart-sub', info.entries
-    ? `You have ${info.entries} song${info.entries > 1 ? 's' : ''} charting. Peak: #${info.peak}.`
-    : 'You are not on it. The chart does not know you exist. Yet.'));
-  const { rows, dethroned } = buildChartWithMovement(run);
-  if (dethroned) box.append(el('p', 'chart-sub', `📉 ${dethroned} lost the top spot this act. The group chats are merciless.`));
-  const list = el('div', 'chart-list');
-  for (const row of rows) {
-    const r = el('div', 'chart-row' + (row.you ? ' you' : '') + (row.rival ? ' rival' : ''));
-    const moveHtml = row.isNew
-      ? '<span class="chart-move new">NEW</span>'
-      : row.move > 0 ? `<span class="chart-move up">▲${row.move}</span>`
-      : row.move < 0 ? `<span class="chart-move down">▼${-row.move}</span>`
-      : '<span class="chart-move flat">—</span>';
-    r.append(el('span', 'chart-pos', `${row.pos}`));
-    r.append(el('span', 'chart-song', `<b>${row.song}</b><br><span>${row.artist}</span>`));
-    r.append(el('span', 'chart-weeks', `${moveHtml} ${row.weeks}w`));
-    list.append(r);
-  }
-  box.append(list);
-
-  // The Songbook: every song you've written, in whatever state it's in
-  const songs = (ensureSongs(run) || []).slice().reverse();
-  if (songs.length) {
-    box.append(el('div', 'trades-head songbook-head', '♪ YOUR SONGBOOK'));
-    const book = el('div', 'songbook');
-    for (const s of songs) {
-      const row = el('div', 'songbook-row sb-' + s.status + (s.crowned ? ' sb-crowned' : ''));
-      let state;
-      if (s.crowned) state = `👑 HIT — peaked #${s.peak}`;
-      else if (s.status === 'charting' && s.pos) state = `charting #${s.pos} · wk ${s.weeks}${s.peak && s.peak < s.pos ? ` · peak #${s.peak}` : ''}`;
-      else if (s.status === 'charting') state = 'shipped — off the chart';
-      else if (s.status === 'faded') state = s.peak ? `faded — peaked #${s.peak}, ${s.weeks} wk${s.weeks === 1 ? '' : 's'}` : 'faded — never charted';
-      else state = s.quality >= 68 ? 'demo — might be undeniable' : s.quality >= 52 ? 'demo — something’s there' : s.quality >= 38 ? 'demo — rough but honest' : 'demo — it exists';
-      row.innerHTML = `<b>“${s.title}”</b><span class="sb-state">${state}</span>`;
-      // tap a song to unfold its biography
-      keyable(row, s.title);
-      row.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const open = row.nextElementSibling?.classList?.contains('sb-detail');
-        book.querySelectorAll('.sb-detail').forEach((d) => d.remove());
-        if (open) return;
-        const origin = s.origin ? EVENTS.find((ev) => ev.id === s.origin) : null;
-        const bits = [];
-        bits.push(`written in act ${s.act}${origin?.context ? ` — ${origin.context.replace(/\{\w+\}/g, '…')}` : ''}`);
-        bits.push(`quality ${s.quality} · hype ${s.hype}`);
-        if (s.peak) bits.push(`chart life: debuted, peaked #${s.peak}, ${s.weeks} week${s.weeks === 1 ? '' : 's'}${s.crowned ? ' — certified HIT 👑' : ''}`);
-        else if (s.status === 'demo') bits.push('still in the vault — a release card ships it');
-        else bits.push('shipped, never charted — the sync desk may still call');
-        const d = el('div', 'sb-detail', bits.join('<br>'));
-        row.after(d);
-      });
-      book.append(row);
-    }
-    box.append(book);
-    const demos = songs.filter((s) => s.status === 'demo').length;
-    if (demos) box.append(el('p', 'chart-sub sb-hint', `${demos} demo${demos > 1 ? 's' : ''} in the vault — release cards decide when they ship.`));
-  }
-
-  box.append(el('p', 'tap-hint', 'tap to close'));
-  ov.append(box);
-  const done = () => {
-    ov.classList.remove('active');
-    ov.removeEventListener('click', done);
-  };
-  ov.removeAttribute('data-armed');
-  setTimeout(() => { ov.addEventListener('click', done); ov.setAttribute('data-armed', '1'); }, 200);
-  save.saveRun(run); // chartTitles may have been generated
-}

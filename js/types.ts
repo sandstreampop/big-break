@@ -464,8 +464,20 @@ export interface Presenter {
   // data, and so is the word). The shell renders it wherever it numbers a
   // segment; packs that omit it get the original 'ACT'.
   actWord?: string;
-  // The HUD's counter chips (top-right), replacing the default resource row.
+  // The HUD's counter chips (top-right): the pack's resource readout (score,
+  // currency, streak…). The shell renders whatever chips this returns.
   hudCounters?: (state: RunState) => { html: string; cls?: string }[];
+  // The HUD's gear row (full-HUD packs): the run's persona/loadout and its
+  // acquired kit as tappable chips. Each chip is a descriptor the shell renders
+  // and wires to a tap-to-inspect sheet; the pack owns what's on it. A pack
+  // that omits this (or opts into compactHud) shows no gear row.
+  gearChips?: (state: RunState) => { cls: string; html: string; sheet: any }[];
+  // Extra HUD action buttons beside the act label (e.g. a chart/standings
+  // screen). `badge` is an optional count bubble; `onTap` opens the pack's own
+  // screen (packs render bespoke screens with the shell's dom toolkit). The
+  // shell always shows its generic Help (and, in compactHud, the status
+  // drawer); these are the pack's additions.
+  hudButtons?: (state: RunState) => { icon: string; badge?: string | null; onTap: () => void }[];
   // Resolve an equipped-item id (the gear mechanic's per-pack catalog) for
   // HUD chips and swap flows.
   itemById?: (id: string) => any;

@@ -16,6 +16,8 @@ import { accessoryById } from '../data/accessories.js';
 import { collabArtistFor } from '../charts.js';
 import { flagshipSong } from '../songs.js';
 import { DEFAULT_FAIL_LABELS } from '../share-text.js';
+import { musicHudCounters, musicGearChips } from './music-hud.js';
+import { showChart } from './music-chart.js';
 import type { Presenter } from '../types.js';
 
 export const musicPresenter: Presenter = {
@@ -31,12 +33,41 @@ export const musicPresenter: Presenter = {
   // Short verdict labels for music's fail-state endings (ribbon, history).
   failLabels: DEFAULT_FAIL_LABELS,
 
+  // Per-stat inspector blurbs (the stat sheet) and the help sheet's music
+  // cheat-sheet (the intro — the universal swipe mechanic — stays in the shell).
+  statInfo: {
+    skill: 'Raw musicianship. Feeds the <b>Studio Legend</b> gate and steadies live/studio choices.',
+    cred: 'Industry respect — the floor under every path. Hits 0 in Act 2+ and you’re cancelled.',
+    creativity: 'Original ideas. Feeds the <b>Hit Factory</b> gate and weird/indie choices.',
+    network: 'Who owes you a favor. Feeds the <b>Megastar</b> gate and every deal.',
+    burnout: 'The danger stat. Every point drags all rolls down; at 100 you quit music for a fintech. Rest cards and coping moments push it back.',
+  },
+  helpBlocks: [
+    '🔥 <b>Burnout</b> is the danger stat: it drags every roll down and ends your career at 100. Rest is a real decision.',
+    '🎇 Rolling an INCREDIBLE banks an <b>Encore</b> — arm it later to boost the swipe that matters.',
+    '▲ <b>Momentum</b> from big wins can push a near-miss finale over the line. ★ Fame and $ money are score and fuel, not stats.',
+  ],
+
   // Resolve an equipped-item id through music's accessory catalog (HUD chips,
   // gear-swap flows).
   itemById: (id) => accessoryById(id),
 
   // The art system's reactive-scene inputs, mapped from music's meters.
   vibe: (state: any) => ({ fame: state.fame, network: state.stats.network, burnout: state.stats.burnout }),
+
+  // The HUD's music readout: the counter chips (fame/money/hits + encore &
+  // momentum) and the gear row (instrument + kit). Both are descriptors the
+  // shared HUD renders — see js/packs/music-hud.ts.
+  hudCounters: musicHudCounters,
+  gearChips: musicGearChips,
+
+  // The Hot 10 button beside the act label, once the songs subsystem is live;
+  // it opens music's own chart + songbook screen (js/packs/music-chart.ts).
+  hudButtons: (s: any) => {
+    if (s.tutorial || !s.songs) return [];
+    const n = (s.songs || []).filter((x: any) => x.status === 'charting' && x.pos).length;
+    return [{ icon: '📈', badge: n ? String(n) : null, onTap: showChart }];
+  },
 
   // Fill a card's {tokens} with this run's musical identities (rival, genre,
   // the flagship/hit/faded song, the home venue).
