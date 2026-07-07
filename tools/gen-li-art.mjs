@@ -18,7 +18,7 @@
 //
 // Build first (tools import dist/): npm run build.
 
-import { readdirSync, copyFileSync, mkdirSync, existsSync, writeFileSync } from 'node:fs';
+import { readdirSync, copyFileSync, mkdirSync, existsSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CAST, castById } from '../dist/js/packs/love-island/cast.js';
@@ -26,7 +26,7 @@ import { MOODS } from '../dist/js/packs/love-island/plugins/characters.js';
 import { STYLE_PREAMBLE, NEGATIVE, MOOD_EXPRESSIONS, SHAPE_HINTS, genderNote } from '../docs/games/love-island/art/style.mjs';
 import {
   MODELS, generateWithRetry, writeManifest, readManifest, writeContactSheet,
-  estimateCost, promptHash,
+  estimateCost, promptHash, submitBatch, getBatch, collectBatch, isBatchFailed,
 } from './art-core.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -37,6 +37,7 @@ const PUBLIC = resolve(ROOT, 'docs/games/love-island/public/art/cast'); // deplo
 const DATA_TS = resolve(ROOT, 'js/packs/love-island/portraits.data.ts'); // the wired map (generated)
 const MANIFEST = resolve(ART, 'manifest.json');
 const SHEET = resolve(ART, 'contact-sheet.html');
+const BATCH_STATE = resolve(ART, 'batch-state.json');           // resumable batch handles (committed)
 
 // ---------- args ----------
 const args = process.argv.slice(2);
@@ -44,6 +45,7 @@ const has = (f) => args.includes(f);
 const val = (k, d) => { const a = args.find((x) => x.startsWith(`--${k}=`)); return a ? a.split('=')[1] : d; };
 const doGenerate = has('--generate');
 const doWireOnly = has('--wire') && !doGenerate;
+const batch = has('--batch');                            // async Batch API: crash-proof + 50% off
 const reroll = val('reroll', null);
 const tier = val('tier', 'pro2k');                       // pro2k | pro4k | draft
 const model = tier === 'draft' ? MODELS.draft : MODELS.pro;
@@ -101,8 +103,9 @@ if (doGenerate && has('--skip-existing') && !reroll) {
 const est = estimateCost({
   heroes: jobs.filter((j) => j.kind === 'hero').length,
   moods: jobs.filter((j) => j.kind === 'mood').length,
-  candidates: doGenerate ? candidates : 0,
+  candidates: doGenerate && !batch ? candidates : 0, // batch has no separate draft pass
   tier: tier === 'draft' ? 'draft' : tier,
+  batch,
 });
 
 // ---------- wiring: final/*.png → public + portraits.data.ts ----------
@@ -161,6 +164,62 @@ if (!apiKey) {
   process.exit(1);
 }
 
+// ---------- BATCH path — async, crash-proof, 50% cheaper ----------
+// The Batch API generates offline and RETAINS results server-side, so a failure
+// on our side after Google generated+billed an image cannot lose it. The batch
+// handle is persisted (and committed by the workflow), so a dead runner resumes
+// the SAME batch — no re-submission, no double charge. Identity-locked moods
+// need their hero image to exist, so they run as a SECOND batch after the hero
+// batch lands.
+if (batch) {
+  const readState = () => (existsSync(BATCH_STATE) ? JSON.parse(readFileSync(BATCH_STATE, 'utf8')) : {});
+  const saveState = (s) => writeFileSync(BATCH_STATE, JSON.stringify(s, null, 2) + '\n');
+  const state = readState();
+  const pending = (arr) => arr.filter((j) => !existsSync(j.out)); // resumable + never double-paid
+
+  async function runPhase(name, phaseJobs) {
+    if (!phaseJobs.length) { console.log(`   ${name}: nothing to render (all present)`); return; }
+    const bySlot = Object.fromEntries(phaseJobs.map((j) => [j.slot, j]));
+    if (!state[name]) {
+      state[name] = await submitBatch({ apiKey, model, displayName: `li-${name}-${phaseJobs.length}`, jobs: phaseJobs });
+      saveState(state);
+      console.log(`   ${name}: submitted batch ${state[name]} (${phaseJobs.length} images) — handle saved, resumable`);
+    } else {
+      console.log(`   ${name}: resuming saved batch ${state[name]}`);
+    }
+    for (;;) {
+      const st = await getBatch({ apiKey, name: state[name] });
+      if (st.error) throw new Error(`${name} batch errored: ${JSON.stringify(st.error).slice(0, 200)}`);
+      if (st.done) {
+        const c = collectBatch(st.batch, bySlot);
+        console.log(`   ${name}: collected ${c.ok}, failed ${c.fail}`);
+        c.results.filter((r) => r.error).forEach((r) => console.log(`      ✗ ${r.slot}: ${r.error}`));
+        delete state[name]; saveState(state);
+        return;
+      }
+      if (isBatchFailed(st.state)) throw new Error(`${name} batch ${st.state}`);
+      console.log(`   ${name}: ${st.state} … re-poll in 20s`);
+      await new Promise((r) => setTimeout(r, 20000));
+    }
+  }
+
+  console.log('🧺 BATCH mode — async, results retained server-side, 50% cost. Handles persisted for resume.\n');
+  await runPhase('heroes', pending(jobs.filter((j) => j.kind === 'hero')));
+  // Moods only where the hero portrait now exists on disk (its reference).
+  const moodJobs = pending(jobs.filter((j) => j.kind === 'mood')).filter((j) => existsSync(j.refs[0]));
+  await runPhase('moods', moodJobs);
+
+  writeManifest(MANIFEST, jobs);
+  writeContactSheet(SHEET, { title: 'Love Island portraits — batch', jobs, estimate: est.line });
+  if (!has('--no-wire')) {
+    const { count } = wire();
+    console.log(`\n🔌 wired ${count} portrait(s) → ${DATA_TS}`);
+  }
+  console.log('✅ batch complete. next: npm run build');
+  process.exit(0);
+}
+
+// ---------- SYNC path (default) — render each image inline, one at a time ----------
 // Heroes first (moods reference their hero portrait, so the file must exist).
 const heroes = jobs.filter((j) => j.kind === 'hero');
 const moods = jobs.filter((j) => j.kind === 'mood');

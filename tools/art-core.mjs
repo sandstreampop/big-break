@@ -41,30 +41,43 @@ export function promptHash(s) {
 // job.out), or { ok:false, error } — the caller decides whether to retry or
 // skip. refs are file paths to prior renders fed back as reference images: the
 // identity-lock seam (a mood render references its hero portrait).
-export async function generateImage({ apiKey, model, prompt, refs = [], out }) {
+// A GenerateContentRequest body: prompt text + any reference images inlined.
+// Shared by the sync and batch paths so the two never drift. Throws if a
+// reference file is missing (a mood asking for a hero that didn't render).
+function buildRequest(prompt, refs = []) {
   const parts = [{ text: prompt }];
   for (const ref of refs) {
-    if (!existsSync(ref)) return { ok: false, error: `reference image missing: ${ref}` };
+    if (!existsSync(ref)) throw new Error(`reference image missing: ${ref}`);
     parts.push({ inlineData: { mimeType: 'image/png', data: readFileSync(ref).toString('base64') } });
   }
+  return { contents: [{ parts }], generationConfig: { responseModalities: ['IMAGE'] } };
+}
+
+// Pull the first inline image out of a GenerateContentResponse, or a reason.
+function extractImage(genResponse) {
+  const parts = genResponse?.candidates?.[0]?.content?.parts || [];
+  const img = parts.find((p) => p.inlineData?.data);
+  if (img) return { data: img.inlineData.data };
+  const text = parts.find((p) => p.text)?.text || 'no image in response';
+  return { error: `no image returned (${text.slice(0, 200)})` };
+}
+
+export async function generateImage({ apiKey, model, prompt, refs = [], out }) {
+  let body;
+  try { body = buildRequest(prompt, refs); } catch (e) { return { ok: false, error: e.message }; }
   const url = `${API_ROOT}/${model}:generateContent?key=${apiKey}`;
   let res;
   try {
     res = await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts }], generationConfig: { responseModalities: ['IMAGE'] } }),
+      body: JSON.stringify(body),
     });
   } catch (e) { return { ok: false, error: `network: ${e.message}` }; }
   if (!res.ok) return { ok: false, error: `HTTP ${res.status}: ${(await res.text()).slice(0, 300)}` };
-  const json = await res.json();
-  const cand = json.candidates?.[0]?.content?.parts || [];
-  const img = cand.find((p) => p.inlineData?.data);
-  if (!img) {
-    const text = cand.find((p) => p.text)?.text || 'no image in response';
-    return { ok: false, error: `no image returned (${text.slice(0, 200)})` };
-  }
-  const buf = Buffer.from(img.inlineData.data, 'base64');
+  const img = extractImage(await res.json());
+  if (img.error) return { ok: false, error: img.error };
+  const buf = Buffer.from(img.data, 'base64');
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, buf);
   return { ok: true, bytes: buf.length };
@@ -86,6 +99,69 @@ export async function generateWithRetry(job, { tries = 4 } = {}) {
     await new Promise((res) => setTimeout(res, 1500 * 2 ** i));
   }
   return last;
+}
+
+// ---------- BATCH engine (crash-proof + 50% cheaper) ----------
+// The Batch API generates asynchronously and RETAINS results server-side, so a
+// failure on our side after Google has generated+billed an image cannot lose
+// it — we just re-fetch the same batch. The batch's resource name is persisted
+// by the caller, so a dead runner resumes the SAME batch (no re-submission, no
+// double charge). API shape confirmed against the v1beta discovery document:
+//   create : POST v1beta/models/{model}:batchGenerateContent  → Operation
+//   poll   : GET  v1beta/{operation.name}                     → Operation
+//   result : batch.output.inlinedResponses[] (each carries back our metadata)
+
+const V1 = 'https://generativelanguage.googleapis.com/v1beta';
+
+// Submit one batch of image requests. jobs: [{ prompt, refs, slot }]. Returns
+// the Operation name to poll (also the resumable handle). Throws on create
+// failure (nothing is billed for a rejected create).
+export async function submitBatch({ apiKey, model, displayName, jobs }) {
+  const m = model.startsWith('models/') ? model : `models/${model}`; // schema: "models/{model}"
+  const requests = jobs.map((j) => ({ request: buildRequest(j.prompt, j.refs), metadata: { slot: j.slot } }));
+  const body = { batch: { displayName, model: m, inputConfig: { requests: { requests } } } };
+  const res = await fetch(`${V1}/${m}:batchGenerateContent?key=${apiKey}`, {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`batch create HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  const op = await res.json();
+  if (!op.name) throw new Error(`batch create returned no operation name: ${JSON.stringify(op).slice(0, 200)}`);
+  return op.name;
+}
+
+// Poll a batch operation once. Returns { done, state, batch, error }. The batch
+// resource (with .state and .output) rides in op.response when finished, or
+// op.metadata while running.
+export async function getBatch({ apiKey, name }) {
+  const res = await fetch(`${V1}/${name}?key=${apiKey}`, { headers: { 'content-type': 'application/json' } });
+  if (!res.ok) throw new Error(`batch poll HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const op = await res.json();
+  const batch = op.response || op.metadata || {};
+  const state = batch.state || (op.done ? 'BATCH_STATE_SUCCEEDED' : 'BATCH_STATE_RUNNING');
+  return { done: !!op.done || state === 'BATCH_STATE_SUCCEEDED', state, batch, error: op.error };
+}
+
+const BATCH_TERMINAL_BAD = ['BATCH_STATE_FAILED', 'BATCH_STATE_CANCELLED', 'BATCH_STATE_EXPIRED'];
+export function isBatchFailed(state) { return BATCH_TERMINAL_BAD.includes(state); }
+
+// Write out every image a finished batch returned, mapping each response to its
+// job by the metadata.slot we attached. Returns per-slot results.
+export function collectBatch(batch, bySlot) {
+  const responses = batch.output?.inlinedResponses?.inlinedResponses || [];
+  let ok = 0, fail = 0; const results = [];
+  responses.forEach((r, i) => {
+    const slot = r.metadata?.slot;
+    const job = (slot && bySlot[slot]) || null;
+    if (!job) { fail++; results.push({ slot: slot || `#${i}`, error: 'no matching job' }); return; }
+    if (r.error) { fail++; results.push({ slot, error: r.error.message || JSON.stringify(r.error).slice(0, 120) }); return; }
+    const img = extractImage(r.response);
+    if (img.error) { fail++; results.push({ slot, error: img.error }); return; }
+    const buf = Buffer.from(img.data, 'base64');
+    mkdirSync(dirname(job.out), { recursive: true });
+    writeFileSync(job.out, buf);
+    ok++; results.push({ slot, bytes: buf.length });
+  });
+  return { ok, fail, results };
 }
 
 // ---------- manifest (the deterministic plan) ----------
@@ -143,13 +219,16 @@ function escapeHtml(s) {
 }
 
 // ---------- cost estimation ----------
-export function estimateCost({ heroes, moods, candidates, tier = 'pro2k' }) {
+// batch: true applies the Batch API's 50% discount to the finals.
+export function estimateCost({ heroes, moods, candidates, tier = 'pro2k', batch = false }) {
   const drafts = (heroes + moods) * candidates;
   const finals = heroes + moods;
+  const rate = PRICES[tier] * (batch ? 0.5 : 1);
   const draftUsd = drafts * PRICES.draft;
-  const finalUsd = finals * PRICES[tier];
+  const finalUsd = finals * rate;
+  const how = batch ? `${tier} batch (50% off)` : tier;
   return {
     drafts, finals, draftUsd, finalUsd, total: draftUsd + finalUsd,
-    line: `${drafts} drafts (~$${draftUsd.toFixed(2)}) + ${finals} finals @ ${tier} (~$${finalUsd.toFixed(2)}) = ~$${(draftUsd + finalUsd).toFixed(2)}`,
+    line: `${drafts} drafts (~$${draftUsd.toFixed(2)}) + ${finals} finals @ ${how} (~$${finalUsd.toFixed(2)}) = ~$${(draftUsd + finalUsd).toFixed(2)}`,
   };
 }
