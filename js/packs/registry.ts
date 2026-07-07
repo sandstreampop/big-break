@@ -10,7 +10,7 @@
 // the whole registration.
 
 import type { Pack } from '../types.js';
-import { musicPack } from './music.js';
+import { musicPack } from './music/pack.js';
 import { probePack } from './probe.js';
 import { loveIslandPack } from './love-island/pack.js';
 

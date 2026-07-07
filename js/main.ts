@@ -4,7 +4,7 @@
 // so both ship from one build.
 
 import { boot } from './ui.js';
-import { musicPack } from './packs/music.js';
+import { musicPack } from './packs/music/pack.js';
 import { installMobileGuards, registerServiceWorker } from './platform.js';
 
 installMobileGuards();

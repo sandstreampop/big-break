@@ -8,9 +8,9 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildDefaultShareText, SHARE_TIER_EMOJI, DEFAULT_FAIL_LABELS } from '../dist/js/share-text.js';
-import { musicPack } from '../dist/js/packs/music.js';
-import { genreById } from '../dist/js/data/genres.js';
+import { buildDefaultShareText, SHARE_TIER_EMOJI, DEFAULT_FAIL_LABELS } from '../dist/js/packs/music/share-text.js';
+import { musicPack } from '../dist/js/packs/music/pack.js';
+import { genreById } from '../dist/js/packs/music/data/genres.js';
 
 const URL = 'https://sandstreampop.github.io/big-break/';
 

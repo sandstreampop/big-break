@@ -16,12 +16,12 @@
 // meta stream (mulberry32(seed)) so it never perturbs the game's internal draws.
 
 import { CONFIG } from '../dist/js/config.js';
-import { INSTRUMENTS } from '../dist/js/data/instruments.js';
-import { GENRES } from '../dist/js/data/genres.js';
-import { VENUES } from '../dist/js/data/venues.js';
+import { INSTRUMENTS } from '../dist/js/packs/music/data/instruments.js';
+import { GENRES } from '../dist/js/packs/music/data/genres.js';
+import { VENUES } from '../dist/js/packs/music/data/venues.js';
 import * as engine from '../dist/js/engine.js';
-import { musicPack } from '../dist/js/packs/music.js';
-import { equipAccessory } from '../dist/js/packs/plugins/gear.js';
+import { musicPack } from '../dist/js/packs/music/pack.js';
+import { equipAccessory } from '../dist/js/packs/music/plugins/gear.js';
 const PATHS = musicPack.manifest.paths;
 
 export const DEFAULT_INSTRUMENTS = INSTRUMENTS.filter((i) => i.unlockedByDefault).map((i) => i.id);

@@ -14,10 +14,10 @@
 // reproducible and the golden-master oracle can trust it.
 
 import { CONFIG } from '../dist/js/config.js';
-import { EVENTS } from '../dist/js/data/events.js';
-import { ARCS, arcById } from '../dist/js/data/arcs.js';
+import { EVENTS } from '../dist/js/packs/music/data/events.js';
+import { ARCS, arcById } from '../dist/js/packs/music/data/arcs.js';
 import * as engine from '../dist/js/engine.js';
-import { arcLit } from '../dist/js/packs/plugins/seeds.js';
+import { arcLit } from '../dist/js/packs/music/plugins/seeds.js';
 import { simulateRun } from './sim-core.mjs';
 
 const args = process.argv.slice(2);

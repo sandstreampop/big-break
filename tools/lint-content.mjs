@@ -23,14 +23,14 @@
 //            branch; any unfilled {token} or "undefined" leaking into copy fails
 
 import * as engine from '../dist/js/engine.js';
-import { addSong } from '../dist/js/songs.js';
+import { addSong } from '../dist/js/packs/music/songs.js';
 import { PACKS } from '../dist/js/packs/registry.js';
-import { musicPack } from '../dist/js/packs/music.js';
-import { generateDMs } from '../dist/js/dms.js';
-import { generateHeadlines } from '../dist/js/headlines.js';
-import { buildEpilogue } from '../dist/js/epilogue.js';
-import { WEATHER } from '../dist/js/data/weather.js';
-import { ARCS as MUSIC_ARCS } from '../dist/js/data/arcs.js';
+import { musicPack } from '../dist/js/packs/music/pack.js';
+import { generateDMs } from '../dist/js/packs/music/dms.js';
+import { generateHeadlines } from '../dist/js/packs/music/headlines.js';
+import { buildEpilogue } from '../dist/js/packs/music/epilogue.js';
+import { WEATHER } from '../dist/js/packs/music/data/weather.js';
+import { ARCS as MUSIC_ARCS } from '../dist/js/packs/music/data/arcs.js';
 import { bangIssue, tasteIssues, hasDialogue, quotedSpans, argotPresenceIssues, tellIssues, feedIssues } from './taste-core.mjs';
 // Each pack's taste DATA lives with the game; the checker above is genre-neutral.
 import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';

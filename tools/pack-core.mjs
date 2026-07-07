@@ -9,7 +9,7 @@
 // drawNextCard / resolveSwipe on the seeded play RNG.
 
 import * as engine from '../dist/js/engine.js';
-import { equipAccessory } from '../dist/js/packs/plugins/gear.js';
+import { equipAccessory } from '../dist/js/packs/music/plugins/gear.js';
 
 // Sum of (value / gate target) across a path's winGates, read generically via
 // the engine's gateValue — no per-resource special-casing.

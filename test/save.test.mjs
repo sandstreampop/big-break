@@ -31,7 +31,7 @@ function useStorage(opts) {
 const save = await import('../dist/js/save.js');
 // Music's unlock pools moved out of the (now genre-neutral) save layer into the
 // music pack; the gating rule they enforce is still worth pinning here.
-const { musicUnlockedContractIds } = await import('../dist/js/packs/music-save.js');
+const { musicUnlockedContractIds } = await import('../dist/js/packs/music/save.js');
 const META_KEY = 'bigbreak_meta_v1';
 const RUN_KEY = 'bigbreak_run_v1';
 
