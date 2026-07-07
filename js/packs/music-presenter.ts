@@ -25,6 +25,11 @@ import {
 import { showBrammies } from './music-brammies.js';
 import { musicFinalSet } from './music-finalset.js';
 import { musicActBreakChart } from './music-chart.js';
+import { musicShareText, musicShareImage } from './music-share.js';
+import { musicRecordMeta, musicTrophySpecials, musicEndingExtras } from './music-meta.js';
+import {
+  musicLoadoutPool, musicSetupSummary, musicRenderSetupExtras, musicApplySetup, musicStartGauntlet,
+} from './music-setup.js';
 import type { Presenter } from '../types.js';
 
 export const musicPresenter: Presenter = {
@@ -81,6 +86,14 @@ export const musicPresenter: Presenter = {
   // minigame, and the contract-driven risk/encore gates.
   deltaChip: musicDeltaChip,
   resultExtras: musicResultExtras,
+
+  // Share (default text + poster), pack meta bookkeeping, the special trophy
+  // predicates, and the ending-screen extras (chart legacy + contract mult).
+  shareText: musicShareText,
+  shareImage: musicShareImage,
+  recordMeta: musicRecordMeta,
+  trophySpecials: musicTrophySpecials,
+  endingExtras: musicEndingExtras,
   choiceMinigame: musicChoiceMinigame,
   recordPerf: musicRecordPerf,
   hideRisk: musicHideRisk,
@@ -101,8 +114,38 @@ export const musicPresenter: Presenter = {
       .replaceAll('{venue}', venueById(state.venue)?.name || 'the venue');
   },
   // The weekly Gauntlet builds its fixed loadout from music data (contracts,
-  // genres), so the mode is this pack's to declare.
+  // genres), so the mode — and its build screen — are this pack's to declare.
   gauntlet: true,
+  startGauntlet: musicStartGauntlet,
+
+  // The First Gig tutorial copy (the mechanism — deck, coach marks — is
+  // engine/shell-generic; only the words are music's).
+  tutorial: {
+    offer: '▶ Play — Your First Gig',
+    skip: 'Skip the gig — I know the drill',
+    replay: '🎓 Replay the first gig',
+    hud: 'FIRST GIG · The Rubber Room',
+    end: {
+      verdict: 'SOUNDCHECK COMPLETE', title: 'The First Gig', art: 'ev_tut_set',
+      text: 'Nineteen people, four of them on purpose, and nobody left. Dee flips the clipboard shut: “Tuesday’s yours if you want it.” That’s the whole tutorial — the career ahead is longer, meaner, and much funnier.',
+      lessons: [
+        { cls: 'notice-gear', html: '👆 <b>Swipe or tap</b> — every card is one decision, left or right.' },
+        { cls: 'notice-gear', html: '🎸 <b>Stat icons</b> on a choice show what it rolls against. Build what your path needs.' },
+        { cls: 'notice-gear', html: '<b>The risk tell</b> — ● safe · ▲ dicey · ■ likely bad · ✦ big upside. Read it before you leap.' },
+        { cls: 'notice-bad', html: '🔥 <b>Burnout</b> drags every roll and ends careers at 100. Rest is a real move.' },
+        { cls: 'notice-encore', html: '🎇 <b>Encores</b> — an INCREDIBLE banks one; arm it on the card that matters.' },
+      ],
+      next: '▶ Start your real career',
+    },
+  },
+
+  // The loadout screen: music's copy, its instrument pool, and its optional
+  // venue/genre/contract pickers + the run-init those drive (music-setup.ts).
+  loadoutPicker: { head: 'Choose your weapon', sub: 'Each one is almost useless. That’s the point.' },
+  loadoutPool: musicLoadoutPool,
+  setupExtras: musicRenderSetupExtras,
+  setupSummary: musicSetupSummary,
+  applySetup: musicApplySetup,
 
   // The Brammies (Pass 44): awards night before the final act, once you've made
   // enough noise to be nominated. Both the trigger condition and the screen

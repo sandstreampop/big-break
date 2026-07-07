@@ -539,6 +539,8 @@ export const loveIslandPresenter: Presenter = {
   },
 
   // The redemption season (R8/C2b): comeback mode in villa clothes.
+  loadoutPicker: { head: 'Choose your player', sub: 'Who are you, when the cameras are always on?' },
+
   comeback: {
     label: '🧳 The Redemption Season (×1.2 LP)',
     head: 'The Redemption Season',

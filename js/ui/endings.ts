@@ -12,10 +12,6 @@ import * as engine from '../engine.js';
 import * as save from '../save.js';
 import { CONFIG } from '../config.js';
 import { artFor } from '../art.js';
-import { renderShareImage } from '../sharecard.js';
-import { buildDefaultShareText, SHARE_TIER_EMOJI } from '../share-text.js';
-import { contractById } from '../data/contracts.js';
-import { genreById } from '../data/genres.js';
 import { sfx, music } from '../audio.js';
 import { track } from '../analytics.js';
 import { el, $, btn, show, openOverlay, todayStr } from './dom.js';
@@ -30,7 +26,6 @@ function finishMeta(summary, lp) {
   meta.runs += 1;
   meta.lp += lp;
   meta.lpEarnedTotal += lp;
-  meta.best.fame = Math.max(meta.best.fame, summary.fame || 0);
   meta.best.lp = Math.max(meta.best.lp, lp);
   if (summary.daily) {
     meta.dailyResults = meta.dailyResults || {};
@@ -55,13 +50,12 @@ function finishMeta(summary, lp) {
   }
   meta.history = [...(meta.history || []).slice(-4), compact];
 
-  // Lifetime aggregates (Pass 25)
+  // Lifetime aggregates (Pass 25): the genre-neutral counts. The pack folds in
+  // its own aggregates (music's hits / best bank) via recordMeta below.
   const lt = meta.lifetime = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
   lt.swipes += (summary.tierLog || []).length;
   lt.incredibles += (summary.tierLog || []).filter((t) => t === 'incredible').length;
   lt.bads += (summary.tierLog || []).filter((t) => t === 'bad').length;
-  lt.hits += summary.hits || 0;
-  lt.moneyBest = Math.max(lt.moneyBest, summary.money || 0);
   const bi = lt.byInstrument[summary.loadout] = lt.byInstrument[summary.loadout] || { runs: 0, wins: 0 };
   bi.runs += 1;
   if (summary.result === 'success') bi.wins += 1;
@@ -71,11 +65,9 @@ function finishMeta(summary, lp) {
     if (summary.result === 'success') bp.wins += 1;
   }
 
-  // Nemesis bookkeeping (Pass 47): count rival encounters across runs
-  if (summary.rival) {
-    meta.rivalCounts = meta.rivalCounts || {};
-    meta.rivalCounts[summary.rival] = (meta.rivalCounts[summary.rival] || 0) + 1;
-  }
+  // The pack's own end-of-run meta writes (music: best fame, nemesis ledger,
+  // lifetime hits/bank).
+  PRES.recordMeta?.(meta, summary);
   meta.runHistory = meta.runHistory || [];
   meta.runHistory.unshift({
     date: todayStr(),
@@ -89,21 +81,14 @@ function finishMeta(summary, lp) {
   meta.runHistory = meta.runHistory.slice(0, 10);
 
   const earned = [];
-  const specials = {
-    all_paths: () => ['megastar', 'studio', 'hitfactory'].every((p) => meta.successPaths.includes(p)),
-    daily_3: () => Object.keys(meta.dailyResults || {}).length >= 3,
-    wall_5: () => meta.unlockedWall.length >= 5,
-    mastery_3: () => Object.values(meta.lifetime?.byInstrument || {})
-      .some((st: any) => Math.min(3, Math.floor(st.runs / 2) + st.wins) >= 3),
-    exits_3: () => (meta.exitSeen || []).length >= 3,
-    nemesis_3: () => Object.values(meta.rivalCounts || {}).some((n: any) => n >= 3),
-    mg_6: () => Object.keys(meta.minigamesPlayed || {}).length >= 6,
-    mg_12: () => Object.keys(meta.minigamesPlayed || {}).length >= 12,
-  };
+  // A trophy fires on either a pure summary predicate (t.check) or a
+  // ledger-reading "special" the pack supplies (presenter.trophySpecials) —
+  // the shell's trophy loop names no genre.
+  const specials = PRES.trophySpecials || {};
   for (const t of (PRES.trophies || [])) {
     if (meta.trophies.includes(t.id)) continue;
     let ok = false;
-    if (t.special) ok = !!specials[t.special]?.();
+    if (t.special) ok = !!specials[t.special]?.(meta);
     else if (t.check) ok = t.check(summary);
     if (ok) { meta.trophies.push(t.id); earned.push(t); }
   }
@@ -221,7 +206,9 @@ function showExitInterview(endingKey, interview) {
   }, { dismissable: false, onClose: () => nav.gameOver(endingKey) });
 }
 
-const TIER_EMOJI = SHARE_TIER_EMOJI;
+// The engine's universal outcome tiers → the share-grid glyphs (the tier strip
+// and scrapbook). Genre-neutral: every pack rolls the same four tiers.
+const TIER_EMOJI: Record<string, string> = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
 
 // Consecutive daily-mode days ending at `d` (inclusive) — the streak the
 // share card and the pack's end note read. Pure ledger walk.
@@ -231,21 +218,6 @@ function dailyStreakFor(d) {
   const day = new Date(d + 'T12:00:00Z');
   while (done[day.toISOString().slice(0, 10)]) { n++; day.setUTCDate(day.getUTCDate() - 1); }
   return n;
-}
-
-function shareTextFor(summary, lp) {
-  if (PRES.shareText) return PRES.shareText(summary, lp);
-  // The genre-specific pieces are resolved here (loadout name, the genre-prefixed
-  // path label); the neutral template lives in share-text.ts and is snapshot-tested.
-  const inst = activePack.loadoutById(summary.loadout);
-  const genre = summary.genre ? genreById(summary.genre) : null;
-  const pathName = (genre ? genre.name + ' ' : '') + (summary.path ? PATHS[summary.path].name : 'the void');
-  return buildDefaultShareText(summary, lp, {
-    loadoutName: inst ? inst.name : null,
-    pathName,
-    failLabels: PRES.failLabels,
-    url: 'https://sandstreampop.github.io/big-break/',
-  });
 }
 
 function renderEndingScreen(ending, lp, trophies, evalr, summary) {
@@ -269,18 +241,10 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   }
   wrap.append(el('p', 'ending-text', ending.text));
 
-  // Chart legacy: what the Hot 10 will remember
-  {
-    const songs = summary?.songs || run.songs || [];
-    const charted = songs.filter((x) => x.peak).length;
-    const crowned = songs.filter((x) => x.crowned).length;
-    const peak = summary?.chartPeak;
-    if (charted) {
-      const bits = [`peak <b>#${peak}</b>`, `${charted} song${charted > 1 ? 's' : ''} charted`];
-      if (crowned) bits.push(`${crowned} certified hit${crowned > 1 ? 's' : ''} 👑`);
-      wrap.append(el('p', 'chart-legacy', `📈 Chart legacy: ${bits.join(' · ')}`));
-    }
-  }
+  // The pack's legacy lines (music's chart legacy) + its LP-award note (the
+  // contract multiplier). The shell knows the layout, never the content.
+  const endExtras = PRES.endingExtras?.(summary, run) || { lines: [], lpNote: '' };
+  for (const line of endExtras.lines) wrap.append(el('p', line.cls, line.html));
 
   // Scoreboard first (how you were judged), memorabilia after
   if (evalr) {
@@ -293,8 +257,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     }
     wrap.append(gates);
   }
-  const endContract = summary?.contract ? contractById(summary.contract) : null;
-  wrap.append(el('p', 'lp-award', `+${lp} Legacy Points${endContract ? ` <span class="lp-mult">(${endContract.icon} ${endContract.name} ×${endContract.lpMult})</span>` : ''}`));
+  wrap.append(el('p', 'lp-award', `+${lp} Legacy Points${endExtras.lpNote}`));
   for (const t of trophies) {
     wrap.append(el('p', 'trophy-toast', `${t.icon} Trophy: <b>${t.name}</b> — ${t.desc}`));
   }
@@ -338,32 +301,11 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   }
   if (summary) {
     const shareBtn = btn('📣 Share this run', '', async () => {
-      const text = shareTextFor(summary, lp);
+      const text = PRES.shareText?.(summary, lp) || '';
       try {
-        // Prefer a poster image via the native sheet (Pass 38). The poster
-        // composer is music-shaped; a pack with its own shareText shares text.
-        if (PRES.shareText) {
-          if (navigator.share) await navigator.share({ text });
-          else { await navigator.clipboard.writeText(text); shareBtn.textContent = '📋 Copied!'; }
-          return;
-        }
-        const inst = activePack.loadoutById(summary.loadout);
-        const genre = summary.genre ? genreById(summary.genre) : null;
-        const res = summary.result ? summary.result.toUpperCase()
-          : failLabelFor(summary.endingKey) || 'GAME OVER';
-        const blob = await renderShareImage({
-          headline: `${ending.title}`,
-          subline: `${inst ? inst.name : '?'} → ${genre ? genre.name + ' ' : ''}${summary.path ? PATHS[summary.path].name : 'the void'} → ${res}`,
-          tierLog: summary.tierLog,
-          songLine: (() => {
-            const best = (summary.songs || []).filter((x) => x.peak)
-              .sort((a, b) => (b.crowned - a.crowned) || (a.peak - b.peak))[0];
-            return best ? `${best.crowned ? '👑 ' : '♪ '}“${best.title}” — peaked #${best.peak}` : null;
-          })(),
-          statLine: `★${summary.fame} fame · ${summary.hits} hits · +${lp} LP${summary.chartPeak ? ` · Hot 10 #${summary.chartPeak}` : ''}`,
-          footer: 'play: sandstreampop.github.io/big-break',
-        });
-        const file = blob ? new File([blob as BlobPart], 'big-break-run.png', { type: 'image/png' }) : null;
+        // A pack may compose a poster image (music); text-only packs share the
+        // string. The native sheet is preferred; clipboard is the fallback.
+        const file = PRES.shareImage ? await PRES.shareImage(summary, lp, ending.title) : null;
         if (file && navigator.canShare?.({ files: [file] })) {
           await navigator.share({ files: [file], text });
         } else if (navigator.share) {

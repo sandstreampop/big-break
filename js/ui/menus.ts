@@ -92,7 +92,7 @@ export function renderTitle() {
       gDone
         ? `⚔️ The Gauntlet ✓ (${gDone.result ? gDone.result.toUpperCase() : 'DNF'} — replay?)`
         : `⚔️ The Gauntlet — ${week}`,
-      '', () => { save.clearRun(); nav.startGauntlet(); }));
+      '', () => { save.clearRun(); PRES.startGauntlet?.(); }));
   }
   if ((PRES.wallItems || []).length) menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', nav.wall));
   menu.append(btn('🎖 Trophy Room', '', renderTrophies));

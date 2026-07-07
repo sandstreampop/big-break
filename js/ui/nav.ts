@@ -27,7 +27,6 @@ export interface Nav {
   tutorialEnd(): void;                       // the First Gig wrap-up
   newRun(daily?: boolean, comeback?: boolean): void;
   startTutorial(): void;
-  startGauntlet(): void;
   resumeRun(): void;                          // continue a saved run at its phase
   title(): void;                             // the title screen
   wall(): void;                              // the Career Wall

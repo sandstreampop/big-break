@@ -23,7 +23,7 @@ import { nav, type Nav } from './ui/nav.js';
 import { dealCard, commitSwipe } from './ui/card.js';
 import { renderCrossroads, actInterstitial, renderFinalSet } from './ui/progression.js';
 import { renderFinale, renderGameOver } from './ui/endings.js';
-import { startNewRun, startTutorial, startGauntlet, resumeRun, renderTutorialEnd } from './ui/newrun.js';
+import { startNewRun, startTutorial, resumeRun, renderTutorialEnd } from './ui/newrun.js';
 import { renderTitle, renderWall } from './ui/menus.js';
 
 // The composition root: bind every screen renderer into the navigation seam.
@@ -40,7 +40,6 @@ const wiring: Nav = {
   tutorialEnd: renderTutorialEnd,
   newRun: startNewRun,
   startTutorial,
-  startGauntlet,
   resumeRun,
   title: renderTitle,
   wall: renderWall,

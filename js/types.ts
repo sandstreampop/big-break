@@ -515,6 +515,18 @@ export interface Presenter {
   finalSet?: (state: RunState) => { head: string; sub: string; options: any[] };
   // Share text for a finished run.
   shareText?: (summary: any, lp: number) => string;
+  // An optional share poster image (music composes one; text-only packs omit
+  // it and the shell shares shareText alone).
+  shareImage?: (summary: any, lp: number, endingTitle: string) => Promise<File | null>;
+  // Pack-specific meta-save writes at run end (best score, nemesis ledger, the
+  // pack's lifetime aggregates). The shell does the genre-neutral bookkeeping.
+  recordMeta?: (meta: any, summary: any) => void;
+  // The "special" trophy predicates keyed by a trophy's `special` id — the ones
+  // whose condition reads the meta ledger (and may name the pack's path ids).
+  trophySpecials?: Record<string, (meta: any) => boolean>;
+  // Ending-screen extras: the pack's legacy lines (music's chart legacy) and an
+  // LP-award suffix note (music's contract multiplier).
+  endingExtras?: (summary: any, state: RunState) => { lines: { cls: string; html: string }[]; lpNote: string };
   // Pack-owned telemetry props (Epic 5). The shell owns the genre-NEUTRAL spine
   // of the run_start / run_end events (mode, outcome, path, cards, burnout, lp,
   // career_runs) and merges the pack's OWN taxonomy here — so a second game
@@ -624,6 +636,24 @@ export interface Presenter {
   art?: Record<string, { e: string; s: string }>;
   // Offer every unlocked persona at run start instead of a random 3.
   offerAllLoadouts?: boolean;
+  // ── Run setup (the loadout screen). The shell owns the loadout pick + start
+  // button; these let a pack add its own selection layer. ──
+  // The loadout-screen title/sub copy (music: "Choose your weapon"). Default
+  // covers the base case; comeback/daily copy comes from comeback/daily.
+  loadoutPicker?: { head: string; sub: string };
+  // The candidate loadout ids to offer (music: contract-forced or unlocked).
+  // Omitted → the shell offers every unlockedByDefault / unlockedBy loadout.
+  loadoutPool?: (meta: any, sel: any) => string[];
+  // Render the pack's optional pre-run choices (music's venue/genre/contract)
+  // into the setup screen; mutate `sel` and call `rebuild` on a pick.
+  setupExtras?: (host: HTMLElement, ctx: { seed: number; sel: any; rebuild: () => void; daily: boolean }) => void;
+  // The chosen-extras summary shown on the sticky start button.
+  setupSummary?: (sel: any) => string;
+  // Apply the pack's setup choices + run-init to a freshly minted run (after
+  // the engine's newRun, before any comeback transform).
+  applySetup?: (state: RunState, sel: any, meta: any, daily: boolean) => void;
+  // The weekly Gauntlet's fixed-build screen (the mode itself is pack data).
+  startGauntlet?: () => void;
   // ADR-0009 (the screen contract): opt into the compact HUD. The stat
   // rail, persona/gear chips, and streak banner leave the permanent screen;
   // one ambient strip remains (act, counters, salience chips) and the full
