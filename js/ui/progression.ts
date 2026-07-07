@@ -154,8 +154,8 @@ export function actInterstitial(step) {
   // if the week earned one. Packs without standings return null.
   const chart = PRES.actBreakChart?.(run);
   if (chart) {
-    const cw = el('div', 'chart-week');
-    cw.append(el('div', 'trades-head', '📈 THIS WEEK ON THE HOT 10'));
+    const cw = el('div', 'act-break-chart');
+    cw.append(el('div', 'trades-head', chart.head));
     for (const r of chart.rows) cw.append(el('div', r.cls, r.html));
     box.append(cw);
   }

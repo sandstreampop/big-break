@@ -202,13 +202,13 @@ async function driveSeason(browser, base, game, vp, tag) {
     await page.evaluate(() => document.querySelector('button.btn.primary')?.click());
     // Identity step (name → gender → personality): fill the name and pick a
     // gender so the personality cards appear (the villa gates them on gender).
-    await page.waitForSelector('#screen-instruments.active #player-name', { timeout: 10000 });
+    await page.waitForSelector('#screen-setup.active #player-name', { timeout: 10000 });
     await page.evaluate(() => {
       const n = document.querySelector('#player-name');
       if (n && !n.value.trim()) { n.value = 'Tester'; n.dispatchEvent(new Event('input', { bubbles: true })); }
       if (!document.querySelector('.identity-gender-chip.selected')) document.querySelector('.identity-gender-chip')?.click();
     });
-    await page.waitForSelector('#screen-instruments.active .pick-card', { timeout: 10000 });
+    await page.waitForSelector('#screen-setup.active .pick-card', { timeout: 10000 });
     await audit('setup');
     await page.evaluate(() => document.querySelector('.pick-card')?.click());
     await page.evaluate(() => document.querySelector('#start-run-btn')?.click());

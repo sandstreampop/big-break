@@ -43,10 +43,19 @@ function write(key, value) {
 }
 
 // Meta is deserialized JSON progression, extended dynamically across many
-// subsystems (lifetime.byPath/byInstrument, rivalCounts, minigamesPlayed…),
+// subsystems (lifetime.byPath/byLoadout, rivalCounts, minigamesPlayed…),
 // so it's typed as an open record during the strictness ramp.
 export function loadMeta(): any {
-  return { ...defaultMeta(), ...(read(metaKey()) || {}) };
+  const meta = { ...defaultMeta(), ...(read(metaKey()) || {}) };
+  // Migration: the per-loadout mastery aggregate was once keyed `byInstrument`
+  // (a music noun in genre-neutral persistence). Rename in place so existing
+  // careers keep their mastery; harmless when neither key is present.
+  const lt = meta.lifetime;
+  if (lt && lt.byInstrument && !lt.byLoadout) {
+    lt.byLoadout = lt.byInstrument;
+    delete lt.byInstrument;
+  }
+  return meta;
 }
 export function saveMeta(meta) {
   write(metaKey(), meta);

@@ -16,7 +16,7 @@ import * as save from '../../save.js';
 // you weren't looking. Returns rendered rows (+ whether a crown warrants the
 // confetti/win beat) for the shared act interstitial; null when the songs
 // subsystem hasn't produced a chart week (so the shell renders no panel).
-export function musicActBreakChart(state: any): { rows: { cls: string; html: string }[]; celebrate: boolean } | null {
+export function musicActBreakChart(state: any): { head: string; rows: { cls: string; html: string }[]; celebrate: boolean } | null {
   const week = state.lastChartWeek;
   if (!week || !week.moves?.length) return null;
   const rivalName = () => rivalById(state.rival)?.name || 'your rival';
@@ -32,7 +32,7 @@ export function musicActBreakChart(state: any): { rows: { cls: string; html: str
     else if (m.kind === 'rivalNeck') rows.push({ cls: 'chart-week-row rivalwar', html: `<span class="cw-move">⚔️ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">one slot from ${rivalName()} (#${m.from}). It knows.</span>` });
   }
   const celebrate = week.moves.some((m: any) => m.kind === 'crown');
-  return { rows, celebrate };
+  return { head: '📈 THIS WEEK ON THE HOT 10', rows, celebrate };
 }
 
 export function showChart() {

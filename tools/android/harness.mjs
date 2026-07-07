@@ -101,11 +101,11 @@ export async function startRun(page) {
     return true;
   });
   if (!clicked) throw new Error('no Play button on title screen');
-  // A run may route through an instrument picker first.
+  // A run may route through a loadout picker first.
   await page.waitForTimeout(400);
-  if (await page.locator('#screen-instruments.active').count()) {
+  if (await page.locator('#screen-setup.active').count()) {
     await page.evaluate(() => {
-      const c = document.querySelector('#screen-instruments .instrument-card, #screen-instruments button, #screen-instruments .btn');
+      const c = document.querySelector('#screen-setup .pick-card, #screen-setup button, #screen-setup .btn');
       c && c.click();
     });
     await page.waitForTimeout(400);

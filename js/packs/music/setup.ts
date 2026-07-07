@@ -93,7 +93,7 @@ export function musicApplySetup(r: any, sel: any, m: any, daily: boolean) {
 }
 
 const masteryLevel = (id: string) => {
-  const st = meta.lifetime?.byInstrument?.[id];
+  const st = meta.lifetime?.byLoadout?.[id];
   return st ? Math.min(3, Math.floor(st.runs / 2) + st.wins) : 0;
 };
 const modsText = (mods: any) => Object.entries(mods)
@@ -110,7 +110,7 @@ export function musicStartGauntlet() {
   const contract = CONTRACTS[Math.floor(rng() * CONTRACTS.length)];
   const genre = offerGenres(rng)[0];
 
-  const s = $('#screen-instruments');
+  const s = $('#screen-setup');
   s.innerHTML = '';
   s.append(el('h2', 'screen-head', `The Gauntlet — ${week}`));
   s.append(el('p', 'screen-sub', 'One build, chosen by fate, same for everyone this week. No substitutions. The kitchen is closed.'));
@@ -147,5 +147,5 @@ export function musicStartGauntlet() {
   const menu = el('div', 'menu');
   menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
   s.append(menu);
-  show('#screen-instruments');
+  show('#screen-setup');
 }

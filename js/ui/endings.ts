@@ -51,16 +51,15 @@ function finishMeta(summary, lp) {
   meta.history = [...(meta.history || []).slice(-4), compact];
 
   // Lifetime aggregates (Pass 25): the genre-neutral counts + the per-loadout
-  // and per-path win records (generic — keyed by loadout/path; `byInstrument`
-  // is the legacy key name, kept for save compatibility, and feeds the generic
-  // loadout-mastery the engine applies). The pack folds in its own aggregates
-  // (music's hits / best bank) via recordMeta below.
-  const lt = meta.lifetime = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {} };
+  // and per-path win records (generic — keyed by loadout/path; `byLoadout`
+  // feeds the generic loadout-mastery the engine applies). The pack folds in
+  // its own aggregates (music's hits / best bank) via recordMeta below.
+  const lt = meta.lifetime = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byLoadout: {}, byPath: {} };
   lt.swipes += (summary.tierLog || []).length;
   lt.incredibles += (summary.tierLog || []).filter((t) => t === 'incredible').length;
   lt.bads += (summary.tierLog || []).filter((t) => t === 'bad').length;
-  lt.byInstrument = lt.byInstrument || {};
-  const bi = lt.byInstrument[summary.loadout] = lt.byInstrument[summary.loadout] || { runs: 0, wins: 0 };
+  lt.byLoadout = lt.byLoadout || {};
+  const bi = lt.byLoadout[summary.loadout] = lt.byLoadout[summary.loadout] || { runs: 0, wins: 0 };
   bi.runs += 1;
   if (summary.result === 'success') bi.wins += 1;
   if (summary.path) {
