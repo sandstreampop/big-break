@@ -7,7 +7,7 @@
 // data. (A pack's bespoke screens — music's Hot 10 — live in the pack.) None
 // route the game forward, so they sit safely below the flow.
 
-import { openOverlay, openPortrait, el, activatable } from './dom.js';
+import { openOverlay, openPortrait, el, activatable, escapeHtml } from './dom.js';
 import { activePack, run, STAT_META, PRES, metaFor, itemById, genderLabelFor } from './context.js';
 import { sfx } from '../audio.js';
 import { artFor } from '../art.js';
@@ -59,7 +59,7 @@ export function showStatusDrawer() {
   // own axis, and the persona is the loadout.
   if (run.name || run.gender) {
     const gl = genderLabelFor(run.gender);
-    box.append(el('p', 'drawer-identity', `👤 <b>${run.name || 'You'}</b>${gl ? ` · ${gl}` : ''}`));
+    box.append(el('p', 'drawer-identity', `👤 <b>${run.name ? escapeHtml(run.name) : 'You'}</b>${gl ? ` · ${gl}` : ''}`));
   }
   const inst = activePack.loadoutById(run.loadout);
   if (inst) {

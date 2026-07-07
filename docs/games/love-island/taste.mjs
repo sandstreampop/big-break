@@ -128,8 +128,8 @@ export const LOVE_ISLAND_TASTE = {
   feeds: {
     maxBody: 300,
     minBodies: 120,
-    // Feed-internal token the browser fills with each channel's nickname for
-    // the player; legal only inside feed copy.
+    // Feed-internal token the browser fills with the player's CHOSEN name (or a
+    // per-channel nickname when a run is nameless); legal only inside feed copy.
     extraTokens: ['me'],
   },
 };

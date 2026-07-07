@@ -53,18 +53,37 @@ function tally(rng: () => number, base: number): string {
   return String(n);
 }
 
-// ---------- The player, as each community imagines them ----------
+// ---------- The player, as the nation names them ----------
+
+// The name the feed calls you is the name YOU chose at setup (state.name) — the
+// nation chants the name on the screen, not a label we invented for you. That
+// is the whole point of {me}: your own name, in five different mouths.
+//
+// The nickname table below is the FALLBACK for a nameless run — a legacy save
+// may predate the identity step — so the feed still reads when there's no name
+// to chant. (Real play always has a name: the setup screen won't start a run
+// without one, and sims never render feeds at all.) The name is escaped because
+// it's free text and feed bodies are rendered as innerHTML by the shell
+// (js/ui/dom.el).
+function escapeName(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string
+  ));
+}
+function playerHandle(state: RunState, channel: string): string {
+  const chosen = (state.name || '').trim();
+  return chosen ? escapeName(chosen) : nick(state, channel);
+}
 
 // The Type the player is running (retriever / gameplayer / influencer /
 // heartthrob / bombshell), stripped of gender — the public reads a vibe, not a
-// persona id.
+// persona id. Only the nameless fallback nickname reads it now.
 function playerType(state: RunState): string {
   const id = String(state.loadout || '');
   return id.split('_')[0] || 'retriever';
 }
-// Every community coins its OWN nickname for you off your Type and keeps the
-// bill running (VOICE.md: coin once per channel, call back). The disagreement
-// about who you are IS the instrument.
+// Fallback only (see playerHandle): when a run has no chosen name, each
+// community still coins its OWN nickname off your Type so the feed isn't blank.
 const NICKNAMES: Record<string, Record<string, string>> = {
   bird: {
     retriever: 'the golden retriever',
@@ -183,8 +202,9 @@ function valenceOf(tier: Tier | 'declined'): Valence {
 // ---------- The content corpus ----------
 //
 // A post fragment: everything but the deterministic tally is authored. The
-// generator fills {tokens} at render (via the presenter's fillTokens) and coins
-// the per-channel nickname with {me}.
+// generator fills {tokens} at render (via the presenter's fillTokens) and fills
+// {me} with the player's chosen name (playerHandle) — so a bombshell arrival
+// reads "{me} the air just changed" as the nation chanting the name on screen.
 interface Frag { author: string; avatar?: string; body: string; meta?: string; pinned?: boolean; replies?: { author: string; avatar?: string; body: string }[]; }
 
 // Channel chrome: the tab, the skin, the header line pools.
@@ -753,7 +773,7 @@ const TEASERS: Partial<Record<Family, string[]>> = {
 // ---------- Assembling one channel ----------
 
 function fragToPost(rng: () => number, state: RunState, ch: string, f: Frag, baseTally: number): FeedPost {
-  const me = nick(state, ch);
+  const me = playerHandle(state, ch);
   const sub = (s: string) => s.replaceAll('{me}', me);
   const post: FeedPost = { author: sub(f.author), body: sub(f.body) };
   if (f.avatar) post.avatar = f.avatar;

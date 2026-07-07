@@ -829,8 +829,11 @@ export interface RunState {
   path: string | null;
   // The playable character's name — genre-neutral player identity, entered at
   // setup (remembered across runs in meta, always editable). Cosmetic: the sims
-  // never set it, so it's absent in golden state. Packs may surface it in
-  // flavor via the {me} token.
+  // never set it, so it's absent in golden state. Any pack's copy can address
+  // the player by name via the neutral {playerName} token (resolved by the
+  // shell in js/ui/context.ts). (A pack may also route its own token to the
+  // name — the villa's feed fills {me} with it — but {playerName} is the
+  // universal, cross-pack way.)
   name?: string;
   gender?: string;                  // the player's chosen gender id (pack-owned meaning)
   loadout: string;                  // the run's persona/instrument id

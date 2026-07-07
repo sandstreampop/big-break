@@ -480,10 +480,16 @@ talks anyway.
 - **Specificity beats scale, still.** Not “everyone is talking about it” —
   “Sandra has printed the postcard.” Not “this is dramatic” — “I have been
   refreshing since the recoupling and my dinner is ruined.”
-- **The player is a character they invented.** Each community coins its own
-  nickname for you off your Type and keeps the bill running — coin once per
-  channel, call back. The communities disagree about you; that disagreement
-  IS the instrument the player reads.
+- **The nation chants YOUR name.** The `{me}` token fills with the name the
+  player chose at setup — the name that's on the screen — so the feed addresses
+  them as themselves, not as a label we invented. Write posts that read right
+  with a real first name in the slot (“I would die for {me}”, “{me}’s whole
+  arc”), never copy that only works if {me} were a descriptive nickname. (When
+  a run is nameless — sims, a legacy save — each community coins a fallback
+  nickname off your Type so the feed still reads; that path is a safety net,
+  not the voice.) What the communities disagree about is your STANDING — the
+  wing mood colours each channel up/split/down — and that disagreement is the
+  instrument the player reads.
 - **Posts are weather reports from sofas.** They react to what actually
   happened (the moment, the tier, the wings, the flags) — an honest
   instrument, never generic filler that would fit any episode.

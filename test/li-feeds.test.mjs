@@ -77,6 +77,62 @@ test('determinism: same state + moment → identical bundle', () => {
   assert.deepEqual(a, b, 'feedRng must be a pure hash of state, not the advancing run RNG');
 });
 
+// Flatten every rendered string in a bundle (authors, bodies, metas, replies)
+// into one blob so a test can assert what the nation calls the player.
+function bundleText(b) {
+  const out = [];
+  for (const c of b.channels) {
+    for (const list of [c.posts, c.more || []]) {
+      for (const p of list) {
+        out.push(p.author, p.body, p.meta || '');
+        for (const r of p.replies || []) out.push(r.author, r.body);
+      }
+    }
+  }
+  return out.join('\n');
+}
+
+// The retriever persona's fallback nicknames — the ONLY row that can surface
+// for `retriever_girl`, and each lives solely in the feeds NICKNAMES table.
+const RETRIEVER_NICKS = ['the golden retriever', 'OP’s cinnamon roll', 'our sweetheart', 'the puppy'];
+
+test('the nation chants the chosen name, not a coined nickname', () => {
+  // Sweep seeds/tiers so we exercise many selected posts: with a name set, the
+  // name appears and NONE of the fallback nicknames leak through {me}.
+  for (const seed of [1, 7, 42, 100, 2024]) {
+    for (const tier of ['bad', 'good', 'incredible']) {
+      const s = fresh(seed);
+      s.name = 'Priya';
+      const text = bundleText(feeds(s, resultMoment(tier)));
+      assert.ok(text.includes('Priya'), `@seed${seed}/${tier}: the chosen name should be chanted`);
+      for (const nick of RETRIEVER_NICKS) {
+        assert.ok(!text.includes(nick), `@seed${seed}/${tier}: nickname "${nick}" must not surface when a name is set`);
+      }
+    }
+  }
+});
+
+test('a nameless run falls back to the coined nickname (sims / legacy saves)', () => {
+  // Across a sweep, at least one selected post carries {me}, so the fallback
+  // nickname must surface somewhere — the feed is never blank for a nameless run.
+  const blob = [1, 7, 42, 100, 2024, 9, 5, 123]
+    .flatMap((seed) => ['bad', 'good', 'incredible'].map((t) => bundleText(feeds(fresh(seed), resultMoment(t)))))
+    .join('\n');
+  assert.ok(RETRIEVER_NICKS.some((n) => blob.includes(n)), 'a nameless run must still coin a fallback nickname');
+  assert.ok(!blob.includes('{me}'), 'no {me} token may reach the rendered feed');
+});
+
+test('a name with HTML is escaped before it lands in a feed body (innerHTML)', () => {
+  // Feed bodies render via dom.el(innerHTML), so a free-text name must be
+  // escaped — never injected as live markup.
+  const s = fresh(7);
+  s.name = 'Al<script>x</script> & "Bo"';
+  const text = bundleText(feeds(s, resultMoment('good')));
+  assert.ok(!/<script>/.test(text), 'raw <script> must not appear');
+  assert.ok(text.includes('&lt;script&gt;'), 'angle brackets are escaped');
+  assert.ok(text.includes('&amp;') && text.includes('&quot;'), 'ampersand and quote are escaped');
+});
+
 test('honest instrument: a lost wing shows down even on a good result', () => {
   // Drama wing tanked below coldAt (25) → the bird app (which wears the drama
   // wing) must read down, while a devoted wing reads up — on the SAME good

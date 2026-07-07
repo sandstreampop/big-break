@@ -20,6 +20,15 @@ export const el = (tag, cls?, html?) => {
   return n;
 };
 
+// Escape a string for safe interpolation into an `el(..., html)` template.
+// `el` assigns `innerHTML`, so any FREE-TEXT value (chiefly the player's own
+// name, typed at setup) must be escaped before it lands in markup or it becomes
+// a DOM-XSS vector. Authored/manifest copy needs no escaping; player input does.
+export const escapeHtml = (s: string): string =>
+  s.replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string
+  ));
+
 // Make a click-only div/span keyboard-operable (Epic 7): a real button role,
 // focusable, and Enter/Space activates it exactly like a click. Copies the
 // risk-dot aria-label pattern. Returns the element. Use in place of a bare

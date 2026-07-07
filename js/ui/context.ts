@@ -87,8 +87,9 @@ export const metaFor = (key: string): StatMeta =>
 // active pack's token vocabulary (presenter.fillTokens). The neutral
 // {playerName} token (the player's own name) is resolved by the shell first —
 // it's universal, not a genre concept — so any pack's copy can address the
-// player by name for free. (Deliberately NOT {me}: the villa already owns {me}
-// as a per-channel nickname, so the shell stays off that token.)
+// player by name for free. (Deliberately NOT {me}: the villa owns {me} and
+// fills it itself in feeds.ts — the player's chosen name, or a per-channel
+// nickname when a run is nameless — so the shell stays off that token.)
 export function fillText(s: string): string {
   if (!s || !run) return s;
   const named = run.name ? s.replaceAll('{playerName}', run.name) : s;
