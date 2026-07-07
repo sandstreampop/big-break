@@ -72,14 +72,18 @@ export async function generateImage({ apiKey, model, prompt, refs = [], out }) {
 
 // Retry wrapper: exponential backoff on transient failures (matches the repo's
 // git-op retry ethos). Terminal 4xx (bad prompt/key) fail fast.
-export async function generateWithRetry(job, { tries = 3 } = {}) {
+export async function generateWithRetry(job, { tries = 4 } = {}) {
   let last;
   for (let i = 0; i < tries; i++) {
     const r = await generateImage(job);
     if (r.ok) return r;
     last = r;
-    if (/HTTP 4\d\d/.test(r.error || '')) break; // client error — retrying won't help
-    await new Promise((res) => setTimeout(res, 1000 * 2 ** i));
+    // Fail fast ONLY on genuinely unretryable client errors (bad request / auth
+    // / not-found / bad model id). Everything else — 408 timeout, 429 rate
+    // limit, 5xx, network blips — is transient and RETRIED with exponential
+    // backoff. (A 429 was previously misclassified as fatal; it isn't.)
+    if (/HTTP (400|401|403|404)/.test(r.error || '')) break;
+    await new Promise((res) => setTimeout(res, 1500 * 2 ** i));
   }
   return last;
 }

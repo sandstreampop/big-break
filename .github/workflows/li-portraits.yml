@@ -61,7 +61,11 @@ concurrency:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # Generous headroom so a full 112-image run can't be killed mid-batch by the
+    # timeout (public repo ⇒ Actions minutes are free, so this costs nothing).
+    # Even if it IS interrupted, partial progress is committed below and a re-run
+    # resumes for free via --skip-existing.
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -140,15 +144,26 @@ jobs:
             docs/games/love-island/art/manifest.json
           if-no-files-found: warn
 
+      - name: Wire whatever rendered (idempotent, always runs)
+        # Even if generation was interrupted mid-batch, re-scan final/ and wire
+        # every image that made it to disk. Guarantees the path map matches the
+        # PNGs you actually paid for, so nothing successful is left unreferenced.
+        if: always()
+        run: node tools/gen-li-art.mjs --wire
+
       - name: Verify the wired portraits still compile
-        # The generate step may have rewritten js/packs/love-island/portraits.data.ts;
-        # make sure the built graph is still green before committing. Runs AFTER
-        # the image upload above, so a compile hiccup can't cost you the renders.
+        # The generated portraits.data.ts is just a string→string map, so this
+        # can't break from wiring; it's a belt-and-braces check. Even if it fails,
+        # the commit below still runs — and the push to main is INDEPENDENTLY
+        # re-gated by pages.yml, which blocks any deploy of broken code.
+        if: always()
         run: npm run build
 
-      - name: Commit portraits back to the branch
-        # Skipped entirely on a dry run (nothing staged ⇒ no-op). Commits only the
-        # deployables: source-of-truth renders, deploy copies, the generated map.
+      - name: Commit portraits back to the branch (always — persists partial progress)
+        # Runs even on failure/timeout so every image you paid for is committed,
+        # not just held in the artifact. A re-run then resumes for free
+        # (--skip-existing). No-op on a dry run (nothing staged).
+        if: always()
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -158,6 +173,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "Nothing to commit (dry run, or no new images)."
           else
-            git commit -m "Generate Love Island contestant portraits (${{ inputs.dry_run == true && 'dry' || inputs.tier }})"
+            git commit -m "Generate Love Island contestant portraits (partial-safe, ${{ inputs.tier }})"
             git push origin HEAD:${{ github.ref_name }}
           fi

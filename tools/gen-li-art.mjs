@@ -165,18 +165,29 @@ if (!apiKey) {
 const heroes = jobs.filter((j) => j.kind === 'hero');
 const moods = jobs.filter((j) => j.kind === 'mood');
 let ok = 0, fail = 0;
+// One job never aborts the batch: a per-job try/catch means a single crash,
+// timeout, or exhausted-retry is recorded and skipped, and every OTHER image
+// still renders. Whatever succeeds is written to disk immediately, so a later
+// interruption can only ever cost the in-flight image — never the batch.
 for (const phase of [heroes, moods]) {
   for (const job of phase) {
     process.stdout.write(`  → ${job.slot} (${job.kind}) … `);
-    const r = await generateWithRetry({ apiKey, model: job.model, prompt: job.prompt, refs: job.refs, out: job.out });
-    if (r.ok) { ok++; job.status = 'rendered'; job.bytes = r.bytes; console.log(`ok (${(r.bytes / 1024).toFixed(0)} KB)`); }
-    else { fail++; job.status = 'failed'; job.error = r.error; console.log(`FAILED — ${r.error}`); }
+    try {
+      const r = await generateWithRetry({ apiKey, model: job.model, prompt: job.prompt, refs: job.refs, out: job.out });
+      if (r.ok) { ok++; job.status = 'rendered'; job.bytes = r.bytes; console.log(`ok (${(r.bytes / 1024).toFixed(0)} KB)`); }
+      else { fail++; job.status = 'failed'; job.error = r.error; console.log(`FAILED — ${r.error}`); }
+    } catch (e) {
+      fail++; job.status = 'failed'; job.error = String(e && e.message || e); console.log(`CRASHED — ${job.error}`);
+    }
   }
 }
 writeManifest(MANIFEST, jobs);
 writeContactSheet(SHEET, { title: 'Love Island portraits — rendered', jobs, estimate: est.line });
 console.log(`\n✅ rendered ${ok}, failed ${fail}. Contact sheet → ${SHEET}`);
 
+// Wire whatever succeeded (idempotent). Re-running with --skip-existing later
+// resumes exactly where this left off — already-rendered slots are never
+// re-paid for.
 if (!has('--no-wire') && ok > 0) {
   const { count } = wire();
   console.log(`🔌 wired ${count} portrait(s) → ${DATA_TS}`);
