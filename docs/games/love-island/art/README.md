@@ -4,6 +4,43 @@ The workflow is built so your entire job is: **set a key, run one command, glanc
 at a contact sheet.** Prompt writing, identity locking, retries, cost estimates,
 and wiring the images into the game are all automated.
 
+## Dialing in the art direction FIRST (do this before batching)
+
+Batch is for the final bulk run — it's async and generates everything at once,
+which is a terrible feedback loop. To *align on a look*, iterate fast and cheap
+on a single image. The whole style lives in **`style.mjs`**, so the loop is:
+
+> **edit `style.mjs` → render one cheap hero → look → repeat.**
+
+The `--heroes-only` flag renders just the base portrait (no 6-mood matrix), and
+`--tier=draft` uses the fast, ~4¢ model — so one iteration is **seconds and
+pennies**, not a batch:
+
+```bash
+# one hero, draft model, don't wire it into the game — pure style proof (~$0.04)
+npm run art:li -- --generate --only=marco --heroes-only --tier=draft --no-wire
+open docs/games/love-island/art/contact-sheet.html
+# tweak STYLE_PREAMBLE / NEGATIVE in style.mjs, run again, compare. Repeat.
+```
+
+Climb this staircase — only escalate when the current rung looks right:
+
+1. **Style** (1 hero, draft): is the medium / lighting / framing the vibe? Tweak
+   `STYLE_PREAMBLE` + `NEGATIVE`. Cents each.
+2. **Consistency** (`--only=marco,priya,amber --heroes-only`): do they read as
+   one cast *and* stay distinct and on-vibe? Tests the hero prompt + the `vibe`
+   seeds. Watch representation here.
+3. **Mood-lock** (`--only=marco --tier=pro2k`, no `--heroes-only`): render one
+   contestant's hero + 6 moods on the Pro model — does the reference-edit hold
+   the *same face* while only the expression changes? (~$0.90; draft won't show
+   this fidelity, so use pro for this one rung.)
+4. **Full batch** — only now: `--generate --batch` for all 16.
+
+**In the GitHub Action:** tick **`proof`** (with `tier=draft`, `only=marco,priya`).
+It renders heroes only, **commits nothing**, and just uploads the contact-sheet
+artifact for you to eyeball — the same loop without a key on your machine (though
+locally is faster per iteration; a throwaway key with a $5 budget is plenty).
+
 ## The one-time human steps
 
 1. **Get a key** — https://aistudio.google.com/apikey, then:

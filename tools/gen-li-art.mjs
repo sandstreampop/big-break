@@ -89,6 +89,10 @@ function jobsFor(cast) {
 }
 let jobs = selected.flatMap(jobsFor);
 if (reroll) jobs = jobs.filter((j) => j.slot === reroll);
+// --heroes-only: the art-direction proof loop. Render just the base portrait
+// per contestant (no 6-mood matrix), so a style tweak costs one image and
+// seconds, not seven. Iterate on style.mjs until the look is right, THEN batch.
+if (has('--heroes-only')) jobs = jobs.filter((j) => j.kind === 'hero');
 jobs.forEach((j) => { j.promptHash = promptHash(j.prompt); j.model = model; });
 
 // --skip-existing: never re-pay for a portrait already on disk. A full run

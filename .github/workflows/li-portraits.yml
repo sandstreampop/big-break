@@ -32,6 +32,10 @@ on:
         description: 'DRY RUN — plan only, generate NO images, spend $0 (uncheck to actually render)'
         type: boolean
         default: true
+      proof:
+        description: 'PROOF loop — render only hero portraits (no moods), do NOT commit, just upload a contact sheet to review. For dialing in art direction cheaply. Pair with tier=draft + only=marco,priya.'
+        type: boolean
+        default: false
       mode:
         description: 'batch = async, results held server-side, 50% cheaper, crash-proof (recommended). sync = render inline.'
         type: choice
@@ -104,9 +108,13 @@ jobs:
           else SEL="--pilot --skip-existing"; fi
           # batch mode: async, results retained server-side, 50% cheaper, resumable.
           if [ "${{ inputs.mode }}" = "batch" ]; then BATCH="--batch"; else BATCH=""; fi
+          # proof loop: heroes only, no wire, and SYNC (immediate) so the feedback
+          # is fast; results are NOT committed (see the commit step guard).
+          if [ "${{ inputs.proof }}" = "true" ]; then PROOF="--heroes-only --no-wire"; BATCH=""; else PROOF=""; fi
           echo "mode=$MODE"   >> "$GITHUB_OUTPUT"
           echo "sel=$SEL"     >> "$GITHUB_OUTPUT"
           echo "batch=$BATCH" >> "$GITHUB_OUTPUT"
+          echo "proof=$PROOF" >> "$GITHUB_OUTPUT"
 
       - name: Preflight — verify the key works (free, generates nothing)
         # Only before a REAL run. Lists models (a free endpoint) to prove the
@@ -133,7 +141,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # Blank input leaves the tool default (gemini-3-pro-image-preview).
           GEMINI_IMAGE_MODEL: ${{ inputs.model }}
-        run: node tools/gen-li-art.mjs ${{ steps.flags.outputs.mode }} ${{ steps.flags.outputs.batch }} ${{ steps.flags.outputs.sel }} --tier=${{ inputs.tier }}
+        run: node tools/gen-li-art.mjs ${{ steps.flags.outputs.mode }} ${{ steps.flags.outputs.batch }} ${{ steps.flags.outputs.proof }} ${{ steps.flags.outputs.sel }} --tier=${{ inputs.tier }}
 
       # SAFETY NET — runs even if a later step fails. Every image you PAID FOR is
       # written to disk as it renders; this captures them off the ephemeral
@@ -161,7 +169,8 @@ jobs:
         # Even if generation was interrupted mid-batch, re-scan final/ and wire
         # every image that made it to disk. Guarantees the path map matches the
         # PNGs you actually paid for, so nothing successful is left unreferenced.
-        if: always()
+        # Skipped in proof mode — a proof is throwaway, it doesn't touch the game.
+        if: always() && inputs.proof == false
         run: node tools/gen-li-art.mjs --wire
 
       - name: Verify the wired portraits still compile
@@ -169,14 +178,15 @@ jobs:
         # can't break from wiring; it's a belt-and-braces check. Even if it fails,
         # the commit below still runs — and the push to main is INDEPENDENTLY
         # re-gated by pages.yml, which blocks any deploy of broken code.
-        if: always()
+        if: always() && inputs.proof == false
         run: npm run build
 
       - name: Commit portraits back to the branch (always — persists partial progress)
         # Runs even on failure/timeout so every image you paid for is committed,
         # not just held in the artifact. A re-run then resumes for free
-        # (--skip-existing). No-op on a dry run (nothing staged).
-        if: always()
+        # (--skip-existing). No-op on a dry run (nothing staged). Skipped for a
+        # proof run — proofs are for eyeballing the contact sheet, never committed.
+        if: always() && inputs.proof == false
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
