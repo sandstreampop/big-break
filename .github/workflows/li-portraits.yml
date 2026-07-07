@@ -108,9 +108,13 @@ jobs:
           else SEL="--pilot --skip-existing"; fi
           # batch mode: async, results retained server-side, 50% cheaper, resumable.
           if [ "${{ inputs.mode }}" = "batch" ]; then BATCH="--batch"; else BATCH=""; fi
-          # proof loop: heroes only, no wire, and SYNC (immediate) so the feedback
-          # is fast; results are NOT committed (see the commit step guard).
-          if [ "${{ inputs.proof }}" = "true" ]; then PROOF="--heroes-only --no-wire"; BATCH=""; else PROOF=""; fi
+          # proof loop: heroes only, SYNC (immediate), rendered to a committed-but-
+          # NOT-wired proofs/ dir. Drop --skip-existing so each iteration overwrites.
+          if [ "${{ inputs.proof }}" = "true" ]; then
+            PROOF="--proof"; BATCH=""; SEL="${SEL//--skip-existing/}"
+          else
+            PROOF=""
+          fi
           echo "mode=$MODE"   >> "$GITHUB_OUTPUT"
           echo "sel=$SEL"     >> "$GITHUB_OUTPUT"
           echo "batch=$BATCH" >> "$GITHUB_OUTPUT"
@@ -152,7 +156,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: li-portraits-images
-          path: docs/games/love-island/art/final
+          path: |
+            docs/games/love-island/art/final
+            docs/games/love-island/art/proofs
           if-no-files-found: warn
 
       - name: Upload contact sheet + plan (review surface)
@@ -184,19 +190,23 @@ jobs:
       - name: Commit portraits back to the branch (always — persists partial progress)
         # Runs even on failure/timeout so every image you paid for is committed,
         # not just held in the artifact. A re-run then resumes for free
-        # (--skip-existing). No-op on a dry run (nothing staged). Skipped for a
-        # proof run — proofs are for eyeballing the contact sheet, never committed.
-        if: always() && inputs.proof == false
+        # (--skip-existing). No-op on a dry run (nothing staged). In PROOF mode
+        # this commits only the proofs/ dir — viewable in the repo, but not wired
+        # or deployed — so the render can be reviewed without touching the game.
+        if: always()
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/games/love-island/art/final \
+                  docs/games/love-island/art/proofs \
                   docs/games/love-island/public/art \
                   docs/games/love-island/art/batch-state.json \
                   js/packs/love-island/portraits.data.ts 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "Nothing to commit (dry run, or no new images)."
           else
-            git commit -m "Generate Love Island contestant portraits (partial-safe, ${{ inputs.tier }})"
+            MSG="Generate Love Island contestant portraits (${{ inputs.tier }})"
+            [ "${{ inputs.proof }}" = "true" ] && MSG="Add Love Island portrait PROOF render (${{ inputs.tier }}, not wired)"
+            git commit -m "$MSG"
             git push origin HEAD:${{ github.ref_name }}
           fi

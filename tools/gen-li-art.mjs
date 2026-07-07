@@ -38,6 +38,7 @@ const DATA_TS = resolve(ROOT, 'js/packs/love-island/portraits.data.ts'); // the 
 const MANIFEST = resolve(ART, 'manifest.json');
 const SHEET = resolve(ART, 'contact-sheet.html');
 const BATCH_STATE = resolve(ART, 'batch-state.json');           // resumable batch handles (committed)
+const PROOFS = resolve(ART, 'proofs');                          // --proof renders here: committed & viewable, but NOT wired/deployed
 
 // ---------- args ----------
 const args = process.argv.slice(2);
@@ -92,7 +93,12 @@ if (reroll) jobs = jobs.filter((j) => j.slot === reroll);
 // --heroes-only: the art-direction proof loop. Render just the base portrait
 // per contestant (no 6-mood matrix), so a style tweak costs one image and
 // seconds, not seven. Iterate on style.mjs until the look is right, THEN batch.
-if (has('--heroes-only')) jobs = jobs.filter((j) => j.kind === 'hero');
+if (has('--heroes-only') || has('--proof')) jobs = jobs.filter((j) => j.kind === 'hero');
+// --proof: an art-direction proof. Heroes only, rendered to a committed-but-
+// NOT-wired proofs/ dir (viewable in the repo, never deployed to the game), and
+// no --skip-existing so each iteration overwrites. Lets a human (or Claude, via
+// git pull) eyeball the look without the render touching the live game.
+if (has('--proof')) jobs.forEach((j) => { j.out = resolve(PROOFS, `${j.slot}.png`); });
 jobs.forEach((j) => { j.promptHash = promptHash(j.prompt); j.model = model; });
 
 // --skip-existing: never re-pay for a portrait already on disk. A full run
@@ -251,8 +257,10 @@ console.log(`\n✅ rendered ${ok}, failed ${fail}. Contact sheet → ${SHEET}`);
 // Wire whatever succeeded (idempotent). Re-running with --skip-existing later
 // resumes exactly where this left off — already-rendered slots are never
 // re-paid for.
-if (!has('--no-wire') && ok > 0) {
+if (!has('--no-wire') && !has('--proof') && ok > 0) {
   const { count } = wire();
   console.log(`🔌 wired ${count} portrait(s) → ${DATA_TS}`);
   console.log('   next: npm run build  (then open Love Island — portraits replace the emoji faces)');
+} else if (has('--proof') && ok > 0) {
+  console.log(`🔎 proof render(s) in ${PROOFS} — committed for review, NOT wired into the game.`);
 }
