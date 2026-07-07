@@ -118,6 +118,7 @@ declare module '../types.js' {
 // #region pack
 export const musicPack: Pack = {
   id: 'music',
+  saveNamespace: '', // the flagship keeps the original (un-namespaced) save keys
   manifest: musicManifest,
   // Order matters: onConstruct draws rival (then seeds); onRunStart draws
   // weather before songs' notebook demo; onActBreak fires band quirks (notebook

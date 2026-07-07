@@ -9,6 +9,13 @@ import { buildEpilogue } from '../epilogue.js';
 import { generateHeadlines } from '../headlines.js';
 import { generateDMs } from '../dms.js';
 import { buildDiscography } from '../discography.js';
+import { rivalById } from '../data/rivals.js';
+import { genreById } from '../data/genres.js';
+import { venueById } from '../data/venues.js';
+import { accessoryById } from '../data/accessories.js';
+import { collabArtistFor } from '../charts.js';
+import { flagshipSong } from '../songs.js';
+import { DEFAULT_FAIL_LABELS } from '../share-text.js';
 import type { Presenter } from '../types.js';
 
 export const musicPresenter: Presenter = {
@@ -20,6 +27,30 @@ export const musicPresenter: Presenter = {
   headlines: generateHeadlines,
   dms: generateDMs,
   discography: buildDiscography,
+
+  // Short verdict labels for music's fail-state endings (ribbon, history).
+  failLabels: DEFAULT_FAIL_LABELS,
+
+  // Resolve an equipped-item id through music's accessory catalog (HUD chips,
+  // gear-swap flows).
+  itemById: (id) => accessoryById(id),
+
+  // The art system's reactive-scene inputs, mapped from music's meters.
+  vibe: (state: any) => ({ fame: state.fame, network: state.stats.network, burnout: state.stats.burnout }),
+
+  // Fill a card's {tokens} with this run's musical identities (rival, genre,
+  // the flagship/hit/faded song, the home venue).
+  fillTokens: (state: any, s: string) => {
+    const r = rivalById(state.rival);
+    const g = genreById(state.genre);
+    return s.replaceAll('{rival}', r.name).replaceAll('{rivalVibe}', r.vibe)
+      .replaceAll('{genre}', g ? g.name : 'your genre')
+      .replaceAll('{collabArtist}', collabArtistFor(state))
+      .replaceAll('{song}', flagshipSong(state)?.title || 'the song')
+      .replaceAll('{hitSong}', (state.songs || []).find((x: any) => x.crowned)?.title || 'the hit')
+      .replaceAll('{fadedSong}', (state.songs || []).find((x: any) => x.status === 'faded' && x.peak)?.title || 'your old single')
+      .replaceAll('{venue}', venueById(state.venue)?.name || 'the venue');
+  },
   // The weekly Gauntlet builds its fixed loadout from music data (contracts,
   // genres), so the mode is this pack's to declare.
   gauntlet: true,

@@ -602,6 +602,10 @@ export interface Presenter {
 
 export interface Pack {
   id: string;
+  // The localStorage namespace for this pack's saves. The flagship uses '' so
+  // careers predating multi-pack survive; a pack that omits it is namespaced by
+  // its id. Lets boot() stay genre-neutral (no `id === 'music'` special-case).
+  saveNamespace?: string;
   manifest: PackManifest;
   plugins?: Plugin[];
   events: GameEvent[];

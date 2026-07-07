@@ -13,7 +13,7 @@
 
 import * as engine from './engine.js';
 import * as save from './save.js';
-import { musicPack } from './packs/music.js';
+import type { Pack } from './types.js';
 import { registerArt } from './art.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 import { initAnalytics, track } from './analytics.js';
@@ -47,7 +47,7 @@ const wiring: Nav = {
   wall: renderWall,
 };
 
-export function boot(pack = musicPack) {
+export function boot(pack: Pack) {
   Object.assign(nav, wiring);
   // Guard the CSS↔JS pairing before anything renders; re-check once the DOM
   // (and any still-streaming stylesheet) has settled.
@@ -61,7 +61,7 @@ export function boot(pack = musicPack) {
   // games never clobber each other's meta or in-progress run.
   selectPack(pack);
   registerArt(PRES.art); // a pack's own art slots join the scene painter
-  save.setSaveNamespace(pack.id === 'music' ? '' : pack.id);
+  save.setSaveNamespace(pack.saveNamespace ?? pack.id);
   setMeta(save.loadMeta());
   engine.useContentPack(pack); // this game's content; set before any engine call
   initAnalytics(meta.settings, pack.id);
