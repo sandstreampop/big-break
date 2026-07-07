@@ -104,8 +104,9 @@ export interface Choice {
   // stat (e.g. a resource authored here) resolves to 0 — a latent no-op.
   governingStats?: Record<string, number>;
   cost?: number;
-  minigame?: string;
   outcomes: Record<Tier, Outcome>;
+  // A pack may add its own per-choice fields (e.g. music's `minigame?: string`)
+  // via a Choice augmentation in its pack.ts — the core names none.
 }
 
 // ---------- Content pack ----------

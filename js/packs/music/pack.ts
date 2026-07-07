@@ -68,6 +68,8 @@ const musicComeback = (state: RunState) => {
 // songs subsystem verbs — added here, editing no shared type.
 // #region effect-augmentation
 declare module '../../types.js' {
+  // A music card's choice may carry an on-swipe minigame (performance beat).
+  interface Choice { minigame?: string; }
   interface Effect {
     // music core stats
     skill?: number; cred?: number; creativity?: number; network?: number;
