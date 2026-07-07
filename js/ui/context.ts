@@ -70,7 +70,7 @@ export function failLabelFor(endingKey): string | undefined {
 // contracts — live in the music pack and call through here.)
 export function wallUnlocks(m: any, kind: string): string[] {
   const owned = new Set(m.unlockedWall);
-  return (PRES.wallItems || []).filter((w: any) => w.kind === kind && owned.has(w.id)).map((w: any) => w.target);
+  return (PRES?.wallItems || []).filter((w: any) => w.kind === kind && owned.has(w.id)).map((w: any) => w.target);
 }
 // The wall-unlocked pack modules and perks — the genre-neutral args the engine's
 // newRun takes. (Packs are keyed by a `pack_` id prefix; perks are a wall kind.)

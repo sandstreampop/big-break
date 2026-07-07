@@ -29,6 +29,9 @@ function useStorage(opts) {
 }
 
 const save = await import('../dist/js/save.js');
+// Music's unlock pools moved out of the (now genre-neutral) save layer into the
+// music pack; the gating rule they enforce is still worth pinning here.
+const { musicUnlockedContractIds } = await import('../dist/js/packs/music-save.js');
 const META_KEY = 'bigbreak_meta_v1';
 const RUN_KEY = 'bigbreak_run_v1';
 
@@ -162,8 +165,8 @@ test('unlockedContractIds gate on a finished run', () => {
   useStorage();
   save.setSaveNamespace('');
   const meta = save.loadMeta();
-  assert.deepEqual(save.unlockedContractIds(meta), [], 'no contracts before the first finished run');
+  assert.deepEqual(musicUnlockedContractIds(meta), [], 'no contracts before the first finished run');
   meta.runs = 1;
-  const ids = save.unlockedContractIds(meta);
+  const ids = musicUnlockedContractIds(meta);
   assert.ok(ids.includes('nepo_baby') && ids.includes('straight_edge'), 'starter contracts appear after run 1');
 });
