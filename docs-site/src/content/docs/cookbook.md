@@ -29,7 +29,7 @@ full story.
 
 ## Add a subsystem
 
-1. Write a `Plugin` (a small one like `js/packs/plugins/genre.ts` is a good template).
+1. Write a `Plugin` (a small one like `js/packs/music/plugins/genre.ts` is a good template).
 2. Declare the verbs it owns in `effectVerbs` and handle them in `onEffect`.
 3. Keep its state on `state`; push `deltas` and `notes` for the UI.
 4. Register it in your pack's `plugins` array with a deliberate `priority`.

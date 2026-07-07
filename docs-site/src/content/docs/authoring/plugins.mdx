@@ -4,7 +4,7 @@ description: The hook lifecycle, ordering, the per-resolution context, owning a 
 ---
 
 import { Aside, Code } from '@astrojs/starlight/components';
-import songsRaw from '@engine/packs/plugins/songs.ts?raw';
+import songsRaw from '@engine/packs/music/plugins/songs.ts?raw';
 import { region } from '@snippet';
 
 A [`Plugin`](/big-break/docs/reference/types/interfaces/plugin/) is how a genre
@@ -95,7 +95,7 @@ If a resource needs bespoke arithmetic, a plugin can *own* it with
 `undefined` to decline (the engine tries the next plugin, then a generic add).
 The songs plugin owns `hits` — an "instant classic" mints a charting song:
 
-<Code code={region(songsRaw, 'apply-resource')} lang="ts" title="js/packs/plugins/songs.ts" />
+<Code code={region(songsRaw, 'apply-resource')} lang="ts" title="js/packs/music/plugins/songs.ts" />
 
 Notice it consumes `ctx.rng` and pushes song debuts onto `ctx.deltas` — exactly
 at the resource's ordinal slot, so the RNG stream stays byte-identical to when
@@ -106,7 +106,7 @@ this logic lived inline in the engine.
 The same plugin runs the chart week at each act break and one final week at the
 finale — reusing the engine's own song machinery:
 
-<Code code={region(songsRaw, 'act-break')} lang="ts" title="js/packs/plugins/songs.ts" />
+<Code code={region(songsRaw, 'act-break')} lang="ts" title="js/packs/music/plugins/songs.ts" />
 
 ## The pattern to copy
 

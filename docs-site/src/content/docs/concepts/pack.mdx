@@ -4,7 +4,7 @@ description: Required fields vs optional capabilities, feature detection, and th
 ---
 
 import { Aside, Code } from '@astrojs/starlight/components';
-import musicRaw from '@engine/packs/music.ts?raw';
+import musicRaw from '@engine/packs/music/pack.ts?raw';
 import probeRaw from '@engine/packs/probe.ts?raw';
 import { region } from '@snippet';
 
@@ -65,7 +65,7 @@ transform, and a run summarizer. It opts into nearly every optional capability â
 yet the required core is still just the five fields above; everything past them
 is a field it chose to provide:
 
-<Code code={region(musicRaw, 'pack')} lang="ts" title="js/packs/music.ts" />
+<Code code={region(musicRaw, 'pack')} lang="ts" title="js/packs/music/pack.ts" />
 
 The `declare module` block just above it in the same file is how the pack adds
 its own effect verbs without editing a shared type â€” covered in

@@ -5,7 +5,7 @@ description: The core verb set, adding your genre's verbs via declaration mergin
 
 import { Aside, Code } from '@astrojs/starlight/components';
 import probeRaw from '@engine/packs/probe.ts?raw';
-import musicRaw from '@engine/packs/music.ts?raw';
+import musicRaw from '@engine/packs/music/pack.ts?raw';
 import { region } from '@snippet';
 
 An [`Effect`](/big-break/docs/reference/types/interfaces/effect/) is the payload
@@ -38,7 +38,7 @@ file. The probe adds its one stat and one resource:
 The music pack adds its four core stats and the subsystem verbs its plugins
 handle the same way:
 
-<Code code={region(musicRaw, 'effect-augmentation')} lang="ts" title="js/packs/music.ts" />
+<Code code={region(musicRaw, 'effect-augmentation')} lang="ts" title="js/packs/music/pack.ts" />
 
 This is the Open/Closed Principle made literal: the shared type is **closed** to
 modification (you never edit `types.ts` to add a genre) but **open** to

@@ -4,7 +4,7 @@ description: stats, resources, paths, winGates, and the HUD metadata — the obj
 ---
 
 import { Aside, Code } from '@astrojs/starlight/components';
-import musicManifestRaw from '@engine/packs/music-manifest.ts?raw';
+import musicManifestRaw from '@engine/packs/music/manifest.ts?raw';
 import { region } from '@snippet';
 
 The [`PackManifest`](/big-break/docs/reference/types/interfaces/packmanifest/)
@@ -78,9 +78,9 @@ A [`PathDef`](/big-break/docs/reference/types/interfaces/pathdef/) is a summit t
 player commits to at the crossroads; its `winGates` entry is the bar the finale
 judges. Here are the music pack's three, verbatim:
 
-<Code code={region(musicManifestRaw, 'paths')} lang="ts" title="js/packs/music-manifest.ts" />
+<Code code={region(musicManifestRaw, 'paths')} lang="ts" title="js/packs/music/manifest.ts" />
 
-<Code code={region(musicManifestRaw, 'win-gates')} lang="ts" title="js/packs/music-manifest.ts" />
+<Code code={region(musicManifestRaw, 'win-gates')} lang="ts" title="js/packs/music/manifest.ts" />
 
 A gate key can be **any** stat or resource — even a pack-specific one a plugin
 maintains. The Hit Factory summit gates on `hits`, a resource the
