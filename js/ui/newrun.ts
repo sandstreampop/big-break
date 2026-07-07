@@ -78,7 +78,7 @@ export function startNewRun(daily = false, comeback = false) {
     const inst = chosenInst ? activePack.loadoutById(chosenInst) : null;
     const bar = el('div', 'start-bar');
     const extras = PRES.setupSummary?.(sel) || '';
-    const sb = btn(inst ? `▶ Start the run — ${inst.name}${extras ? ' · ' + extras : ''}` : (picker.head.includes('player') ? 'Pick your player to start' : 'Pick an instrument to start'), inst ? 'primary' : '', beginRun);
+    const sb = btn(inst ? `▶ Start the run — ${inst.name}${extras ? ' · ' + extras : ''}` : (picker.empty || 'Pick to start'), inst ? 'primary' : '', beginRun);
     sb.id = 'start-run-btn';
     if (!inst) sb.disabled = true;
     bar.append(sb);

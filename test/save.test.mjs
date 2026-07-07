@@ -43,7 +43,7 @@ test('loadMeta returns defaults on empty storage', () => {
   assert.equal(meta.runs, 0);
   assert.deepEqual(meta.unlockedWall, []);
   assert.ok(meta.settings && typeof meta.settings.sound === 'boolean');
-  assert.ok(meta.best && meta.best.fame === 0);
+  assert.ok(meta.best && meta.best.lp === 0); // neutral score record (packs add their own, e.g. music best.fame)
 });
 
 test('loadMeta schema-migrates: old partial save gets new default keys', () => {

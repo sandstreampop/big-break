@@ -468,7 +468,7 @@ export const loveIslandPresenter: Presenter = {
   // ADR-0014 — the second screen: the nation's five feeds at every pivotal
   // moment. Pure read of state; the shell renders the teaser + browser.
   feeds: villaFeeds,
-  vibe: (state: RunState) => ({ fame: state.public ?? 0, network: state.stats?.charisma ?? 0, burnout: state.stats?.burnout ?? 0 }),
+  vibe: (state: RunState) => ({ scale: state.public ?? 0, glow: state.stats?.charisma ?? 0, heat: state.stats?.burnout ?? 0 }),
 
   tutorial: {
     offer: '▶ Play — Your First Morning',
@@ -539,7 +539,7 @@ export const loveIslandPresenter: Presenter = {
   },
 
   // The redemption season (R8/C2b): comeback mode in villa clothes.
-  loadoutPicker: { head: 'Choose your player', sub: 'Who are you, when the cameras are always on?' },
+  loadoutPicker: { head: 'Choose your player', sub: 'Who are you, when the cameras are always on?', empty: 'Pick your player to start' },
 
   comeback: {
     label: '🧳 The Redemption Season (×1.2 LP)',

@@ -192,7 +192,7 @@ function renderTrophies() {
     s.append(el('h3', 'wall-tier', 'Past Lives'));
     const hist = el('div', 'history-list');
     for (const h of meta.runHistory) {
-      const inst = activePack.loadoutById(h.instrument);
+      const inst = activePack.loadoutById(h.loadout ?? h.instrument); // h.instrument: pre-rename saves
       const res = h.result ? h.result.toUpperCase()
         : failLabelFor(h.endingKey) || 'DNF';
       const pathName = h.path ? PATHS[h.path].name : '—';

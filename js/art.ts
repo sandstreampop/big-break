@@ -52,25 +52,25 @@ function crowd(y, n, r, fill) {
 }
 
 const SCENES = {
-  // v = vibe: {fame, network, burnout} 0..100-ish — scenes react to the run
+  // v = vibe: {scale, glow, heat} 0..100-ish (generic scene dials) — scenes react to the run
   stage: (h, v) => `
-    <polygon points="70,0 20,200 150,200" fill="hsla(${h},70%,80%,${0.08 + v.fame / 900})"/>
-    <polygon points="250,0 170,200 300,200" fill="hsla(${(h + 40) % 360},70%,80%,${0.10 + v.fame / 800})"/>
+    <polygon points="70,0 20,200 150,200" fill="hsla(${h},70%,80%,${0.08 + v.scale / 900})"/>
+    <polygon points="250,0 170,200 300,200" fill="hsla(${(h + 40) % 360},70%,80%,${0.10 + v.scale / 800})"/>
     <rect x="0" y="168" width="320" height="32" fill="hsla(0,0%,0%,.35)"/>
     <line x1="160" y1="70" x2="160" y2="168" stroke="hsla(0,0%,95%,.55)" stroke-width="3"/>
     <circle cx="160" cy="64" r="9" fill="hsla(0,0%,95%,.75)"/>
     <line x1="146" y1="168" x2="174" y2="168" stroke="hsla(0,0%,95%,.55)" stroke-width="4"/>
-    ${crowd(186, Math.min(34, 12 + Math.floor(v.fame / 5)), 6, `hsla(${h},30%,8%,.9)`)}
-    ${v.fame >= 40 ? crowd(174, Math.min(20, Math.floor(v.fame / 8)), 5, `hsla(${h},28%,10%,.85)`) : ''}
-    ${v.fame >= 30 ? `<rect x="8" y="150" width="14" height="18" rx="2" fill="hsla(0,0%,90%,.25)"/><rect x="298" y="150" width="14" height="18" rx="2" fill="hsla(0,0%,90%,.25)"/>` : ''}
+    ${crowd(186, Math.min(34, 12 + Math.floor(v.scale / 5)), 6, `hsla(${h},30%,8%,.9)`)}
+    ${v.scale >= 40 ? crowd(174, Math.min(20, Math.floor(v.scale / 8)), 5, `hsla(${h},28%,10%,.85)`) : ''}
+    ${v.scale >= 30 ? `<rect x="8" y="150" width="14" height="18" rx="2" fill="hsla(0,0%,90%,.25)"/><rect x="298" y="150" width="14" height="18" rx="2" fill="hsla(0,0%,90%,.25)"/>` : ''}
     <circle cx="60" cy="30" r="2" fill="hsla(${h},90%,80%,.7)"/>
     <circle cx="284" cy="44" r="2.5" fill="hsla(${(h + 60) % 360},90%,80%,.6)"/>
     <circle cx="230" cy="18" r="1.8" fill="hsla(${(h + 120) % 360},90%,85%,.7)"/>`,
   arena: (h, v) => `
-    ${crowd(40, Math.min(34, 20 + Math.floor(v.fame / 12)), 3, `hsla(${h},60%,75%,.35)`)}
-    ${crowd(60, Math.min(30, 18 + Math.floor(v.fame / 14)), 3.5, `hsla(${h},60%,70%,.3)`)}
-    ${crowd(82, Math.min(26, 14 + Math.floor(v.fame / 16)), 4, `hsla(${h},50%,65%,.25)`)}
-    ${v.fame >= 60 ? crowd(24, 30, 2.5, `hsla(${h},60%,80%,.3)`) : ''}
+    ${crowd(40, Math.min(34, 20 + Math.floor(v.scale / 12)), 3, `hsla(${h},60%,75%,.35)`)}
+    ${crowd(60, Math.min(30, 18 + Math.floor(v.scale / 14)), 3.5, `hsla(${h},60%,70%,.3)`)}
+    ${crowd(82, Math.min(26, 14 + Math.floor(v.scale / 16)), 4, `hsla(${h},50%,65%,.25)`)}
+    ${v.scale >= 60 ? crowd(24, 30, 2.5, `hsla(${h},60%,80%,.3)`) : ''}
     <polygon points="40,0 0,140 90,140" fill="hsla(${h},80%,85%,.12)"/>
     <polygon points="160,0 120,150 200,150" fill="hsla(${(h + 30) % 360},80%,85%,.15)"/>
     <polygon points="280,0 230,140 320,140" fill="hsla(${(h + 60) % 360},80%,85%,.12)"/>
@@ -85,7 +85,7 @@ const SCENES = {
     <circle cx="52" cy="30" r="14" fill="hsla(${(h + 180) % 360},80%,80%,.5)"/>
     <rect x="0" y="150" width="320" height="50" fill="hsla(${h},25%,12%,.8)"/>
     <path d="M0,160 Q60,148 120,158 T240,156 T320,160 V200 H0 Z" fill="hsla(${h},35%,18%,.9)"/>
-    ${crowd(178, Math.min(30, 14 + Math.floor(v.fame / 7)), 5.5, `hsla(${h},30%,7%,.9)`)}
+    ${crowd(178, Math.min(30, 14 + Math.floor(v.scale / 7)), 5.5, `hsla(${h},30%,7%,.9)`)}
     <line x1="20" y1="12" x2="300" y2="26" stroke="hsla(0,0%,90%,.18)" stroke-width="2"/>
     <circle cx="90" cy="15" r="3" fill="hsla(${h},90%,75%,.8)"/>
     <circle cx="170" cy="20" r="3" fill="hsla(${(h + 90) % 360},90%,75%,.8)"/>
@@ -110,10 +110,10 @@ const SCENES = {
     <path d="M60,150 c-8,-10 8,-22 12,-8 c4,-14 20,-2 12,8 l-12,12 Z" fill="hsla(340,85%,65%,.85)"/>
     <path d="M244,110 c-6,-8 6,-17 9,-6 c3,-11 15,-2 9,6 l-9,9 Z" fill="hsla(340,85%,70%,.7)"/>
     <path d="M256,60 c-5,-6 5,-13 7,-5 c2,-8 12,-1 7,5 l-7,7 Z" fill="hsla(340,85%,75%,.55)"/>
-    ${v.fame >= 35 ? `<path d="M52,100 c-6,-8 6,-17 9,-6 c3,-11 15,-2 9,6 l-9,9 Z" fill="hsla(340,85%,68%,.7)"/>` : ''}
-    ${v.fame >= 65 ? `<path d="M268,160 c-6,-8 6,-17 9,-6 c3,-11 15,-2 9,6 l-9,9 Z" fill="hsla(340,85%,66%,.8)"/><path d="M40,40 c-5,-6 5,-13 7,-5 c2,-8 12,-1 7,5 l-7,7 Z" fill="hsla(340,85%,72%,.6)"/>` : ''}
+    ${v.scale >= 35 ? `<path d="M52,100 c-6,-8 6,-17 9,-6 c3,-11 15,-2 9,6 l-9,9 Z" fill="hsla(340,85%,68%,.7)"/>` : ''}
+    ${v.scale >= 65 ? `<path d="M268,160 c-6,-8 6,-17 9,-6 c3,-11 15,-2 9,6 l-9,9 Z" fill="hsla(340,85%,66%,.8)"/><path d="M40,40 c-5,-6 5,-13 7,-5 c2,-8 12,-1 7,5 l-7,7 Z" fill="hsla(340,85%,72%,.6)"/>` : ''}
     <circle cx="70" cy="60" r="10" fill="hsla(${(h + 180) % 360},70%,70%,.5)"/>
-    <text x="70" y="65" font-size="12" text-anchor="middle" fill="hsla(0,0%,10%,.8)">${v.fame >= 50 ? '+9k' : '+1'}</text>`,
+    <text x="70" y="65" font-size="12" text-anchor="middle" fill="hsla(0,0%,10%,.8)">${v.scale >= 50 ? '+9k' : '+1'}</text>`,
   office: (h) => `
     <rect x="0" y="0" width="320" height="14" fill="hsla(${h},20%,60%,.15)"/>
     <rect x="0" y="22" width="320" height="14" fill="hsla(${h},20%,60%,.12)"/>
@@ -130,7 +130,7 @@ const SCENES = {
       const x = i * 68 - 10, w = 52 + ((i * 17) % 20), ht = 70 + ((i * 43) % 60);
       let win = '';
       for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) {
-        if ((i + r + c) % 4 < 1 + Math.floor((v.network || 0) / 30)) win += `<rect x="${x + 8 + c * 14}" y="${150 - ht + 10 + r * 16}" width="7" height="9" fill="hsla(45,90%,70%,.55)"/>`;
+        if ((i + r + c) % 4 < 1 + Math.floor((v.glow || 0) / 30)) win += `<rect x="${x + 8 + c * 14}" y="${150 - ht + 10 + r * 16}" width="7" height="9" fill="hsla(45,90%,70%,.55)"/>`;
       }
       return `<rect x="${x}" y="${150 - ht}" width="${w}" height="${ht}" fill="hsla(${h},22%,${16 + i * 3}%,.95)"/>` + win;
     }).join('')}
@@ -168,7 +168,7 @@ const SCENES = {
     ${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
       const a = (i * Math.PI) / 4;
       const x = 160 + Math.cos(a) * 340, y = 100 + Math.sin(a) * 340;
-      return `<polygon points="160,100 ${x - 30},${y} ${x + 30},${y}" fill="hsla(${(h + i * 8) % 360},70%,55%,${(0.05 + (v.burnout || 0) / 800).toFixed(3)})"/>`;
+      return `<polygon points="160,100 ${x - 30},${y} ${x + 30},${y}" fill="hsla(${(h + i * 8) % 360},70%,55%,${(0.05 + (v.heat || 0) / 800).toFixed(3)})"/>`;
     }).join('')}
     <circle cx="160" cy="100" r="44" fill="hsla(${h},60%,45%,.25)"/>
     <circle cx="160" cy="100" r="30" fill="hsla(${h},70%,50%,.3)"/>
@@ -177,10 +177,9 @@ const SCENES = {
 };
 
 export function sceneFor(slot) {
-  if (!slot) return 'stage'; // cards/packs without an art slot get a neutral scene
-  if (SCENE[slot]) return SCENE[slot];
-  if (slot.startsWith('instrument_') || slot.startsWith('gear_')) return 'pedestal';
-  return 'stage';
+  // A registered slot's scene, else a neutral default. (A pack registers every
+  // slot it authors via presenter.art; the fallback covers only stragglers.)
+  return (slot && SCENE[slot]) || 'stage';
 }
 
 function svgFor(slot, vibe) {
@@ -209,7 +208,7 @@ function svgFor(slot, vibe) {
 
 // Returns an element for the art slot (img if a real asset exists,
 // otherwise a generated SVG scene).
-export function artFor(slot, className = 'art', vibe = { fame: 0, network: 0, burnout: 0 }) {
+export function artFor(slot, className = 'art', vibe = { scale: 0, glow: 0, heat: 0 }) {
   slot = slot || 'scene_default'; // packs/cards without an art slot get a neutral tile
   const path = ASSETS[slot]?.path;
   if (path) {

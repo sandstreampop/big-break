@@ -71,6 +71,8 @@ declare module '../../types.js' {
   interface Effect {
     // music core stats
     skill?: number; cred?: number; creativity?: number; network?: number;
+    // music resources (moved off the shared Effect — the core names no genre)
+    fame?: number; money?: number; hits?: number; rivalry?: number;
     // venue subsystem
     adoptVenue?: string; venueLove?: number; venueLoveStart?: number;
     // songs subsystem

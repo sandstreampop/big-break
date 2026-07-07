@@ -16,6 +16,11 @@ export type ForceTier = Tier | 'encoreUp';
 
 export interface StatMeta { name: string; icon: string; }
 
+// The art painter's reactive-scene inputs — three generic 0..100-ish intensity
+// dials the SVG scenes read (roughly: prominence, ambient glow, and strain).
+// Genre-neutral: each pack maps its own meters onto them via presenter.vibe.
+export interface SceneVibe { scale: number; glow: number; heat: number; }
+
 // A pack-declared fail-state rule: a run ends the moment a stat or resource
 // crosses a threshold. Declared in the manifest so checkFailStates names no
 // genre's stat — the engine owns only the universal burnout fail; every other
@@ -53,10 +58,11 @@ export interface PromiseSpec {
 export interface Effect {
   // The engine's universal burnout slot.
   burnout?: number;
-  // Resources the engine applies in manifest order (via a pack's applyResource,
-  // else a generic additive default). Enumerated here for the packs that use
-  // them; a genre declares any further resource verbs via declaration merging.
-  fame?: number; money?: number; hits?: number; pathProgress?: number; rivalry?: number;
+  // The engine's generic momentum accumulator (RunState.pathProgress). Every
+  // other resource verb is the owning genre's, declared in that pack's own
+  // `declare module` Effect augmentation (music: fame/money/hits/rivalry/…;
+  // love-island: public/bond/…) — so this shared interface names no genre.
+  pathProgress?: number;
   // Flag / chain / promise control — the genuinely genre-neutral control verbs.
   addFlag?: string; removeFlag?: string; chainEventId?: string;
   addPromise?: PromiseSpec;
@@ -458,6 +464,9 @@ export interface Presenter {
   // names no meter; a pack without them gets the shell's minimal neutral résumé.
   resume?: (meta: any) => { label: string; value: string; head?: boolean }[];
   historyStat?: (h: any) => string;
+  // The pack's own fields to store on a Past-Lives run-history row (music: its
+  // peak fame), merged over the shell's neutral row (loadout/path/result/…).
+  historyEntry?: (summary: any) => Record<string, any>;
   // Whether this pack ships on-swipe minigames (gates the Settings toggles for
   // them; a pack without minigames doesn't show the rows).
   minigameSettings?: boolean;
@@ -643,8 +652,10 @@ export interface Presenter {
     // wear only the slim continuity ribbon — the frame is taught once.
     key?: string;
   } | null;
-  // The art system's reactive-scene inputs, mapped from this pack's state.
-  vibe?: (state: RunState) => { fame: number; network: number; burnout: number };
+  // The art system's reactive-scene inputs, mapped from this pack's state. The
+  // three axes are generic scene-intensity dials (see SceneVibe) — a pack maps
+  // whichever of its meters drive the picture.
+  vibe?: (state: RunState) => SceneVibe;
   // Art slots this pack registers with the generated-scene painter:
   // slot id → { e: emoji badge, s: scene id }.
   art?: Record<string, { e: string; s: string }>;
@@ -654,7 +665,7 @@ export interface Presenter {
   // button; these let a pack add its own selection layer. ──
   // The loadout-screen title/sub copy (music: "Choose your weapon"). Default
   // covers the base case; comeback/daily copy comes from comeback/daily.
-  loadoutPicker?: { head: string; sub: string };
+  loadoutPicker?: { head: string; sub: string; empty?: string };
   // The candidate loadout ids to offer (music: contract-forced or unlocked).
   // Omitted → the shell offers every unlockedByDefault / unlockedBy loadout.
   loadoutPool?: (meta: any, sel: any) => string[];

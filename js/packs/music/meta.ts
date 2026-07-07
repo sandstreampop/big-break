@@ -22,7 +22,7 @@ export function musicResume(meta: any): { label: string; value: string; head?: b
     { label: 'Faceplants survived', value: String(lt.bads) },
     { label: 'Hits written', value: String(lt.hits) },
     { label: 'Best bank balance', value: `$${lt.moneyBest}` },
-    { label: 'Best fame', value: `★${meta.best.fame}` },
+    { label: 'Best fame', value: `★${meta.best.fame || 0}` },
     { label: 'Legacy earned', value: `${meta.lpEarnedTotal} LP` },
     { label: 'Dailies played', value: String(Object.keys(meta.dailyResults || {}).length) },
   ];
@@ -54,12 +54,17 @@ export function musicRecordMeta(meta: any, summary: any) {
     meta.rivalCounts = meta.rivalCounts || {};
     meta.rivalCounts[summary.rival] = (meta.rivalCounts[summary.rival] || 0) + 1;
   }
+  // Music's lifetime extras: hits written + best bank. (The generic per-loadout
+  // and per-path records live in the shell — they feed engine loadout-mastery.)
   const lt = meta.lifetime;
   if (lt) {
-    lt.hits += summary.hits || 0;
+    lt.hits = (lt.hits || 0) + (summary.hits || 0);
     lt.moneyBest = Math.max(lt.moneyBest || 0, summary.money || 0);
   }
 }
+
+// Music's Past-Lives row field: the run's peak fame (shown by historyStat).
+export const musicHistoryEntry = (summary: any) => ({ fame: summary.fame || 0 });
 
 // The "special" trophy predicates — the ones whose condition reads the meta
 // ledger (and names music's own path ids). Pack-owned so the shell's trophy

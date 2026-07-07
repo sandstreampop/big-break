@@ -20,7 +20,7 @@ function defaultMeta() {
     trophies: [],               // trophy ids earned
     successPaths: [],           // paths won (for EGOT-Adjacent)
     firstTimeBonuses: [],       // `${path}_${result}` milestones already paid
-    best: { fame: 0, lp: 0 },
+    best: { lp: 0 },          // neutral score record; a pack adds its own (music: best.fame)
     settings: { sound: true, music: true, reducedMotion: null }, // null = follow system
   };
 }

@@ -28,7 +28,7 @@ import { showBrammies } from './brammies.js';
 import { musicFinalSet } from './finalset.js';
 import { musicActBreakChart } from './chart.js';
 import { musicShareText, musicShareImage } from './share.js';
-import { musicRecordMeta, musicTrophySpecials, musicEndingExtras, musicResume, musicHistoryStat } from './meta.js';
+import { musicRecordMeta, musicTrophySpecials, musicEndingExtras, musicResume, musicHistoryStat, musicHistoryEntry } from './meta.js';
 import {
   musicLoadoutPool, musicSetupSummary, musicRenderSetupExtras, musicApplySetup, musicStartGauntlet,
 } from './setup.js';
@@ -69,7 +69,7 @@ export const musicPresenter: Presenter = {
 
   // The art system's reactive-scene inputs, mapped from music's meters, plus
   // music's slot -> {emoji, scene} table (registered with the scene painter).
-  vibe: (state: any) => ({ fame: state.fame, network: state.stats.network, burnout: state.stats.burnout }),
+  vibe: (state: any) => ({ scale: state.fame, glow: state.stats.network, heat: state.stats.burnout }),
   art: MUSIC_ART,
 
   // The HUD's music readout: the counter chips (fame/money/hits + encore &
@@ -101,6 +101,7 @@ export const musicPresenter: Presenter = {
   endingExtras: musicEndingExtras,
   resume: musicResume,
   historyStat: musicHistoryStat,
+  historyEntry: musicHistoryEntry,
   minigameSettings: true,
   choiceMinigame: musicChoiceMinigame,
   recordPerf: musicRecordPerf,
@@ -141,7 +142,7 @@ export const musicPresenter: Presenter = {
       'The nachos are load-bearing. The dream is real. The pay is exposure.',
       'Craig has the corner. Todd has the shifts. You have four chords and a feeling.',
     ],
-    foot: (m: any) => `Runs: ${m.runs} · Best fame: ${m.best.fame} · Legacy: ${m.lpEarnedTotal} LP`,
+    foot: (m: any) => `Runs: ${m.runs} · Best fame: ${m.best.fame || 0} · Legacy: ${m.lpEarnedTotal} LP`,
     news: (dayNum: number) => {
       // The evergreen headline pool, exercised with a music-shaped fake state.
       const fake: any = {
@@ -178,7 +179,7 @@ export const musicPresenter: Presenter = {
 
   // The loadout screen: music's copy, its instrument pool, and its optional
   // venue/genre/contract pickers + the run-init those drive (music-setup.ts).
-  loadoutPicker: { head: 'Choose your weapon', sub: 'Each one is almost useless. That’s the point.' },
+  loadoutPicker: { head: 'Choose your weapon', sub: 'Each one is almost useless. That’s the point.', empty: 'Pick an instrument to start' },
   loadoutPool: musicLoadoutPool,
   setupExtras: musicRenderSetupExtras,
   setupSummary: musicSetupSummary,

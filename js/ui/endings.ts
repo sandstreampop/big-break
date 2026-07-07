@@ -30,14 +30,14 @@ function finishMeta(summary, lp) {
   if (summary.daily) {
     meta.dailyResults = meta.dailyResults || {};
     if (!meta.dailyResults[summary.daily]) {
-      meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path, fame: summary.fame || 0 };
+      meta.dailyResults[summary.daily] = { result: summary.result, path: summary.path };
     }
     summary.dailyStreak = dailyStreakFor(summary.daily); // trophies + share read it
   }
   if (summary.gauntlet) {
     meta.gauntletResults = meta.gauntletResults || {};
     if (!meta.gauntletResults[summary.gauntlet]) {
-      meta.gauntletResults[summary.gauntlet] = { result: summary.result, path: summary.path, fame: summary.fame || 0 };
+      meta.gauntletResults[summary.gauntlet] = { result: summary.result, path: summary.path };
     }
   }
   // The memory ledger: the last five runs' scalar summary fields, kept on
@@ -50,16 +50,21 @@ function finishMeta(summary, lp) {
   }
   meta.history = [...(meta.history || []).slice(-4), compact];
 
-  // Lifetime aggregates (Pass 25): the genre-neutral counts. The pack folds in
-  // its own aggregates (music's hits / best bank) via recordMeta below.
-  const lt = meta.lifetime = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
+  // Lifetime aggregates (Pass 25): the genre-neutral counts + the per-loadout
+  // and per-path win records (generic — keyed by loadout/path; `byInstrument`
+  // is the legacy key name, kept for save compatibility, and feeds the generic
+  // loadout-mastery the engine applies). The pack folds in its own aggregates
+  // (music's hits / best bank) via recordMeta below.
+  const lt = meta.lifetime = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {} };
   lt.swipes += (summary.tierLog || []).length;
   lt.incredibles += (summary.tierLog || []).filter((t) => t === 'incredible').length;
   lt.bads += (summary.tierLog || []).filter((t) => t === 'bad').length;
+  lt.byInstrument = lt.byInstrument || {};
   const bi = lt.byInstrument[summary.loadout] = lt.byInstrument[summary.loadout] || { runs: 0, wins: 0 };
   bi.runs += 1;
   if (summary.result === 'success') bi.wins += 1;
   if (summary.path) {
+    lt.byPath = lt.byPath || {};
     const bp = lt.byPath[summary.path] = lt.byPath[summary.path] || { runs: 0, wins: 0 };
     bp.runs += 1;
     if (summary.result === 'success') bp.wins += 1;
@@ -71,12 +76,12 @@ function finishMeta(summary, lp) {
   meta.runHistory = meta.runHistory || [];
   meta.runHistory.unshift({
     date: todayStr(),
-    instrument: summary.loadout,
+    loadout: summary.loadout,
     path: summary.path,
     result: summary.result,
     endingKey: summary.endingKey,
-    fame: summary.fame || 0,
     daily: !!summary.daily,
+    ...(PRES.historyEntry?.(summary) || {}), // the pack's own row fields (music: fame)
   });
   meta.runHistory = meta.runHistory.slice(0, 10);
 

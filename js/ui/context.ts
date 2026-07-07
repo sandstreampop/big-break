@@ -54,7 +54,7 @@ export function itemById(id): any {
 // meters onto the scene axes via presenter.vibe. Read by the card art and the
 // ending art, so it lives here below both. Neutral zero when a pack opts out.
 export function vibeFor() {
-  return run && PRES.vibe ? PRES.vibe(run) : { fame: 0, network: 0, burnout: 0 };
+  return run && PRES.vibe ? PRES.vibe(run) : { scale: 0, glow: 0, heat: 0 };
 }
 
 // Short verdict label for the pack's fail-state endings (ribbon, history).
