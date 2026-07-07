@@ -23,7 +23,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CAST, castById } from '../dist/js/packs/love-island/cast.js';
 import { MOODS } from '../dist/js/packs/love-island/plugins/characters.js';
-import { STYLE_PREAMBLE, NEGATIVE, MOOD_EXPRESSIONS, SHAPE_HINTS, genderNote } from '../docs/games/love-island/art/style.mjs';
+import { STYLE_PREAMBLE, HERO_EXPRESSION, STYLING, NEGATIVE, MOOD_EXPRESSIONS, SHAPE_HINTS, genderNote } from '../docs/games/love-island/art/style.mjs';
 import {
   MODELS, generateWithRetry, writeManifest, readManifest, writeContactSheet,
   estimateCost, promptHash, submitBatch, getBatch, collectBatch, isBatchFailed,
@@ -61,20 +61,20 @@ const selected = [...new Set(selectIds)].map(castById).filter(Boolean);
 
 // ---------- prompt assembly (LI-specific; style DATA comes from style.mjs) ----------
 function heroPrompt(cast) {
+  const look = cast.appearance ? ` ${cast.appearance}.` : '';
   return [
     STYLE_PREAMBLE,
-    `Subject: a ${genderNote(cast.gender)} contestant, "${cast.vibe}".`,
-    `${SHAPE_HINTS[cast.shape] || ''}.`,
-    'Neutral, warm, relaxed-confident expression — this is their base look.',
+    `Subject: a ${genderNote(cast.gender)} — the "${cast.vibe}" type. ${SHAPE_HINTS[cast.shape] || ''}.${look}`,
+    `${STYLING}.`,
+    `${HERO_EXPRESSION}.`,
     `Avoid: ${NEGATIVE}.`,
   ].join(' ');
 }
 function moodPrompt(cast, mood) {
   return [
     'Re-render the SAME PERSON as the reference image — identical face, hair, skin tone, and styling. Do not change who they are.',
-    `They are the ${genderNote(cast.gender)} known as "${cast.vibe}".`,
-    `Change only the expression/posture to: ${MOOD_EXPRESSIONS[mood]}.`,
-    'Keep the same head-and-shoulders framing, villa golden-hour lighting, and semi-stylised look.',
+    `Same fictional ${genderNote(cast.gender)} dating-show contestant ("${cast.vibe}").`,
+    `Keep the candid front-facing iPhone-selfie look, the villa terrace setting, and the phone-camera realism; change ONLY the micro-expression to: ${MOOD_EXPRESSIONS[mood]}.`,
     `Avoid: ${NEGATIVE}.`,
   ].join(' ');
 }

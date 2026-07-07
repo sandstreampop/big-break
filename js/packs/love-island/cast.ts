@@ -110,6 +110,11 @@ export interface CastMember {
   // dialogue variants and the Partner's secret pool, so who you couple with
   // changes what the Season feels like, not just a name.
   shape: 'sweetheart' | 'gameplayer' | 'slowburner';
+  // Optional physical look, read ONLY by the portrait generator (tools/gen-li-art.mjs)
+  // to keep each contestant on-model and the cast intentionally diverse. Never
+  // read by the engine/plugins, so it's golden-neutral. A contestant without one
+  // falls back to the generic villa styling in style.mjs.
+  appearance?: string;
 }
 
 // The three shapes, as the player meets them (stage sheet reads).
@@ -125,12 +130,14 @@ export const CAST: CastMember[] = [
   { id: 'tyler', name: 'Tyler', gender: 'boy', vibe: 'semi-pro winker', face: '😉', shape: 'gameplayer' },
   { id: 'reece', name: 'Reece', gender: 'boy', vibe: 'protein-first romantic', face: '💪', shape: 'slowburner' },
   { id: 'dev', name: 'Dev', gender: 'boy', vibe: 'nicest man in any postcode', face: '🫶', shape: 'sweetheart' },
-  { id: 'marco', name: 'Marco', gender: 'boy', vibe: 'villain with a skincare routine', face: '🧴', shape: 'gameplayer' },
+  { id: 'marco', name: 'Marco', gender: 'boy', vibe: 'villain with a skincare routine', face: '🧴', shape: 'gameplayer',
+    appearance: 'warm brown skin with a dewy, well-moisturised glow, dark styled hair, groomed short stubble, defined brows, a single fine gold chain, a fitted white tee or open linen shirt; polished and camera-aware with a faint knowing smugness' },
   { id: 'jamal', name: 'Jamal', gender: 'boy', vibe: 'aspiring podcast', face: '🎙️', shape: 'slowburner' },
   // day-one girls
   { id: 'priya', name: 'Priya', gender: 'girl', vibe: 'girl-next-door, next door is Surrey', face: '🌷', shape: 'sweetheart' },
   { id: 'chloe', name: 'Chloe', gender: 'girl', vibe: 'savage in gel nails', face: '💅', shape: 'gameplayer' },
-  { id: 'amber', name: 'Amber', gender: 'girl', vibe: 'main character, self-cast', face: '👑', shape: 'gameplayer' },
+  { id: 'amber', name: 'Amber', gender: 'girl', vibe: 'main character, self-cast', face: '👑', shape: 'gameplayer',
+    appearance: 'Black British woman, athletic curvy build, glossy sun-kissed skin, slicked-back high ponytail, laminated brows, glossy nude lips, small gold hoop earrings, layered gold necklaces, a bikini top under a loose white linen shirt, fresh manicure, a touch of under-eye tiredness from villa life' },
   { id: 'sophia', name: 'Sophia', gender: 'girl', vibe: 'brand deal in human form', face: '🛍️', shape: 'gameplayer' },
   { id: 'meg', name: 'Meg', gender: 'girl', vibe: 'funny on purpose, chaotic by accident', face: '🤸', shape: 'sweetheart' },
   { id: 'tash', name: 'Tash', gender: 'girl', vibe: 'everyone’s type on paper', face: '📋', shape: 'slowburner' },

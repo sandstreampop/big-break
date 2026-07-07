@@ -3,56 +3,63 @@
 // (tools/art-core.mjs) holds no genre words; the LI driver (tools/gen-li-art.mjs)
 // composes these strings with cast.ts data into the prompts it sends.
 //
-// The whole set is generated once against a FIXED roster, so the goal is a
-// coherent "villa cast photo" look that survives 16 people × 6 moods without
-// drifting in medium, lighting, or framing. Keep edits here small and
-// deliberate — this is the style lock.
+// DIRECTION: a candid, believable reality-TV "phone-camera micro-moment" — a
+// FICTIONAL dating-show contestant's front-facing iPhone selfie grabbed between
+// filming moments. Per art review, the three realism levers that matter MOST are
+// (1) phone-camera flaws, (2) a contradictory micro-expression, and (3) real
+// villa/social background context. Without those it drifts into a generic
+// influencer portrait. Nano Banana rewards explicit subject/setting/style/mood/
+// composition/detail over vague aesthetic labels — so every clause below is
+// concrete. Fictional contestants only: no real-person likeness, no show branding.
 
-// The shared treatment every portrait opens with. Framing + medium + lighting
-// are pinned so the whole cast reads as one shoot. Square: the faces render
-// into circular chips (.stage-face), so a centered head-and-shoulders crop
-// survives the mask.
+// The shared treatment every portrait opens with — the selfie realism + villa
+// setting. This is the style lock; keep edits small and deliberate.
 export const STYLE_PREAMBLE = [
-  'Head-and-shoulders character portrait for a stylised dating-reality-show video game.',
-  'Warm golden-hour villa light, soft rim light, shallow depth of field, clean out-of-focus tropical background.',
-  'Semi-stylised illustrated look — polished, glossy, confident, a touch of caricature; NOT photorealistic, NOT anime.',
-  'Centered, facing camera, shoulders square, square 1:1 composition with headroom for a circular crop.',
-  'Consistent single-shoot lighting and colour grade across the whole cast.',
+  'A candid front-facing iPhone selfie of a FICTIONAL dating-show villa contestant (an invented person — no real-celebrity likeness).',
+  'Shot on a phone front camera held at arm’s length, slightly above eye level, one shoulder closer to the lens, with mild wide-angle selfie distortion and an imperfect, casual crop.',
+  'Authentic phone-camera imperfections: uneven HDR, overexposed highlights, slight motion blur, compressed social-media quality; natural skin texture with visible pores, tiny makeup creases and flyaway hairs.',
+  'Setting: a white-stucco Mediterranean villa terrace beside a turquoise pool — sun loungers, palm shadows, colourful towels, a half-empty iced drink on a side table, blurred young contestants chatting behind, party lights beginning to glow.',
+  'Warm golden-hour or late-night terrace light. It should read like a real phone photo taken between filming moments, NOT a professional photoshoot.',
 ].join(' ');
 
-// Never-wants. Keeps the set on-model and dodges the failure modes that make a
-// generated cast look broken or off-brand.
+// The base (hero) micro-expression — the contradiction that reads as real.
+export const HERO_EXPRESSION =
+  'relaxed half-smile, squinting a little in bright sun, looking at the phone SCREEN rather than the lens, head slightly tilted, mouth barely open as if about to say something — confident but subtly tired from villa life, candid "just checked myself in the camera" energy';
+
+// Villa-coded styling baseline. Gender + the contestant's own vibe (and any
+// per-contestant `appearance` in cast.ts) differentiate the person.
+export const STYLING =
+  'fashionable summer reality-TV styling: sun-kissed glossy skin, faint tan lines, styled hair with a few flyaways, subtle gold jewellery, villa-appropriate swimwear or light linen; aspirational but believable, not model-perfect';
+
+// Never-wants. These are the anti-drift guards: they push AWAY from the polished
+// influencer/editorial default and toward candid phone realism.
 export const NEGATIVE = [
-  'no text, no watermark, no logos, no captions',
-  'no extra limbs or distorted hands',
-  'no photorealism, no uncanny realism',
-  'no nudity, no swimwear-only framing (head-and-shoulders only)',
-  'no changing the person’s apparent age, ethnicity, or core features between shots',
-].join('; ');
+  'professional studio lighting', 'DSLR or editorial portrait look', 'airbrushed or AI-smooth skin',
+  'beauty-filter plastic sheen', 'perfect symmetry', 'fashion-editorial or red-carpet pose',
+  'doll-like face', 'unrealistic body proportions', 'over-sexualised posing',
+  'official Love Island logos or branding', 'recognisable real contestants or celebrity likeness',
+  'text', 'watermark', 'captions', 'fake influencer backdrop',
+].join(', ');
 
-// Mood → expression/posture direction. Keys MUST match MOODS in
-// js/packs/love-island/plugins/characters.ts (buzzing/smug/fuming/wounded/
-// scheming/torn). A mood render references the hero portrait so the FACE stays
-// the same person — only the expression moves.
+// Mood → candid micro-expression. Keys MUST match MOODS in
+// js/packs/love-island/plugins/characters.ts. Phrased as fleeting selfie
+// micro-moments (not posed emotions); a mood render references the hero so the
+// FACE stays the same person — only the expression moves.
 export const MOOD_EXPRESSIONS = {
-  buzzing: 'beaming, eyes bright, giddy in-love energy, slight lean toward camera',
-  smug: 'one eyebrow up, knowing half-smile, chin slightly raised, self-satisfied',
-  fuming: 'jaw set, glare, brows down, arms-crossed tension, barely holding it in',
-  wounded: 'glassy eyes, downturned mouth, vulnerable, looking slightly away, hurt',
-  scheming: 'sidelong glance, faint sly smirk, plotting, playing it close',
-  torn: 'conflicted, brow furrowed, gaze middle-distance, caught between two feelings',
+  buzzing: 'giddy grin at the screen, eyes bright, leaning in, buzzing in-love energy',
+  smug: 'knowing half-smirk, chin slightly raised, camera-aware and self-satisfied',
+  fuming: 'tight jaw, flat unimpressed stare at the screen, barely holding it in',
+  wounded: 'glassy eyes, small downturned mouth, looking slightly away, quietly hurt',
+  scheming: 'sly sidelong glance, faint plotting smirk, playing it close',
+  torn: 'conflicted, brow faintly furrowed, gaze drifting to the middle distance, caught between two feelings',
 };
 
-// Partner-SHAPE flavour (cast.ts `shape`). A light styling nudge, not a face
-// change — sweethearts read soft, game-players read sharp, slow-burners read
-// guarded.
+// Partner-SHAPE flavour (cast.ts `shape`) — an energy nudge, not a face change.
 export const SHAPE_HINTS = {
-  sweetheart: 'open, warm, approachable styling',
-  gameplayer: 'sharp, camera-aware, polished styling',
-  slowburner: 'reserved, cool, guarded styling',
+  sweetheart: 'warm, open, approachable energy',
+  gameplayer: 'sharp, camera-aware, self-assured energy',
+  slowburner: 'cooler, more guarded, reserved energy',
 };
 
-// The two-line brief the driver wraps a contestant's own `vibe` in. The vibe
-// strings in cast.ts ("villain with a skincare routine", "abs with a boat
-// licence") are already characterful prompt seeds — we lean on them.
-export const genderNote = (g) => (g === 'girl' ? 'young woman' : 'young man');
+// mid-20s villa contestants.
+export const genderNote = (g) => (g === 'girl' ? 'woman in her mid-20s' : 'man in his mid-20s');
