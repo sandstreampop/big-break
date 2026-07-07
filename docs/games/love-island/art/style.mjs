@@ -15,16 +15,16 @@
 // The shared treatment every portrait opens with — the selfie realism + villa
 // setting. This is the style lock; keep edits small and deliberate.
 export const STYLE_PREAMBLE = [
-  'A candid front-facing iPhone selfie of a FICTIONAL dating-show villa contestant (an invented person — no real-celebrity likeness).',
-  'Shot on a phone front camera held at arm’s length, slightly above eye level, one shoulder closer to the lens, with mild wide-angle selfie distortion and an imperfect, casual crop.',
-  'Authentic phone-camera imperfections: uneven harsh HDR, blown-out sun highlights, slight motion blur, sensor grain, visible JPEG compression, compressed social-media quality; real skin with oily T-zone shine, visible pores, tiny makeup creases and flyaway hairs.',
+  'A candid front-facing phone SELFIE that the contestant is taking of THEMSELVES — their own hand holds the phone at arm’s length and the phone’s front camera IS the camera (first-person selfie POV; NOT a photo taken by anyone else). A vertical phone photo; their forearm or hand may reach toward the lens; natural arm’s-length selfie framing. A fictional dating-show villa contestant (an invented person — no real-celebrity likeness).',
+  'It should look like a real, modern 2026 Instagram selfie: clean, aspirational, natural flattering light, true-to-life — subtle authentic phone-camera character, but NO tacky Instagram filters, NO heavy beauty-app smoothing, and NOT a DSLR or editorial portrait.',
+  'Healthy, well-groomed, glowing skin — they clearly take care of themselves — with natural real texture, neither plastic/airbrushed nor gritty.',
   'Setting: a white-stucco Mediterranean villa terrace beside a turquoise pool — sun loungers, palm shadows, colourful towels, a half-empty iced drink on a side table, blurred young contestants chatting behind, party lights beginning to glow.',
-  'Warm golden-hour or late-night terrace light. It should read like a real phone photo taken between filming moments, NOT a professional photoshoot.',
+  'Warm golden-hour or soft late-night terrace light. A real casual selfie taken between filming moments, not a professional photoshoot.',
 ].join(' ');
 
 // The base (hero) micro-expression — the contradiction that reads as real.
 export const HERO_EXPRESSION =
-  'caught mid-word or half-blink, squinting into the sun, glancing at the phone SCREEN rather than the lens — confident but subtly tired from villa life, candid "just checked myself in the camera" energy, unposed';
+  'a natural, unposed expression that lets their personality show (per the subject and vibe above) as they take their own selfie — relaxed, self-assured Instagram energy; eyes open and engaged with at most the faintest hint of a sun-squint; a characterful knowing look or easy half-smile rather than a posed grin';
 
 // Villa-coded styling baseline. Gender + the contestant's own vibe (and any
 // per-contestant `appearance` in cast.ts) differentiate the person.
@@ -34,10 +34,11 @@ export const STYLING =
 // Never-wants. These are the anti-drift guards: they push AWAY from the polished
 // influencer/editorial default and toward candid phone realism.
 export const NEGATIVE = [
-  'professional studio lighting', 'DSLR or editorial portrait look', 'airbrushed or AI-smooth skin',
-  'beauty-filter plastic sheen', 'perfect symmetry', 'fashion-editorial or red-carpet pose',
+  'photo taken by another person', 'third-person or photographer-shot portrait', 'professional headshot',
+  'professional studio lighting', 'DSLR or editorial portrait look',
+  'airbrushed or AI-smooth skin', 'beauty-filter plastic sheen', 'tacky Instagram filter', 'heavy face-tuning',
+  'heavily squinting or scrunched-up face', 'fashion-editorial or red-carpet pose',
   'doll-like face', 'unrealistic body proportions', 'over-sexualised posing',
-  'smooth retouched skin', 'symmetrical centred composition', 'professional headshot',
   'official Love Island logos or branding', 'recognisable real contestants or celebrity likeness',
   'text', 'watermark', 'captions', 'fake influencer backdrop',
 ].join(', ');
