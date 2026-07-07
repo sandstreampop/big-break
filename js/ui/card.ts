@@ -11,10 +11,7 @@
 import * as engine from '../engine.js';
 import * as save from '../save.js';
 import { CONFIG } from '../config.js';
-import { playMinigame, minigameById } from '../minigames.js';
 import { equipAccessory } from '../packs/plugins/gear.js';
-import { rivalById } from '../data/rivals.js';
-import { contractById } from '../data/contracts.js';
 import { artFor, sceneFor } from '../art.js';
 import { sfx, ambient } from '../audio.js';
 import { track } from '../analytics.js';
@@ -182,9 +179,9 @@ function renderDealtCard(ev, sp) {
   bR.addEventListener('click', () => commitSwipe('right'));
   controls.append(bL, bR);
 
-  // Risk dots recompute when an Encore is armed/disarmed.
-  // The Imposter Syndrome contract hides them entirely.
-  const hideRisk = !!contractById(run.contract)?.mods?.hideRisk;
+  // Risk dots recompute when an Encore is armed/disarmed. A pack modifier may
+  // hide them entirely (music's Imposter Syndrome contract).
+  const hideRisk = !!PRES.hideRisk?.(run);
   const dot = (o) => hideRisk ? '<span class="risk risk-hidden">?</span>' : riskDot(riskClass(o));
   const paintOdds = () => {
     const opts = { encore: encoreArmed };
@@ -199,7 +196,7 @@ function renderDealtCard(ev, sp) {
     // Structured two-tier layout: a compact meta strip (direction, risk
     // tell, governing stats), then the label — long labels wrap cleanly
     // instead of scattering icons across lines.
-    const mg = (c) => (c.minigame && meta.settings.minigames !== false && !run.tutorial ? '<span class="mg-flag">🎮</span>' : '');
+    const mg = (c) => (PRES.choiceHasMinigame?.(c, run) ? '<span class="mg-flag">🎮</span>' : '');
     bL.innerHTML = `<span class="choice-meta"><span class="dir">◀</span>${dot(oL)}<span class="gov-row">${govIcons(ev.choices.left)}</span>${mg(ev.choices.left)}</span><span class="btn-label">${fillText(ev.choices.left.label)}</span>`;
     bR.innerHTML = `<span class="choice-meta"><span class="dir">▶</span>${dot(oR)}<span class="gov-row">${govIcons(ev.choices.right)}</span>${mg(ev.choices.right)}</span><span class="btn-label">${fillText(ev.choices.right.label)}</span>`;
   };
@@ -208,7 +205,7 @@ function renderDealtCard(ev, sp) {
   // Encore arm toggle (Pass 2 mechanic)
   const encoreBar = $('#encore-bar');
   encoreBar.innerHTML = '';
-  if ((run.encore || 0) > 0 && !contractById(run.contract)?.mods?.disableEncore) {
+  if ((run.encore || 0) > 0 && !PRES.encoreDisabled?.(run)) {
     const encoreReady = PRES.encore?.ready || '🎇 Encore ready — spend for a boosted roll';
     const encoreArmedLabel = PRES.encore?.armed || '🎇 ENCORE ARMED — this swipe rolls hot';
     const eb = el('button', 'encore-btn', encoreReady);
@@ -370,28 +367,17 @@ function attachDrag(card, bL, bR) {
 
 export function commitSwipe(side, dx = 0, dy = 0) {
   if (!currentCard) return;
-  // Flagship choices carry a minigame: your performance becomes the bonus.
-  const mgId = currentEvent?.choices?.[side]?.minigame;
-  if (mgId && minigameById(mgId) && meta.settings.minigames !== false && !run.tutorial) {
+  // A chosen card may carry a pack minigame (music's performance beats): the
+  // shell freezes the card, the pack runs its own screen, and its perf becomes
+  // the swipe bonus. Packs without one resolve straight through.
+  const mg = PRES.choiceMinigame?.(currentEvent?.choices?.[side], run);
+  if (mg) {
     const card = currentCard;
     currentCard = null; // freeze the card while the minigame runs
     card.style.transform = ''; // snap back from any drag offset
-    const mgMods: any = contractById(run.contract)?.mods || {};
-    playMinigame(mgId, { run, rivalName: rivalById(run.rival)?.name, noSkip: !!mgMods.forceMinigames, relaxed: meta.settings.relaxedMinigames === true }).then(({ score, verdict, detail }) => {
-      // instrument hook: some gear makes performance moments play easier
-      const mgHook = score == null ? 0 : (activePack.loadoutById(run.loadout)?.quirk?.hooks?.mgBonus || 0);
-      let bonus = verdict.bonus + mgHook;
-      // The Showman's Pact: botching on stage, under contract, hurts double
-      if (verdict.label === 'BOTCHED' && mgMods.mgBotchDouble) bonus = verdict.bonus * 2;
-      track('minigame', { id: mgId, card: currentEvent?.id, score, bonus, skipped: score == null });
-      if (score != null) {
-        meta.minigamesPlayed = meta.minigamesPlayed || {};
-        meta.minigamesPlayed[mgId] = (meta.minigamesPlayed[mgId] || 0) + 1;
-        if (verdict.label === 'GOLDEN') meta.mgGolden = (meta.mgGolden || 0) + 1;
-        save.saveMeta(meta);
-      }
+    mg.then((perf) => {
       currentCard = card; // hand back for the normal path
-      finishSwipe(side, dx, dy, score != null ? { id: mgId, ...verdict, bonus, detail } : null);
+      finishSwipe(side, dx, dy, perf);
     });
     return;
   }
@@ -411,13 +397,8 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
     mgDetail: perf ? { label: perf.label, hooks: perf.detail?.hooks } : null,
   });
   if (perf) {
-    result.minigameInfo = perf;
-    const logEntry = run.cardLog?.[run.cardLog.length - 1];
-    if (logEntry) logEntry.m = perf.label; // the scrapbook remembers the performance
-    // skill echoes: standout performances enter the fiction as flags
-    if (perf.label === 'GOLDEN' && !run.flags.includes('mg_golden')) run.flags.push('mg_golden');
-    if (perf.label === 'GOLDEN' && run.stats.burnout >= 60 && !run.flags.includes('mg_steady')) run.flags.push('mg_steady');
-    if (perf.label === 'BOTCHED' && !run.flags.includes('mg_botched')) run.flags.push('mg_botched');
+    result.minigameInfo = perf; // carry the pack's perf onto the result
+    PRES.recordPerf?.(perf, run); // the pack folds it into its own fiction
   }
   track('swipe', {
     card: result.event?.id, side, tier: result.tier,
@@ -570,53 +551,16 @@ function showResult(result) {
   const notice = (cls, html) => notices.append(el('div', `notice ${cls}`, html));
   // Pack plugins push their own notices onto the deltas ({cls, html}) — the
   // generic channel for subsystem sentences the shell can't know about.
+  // The generic notices channel: pack plugins push {cls, html} sentences the
+  // shell can't know about.
   for (const n of result.deltas.notices || []) notice(n.cls || 'notice-gear', fillText(n.html));
-  if (result.minigameInfo) {
-    const m = result.minigameInfo;
-    notice(m.bonus >= 0 ? 'notice-good' : 'notice-bad',
-      `🎮 Performance: <b>${m.label}</b> — ${m.bonus >= 0 ? '+' : ''}${m.bonus} on that roll`);
-  }
-  if (result.encoreRefunded) notice('notice-encore', '🔥🎇 <b>ENCORE REFUNDED</b> — you spent it ON A ROLL and it came back');
-  else if (result.encoreSpent) notice('notice-encore', '🎇 Encore spent — that roll was boosted');
-  if (result.encoreEarned) notice('notice-encore', '🎇 <b>Encore earned</b> — bank it for the right card');
-  if (!result.streakWasHot && (result.hotStreak || 0) === CONFIG.hotStreakAt && !run.tutorial) {
-    notice('notice-encore', '🔥 <b>ON A ROLL</b> — three clean cards straight. While it lasts, the deck deals what you’ve never seen.');
-  }
-  if (result.gearLost) notice('notice-bad', `🧰 <b>${result.gearLost.name}</b> — lost!`);
-  if (result.venueLeveled) notice('notice-gear', `${result.venueLeveled.venue.icon} <b>${result.venueLeveled.venue.name}</b> levels up: ${result.venueLeveled.tier.name}`);
-  else if (result.venueHosted) notice('notice-good', `${result.venueHosted.venue.icon} Home crowd: +${result.venueHosted.tier.showBonus} on that roll`);
-  for (const p of result.promisesKept || []) notice('notice-good', `🤞 <b>Promise kept:</b> ${p.label}`);
-  for (const p of result.promisesBroken || []) notice('notice-bad', `💔 <b>Promise broken:</b> ${p.label}`);
-  if (result.promiseMade) notice('notice-gear', `🤞 <b>Promised:</b> ${result.promiseMade.label} — ${result.promiseMade.cards} cards to deliver`);
-  const joined = result.deltas.bandmateJoined;
-  if (joined) notice('notice-gear', `${joined.icon} <b>${joined.name}</b> (${joined.role}) joins the band — ${joined.quirkDesc}`);
-  if (result.deltas.bandmateLeft) notice('notice-bad', `${result.deltas.bandmateLeft.icon} <b>${result.deltas.bandmateLeft.name}</b> quits the band`);
-  const hustle = result.deltas.hustleGained;
-  if (hustle) notice('notice-gear', `${hustle.icon} <b>Side hustle: ${hustle.name}</b> (+$${hustle.moneyPerAct}/act)${hustle.blurb ? ' — ' + hustle.blurb : ''}`);
-  const newInst = result.deltas.loadoutSet;
-  if (newInst) notice('notice-gear', `🎸 <b>Now playing: ${newInst.name}</b> — <b>${newInst.quirk.name}:</b> ${newInst.quirk.desc}`);
-  if (result.deltas.albumOut) {
-    const n = result.deltas.albumOut.tracks;
-    notice('notice-encore', `💿 <b>THE ALBUM IS OUT</b> — ${n ? `${n} vault song${n > 1 ? 's' : ''} ship at once` : 'the catalog gets the halo'} and every charting song feels it`);
-  }
-  const sh = result.deltas.songHyped;
-  if (sh) notice('notice-good', `📣 <b>“${sh.title}”</b> is everywhere this week — hype ${sh.gain >= 0 ? '+' + sh.gain : sh.gain} (next chart week will show it)`);
-  const sp = result.deltas.songPolished;
-  if (sp) notice('notice-good', `🎛 <b>“${sp.title}”</b> gets better in the vault — the mix tightens (quality ${sp.quality})`);
-  const sw = result.deltas.songWritten;
-  if (sw) {
-    const feel = sw.quality >= 68 ? 'it might be undeniable' : sw.quality >= 52 ? 'something’s there'
-      : sw.quality >= 38 ? 'rough, but honest' : 'well… it exists';
-    notice('notice-good', `🎙 <b>Demo taped: “${sw.title}”</b>${sw.fromHook ? ' <i>(that hook you grabbed)</i>' : ''} — ${feel}`);
-  }
-  for (const sd of result.deltas.songDebuts || []) {
-    if (sd.viral) notice('notice-viral', `🌋 <b>OVERNIGHT VIRAL</b> — “${sd.title}” detonates on release and debuts at <b>#${sd.pos}</b>${sd.hit ? ' — instant HIT 👑' : ''}. Nobody can explain it. Nobody wants to.`);
-    else if (sd.hit) notice('notice-encore', `👑 <b>“${sd.title}”</b> enters the Hot 10 at <b>#${sd.pos}</b> — instant HIT`);
-    else if (sd.pos) notice('notice-good', `♪ <b>“${sd.title}”</b> debuts at <b>#${sd.pos}</b> on the Hot 10`);
-    else notice('notice-bad', `♪ <b>“${sd.title}”</b> ships… and misses the Hot 10. For now, hype can bring it back.`);
-  }
-  if ((result.deltas.songDebuts || []).some((sd) => sd.viral)) { spawnConfetti(ov); sfx.win(); }
+  // The pack's own result voice (music's gear/venue/song/band lines, its
+  // viral celebration, its cash sound) — presenter.resultExtras.
+  const extras = PRES.resultExtras?.(result, run);
+  for (const n of extras?.notices || []) notice(n.cls, fillText(n.html));
+  if (extras?.celebrate) { spawnConfetti(ov); sfx.win(); }
   box.append(notices);
+  if (extras?.cash) sfx.cash();
 
   // Shop shelf: choose which item you actually bought (Pass 33)
   const shelf = result.deltas.pendingGearChoices;
@@ -637,7 +581,6 @@ function showResult(result) {
     }
     box.append(list);
     ov.append(box);
-    if (result.deltas.some((d) => d.key === 'money' && d.amount > 0)) sfx.cash();
     return; // wait for the shelf pick
   }
 
@@ -656,8 +599,7 @@ function showResult(result) {
         gearChooser(pending, result);
       }));
       ov.append(box);
-      if (result.deltas.some((d) => d.key === 'money' && d.amount > 0)) sfx.cash();
-      return; // wait for chooser
+        return; // wait for chooser
     }
   }
 
@@ -668,26 +610,17 @@ function showResult(result) {
     (e, i) => (e as HTMLElement).style.setProperty('--ri', String(i)));
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
-  if (result.deltas.some((d) => d.key === 'money' && d.amount > 0)) sfx.cash();
   }, { dismissable: !forced, armMs: 250, onClose });
 }
 
 function deltaChip(key, amount) {
+  // A pack may give a key its own chip flourish (music's rivalry/money/hit);
+  // otherwise the generic manifest-driven chip below covers any stat/resource.
+  const custom = PRES.deltaChip?.(key, amount, run);
+  if (custom) return el('span', custom.cls, custom.html);
   const sign = amount > 0 ? '+' : '';
-  if (key === 'rivalry') {
-    const r = rivalById(run.rival);
-    const nemesis = (meta.rivalCounts?.[run.rival] || 0) >= 3;
-    return el('span', 'chip chip-rival',
-      `⚔ ${amount > 0 ? 'Feud with' : 'Peace with'} ${nemesis ? 'your nemesis ' : ''}${r.name} ${sign}${amount}`);
-  }
   const goodDelta = key === 'burnout' ? amount < 0 : amount > 0;
-  if (key === 'money') {
-    return el('span', 'chip ' + (goodDelta ? 'chip-good' : 'chip-bad'),
-      `${amount > 0 ? '+' : '−'}$${Math.abs(amount)}`);
-  }
-  // 'Hit!' keeps its exclamation flourish; everything else reads the manifest
-  // (metaFor covers any pack's stats + resources).
-  const label = key === 'hits' ? 'Hit!' : metaFor(key).name;
+  const label = metaFor(key).name;
   const icon = metaFor(key).icon;
   return el('span', 'chip ' + (goodDelta ? 'chip-good' : 'chip-bad'),
     `${icon} ${sign}${amount} ${label}`);

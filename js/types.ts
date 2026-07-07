@@ -534,6 +534,37 @@ export interface Presenter {
     name: string; face: string; moodFace?: string | null; sub?: string | null; cls?: string;
   }[] | null;
 
+  // ── Result / card hooks (the pack's own outcome presentation). The shell
+  // renders the generic result (tier, recap, delta chips, the deltas.notices
+  // channel, gear-slot flow) and the generic card; these let a pack add its
+  // subsystem voice without the shell naming a genre concept. ──
+
+  // Custom chip (class + html) for a single stat/resource delta (music's
+  // rivalry feud line, its $ money format, its 'Hit!'). Return null for the
+  // generic "{icon} {±n} {name}" chip the shell builds from the manifest.
+  deltaChip?: (key: string, amount: number, state: RunState) => { cls: string; html: string } | null;
+  // Extra result-overlay presentation for this pack: its subsystem notices
+  // (gear/venue/song lines…), whether the beat celebrates (confetti + win
+  // sting), and whether it plays the cash sound. The shell renders the generic
+  // tier/recap/chips and the deltas.notices channel; this adds the pack's own.
+  resultExtras?: (result: any, state: RunState) => {
+    notices?: { cls: string; html: string }[]; celebrate?: boolean; cash?: boolean;
+  } | null;
+  // A chosen card's on-swipe minigame (a pack that ships performance beats).
+  // The shell freezes the card, awaits the returned promise, and applies the
+  // perf as the swipe bonus; returns null when the choice has none (or the
+  // player disabled them). The pack runs its own minigame screens here.
+  choiceMinigame?: (choice: any, state: RunState) => Promise<any> | null;
+  // Whether a choice's button shows the "has a minigame" flag.
+  choiceHasMinigame?: (choice: any, state: RunState) => boolean;
+  // Record a minigame performance into the run's own fiction (the scrapbook
+  // label, skill-echo flags). Called after the swipe resolves, when a perf ran.
+  recordPerf?: (perf: any, state: RunState) => void;
+  // Per-run UI gates a pack's modifiers can set: hide the risk tell, or disable
+  // the banked-bonus (encore) bar. (Music's contracts drive these.)
+  hideRisk?: (state: RunState) => boolean;
+  encoreDisabled?: (state: RunState) => boolean;
+
   // ── The clarity screens: four sibling channels of the overlay note. Each is
   // a generic presentation SLOT the shell renders when a pack provides it —
   // the shell knows layout, never content, and a pack that omits one gets the

@@ -18,6 +18,10 @@ import { flagshipSong } from '../songs.js';
 import { DEFAULT_FAIL_LABELS } from '../share-text.js';
 import { musicHudCounters, musicGearChips } from './music-hud.js';
 import { showChart } from './music-chart.js';
+import {
+  musicDeltaChip, musicResultExtras, musicChoiceMinigame, musicRecordPerf,
+  musicHideRisk, musicEncoreDisabled, musicChoiceHasMinigame,
+} from './music-result.js';
 import type { Presenter } from '../types.js';
 
 export const musicPresenter: Presenter = {
@@ -68,6 +72,17 @@ export const musicPresenter: Presenter = {
     const n = (s.songs || []).filter((x: any) => x.status === 'charting' && x.pos).length;
     return [{ icon: '📈', badge: n ? String(n) : null, onTap: showChart }];
   },
+
+  // The result overlay + card-choice voice (js/packs/music-result.ts): the
+  // subsystem notices, the rivalry/money/hit chip flourishes, the on-swipe
+  // minigame, and the contract-driven risk/encore gates.
+  deltaChip: musicDeltaChip,
+  resultExtras: musicResultExtras,
+  choiceMinigame: musicChoiceMinigame,
+  recordPerf: musicRecordPerf,
+  hideRisk: musicHideRisk,
+  encoreDisabled: musicEncoreDisabled,
+  choiceHasMinigame: musicChoiceHasMinigame,
 
   // Fill a card's {tokens} with this run's musical identities (rival, genre,
   // the flagship/hit/faded song, the home venue).
