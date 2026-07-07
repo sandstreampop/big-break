@@ -1,0 +1,5 @@
+# Regenerable outputs — recreated by `npm run art:li` (free dry run). Not committed
+# to avoid churn; the plan and contact sheet are one command away.
+drafts/
+manifest.json
+contact-sheet.html

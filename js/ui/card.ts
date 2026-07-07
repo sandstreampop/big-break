@@ -33,6 +33,19 @@ let lastSwipeSide = null; // Epic 6 morph: the direction the last card flew, so
                           // the result card can spring in from that same side
 
 
+// A face's inner HTML: a real portrait image when the presenter supplies one
+// (face object carries `portraitSrc`), else the emoji glyph — the same
+// "real asset wins, else fall back" rule js/art.ts uses for scene art. The mood
+// emoji rides on top as a badge either way. Genre-neutral: the shell renders
+// whatever the pack's face object carries; only packs that generate portraits
+// set the field.
+function faceInner(f: { face?: string; moodFace?: string | null; portraitSrc?: string }): string {
+  const base = f.portraitSrc
+    ? `<img class="face-portrait" src="${f.portraitSrc}" alt="" draggable="false">`
+    : (f.face || '');
+  return `${base}${f.moodFace ? `<span class="stage-moodface">${f.moodFace}</span>` : ''}`;
+}
+
 // The persistent character stage (presenter.stage). Lives between the HUD and
 // the card area; each slot is a face + a short qualitative read, tappable when
 // the pack backs it with an inspector sheet. Genre-neutral: the shell renders
@@ -51,7 +64,7 @@ function renderStage(ev) {
   for (const s of slots) {
     const slot = el('div', 'stage-slot' + (s.cls ? ' ' + s.cls : '') + (s.live ? ' stage-live' : ''));
     slot.append(el('div', 'stage-label', s.label));
-    slot.append(el('div', 'stage-face', `${s.face}${s.moodFace ? `<span class="stage-moodface">${s.moodFace}</span>` : ''}`));
+    slot.append(el('div', 'stage-face', faceInner(s)));
     slot.append(el('div', 'stage-name', s.name));
     if (s.read) slot.append(el('div', 'stage-read', s.read));
     if (s.sheet) activatable(slot, () => { sfx.ui(); showInspect(s.sheet); });
@@ -510,7 +523,7 @@ function showResult(result) {
   if (rs?.portrait) {
     const p = rs.portrait;
     const po = el('div', 'result-portrait' + (p.cls ? ' ' + p.cls : ''));
-    po.append(el('div', 'result-face', `${p.face}${p.moodFace ? `<span class="stage-moodface">${p.moodFace}</span>` : ''}`));
+    po.append(el('div', 'result-face', faceInner(p)));
     if (p.name) po.append(el('div', 'result-face-name', `${p.name}${p.sub ? `<span class="result-face-sub">${p.sub}</span>` : ''}`));
     box.append(po);
   }

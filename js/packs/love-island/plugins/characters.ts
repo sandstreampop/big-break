@@ -12,6 +12,7 @@
 // diegetically (portraits, Stirling), never the floats.
 
 import { castById, CAST, sameGenderPool } from '../cast.js';
+import { portraitSrc } from '../portraits.js';
 import type { Plugin, RunState } from '../../../types.js';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -140,6 +141,7 @@ export function characterRead(state: RunState, role: CharRole) {
   return {
     role, cast,
     face: (cast as any).face || '',
+    portraitSrc: portraitSrc(cast.id, mood),
     tier: opinionTier(opinionOf(state, role)),
     mood, moodFace: mood ? MOODS[mood]?.face || null : null,
   };

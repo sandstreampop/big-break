@@ -68,7 +68,7 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
   if (p) {
     const sec = secretOf(state, 'partner');
     out.push({
-      label: 'PARTNER', name: p.cast.name, face: p.face, moodFace: p.moodFace,
+      label: 'PARTNER', name: p.cast.name, face: p.face, moodFace: p.moodFace, portraitSrc: p.portraitSrc,
       read: `${PARTNER_TIER[p.tier]}${state.exclusive ? ' 🔒' : ''}`,
       cls: 'stage-partner mood-' + (p.mood || 'level'), live: live.has('partner'),
       sheet: {
@@ -103,7 +103,7 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
     const active = state.flags.includes('li_rival_active');
     const sec = secretOf(state, 'rival');
     out.push({
-      label: 'RIVAL', name: r.cast.name, face: r.face, moodFace: r.moodFace,
+      label: 'RIVAL', name: r.cast.name, face: r.face, moodFace: r.moodFace, portraitSrc: r.portraitSrc,
       read: active ? 'on the move' : TIER_LABEL[r.tier],
       cls: 'stage-rival mood-' + (r.mood || 'level') + (active ? ' stage-threat' : ''), live: live.has('rival'),
       sheet: {
@@ -122,7 +122,7 @@ export function villaStage(state: RunState, ev: GameEvent | null) {
   const b = characterRead(state, 'bombshell');
   if (b && b.cast.id !== state.partner) {
     out.push({
-      label: 'BOMBSHELL', name: b.cast.name, face: b.face, moodFace: b.moodFace,
+      label: 'BOMBSHELL', name: b.cast.name, face: b.face, moodFace: b.moodFace, portraitSrc: b.portraitSrc,
       read: b.mood ? MOODS[b.mood].label : 'just landed',
       cls: 'stage-bombshell mood-' + (b.mood || 'level'), live: live.has('bombshell'),
       sheet: {
@@ -261,7 +261,7 @@ export function villaResultStage(state: RunState, result: any) {
     : [...liveRoles(state, result.event)][0] || null;
   const c = role ? characterRead(state, role as any) : null;
   const portrait = c ? {
-    face: c.face, moodFace: c.moodFace, name: c.cast.name,
+    face: c.face, moodFace: c.moodFace, portraitSrc: c.portraitSrc, name: c.cast.name,
     sub: c.mood ? MOODS[c.mood].label : role === 'partner' ? PARTNER_TIER[c.tier] : null,
     cls: 'mood-' + (c.mood || 'level'),
   } : null;

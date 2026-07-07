@@ -15,6 +15,7 @@
     "test": "npm run build && node --test test/*.test.mjs",
     "ci": "npm run check && node --test test/*.test.mjs",
     "sim": "npm run build && node tools/simulate.mjs",
+    "art:li": "npm run build && node tools/gen-li-art.mjs",
     "android": "npm run build && node tools/android/run.mjs",
     "android:quick": "npm run build && node tools/android/run.mjs --quick",
     "ios": "npm run build && node tools/ios/run.mjs",
