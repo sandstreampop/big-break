@@ -304,4 +304,300 @@ export const DAY_EVENTS: GameEvent[] = [
       },
     },
   },
+
+  // ---------- Arrival — more small tending ----------
+  {
+    id: 'li_freezer_raid', act: 1, tags: ['chat', 'loyal'],
+    art: 'li_kitchen',
+    context: 'Midnight · the kitchen · the freezer light',
+    prompt: 'The freezer light catches {partner} mid-crime, the season’s last Mini Milk halfway to their mouth. “There were two. I’m a giver,” they whisper, and break it in half on the counter edge, holding out the bigger piece.',
+    recap: 'Midnight freezer raid — {partner} splits the villa’s last Mini Milk with you.',
+    choices: {
+      left: {
+        label: 'Take the big half',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You take it, feel weird about the size difference, swap them back, they swap back, and the Mini Milk melts to a stalemate on the counter while you both hold your ground.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You take the big half without ceremony, which is its own kind of trust. {partner} watches you eat it like they’ve learned something. Nobody splits the last one with an enemy.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: 'Next night there are two behind the ice tray with a Post-it: “ours.” A supply chain, established in secret. The villa’s smallest treaty, and its most binding one so far.', effects: { loyalty: 8, bond: 6, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Refuse. Watch them have it',
+        tags: ['flirt', 'banter'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: '“I’m sweet enough,” you say, which is a line, and they know it’s a line, and it drips down their wrist through the pause you left a beat too long. You both pretend that was smooth.', effects: { rizz: 2, burnout: 3 } },
+          good: { text: '“All yours.” {partner} eats the whole thing holding eye contact like a threat. The kitchen has never been this loud at zero decibels. Flirting via frozen dairy, a villa first.', effects: { rizz: 5, bond: 3, followers: 2 } },
+          incredible: { text: 'You feed them the last bite off the stick and neither of you breathes. Somewhere a night-vision camera earns its budget. The clip is trending before the freezer door shuts.', effects: { rizz: 8, bond: 4, followers: 5, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_suncream_shoulders', act: 1, tags: ['chat', 'loyal'],
+    art: 'li_pool',
+    context: 'Noon · the pool · factor thirty diplomacy',
+    prompt: '{partner} holds out the factor thirty without turning round. “You missed a bit yesterday and I peeled like a Twiglet. I’m trusting you with my shoulders.” The whole lawn is suddenly very interested in this administrative task.',
+    recap: '{partner} trusts you with the factor thirty and their unreachable shoulders.',
+    choices: {
+      left: {
+        label: 'Do it properly. No shortcuts',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You go so thorough it becomes a massage it wasn’t billed as, {partner} makes a noise, and the lawn makes a noise about the noise. Factor thirty, factor drama.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You get every bit, including the shoulder blade they always miss. “Oh, you’re GOOD at this,” {partner} says, surprised, and files it under reasons. Sunscreen as a love language.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: 'You do it unasked all week after that. By Friday {partner} just presents their back to you, wordless, mid-conversation with someone else entirely. A whole routine, built from SPF.', effects: { loyalty: 8, bond: 6, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Make a whole bit of it',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'Your sunscreen commentary in a nature-documentary voice runs long, the lawn drifts, and you rub factor thirty into the same shoulder for a full minute. Over-basted.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: '“Here we observe the islander, protecting its mate.” The lawn cackles, {partner} corpses, and the bit lands better than the coverage does. A patch of shoulder burns anyway.', effects: { charisma: 5, followers: 3, public: 2 } },
+          incredible: { text: 'The nature-doc bit gets its own segment by evening, everyone requesting narration. You become the villa’s official basting correspondent. {partner}’s shoulders remain, tragically, uneven.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_dish_duty', act: 1, tags: ['loyal', 'rest'],
+    art: 'li_kitchen',
+    context: 'After dinner · the sink · everyone else has scattered',
+    prompt: 'Dinner’s done and the villa evaporates, leaving a mountain of plates and you. Then {partner} appears at the sink with a tea towel, unasked. “I wash, you dry. We don’t talk about who cooked.” Four days in, and someone’s volunteering for chores to stand next to you.',
+    recap: 'Everyone scatters after dinner; {partner} volunteers for the washing-up beside you.',
+    choices: {
+      left: {
+        label: 'Fall into the rhythm',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You get competitive about drying technique and a plate goes down in the friendly crossfire. It survives; the rhythm doesn’t. You finish the pile in slightly frosty silence.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'Wash, pass, dry, stack — a two-person machine running on instinct, four days in. Twenty minutes of the most married you’ve felt over a chore. A date, cleverly disguised as cutlery.', effects: { loyalty: 5, bond: 5, burnout: -3 } },
+          incredible: { text: 'You realise, elbow-deep in suds, that this is the bit you’d miss most — not the dates, the dishes. You say so. {partner} flicks water at you and, tellingly, doesn’t disagree.', effects: { loyalty: 8, bond: 7, burnout: -3 } },
+        },
+      },
+      right: {
+        label: 'Turn it into the after-party',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You crank the kitchen speaker and the washing-up disco peaks with a soap-sud incident and a lightly flooded floor. Production sends someone with a mop and a look.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You two run the sink like a nightclub — bubbles, a sponge for a microphone, {partner} on backing vocals. The stragglers drift back in. The best room in the villa is the kitchen.', effects: { charisma: 5, bond: 3, followers: 3 } },
+          incredible: { text: 'The sink disco becomes a villa institution, everyone queuing to dry just to be in it. You’ve made the worst chore the hottest ticket. Even the mop guy stays for a song.', effects: { charisma: 8, bond: 3, followers: 6, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_good_mirror', act: 1, tags: ['flirt', 'chat'],
+    art: 'li_bedroom',
+    context: 'Evening · the dressing room · the one mirror with good light',
+    prompt: 'There is one mirror in the villa with forgiving light and everyone knows it. {partner} shuffles over to make room unasked. “Two-person mirror. We’re basically married.” You share the good light like a utility bill.',
+    recap: 'You and {partner} share the villa’s one flattering mirror like a married couple.',
+    choices: {
+      left: {
+        label: 'Get ready together, properly',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You keep bumping elbows and apologising, apologising and bumping elbows, until getting ready takes twice as long and you both go out slightly damp and out of sync.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You fall into a rhythm — you do teeth while they do hair, swap, repeat. Domestic as anything. The good mirror has seen a lot of villa; it hasn’t seen this.', effects: { loyalty: 5, bond: 5 } },
+          incredible: { text: '{partner} fixes the bit of your collar you can’t see, absent-mindedly, mid-sentence about someone else. The gesture of a person who’s stopped performing being with you.', effects: { loyalty: 8, bond: 7, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Do their eyeliner for them',
+        tags: ['flirt', 'banter'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You go in with the eyeliner and immediately understand why this is a licensed profession. {partner} ends up with one confident wing and one apology. They wear both out proudly.', effects: { rizz: 2, burnout: 3 } },
+          good: { text: '“Look up. Don’t blink. Don’t — okay, breathe.” The concentration is its own flirtation, faces this close this long. You nail the wings. They nail the exit line: “do mine forever.”', effects: { rizz: 5, bond: 4, followers: 2 } },
+          incredible: { text: 'Matching wings, matching smug, and a video of the steady-handed operation set to slow music. The nation decides you’re the couple who does each other’s makeup now. A brand is born.', effects: { rizz: 8, bond: 5, followers: 5, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_daybed_nap', act: 1, tags: ['rest', 'loyal'],
+    art: 'li_daybed',
+    context: 'Afternoon · the daybed · the heat wins',
+    prompt: 'The afternoon heat has done what the producers couldn’t and shut everyone up. You’re half-asleep on the daybed when {partner} lands next to you, wordless, and shuts their eyes. “Not talking. Just here,” they mumble. The sun does the rest.',
+    recap: 'The afternoon heat lands {partner} next to you on the daybed for a wordless nap.',
+    choices: {
+      left: {
+        label: 'Let them sleep. Stay put',
+        tags: ['rest', 'loyal'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You lie rigid being the perfect nap partner, don’t move a muscle for forty minutes, and wake with a dead arm and the exact posture of someone guarding a nap. Restful for one of you.', effects: { loyalty: 2, burnout: -2 } },
+          good: { text: 'You both actually sleep, properly, in the daytime, which the villa makes near impossible. You wake first and just let the afternoon sit there. No agenda. Rare as anything.', effects: { loyalty: 5, bond: 4, burnout: -6 } },
+          incredible: { text: 'You wake to find you’ve drifted into the exact same shape without planning it, {partner}’s hand loose in yours, both dead to the world. The nation captions the photo. You never saw it happen.', effects: { loyalty: 8, bond: 6, burnout: -7, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Wake them for the pool',
+        tags: ['banter', 'rest'],
+        governingStats: { charisma: 0.5, rizz: 0.5 },
+        outcomes: {
+          bad: { text: 'You rouse them for a swim and get the full betrayed-cat face, and the mood you interrupted does not return. The daybed, once a sanctuary, is now a scene of your crime.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: '“Up. The pool’s better than the dream,” you promise, wrong but persuasive. {partner} groans, gets up, and admits the water was in fact better. Credit for a nap ruined well.', effects: { charisma: 5, bond: 3 } },
+          incredible: { text: 'You bribe them awake with the promise of shade and a cold drink, and the lazy afternoon that follows — pool, ice, zero drama — becomes the edit’s idea of the dream couple. Effortless.', effects: { charisma: 8, bond: 4, followers: 3, public: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- The Turn — tending under pressure ----------
+  {
+    id: 'li_herb_planter', act: 2, tags: ['rest', 'loyal'],
+    art: 'li_lawn',
+    context: 'Afternoon · the herb planter nobody else waters',
+    prompt: 'There’s a sad basil plant by the kitchen door that would be dead if you didn’t sneak it water. {partner} catches you at it with a stolen glass. “You’ve been keeping that alive? Better survival rate than half our couples.”',
+    recap: '{partner} catches you secretly keeping the villa’s dying basil alive.',
+    choices: {
+      left: {
+        label: 'Adopt the plant together',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You overwater it in a joint act of enthusiasm and the basil, having survived weeks of neglect, drowns in a weekend of love. A metaphor nobody asked the garden to provide.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You name it, agree a watering rota, and check on it together each morning like a shared pet. The basil thrives. So, quietly and off-camera, does the thing you’re not naming.', effects: { loyalty: 5, bond: 4, burnout: -3 } },
+          incredible: { text: 'The basil ends the season the healthiest thing in the villa, and you tape care instructions to the planter for whoever’s next. {partner} reads them and goes quiet. It’s just a plant. It isn’t just a plant.', effects: { loyalty: 8, bond: 6, burnout: -4 } },
+        },
+      },
+      right: {
+        label: 'Turn it into a running bit',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You give the basil a backstory and a name, and the bit works until you forget to actually water it because you were doing the bit. The basil, unimpressed, wilts on schedule.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'The basil becomes “Kevin,” gets a birthday, and features in three separate Beach Huts. The villa rallies round a herb. Content from soil — the challenge budget weeps with relief.', effects: { charisma: 5, followers: 4, public: 2 } },
+          incredible: { text: 'Kevin the basil gets a fan account, a storyline, and more airtime than Dev. You give a tearful update on his growth to camera. Somewhere a producer greenlights a spin-off nobody needs.', effects: { charisma: 8, followers: 7, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_villa_barber', act: 2, tags: ['loyal', 'chat'],
+    art: 'li_terrace',
+    context: 'Golden hour · the terrace · the villa’s unlicensed barber',
+    prompt: 'You’ve become the villa’s de facto barber, and the terrace queue is three deep. {mate} sits down last, quietly. “Don’t make it weird, but you’re the only one I trust near my head. That’s a lot of trust to hand someone with clippers and no diploma.”',
+    recap: '{mate} joins the queue for a haircut from the villa’s unlicensed barber.',
+    choices: {
+      left: {
+        label: 'Do a careful, honest job',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You take it slow and get it dead level, then {mate} moves at the crucial second and now there’s a notch. You style around it heroically. They’ll notice in a photo in about a week.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'Twenty minutes, no phone, actual conversation while your hands are busy — the kind that only happens when nobody has to make eye contact. The haircut’s good. The chat’s better.', effects: { loyalty: 5, bond: 4, burnout: -2 } },
+          incredible: { text: '{mate} looks in the mirror and goes quiet, and it isn’t about the fade. “First time someone’s looked after me in here,” they say, to the clippers, not to you. You just tidy the neckline.', effects: { loyalty: 8, bond: 6, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Run it as a proper salon',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You commit to the salon bit — robes, a fake receptionist, a tip jar — and the admin takes longer than the haircuts. The queue mutinies. The tip jar contains one grape.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You do the full salon patter, gossip and all, and the terrace turns into the villa’s most honest room, because everyone talks in a barber’s chair. You leave knowing everything.', effects: { charisma: 5, savvy: 3, followers: 2 } },
+          incredible: { text: 'The villa salon becomes appointment television — a waitlist, confessions mid-trim that make the edit. You’re a barber, a therapist, and an intelligence service. The clippers pay for themselves.', effects: { charisma: 8, savvy: 3, followers: 6, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_duvet_treaty', act: 2, tags: ['loyal', 'rest'],
+    art: 'li_bedroom',
+    context: 'Two a.m. · the shared bed · the nightly border dispute',
+    prompt: 'You wake at two a.m. with no duvet and full evidence of who has it. {partner} is a cocoon. You tug; the cocoon tugs back, then sleepily mutters, “there’s a whole other side of the bed, you know.” You are already on the whole other side.',
+    recap: 'Two a.m. and {partner} has stolen the entire duvet again.',
+    choices: {
+      left: {
+        label: 'Negotiate the border. Whisper',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You wake them properly to redraw the treaty and now you’re both up at two a.m. relitigating a duvet like a select committee. Nobody wins. It ends up on the floor, neutral territory.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You tug, they roll, and somewhere in the negotiation you end up sharing the middle instead of the sides. Border dispute resolved by merger. You both sleep better annexed.', effects: { loyalty: 5, bond: 5, burnout: -3 } },
+          incredible: { text: 'They wake just enough to tuck the duvet back around YOU before taking any themselves, eyes shut the whole time. A reflex. You lie awake a while, quietly wrecked by a sleeping person.', effects: { loyalty: 8, bond: 7, burnout: -3 } },
+        },
+      },
+      right: {
+        label: 'Steal it all back. Petty',
+        tags: ['banter', 'rest'],
+        governingStats: { charisma: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You execute a full duvet coup and {partner}, dethroned, retaliates with cold feet applied directly to your spine. The bed becomes a demilitarised zone. Neither superpower sleeps.', effects: { charisma: 2, burnout: 4 } },
+          good: { text: 'You reclaim the duvet with slow, criminal precision and {partner} wakes freezing and impressed. “Respect,” they mutter, and burrow into you instead of the duvet. Tactical warmth.', effects: { charisma: 5, bond: 4, burnout: -2 } },
+          incredible: { text: 'The morning debrief of the Great Duvet War becomes the breakfast table’s favourite bit, told with military maps drawn in ketchup. A shared nemesis: the duvet. A shared bed: still shared.', effects: { charisma: 8, bond: 4, followers: 4 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Final Week — the tending, at altitude ----------
+  {
+    id: 'li_last_breakfast', act: 3, tags: ['rest', 'loyal'],
+    art: 'li_kitchen',
+    context: 'Final Week · the kitchen · the last big breakfast',
+    prompt: '{partner} is doing the eggs the way they’ve done them every morning, and this morning that ordinary fact has weight. “Same as always. Don’t get emotional about eggs,” they say, plating up. You are, a bit, getting emotional about eggs.',
+    recap: 'Final week — {partner} makes the same breakfast eggs, and it suddenly matters.',
+    choices: {
+      left: {
+        label: 'Eat it like any morning',
+        tags: ['rest', 'loyal'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You try to keep it a normal breakfast and your throat has other plans around the second bite. {partner} pretends not to see. The eggs, for the record, are perfect. That’s the problem.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You do the crossword you can’t finish, argue about a clue, let the toast go cold. One last ordinary morning, protected on purpose. Nothing happens. The best breakfast of the season.', effects: { loyalty: 5, bond: 5, burnout: -4 } },
+          incredible: { text: 'You ask them to make the eggs the same way on the outside, first Sunday, and mean it as a plan not a line. {partner} says “deal” without looking up from the pan. A Sunday, booked in advance.', effects: { loyalty: 8, bond: 8, burnout: -3 } },
+        },
+      },
+      right: {
+        label: 'Say the soft thing out loud',
+        tags: ['chat', 'date'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You reach for the big feeling over breakfast and it comes out as logistics — trains, postcodes, whose eggs. The romance gets buried under a timetable before the toast even pops.', effects: { loyalty: 2, burnout: 4 } },
+          good: { text: '“I’m going to miss the eggs,” you say, meaning something enormous, and {partner} says “I know,” meaning it back. Two people saying it via breakfast. Villa dialect at its finest.', effects: { loyalty: 5, bond: 6, burnout: -2 } },
+          incredible: { text: 'You say the actual sentence, no code, no eggs metaphor, and {partner} puts the spatula down to hear it properly. Some things you only get to say once in here, and you said it.', effects: { loyalty: 8, bond: 9, burnout: -3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_last_swim', act: 3, tags: ['rest', 'loyal'],
+    art: 'li_pool',
+    context: 'Final Week · midnight · the pool, lit blue, everyone else asleep',
+    prompt: '“One last swim,” {partner} says, already climbing over the pool edge fully aware it’s freezing. “We never actually used this thing. Weeks of villa, and we sat NEXT to a pool.” They hold a hand out from the shallow end, shivering and grinning.',
+    recap: 'Final week — {partner} coaxes you into the pool for one last midnight swim.',
+    choices: {
+      left: {
+        label: 'Get in. Freeze together',
+        tags: ['rest', 'loyal'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You get in and immediately regret it audibly, and the audible regret wakes the terrace, and now there’s an audience for what was supposed to be a private goodbye to a pool.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'It’s freezing and stupid and you tread water talking rubbish until your teeth chatter. No camera worth the angle at this hour. Just two idiots and a pool they finally used.', effects: { loyalty: 5, bond: 5, burnout: -5 } },
+          incredible: { text: 'You float on your backs looking at the one bit of sky the villa doesn’t light, not talking, and the whole loud season goes quiet a minute. You’ll remember the cold. You’ll mostly remember this.', effects: { loyalty: 8, bond: 8, burnout: -6 } },
+        },
+      },
+      right: {
+        label: 'Push them in first. Then jump',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You go for the cinematic push and slip on the wet tile, taking yourself into the deep end and {partner} into a laughing fit that definitely woke somebody. The dismount scored low.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You bomb in beside them sending a wave over the loungers, and the splash and the shriek and the laughing is the least strategic thing you’ve done all season. Overdue.', effects: { charisma: 5, bond: 4, followers: 2 } },
+          incredible: { text: 'The midnight bomb, the wave, the two of you surfacing laughing — a night camera catches all of it, unplanned and unbeatable. The season’s realest clip, filmed by accident at 1 a.m.', effects: { charisma: 8, bond: 5, followers: 5, public: 3 } },
+        },
+      },
+    },
+  },
 ];

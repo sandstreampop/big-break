@@ -503,4 +503,497 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
       },
     },
   },
+  {
+    id: 'li_villa_threshold', act: 1, tags: ['flirt', 'chat'],
+    art: 'li_lawn',
+    context: 'Day 1 · the villa gates · first impressions',
+    prompt: '“Here she comes—” The line-up assembles on the lawn like a firing squad in linen. Eleven strangers, one entrance, and roughly four seconds to decide whether you’re a threat, a laugh, or lunch. The gate clicks shut behind you. No handle on this side.',
+    recap: 'Day 1 at the gates — eleven strangers lined up to judge your entrance.',
+    choices: {
+      left: {
+        label: 'Work the whole line',
+        tags: ['flirt', 'camera'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You go down the line like a wedding receiving line and blank the second name. It was {mate}’s. {mate} clocks it. First impression: filed under “forgot me.”', effects: { rizz: 2, burnout: 2, public: -1 } },
+          good: { text: 'You greet each of them like you mean it, land two jokes, and leave nobody out. The lawn thaws. Eleven strangers become eleven maybes in under a minute.', effects: { rizz: 5, charisma: 2, public: 3 } },
+          incredible: { text: 'You read the line-up like a room and give each one exactly the hello they wanted. By the time you sit, three of them are already quoting you. The lawn is yours.', effects: { rizz: 8, charisma: 3, public: 5, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Find one real face',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You lock onto the kindest face and cling. Sweet, safe, and the other ten now think you’re shy. Shy plays badly on a show that runs on volume.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You skip the parade and find the one person actually holding eye contact. A real two-minute chat while everyone else performs. Substance over splash.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: 'You ignore the fireworks and clock the quiet one clocking you. One honest hello, and you’ve got an ally before you’ve got a drink. Slow game, best game.', effects: { loyalty: 8, bond: 5, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_bed_share_night_one', act: 1, tags: ['chat', 'flirt'],
+    art: 'li_bedroom',
+    context: 'Night 1 · the bedroom · one bed, two strangers',
+    prompt: '“So… which side are you?” asks {partner}, holding the duvet like a peace treaty. One bed, two people who met at teatime, eleven others pretending to be asleep three feet away. The mics are on. The mics are always on.',
+    recap: 'Night 1, sharing a bed with {partner}, who you met at teatime.',
+    choices: {
+      left: {
+        label: 'Break the ice',
+        tags: ['chat', 'banter'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: '“Do you snore?” is a bold opener and the answer, it turns out, is a saga. You learn about their deviated septum until 2 a.m. Romance: pending. Sleep: cancelled.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You whisper-chat about nothing till the room goes quiet, then keep going quieter. No moves, no pressure, just two people getting the giggles under a duvet.', effects: { charisma: 3, bond: 4 } },
+          incredible: { text: '“I’ve not laughed like this in ages,” {partner} whispers, and means it. You talked till the birds started. Nothing happened. Everything happened.', effects: { charisma: 3, bond: 6, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Play it cool',
+        tags: ['flirt', 'chat'],
+        governingStats: { rizz: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You go for aloof and land on “asleep.” {partner} lies awake wondering if you’re keen. So does the nation. So, frankly, do you.', effects: { rizz: 2, burnout: 2, bond: -1 } },
+          good: { text: 'One arm out, one easy joke, zero desperation. “Comfy?” you ask. “Getting there,” they say, and the gap in the middle quietly closes.', effects: { rizz: 5, bond: 4 } },
+          incredible: { text: 'You give it one line and a lot of nothing, and the space between you does all the talking. By lights-out {partner}’s picked their side: yours.', effects: { rizz: 8, bond: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_firepit_funfact', act: 1, tags: ['banter', 'camera'],
+    art: 'li_firepit',
+    context: 'Night 1 · the firepit · “tell us a fun fact”',
+    prompt: '“Go round the circle — fun fact each,” someone decides, and the firepit braces. The bar is a man who once met a soap actor in a Nando’s. Your turn is coming. The nation is deciding if you’re interesting in real time.',
+    recap: 'Night 1 firepit — the dreaded fun-fact round goes round the circle.',
+    choices: {
+      left: {
+        label: 'Play the big card',
+        tags: ['camera', 'banter'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You lead with the skydiving story and the circle calls “bragging.” The soap-actor man is quietly furious you’ve raised the bar. First night, first enemy.', effects: { charisma: 2, burnout: 3, followers: 2 } },
+          good: { text: 'You tell the one about the wedding you crashed by accident, and the firepit forgets to look at their own turn. Big swing, clean landing.', effects: { charisma: 5, followers: 4, public: 3 } },
+          incredible: { text: 'Your fun fact has a twist ending and a callback, and the circle demands a sequel. You just turned an icebreaker into a headline act.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Undersell it',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“I haven’t really got one,” you say, and the circle believes you instantly. Modest, sure. Memorable, no. You get skipped in the recap.', effects: { loyalty: 2, public: -1 } },
+          good: { text: 'You lowball a small odd fact — you can’t whistle — and it becomes the running joke by breakfast. Small, true, sticky. The best kind.', effects: { loyalty: 5, bond: 3, followers: 2 } },
+          incredible: { text: 'You underplay so charmingly the circle spends ten minutes trying to prise the real fact out of you. Mystery, night one. They’re hooked.', effects: { loyalty: 6, savvy: 3, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_washing_line_claim', act: 1, tags: ['loyal', 'strategy'],
+    art: 'li_lawn',
+    context: 'Morning · the washing line · limited pegs',
+    prompt: 'The washing line has eight pegs and a nation of swimwear. Somebody’s bikini has colonised the sunny end for two days. Diplomacy over drying space is, historically, how villa wars begin. Yours are still wet.',
+    recap: 'A cold war over eight pegs and the sunny end of the washing line.',
+    choices: {
+      left: {
+        label: 'Sort it fairly',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You propose a peg rota and are informed, coldly, that pegs are “not that deep.” They are exactly that deep. You’ve just found the villa’s fault line.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You redistribute the pegs with the calm of a hostage negotiator and everyone’s smalls get equal sun. Nobody thanks you. Everybody remembers.', effects: { loyalty: 5, public: 3, graft: 3 } },
+          incredible: { text: 'You solve the peg crisis so fairly the villa appoints you unofficial minister for logistics. Small job. Real power. It starts with laundry.', effects: { loyalty: 6, savvy: 3, graft: 4, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Quietly rehang everything',
+        tags: ['strategy', 'banter'],
+        governingStats: { savvy: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You quietly move the squatter bikini and its owner clocks the empty peg from across the lawn. “Who touched my stuff?” You touched their stuff.', effects: { savvy: 2, burnout: 4, public: -1 } },
+          good: { text: 'You rehang the whole line by sun exposure while nobody’s watching and claim the prime end for {partner}. A tiny, invisible act of love. And theft.', effects: { savvy: 5, bond: 3, graft: 3 } },
+          incredible: { text: 'By the time anyone notices, the line is a masterpiece of airflow and your swimwear’s bone dry. Chaos-manager energy. Nobody suspects a thing.', effects: { savvy: 8, graft: 4, bond: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_bombshell_incoming', act: 1, tags: ['loyal', 'strategy'],
+    art: 'li_firepit_day',
+    context: 'Afternoon · the firepit · a text lands wrong',
+    prompt: '“I’VE GOT A TEXT!!” The words that stop the villa dead. It reads: a new arrival lands tonight. Eyes flick to partners; partners flick to the floor. Somewhere out there {bombshell} is doing their hair, and the villa is already recalculating.',
+    recap: 'A text warns a new arrival lands tonight — the villa starts recalculating.',
+    choices: {
+      left: {
+        label: 'Reassure {partner}',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You promise {partner} you’re “not going anywhere” a bit too fast, and they hear the speed. Reassurance that sounds rehearsed reassures no one.', effects: { loyalty: 2, burnout: 3, bond: -1 } },
+          good: { text: '“Whoever walks in, I’m still sat here with you.” You say it once, calm, and {partner} exhales for the first time all afternoon. Steady wins the jitters.', effects: { loyalty: 5, bond: 4, public: 3 } },
+          incredible: { text: 'You don’t over-promise; you just stay exactly as you were, and the calm is louder than any speech. {partner} tells the girls you’re “solid.” Top praise here.', effects: { loyalty: 8, bond: 6, public: 4, addFlag: 'li_code_honour' } },
+        },
+      },
+      right: {
+        label: 'Keep your options open',
+        tags: ['strategy', 'temptation'],
+        governingStats: { savvy: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You mention, breezily, that you “came here single,” and {partner} goes very quiet. The bombshell hasn’t landed and you’ve done their work for them.', effects: { savvy: 2, burnout: 3, bond: -3 } },
+          good: { text: 'You keep it honest — “I’ll always have a look, but I’m happy” — and somehow it works. Options open, respect intact. A rare double.', effects: { savvy: 5, rizz: 3, public: 2 } },
+          incredible: { text: 'You clock the incoming threat, war-game every outcome, and say nothing yet. Whoever {bombshell} is, you’ll have read them before they’ve unpacked.', effects: { savvy: 8, graft: 4, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_pull_for_a_chat', act: 1, tags: ['flirt', 'strategy'],
+    art: 'li_daybed',
+    context: 'Afternoon · the daybed · “can I borrow you?”',
+    prompt: '“Can I pull you for a chat?” The seven words that reorganise a villa. You’ve said them, or you’re about to. {partner} is peeling off from the group; twelve pairs of eyes track the walk to the daybed. This chat has an audience and a scoreboard.',
+    recap: 'You pulled {partner} for a chat — twelve pairs of eyes tracking the walk.',
+    choices: {
+      left: {
+        label: 'Lay your cards down',
+        tags: ['flirt', 'loyal'],
+        governingStats: { rizz: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: 'You go too strong — “I could see this being something” — on day three, and {partner} does the polite nod of the gently overwhelmed. Big graft, bad timing.', effects: { rizz: 2, burnout: 3, bond: -1 } },
+          good: { text: '“I like where my head’s at with you.” Simple, warm, no games. {partner} grins at the grass. The daybed audience pretends not to cheer.', effects: { rizz: 5, bond: 4, public: 3 } },
+          incredible: { text: 'You say the honest thing at the honest speed and {partner} says it back before you finish. The graft lands so clean the villa calls it official by dinner.', effects: { rizz: 8, bond: 6, public: 4, graft: 3 } },
+        },
+      },
+      right: {
+        label: 'Keep them guessing',
+        tags: ['strategy', 'flirt'],
+        governingStats: { savvy: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You’re so mysterious {partner} leaves the daybed unsure you even like them. Intrigue’s a knife; you held it by the blade.', effects: { savvy: 2, burnout: 2, bond: -2 } },
+          good: { text: 'You give a little, hold a little, and leave {partner} wanting the next chat. The graft is a slow build, and you just laid a good brick.', effects: { savvy: 5, bond: 3, graft: 3 } },
+          incredible: { text: 'You leave the daybed having said almost nothing and somehow raised the temperature. {partner} spends all evening replaying it. Best graft is the one they finish.', effects: { savvy: 8, bond: 4, graft: 4, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_intentions_vetting', act: 1, tags: ['loyal', 'chat'],
+    art: 'li_firepit_day',
+    context: 'The firepit · the group wants a word',
+    prompt: '“We just wanna know you’re genuine, that’s all,” says {mate}, in the tone of a border official. The group has pulled you for the intentions chat: a friendly interrogation about what you’re actually doing with {partner}. Wrong answer travels fast.',
+    recap: 'The group pulls you for the intentions chat about you and {partner}.',
+    choices: {
+      left: {
+        label: 'Prove you’re genuine',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You over-explain your feelings until it sounds like a hostage statement. The group nods slowly. Sincerity, delivered at that length, reads as guilty.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You answer straight, no speech, and let one true thing about {partner} do the work. The group relaxes. Vetting passed, quietly.', effects: { loyalty: 5, public: 3, addFlag: 'li_code_honour' } },
+          incredible: { text: 'You’re so plainly genuine the interrogation turns into a group hug. {mate} tells {partner} later: “They’re the real deal.” Word gets around by morning.', effects: { loyalty: 8, bond: 4, public: 4, addFlag: 'li_code_honour' } },
+        },
+      },
+      right: {
+        label: 'Charm the jury',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You crack jokes through the whole vetting and the group decides you’re “not taking it serious.” The one time deadpan was the wrong call.', effects: { charisma: 2, burnout: 3, public: -1 } },
+          good: { text: 'You disarm the jury with charm and one self-aware laugh, and they forget they were grilling you. Case dismissed, on personality.', effects: { charisma: 5, followers: 3, public: 3 } },
+          incredible: { text: 'You turn the interrogation into your best bit and the group’s doing your impressions by the end. You walked into a trial and left with fans.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_tea_round', act: 1, tags: ['loyal', 'banter'],
+    art: 'li_kitchen',
+    context: 'Morning · the kitchen · the kettle is on',
+    prompt: 'You’ve offered to do a tea round, which in this villa means memorising eleven increasingly deranged orders. One oat, one “builder’s but weak,” one that is legally a dessert. The kettle clicks. The nation judges a person by their tea admin.',
+    recap: 'You offered a tea round — eleven deranged orders and one kettle.',
+    choices: {
+      left: {
+        label: 'Nail every order',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You mix up the oat and the “builder’s” and a small cold war opens over a mug. It is, everyone agrees, not about the tea. It is entirely about the tea.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'Eleven teas, eleven correct, delivered in order of who needs caffeine most. Nobody says thank you properly. Everybody clocks the competence.', effects: { loyalty: 5, graft: 3, public: 3 } },
+          incredible: { text: '“How did you remember mine?” Because you listen, which in here is a superpower. The dessert-tea person nearly proposes. Loyalty, brewed to spec.', effects: { loyalty: 6, graft: 4, bond: 2, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Wing it with flair',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You freestyle the orders and invent a tea nobody asked for. It has cinnamon in it. The villa will discuss this beverage for the rest of the week.', effects: { charisma: 2, burnout: 2 } },
+          good: { text: 'You do the whole round in a butler voice and the kitchen loses it. The tea’s wrong but the service is five stars. Content from a kettle.', effects: { charisma: 5, followers: 3, public: 3 } },
+          incredible: { text: 'Your tea round becomes a full sketch, complete with a trolley you built from a laundry basket. Nobody drinks. Everybody films. The bit runs itself.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_mirror_scramble', act: 1, tags: ['banter', 'loyal'],
+    art: 'li_bedroom',
+    context: 'Evening · the dressing room · one mirror, six faces',
+    prompt: 'Getting-ready hour: six people, one good mirror, and a countdown to a firepit nobody wants to be late for. Elbows are out. A curling wand is being guarded like a family heirloom. The lighting in here has ruined stronger villas than this.',
+    recap: 'Getting-ready hour — six faces, one good mirror, elbows out.',
+    choices: {
+      left: {
+        label: 'Hold your spot',
+        tags: ['banter', 'drama'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You defend your mirror inch and get branded “a bit much before 8 p.m.” The curling-wand guard remembers. These things compound.', effects: { charisma: 2, burnout: 3, public: -1 } },
+          good: { text: 'You hold your patch of mirror with jokes instead of elbows and somehow everyone still gets ready on time. Diplomacy, applied to eyeliner.', effects: { charisma: 5, public: 3 } },
+          incredible: { text: 'You run the dressing room like air-traffic control and the whole room’s glam and grateful with two minutes to spare. Chaos, tamed with a comb.', effects: { charisma: 8, public: 4, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Do everyone’s glam',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You offer to do everyone’s makeup and undertake a four-hour project you cannot finish. Two faces go to the firepit half-done. Ambitious. Foolish.', effects: { loyalty: 2, burnout: 4 } },
+          good: { text: 'You do {mate}’s eyeliner better than {mate} ever has and bank a friend for the summer. Nothing bonds like a good wing on the first go.', effects: { loyalty: 5, bond: 4, graft: 3 } },
+          incredible: { text: 'Your glam station becomes the beating heart of the villa and everyone arrives at the firepit looking incredible and owing you. Soft power, in a compact.', effects: { loyalty: 6, bond: 4, graft: 4, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_hot_tub_debut', act: 1, tags: ['flirt', 'banter'],
+    art: 'li_pool',
+    context: 'Night · the hot tub · built for four, holding nine',
+    prompt: 'The hot tub was designed for four and currently contains nine, plus a lager and a philosophical debate about star signs. You’re on the rim, half in. There’s exactly one gap left, and it’s next to {partner}. And, on the far side, {rival}.',
+    recap: 'One gap left in an overcrowded hot tub — between {partner} and {rival}.',
+    choices: {
+      left: {
+        label: 'Slot in by {partner}',
+        tags: ['flirt', 'loyal'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You climb over three people to reach {partner} and elbow a lager into the water. The tub mourns the lager. {rival} smirks from the good seat.', effects: { loyalty: 2, burnout: 2, public: -1 } },
+          good: { text: 'You fold in next to {partner}, knees touching, and the star-sign debate fades to background noise. Nine in a tub and it’s just the two of you.', effects: { loyalty: 5, bond: 4, public: 3 } },
+          incredible: { text: 'You settle by {partner} so easily that {rival}’s side of the tub quietly empties of interest. The gap you took was the only one that mattered.', effects: { loyalty: 8, bond: 6, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Command the tub',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You try to host from a hot tub and knock the whole thing into a splash war. Fun, briefly. Then someone’s extensions are wet and it’s a whole thing.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You referee the star-sign debate into actual comedy and the tub becomes the best seat in the villa. Nine people, one host, zero exits.', effects: { charisma: 5, followers: 4, public: 3 } },
+          incredible: { text: 'You turn the overcrowded tub into the episode’s centrepiece — a talk show in bubbles. Even {rival} laughs, against their own interests.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_wrong_name', act: 1, tags: ['banter', 'chat'],
+    art: 'li_terrace',
+    context: 'Day 3 · the terrace · a name goes missing',
+    prompt: 'You’ve called {mate} the wrong name. Not a small slip — you called them the name of a completely different Islander, at volume, across the terrace. The pause that follows could hold weather. {mate} is deciding, right now, whether this is funny.',
+    recap: 'You called {mate} by the wrong name, at volume, across the terrace.',
+    choices: {
+      left: {
+        label: 'Own it loudly',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You try to laugh it off and accidentally do it again, worse. {mate} now has a nickname for you and it is not affectionate. The terrace enjoys this hugely.', effects: { charisma: 2, burnout: 3, public: -1 } },
+          good: { text: 'You turn the blunder into a full apology tour with jazz hands and {mate} forgives you on comedic grounds. Recovery, via commitment to the bit.', effects: { charisma: 5, followers: 3, bond: 2 } },
+          incredible: { text: 'You make the name mix-up the villa’s new in-joke and everyone starts “accidentally” getting names wrong. You weaponised your own gaffe. Legendary.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Grovel sincerely',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You apologise so many times {mate} has to reassure YOU, which is somehow the more embarrassing outcome. Over-grovelling: a second crime.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You take {mate} aside, own it properly, and learn three actual things about them while you’re there. A slip, turned into a real conversation.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: 'Your sincere fix is so warm {mate} decides you’re one of the good ones on the spot. Sometimes the fastest way into a friendship is a mistake.', effects: { loyalty: 8, bond: 5, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_dares_postbox', act: 1, tags: ['flirt', 'drama'],
+    art: 'li_firepit',
+    context: 'Night · the firepit · a bowl of folded dares',
+    prompt: 'Production has posted a bowl of dares, which is how the villa manufactures its first proper scandal. The folded slips escalate fast: “kiss the fittest,” “rate the villa,” one that just says “demonstrate.” Your hand’s already in the bowl.',
+    recap: 'A bowl of dares at the firepit — the villa’s first manufactured scandal.',
+    choices: {
+      left: {
+        label: 'Go all in',
+        tags: ['flirt', 'drama'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'Your dare says “kiss who you fancy most” and you overthink it into a lap of the firepit, kissing no one, disappointing everyone. Nerve: failed at volume.', effects: { rizz: 2, burnout: 3, public: -1 } },
+          good: { text: 'You do your dare with a grin and zero hesitation and the firepit erupts. {partner} pretends to be fine about it. The nation is not fine, deliciously.', effects: { rizz: 5, followers: 4, public: 3 } },
+          incredible: { text: 'Your dare turns into the moment the whole season gets trailered on. Frank, funny, over in five seconds. The group chat at home combusts.', effects: { rizz: 8, followers: 7, public: 5, drama: 3 } },
+        },
+      },
+      right: {
+        label: 'Keep it cheeky, not chaos',
+        tags: ['banter', 'strategy'],
+        governingStats: { savvy: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You water your dare down to “rate the villa out of ten” and give everyone a seven. Safe. Also, now eleven people know you called them a seven.', effects: { savvy: 2, burnout: 2, public: -1 } },
+          good: { text: 'You play the game clever — big laughs, no landmines — and pick the dare that flatters {partner} in front of everyone. Chaos, sidestepped with a wink.', effects: { savvy: 5, charisma: 2, bond: 3 } },
+          incredible: { text: 'You defuse the nuclear dares and keep the fun, steering the whole game without anyone clocking the wheel. A scandal, expertly not-had.', effects: { savvy: 8, graft: 3, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_stargaze_daybed', act: 1, tags: ['chat', 'flirt'],
+    art: 'li_daybed',
+    context: 'Late · the outdoor daybed · everyone else is in bed',
+    prompt: 'Everyone else has gone in. It’s just you, {partner}, a shared duvet dragged outside, and a sky the production budget can’t take credit for. No cameras crowding, no audience. Which, in this villa, is the rarest kind of pressure.',
+    recap: 'Just you and {partner} on the outdoor daybed after everyone else went in.',
+    choices: {
+      left: {
+        label: 'Get real',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You reach for a Deep Chat and land on your ex, at length, under the stars. {partner} listens, kindly, wondering why they’re on this daybed. Timing, again.', effects: { loyalty: 2, burnout: 3, bond: -1 } },
+          good: { text: 'You talk about the real stuff — home, fears, the plan — and the villa dissolves. Two people, one duvet, no performance. It counts double out here.', effects: { loyalty: 5, bond: 5, public: 3 } },
+          incredible: { text: '“I feel like I’ve known you ages,” {partner} says to the sky. You stayed out till the stars quit. Nothing was filmed. Everything shifted.', effects: { loyalty: 8, bond: 7, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Keep it playful',
+        tags: ['flirt', 'banter'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You keep it so light it never gets off the ground, and {partner} heads in unsure if you’re into them or just bored. Playful tipped into aloof.', effects: { rizz: 2, burnout: 2, bond: -1 } },
+          good: { text: 'You trade daft would-you-rathers till you’re both wheezing and the stars are forgotten. Not deep. Definitely real. The giggles are the tell.', effects: { rizz: 5, bond: 4 } },
+          incredible: { text: 'You keep it feather-light and somehow it turns into the most honest laugh either of you has had all week. Best chats sneak up sideways.', effects: { rizz: 8, bond: 6, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_group_selfie', act: 1, tags: ['camera', 'loyal'],
+    art: 'li_lawn',
+    context: 'Golden hour · the lawn · “everyone in, quick”',
+    prompt: '“Everyone in — quick, the light’s going,” calls {mate}, holding a phone at arm’s length that production definitely didn’t sanction. Twelve people, one frame, and a quiet war over who gets front and centre. You’re somewhere in the scrum.',
+    recap: 'A golden-hour villa selfie — a quiet war over who gets front and centre.',
+    choices: {
+      left: {
+        label: 'Claim the centre',
+        tags: ['camera', 'strategy'],
+        governingStats: { savvy: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You angle for the middle and end up half-cropped with your eyes shut. The one photo that gets out is that one. It gets out everywhere.', effects: { savvy: 2, burnout: 2, public: -1 } },
+          good: { text: 'You find the flattering front spot without anyone clocking the manoeuvre. The photo’s a keeper and you’re the centre of it. Positioning is a skill.', effects: { savvy: 5, followers: 3, public: 3 } },
+          incredible: { text: 'You land dead centre, mid-laugh, arm round {partner}, and it becomes the season’s poster shot. People will screenshot this for years. Framed, literally.', effects: { savvy: 8, followers: 6, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Make it about the group',
+        tags: ['loyal', 'banter'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You herd everyone into frame so selflessly you’re not actually in the photo. A lovely group shot of eleven people. You took it.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You get the shy ones front and centre and the photo’s all the better for it. Nobody remembers you organised it. The kindness is the point.', effects: { loyalty: 5, bond: 3, public: 3 } },
+          incredible: { text: 'You direct the whole villa into one genuinely joyful frame and the warmth is the story, not the placement. Good-captain energy, caught on camera.', effects: { loyalty: 6, bond: 4, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_accent_divide', act: 1, tags: ['banter', 'chat'],
+    art: 'li_terrace',
+    context: 'Afternoon · the terrace · a translation problem',
+    prompt: '“What d’you MEAN you call it a barm,” says {mate}, genuinely rattled. The villa has discovered it contains four regions and zero agreement on what to call a bread roll. It has escalated. There is now a whiteboard. Somebody’s drawn a map.',
+    recap: 'A four-region war breaks out over what to call a bread roll.',
+    choices: {
+      left: {
+        label: 'Defend your dialect',
+        tags: ['banter', 'drama'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You die on the hill of your regional bread word and the terrace unites, for once, against you. The whiteboard now has your name on it, circled.', effects: { charisma: 2, burnout: 3, public: -1 } },
+          good: { text: 'You defend the barm with the passion of a war poet and the terrace splits into factions. You started this. You’re thrilled. So is the edit.', effects: { charisma: 5, followers: 4, public: 3 } },
+          incredible: { text: 'Your bread-roll manifesto becomes villa lore and by nightfall everyone’s doing your accent, badly, with love. A nothing debate, turned into your bit.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Play translator',
+        tags: ['chat', 'strategy'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You try to mediate the bread war and get accused, by all four regions, of betraying your own. Neutrality is a crime in a room this passionate.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'You translate between the factions till everyone’s laughing instead of fighting, and quietly become the person who gets everyone. Useful, that.', effects: { savvy: 5, bond: 3, public: 3 } },
+          incredible: { text: 'You broker a bread-roll peace treaty and get the terrace teaching each other slang for an hour. Connector energy. The villa runs smoother with you in it.', effects: { savvy: 8, graft: 3, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_pool_lineup', act: 1, tags: ['loyal', 'strategy'],
+    art: 'li_pool',
+    context: 'Midday · the sun loungers · ruled by nobody, obeyed by all',
+    prompt: 'The morning sunbathe has an unspoken seating chart nobody wrote down and everybody obeys. The spot beside {partner} is open today. So is the one beside {rival}, who’s patted it, once, without looking up. The lawn is watching the choice more than the sun.',
+    recap: 'The sunbathe seating chart offers a spot by {partner} — and one by {rival}.',
+    choices: {
+      left: {
+        label: 'Sit with {partner}',
+        tags: ['loyal', 'flirt'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You cross the lawn to {partner} and misjudge the sunny gap, ending up in the shade of a parasol for two hours. Loyal, cold, faintly damp. Points for effort.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You take the spot by {partner} without a beat of hesitation and the lawn reads it loud. {rival}’s empty lounger says the rest.', effects: { loyalty: 5, bond: 4, public: 3 } },
+          incredible: { text: 'You choose {partner} so plainly the whole seating chart reshuffles around your couple. {rival} sunbathes alone with a lot to think about.', effects: { loyalty: 8, bond: 5, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Take the neutral middle',
+        tags: ['strategy', 'rest'],
+        governingStats: { savvy: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You take the neutral lounger to keep everyone happy and make both {partner} and {rival} think you’re playing them. Switzerland pleases no one today.', effects: { savvy: 2, burnout: 3, bond: -2 } },
+          good: { text: 'You park in the middle, read the whole lawn from behind your sunglasses, and commit to nothing. Information gathered; options open. Tactical tanning.', effects: { savvy: 5, graft: 3 } },
+          incredible: { text: 'From the neutral spot you clock every glance and alliance on the lawn without moving a muscle. You learned more sunbathing than most learn scheming.', effects: { savvy: 8, graft: 4, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_text_arrival_chaos', act: 1, tags: ['camera', 'strategy'],
+    art: 'li_lawn',
+    context: 'Afternoon · the lawn · a phone buzzes',
+    prompt: 'A phone buzzes and the villa detonates. “I’VE GOT A TEXT!!” — the sacred shout, answered by a stampede of half-dressed Islanders abandoning drinks mid-sip. Nobody knows what it says yet. Everybody’s already braced for it to ruin their week.',
+    recap: 'A phone buzzes and the villa stampedes for the sacred text shout.',
+    choices: {
+      left: {
+        label: 'Read it for the room',
+        tags: ['camera', 'drama'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You grab the phone and fumble the big read, mangling the hashtag and killing the tension stone dead. The villa’s one ritual, and you dropped it.', effects: { charisma: 2, burnout: 3, public: -1 } },
+          good: { text: 'You read it out with the timing of a game-show host, pausing before the twist. The lawn gasps on cue. You’re good at this. Suspiciously good.', effects: { charisma: 5, followers: 4, public: 3 } },
+          incredible: { text: 'You milk the text read for every drop of drama and the villa hangs on your pause like it’s a season finale. A group announcement, elevated to theatre.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Hang back and watch faces',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You hang back to read the room and miss the actual text, then have to ask what it said. Now you’re the one out of the loop you tried to study.', effects: { savvy: 2, burnout: 2, public: -1 } },
+          good: { text: 'While everyone reads the phone, you read the faces — who flinched, who lit up, who went pale. The text was the distraction. The reactions were the news.', effects: { savvy: 5, graft: 3 } },
+          incredible: { text: 'You clock every micro-flinch during the read and walk away knowing exactly who’s scared of what’s coming. Best intel in the villa, gathered in ten seconds.', effects: { savvy: 8, graft: 4, public: 3 } },
+        },
+      },
+    },
+  },
 ];

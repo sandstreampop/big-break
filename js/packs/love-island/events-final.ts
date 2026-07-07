@@ -504,4 +504,439 @@ export const FINAL_EVENTS: GameEvent[] = [
       },
     },
   },
+  {
+    id: 'li_meet_the_parents', act: 3, tags: ['chat', 'loyal', 'encounter'],
+    art: 'li_lawn',
+    context: 'Final Week · families in the villa · everyone on best behaviour',
+    prompt: '“So YOU’RE the one that’s had them up all night,” says {partner}’s mum, arms folded, the kettle already on. Family day: the people who raised your Islander have come to inspect whoever’s been sharing their bed on national television. No notes, no running.',
+    recap: 'Family day — {partner}’s mum has arrived to inspect you over the kettle.',
+    choices: {
+      left: {
+        label: 'Win the family over',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: '“Lovely. Bit much,” the mum tells {partner} after. You overcorrected into a job interview and answered “what are your intentions” with a whole slide deck of feelings.', effects: { loyalty: 2, public: 1, burnout: 3 } },
+          good: { text: '“You’ll do,” the mum decides, over the second cuppa. You skip the sales pitch, ask about {partner} aged seven, laugh at the baby photos properly. Approved, on the record.', effects: { loyalty: 5, bond: 4, public: 3 } },
+          incredible: { text: 'By the time the families go, {partner}’s mum has your number, a hug, and a warning — “don’t you dare hurt them.” You won the room that built the person. Best endorsement going.', effects: { loyalty: 8, bond: 6, public: 5 } },
+        },
+      },
+      right: {
+        label: 'Let them lead',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You go so deferential the mum reads it as hiding something. “They’re shy,” {partner} covers. The kettle boils twice into the silence.', effects: { loyalty: 2, bond: 1, burnout: 2 } },
+          good: { text: 'You step back and let {partner} beam about you to their own mum. Watching them be proud of you, out loud, to family, beats any speech you’d have fumbled.', effects: { bond: 5, loyalty: 4 } },
+          incredible: { text: 'You barely speak — just watch {partner} light up in front of the people who know them best. The mum clocks it: “they look at you like—” and doesn’t finish. Doesn’t need to.', effects: { bond: 8, loyalty: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_final_letter', act: 3, tags: ['chat', 'loyal'],
+    art: 'li_bedroom',
+    context: 'Night before the Final · a pen · a shaking hand',
+    prompt: 'Production has left everyone paper for the final firepit declaration, and yours is still blank at midnight. {partner} is asleep four feet away. Everything you want to say is either too big for the paper or too small for the moment. The pen waits.',
+    recap: 'Midnight before the Final — the declaration paper is still blank.',
+    choices: {
+      left: {
+        label: 'Write it raw',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You write four pages, cross out three, and read the survivor back in a whisper. It’s honest and it’s a mess. Rather like the whole thing it’s describing.', effects: { loyalty: 2, bond: 2, burnout: 3 } },
+          good: { text: 'You stop trying to be poetic and write the true small stuff — the tea order, the snore, the way they say your name. Specific beats grand. The page fills itself.', effects: { bond: 6, loyalty: 5 } },
+          incredible: { text: 'You write one line — the thing you’ve never said out loud — and put the pen down. Reading it back, you already know the firepit won’t survive it dry-eyed.', effects: { bond: 8, loyalty: 8, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Keep it light',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You aim for charming and land on a best-man speech for a wedding that hasn’t happened. Three jokes, no heart. You’ll rewrite it at 4 a.m., you already know.', effects: { charisma: 2, followers: 2, burnout: 3 } },
+          good: { text: 'You thread the jokes through the feeling so neatly nobody sees the sincerity coming till it’s landed. Funny, then floored. The firepit’s favourite one-two.', effects: { charisma: 5, public: 4 } },
+          incredible: { text: 'Your declaration makes {partner} laugh twice and then completely go — the exact demolition you engineered on paper the night before. Craft, disguised as candour.', effects: { charisma: 8, public: 6, followers: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_final_date_boat', act: 3, tags: ['date', 'flirt'],
+    art: 'li_beach',
+    context: 'Final Week · the last date · off-site · actual sky',
+    prompt: 'The last date is a real one: a boat, a bottle, a horizon with no fairy lights on it. First time you’ve been properly alone with {partner} in weeks. “Feels illegal,” they say, kicking off their shoes. The date has one job — remind you both this is real off-set too.',
+    recap: 'The last date — a boat, {partner}, and a horizon with no fairy lights.',
+    choices: {
+      left: {
+        label: 'Say where your head’s at',
+        tags: ['loyal', 'flirt'],
+        governingStats: { loyalty: 0.5, rizz: 0.5 },
+        outcomes: {
+          bad: { text: 'You get halfway to the big declaration and the boat lurches, so it comes out mid-stumble, gripping a rail. Romantic. Nautical. Slightly green.', effects: { rizz: 2, bond: 2, burnout: 2 } },
+          good: { text: '“I keep waiting for the ick and it’s just not coming.” You say the plainest true thing you’ve got. {partner} takes your hand off the rail and holds it. Course set.', effects: { bond: 6, loyalty: 4 } },
+          incredible: { text: 'Out on the water you say the thing you’d only ever say off the set — and mean it enough that the crew, filming anyway, quietly stop pretending to work.', effects: { bond: 8, loyalty: 6, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Just be here for it',
+        tags: ['rest', 'date'],
+        governingStats: { rizz: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: 'You’re so determined to stay present you narrate it — “this is so nice, isn’t it, this” — until {partner} laughs and tells you to stop hosting the date.', effects: { rizz: 2, bond: 1, burnout: 2 } },
+          good: { text: 'No speeches, no strategy — just two people and a sunset that doesn’t need a producer. Some of the best hours your couple’s had contain no plot at all.', effects: { bond: 5, loyalty: 4, burnout: -3 } },
+          incredible: { text: 'You give the day nothing but your full attention, and it pays out: {partner} says this was the best day, meaning of the Season, meaning maybe more. The boat agrees.', effects: { bond: 8, loyalty: 6, burnout: -4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_envelope_wait', act: 3, tags: ['rest', 'chat'],
+    art: 'li_firepit',
+    context: 'Final Week · no text all day · the villa is jumpy',
+    prompt: 'The text that names the finalists hasn’t come, and the not-knowing is doing more damage than any dumping. Every phone is face-up on the daybed like it might bite. {partner} keeps checking one that hasn’t buzzed. The villa is one notification from euphoria or the coach home.',
+    recap: 'The finalist text won’t come — the villa jumpy over silent phones.',
+    choices: {
+      left: {
+        label: 'Steady the room',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You try to calm everyone and accidentally start a sweepstake on the coach departure time. The mood does not improve. The odds are grim.', effects: { loyalty: 2, burnout: 3, public: 1 } },
+          good: { text: 'You get people off their phones and into a daft card game, and the afternoon passes without a single spiral. When the text lands, the villa’s laughing, not shaking.', effects: { loyalty: 5, public: 4, bond: 2 } },
+          incredible: { text: 'You turn a day of dread into the villa’s best hangout of the Season — no phones, one water fight, zero talk of votes. Whatever the text says, you gave everyone a good last day.', effects: { loyalty: 8, public: 6, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Sit in the dread with them',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You and {partner} catastrophise in tandem until you’ve both planned your dumping outfits. Shared anxiety is still anxiety, just with better company.', effects: { loyalty: 2, bond: 2, burnout: 3 } },
+          good: { text: '“Whatever it says, this bit was real.” You name the fear out loud instead of refreshing a dead phone, and it shrinks. The waiting gets easier with two.', effects: { bond: 5, loyalty: 4 } },
+          incredible: { text: 'You and {partner} make a quiet pact — win, lose, coach home — that the number on the screen changes nothing you’ve decided. By the time it buzzes, you’ve already won the vote that counted.', effects: { bond: 8, loyalty: 8 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_first_love_you', act: 3, tags: ['flirt', 'loyal'],
+    art: 'li_terrace',
+    context: 'Late · the terrace · a word neither of you has used',
+    prompt: 'It’s the last stretch and a specific three-word phrase has been sitting unspoken between you and {partner} for a week. Tonight it’s close to the surface — you can feel it queuing behind your teeth. Say it too soon and it’s a strategy. Too late and it’s a regret.',
+    recap: 'Three unspoken words have been queuing behind your teeth all week.',
+    choices: {
+      left: {
+        label: 'Say it first',
+        tags: ['loyal', 'flirt'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'It falls out sideways — “I sort of, like, love, you know” — a sentence with a puncture. {partner} gets it. Grammar was never the point. Still, ouch.', effects: { rizz: 2, bond: 2, burnout: 2 } },
+          good: { text: 'You say it plainly, no run-up, no camera-glance. A beat of terror, then {partner} says it back like they’d been holding it too. The terrace exhales.', effects: { bond: 6, loyalty: 5 } },
+          incredible: { text: 'You say it and mean it and don’t need it returned to be true — which is exactly why it comes straight back, doubled. Some things are only safe to say once you’ve stopped needing the answer.', effects: { bond: 9, loyalty: 8 } },
+        },
+      },
+      right: {
+        label: 'Show it, don’t say it',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You do the grand gesture instead of the small sentence, and {partner} spends the night wondering why you can plan a picnic but not finish a sentence. Actions, mistranslated.', effects: { loyalty: 2, bond: 1, burnout: 2 } },
+          good: { text: 'You let the week’s hundred small proofs stand in for the words — the tea, the coat, the standing-between-them-and-it. {partner} reads every one. The phrase can wait.', effects: { bond: 5, loyalty: 5 } },
+          incredible: { text: 'You never say it and never need to: by the Final, {partner} tells the Beach Hut they’ve never felt more loved by someone who hasn’t used the word. A language with no vocabulary.', effects: { bond: 8, loyalty: 7, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_first_follow', act: 3, tags: ['banter', 'chat'],
+    art: 'li_daybed',
+    context: 'Afternoon · the group chat that doesn’t exist yet',
+    prompt: 'Someone raises the thing nobody’s said: the outside world has phones in it. Numbers are being swapped, a group chat drafted in principle, and “who’s following who back” has become a delicate diplomatic matter on the daybed. Friendships are about to become URLs.',
+    recap: 'The daybed drafts the post-villa group chat — who follows who back.',
+    choices: {
+      left: {
+        label: 'Keep the real ones',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You promise everyone a lifelong friendship and realise, mid-promise, you’ve pledged eleven weekly catch-ups you cannot possibly attend. The maths of loyalty is unforgiving.', effects: { loyalty: 2, bond: 1, burnout: 2 } },
+          good: { text: 'You quietly tell the two people who actually mattered that you mean it — no group-chat theatre, just a real plan to meet once the cameras are gone. Friendship, filtered for keeps.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: 'You’re the one who keeps the villa together after — the chat that stays alive, the reunions that actually happen. Years later they’ll credit you as the glue. It started on this daybed.', effects: { loyalty: 8, bond: 5, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Play the room',
+        tags: ['strategy', 'camera'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You network the daybed like a conference and someone clocks the LinkedIn energy. “You collecting us?” asks {mate}. A little. It’s going great, apart from that.', effects: { savvy: 2, followers: 3, public: -2, burnout: 2 } },
+          good: { text: 'You lock in the useful connections with warmth genuine enough to pass — the ones with reach, the ones with brands, the ones with staying power. Portfolio, diversified.', effects: { savvy: 5, followers: 4 } },
+          incredible: { text: 'You leave the villa with every number worth having and not one person feeling farmed. The rare operator who can build a network that likes being built. Enviable, faintly sinister.', effects: { savvy: 8, followers: 6, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_compatibility_quiz', act: 3, tags: ['challenge', 'banter'],
+    art: 'li_challenge',
+    context: 'Final Week · “I’VE GOT A TEXT!!” · how well do you know them',
+    prompt: '“Islanders, today you’ll be tested on how well you REALLY know your other half. Get it wrong and everyone finds out. #knowyourpartner” — Buzzers, boards, and a quiz where the wrong answer to “their worst habit” starts an actual conversation later.',
+    recap: 'Got a text — a couples’ quiz on how well you know {partner}.',
+    choices: {
+      left: {
+        label: 'Play it honest',
+        tags: ['loyal', 'banter'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You answer “their worst habit” truthfully and the lawn gasps. Accurate, unfortunately. You’ll be unpacking that particular buzz on the daybed for a while.', effects: { loyalty: 2, bond: -1, burnout: 3 } },
+          good: { text: 'You nail the small stuff — the coffee order, the fear, the middle name they hate — and {partner} realises, board by board, exactly how closely you’ve been paying attention.', effects: { loyalty: 5, bond: 5 } },
+          incredible: { text: 'You get the impossible one right — the thing they’ve never told anyone in the villa — and the game stops being a game. {partner} looks at you like you read a diary. You just listened.', effects: { loyalty: 8, bond: 7, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Play it for laughs',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You clown the answers for the cameras and get the easy one wrong for real. “You don’t know my STARSIGN?” The bit curdles into a genuine dig.', effects: { charisma: 2, followers: 2, bond: -2, burnout: 2 } },
+          good: { text: 'You turn the quiz into the funniest segment of the week — absurd answers that somehow reveal you know the real ones perfectly. Comedy as flex.', effects: { charisma: 5, followers: 4 } },
+          incredible: { text: 'Your wrong-on-purpose answers land so well the clip out-rates the winners’ round, and you STILL sweep the real questions. Funny and devoted: the finalist double.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_ex_amends', act: 3, tags: ['chat', 'drama', 'encounter'],
+    art: 'li_firepit_day',
+    context: 'Final Week · unfinished business · one last chat with {ex}',
+    prompt: '“Can we not leave it like this,” says {ex}, catching you by the kitchen before the Final. Weeks of frost, and now there’s a coach coming and no time left to be cold in. Whatever happened between you happened on camera. This part doesn’t have to.',
+    recap: '{ex} catches you before the Final: ‘Can we not leave it like this.’',
+    choices: {
+      left: {
+        label: 'Make peace',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'The apology tour reopens the wound instead of closing it — you relitigate the recoupling, name dates, cite footage. Closure was the goal. Discovery was the result.', effects: { loyalty: 2, drama: 3, burnout: 3 } },
+          good: { text: '“I’m sorry for how I did it, not that I did it.” Honest, no grovelling, no rewriting. {ex} takes it. The frost breaks clean, with nobody watching for once.', effects: { loyalty: 5, public: 4, selfrespect: 3 } },
+          incredible: { text: 'You two say the real things at last and walk out mates — the Season’s bitterest fallout, resolved off-camera, for its own sake. The kind of ending the edit never gets to use. Good.', effects: { loyalty: 8, public: 6, selfrespect: 4 } },
+        },
+      },
+      right: {
+        label: 'Keep the distance',
+        tags: ['strategy', 'loyal'],
+        governingStats: { savvy: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: 'You keep it civil and cold, and {ex} reads the wall as arrogance. “Typical,” they mutter to {mate}. The story you leave behind writes itself, unkindly.', effects: { savvy: 2, public: -2, burnout: 2 } },
+          good: { text: 'You’re polite, brief, and unmovable — no drama, no false hug, no material. Some bridges don’t need rebuilding, just leaving standing. You leave it standing.', effects: { savvy: 5, selfrespect: 4 } },
+          incredible: { text: 'You decline the reconciliation without a single sharp word, and somehow that dignity reads louder than any hug would have. Grace isn’t always a handshake. Sometimes it’s a clean exit.', effects: { savvy: 8, public: 4, selfrespect: 5 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_last_laundry', act: 3, tags: ['rest', 'chat'],
+    art: 'li_pool',
+    context: 'Morning · the washing line · swimwear coming down for the last time',
+    prompt: 'The washing line is where the villa does its thinking, and this morning it’s emptying — everyone quietly unpegging the swimwear they arrived in, folding a summer into a suitcase. {mate} is at the other end, holding one sock and a bit of a wobble. The line’s never been this honest.',
+    recap: 'The washing line empties — the villa folding a summer into suitcases.',
+    choices: {
+      left: {
+        label: 'Have the wobble with them',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You both go at once and now there are two of you crying into shared laundry, unable to tell whose bikini is whose. Cathartic. Damp. Logistically confusing.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
+          good: { text: 'You put the sock down and let {mate} say the thing they’ve been holding since Casa. The line hears it all, keeps it, and you fold the rest in comfortable silence.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: 'A quiet ten minutes at the line does what six weeks of firepits couldn’t — {mate} tells you what this place actually gave them. The realest exit interview, conducted over pegs.', effects: { loyalty: 8, bond: 5, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Keep it light',
+        tags: ['banter', 'rest'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You crack a joke to dodge the feeling and {mate}’s face falls — they needed the moment, not the bit. Wrong tool, tender job. You course-correct, slowly.', effects: { charisma: 2, bond: -1, burnout: 2 } },
+          good: { text: 'You get {mate} laughing about the state of the communal laundry basket, and the wobble passes without a spiral. Sometimes the kindest thing is refusing to make it a scene.', effects: { charisma: 5, bond: 3, burnout: -2 } },
+          incredible: { text: 'You turn the sad little laundry ritual into the villa’s last great laugh — a fashion parade of six weeks’ worth of ruined swimwear. They needed a giggle, not a grief. You read it right.', effects: { charisma: 8, bond: 4, followers: 4, burnout: -3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_final_morning', act: 3, tags: ['rest', 'loyal'],
+    art: 'li_kitchen',
+    context: 'The Final · dawn · the villa is unbearably quiet',
+    prompt: 'Final day. The villa woke early and went strangely silent — no music, no shrieking, just the kettle and the enormity of it. {partner} is making two teas without being asked. In a few hours it’s all over, one way or the other. Right now it’s just a quiet kitchen and the last ordinary morning.',
+    recap: 'Final day dawn — the villa gone quiet, {partner} making two teas.',
+    choices: {
+      left: {
+        label: 'Hold the quiet',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You fill the silence with logistics — running order, outfit changes, what time the cars come. {partner} nods along, and the last calm hour goes on a schedule.', effects: { loyalty: 2, bond: 1, burnout: 2 } },
+          good: { text: 'You say nothing important and mean all of it — two teas, one step, the kitchen you’ll remember. The last ordinary morning, spent being ordinary together. Exactly right.', effects: { loyalty: 5, bond: 5, burnout: -3 } },
+          incredible: { text: 'You give the morning nothing but presence, and it becomes the memory you both keep over any ceremony — the quiet kitchen, the two mugs, the calm before the whole world came back.', effects: { loyalty: 8, bond: 7, burnout: -4 } },
+        },
+      },
+      right: {
+        label: 'Rally the villa',
+        tags: ['banter', 'loyal'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You try to hype the finalists and misread the room entirely — nobody wanted a pep rally at 6 a.m. The music you put on gets turned back off. Gently, but off.', effects: { charisma: 2, burnout: 3, public: 1 } },
+          good: { text: 'You get everyone up, teas round, one last daft dance in the kitchen to shake the nerves loose. The villa remembers how to laugh just in time for the cars.', effects: { charisma: 5, public: 4, bond: 2 } },
+          incredible: { text: 'You turn the terrified quiet into the send-off the Season deserved — the whole villa dancing badly in pyjamas before the biggest night of any of it. Nerves: routed.', effects: { charisma: 8, public: 6, followers: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_coach_blessing', act: 3, tags: ['chat', 'loyal', 'encounter'],
+    art: 'li_firepit',
+    context: 'Final Week · a text · someone’s going before the Final',
+    prompt: '“Listen — it’s you, yeah? For us, it’s you.” {mate} is packed, the car’s idling, and the couple who just missed the Final are spending their last thirty seconds handing you their blessing instead of sulking. The villa gets smaller. The stakes get realer.',
+    recap: '{mate} is off before the Final and hands you their blessing: ‘It’s you.’',
+    choices: {
+      left: {
+        label: 'Send them off right',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You get so emotional at the goodbye that {mate} ends up consoling YOU from inside the departing car. The window goes up on you mid-sob. Iconic. Backwards.', effects: { loyalty: 2, bond: 1, burnout: 2 } },
+          good: { text: 'You walk them to the car, say the true thing about what they brought to the place, and mean every word. {mate} leaves knowing they mattered here. They did.', effects: { loyalty: 5, bond: 4, public: 3 } },
+          incredible: { text: 'Your send-off is so warm the whole villa joins it — a proper guard of honour down the drive. {mate} leaves grinning, not grieving. You turned a dumping into a graduation.', effects: { loyalty: 8, bond: 5, public: 5 } },
+        },
+      },
+      right: {
+        label: 'Take the torch',
+        tags: ['strategy', 'loyal'],
+        governingStats: { savvy: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: 'You accept the endorsement a touch too readily and someone clocks the finalist already measuring the curtains. “Bit keen,” murmurs {rival}. Humility, mislaid.', effects: { savvy: 2, public: -2, burnout: 2 } },
+          good: { text: 'You take {mate}’s blessing as a responsibility, not a trophy — “then I’ll do it for both of us.” It lands. You leave them feeling part of whatever happens next.', effects: { savvy: 5, loyalty: 3, public: 3 } },
+          incredible: { text: 'You carry the dumped couple’s hopes into the Final and say so, on live TV, by name. Nobody who left this Season gets forgotten on your watch. The nation notes the loyalty, and votes it.', effects: { savvy: 6, loyalty: 5, public: 7 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_final_reassure', act: 3, tags: ['loyal', 'flirt'],
+    art: 'li_daybed',
+    context: 'Final Week · {partner} has gone quiet · doubt at the finish line',
+    prompt: '“Be honest,” says {partner}, not looking at you. “Is this only working because we’re in here?” The oldest villa fear, arriving at the worst possible moment — days from the outside, where it either survives daylight or it doesn’t. They need an answer that isn’t just a nice noise.',
+    recap: '{partner}, days from the outside: ‘Is this only working because we’re in here?’',
+    choices: {
+      left: {
+        label: 'Answer it straight',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You over-reassure — too fast, too smooth, too many words — and the smoothness itself sounds rehearsed. “Right,” says {partner}, unconvinced by a correct answer, badly delivered.', effects: { loyalty: 2, bond: 1, burnout: 3 } },
+          good: { text: '“I don’t know. But I want to find out with you, out there.” No guarantees, no salesmanship — just honest uncertainty, chosen out loud. It lands harder than a promise would.', effects: { bond: 6, loyalty: 5 } },
+          incredible: { text: 'You don’t argue them out of the fear — you name it, share it, and choose them inside it anyway. {partner} stops doubting mid-sentence. You can’t fake picking someone with your eyes open.', effects: { bond: 8, loyalty: 8 } },
+        },
+      },
+      right: {
+        label: 'Show them the plan',
+        tags: ['loyal', 'strategy'],
+        governingStats: { loyalty: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You answer the emotional question with a logistics answer — postcodes, weekends, whose flat. Practical. Also somehow the least reassuring thing you could have reached for.', effects: { savvy: 2, bond: 1, burnout: 2 } },
+          good: { text: 'You lay out the actual outside — the dates, the drive, the first normal Tuesday — until the abstract fear has a train timetable through it. Concrete beats comfort. {partner} breathes.', effects: { bond: 5, savvy: 3, loyalty: 3 } },
+          incredible: { text: 'You turn the wobble into a shared blueprint for month one, so specific and certain that {partner} stops asking if it’s real and starts asking what to pack. Doubt, engineered out.', effects: { bond: 8, loyalty: 6, savvy: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_kitchen_slow_dance', act: 3, tags: ['flirt', 'date'],
+    art: 'li_kitchen',
+    context: 'Late night · the kitchen · a song neither of you chose',
+    prompt: 'A track comes on the villa speakers that means nothing to anyone except, apparently, you and {partner} — the one that was playing the night it all clicked. The kitchen’s empty. Everyone else is asleep. {partner} holds out a hand without a word. The washing-up can wait.',
+    recap: 'The song from the night it clicked comes on — {partner} holds out a hand.',
+    choices: {
+      left: {
+        label: 'Dance it out',
+        tags: ['flirt', 'date'],
+        governingStats: { rizz: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You go for the cinematic dip and clip the open dishwasher door. The dance survives on a technicality. So does the ankle. Barely a slow number after that.', effects: { rizz: 2, bond: 2, burnout: 2 } },
+          good: { text: 'No choreography, no audience, just a slow shuffle round the kitchen island to a song that’s quietly become yours. The best three minutes the villa didn’t schedule.', effects: { rizz: 5, bond: 5 } },
+          incredible: { text: 'You dance in an empty kitchen at 2 a.m. like the cameras aren’t there, and it becomes the clip the whole Season is remembered by. Unstaged, unrepeatable, undeniable.', effects: { rizz: 8, bond: 6, public: 5, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Just hold on',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You sway in place a bit too solemnly and {partner} giggles — “we’re not at a funeral, babe.” The mood recovers. It was very nearly a candlelit vigil.', effects: { loyalty: 2, bond: 2, burnout: 1 } },
+          good: { text: 'You skip the dancing and just hold {partner} while the song plays out, foreheads together, saying nothing. Some songs don’t want moves. They want stillness.', effects: { bond: 6, loyalty: 4, burnout: -2 } },
+          incredible: { text: 'You hold each other through the whole track and past it, into the silence after, and neither of you moves to fill it. The song ends. Whatever it started doesn’t.', effects: { bond: 9, loyalty: 6, burnout: -3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_beachhut_confession', act: 3, tags: ['camera', 'chat'],
+    art: 'li_beachhut',
+    context: 'The Beach Hut · the honest question about winning',
+    prompt: 'The Beach Hut asks the one you’ve been avoiding: “Do you want to win?” Simple question, dangerous answer. Say yes and you’re a game-player. Say no and you’re lying to the nation. The chair creaks. The little red light waits for whichever version of you shows up.',
+    recap: 'Beach Hut asks the dangerous one: ‘Do you want to win?’',
+    choices: {
+      left: {
+        label: 'Tell the truth',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You get so tangled trying to want-it-but-humbly that you contradict yourself twice in one breath. The edit keeps every u-turn. Sincerity, buffering.', effects: { loyalty: 2, public: 1, burnout: 2 } },
+          good: { text: '“Honestly? I’d love it. But I already got the bit I came for.” You nod at the door {partner}’s behind. Wanting to win and not needing to — the answer the vote respects most.', effects: { loyalty: 5, public: 5, bond: 2 } },
+          incredible: { text: 'You give an answer so honest about ambition and so unbothered about losing that it reframes the whole finale. The Hut confession the show closes the episode on. That’s the win, pre-loaded.', effects: { loyalty: 8, public: 7, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Deflect it charming',
+        tags: ['camera', 'banter'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You do a bit to duck the question and it reads as slippery on the sofa at home. “Just answer it,” the nation mutters, unamused, at the fixed grin.', effects: { charisma: 2, followers: 2, public: -2, burnout: 2 } },
+          good: { text: '“I want everyone to win. I especially want ME to win.” You get the laugh AND the honesty in one line. The Hut’s best trick: the truth, disguised as a dodge.', effects: { charisma: 5, followers: 4, public: 3 } },
+          incredible: { text: 'Your non-answer is quoted more than anyone else’s answer — funny, humble, and secretly the most confident thing said all week. You dodged the question into a headline.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_hidden_notes', act: 3, tags: ['loyal', 'banter'],
+    art: 'li_bedroom',
+    context: 'Final Week · packing · a pen and a secret',
+    prompt: 'While everyone’s at the pool, you’ve got the dorm to yourself and a stack of Post-its. The villa tradition nobody admits to: hiding little notes in your mates’ luggage for them to find weeks later, back in the real world, when they need it most. {mate}’s case is open. The pen is loaded.',
+    recap: 'Alone in the dorm with Post-its — the secret-note-in-the-luggage tradition.',
+    choices: {
+      left: {
+        label: 'Write them the real thing',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You get so heartfelt you fill {mate}’s wash bag with confessional Post-its, one of which they’ll find, mortifyingly, at airport security. The sentiment survives the strip-search.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
+          good: { text: 'You leave three small true notes in three cases — the specific thing each mate won’t believe about themselves till they read it in your handwriting on a bad Tuesday. Kindness, time-released.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: 'Weeks later the group chat lights up: everyone’s found their note, on the exact rough day they needed it, and nobody can work out how you knew. You didn’t. You just paid attention here.', effects: { loyalty: 8, bond: 5, public: 4 } },
+        },
+      },
+      right: {
+        label: 'Leave them a bit',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'Your prank notes land while a mate’s unpacking on their own live stream, and one joke reads a lot worse without your face attached. Context: left in the villa. Note: viral.', effects: { charisma: 2, followers: 3, public: -2, burnout: 2 } },
+          good: { text: 'You hide daft in-jokes in every case — the running gags, the callbacks, the nicknames — so six weeks of villa nonsense keeps ambushing them for months. Comedy, smuggled home.', effects: { charisma: 5, bond: 3, followers: 3 } },
+          incredible: { text: 'Your hidden bits become a legend the whole cast keeps finding for a year — a note in a ski boot, one in a wedding suit. You turned goodbyes into a slow-release joke nobody sees coming.', effects: { charisma: 8, followers: 5, bond: 4 } },
+        },
+      },
+    },
+  },
 ];

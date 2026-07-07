@@ -656,4 +656,614 @@ export const WEB_EVENTS: GameEvent[] = [
       },
     },
   },
+
+  // ---------- THE SITUATIONSHIP — Tyler & Meg ----------
+  {
+    id: 'li_web_situationship_0', act: [1, 2], tags: ['web:situationship', 'encounter', 'chat'],
+    requires: { threadStageIs: 'situationship:0' },
+    art: 'li_kitchen',
+    context: 'The kitchen · Meg is being extremely chill about it',
+    prompt: '“We’re not, like, a THING,” Meg tells you, chopping a pepper into increasingly small pieces. “It’s casual. I’m so casual. He called me ‘pal’ yesterday and I said ‘pal’ back and then cried in the pantry. But casual.” Across the garden, Tyler winks at the weather.',
+    recap: 'Meg insists she and Tyler are ‘so casual’ while dicing a pepper to dust.',
+    choices: {
+      left: {
+        label: 'Tell her she deserves a straight answer',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: '“Define it? God no, that’s so intense,” Meg says, then defines it four times to the pepper. You’ve started something. The pepper is a witness.', effects: { threadBeat: 'situationship', addFlag: 'li_web_situationship_in', loyalty: 2, burnout: 2 } },
+          good: { text: '“You’re allowed to want a straight answer.” Meg stops chopping. “…Am I though.” “Yeah.” She sets the knife down like it’s a decision.', effects: { bond: 4, threadBeat: 'situationship', addFlag: 'li_web_situationship_in', loyalty: 5, selfrespect: 2 } },
+          incredible: { text: '“He says ‘pal,’ you cry in the pantry. That’s not casual, that’s a hostage situation with snacks.” Meg laughs, then goes quiet. “I’m gonna ask him.” A spine boots up.', effects: { bond: 5, threadBeat: 'situationship', addFlag: 'li_web_situationship_in', loyalty: 8, selfrespect: 3 } },
+        },
+      },
+      right: {
+        label: 'Let her keep her cool',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 0.7, loyalty: 0.3 },
+        outcomes: {
+          bad: { text: 'You nod along to “so casual” so supportively that Meg doubles down and the pepper becomes paste. Nobody has helped anybody.', effects: { threadBeat: 'situationship', savvy: 2, burnout: 2 } },
+          good: { text: 'Some people find the words on their own clock. You leave Meg, the pepper, and the enormous unspoken thing to marinate. Not your kitchen to run.', effects: { burnout: -4, threadBeat: 'situationship', savvy: 5 } },
+          incredible: { text: 'You say nothing and quietly move the tissues within reach. Meg clocks it. “You think I’m gonna need those.” You think she’s gonna need those. She keeps them close.', effects: { burnout: -6, threadBeat: 'situationship', savvy: 8, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_situationship_1', act: [1, 2], tags: ['web:situationship', 'encounter', 'gossip'],
+    requires: { threadStageIs: 'situationship:0' },
+    art: 'li_daybed',
+    context: 'The daybed · {mate} has a theory and a timeline',
+    prompt: '“Right, don’t say I said,” {mate} says, saying it. “Tyler told the lads Meg’s ‘a laugh, but not, like, THE laugh.’ Meg’s telling the girls she’s ‘lowkey obsessed.’ They’re having two different situationships. In the same one.”',
+    recap: '{mate} clocks that Tyler and Meg are in two different situationships at once.',
+    choices: {
+      left: {
+        label: 'Warn Meg what he said',
+        tags: ['code', 'loyal'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You get to “not, like, THE laugh” and Meg’s face falls, then reassembles into “I KNEW that, obviously.” She did not know that. Now she knows you know.', effects: { threadBeat: 'situationship', addFlag: 'li_web_situationship_in', loyalty: 2, burnout: 2 } },
+          good: { text: '“I’d want to know,” you say, no garnish. Meg nods slowly. “Yeah. Me too.” She stops laughing at his jokes for a full afternoon. Rehearsing something.', effects: { bond: 4, threadBeat: 'situationship', addFlag: 'li_web_situationship_in', loyalty: 5, selfrespect: 2 } },
+          incredible: { text: '“You’re THE laugh,” you tell her. “He just hasn’t got the nerve to be funny back.” Meg files it somewhere load-bearing. The next move is hers, and she knows it now.', effects: { bond: 5, threadBeat: 'situationship', addFlag: 'li_web_situationship_in', loyalty: 8, selfrespect: 3 } },
+        },
+      },
+      right: {
+        label: 'Stay out of the crossfire',
+        tags: ['strategy', 'rest'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You keep the intel and immediately look shifty every time Tyler walks past. Meg asks why your face is “doing a thing.” Your face is doing a thing.', effects: { threadBeat: 'situationship', savvy: 2, burnout: 2 } },
+          good: { text: 'Two people describing the same non-relationship differently isn’t your file to open. You hand {mate} back the gossip, unspent.', effects: { threadBeat: 'situationship', savvy: 5, graft: 2 } },
+          incredible: { text: 'You let it lie — and watch it resolve itself by Thursday without a single fingerprint of yours on it. The cleanest kind of clever: absent.', effects: { threadBeat: 'situationship', savvy: 8, graft: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_sit_called', act: 2, tags: ['web:situationship', 'chat'],
+    requires: { threadStageIs: 'situationship:1', flagsAll: ['li_web_situationship_in'] },
+    art: 'li_firepit',
+    context: 'The firepit · Meg, unexpectedly, stands up',
+    prompt: '“Tyler. Quick one.” Meg’s voice doesn’t wobble, which is new. “I like you. Properly. If you’re just here for a laugh, fair enough — but I’m done doing ‘pal.’” Tyler opens his mouth. The garden leans in for the winker’s first-ever sincere sentence.',
+    recap: 'Meg calls it at the firepit: she’s done being Tyler’s ‘pal.’',
+    choices: {
+      left: {
+        label: 'Have her back',
+        tags: ['loyal', 'banter'],
+        governingStats: { charisma: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: 'You whoop one beat too early and Tyler jumps. He recovers with a wink, which is the wrong tool. Meg clocks it. So does the nation. So do you.', effects: { threadResolve: 'situationship:called', romantics: 2, drama: 2, burnout: 2 } },
+          good: { text: 'You hold the silence with her. Tyler, cornered into honesty, manages: “I don’t do this. I’d… like to do this.” Meg exhales a week of held breath.', effects: { bond: 4, threadResolve: 'situationship:called', selfrespect: 3, romantics: 2 } },
+          incredible: { text: '“Say it without a wink,” you tell Tyler, kindly. He does. It’s clumsy and true and the worst delivery all season. Meg keeps it. So does the nation’s spine wing.', effects: { bond: 5, threadResolve: 'situationship:called', selfrespect: 4, romantics: 3, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Let it be their moment',
+        tags: ['rest', 'loyal'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You give them privacy so hard you back into a bin. The clip is you and the bin. Meg’s moment airs; so does the bin. The bin trends.', effects: { threadResolve: 'situationship:called', selfrespect: 2, burnout: 2, followers: 2 } },
+          good: { text: 'You look away and let a brave sentence be someone else’s. Meg finds you later: “Thanks for not making it a bit.” From Meg, that’s a medal.', effects: { threadResolve: 'situationship:called', selfrespect: 3, romantics: 2, bond: 4 } },
+          incredible: { text: 'You catch Meg’s eye once — just once — and nod. She squares her shoulders and finishes it herself. The autonomy is the gift. She never forgets who gave it.', effects: { threadResolve: 'situationship:called', selfrespect: 4, romantics: 2, graft: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_sit_strung', act: 2, tags: ['web:situationship', 'chat'],
+    requires: { threadStageIs: 'situationship:1', flagsNone: ['li_web_situationship_in'] },
+    art: 'li_lawn',
+    context: 'The lawn · nothing gets said, expensively',
+    prompt: 'It doesn’t resolve so much as continue. Tyler winks; Meg laughs; neither says the sentence. “We’re good,” Meg announces to no one who asked. The situationship rolls into another week like fog that’s developed a personality.',
+    recap: 'Tyler and Meg say nothing, and the situationship fogs onward.',
+    choices: {
+      left: {
+        label: 'Rate the non-relationship with {mate}',
+        tags: ['banter', 'chat'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“It’s not a couple, it’s a group project nobody’s doing,” you say — as Meg rounds the daybed. The sentence goes into witness protection. Her face doesn’t.', effects: { threadResolve: 'situationship:strung', drama: 2, burnout: 2 } },
+          good: { text: '“Longest ‘we’re good’ in villa history,” {mate} says. You clink mugs to the couples running purely on avoidance. Grim work, but someone’s got to commentate.', effects: { threadResolve: 'situationship:strung', charisma: 3, followers: 2, drama: 1 } },
+          incredible: { text: 'You and {mate} do a full weather report on “Storm Casual — no landfall expected.” The Hut runs it as a segment. The fog remains, undefeated, undefined.', effects: { threadResolve: 'situationship:strung', charisma: 4, followers: 5, drama: 2 } },
+        },
+      },
+      right: {
+        label: 'Leave them to the fog',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 0.7, loyalty: 0.3 },
+        outcomes: {
+          bad: { text: 'You mind your business so hard you miss Meg trying to catch your eye for backup. By the time you look up, she’s laughing at another wink. Chance gone.', effects: { threadResolve: 'situationship:strung', savvy: 2, burnout: 2 } },
+          good: { text: 'Not every fog needs a forecaster. You let the two of them drift and put your energy where a real answer might actually land — your own couple.', effects: { threadResolve: 'situationship:strung', savvy: 5, bond: 3 } },
+          incredible: { text: 'You say nothing and simply out-couple them — visibly, boringly, honestly — until the contrast does the talking. Meg watches you two and, quietly, recalculates.', effects: { threadResolve: 'situationship:strung', savvy: 6, bond: 5, romantics: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- THE POLITE ONES — Reece & Priya ----------
+  {
+    id: 'li_web_polite_0', act: [1, 2], tags: ['web:politeones', 'encounter', 'chat'],
+    requires: { threadStageIs: 'politeones:0' },
+    art: 'li_daybed',
+    context: 'The daybed · a couple so agreeable it’s alarming',
+    prompt: 'Reece and Priya have never had a cross word, which the villa finds either beautiful or suspicious. “We just, like, GET each other,” Priya says. “Totally,” says Reece, about a film he clearly hasn’t seen. They agree on everything. Neither can name their partner’s favourite anything.',
+    recap: 'Reece and Priya agree on everything and know nothing about each other.',
+    choices: {
+      left: {
+        label: 'Ask them one real question',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: '“What scares you?” you ask. Reece says “spiders?” like a question. Priya says “same.” They high-five. You have learned nothing and neither, alarmingly, have they.', effects: { threadBeat: 'politeones', addFlag: 'li_web_politeones_in', charisma: 2, burnout: 2 } },
+          good: { text: '“When did you last disagree?” Silence. Reece: “…I don’t actually like the beach.” Priya turns, delighted and betrayed: “We’ve been to the beach FOUR times.” A first crack of something real.', effects: { bond: 4, threadBeat: 'politeones', addFlag: 'li_web_politeones_in', charisma: 5, romantics: 2 } },
+          incredible: { text: 'One real question and the dam goes. Turns out he hates her favourite band; she thinks his laugh is “a lot.” They argue for the first time — and light up doing it. You’ve unlocked them.', effects: { bond: 5, threadBeat: 'politeones', addFlag: 'li_web_politeones_in', charisma: 6, romantics: 3, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Leave the nice couple alone',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 0.7, loyalty: 0.3 },
+        outcomes: {
+          bad: { text: 'You decide harmony’s not a crime and wander off — into a genuine row by the pool, which you’d rather not have found. Should’ve stayed with the nice ones.', effects: { threadBeat: 'politeones', savvy: 2, burnout: 2 } },
+          good: { text: 'Maybe easy is just easy. You let the agreeable ones be agreeable and take your coffee somewhere with less consensus and more content.', effects: { burnout: -4, threadBeat: 'politeones', savvy: 5 } },
+          incredible: { text: 'You watch them finish each other’s bland sentences and decide the experiment can run itself. Some couples are a documentary you don’t need to narrate.', effects: { burnout: -6, threadBeat: 'politeones', savvy: 8, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_polite_1', act: [1, 2], tags: ['web:politeones', 'encounter', 'chat'],
+    requires: { threadStageIs: 'politeones:0' },
+    art: 'li_terrace',
+    context: 'The terrace · Priya, quietly, to you',
+    prompt: '“Can I be honest?” Priya keeps her voice low. “Reece is lovely. Genuinely. But I don’t know if it’s a spark or if we’re both just… well-mannered. Is that mad? Everyone says we’re the safe couple like it’s a compliment.” She watches Reece agree with someone across the lawn.',
+    recap: 'Priya admits she can’t tell if it’s a spark or just good manners.',
+    choices: {
+      left: {
+        label: '“Poke it and find out”',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“Start a fight, on purpose?” Priya looks scandalised, then intrigued, then guilty, then intrigued again. You may have taught a sweetheart chaos. Sorry, villa.', effects: { threadBeat: 'politeones', addFlag: 'li_web_politeones_in', loyalty: 2, burnout: 2 } },
+          good: { text: '“Safe isn’t the same as sure,” you say. “Have one honest row and see if you miss him after.” Priya nods slowly. “…That’s terrifying advice.” It is. It’s also right.', effects: { bond: 4, threadBeat: 'politeones', addFlag: 'li_web_politeones_in', loyalty: 5, romantics: 2 } },
+          incredible: { text: '“Politeness is a lovely place to visit,” you tell her. “Don’t buy a flat there.” Priya laughs, properly, for once not checking who heard. She’s going to poke it. Good.', effects: { bond: 5, threadBeat: 'politeones', addFlag: 'li_web_politeones_in', loyalty: 8, romantics: 3 } },
+        },
+      },
+      right: {
+        label: '“Nice is underrated”',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You champion nice so hard Priya feels obliged to stay nice, which is the opposite of clarity. You’ve talked her back into the fog. Kindly. Uselessly.', effects: { threadBeat: 'politeones', loyalty: 2, burnout: 2 } },
+          good: { text: '“Half this villa would kill for boring,” you say. Priya considers it. “Maybe I’m looking for a problem.” Maybe. You’ve at least given calm a fair hearing.', effects: { threadBeat: 'politeones', loyalty: 5, romantics: 1 } },
+          incredible: { text: '“You don’t need fireworks,” you say, “you need to know if you’d pick him on a bad day.” Priya goes quiet. That’s the actual question, and now it’s hers.', effects: { threadBeat: 'politeones', loyalty: 6, romantics: 2, selfrespect: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_polite_spark', act: 2, tags: ['web:politeones', 'drama'],
+    requires: { threadStageIs: 'politeones:1', flagsAll: ['li_web_politeones_in'] },
+    art: 'li_firepit',
+    context: 'The firepit · the polite ones have their first row',
+    prompt: 'It arrives over something absurd — the correct way to load a dishwasher — and escalates into the first real thing they’ve ever said to each other. “You never actually TELL me anything,” Priya says. “Because you AGREE with everything, that’s the problem.” The villa braces. Then, mid-row, they both start laughing. Oh. There it is.',
+    recap: 'Reece and Priya’s first proper row turns into their first real spark.',
+    choices: {
+      left: {
+        label: 'Toast the breakthrough',
+        tags: ['banter', 'loyal'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You applaud a couple’s first fight, which sounds worse out loud than in your head, as several faces inform you. Priya, at least, gets the bit. Reece is still on dishwashers.', effects: { threadResolve: 'politeones:spark', romantics: 2, drama: 2, burnout: 2 } },
+          good: { text: '“That’s the most I’ve ever seen you two feel,” you say. Priya grins. “I know. It’s horrible. I love it.” A safe couple just became an interesting one.', effects: { bond: 4, threadResolve: 'politeones:spark', romantics: 3, charisma: 3 } },
+          incredible: { text: '“Never trust a couple that’s never argued about a dishwasher,” you announce. The garden howls. Reece and Priya, hand in hand and still bickering, become the villa’s dark horse.', effects: { bond: 5, threadResolve: 'politeones:spark', romantics: 4, charisma: 4, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Measure it against your own couple',
+        tags: ['date', 'chat'],
+        governingStats: { loyalty: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: '“Do WE ever properly argue?” you ask {partner}, who panics: “We’re arguing now?” You’re not. You are now. The polite disease is catching.', effects: { threadResolve: 'politeones:spark', romantics: 2, bond: 2, burnout: 2 } },
+          good: { text: 'Watching them find heat in a row makes you check your own. The audit’s reassuring: you and {partner} disagree fine, and mean it, and stay. Nice to know it’s real.', effects: { threadResolve: 'politeones:spark', romantics: 2, bond: 6 } },
+          incredible: { text: '“Promise me we’ll fight about a dishwasher one day,” you tell {partner}. “We don’t have a dishwasher.” “Then we’re already winning.” The realest vow said as a joke.', effects: { threadResolve: 'politeones:spark', romantics: 3, bond: 6 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_polite_fade', act: 2, tags: ['web:politeones', 'chat'],
+    requires: { threadStageIs: 'politeones:1', flagsNone: ['li_web_politeones_in'] },
+    art: 'li_lawn',
+    context: 'The lawn · the nicest breakup you’ll ever see',
+    prompt: 'It ends the way it ran: politely. “I think we’re better as mates,” says Priya. “Honestly, same,” says Reece, and means it, and they hug like people who were never quite anything. No tears. The villa doesn’t know whether to clap. Neither, really, do they.',
+    recap: 'Reece and Priya agree, amicably, that they were only ever mates.',
+    choices: {
+      left: {
+        label: 'Sit with Priya after',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: '“Are you okay?” you ask. “That’s the thing,” Priya says, “I’m completely fine, and that’s how I know.” You’ve no comfort to give a wound that never opened.', effects: { threadResolve: 'politeones:fade', loyalty: 2, romantics: 1, burnout: 2 } },
+          good: { text: '“Better to find out now than in a flat in Croydon,” you say. Priya laughs, relieved. “God, yeah.” Sometimes the kindest ending is the one nobody cried at.', effects: { bond: 4, threadResolve: 'politeones:fade', loyalty: 5, romantics: 2 } },
+          incredible: { text: '“You didn’t lose a spark,” you tell her, “you just stopped pretending to look for one.” Priya sits with that. “That’s… annoyingly healthy.” She leaves lighter than she arrived.', effects: { bond: 5, threadResolve: 'politeones:fade', loyalty: 8, selfrespect: 2 } },
+        },
+      },
+      right: {
+        label: 'Note the lesson for yourself',
+        tags: ['date', 'strategy'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You get so philosophical about “comfortable isn’t the same as connected” that {partner} asks if you’re breaking up with them. You are not. Probably clarify that.', effects: { threadResolve: 'politeones:fade', bond: -2, burnout: 2 } },
+          good: { text: 'Their tidy ending makes you check yours isn’t just tidy too. It isn’t — there’s heat under the calm. You go find {partner} to make sure it stays lit.', effects: { threadResolve: 'politeones:fade', bond: 5, romantics: 2 } },
+          incredible: { text: '“Nice couples fade; real ones argue about dishwashers,” you tell {partner}, quoting no one. They laugh. You both quietly resolve never to be the safe couple. Noted, banked.', effects: { threadResolve: 'politeones:fade', bond: 6, romantics: 2, selfrespect: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- THE PODCAST — Jamal, narrating his own heart ----------
+  {
+    id: 'li_web_podcast_0', act: 2, tags: ['web:podcast', 'encounter', 'chat'],
+    requires: { threadStageIs: 'podcast:0' },
+    art: 'li_daybed',
+    context: 'The daybed · Jamal is recording an episode in his head',
+    prompt: '“So the way I see it,” Jamal says, to you, in his podcast voice, “this villa’s a case study in modern connection, and I’m — call it — the neutral observer.” He is not neutral. He fancies Priya so hard he narrates it. “Anyway. Big questions this week. No feelings, just analysis.”',
+    recap: 'Jamal narrates his own crush like it’s a podcast segment.',
+    choices: {
+      left: {
+        label: '“Drop the mic and just tell her”',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: '“It’s not a MIC, it’s a lens,” Jamal says, wounded, and does a whole segment on why he’s above having a crush. The segment is about having a crush. You let him finish.', effects: { threadBeat: 'podcast', addFlag: 'li_web_podcast_in', loyalty: 2, burnout: 2 } },
+          good: { text: '“You can’t narrate your way out of fancying someone, mate.” Jamal pauses the imaginary recording. “…Off the record?” “Off the record.” “I really like her.” There it is.', effects: { bond: 4, threadBeat: 'podcast', addFlag: 'li_web_podcast_in', loyalty: 5, romantics: 2 } },
+          incredible: { text: '“The bit’s a bunker,” you tell him. “You’re hiding in it.” Jamal goes quiet, then: “If I say it out loud it’s real and then it can go wrong.” “Yeah,” you say. “That’s the deal.”', effects: { bond: 5, threadBeat: 'podcast', addFlag: 'li_web_podcast_in', loyalty: 8, romantics: 3 } },
+        },
+      },
+      right: {
+        label: 'Play a guest on his podcast',
+        tags: ['banter', 'strategy'],
+        governingStats: { charisma: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You do a segment WITH him and it runs so long you both miss lunch. Content: made. Feelings: still buried, now with an intro and outro. You’ve enabled him.', effects: { threadBeat: 'podcast', charisma: 2, burnout: 2 } },
+          good: { text: '“Welcome back to the pod,” you deadpan, and interview him about “a hypothetical listener” who fancies someone. He answers as the listener. Confession by format. Sneaky.', effects: { threadBeat: 'podcast', charisma: 5, followers: 2 } },
+          incredible: { text: 'You conduct the interview so skilfully Jamal confesses everything believing it’s “analysis.” “Great guest,” he says, of himself. You’ve therapised a man who thinks he’s hosting.', effects: { threadBeat: 'podcast', charisma: 8, followers: 4, savvy: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_podcast_1', act: 2, tags: ['web:podcast', 'encounter', 'gossip'],
+    requires: { threadStageIs: 'podcast:0' },
+    art: 'li_kitchen',
+    context: 'The kitchen · the episode has a live studio audience now',
+    prompt: '{mate} pulls you aside. “Jamal’s doing the ‘neutral observer’ bit TO Priya now. To her face. He just called their chat ‘a fascinating dynamic.’ She said ‘are you alright?’ He’s one metaphor away from blowing it live on air.”',
+    recap: 'Jamal starts doing his neutral-observer bit directly at Priya.',
+    choices: {
+      left: {
+        label: 'Coach him before he airs it',
+        tags: ['code', 'loyal'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“Just say a normal sentence,” you beg. Jamal nods, approaches Priya, and opens with “statistically, we make sense.” Statistically, you tried. Statistically, he’s doomed.', effects: { threadBeat: 'podcast', addFlag: 'li_web_podcast_in', loyalty: 2, burnout: 2 } },
+          good: { text: '“Ditch ‘dynamic.’ Try ‘I like talking to you.’” Jamal repeats it like a foreign phrase. “I like talking to you.” “Now say it to HER.” He’s writing it on his hand. Progress.', effects: { bond: 4, threadBeat: 'podcast', addFlag: 'li_web_podcast_in', loyalty: 5, romantics: 2 } },
+          incredible: { text: '“She doesn’t want the host,” you tell him. “She wants the guy who forgets the mic exists.” Jamal actually hears it. He goes to find Priya without a single segment planned. Terrifying. Correct.', effects: { bond: 5, threadBeat: 'podcast', addFlag: 'li_web_podcast_in', loyalty: 8, romantics: 3 } },
+        },
+      },
+      right: {
+        label: 'Let the bit run its course',
+        tags: ['rest', 'banter'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You decide it’s must-watch telly and settle in — then feel a bit grubby when Priya looks genuinely confused. Ratings aren’t everything. You mute your own commentary.', effects: { threadBeat: 'podcast', savvy: 2, burnout: 2 } },
+          good: { text: 'Some men have to hear their own bit out loud to notice it’s daft. You let Jamal narrate himself into a corner and trust he’ll find the door.', effects: { threadBeat: 'podcast', savvy: 5, drama: 1 } },
+          incredible: { text: 'You say nothing and simply stop laughing at the segments. The silence does what advice couldn’t — Jamal hears himself, winces, and quietly retires the neutral observer.', effects: { threadBeat: 'podcast', savvy: 8, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_podcast_real', act: 2, tags: ['web:podcast', 'chat'],
+    requires: { threadStageIs: 'podcast:1', flagsAll: ['li_web_podcast_in'] },
+    art: 'li_firepit',
+    context: 'The firepit · Jamal, off the record, out loud',
+    prompt: '“No bit,” Jamal says, and puts down the imaginary mic for good. “Priya. I’ve been narrating this because narrating it felt safer than being in it. I’m not the neutral observer. I really like you. That’s the whole episode.” The villa has never heard him say a sentence without a callback.',
+    recap: 'Jamal drops the bit and tells Priya the plain truth.',
+    choices: {
+      left: {
+        label: 'Let the plain sentence land',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You’re so ready to cheer that you cheer over Priya’s answer, and everyone has to ask her to repeat it. She does. It’s a yes. You nearly narrated over a yes.', effects: { threadResolve: 'podcast:real', romantics: 2, burnout: 2, followers: 2 } },
+          good: { text: 'You keep quiet and let a nervous man land a true sentence. Priya smiles: “Finally. The pod was killing me.” Jamal laughs — no callback, just relief.', effects: { bond: 4, threadResolve: 'podcast:real', romantics: 3, selfrespect: 2 } },
+          incredible: { text: 'Nobody speaks. Jamal, for once, doesn’t fill the silence with content. Priya takes his hand. The man who narrates everything gets a moment too real to describe. He lets it be.', effects: { bond: 5, threadResolve: 'podcast:real', romantics: 4, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Save him if it flops',
+        tags: ['loyal', 'banter'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You leap in with a rescue joke before Priya’s even answered. She WAS going to say yes. Now she’s laughing at your joke instead. Timing, mate. Read the room, not the mic.', effects: { threadResolve: 'podcast:real', romantics: 1, drama: 2, burnout: 2 } },
+          good: { text: 'You’re braced to soften a rejection that never comes. Priya says yes; you stand down. “I had a whole bit ready,” you tell Jamal later. “Keep it,” he says. “For the wedding.”', effects: { threadResolve: 'podcast:real', romantics: 2, charisma: 3, bond: 3 } },
+          incredible: { text: 'You’re ready to catch him — and don’t need to. So you just start the applause at exactly the right second. A man dropped his armour and the landing was soft. You made sure of it.', effects: { threadResolve: 'podcast:real', romantics: 3, charisma: 4, followers: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_podcast_brand', act: 2, tags: ['web:podcast', 'banter'],
+    requires: { threadStageIs: 'podcast:1', flagsNone: ['li_web_podcast_in'] },
+    art: 'li_daybed',
+    context: 'The daybed · the bit becomes the brand',
+    prompt: 'Jamal never drops it. Instead he leans all the way in: “The Villa Pod, with your host, me.” He now interviews couples on the daybed, seriously, with a rolled-up towel for a mic. He never tells Priya. But the segments are, annoyingly, must-watch. The crush becomes content. The content becomes a career plan.',
+    recap: 'Jamal turns the whole crush into a daybed podcast bit instead of confessing.',
+    choices: {
+      left: {
+        label: 'Go on the pod, gently roast him',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You ask “any guests you fancy?” live on the towel-mic. Jamal freezes, recovers, says “no comment,” and it’s the realest thing the pod’s ever aired. Priya’s watching. Awkward. Great telly.', effects: { threadResolve: 'podcast:brand', drama: 3, charisma: 3, burnout: 2 } },
+          good: { text: '“Ever think of telling a guest how you feel?” you ask. “That’s not the format,” Jamal deflects, smooth as radio. The bit survives; the feelings don’t make the edit. His call.', effects: { threadResolve: 'podcast:brand', charisma: 5, followers: 3, drama: 2 } },
+          incredible: { text: 'You go full guest — “tell the listeners about your type” — and Jamal answers in perfect podcast neutral while describing Priya exactly. Everyone clocks it but him. Career: launched. Crush: archived.', effects: { threadResolve: 'podcast:brand', charisma: 8, followers: 5, drama: 3 } },
+        },
+      },
+      right: {
+        label: 'Respect the hustle, keep the counsel',
+        tags: ['strategy', 'rest'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You watch a man build a media empire to avoid one conversation and say nothing — until your face says everything, on camera, in the background of his intro. Sorry, Jamal.', effects: { threadResolve: 'podcast:brand', savvy: 2, drama: 2, burnout: 2 } },
+          good: { text: 'Some people would genuinely rather have a podcast than a partner, and honestly? Fair. You let Jamal host his way through it and quietly wish him a good launch.', effects: { threadResolve: 'podcast:brand', savvy: 5, graft: 2 } },
+          incredible: { text: 'You clock the whole play — the bit is the armour AND the exit strategy — and let him have it, untouched. He’ll thank the villa in episode one. You’ll be a footnote. Fine by you.', effects: { threadResolve: 'podcast:brand', savvy: 8, graft: 3 } },
+        },
+      },
+    },
+  },
+
+  // ---------- THE OLD FLAME — Ollie & Zara ----------
+  {
+    id: 'li_web_oldflame_0', act: [2, 3], tags: ['web:oldflame', 'encounter', 'drama'],
+    requires: { threadStageIs: 'oldflame:0' },
+    art: 'li_terrace',
+    context: 'The terrace · two bombshells, one suspiciously shared history',
+    prompt: 'Ollie and Zara have been introducing themselves to each other with the elaborate politeness of people who’ve absolutely met. “So nice to MEET you,” Zara says, for the third time. Later, alone with you: “We dated. Two years. Nobody knows. He asked me not to say.” The terrace suddenly has a plot.',
+    recap: 'Zara confides that she and bombshell Ollie secretly dated for two years.',
+    choices: {
+      left: {
+        label: 'Tell her to get ahead of it',
+        tags: ['code', 'strategy'],
+        governingStats: { savvy: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: '“Say it first,” you urge. Zara panics and says it to the wrong person — the villa’s loudest — and the secret goes public before she’s ready. You aimed right; she fired early.', effects: { threadBeat: 'oldflame', addFlag: 'li_web_oldflame_in', savvy: 2, drama: 2, burnout: 2 } },
+          good: { text: '“Secrets in here rot,” you tell her. “Own it before Movie Night owns it for you.” Zara nods, already drafting the sentence. “You’re right. God. I hate that you’re right.”', effects: { bond: 4, threadBeat: 'oldflame', addFlag: 'li_web_oldflame_in', savvy: 5, selfrespect: 2 } },
+          incredible: { text: '“Two years isn’t a secret, it’s a season finale waiting for a slot,” you say. “Pick your moment or the edit picks it for you.” Zara exhales. “Okay. Okay. I’ll tell him I’m telling.” The good kind of scary.', effects: { bond: 5, threadBeat: 'oldflame', addFlag: 'li_web_oldflame_in', savvy: 8, selfrespect: 3 } },
+        },
+      },
+      right: {
+        label: 'Guard the secret with her',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You swear to keep it and immediately develop the guiltiest face in the villa. “What do YOU know,” asks {mate}, delighted. Nothing. You know nothing. Your eyes disagree, loudly.', effects: { threadBeat: 'oldflame', loyalty: 2, burnout: 2 } },
+          good: { text: '“Your story, your timing,” you tell her. Zara relaxes an inch. Holding someone else’s two-year secret is heavy — but she trusts you with it now, and trust is villa gold.', effects: { threadBeat: 'oldflame', loyalty: 5, graft: 3 } },
+          incredible: { text: 'You keep it so completely that even when Ollie fishes — “you and Zara close?” — you give him weather and small talk. Zara watches you hold the line. An alliance, minted in silence.', effects: { threadBeat: 'oldflame', loyalty: 8, graft: 4, savvy: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_oldflame_1', act: [2, 3], tags: ['web:oldflame', 'encounter', 'chat'],
+    requires: { threadStageIs: 'oldflame:0' },
+    art: 'li_hideaway',
+    context: 'The Hideaway steps · Ollie, off guard, honest',
+    prompt: 'You find Ollie on the Hideaway steps looking like a man doing long division. “Can I be straight with you? Zara and me — we’ve got history. Big history. And I told myself I was over it right up until she walked through that door in slow motion. Now my head’s all over the shop.”',
+    recap: 'Ollie admits to you that seeing his ex Zara has turned his head completely.',
+    choices: {
+      left: {
+        label: '“Then don’t bury it”',
+        tags: ['code', 'loyal'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“Talk to her,” you say. Ollie takes this as “talk to her RIGHT NOW” and marches off mid-conversation to do it badly, loudly, near a microphone. You meant later. He heard now.', effects: { threadBeat: 'oldflame', addFlag: 'li_web_oldflame_in', loyalty: 2, burnout: 2 } },
+          good: { text: '“A turned head’s not a crime, mate. Pretending it isn’t turned — that’s the crime.” Ollie nods, rugby-slow. “So I just… say it.” “You just say it.” He looks terrified and relieved.', effects: { bond: 4, threadBeat: 'oldflame', addFlag: 'li_web_oldflame_in', loyalty: 5, romantics: 2 } },
+          incredible: { text: '“You knew her when you were nobody,” you say. “That’s not history, that’s the good stuff.” Ollie stares at his hands. “Yeah.” He’s going to go find her. You can see the decision land.', effects: { bond: 5, threadBeat: 'oldflame', addFlag: 'li_web_oldflame_in', loyalty: 8, romantics: 3 } },
+        },
+      },
+      right: {
+        label: '“Or leave it in the past”',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 0.7, loyalty: 0.3 },
+        outcomes: {
+          bad: { text: '“Leave it,” you advise, and Ollie tries to, visibly, at every meal, from across the garden, with his whole face. Repression, it turns out, is not his position.', effects: { threadBeat: 'oldflame', savvy: 2, burnout: 2 } },
+          good: { text: '“Old flames feel like fate ’cause they’re familiar,” you warn. “Familiar isn’t the same as right.” Ollie considers it. “So I test it before I torch anything.” Sensible. Rare.', effects: { threadBeat: 'oldflame', savvy: 5, drama: 1 } },
+          incredible: { text: '“Don’t set fire to your present for a rerun,” you tell him. Ollie sits with it. “When did you get wise?” Around the third time the villa taught me the hard way. You keep that bit to yourself.', effects: { threadBeat: 'oldflame', savvy: 8, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_oldflame_rekindle', act: [2, 3], tags: ['web:oldflame', 'drama'],
+    requires: { threadStageIs: 'oldflame:1', flagsAll: ['li_web_oldflame_in'] },
+    art: 'li_firepit',
+    context: 'The firepit · the history comes out, loud',
+    prompt: '“Right, everyone should hear this from us.” Ollie and Zara stand together. “We were together. Before. Two years.” The villa detonates in slow motion. “And,” Zara adds, taking his hand, “we’re gonna see where it goes. Again.” Somewhere a producer is being carried out on their colleagues’ shoulders.',
+    recap: 'Ollie and Zara go public — and decide to try again.',
+    choices: {
+      left: {
+        label: 'Back the reunion, publicly',
+        tags: ['loyal', 'camera'],
+        governingStats: { loyalty: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You cheer the reunion and half the villa glares — turns out two people were quietly grafting on Ollie and Zara respectively. You’ve backed a couple and made two enemies. Efficient.', effects: { threadResolve: 'oldflame:rekindle', drama: 3, burnout: 2, followers: 2 } },
+          good: { text: '“Second chances that cross a whole city to find you? Rare.” You raise a glass. Ollie mouths “cheers” — he remembers who told him not to bury it. The nation loves a reunion.', effects: { bond: 4, threadResolve: 'oldflame:rekindle', romantics: 2, drama: 3, public: 2 } },
+          incredible: { text: '“Two years, two villas, one slow-motion door,” you toast. “If that’s not a story, nothing is.” The garden roars. Zara points at you: “This one made me say it.” Credited in someone’s finest hour again.', effects: { bond: 5, threadResolve: 'oldflame:rekindle', romantics: 3, drama: 4, followers: 5 } },
+        },
+      },
+      right: {
+        label: 'Watch the fallout ripple',
+        tags: ['strategy', 'camera'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You track the fallout so intently you narrate it aloud and the boom mic broadcasts your odds on the whole thing collapsing by Friday. Both halves of the couple heard “collapsing.”', effects: { threadResolve: 'oldflame:rekindle', drama: 3, burnout: 2 } },
+          good: { text: 'You clock every recalibrating face around the firepit — the grafters, the mates, the sudden singles. A whole villa just reshuffled. You file the new map before anyone else finishes gasping.', effects: { threadResolve: 'oldflame:rekindle', savvy: 5, drama: 2, graft: 2 } },
+          incredible: { text: 'You watch it all land and read the room three moves out: who’s free now, who’s furious, who benefits. By the time the gasps fade, you’re the only person holding the updated villa.', effects: { threadResolve: 'oldflame:rekindle', savvy: 8, drama: 2, graft: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_oldflame_closure', act: [2, 3], tags: ['web:oldflame', 'chat'],
+    requires: { threadStageIs: 'oldflame:1', flagsNone: ['li_web_oldflame_in'] },
+    art: 'li_beach',
+    context: 'The beach · the old flame, put out kindly',
+    prompt: 'They talk it out where the mics are weakest, and come back different. “We loved each other,” Zara tells the villa, calm. “And we’re not that anymore. It’s nice to actually know that now.” Ollie nods. No reunion, no row — just two people who finally closed a door they’d left ajar for two years.',
+    recap: 'Ollie and Zara choose closure over a reunion, and mean it.',
+    choices: {
+      left: {
+        label: 'Tell Zara that took guts',
+        tags: ['chat', 'code'],
+        governingStats: { charisma: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: '“So brave,” you say, a touch too reverent, and Zara snorts. “It’s a breakup, not a marathon.” It was a bit of a marathon, actually. Two years’ worth. But point taken.', effects: { threadResolve: 'oldflame:closure', selfrespect: 3, burnout: 1 } },
+          good: { text: '“Most people never close the door,” you tell her. “They just move house.” Zara laughs. “God, that’s me usually.” Not this time. The spine wing has a new favourite.', effects: { bond: 4, threadResolve: 'oldflame:closure', selfrespect: 4, romantics: 1 } },
+          incredible: { text: 'You say nothing and just bump her shoulder with yours, watching the sea. “Thanks for making me say it out loud,” Zara says. “It stopped being a ghost.” Some hauntings only need a witness.', effects: { bond: 5, threadResolve: 'oldflame:closure', selfrespect: 5, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Take the lesson to {partner}',
+        tags: ['date', 'loyal'],
+        governingStats: { loyalty: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You bring up “doors left ajar” with {partner}, who immediately asks which door of yours is ajar. None. NONE. You’ve invented a draught out of a nice moment. Reassure, quickly.', effects: { threadResolve: 'oldflame:closure', bond: -2, burnout: 2 } },
+          good: { text: 'Watching two people end it cleanly makes you grateful yours isn’t haunted. You find {partner} and say, plainly, “no ghosts here.” They didn’t know they needed to hear it. They did.', effects: { threadResolve: 'oldflame:closure', bond: 5, romantics: 2 } },
+          incredible: { text: '“If we ever end,” you tell {partner}, “let’s do it like that — on a beach, no ghosts.” “We’re not ending.” “I know. That’s why I can say it.” The securest thing said as a hypothetical.', effects: { threadResolve: 'oldflame:closure', bond: 6, romantics: 3, selfrespect: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- THE WRECKING BALL — Bella ----------
+  {
+    id: 'li_web_wrecking_0', act: [2, 3], tags: ['web:wrecking', 'encounter', 'drama'],
+    requires: { threadStageIs: 'wrecking:0' },
+    art: 'li_lawn',
+    context: 'The lawn · Bella has decided which couple she’s ending',
+    prompt: 'Bella arrived mid-sentence and hasn’t stopped. She’s picked her target — a settled couple two weeks deep — and she’s not subtle. “I go after what I want,” she tells you, reapplying lipstick like war paint. “He’s not married. There’s no ring. There’s barely a text.” She’s coming for someone’s whole villa.',
+    recap: 'Bombshell Bella sets her sights on ending a settled couple, and tells you so.',
+    choices: {
+      left: {
+        label: 'Warn the settled couple',
+        tags: ['code', 'loyal'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You tip them off and it comes out that you did, and now you’re “the one stirring,” while Bella floats above it, innocent as a hurricane. You did a good thing, badly, on camera.', effects: { threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', loyalty: 2, drama: 2, burnout: 2 } },
+          good: { text: '“Heads up — Bella’s got a plan, and it’s you.” The couple close ranks, forewarned. Bella clocks the sudden solidarity and narrows her eyes at you. You’ve made an enemy and a friend.', effects: { bond: 4, threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', loyalty: 5, selfrespect: 2 } },
+          incredible: { text: '“A couple that talks can’t be split,” you tell them. “So talk.” They do — all night, honestly — and Bella’s wrecking ball meets a wall it can’t swing through. You quietly reinforced the building.', effects: { bond: 5, threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', loyalty: 8, selfrespect: 3 } },
+        },
+      },
+      right: {
+        label: 'Stay well clear of the swing',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 0.7, loyalty: 0.3 },
+        outcomes: {
+          bad: { text: 'You step back from the demolition zone and straight into range — Bella decides YOUR reaction is the interesting one and starts working you for intel. You wanted no part; you’re now a part.', effects: { threadBeat: 'wrecking', savvy: 2, drama: 2, burnout: 2 } },
+          good: { text: 'Not your couple, not your crane. You get a safe distance and let the villa’s newest natural disaster do whatever weather it’s going to do.', effects: { burnout: -4, threadBeat: 'wrecking', savvy: 5 } },
+          incredible: { text: 'You watch Bella work and simply refuse to be content for it — no reaction, no intel, no fuel. Starved of oxygen, the drama has to look elsewhere. You’re the one wall she skips.', effects: { burnout: -6, threadBeat: 'wrecking', savvy: 8, graft: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_wrecking_1', act: [2, 3], tags: ['web:wrecking', 'encounter', 'gossip'],
+    requires: { threadStageIs: 'wrecking:0' },
+    art: 'li_kitchen',
+    context: 'The kitchen · Bella recruits you, mid-scheme',
+    prompt: '“You’re smart, I like smart,” Bella says, cornering you by the kettle. “So help me out. Who’s actually solid and who’s just doing bits for the cameras? I only want the real ones. Everyone else is scenery.” She smiles. It’s a genuinely great smile. It’s also a job interview for a villain’s sidekick.',
+    recap: 'Bella tries to recruit you as her intel source on who’s really solid.',
+    choices: {
+      left: {
+        label: 'Feed her nothing true',
+        tags: ['strategy', 'code'],
+        governingStats: { savvy: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You feed her duff intel and she tests it within the hour, finds it hollow, and now knows exactly one thing: you can’t be trusted. Which, fair. But now it’s her project.', effects: { threadBeat: 'wrecking', savvy: 2, drama: 2, burnout: 2 } },
+          good: { text: '“Everyone in here’s real and everyone’s scenery. That’s the show.” You give her a philosophy instead of a name. Bella squints. “Annoying. Respect.” She leaves with nothing. So do you. Even trade.', effects: { threadBeat: 'wrecking', savvy: 5, selfrespect: 2 } },
+          incredible: { text: 'You send her, sweetly, at the two most bulletproof couples in the villa — “them, definitely them” — knowing she’ll bounce off both. Misdirection as a public service. She never suspects the guide.', effects: { threadBeat: 'wrecking', savvy: 8, drama: 2, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Play along to keep tabs',
+        tags: ['strategy', 'drama'],
+        governingStats: { savvy: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You cosy up to keep tabs and the villa clocks you two whispering by the kettle. Now you’re “Bella’s ally,” a title with terrible PR and no salary. Undercover, blown, on day one.', effects: { threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', drama: 3, burnout: 2 } },
+          good: { text: 'You get close enough to see the plan without joining it. Bella tells you the target, the timeline, the exit. You now know the whole wreck before it happens. Knowledge, banked, quietly.', effects: { threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', savvy: 5, graft: 2 } },
+          incredible: { text: 'You become Bella’s confidante and her early-warning system for the couple she’s targeting, simultaneously, undetected. A double agent in factor-50. The villa will owe you and never know it.', effects: { threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', savvy: 8, graft: 3, drama: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_wrecking_chaos', act: [2, 3], tags: ['web:wrecking', 'drama'],
+    requires: { threadStageIs: 'wrecking:1', flagsAll: ['li_web_wrecking_in'] },
+    art: 'li_firepit',
+    context: 'The firepit · the wrecking ball connects',
+    prompt: 'Bella swings and it lands: the settled boy’s head is, on live television, turned. His partner finds out at the firepit, in front of everyone, which is the villa’s cruellest floor plan. “I didn’t DO anything,” he tries. “You didn’t stop it either,” she says, and the whole garden feels that one land.',
+    recap: 'Bella’s move connects — a settled couple blows up at the firepit.',
+    choices: {
+      left: {
+        label: 'Support the blindsided partner',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You rush to comfort her and knock the whole thing louder — now it’s a scene with an audience and a supporting cast, and she wanted a quiet corner. Good instinct, wrong volume.', effects: { threadResolve: 'wrecking:chaos', drama: 3, loyalty: 2, burnout: 2 } },
+          good: { text: 'You get her out of the firepit’s spotlight and into the kitchen with a cup of tea and no advice. “You don’t have to perform this,” you say. She cries where the wide shot can’t reach. Small mercy.', effects: { bond: 4, threadResolve: 'wrecking:chaos', loyalty: 5, drama: 2, selfrespect: 2 } },
+          incredible: { text: '“Whatever he does next, you already know who you are,” you tell her. “She only found a crack that was there.” Hard, true, kind. She squares up and handles it standing. The nation stands with her.', effects: { bond: 5, threadResolve: 'wrecking:chaos', loyalty: 8, drama: 2, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Call Bella’s game to her face',
+        tags: ['drama', 'code'],
+        governingStats: { savvy: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: '“That was a hit job,” you tell Bella, loudly, and she smiles because loud is her native tongue. “Jealous?” she lobs, and the crowd oohs, and now it’s you two, which is exactly her win condition.', effects: { threadResolve: 'wrecking:chaos', drama: 4, burnout: 3, rivalOpinion: -2 } },
+          good: { text: '“Own the swing, at least,” you tell her, quiet enough that only she hears. Bella’s smile flickers. “I don’t do guilt.” “I know. That’s the sad bit.” You leave her holding the silence.', effects: { threadResolve: 'wrecking:chaos', savvy: 5, selfrespect: 3, drama: 2 } },
+          incredible: { text: '“You didn’t break them,” you tell her, level. “You just arrived on the day they were already cracking. That’s not power, babe. That’s timing.” Bella has no bit for the truth. First time all week she’s quiet.', effects: { threadResolve: 'wrecking:chaos', savvy: 8, selfrespect: 4, drama: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_web_wrecking_fizzle', act: [2, 3], tags: ['web:wrecking', 'chat'],
+    requires: { threadStageIs: 'wrecking:1', flagsNone: ['li_web_wrecking_in'] },
+    art: 'li_lawn',
+    context: 'The lawn · the wrecking ball meets a wall',
+    prompt: 'Bella swings — and nothing moves. The couple she targeted just… talk to each other, boringly, honestly, in front of her, and her whole plan slides off them like rain off factor-50. “Fine,” she announces, to no one, “they’re GENUINELY happy, it’s disgusting.” She wanders off to redecorate a different couple.',
+    recap: 'Bella’s target couple proves solid, and her wrecking ball bounces off.',
+    choices: {
+      left: {
+        label: 'Salute the couple that held',
+        tags: ['loyal', 'banter'],
+        governingStats: { charisma: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You congratulate them so loudly Bella hears and takes it as a challenge. You’ve pointed the hurricane at the one house that survived. Well done. Genuinely, well done, you plum.', effects: { threadResolve: 'wrecking:fizzle', romantics: 2, drama: 2, burnout: 2 } },
+          good: { text: '“A couple that talks can’t be wrecked,” you tell them. “You just proved it on telly.” They shrug, still holding hands, still boring, still standing. The nation adores a wall.', effects: { bond: 4, threadResolve: 'wrecking:fizzle', romantics: 3, public: 2 } },
+          incredible: { text: '“Bella brought a wrecking ball to a couple made of admin,” you announce, delighted. “Never stood a chance.” The lawn laughs. The solid couple gets a standing ovation for the crime of being fine.', effects: { bond: 5, threadResolve: 'wrecking:fizzle', romantics: 3, charisma: 4, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Check on Bella, oddly',
+        tags: ['chat', 'rest'],
+        governingStats: { loyalty: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You ask if she’s alright and Bella hears pity, which she cannot abide, and immediately picks a new target out of pure spite. Your kindness has restocked the villain. Oops.', effects: { threadResolve: 'wrecking:fizzle', drama: 2, burnout: 2 } },
+          good: { text: '“You alright?” you ask. Bella blinks. “Nobody asks me that.” For one unguarded second she’s just a person who arrives loud because quiet is scarier. Then the lipstick goes back on.', effects: { bond: 3, threadResolve: 'wrecking:fizzle', romantics: 2, selfrespect: 2 } },
+          incredible: { text: '“The loud ones are usually the most scared of the quiet,” you say, gently. Bella looks at you like you’ve read a file she thought was sealed. “Don’t,” she says. But she sits down. Progress, of a sort.', effects: { bond: 4, threadResolve: 'wrecking:fizzle', romantics: 3, selfrespect: 2, graft: 2 } },
+        },
+      },
+    },
+  },
 ];

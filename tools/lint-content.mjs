@@ -133,8 +133,21 @@ const DESCRIPTORS = {
         'li_web_feud_0', 'li_web_feud_peace', 'li_web_feud_coldwar',
         'li_web_sco_0', 'li_web_sco_loud', 'li_web_sco_grace',
         'li_web_cb_showdown', 'li_web_cb_together', 'li_web_cb_wakes',
+        // v5 doubling — new couple-web threads (situationship · politeones ·
+        // podcast · oldflame · wrecking) and new player arcs (the falling, the
+        // fame friction), plus the second-scenario ick triggers and alternate
+        // repair openers. Same delivery-owned class as the originals above.
+        'li_web_situationship_0', 'li_web_situationship_1', 'li_web_sit_called', 'li_web_sit_strung',
+        'li_web_polite_0', 'li_web_polite_1', 'li_web_polite_spark', 'li_web_polite_fade',
+        'li_web_podcast_0', 'li_web_podcast_1', 'li_web_podcast_real', 'li_web_podcast_brand',
+        'li_web_oldflame_0', 'li_web_oldflame_1', 'li_web_oldflame_rekindle', 'li_web_oldflame_closure',
+        'li_web_wrecking_0', 'li_web_wrecking_1', 'li_web_wrecking_chaos', 'li_web_wrecking_fizzle',
         'li_ick_sweet', 'li_ick_game', 'li_ick_slow', 'li_ick_resurface', 'li_ick_theirs',
+        'li_ick_sweet2', 'li_ick_game2', 'li_ick_slow2',
         'li_repair_mine_0', 'li_repair_mine_1', 'li_repair_theirs_0', 'li_repair_theirs_1',
+        'li_repair_mine_alt0', 'li_repair_theirs_alt0',
+        'li_fall_start', 'li_fall_talk', 'li_fall_resurface',
+        'li_fame_start', 'li_fame_talk', 'li_fame_resurface',
         'li_nation_correction'],
       payoffs: [],
     }],

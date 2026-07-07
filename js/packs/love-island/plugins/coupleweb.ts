@@ -73,12 +73,33 @@ export const THREADS: ThreadDef[] = [
   // Dev (nicest man in any postcode) & Tash (everyone's type on paper) —
   // the achingly slow real one. The quiet favourite.
   { id: 'slowburn', cast: ['dev', 'tash'], window: [2, 5], stages: 1, offscreen: 'parked' },
+  // Tyler (semi-pro winker) & Meg (funny on purpose, chaotic by accident) — the
+  // situationship: one of them is grafting, one of them is banking laughs and
+  // calling it chill. Nobody has defined the relationship and both refuse to be
+  // the one who asks.
+  { id: 'situationship', cast: ['tyler', 'meg'], window: [2, 4], stages: 1, offscreen: 'ghosted' },
   // Kai (golden-retriever scaffolder) & Chloe (savage in gel nails) — a
   // sweetheart lovebombing a game-player who is banking it.
   { id: 'lovebomb', cast: ['kai', 'chloe'], window: [3, 5], stages: 1, offscreen: 'wobbles' },
+  // Reece (protein-first romantic) & Priya (girl-next-door) — the polite ones:
+  // a couple so agreeable nobody, including them, can tell whether it’s a real
+  // thing or two people too well-mannered to admit it isn’t.
+  { id: 'politeones', cast: ['reece', 'priya'], window: [2, 5], stages: 1, offscreen: 'coast' },
+  // Jamal (aspiring podcast) — narrates his own love life like content, all
+  // segments and callbacks, until the day it stops being a bit. A single-corner
+  // thread, like the scorched cascade: it’s about how HE does a relationship.
+  { id: 'podcast', cast: ['jamal'], window: [3, 5], stages: 1, offscreen: 'segment' },
   // {rival} vs {mate} — the cross-couple cold war. Dynamic seats, so it can
   // always light; deliberately LAST in priority.
   { id: 'feud', cast: [], window: [4, 5], stages: 1, offscreen: 'simmer' },
+  // Ollie (rugby lad, feelings pending) & Zara (model who knows people from
+  // home) — the old flame: two bombshells who turn out to have history, playing
+  // it cool for the cameras and badly for everyone with eyes.
+  { id: 'oldflame', cast: ['ollie', 'zara'], window: [3, 5], stages: 1, offscreen: 'awkward' },
+  // Bella (arrives mid-sentence, stays mid-drama) — the wrecking ball: a
+  // bombshell who walks into a settled couple and starts redecorating. A
+  // single-corner thread; the drama is what she does to the room.
+  { id: 'wrecking', cast: ['bella'], window: [3, 5], stages: 1, offscreen: 'moveson' },
   // The cascade: Sophia, scorched by the triangle, rebounds AT your couple.
   // Lights only when the triangle resolves loudly — the domino the charter
   // asked for, one card at a time.
@@ -143,6 +164,16 @@ const RESOLUTION_SPREAD: Record<string, Partial<Record<FactionKey, number>>> = {
   'feud:coldwar': { drama: 4 },
   'scorched:loud': { drama: 5, romantics: -2 },
   'scorched:grace': { selfrespect: 5, romantics: 2 },
+  'situationship:called': { selfrespect: 5, romantics: 1 },
+  'situationship:strung': { drama: 3, romantics: -2 },
+  'politeones:spark': { romantics: 4, drama: 1 },
+  'politeones:fade': { romantics: -1, drama: 1 },
+  'podcast:real': { romantics: 4, selfrespect: 1 },
+  'podcast:brand': { drama: 3, romantics: -1 },
+  'oldflame:rekindle': { drama: 4, romantics: 2 },
+  'oldflame:closure': { selfrespect: 4, romantics: 1 },
+  'wrecking:chaos': { drama: 6, romantics: -2 },
+  'wrecking:fizzle': { drama: -1, romantics: 2 },
 };
 
 export const coupleWebPlugin: Plugin = {
@@ -263,7 +294,7 @@ export const coupleWebPlugin: Plugin = {
       const heat = Math.max(0, (state.act || 1) - (t.litWeek || state.act || 1));
       return weight * Math.min(COUPLEWEB.heatCap, COUPLEWEB.threadMult * Math.pow(2, heat));
     }
-    if (tags.includes('ick') || tags.includes('repair')) return weight * COUPLEWEB.arcMult;
+    if (tags.includes('ick') || tags.includes('repair') || tags.includes('fall') || tags.includes('fame')) return weight * COUPLEWEB.arcMult;
     return weight;
   },
 

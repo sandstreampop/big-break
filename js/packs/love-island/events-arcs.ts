@@ -318,4 +318,340 @@ export const ARC_EVENTS: GameEvent[] = [
       },
     },
   },
+
+  // ---------- THE ICK — second scenario per shape (novel triggers, wider pool) ----------
+  {
+    id: 'li_ick_sweet2', act: 2, tags: ['ick', 'encounter', 'chat'],
+    requires: { singleIs: false, partnerShapeIs: 'sweetheart', flagsNone: ['li_ick_named', 'li_ick_buried'] },
+    art: 'li_daybed',
+    context: 'The daybed · {partner} has planned the rest of your life · you’ve known them nine days',
+    prompt: '“So I was thinking,” {partner} says, glowing, “our dog — a sausage dog — Nigel. And your mum can have the box room. And we’d do Christmases at mine ’cause of the good oven.” Day nine. There is a good oven, apparently. Behind your ribs, the tiny inspector picks up a clipboard and writes: fast. Very fast.',
+    recap: '{partner} has named your future dog and allocated your mum a box room. Day nine.',
+    choices: {
+      left: {
+        label: 'Name the pace, kindly',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“Maybe park Nigel for now?” you try, and {partner}’s face crumples like you dumped Nigel personally. Now you’re reassuring someone about a dog that doesn’t exist. The inspector sighs.', effects: { addFlag: 'li_ick_named', chainEventId: 'li_ick_talk', bond: -3, burnout: 3 } },
+          good: { text: '“I love that you see it,” you say. “Can we get to next week first?” {partner} laughs, a bit embarrassed. “I do get ahead of myself.” “A bit, babe.” The oven can wait. The ick loosens.', effects: { addFlag: 'li_ick_named', chainEventId: 'li_ick_talk', bond: -2, selfrespect: 2 } },
+          incredible: { text: '“I want the sausage dog,” you say. “I just want to earn it first.” {partner} goes still, then softer than you’ve seen. “…Nobody’s ever wanted to earn me.” Slower, together. Nigel, pending.', effects: { addFlag: 'li_ick_named', chainEventId: 'li_ick_talk', bond: -1, selfrespect: 3, romantics: 1 } },
+        },
+      },
+      right: {
+        label: 'Nod along, panic inside',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 0.7, loyalty: 0.3 },
+        outcomes: {
+          bad: { text: 'You say “totally” to the box room, the oven, and Nigel. Your smile is doing overtime and the overtime is unpaid. Somewhere a future you is already exhausted.', effects: { addFlag: 'li_ick_buried', burnout: 4, savvy: 2 } },
+          good: { text: 'You file it under “keen, will settle.” The inspector notes the keenness, then, in a smaller hand, the speed. Leaves a card: we’ll be in touch about the oven.', effects: { burnout: -4, addFlag: 'li_ick_buried', savvy: 5 } },
+          incredible: { text: 'You bury it under a sausage dog’s worth of enthusiasm and change the subject to lunch. Buried keenness has a documented habit of returning at Meet the Parents. Lovely funeral, though.', effects: { burnout: -6, addFlag: 'li_ick_buried', savvy: 8, drama: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_ick_game2', act: 2, tags: ['ick', 'encounter', 'chat'],
+    requires: { singleIs: false, partnerShapeIs: 'gameplayer', flagsNone: ['li_ick_named', 'li_ick_buried'] },
+    art: 'li_lawn',
+    context: 'The lawn · you hear your own story, told to someone else',
+    prompt: 'The story {partner} told you last night — the dead grandad, the real one, the one that made you trust them — you just heard it again. Word for word, to the Beach Hut camera: “…and after my grandad went, I just stopped letting people in.” Same pause. Same catch in the voice. The tiny inspector behind your ribs underlines the catch: rehearsed. It was rehearsed.',
+    recap: 'You catch {partner} performing their “vulnerable” grandad story to camera, verbatim.',
+    choices: {
+      left: {
+        label: 'Ask if any of it was real',
+        tags: ['chat', 'strategy'],
+        governingStats: { savvy: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: '“Was the grandad even—” “Don’t you DARE,” {partner} snaps, and the grandad was real, and now you’ve insulted a dead man and a live one. The catch in their voice, this time, isn’t for camera.', effects: { addFlag: 'li_ick_named', chainEventId: 'li_ick_talk', bond: -4, burnout: 3, drama: 1 } },
+          good: { text: '“It’s real,” you say. “I just need to know you meant it for ME, not the edit.” {partner} deflates. “…Both. I panicked and made it content.” Honest, finally. The ick eases a notch.', effects: { addFlag: 'li_ick_named', chainEventId: 'li_ick_talk', bond: -2, selfrespect: 3 } },
+          incredible: { text: '“Tell me one thing you’d never say to a camera,” you ask. {partner} thinks, then says something small and unflattering and true. “That,” you say. “More of that.” The realest trade you’ve made.', effects: { addFlag: 'li_ick_named', chainEventId: 'li_ick_talk', bond: -1, selfrespect: 3, romantics: 2 } },
+        },
+      },
+      right: {
+        label: 'File it. Say nothing',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You keep the receipt and now hear the rehearsed catch every time they open up. Real or not, you can’t un-hear it. That’s the ick: a permanent second audio track.', effects: { addFlag: 'li_ick_buried', burnout: 4, savvy: 2 } },
+          good: { text: 'Everyone performs a bit in here, you reason. The inspector writes “a bit” in quotation marks and files it under the growing folder marked their name.', effects: { burnout: -4, addFlag: 'li_ick_buried', savvy: 5 } },
+          incredible: { text: 'You become a connoisseur of which of their feelings are for you and which are for the edit. You’re usually right. Being right about this, nightly, is its own small cost.', effects: { burnout: -6, addFlag: 'li_ick_buried', savvy: 8, drama: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_ick_slow2', act: 2, tags: ['ick', 'encounter', 'chat'],
+    requires: { singleIs: false, partnerShapeIs: 'slowburner', flagsNone: ['li_ick_named', 'li_ick_buried'] },
+    art: 'li_firepit',
+    context: 'The firepit · warm in private · a stranger in public',
+    prompt: 'In bed last night {partner} held your hand and called you “home.” Tonight, at the firepit, someone teases them about you and they go: “We’re just seeing how it goes, aren’t we.” Aren’t we. Said to the group, about home. The tiny inspector behind your ribs circles two words: in public.',
+    recap: '{partner} calls you “home” in private, then downgrades you to “seeing how it goes” publicly.',
+    choices: {
+      left: {
+        label: 'Name the two faces, gently',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: '“So which one’s real — the bed or the firepit?” comes out sharper than you meant. {partner} shuts like a till. “Why does it need announcing?” Because you called me home, you don’t say.', effects: { addFlag: 'li_ick_named', chainEventId: 'li_ick_talk', bond: -4, burnout: 3 } },
+          good: { text: '“I don’t need a banner,” you say quietly. “I just need the firepit version to know the bed version exists.” {partner} looks caught. “…That’s fair. I go shy out there.” The shutters lift a slat.', effects: { addFlag: 'li_ick_named', chainEventId: 'li_ick_talk', bond: -2, selfrespect: 2, romantics: 1 } },
+          incredible: { text: '“You can be private,” you tell them, “you just can’t be two people.” A long pause. Then {partner}, to the whole firepit, unprompted: “Actually — they’re not a maybe to me.” From this one, that’s a fireworks display.', effects: { addFlag: 'li_ick_named', chainEventId: 'li_ick_talk', bond: -1, selfrespect: 3, romantics: 2 } },
+        },
+      },
+      right: {
+        label: 'Take the private version, ignore the public',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You decide the bed is the truth and the firepit is nerves. Maybe. But you start listening for “home” like proof, and needing proof nightly is the ick with a nicer name.', effects: { addFlag: 'li_ick_buried', burnout: 4, savvy: 2 } },
+          good: { text: 'Guarded people guard in public, you reason. Patient. Mature. The inspector notes the maturity and, beside it, how quiet you’ve gone at firepits lately.', effects: { burnout: -4, addFlag: 'li_ick_buried', savvy: 5 } },
+          incredible: { text: 'You bank the private “home” like a photo and expect nothing in daylight. Either the two faces become one, or they don’t. The villa respects a patient experiment. Your ribs keep the receipt.', effects: { burnout: -6, addFlag: 'li_ick_buried', savvy: 8 } },
+        },
+      },
+    },
+  },
+
+  // ---------- BETRAYAL-REPAIR — alternate opening scenes (variance in the grovel) ----------
+  {
+    id: 'li_repair_mine_alt0', act: [2, 3], tags: ['repair', 'encounter', 'loyal'],
+    requires: { singleIs: false, flagsAll: ['li_revealed'], flagsNone: ['li_repair_going', 'li_repaired'] },
+    art: 'li_firepit_day',
+    context: 'The morning after your footage · the sun-loungers · nobody’s saved you a seat',
+    prompt: 'Your footage aired. This morning every lounger has a towel on it except the wobbly one, which is a message. {partner} is on the good lounger, sunglasses on, unreadable. “You can sit,” they say, not moving their towel an inch. “If you want.” The repair manual’s unwritten but chapter one is clear: earn the towel.',
+    recap: 'The morning after your footage, {partner} won’t move their towel an inch.',
+    choices: {
+      left: {
+        label: 'Start earning it — small, daily, no speech',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You launch into a speech and {partner} lifts one sunglass lens. “I said sit, not present.” You sit. The speech dies on the lounger. Day one of the lap, already a penalty loop.', effects: { addFlag: 'li_repair_going', bond: 1, romantics: 2, selfrespect: -1, burnout: 3 } },
+          good: { text: 'You sit, say nothing, and top up their water when it runs low without being asked. {partner} doesn’t thank you. Doesn’t move away either. The villa clocks the start of a lap.', effects: { addFlag: 'li_repair_going', bond: 5, romantics: 3, selfrespect: -2 } },
+          incredible: { text: 'You sit, hand them the good sun cream, move their towel to the shade before they burn, and shut up. All before the others wake. {partner} says nothing. Keeps the cream. The lap has begun.', effects: { addFlag: 'li_repair_going', bond: 6, romantics: 4, selfrespect: -2, graft: 2 } },
+        },
+      },
+      right: {
+        label: '“I’m not grovelling on a lounger”',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: '“Grovel? Who said grovel,” you bluster, standing, and the standing IS the grovel, badly done, for the wide shot. {partner} puts the sunglasses back down. Audience over.', effects: { bond: -4, drama: 2, selfrespect: 1, burnout: 3 } },
+          good: { text: 'You choose dignity over the lap. It’s a position. The Self-Respect wing nods; {partner} files you under “pending, cold.” The towel does not move.', effects: { bond: -2, drama: 1, selfrespect: 3, romantics: -2 } },
+          incredible: { text: 'You state, plainly, that you’ll show them you meant it rather than say it, and sit on the WOBBLY lounger by choice. {partner} almost smiles. Unresolved — but the wobbly lounger did numbers.', effects: { bond: 3, selfrespect: 4, romantics: -2, drama: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_repair_theirs_alt0', act: [2, 3], tags: ['repair', 'encounter', 'chat'],
+    requires: { singleIs: false, flagsAll: ['li_partner_revealed'], flagsNone: ['li_repaired', 'li_repair_lap'] },
+    art: 'li_terrace',
+    context: 'The terrace · {partner}’s footage aired · they’ve brought your tea up two mornings running',
+    prompt: '{partner}’s clip played. Since then: your tea, on the wall by the stairs, right order, no card, two mornings. This morning they add a sentence. “I’m not gonna insult you with a big speech. I messed up, I know it aired, and I’m here till you tell me otherwise.” The queue for forgiveness has a number and it’s yours to call.',
+    recap: '{partner}’s footage aired; they’ve brought your tea up two mornings, no speech.',
+    choices: {
+      left: {
+        label: 'Forgive it, plainly, out loud',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You forgive so fast the villa does the maths out loud. “Two teas?” mouths {mate}. The Romantics cheer; the spine wing writes you off before your tea’s even cold.', effects: { addFlag: 'li_repaired', bond: 5, romantics: 4, selfrespect: -4, storyBeat: 'Cracked, chose it again — fast. The nation argues about you at dinner tables.' } },
+          good: { text: '“The tea counted. The no-speech counted more. We’re alright.” Clean, dated, done. Half the country stands; the other half respects the paperwork. {partner} exhales a week.', effects: { addFlag: 'li_repaired', bond: 7, romantics: 4, selfrespect: -2, storyBeat: 'Questioned it, cracked, chose it again — the arc the envelope loves.' } },
+          incredible: { text: '“I watched you show up when you could’ve hidden,” you say, to the group, not just them. “I’m keeping the person who did that.” Forgiveness with a spine in it. Even the spine wing allows it.', effects: { addFlag: 'li_repaired', bond: 8, romantics: 5, selfrespect: 1, public: 2, storyBeat: 'Forgiveness delivered as a verdict, not a surrender. The complete storyline.' } },
+        },
+      },
+      right: {
+        label: 'Make them run the full lap first',
+        tags: ['strategy', 'code'],
+        governingStats: { savvy: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: '“Keep going,” you say, gavel fully out, and {partner} nods, grafting and stung. The villa opens a book on whether this is standards or a power trip. Odds are unkind.', effects: { addFlag: 'li_repair_lap', bond: 1, selfrespect: 4, romantics: -3, burnout: 2 } },
+          good: { text: '“Two teas is a start, not a repair,” you say — kind, clear. “Show me when the cameras are bored.” {partner} takes it on the chin. “Then I’ll keep starting.” The spine wing frames you.', effects: { addFlag: 'li_repair_lap', bond: 4, selfrespect: 4, romantics: -2 } },
+          incredible: { text: '“I want the version nobody’s filming,” you tell them. “Weeks of boring. Prove it there.” The single most radical request in the villa. The nation SCREAMS. Respectfully.', effects: { addFlag: 'li_repair_lap', bond: 5, selfrespect: 5, romantics: -2, followers: 4 } },
+        },
+      },
+    },
+  },
+
+  // ---------- THE FALLING — love’s own arc: the leap, and who takes it (ADR-0013 sibling) ----------
+  {
+    id: 'li_fall_start', act: [2, 3], tags: ['fall', 'encounter', 'chat'],
+    requires: { singleIs: false, flagsNone: ['li_fall_said', 'li_fall_held'] },
+    art: 'li_terrace',
+    context: 'The terrace, late · the sentence is right there · so is the drop',
+    prompt: 'You’re mid-nothing — “cheese and onion is objectively the superior crisp and I won’t hear otherwise,” {partner} is saying — when they laugh at something you said and you feel it arrive: the big word, fully formed and terrifying. They don’t know it’s in the room. You could say it first, which in here is a bungee jump with the cameras rolling, or hold it and keep it safe.',
+    recap: 'The big word arrives on the terrace, and it’s yours to say first — or hold.',
+    choices: {
+      left: {
+        label: 'Say it first',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: '“I think I love you,” you blurt, over a crisp fact, and {partner} freezes. “…That’s mad,” they manage — not no, but not the echo you wanted. You jumped; the bungee’s still deciding.', effects: { addFlag: 'li_fall_said', chainEventId: 'li_fall_talk', bond: 2, burnout: 3, romantics: 1 } },
+          good: { text: '“I’m not saying it for a reaction,” you say. “I just love you, and holding it in felt like lying.” {partner} goes very still, then: “…say it again.” You do. This time they’re smiling.', effects: { addFlag: 'li_fall_said', chainEventId: 'li_fall_talk', bond: 5, romantics: 3, selfrespect: 2 } },
+          incredible: { text: '“I love you. No hashtag, no strategy, terrible timing, all of it.” {partner} laughs, wet-eyed. “I’ve been sat on it for four days, you absolute—” and doesn’t finish, because they’re kissing you. Nobody else gets this one.', effects: { addFlag: 'li_fall_said', chainEventId: 'li_fall_talk', bond: 7, romantics: 5, selfrespect: 2, storyBeat: 'Said the big word first, on camera, no safety net — and it was met.' } },
+        },
+      },
+      right: {
+        label: 'Hold it. Keep it safe',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: 'You swallow it and change the subject back to crisps. {partner} clocks the swerve. “You alright? You went weird.” “Cheese and onion,” you say, which explains nothing and buries everything.', effects: { addFlag: 'li_fall_held', burnout: 4, savvy: 2 } },
+          good: { text: 'You keep it in your pocket where it’s safe and unsaid. Safe and unsaid, you’ll learn, are not the same as safe. But not tonight. Tonight you just hold the word and the hand.', effects: { addFlag: 'li_fall_held', burnout: -2, savvy: 3, romantics: 1 } },
+          incredible: { text: 'You decide the word deserves a better stage than a crisp chat — and start, quietly, building one. Held on purpose, not from fear. The inspector behind your ribs, for once, approves.', effects: { addFlag: 'li_fall_held', burnout: -4, savvy: 5, selfrespect: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_fall_talk', act: [2, 3], chainOnly: true, tags: ['fall', 'encounter', 'chat'],
+    art: 'li_daybed',
+    context: 'The next day · the word is out of the box · now what',
+    prompt: '“So.” {partner} sits down, holding two drinks and yesterday’s enormous sentence. “I’ve never said it back that quick to anyone. I keep people at arm’s length — ask literally anyone. But you got in. So. Yeah.” They hand you a drink like it’s a contract. “I love you too. Don’t make it weird.”',
+    recap: '{partner} sits down to say it back, and asks you not to make it weird.',
+    choices: {
+      left: {
+        label: 'Build the real thing',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 0.8, rizz: 0.2 },
+        outcomes: {
+          bad: { text: 'You over-plan the future on the spot — labels, dates, the lot — and {partner} laughs nervously. “Can we love each other on Tuesday before we do the mortgage?” Fair. You brought a spreadsheet to a feeling.', effects: { bond: 3, romantics: 2, burnout: 2 } },
+          good: { text: '“I don’t need it to be weird,” you say. “I need it to be real when nobody’s filming.” {partner} nods, relieved. “Deal.” You clink drinks on the least dramatic, most solid thing you’ve built.', effects: { bond: 6, romantics: 3, storyBeat: 'Said it, meant it, and chose to keep it real off-camera. Love, on purpose.' } },
+          incredible: { text: '“I fancied you before I had a plan,” you tell them, “and I’ve got a plan now and I still just fancy you.” {partner} goes quiet, then: “Nobody’s ever wanted the boring version with me.” You do. That’s the whole vow.', effects: { bond: 8, romantics: 4, selfrespect: 2, storyBeat: 'Two guarded people said the word and chose the un-filmed, un-dramatic, real version.' } },
+        },
+      },
+      right: {
+        label: 'Keep it light, protect it',
+        tags: ['banter', 'rest'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You deflect the big moment with a bit, and {partner}’s face does a small drop. “Right. Yeah. Bit.” The word’s out but you’ve wrapped it in cling film. It’s fine. It’s a bit muffled, is all.', effects: { bond: -2, burnout: 3, romantics: -1 } },
+          good: { text: '“Weird is off the table,” you grin. “Obsessed is very much ON it.” {partner} laughs, the tension breaks, and the enormous thing settles into something you can actually carry around all day.', effects: { bond: 4, romantics: 2, charisma: 4, followers: 2 } },
+          incredible: { text: 'You turn “don’t make it weird” into your whole bit — announcing your love exclusively via increasingly formal handshakes. {partner} plays along, delighted. A huge feeling, made portable. Villa alchemy.', effects: { bond: 6, romantics: 3, charisma: 6, followers: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_fall_resurface', act: 3, tags: ['fall', 'encounter', 'chat'],
+    requires: { singleIs: false, flagsAll: ['li_fall_held'], flagsNone: ['li_fall_said'] },
+    art: 'li_firepit',
+    context: 'Final Week · the word you didn’t say · running out of terrace',
+    prompt: 'You held it. It’s been safe in your pocket for weeks and now Final Week is here and safe is starting to feel like a coward’s word. {partner}, at the firepit, quietly: “Can I ask you something? Do you actually… or are we just really good at this?” The word presses at your teeth. Last chance to jump.',
+    recap: 'Final Week — {partner} asks if it’s real, and the word you held wants out.',
+    choices: {
+      left: {
+        label: 'Say it. Finally',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: '“I’ve loved you since the crisp chat,” tumbles out with weeks of interest attached. “The CRISP chat? That was AGES ago,” {partner} says, half thrilled, half furious you sat on it. Late, but out.', effects: { addFlag: 'li_fall_said', bond: 3, selfrespect: 2, burnout: 2, romantics: 2 } },
+          good: { text: '“It’s real. I’ve known for ages. I was scared to say it out loud in here.” {partner} lets out a breath they’ve clearly been holding too. “Say it properly, then.” You do. Late counts.', effects: { addFlag: 'li_fall_said', bond: 6, romantics: 4, selfrespect: 2, storyBeat: 'Held the word for weeks out of fear — then jumped before the whistle. Late, and real.' } },
+          incredible: { text: '“I love you. I held it because saying it made it breakable, and I was a coward, and I’m done being one.” {partner} kisses you before you finish. Final Week just got its story, and it’s yours.', effects: { addFlag: 'li_fall_said', bond: 8, romantics: 5, selfrespect: 3, public: 2, storyBeat: 'The word held all season, said at last at the final firepit. The leap, taken late and true.' } },
+        },
+      },
+      right: {
+        label: 'Deflect. Protect yourself',
+        tags: ['strategy', 'rest'],
+        governingStats: { savvy: 0.6, loyalty: 0.4 },
+        outcomes: {
+          bad: { text: '“We’re really good at this,” you say, choosing the safe half of their question. {partner}’s face closes a little. “Right. Yeah. Good at this.” The word goes back in the pocket, heavier now.', effects: { bond: -4, burnout: 4, romantics: -2, partnerMood: 'wounded' } },
+          good: { text: 'You keep it guarded one more time and steer to safer ground. It works; the evening holds. But the word’s still in there, unspent, and Final Week has a way of auditing what you didn’t say.', effects: { bond: -2, burnout: 3, savvy: 4 } },
+          incredible: { text: 'You deflect so gracefully {partner} doesn’t even notice the dodge. A clean escape. You’re very good at this — which was, you realise walking away, precisely their question.', effects: { bond: -1, burnout: 3, savvy: 7, drama: 1 } },
+        },
+      },
+    },
+  },
+
+  // ---------- THE FAME FRICTION — when the nation picks a favourite between you ----------
+  {
+    id: 'li_fame_start', act: [2, 3], tags: ['fame', 'encounter', 'drama'],
+    requires: { singleIs: false, flagsNone: ['li_fame_named', 'li_fame_buried'] },
+    art: 'li_bedroom',
+    context: 'The dressing room · the nation has done a rude thing · picked one of you',
+    prompt: 'The producers let it slip in a challenge: you’ve got triple {partner}’s followers. Since then {partner} laughs a half-second late at your jokes, and tonight, brushing their teeth beside you: “Weird, isn’t it. Being the plus-one in your own relationship.” Foam and honesty. The tiny inspector behind your ribs notes: this is a real one.',
+    recap: '{partner} clocks that the nation’s picked you as the favourite, and feels like a plus-one.',
+    choices: {
+      left: {
+        label: 'Name it before it festers',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: '“The numbers don’t mean anything,” you say, which is what the person WITH the numbers always says. {partner} spits, rinses. “Easy to say from up there.” True. You said the true wrong thing.', effects: { addFlag: 'li_fame_named', chainEventId: 'li_fame_talk', bond: -3, burnout: 3, drama: 1 } },
+          good: { text: '“You’re not my plus-one, you’re the reason I’m worth watching,” you say. {partner} rolls their eyes but the shoulders drop. “…That was smooth.” “It’s also true.” Named, and defused a notch.', effects: { addFlag: 'li_fame_named', chainEventId: 'li_fame_talk', bond: -1, selfrespect: 2, romantics: 1 } },
+          incredible: { text: '“Then let’s make you unmissable,” you say. “I’ll set you up, you land it, we split the fame like the washing-up.” {partner} laughs, properly. “A fame prenup.” The realest plan the sink’s ever hosted.', effects: { addFlag: 'li_fame_named', chainEventId: 'li_fame_talk', bond: -1, selfrespect: 3, romantics: 2 } },
+        },
+      },
+      right: {
+        label: 'Play it down, hope it passes',
+        tags: ['rest', 'camera'],
+        governingStats: { charisma: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You dim your own light at the next challenge to even the score, throw a bit deliberately — and {partner} clocks the charity and hates it more than the gap. “Don’t you DARE lose on purpose.”', effects: { addFlag: 'li_fame_buried', burnout: 4, drama: 1, followers: -2 } },
+          good: { text: 'You wave the numbers off and keep the peace. It holds — for now. But followers don’t un-happen, and a gap you don’t name tends to name itself later, louder.', effects: { burnout: -2, addFlag: 'li_fame_buried', savvy: 4 } },
+          incredible: { text: 'You quietly redirect every camera you can toward {partner} without telling them — feeding lines, stepping back. Generous, invisible, and a bomb with a slow fuse: kindness they didn’t agree to.', effects: { burnout: -4, addFlag: 'li_fame_buried', savvy: 6, followers: -1, drama: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_fame_talk', act: [2, 3], chainOnly: true, tags: ['fame', 'encounter', 'chat'],
+    art: 'li_daybed',
+    context: 'The daybed · the follow-up · followers on the table, feelings underneath',
+    prompt: '“I’m not jealous, before you say it,” {partner} says, which is what jealous people say, and they know it, and wave it off. “Okay, a bit. Not of you. Of how easy it looks. I graft for a laugh; you breathe and the nation swoons.” It’s the most honest they’ve been. It’s also a live grenade on a daybed.',
+    recap: '{partner} admits, honestly, that your effortless fame stings.',
+    choices: {
+      left: {
+        label: 'Make it a team, not a table',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.8, charisma: 0.2 },
+        outcomes: {
+          bad: { text: 'You get defensive — “I graft too, actually” — and it becomes a follower-count row on a daybed, which airs, which does numbers, which is somehow the worst possible outcome for both of you.', effects: { bond: -3, drama: 2, burnout: 3 } },
+          good: { text: '“Then we run it as a double act,” you say. “Your bits, my face, split the credit at the reunion.” {partner} considers it. “…I do have better bits.” “You do.” A couple, pooling fame instead of fighting over it.', effects: { bond: 6, romantics: 3, followers: 2, storyBeat: 'Turned a fame gap into a partnership instead of a wound. The rare grown-up move.' } },
+          incredible: { text: '“I’d give you every follower to keep this,” you say, and mean it, and {partner} sees you mean it. “Don’t,” they say, thick-voiced. “Just… don’t leave me behind out there.” “Never.” The vow that actually matters.', effects: { bond: 8, romantics: 4, selfrespect: 2, storyBeat: 'Chose the couple over the clout, out loud, and were believed. The nation’s favourite couple, not favourite.' } },
+        },
+      },
+      right: {
+        label: 'Protect your own shine',
+        tags: ['strategy', 'camera'],
+        governingStats: { savvy: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: '“I can’t apologise for the edit,” you say, cool, and you can’t — but the coolness is the injury. {partner} nods, filing it. “No. You can’t.” Something quietly recalibrates on the daybed.', effects: { bond: -4, selfrespect: 2, romantics: -2, burnout: 2 } },
+          good: { text: 'You keep your shine and offer them the spotlight when it’s spare, not your whole light. Fair, honest, a little cold. {partner} respects the honesty and clocks the temperature. Both are true.', effects: { bond: -1, selfrespect: 3, savvy: 5, followers: 2 } },
+          incredible: { text: '“I’m not dimming, and you shouldn’t want me to,” you say. “Match me.” It’s ruthless and it’s a compliment and {partner} can’t decide which — then, slowly, takes it as the compliment. Game on.', effects: { bond: 2, selfrespect: 4, savvy: 6, followers: 3, drama: 1 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_fame_resurface', act: 3, tags: ['fame', 'encounter', 'drama'],
+    requires: { singleIs: false, flagsAll: ['li_fame_buried'], flagsNone: ['li_fame_named'] },
+    art: 'li_lawn',
+    context: 'Final Week · the gap you ignored · now it has a voice',
+    prompt: 'The thing you smoothed over has grown teeth. A magazine cover leaks to the villa — your face, solo, {partner} cropped to an elbow — and {partner} sees it before you can. “Elbow,” they say, flat. “Weeks of us and I made the ELBOW.” The buried thing is at the firepit now, wearing your silence as a lanyard.',
+    recap: 'A magazine cover crops {partner} to an elbow, and the buried fame gap erupts.',
+    choices: {
+      left: {
+        label: 'Own the silence, fix it late',
+        tags: ['chat', 'loyal'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“It’s just a cover,” you say, and the “just” lands like a slap. “Easy for the FACE to say,” {partner} snaps, and weeks of your polite dimming curdle into one loud row the whole lawn attends.', effects: { addFlag: 'li_fame_named', bond: -6, drama: 3, burnout: 3, partnerMood: 'wounded' } },
+          good: { text: '“I should’ve named this weeks ago instead of managing it,” you admit. “That’s on me.” {partner} deflates, still hurt. “…Yeah. It is.” Owned late is worse than owned early, better than never.', effects: { addFlag: 'li_fame_named', bond: -3, selfrespect: 3, storyBeat: 'Ignored the fame gap till it split open — then owned it, late, at the last fire.' } },
+          incredible: { text: '“I’d burn the cover for the elbow,” you say, “and I mean it, and I should’ve said it in week three.” You take {partner}’s hand in front of the leak, the lawn, the lot. The nation crops the wrong one this time.', effects: { addFlag: 'li_fame_named', bond: -1, selfrespect: 3, romantics: 2, public: 2, storyBeat: 'The fame gap, buried and then faced at the finish — and the couple chose each other over the cover.' } },
+        },
+      },
+      right: {
+        label: 'Let it curdle, ride the fame',
+        tags: ['camera', 'strategy'],
+        governingStats: { charisma: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You post-rationalise the cover as “good for both of us, really” and {partner} stops arguing, which is worse than arguing. The elbow becomes a thing you don’t discuss. There are a few of those now.', effects: { bond: -7, burnout: 4, drama: 2, partnerMood: 'wounded' } },
+          good: { text: 'You take the fame and let the gap sit, professionally. Your numbers climb; the daybed gets quieter. The inspector upgrades the file from “pending” to “structural.” Structures hold. Until.', effects: { bond: -5, burnout: 3, savvy: 5, followers: 3 } },
+          incredible: { text: 'You ride it all the way to the cover shoot, radiant and solo and successful, and {partner} claps last, one beat behind, filing it where feelings keep receipts. A star is born. A couple is filed.', effects: { bond: -4, savvy: 7, followers: 5, public: 2, drama: 1 } },
+        },
+      },
+    },
+  },
 ];
