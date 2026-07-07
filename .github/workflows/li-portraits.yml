@@ -3,20 +3,32 @@ name: Generate Love Island portraits
 # Manual, on-demand contestant-portrait generation — the "run it for me" path.
 # The Gemini key lives ONLY as the repo secret GEMINI_API_KEY (Settings →
 # Secrets and variables → Actions); it never touches a machine, a session, or
-# the repo. This runs on GitHub's own runners (open network — no agent proxy),
+# the repo. Runs on GitHub's own runners (open network — no agent proxy),
 # renders with Nano Banana Pro via tools/gen-li-art.mjs, commits the images back
-# to the branch it ran on, and uploads the contact sheet as an artifact to
-# review. Merge that branch to main to deploy the portraits via pages.yml.
+# to the branch, and uploads a contact sheet to review. Merge to main to deploy.
 #
-# COST SAFETY: dispatch defaults to the ~$1.88 pilot (Marco + Priya). The ~$15
-# full cast requires explicitly choosing scope=full. The estimate prints in the
-# log before anything is spent.
+# BUILT TO BE UN-SCARY — spend can only happen on purpose:
+#   • DEFAULT is dry_run=true: exercises EVERY step (checkout, build, secret,
+#     artifact upload, commit) for $0, generating no images. Run it first and
+#     watch it go green before a cent is at stake.
+#   • A free preflight verifies the key actually works BEFORE any paid call —
+#     a bad/missing key fails here at $0, never mid-render.
+#   • Failed API calls are not billed (Gemini charges on successful output only),
+#     so a wrong model id / auth error costs nothing.
+#   • Rendered images upload as an artifact with `if: always()` — even if a
+#     later step breaks, anything you paid for is saved off the runner.
+#   • --skip-existing means a re-run or full-cast-after-pilot only pays for the
+#     slots still missing, never re-paying for images already on the branch.
 
 on:
   workflow_dispatch:
     inputs:
+      dry_run:
+        description: 'DRY RUN — plan only, generate NO images, spend $0 (uncheck to actually render)'
+        type: boolean
+        default: true
       scope:
-        description: 'How much to render'
+        description: 'How much to render (when not a dry run)'
         type: choice
         default: pilot
         options: [pilot, full]
@@ -63,27 +75,63 @@ jobs:
 
       - name: Compose the driver flags
         id: flags
-        # reroll > only > scope. The driver prints the cost estimate itself.
+        # dry_run wins over everything: no --generate ⇒ the tool only writes the
+        # plan + contact sheet ($0). Otherwise reroll > only > scope, and
+        # --skip-existing keeps bulk runs from re-paying for existing images.
         run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            MODE=""
+          else
+            MODE="--generate"
+          fi
           if   [ -n "${{ inputs.reroll }}" ]; then SEL="--reroll=${{ inputs.reroll }}";
-          elif [ -n "${{ inputs.only }}"   ]; then SEL="--only=${{ inputs.only }}";
-          elif [ "${{ inputs.scope }}" = "full" ]; then SEL="";
-          else SEL="--pilot"; fi
-          echo "sel=$SEL" >> "$GITHUB_OUTPUT"
+          elif [ -n "${{ inputs.only }}"   ]; then SEL="--only=${{ inputs.only }} --skip-existing";
+          elif [ "${{ inputs.scope }}" = "full" ]; then SEL="--skip-existing";
+          else SEL="--pilot --skip-existing"; fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "sel=$SEL"   >> "$GITHUB_OUTPUT"
 
-      - name: Generate portraits (Nano Banana Pro)
+      - name: Preflight — verify the key works (free, generates nothing)
+        # Only before a REAL run. Lists models (a free endpoint) to prove the
+        # secret authenticates. A bad/missing key fails HERE, at $0, so you never
+        # discover a key problem halfway through a paid batch.
+        if: inputs.dry_run == false
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "::error::GEMINI_API_KEY secret is empty/unset. Add it in Settings → Secrets and variables → Actions. Nothing was generated, \$0 spent."
+            exit 1
+          fi
+          code=$(curl -sS -o /dev/null -w "%{http_code}" "https://generativelanguage.googleapis.com/v1beta/models?key=$GEMINI_API_KEY")
+          if [ "$code" != "200" ]; then
+            echo "::error::Key check failed (HTTP $code). Key is wrong or billing isn't enabled. No images generated, \$0 spent."
+            exit 1
+          fi
+          echo "✓ Key authenticates. Proceeding to generation."
+
+      - name: Run the generator (dry = plan only / $0; real = render)
+        id: gen
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # Blank input leaves the tool default (gemini-3-pro-image-preview).
           GEMINI_IMAGE_MODEL: ${{ inputs.model }}
-        run: node tools/gen-li-art.mjs --generate ${{ steps.flags.outputs.sel }} --tier=${{ inputs.tier }}
+        run: node tools/gen-li-art.mjs ${{ steps.flags.outputs.mode }} ${{ steps.flags.outputs.sel }} --tier=${{ inputs.tier }}
 
-      - name: Verify the wired portraits still compile
-        # The generate step rewrote js/packs/love-island/portraits.data.ts; make
-        # sure the built graph is still green before committing.
-        run: npm run build
+      # SAFETY NET — runs even if a later step fails. Every image you PAID FOR is
+      # written to disk as it renders; this captures them off the ephemeral
+      # runner no matter what happens next, so spend is never lost. (In a dry run
+      # there are no images and this simply warns — harmless.)
+      - name: Upload rendered images (paid output — always saved)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: li-portraits-images
+          path: docs/games/love-island/art/final
+          if-no-files-found: warn
 
       - name: Upload contact sheet + plan (review surface)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: li-portraits-contact-sheet
@@ -92,19 +140,24 @@ jobs:
             docs/games/love-island/art/manifest.json
           if-no-files-found: warn
 
+      - name: Verify the wired portraits still compile
+        # The generate step may have rewritten js/packs/love-island/portraits.data.ts;
+        # make sure the built graph is still green before committing. Runs AFTER
+        # the image upload above, so a compile hiccup can't cost you the renders.
+        run: npm run build
+
       - name: Commit portraits back to the branch
-        # Only the deployables: the source-of-truth renders, the deploy copies,
-        # and the generated path map. drafts/, manifest, and the sheet are
-        # gitignored (the sheet ships as the artifact above).
+        # Skipped entirely on a dry run (nothing staged ⇒ no-op). Commits only the
+        # deployables: source-of-truth renders, deploy copies, the generated map.
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/games/love-island/art/final \
                   docs/games/love-island/public/art \
-                  js/packs/love-island/portraits.data.ts
+                  js/packs/love-island/portraits.data.ts 2>/dev/null || true
           if git diff --cached --quiet; then
-            echo "No new portraits to commit (nothing rendered?)."
+            echo "Nothing to commit (dry run, or no new images)."
           else
-            git commit -m "Generate Love Island contestant portraits (${{ steps.flags.outputs.sel || 'full cast' }}, ${{ inputs.tier }})"
+            git commit -m "Generate Love Island contestant portraits (${{ inputs.dry_run == true && 'dry' || inputs.tier }})"
             git push origin HEAD:${{ github.ref_name }}
           fi

@@ -89,6 +89,15 @@ let jobs = selected.flatMap(jobsFor);
 if (reroll) jobs = jobs.filter((j) => j.slot === reroll);
 jobs.forEach((j) => { j.promptHash = promptHash(j.prompt); j.model = model; });
 
+// --skip-existing: never re-pay for a portrait already on disk. A full run
+// after a pilot (or a re-run of a job that half-finished) only spends on the
+// slots still missing. reroll deliberately overwrites, so it ignores this.
+if (doGenerate && has('--skip-existing') && !reroll) {
+  const before = jobs.length;
+  jobs = jobs.filter((j) => !existsSync(j.out));
+  console.log(`   --skip-existing: ${before - jobs.length} already rendered, ${jobs.length} to render (only pay for the gap)\n`);
+}
+
 const est = estimateCost({
   heroes: jobs.filter((j) => j.kind === 'hero').length,
   moods: jobs.filter((j) => j.kind === 'mood').length,
