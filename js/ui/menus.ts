@@ -14,16 +14,6 @@ import { activePack, PATHS, PRES, meta, run, setRun, setMeta, failLabelFor } fro
 import { showHelp } from './inspectors.js';
 import { nav } from './nav.js';
 
-const TAGLINES = [
-  'Swipe your way from a damp garage to the top of the music industry — before the industry breaks you first.',
-  'The kingdom is your career. The courtiers are A&R reps, algorithms, and your own burnout.',
-  'Exposure is not legal tender. Swipe accordingly.',
-  'Somewhere between the open mic and the stadium, there is a man named Curtis.',
-  'Every swipe is a career decision. Most careers are twelve bad ones in a row.',
-  'The nachos are load-bearing. The dream is real. The pay is exposure.',
-  'Craig has the corner. Todd has the shifts. You have four chords and a feeling.',
-];
-
 export function renderTitle() {
   music.setMood('title');
   const s = $('#screen-title');
@@ -42,10 +32,10 @@ export function renderTitle() {
     }
     s.append(notes);
   }
-  s.append(el('div', 'title-logo', PRES.title?.logo || 'BIG<br>BREAK'));
+  s.append(el('div', 'title-logo', PRES.title?.logo || ''));
   const dayNum = hashStr(todayStr());
-  const taglines = PRES.title?.taglines || TAGLINES;
-  s.append(el('p', 'title-tag', taglines[dayNum % taglines.length]));
+  const taglines = PRES.title?.taglines || [];
+  if (taglines.length) s.append(el('p', 'title-tag', taglines[dayNum % taglines.length]));
 
   const saved = save.loadRun();
   const menu = el('div', 'menu');
@@ -99,20 +89,11 @@ export function renderTitle() {
   if (meta.runs > 0) menu.append(btn('📊 The Résumé', '', renderResume));
   menu.append(btn('⚙ Settings', '', renderSettings));
   s.append(menu);
-  // Today's flavor headline: pack-provided title news, else the evergreen
-  // generator pool exercised with the music-shaped fake state (music default).
-  const fakeState = {
-    flavorSeed: dayNum, act: 1, cardLog: [], fame: 0, money: 50, hits: 0,
-    stats: { burnout: 0, cred: 50, skill: 0 }, rival: 'vanta', loadout: 'kazoo',
-    hustles: [], rivalry: 3,
-  };
-  const news = PRES.title?.news
-    ? PRES.title.news(dayNum)
-    : (PRES.headlines?.(fakeState as any, 1) || [])[0];
+  // Today's flavor headline + the footer stat line are the pack's (music's
+  // evergreen news pool, its runs/best/legacy line).
+  const news = PRES.title?.news?.(dayNum);
   if (news) s.append(el('p', 'title-news', `📰 ${news.text} <span>— ${news.src}</span>`));
-  s.append(el('p', 'title-foot', PRES.title?.foot
-    ? PRES.title.foot(meta)
-    : `Runs: ${meta.runs} · Best fame: ${meta.best.fame} · Legacy: ${meta.lpEarnedTotal} LP`));
+  if (PRES.title?.foot) s.append(el('p', 'title-foot', PRES.title.foot(meta)));
 }
 
 // ---------- Career Wall ----------
@@ -371,6 +352,6 @@ function renderSettings() {
   }));
   menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
   s.append(menu);
-  if (activePack.id === 'music') s.append(el('p', 'title-foot', 'BIG BREAK v5 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.'));
+  if (PRES.aboutLine) s.append(el('p', 'title-foot', PRES.aboutLine));
   show('#screen-settings');
 }

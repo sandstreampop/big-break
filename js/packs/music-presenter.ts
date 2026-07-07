@@ -120,6 +120,35 @@ export const musicPresenter: Presenter = {
   gauntlet: true,
   startGauntlet: musicStartGauntlet,
 
+  // The title screen: logo, attract-mode glyphs, the day's rotating tagline,
+  // the flavor-news line, and the footer stat line. (Music's; the shell only
+  // lays them out.)
+  title: {
+    logo: 'BIG<br>BREAK',
+    glyphs: ['♪', '♫', '♩', '♬'],
+    taglines: [
+      'Swipe your way from a damp garage to the top of the music industry — before the industry breaks you first.',
+      'The kingdom is your career. The courtiers are A&R reps, algorithms, and your own burnout.',
+      'Exposure is not legal tender. Swipe accordingly.',
+      'Somewhere between the open mic and the stadium, there is a man named Curtis.',
+      'Every swipe is a career decision. Most careers are twelve bad ones in a row.',
+      'The nachos are load-bearing. The dream is real. The pay is exposure.',
+      'Craig has the corner. Todd has the shifts. You have four chords and a feeling.',
+    ],
+    foot: (m: any) => `Runs: ${m.runs} · Best fame: ${m.best.fame} · Legacy: ${m.lpEarnedTotal} LP`,
+    news: (dayNum: number) => {
+      // The evergreen headline pool, exercised with a music-shaped fake state.
+      const fake: any = {
+        flavorSeed: dayNum, act: 1, cardLog: [], fame: 0, money: 50, hits: 0,
+        stats: { burnout: 0, cred: 50, skill: 0 }, rival: 'vanta', loadout: 'kazoo', hustles: [], rivalry: 3,
+      };
+      return (generateHeadlines(fake, 1) || [])[0] || null;
+    },
+  },
+
+  // The Settings "about" line (the flagship's tagline footer).
+  aboutLine: 'BIG BREAK v5 — a satirical music-career roguelike. All characters are archetypes; any resemblance to real A&R reps is statistically inevitable.',
+
   // The First Gig tutorial copy (the mechanism — deck, coach marks — is
   // engine/shell-generic; only the words are music's).
   tutorial: {

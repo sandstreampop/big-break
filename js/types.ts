@@ -451,6 +451,8 @@ export interface Presenter {
     foot?: (meta: any) => string;
     news?: (dayNum: number) => { text: string; src: string } | null;
   };
+  // The Settings screen's "about" footer line (the pack's tagline/credit).
+  aboutLine?: string;
   // 1-indexed act names (HUD strip, scrapbook) + act-break interstitial copy.
   actNames?: string[];
   actIntro?: Record<number, { name: string; text: string }>;
