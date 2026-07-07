@@ -31,7 +31,7 @@ export function startNewRun(daily = false, comeback = false) {
   // Only offer a remembered gender the pack still knows about.
   if (sel.gender && !genderOpts.some((g) => g.id === sel.gender)) sel.gender = null;
   let chosenInst = null;
-  const s = $('#screen-instruments');
+  const s = $('#screen-setup');
 
   // Committing is a separate, explicit act — tapping a loadout only selects it,
   // so the pack's optional pickers can't be silently skipped.
@@ -133,7 +133,7 @@ export function startNewRun(daily = false, comeback = false) {
     s.scrollTop = keepScroll;
   };
   buildScreen();
-  show('#screen-instruments');
+  show('#screen-setup');
 }
 
 // The identity step (ADR: name → gender → personality). The name is universal —
@@ -208,9 +208,9 @@ function renderInstrumentRow(s, offered, chosenId, onPick) {
   s.append(row);
 }
 
-// Mastery level for an instrument: earned by finishing (and winning) runs
-function masteryLevel(instrumentId) {
-  const st = meta.lifetime?.byInstrument?.[instrumentId];
+// Mastery level for a loadout: earned by finishing (and winning) runs
+function masteryLevel(loadoutId) {
+  const st = meta.lifetime?.byLoadout?.[loadoutId];
   if (!st) return 0;
   return Math.min(3, Math.floor(st.runs / 2) + st.wins);
 }

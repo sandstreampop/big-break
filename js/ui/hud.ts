@@ -36,16 +36,16 @@ export function renderHud() {
   // Pack-contributed HUD buttons (e.g. music's Hot 10). The shell always shows
   // Help below; the pack adds its own screens.
   for (const b of PRES.hudButtons?.(run) || []) {
-    const bEl = el('button', 'chart-btn', b.badge ? `${b.icon}<span class="chart-badge">${b.badge}</span>` : b.icon);
+    const bEl = el('button', 'hud-btn', b.badge ? `${b.icon}<span class="hud-badge">${b.badge}</span>` : b.icon);
     bEl.addEventListener('click', () => { sfx.ui(); b.onTap(); });
     actWrap.append(bEl);
   }
-  const helpBtn = el('button', 'chart-btn', '❓');
+  const helpBtn = el('button', 'hud-btn', '❓');
   helpBtn.addEventListener('click', () => { sfx.ui(); showHelp(); });
   actWrap.append(helpBtn);
   if (compact) {
     // Tier 3 entry point: everything the rail and gear row used to force-feed.
-    const drawerBtn = el('button', 'chart-btn drawer-btn', '☰');
+    const drawerBtn = el('button', 'hud-btn drawer-btn', '☰');
     drawerBtn.addEventListener('click', () => { sfx.ui(); showStatusDrawer(); });
     actWrap.append(drawerBtn);
   }

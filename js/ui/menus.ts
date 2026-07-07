@@ -199,7 +199,7 @@ function renderTrophies() {
       const stat = PRES.historyStat?.(h) || '';
       hist.append(el('div', 'history-row res-' + (h.result || 'fail'),
         `<span>${h.daily ? '📅 ' : ''}${inst ? inst.name : '?'} → ${pathName}</span>` +
-        `<b>${res}</b><span class="hist-fame">${stat}</span>`));
+        `<b>${res}</b><span class="hist-stat">${stat}</span>`));
     }
     s.append(hist);
   }

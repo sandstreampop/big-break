@@ -485,9 +485,9 @@ export interface Presenter {
   // `onDone` to fall through to the normal act interstitial.
   actStartScreen?: (step: any, onDone: () => void) => void;
   // The act-break chart/standings panel (music's "This week on the Hot 10"):
-  // rendered rows plus whether the week warrants a celebration beat. Null when
-  // the pack has no standings to show at this break.
-  actBreakChart?: (state: RunState) => { rows: { cls: string; html: string }[]; celebrate: boolean } | null;
+  // the panel heading plus rendered rows plus whether the week warrants a
+  // celebration beat. Null when the pack has no standings to show at this break.
+  actBreakChart?: (state: RunState) => { head: string; rows: { cls: string; html: string }[]; celebrate: boolean } | null;
   // The pack's noun for a run segment ("ACT", "WEEK" — ADR-0010: the count is
   // data, and so is the word). The shell renders it wherever it numbers a
   // segment; packs that omit it get the original 'ACT'.

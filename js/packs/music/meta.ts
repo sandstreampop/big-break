@@ -14,7 +14,7 @@ import { PATHS } from './manifest.js';
 // menu names no fame/hit/instrument. A pack without this hook gets the shell's
 // minimal neutral résumé (runs/swipes/incredibles/legacy).
 export function musicResume(meta: any): { label: string; value: string; head?: boolean }[] {
-  const lt = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
+  const lt = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byLoadout: {}, byPath: {}, hits: 0, moneyBest: 0 };
   const rows: { label: string; value: string; head?: boolean }[] = [
     { label: 'Careers attempted', value: String(meta.runs) },
     { label: 'Decisions swiped', value: String(lt.swipes) },
@@ -33,7 +33,7 @@ export function musicResume(meta: any): { label: string; value: string; head?: b
   for (const [pid, p] of Object.entries<any>(lt.byPath)) {
     rows.push({ label: `${PATHS[pid]?.icon || ''} ${PATHS[pid]?.name || pid}`, value: `${p.wins}/${p.runs} won (${p.runs ? Math.round((100 * p.wins) / p.runs) : 0}%)` });
   }
-  const instRuns = Object.entries<any>(lt.byInstrument).sort((a, b) => b[1].runs - a[1].runs);
+  const instRuns = Object.entries<any>(lt.byLoadout).sort((a, b) => b[1].runs - a[1].runs);
   if (instRuns.length) {
     rows.push({ label: 'Weapon of choice', value: '', head: true });
     for (const [iid, st] of instRuns.slice(0, 3)) {
@@ -74,7 +74,7 @@ export const musicTrophySpecials: Record<string, (meta: any) => boolean> = {
   all_paths: (meta) => ['megastar', 'studio', 'hitfactory'].every((p) => meta.successPaths.includes(p)),
   daily_3: (meta) => Object.keys(meta.dailyResults || {}).length >= 3,
   wall_5: (meta) => meta.unlockedWall.length >= 5,
-  mastery_3: (meta) => Object.values(meta.lifetime?.byInstrument || {})
+  mastery_3: (meta) => Object.values(meta.lifetime?.byLoadout || {})
     .some((st: any) => Math.min(3, Math.floor(st.runs / 2) + st.wins) >= 3),
   exits_3: (meta) => (meta.exitSeen || []).length >= 3,
   nemesis_3: (meta) => Object.values(meta.rivalCounts || {}).some((n: any) => n >= 3),

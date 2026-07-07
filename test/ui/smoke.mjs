@@ -98,7 +98,7 @@ async function clickJS(page, sel, timeout = 10000) {
 // type a name and, if the pack offers a gender axis, pick one — the personality
 // cards only appear once a required gender is chosen. Idempotent and pack-safe.
 async function enterIdentity(page) {
-  await page.waitForSelector('#screen-instruments.active #player-name', { timeout: 10000 });
+  await page.waitForSelector('#screen-setup.active #player-name', { timeout: 10000 });
   await page.evaluate(() => {
     const n = document.querySelector('#player-name');
     if (n && !n.value.trim()) { n.value = 'Tester'; n.dispatchEvent(new Event('input', { bubbles: true })); }
@@ -137,7 +137,7 @@ async function playToFinale(page, label, pathIndex = 0) {
 
   await page.waitForSelector('#screen-title.active', { timeout: 15000 });
   await clickJS(page, 'button.btn.primary');
-  await page.waitForSelector('#screen-instruments.active', { timeout: 10000 });
+  await page.waitForSelector('#screen-setup.active', { timeout: 10000 });
   await enterIdentity(page);
   await clickJS(page, '.pick-card');
   await clickJS(page, '#start-run-btn');
