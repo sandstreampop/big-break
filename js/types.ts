@@ -451,6 +451,8 @@ export interface Presenter {
     foot?: (meta: any) => string;
     news?: (dayNum: number) => { text: string; src: string } | null;
   };
+  // The Settings screen's "about" footer line (the pack's tagline/credit).
+  aboutLine?: string;
   // 1-indexed act names (HUD strip, scrapbook) + act-break interstitial copy.
   actNames?: string[];
   actIntro?: Record<number, { name: string; text: string }>;
@@ -460,12 +462,32 @@ export interface Presenter {
   // — the pack owns the condition; a pack that omits this always gets the
   // default interstitial.
   actStartOverlay?: (state: RunState) => boolean;
+  // The pack's special act-start screen (music's Brammies), shown when
+  // actStartOverlay says so. It renders with the shell's dom toolkit and calls
+  // `onDone` to fall through to the normal act interstitial.
+  actStartScreen?: (step: any, onDone: () => void) => void;
+  // The act-break chart/standings panel (music's "This week on the Hot 10"):
+  // rendered rows plus whether the week warrants a celebration beat. Null when
+  // the pack has no standings to show at this break.
+  actBreakChart?: (state: RunState) => { rows: { cls: string; html: string }[]; celebrate: boolean } | null;
   // The pack's noun for a run segment ("ACT", "WEEK" — ADR-0010: the count is
   // data, and so is the word). The shell renders it wherever it numbers a
   // segment; packs that omit it get the original 'ACT'.
   actWord?: string;
-  // The HUD's counter chips (top-right), replacing the default resource row.
+  // The HUD's counter chips (top-right): the pack's resource readout (score,
+  // currency, streak…). The shell renders whatever chips this returns.
   hudCounters?: (state: RunState) => { html: string; cls?: string }[];
+  // The HUD's gear row (full-HUD packs): the run's persona/loadout and its
+  // acquired kit as tappable chips. Each chip is a descriptor the shell renders
+  // and wires to a tap-to-inspect sheet; the pack owns what's on it. A pack
+  // that omits this (or opts into compactHud) shows no gear row.
+  gearChips?: (state: RunState) => { cls: string; html: string; sheet: any }[];
+  // Extra HUD action buttons beside the act label (e.g. a chart/standings
+  // screen). `badge` is an optional count bubble; `onTap` opens the pack's own
+  // screen (packs render bespoke screens with the shell's dom toolkit). The
+  // shell always shows its generic Help (and, in compactHud, the status
+  // drawer); these are the pack's additions.
+  hudButtons?: (state: RunState) => { icon: string; badge?: string | null; onTap: () => void }[];
   // Resolve an equipped-item id (the gear mechanic's per-pack catalog) for
   // HUD chips and swap flows.
   itemById?: (id: string) => any;
@@ -495,6 +517,18 @@ export interface Presenter {
   finalSet?: (state: RunState) => { head: string; sub: string; options: any[] };
   // Share text for a finished run.
   shareText?: (summary: any, lp: number) => string;
+  // An optional share poster image (music composes one; text-only packs omit
+  // it and the shell shares shareText alone).
+  shareImage?: (summary: any, lp: number, endingTitle: string) => Promise<File | null>;
+  // Pack-specific meta-save writes at run end (best score, nemesis ledger, the
+  // pack's lifetime aggregates). The shell does the genre-neutral bookkeeping.
+  recordMeta?: (meta: any, summary: any) => void;
+  // The "special" trophy predicates keyed by a trophy's `special` id — the ones
+  // whose condition reads the meta ledger (and may name the pack's path ids).
+  trophySpecials?: Record<string, (meta: any) => boolean>;
+  // Ending-screen extras: the pack's legacy lines (music's chart legacy) and an
+  // LP-award suffix note (music's contract multiplier).
+  endingExtras?: (summary: any, state: RunState) => { lines: { cls: string; html: string }[]; lpNote: string };
   // Pack-owned telemetry props (Epic 5). The shell owns the genre-NEUTRAL spine
   // of the run_start / run_end events (mode, outcome, path, cards, burnout, lp,
   // career_runs) and merges the pack's OWN taxonomy here — so a second game
@@ -521,6 +555,41 @@ export interface Presenter {
   cardCast?: (state: RunState, ev: GameEvent) => {
     name: string; face: string; moodFace?: string | null; sub?: string | null; cls?: string;
   }[] | null;
+
+  // ── Result / card hooks (the pack's own outcome presentation). The shell
+  // renders the generic result (tier, recap, delta chips, the deltas.notices
+  // channel, gear-slot flow) and the generic card; these let a pack add its
+  // subsystem voice without the shell naming a genre concept. ──
+
+  // Custom chip (class + html) for a single stat/resource delta (music's
+  // rivalry feud line, its $ money format, its 'Hit!'). Return null for the
+  // generic "{icon} {±n} {name}" chip the shell builds from the manifest.
+  deltaChip?: (key: string, amount: number, state: RunState) => { cls: string; html: string } | null;
+  // Extra result-overlay presentation for this pack: its subsystem notices
+  // (gear/venue/song lines…), whether the beat celebrates (confetti + win
+  // sting), and whether it plays the cash sound. The shell renders the generic
+  // tier/recap/chips and the deltas.notices channel; this adds the pack's own.
+  resultExtras?: (result: any, state: RunState) => {
+    notices?: { cls: string; html: string }[]; celebrate?: boolean; cash?: boolean;
+  } | null;
+  // A chosen card's on-swipe minigame (a pack that ships performance beats).
+  // The shell freezes the card, awaits the returned promise, and applies the
+  // perf as the swipe bonus; returns null when the choice has none (or the
+  // player disabled them). The pack runs its own minigame screens here.
+  choiceMinigame?: (choice: any, state: RunState) => Promise<any> | null;
+  // Whether a choice's button shows the "has a minigame" flag.
+  choiceHasMinigame?: (choice: any, state: RunState) => boolean;
+  // Record a minigame performance into the run's own fiction (the scrapbook
+  // label, skill-echo flags). Called after the swipe resolves, when a perf ran.
+  recordPerf?: (perf: any, state: RunState) => void;
+  // Per-run UI gates a pack's modifiers can set: hide the risk tell, or disable
+  // the banked-bonus (encore) bar. (Music's contracts drive these.)
+  hideRisk?: (state: RunState) => boolean;
+  encoreDisabled?: (state: RunState) => boolean;
+  // Equip an item into the run's gear slots (the shared gear-slot result flow
+  // calls this; the pack owns the catalog + equip rules). Returns any extra
+  // stat deltas the equip produced, for the result chips.
+  equipItem?: (state: RunState, id: string, dropId?: string) => any[] | undefined;
 
   // ── The clarity screens: four sibling channels of the overlay note. Each is
   // a generic presentation SLOT the shell renders when a pack provides it —
@@ -573,6 +642,24 @@ export interface Presenter {
   art?: Record<string, { e: string; s: string }>;
   // Offer every unlocked persona at run start instead of a random 3.
   offerAllLoadouts?: boolean;
+  // ── Run setup (the loadout screen). The shell owns the loadout pick + start
+  // button; these let a pack add its own selection layer. ──
+  // The loadout-screen title/sub copy (music: "Choose your weapon"). Default
+  // covers the base case; comeback/daily copy comes from comeback/daily.
+  loadoutPicker?: { head: string; sub: string };
+  // The candidate loadout ids to offer (music: contract-forced or unlocked).
+  // Omitted → the shell offers every unlockedByDefault / unlockedBy loadout.
+  loadoutPool?: (meta: any, sel: any) => string[];
+  // Render the pack's optional pre-run choices (music's venue/genre/contract)
+  // into the setup screen; mutate `sel` and call `rebuild` on a pick.
+  setupExtras?: (host: HTMLElement, ctx: { seed: number; sel: any; rebuild: () => void; daily: boolean }) => void;
+  // The chosen-extras summary shown on the sticky start button.
+  setupSummary?: (sel: any) => string;
+  // Apply the pack's setup choices + run-init to a freshly minted run (after
+  // the engine's newRun, before any comeback transform).
+  applySetup?: (state: RunState, sel: any, meta: any, daily: boolean) => void;
+  // The weekly Gauntlet's fixed-build screen (the mode itself is pack data).
+  startGauntlet?: () => void;
   // ADR-0009 (the screen contract): opt into the compact HUD. The stat
   // rail, persona/gear chips, and streak banner leave the permanent screen;
   // one ambient strip remains (act, counters, salience chips) and the full
@@ -602,6 +689,10 @@ export interface Presenter {
 
 export interface Pack {
   id: string;
+  // The localStorage namespace for this pack's saves. The flagship uses '' so
+  // careers predating multi-pack survive; a pack that omits it is namespaced by
+  // its id. Lets boot() stay genre-neutral (no `id === 'music'` special-case).
+  saveNamespace?: string;
   manifest: PackManifest;
   plugins?: Plugin[];
   events: GameEvent[];
@@ -708,7 +799,7 @@ export interface RunState {
   firstRun?: boolean;
   firstLoadout?: string;            // id of the run's first loadout (swap detection)
   swappedLoadout?: boolean;
-  coached?: boolean;
+  coached?: string[];               // tutorial: ids of cards whose coach mark has shown
   history?: any[];
   unlockedPacks?: string[];
   // ── exit interview (generic shell) ──
