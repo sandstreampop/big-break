@@ -38,6 +38,19 @@
   transitions go through `nav` (dependency inversion), so the graph stays
   acyclic. Adding a screen adds one `Nav` method + one module; only the
   composition root changes.
+- **The shell names no genre.** Every file under `js/ui/` (and the shared
+  `js/*` layer — `engine`/`save`/`art`/`audio`/…) reads a pack ONLY through the
+  `Presenter` interface (`js/types.ts`) + the manifest — never a genre module.
+  A pack's UI-facing flavor (HUD chips, result notices, the pre-finale set, the
+  setup pickers, share, act set-pieces, bespoke screens like music's Hot 10)
+  lives behind presenter hooks the shell feature-detects; a bespoke pack screen
+  may render with the neutral `dom` toolkit. So the interface surface to scan is
+  one file: `Presenter` (+ `Pack`/`PackManifest`/`RunState`) in `js/types.ts`.
+  Each game is a self-contained folder — `js/packs/music/` and
+  `js/packs/love-island/` mirror each other (manifest, presenter, deck,
+  plugins, data). `RunState` in `js/types.ts` is the genre-neutral core; each
+  pack adds its own fields via `declare module '../../types.js'` in its
+  `pack.ts`, so a field like `fame` is defined in `js/packs/music/pack.ts`.
 - Seeded behavior is pinned by golden masters (music, love-island, and the
   zero-subsystem probe). A golden diff is a bug unless intended — then
   re-baseline deliberately (`tools/gen-golden.mjs`, `tools/gen-li-golden.mjs`,
