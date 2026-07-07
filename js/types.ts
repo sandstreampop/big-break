@@ -584,6 +584,10 @@ export interface Presenter {
   // the banked-bonus (encore) bar. (Music's contracts drive these.)
   hideRisk?: (state: RunState) => boolean;
   encoreDisabled?: (state: RunState) => boolean;
+  // Equip an item into the run's gear slots (the shared gear-slot result flow
+  // calls this; the pack owns the catalog + equip rules). Returns any extra
+  // stat deltas the equip produced, for the result chips.
+  equipItem?: (state: RunState, id: string, dropId?: string) => any[] | undefined;
 
   // ── The clarity screens: four sibling channels of the overlay note. Each is
   // a generic presentation SLOT the shell renders when a pack provides it —

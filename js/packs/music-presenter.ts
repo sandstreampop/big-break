@@ -9,6 +9,7 @@ import { buildEpilogue } from '../epilogue.js';
 import { generateHeadlines } from '../headlines.js';
 import { generateDMs } from '../dms.js';
 import { buildDiscography } from '../discography.js';
+import { equipAccessory } from './plugins/gear.js';
 import { rivalById } from '../data/rivals.js';
 import { genreById } from '../data/genres.js';
 import { venueById } from '../data/venues.js';
@@ -61,8 +62,9 @@ export const musicPresenter: Presenter = {
   ],
 
   // Resolve an equipped-item id through music's accessory catalog (HUD chips,
-  // gear-swap flows).
+  // gear-swap flows), and equip one into the run's slots.
   itemById: (id) => accessoryById(id),
+  equipItem: (state: any, id: string, dropId?: string) => equipAccessory(state, id, dropId),
 
   // The art system's reactive-scene inputs, mapped from music's meters.
   vibe: (state: any) => ({ fame: state.fame, network: state.stats.network, burnout: state.stats.burnout }),

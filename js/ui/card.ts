@@ -11,7 +11,6 @@
 import * as engine from '../engine.js';
 import * as save from '../save.js';
 import { CONFIG } from '../config.js';
-import { equipAccessory } from '../packs/plugins/gear.js';
 import { artFor, sceneFor } from '../art.js';
 import { sfx, ambient } from '../audio.js';
 import { track } from '../analytics.js';
@@ -571,7 +570,7 @@ function showResult(result) {
       list.append(btn(`${acc.name} — ${acc.blurb}`, '', () => {
         handled = true; close();
         if ((run.accessories || []).length < CONFIG.accessorySlots) {
-          equipAccessory(run, acc.id);
+          PRES.equipItem?.(run, acc.id);
           save.saveRun(run);
           routeAdvance(engine.advance(run));
         } else {
@@ -588,7 +587,7 @@ function showResult(result) {
   const pending = result.deltas.pendingGear;
   if (pending) {
     if ((run.accessories || []).length < CONFIG.accessorySlots) {
-      const extra = equipAccessory(run, pending.id) || [];
+      const extra = PRES.equipItem?.(run, pending.id) || [];
       save.saveRun(run);
       for (const d of extra) chips.append(deltaChip(d.key, d.amount));
       notice('notice-gear', `🧰 <b>${pending.name}</b> is yours${pending.blurb ? ' — ' + pending.blurb : ''}`);
@@ -638,7 +637,7 @@ function gearChooser(newAcc, result) {
       const acc = itemById(id);
       if (!acc) continue;
       list.append(btn(`Drop ${acc.name}`, '', () => {
-        equipAccessory(run, newAcc.id, id);
+        PRES.equipItem?.(run, newAcc.id, id);
         save.saveRun(run);
         close();
       }));
