@@ -58,6 +58,31 @@ test('loadMeta schema-migrates: old partial save gets new default keys', () => {
   assert.ok(meta.best, 'missing best backfilled from defaults');
 });
 
+test('loadMeta migrates the legacy per-loadout mastery key (byInstrument → byLoadout)', () => {
+  // A career saved before the genre-neutral rename keyed the mastery aggregate
+  // `lifetime.byInstrument`. It must survive as `byLoadout` so players keep the
+  // mastery stars the setup screen and trophies read off it.
+  useStorage({ seed: { [META_KEY]: JSON.stringify({
+    lp: 5, lifetime: { swipes: 10, byInstrument: { melodica: { runs: 4, wins: 2 } }, byPath: {} },
+  }) } });
+  save.setSaveNamespace('');
+  const meta = save.loadMeta();
+  assert.deepEqual(meta.lifetime.byLoadout, { melodica: { runs: 4, wins: 2 } }, 'renamed in place');
+  assert.equal(meta.lifetime.byInstrument, undefined, 'legacy key removed');
+  assert.equal(meta.lifetime.swipes, 10, 'sibling lifetime fields untouched');
+});
+
+test('loadMeta does not clobber byLoadout when both keys are present', () => {
+  // Belt-and-suspenders: a save already migrated (byLoadout present) must keep
+  // it even if a stale byInstrument lingers.
+  useStorage({ seed: { [META_KEY]: JSON.stringify({
+    lifetime: { byInstrument: { melodica: { runs: 9, wins: 9 } }, byLoadout: { guitar: { runs: 1, wins: 1 } } },
+  }) } });
+  save.setSaveNamespace('');
+  const meta = save.loadMeta();
+  assert.deepEqual(meta.lifetime.byLoadout, { guitar: { runs: 1, wins: 1 } }, 'existing byLoadout wins');
+});
+
 test('loadMeta survives corrupt JSON, falling back to defaults', () => {
   useStorage({ seed: { [META_KEY]: '{not valid json' } });
   save.setSaveNamespace('');
