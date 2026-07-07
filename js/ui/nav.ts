@@ -21,7 +21,6 @@ export interface Nav {
   dealCard(): void;                          // deal the next card (the run loop)
   crossroads(): void;                        // the Act-1 path choice
   actInterstitial(step: any): void;          // the act break "previously on"
-  brammies(step: any): void;                 // a pack's act-start set piece
   finalSet(): void;                          // the pre-finale closer choice
   finale(): void;                            // judge the run, show the ending
   gameOver(endingKey: string): void;         // a fail-state ending
@@ -48,11 +47,12 @@ export function routeAdvance(step) {
     case 'card': nav.dealCard(); break;
     case 'crossroads': nav.crossroads(); break;
     case 'actStart':
-      // A pack may intercept the act-start with its own special overlay
-      // (music's Brammies before the final act); the trigger condition lives
-      // in the pack's presenter, not hardcoded here.
-      if (PRES.actStartOverlay?.(run)) nav.brammies(step);
-      else nav.actInterstitial(step);
+      // A pack may intercept the act-start with its own special screen (music's
+      // Brammies before the final act) — both the trigger and the screen are
+      // the pack's; it calls back to the normal interstitial when done.
+      if (PRES.actStartOverlay?.(run) && PRES.actStartScreen) {
+        PRES.actStartScreen(step, () => nav.actInterstitial(step));
+      } else nav.actInterstitial(step);
       break;
     case 'finale': nav.finalSet(); break;
     case 'gameover': nav.gameOver(step.endingKey); break;

@@ -11,88 +11,12 @@
 import * as engine from '../engine.js';
 import * as save from '../save.js';
 import { CONFIG } from '../config.js';
-import { rivalById } from '../data/rivals.js';
-import { genreById } from '../data/genres.js';
-import { buildChart } from '../charts.js';
-import { releaseSong } from '../songs.js';
 import { sfx } from '../audio.js';
 import { el, $, keyable, vibrate, openOverlay, spawnConfetti, show } from './dom.js';
 import { activePack, run, PRES, PATHS, metaFor, fillText } from './context.js';
 import { pathFit, gateReadout } from './gates.js';
 import { feedTeaser } from './feeds.js';
 import { nav } from './nav.js';
-
-// ---------- The Brammies (Pass 44) ----------
-// Procedural awards night: you're nominated against your rival and two
-// chart acts. You pick what to PREPARE; the seeded outcome pays off
-// against your preparation.
-
-export function showBrammies(step) {
-  const rng = engine.mulberry32((run.flavorSeed || 1) * 7 + 44);
-  const rival = rivalById(run.rival);
-  const genre = genreById(run.genre);
-  const category = genre
-    ? `Best Emerging ${genre.name} Act`
-    : ['Best New Act (Regional)', 'Breakthrough Artist To Watch', 'Best Live Act Under 500 Cap'][Math.floor(rng() * 3)];
-  const chart = buildChart(run).filter((r) => !r.you && !r.rival).slice(0, 2);
-  const nominees = [rival.name, ...chart.map((r) => r.artist)];
-  // your odds scale with fame; the rival feeds on feud heat
-  const winChance = Math.min(0.85, Math.max(0.2, run.fame / 110 - (run.rivalry >= 7 ? 0.1 : 0)));
-  const youWin = rng() < winChance;
-
-  const s = $('#screen-crossroads');
-  s.innerHTML = '';
-  s.append(el('h2', 'screen-head', '🏆 The Brammies'));
-  s.append(el('p', 'screen-sub',
-    `You’re nominated: <b>${category}</b>. Also nominated: ${nominees.join(', ')}. The envelope exists. The cameras are ON you. What do you rehearse in the hotel mirror?`));
-  const row = el('div', 'pick-row');
-
-  const outcomes = (prepared) => {
-    run.brammy = youWin ? 'won' : 'lost';
-    let text, deltas;
-    if (youWin && prepared === 'speech') {
-      text = `They call your name. The speech lands — every thank-you in order, the joke placed just right, one genuine crack in your voice you didn’t rehearse. The clip travels for weeks.`;
-      run.fame += 12; run.stats.cred = Math.min(100, run.stats.cred + 4);
-      deltas = '★ +12 Fame · 🤟 +4 Cred';
-    } else if (youWin && prepared === 'lossface') {
-      text = `They call your name and you walk up with nothing. The fumbling, unprepared, honest mess of a speech is somehow MORE charming. “Authentic,” says everyone. You thanked your landlord.`;
-      run.fame += 8; run.stats.cred = Math.min(100, run.stats.cred + 6);
-      deltas = '★ +8 Fame · 🤟 +6 Cred';
-    } else if (!youWin && prepared === 'speech') {
-      text = `${rival.name} wins. The camera finds you mid-expression — the exact face of someone with a folded speech in their pocket. The GIF is instant. The speech stays folded forever.`;
-      run.fame += 3; run.stats.burnout = Math.min(100, run.stats.burnout + 6); run.rivalry = Math.min(10, (run.rivalry ?? 3) + 2);
-      deltas = '★ +3 Fame · 🔥 +6 Burnout · ⚔ Feud +2';
-    } else {
-      text = `${rival.name} wins. Your gracious-loss face — rehearsed to perfection — broadcasts pure class to four million viewers. Industry folk remember losers who clap like that.`;
-      run.fame += 5; run.stats.cred = Math.min(100, run.stats.cred + 5); run.stats.network = Math.min(100, run.stats.network + 4);
-      deltas = '★ +5 Fame · 🤟 +5 Cred · 📱 +4 Network';
-    }
-    save.saveRun(run);
-    openOverlay((ov) => {
-      const box = el('div', `result-card tier-${youWin ? 'incredible' : 'good'}`);
-      if (youWin) { spawnConfetti(ov); sfx.win(); } else sfx.good();
-      box.append(el('div', 'tier-badge', youWin ? 'AND THE BRAMMY GOES TO... YOU' : `AND THE BRAMMY GOES TO... ${rival.name.toUpperCase()}`));
-      box.append(el('p', 'result-text', text));
-      box.append(el('p', 'pick-mods', deltas));
-      box.append(el('p', 'tap-hint', 'tap to continue'));
-      ov.append(box);
-    }, { armMs: 300, onClose: () => { nav.actInterstitial(step); show('#screen-game'); } });
-  };
-
-  const speech = el('div', 'pick-card path-card');
-  speech.append(el('div', 'path-icon', '📜'));
-  speech.append(el('h3', '', 'Rehearse the acceptance speech'));
-  speech.append(el('p', 'pick-flavor', 'Thank-yous ranked by billing. One tasteful joke. Belief, laminated.'));
-  speech.addEventListener('click', () => { sfx.commit(); outcomes('speech'); });
-  const loss = el('div', 'pick-card path-card');
-  loss.append(el('div', 'path-icon', '🙂'));
-  loss.append(el('h3', '', 'Rehearse the gracious-loss face'));
-  loss.append(el('p', 'pick-flavor', 'Chin up, warm applause, zero visible eye-twitch. Oscar-grade humility.'));
-  loss.addEventListener('click', () => { sfx.commit(); outcomes('lossface'); });
-  row.append(speech, loss);
-  s.append(row);
-  show('#screen-crossroads');
-}
 
 // The Final Set (Pass 32): pick your closer before the career is judged.
 // The player MUST be able to see their gates and each closer's impact on
@@ -142,52 +66,10 @@ function closerImpact(opt) {
 }
 
 export function renderFinalSet() {
-  // A pack may bring its own pre-finale set piece (head/sub/options); the
-  // music Final Set below is the default.
-  if (PRES.finalSet) {
-    const fs = PRES.finalSet(run);
-    renderFinalSetScreen(fs.head, fs.sub, fs.options);
-    return;
-  }
-  const flags = run.flags || [];
-  const options = [];
-  if (flags.includes('song_finished')) {
-    options.push({ title: '“The Door”', blurb: 'The one you found at 3 a.m. and finished anyway.', stat: 'pathProgress', amount: 1, label: '+1 Momentum', apply: () => { run.pathProgress += 1; } });
-  }
-  // the crowd-pleaser is your ACTUAL hit — closing with it feeds the final
-  // chart week (evaluateFinale ticks the chart before judgment)
-  const hit = (run.songs || []).filter((x) => x.status === 'charting' && x.pos).sort((a, b) => a.pos - b.pos)[0]
-    || (run.songs || []).find((x) => x.crowned);
-  options.push({
-    title: hit ? `“${hit.title}”` : (run.chartTitles?.[0] ? `“${run.chartTitles[0]}”` : '“The Crowd-Pleaser”'),
-    blurb: hit && hit.pos ? `Charting at #${hit.pos} right now. The room knows the first chord.` : 'The one they scream for. Give the people what they want.',
-    stat: 'fame', amount: 5, label: hit ? '+5 Fame · feeds the final chart week' : '+5 Fame',
-    apply: () => { run.fame += 5; if (hit) hit.hype = Math.min(100, hit.hype + 25); },
-  });
-  // a great unreleased demo can debut LIVE as your closer — it enters the
-  // chart in the finale's last tick, and might even crown
-  const vault = (run.songs || []).filter((x) => x.status === 'demo').sort((a, b) => b.quality - a.quality)[0];
-  if (vault && vault.quality >= 55) {
-    options.push({
-      title: `“${vault.title}” (unreleased)`,
-      blurb: 'Debut the vault song. Right now. Live. Careers should end on a first.',
-      stat: 'cred', amount: 3, label: '+3 Cred · releases it tonight',
-      apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 3); releaseSong(run, vault.id, 58); },
-    });
-  }
-  options.push({ title: '“The Deep Cut”', blurb: 'Track 9. The heads nod. The heads matter.', stat: 'cred', amount: 4, label: '+4 Cred', apply: () => { run.stats.cred = Math.min(100, run.stats.cred + 4); } });
-  if (flags.includes('debt') || run.money < 0) {
-    // debt outranks storytelling: the Curtis closer must survive the 3-slot cut
-    options.splice(Math.min(2, options.length), 0,
-      { title: '“Curtis (Reprise)”', blurb: 'A ballad for the politest man you owe.', stat: 'money', amount: 100, label: '+$100', apply: () => { run.money += 100; } });
-  } else {
-    options.push({ title: '“The Instrumental”', blurb: 'No words. Just proof.', stat: 'skill', amount: 4, label: '+4 Skill', apply: () => { run.stats.skill = Math.min(100, run.stats.skill + 4); } });
-  }
-
-  const pathName = run.path ? PATHS[run.path].name : 'your path';
-  renderFinalSetScreen('The Final Set',
-    `Last night of the run — your <b>${pathName}</b> career gets judged after this. Pick the closer that pushes you over a gate.`,
-    options);
+  // The pre-finale set piece is the pack's (head/sub/options); the shared
+  // screen below renders it and annotates each closer against the win gates.
+  const fs = PRES.finalSet!(run);
+  renderFinalSetScreen(fs.head, fs.sub, fs.options);
 }
 
 // The pre-finale choice screen shell: gate readout + up to three closers.
@@ -249,11 +131,11 @@ export function actInterstitial(step) {
     }
   } else {
     box.append(el('div', 'tier-badge', `${PRES.actWord || 'ACT'} ${step.act}`));
-    const intro = PRES.actIntro?.[step.act] || (step.act === 2
-      ? { name: 'THE GRIND', text: 'The garage is behind you. Everything now costs something.' }
-      : { name: 'THE RECKONING', text: 'Higher stakes, fewer excuses. The summit is visible. So is the drop.' });
-    box.append(el('p', 'result-text act-name', intro.name));
-    box.append(el('p', 'result-text', intro.text));
+    const intro = PRES.actIntro?.[step.act];
+    if (intro) {
+      box.append(el('p', 'result-text act-name', intro.name));
+      box.append(el('p', 'result-text', intro.text));
+    }
   }
   for (const n of step.notes || []) {
     if (n.startsWith('♪')) continue; // chart news gets its own stage below
@@ -267,47 +149,14 @@ export function actInterstitial(step) {
     box.append(el('p', 'upkeep-note', n.startsWith('🧳') || n.startsWith('🔥') ? n : `💸 ${n}`));
   }
 
-  // This week on the Hot 10: your songs move while you weren't looking
-  const week = run.lastChartWeek;
-  const crowns = (week?.moves || []).filter((m) => m.kind === 'crown');
-  if (week && week.moves.length) {
+  // The act-break standings panel is the pack's (music's "This week on the Hot
+  // 10"): the shell renders the rows it returns and fires the celebration beat
+  // if the week earned one. Packs without standings return null.
+  const chart = PRES.actBreakChart?.(run);
+  if (chart) {
     const cw = el('div', 'chart-week');
     cw.append(el('div', 'trades-head', '📈 THIS WEEK ON THE HOT 10'));
-    for (const m of week.moves) {
-      if (m.kind === 'crown') {
-        const row = el('div', 'chart-week-row crown');
-        row.innerHTML = `<span class="cw-move">👑 #${m.to}</span><b>“${m.title}”</b><span class="cw-note">top 3 — that’s a HIT</span>`;
-        cw.append(row);
-      } else if (m.kind === 'debut') {
-        const row = el('div', 'chart-week-row debut');
-        row.innerHTML = `<span class="cw-move">NEW #${m.to}</span><b>“${m.title}”</b><span class="cw-note">debuts</span>`;
-        cw.append(row);
-      } else if (m.kind === 'climb') {
-        const row = el('div', 'chart-week-row climb');
-        row.innerHTML = `<span class="cw-move">▲ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">up from #${m.from}</span>`;
-        cw.append(row);
-      } else if (m.kind === 'slip') {
-        const row = el('div', 'chart-week-row slip');
-        row.innerHTML = `<span class="cw-move">▼ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">was #${m.from}</span>`;
-        cw.append(row);
-      } else if (m.kind === 'hold') {
-        const row = el('div', 'chart-week-row hold');
-        row.innerHTML = `<span class="cw-move">= #${m.to}</span><b>“${m.title}”</b><span class="cw-note">${m.weeks} wks on chart</span>`;
-        cw.append(row);
-      } else if (m.kind === 'drop') {
-        const row = el('div', 'chart-week-row dropoff');
-        row.innerHTML = `<span class="cw-move">OFF</span><b>“${m.title}”</b><span class="cw-note">gone after ${m.weeks} wk${m.weeks === 1 ? '' : 's'}</span>`;
-        cw.append(row);
-      } else if (m.kind === 'rivalPassed') {
-        const row = el('div', 'chart-week-row rivalwar');
-        row.innerHTML = `<span class="cw-move">⚔️ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">passes ${rivalById(run.rival)?.name || 'your rival'} (#${m.from}). First blood.</span>`;
-        cw.append(row);
-      } else if (m.kind === 'rivalNeck') {
-        const row = el('div', 'chart-week-row rivalwar');
-        row.innerHTML = `<span class="cw-move">⚔️ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">one slot from ${rivalById(run.rival)?.name || 'your rival'} (#${m.from}). It knows.</span>`;
-        cw.append(row);
-      }
-    }
+    for (const r of chart.rows) cw.append(el('div', r.cls, r.html));
     box.append(cw);
   }
 
@@ -346,7 +195,7 @@ export function actInterstitial(step) {
   if (recapFeed) box.append(feedTeaser(recapFeed, true));
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
-  if (crowns.length) { spawnConfetti(ov); sfx.win(); vibrate([30, 40, 30, 40, 80]); }
+  if (chart?.celebrate) { spawnConfetti(ov); sfx.win(); vibrate([30, 40, 30, 40, 80]); }
  }, { armMs: 250, onClose: () => nav.dealCard() });
 }
 

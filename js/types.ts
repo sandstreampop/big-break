@@ -460,6 +460,14 @@ export interface Presenter {
   // — the pack owns the condition; a pack that omits this always gets the
   // default interstitial.
   actStartOverlay?: (state: RunState) => boolean;
+  // The pack's special act-start screen (music's Brammies), shown when
+  // actStartOverlay says so. It renders with the shell's dom toolkit and calls
+  // `onDone` to fall through to the normal act interstitial.
+  actStartScreen?: (step: any, onDone: () => void) => void;
+  // The act-break chart/standings panel (music's "This week on the Hot 10"):
+  // rendered rows plus whether the week warrants a celebration beat. Null when
+  // the pack has no standings to show at this break.
+  actBreakChart?: (state: RunState) => { rows: { cls: string; html: string }[]; celebrate: boolean } | null;
   // The pack's noun for a run segment ("ACT", "WEEK" — ADR-0010: the count is
   // data, and so is the word). The shell renders it wherever it numbers a
   // segment; packs that omit it get the original 'ACT'.

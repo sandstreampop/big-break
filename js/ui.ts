@@ -21,7 +21,7 @@ import { PRES, meta, run, selectPack, setMeta } from './ui/context.js';
 import { $, show, healStaleStylesheets } from './ui/dom.js';
 import { nav, type Nav } from './ui/nav.js';
 import { dealCard, commitSwipe } from './ui/card.js';
-import { renderCrossroads, actInterstitial, showBrammies, renderFinalSet } from './ui/progression.js';
+import { renderCrossroads, actInterstitial, renderFinalSet } from './ui/progression.js';
 import { renderFinale, renderGameOver } from './ui/endings.js';
 import { startNewRun, startTutorial, startGauntlet, resumeRun, renderTutorialEnd } from './ui/newrun.js';
 import { renderTitle, renderWall } from './ui/menus.js';
@@ -34,7 +34,6 @@ const wiring: Nav = {
   dealCard,
   crossroads: renderCrossroads,
   actInterstitial,
-  brammies: showBrammies,
   finalSet: renderFinalSet,
   finale: renderFinale,
   gameOver: renderGameOver,

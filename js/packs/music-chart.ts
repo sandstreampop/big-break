@@ -9,7 +9,31 @@ import { run } from '../ui/context.js';
 import { playerChartInfo, buildChartWithMovement } from '../charts.js';
 import { ensureSongs } from '../songs.js';
 import { EVENTS } from '../data/events.js';
+import { rivalById } from '../data/rivals.js';
 import * as save from '../save.js';
+
+// The act-break "This week on the Hot 10" panel: the run's songs moved while
+// you weren't looking. Returns rendered rows (+ whether a crown warrants the
+// confetti/win beat) for the shared act interstitial; null when the songs
+// subsystem hasn't produced a chart week (so the shell renders no panel).
+export function musicActBreakChart(state: any): { rows: { cls: string; html: string }[]; celebrate: boolean } | null {
+  const week = state.lastChartWeek;
+  if (!week || !week.moves?.length) return null;
+  const rivalName = () => rivalById(state.rival)?.name || 'your rival';
+  const rows: { cls: string; html: string }[] = [];
+  for (const m of week.moves) {
+    if (m.kind === 'crown') rows.push({ cls: 'chart-week-row crown', html: `<span class="cw-move">👑 #${m.to}</span><b>“${m.title}”</b><span class="cw-note">top 3 — that’s a HIT</span>` });
+    else if (m.kind === 'debut') rows.push({ cls: 'chart-week-row debut', html: `<span class="cw-move">NEW #${m.to}</span><b>“${m.title}”</b><span class="cw-note">debuts</span>` });
+    else if (m.kind === 'climb') rows.push({ cls: 'chart-week-row climb', html: `<span class="cw-move">▲ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">up from #${m.from}</span>` });
+    else if (m.kind === 'slip') rows.push({ cls: 'chart-week-row slip', html: `<span class="cw-move">▼ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">was #${m.from}</span>` });
+    else if (m.kind === 'hold') rows.push({ cls: 'chart-week-row hold', html: `<span class="cw-move">= #${m.to}</span><b>“${m.title}”</b><span class="cw-note">${m.weeks} wks on chart</span>` });
+    else if (m.kind === 'drop') rows.push({ cls: 'chart-week-row dropoff', html: `<span class="cw-move">OFF</span><b>“${m.title}”</b><span class="cw-note">gone after ${m.weeks} wk${m.weeks === 1 ? '' : 's'}</span>` });
+    else if (m.kind === 'rivalPassed') rows.push({ cls: 'chart-week-row rivalwar', html: `<span class="cw-move">⚔️ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">passes ${rivalName()} (#${m.from}). First blood.</span>` });
+    else if (m.kind === 'rivalNeck') rows.push({ cls: 'chart-week-row rivalwar', html: `<span class="cw-move">⚔️ #${m.to}</span><b>“${m.title}”</b><span class="cw-note">one slot from ${rivalName()} (#${m.from}). It knows.</span>` });
+  }
+  const celebrate = week.moves.some((m: any) => m.kind === 'crown');
+  return { rows, celebrate };
+}
 
 export function showChart() {
   const ov = $('#overlay');

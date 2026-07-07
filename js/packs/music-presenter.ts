@@ -22,6 +22,9 @@ import {
   musicDeltaChip, musicResultExtras, musicChoiceMinigame, musicRecordPerf,
   musicHideRisk, musicEncoreDisabled, musicChoiceHasMinigame,
 } from './music-result.js';
+import { showBrammies } from './music-brammies.js';
+import { musicFinalSet } from './music-finalset.js';
+import { musicActBreakChart } from './music-chart.js';
 import type { Presenter } from '../types.js';
 
 export const musicPresenter: Presenter = {
@@ -102,9 +105,20 @@ export const musicPresenter: Presenter = {
   gauntlet: true,
 
   // The Brammies (Pass 44): awards night before the final act, once you've made
-  // enough noise to be nominated. The trigger used to be hardcoded in the shell
-  // (step.act === 3 && run.fame >= 25); it's this pack's condition now.
+  // enough noise to be nominated. Both the trigger condition and the screen
+  // itself are this pack's (the shell just asks and renders what it's given).
   actStartOverlay: (s: any) => s.act === 3 && s.fame >= 25 && !s.brammy,
+  actStartScreen: showBrammies,
+  actBreakChart: musicActBreakChart,
+
+  // The pre-finale Final Set (js/packs/music-finalset.ts) and the act names /
+  // intro copy the shell used to default to for pack #1.
+  finalSet: musicFinalSet,
+  actNames: ['', 'The Garage', 'The Grind', 'The Reckoning'],
+  actIntro: {
+    2: { name: 'THE GRIND', text: 'The garage is behind you. Everything now costs something.' },
+    3: { name: 'THE RECKONING', text: 'Higher stakes, fewer excuses. The summit is visible. So is the drop.' },
+  },
 
   // Music's own telemetry taxonomy (Epic 5). The shell emits the neutral spine
   // (mode, outcome, cards, burnout, lp, career_runs) and the pack's summarize
