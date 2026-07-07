@@ -124,28 +124,45 @@ export const SHAPES: Record<string, { label: string; read: string }> = {
   slowburner: { label: 'a slow-burner', read: 'Guarded until, quite suddenly, they’re not. Worth the wait. Probably.' },
 };
 
+// Per-contestant `appearance` (read only by the portrait generator): a
+// deliberately diverse British reality-TV cast. All in villa swimwear with bare
+// shoulders (chest-up crop keeps it PG-13). Starter looks — reassign freely.
 export const CAST: CastMember[] = [
   // day-one boys
-  { id: 'kai', name: 'Kai', gender: 'boy', vibe: 'golden-retriever scaffolder', face: '🐶', shape: 'sweetheart' },
-  { id: 'tyler', name: 'Tyler', gender: 'boy', vibe: 'semi-pro winker', face: '😉', shape: 'gameplayer' },
-  { id: 'reece', name: 'Reece', gender: 'boy', vibe: 'protein-first romantic', face: '💪', shape: 'slowburner' },
-  { id: 'dev', name: 'Dev', gender: 'boy', vibe: 'nicest man in any postcode', face: '🫶', shape: 'sweetheart' },
+  { id: 'kai', name: 'Kai', gender: 'boy', vibe: 'golden-retriever scaffolder', face: '🐶', shape: 'sweetheart',
+    appearance: 'white British man, sandy-brown tousled hair, warm sun-flushed skin, broad friendly build, light stubble, a big open easy grin, bare shoulders and chest, a simple beaded necklace' },
+  { id: 'tyler', name: 'Tyler', gender: 'boy', vibe: 'semi-pro winker', face: '😉', shape: 'gameplayer',
+    appearance: 'mixed-heritage man, light-brown skin, sharp skin-fade with a crisp line-up, lean athletic build, groomed brows, a cheeky knowing look, a small gold stud earring, bare chest and shoulders' },
+  { id: 'reece', name: 'Reece', gender: 'boy', vibe: 'protein-first romantic', face: '💪', shape: 'slowburner',
+    appearance: 'white British man, very muscular gym build, close-cropped hair, neat short beard, a fine-line chest tattoo, bare chest and broad shoulders, a shy earnest expression' },
+  { id: 'dev', name: 'Dev', gender: 'boy', vibe: 'nicest man in any postcode', face: '🫶', shape: 'sweetheart',
+    appearance: 'British South Asian man, warm brown skin, neat black hair, soft friendly features and a dimpled smile, slim toned build, bare shoulders' },
   { id: 'marco', name: 'Marco', gender: 'boy', vibe: 'villain with a skincare routine', face: '🧴', shape: 'gameplayer',
-    appearance: 'warm brown skin with a dewy, well-moisturised glow, dark styled hair, groomed short stubble, defined brows, a single fine gold chain, a fitted white tee or open linen shirt; polished and camera-aware with a faint knowing smugness' },
-  { id: 'jamal', name: 'Jamal', gender: 'boy', vibe: 'aspiring podcast', face: '🎙️', shape: 'slowburner' },
+    appearance: 'warm brown skin with a dewy, well-moisturised glow, dark styled hair, groomed short stubble, defined brows, a single fine gold chain on a bare chest, bare shoulders; polished and camera-aware with a faint knowing smugness' },
+  { id: 'jamal', name: 'Jamal', gender: 'boy', vibe: 'aspiring podcast', face: '🎙️', shape: 'slowburner',
+    appearance: 'Black British man, short neat twists, a trimmed beard, thoughtful warm eyes, slim-athletic build, bare shoulders' },
   // day-one girls
-  { id: 'priya', name: 'Priya', gender: 'girl', vibe: 'girl-next-door, next door is Surrey', face: '🌷', shape: 'sweetheart' },
-  { id: 'chloe', name: 'Chloe', gender: 'girl', vibe: 'savage in gel nails', face: '💅', shape: 'gameplayer' },
+  { id: 'priya', name: 'Priya', gender: 'girl', vibe: 'girl-next-door, next door is Surrey', face: '🌷', shape: 'sweetheart',
+    appearance: 'British Indian woman, warm brown skin, long glossy dark hair, pretty natural glam, delicate gold jewellery, a warm approachable smile, a bikini top, bare shoulders' },
+  { id: 'chloe', name: 'Chloe', gender: 'girl', vibe: 'savage in gel nails', face: '💅', shape: 'gameplayer',
+    appearance: 'white British woman, long bleach-blonde hair, deep tan, full glam with bold lashes and arched brows, long ornate gel nails, a bikini top, bare shoulders, a sharp confident look' },
   { id: 'amber', name: 'Amber', gender: 'girl', vibe: 'main character, self-cast', face: '👑', shape: 'gameplayer',
-    appearance: 'Black British woman, athletic curvy build, glossy sun-kissed skin, slicked-back high ponytail with controlled edges, laminated brows, glossy nude lips, small gold hoop earrings, layered gold necklaces, a bikini top under a loose white linen shirt, fresh manicure' },
-  { id: 'sophia', name: 'Sophia', gender: 'girl', vibe: 'brand deal in human form', face: '🛍️', shape: 'gameplayer' },
-  { id: 'meg', name: 'Meg', gender: 'girl', vibe: 'funny on purpose, chaotic by accident', face: '🤸', shape: 'sweetheart' },
-  { id: 'tash', name: 'Tash', gender: 'girl', vibe: 'everyone’s type on paper', face: '📋', shape: 'slowburner' },
+    appearance: 'Black British woman, athletic curvy build, glossy sun-kissed skin, slicked-back high ponytail with controlled edges, laminated brows, glossy nude lips, small gold hoop earrings, layered gold necklaces, a bikini top, bare shoulders, fresh manicure' },
+  { id: 'sophia', name: 'Sophia', gender: 'girl', vibe: 'brand deal in human form', face: '🛍️', shape: 'gameplayer',
+    appearance: 'white tanned woman, long caramel-balayage hair, full influencer glam, sculpted contour, glossy plump lips (believable), a bikini top, bare shoulders, aspirational and camera-ready' },
+  { id: 'meg', name: 'Meg', gender: 'girl', vibe: 'funny on purpose, chaotic by accident', face: '🤸', shape: 'sweetheart',
+    appearance: 'white British woman, auburn wavy hair, freckles, a bright playful grin, fresh natural makeup, a bikini top, bare shoulders' },
+  { id: 'tash', name: 'Tash', gender: 'girl', vibe: 'everyone’s type on paper', face: '📋', shape: 'slowburner',
+    appearance: 'mixed-heritage woman, warm golden skin, voluminous curly hair, symmetrical pretty features, understated glam, a bikini top, bare shoulders' },
   // bombshells
-  { id: 'luca', name: 'Luca', gender: 'boy', vibe: 'abs with a boat licence', face: '🛥️', bombshell: true, shape: 'gameplayer' },
-  { id: 'ollie', name: 'Ollie', gender: 'boy', vibe: 'rugby lad, feelings pending', face: '🏉', bombshell: true, shape: 'slowburner' },
-  { id: 'bella', name: 'Bella', gender: 'girl', vibe: 'arrives mid-sentence, stays mid-drama', face: '🌪️', bombshell: true, shape: 'sweetheart' },
-  { id: 'zara', name: 'Zara', gender: 'girl', vibe: 'model, knows your partner from home', face: '📸', bombshell: true, shape: 'slowburner' },
+  { id: 'luca', name: 'Luca', gender: 'boy', vibe: 'abs with a boat licence', face: '🛥️', bombshell: true, shape: 'gameplayer',
+    appearance: 'Mediterranean man, olive skin, dark slicked-back hair, chiselled jaw, very defined chest and abs, a gold chain, a confident smoulder, bare chest and shoulders' },
+  { id: 'ollie', name: 'Ollie', gender: 'boy', vibe: 'rugby lad, feelings pending', face: '🏉', bombshell: true, shape: 'slowburner',
+    appearance: 'white British man, big broad rugby build, short brown hair, a rugged ruddy complexion, a boyish shy smile, bare chest and broad shoulders' },
+  { id: 'bella', name: 'Bella', gender: 'girl', vibe: 'arrives mid-sentence, stays mid-drama', face: '🌪️', bombshell: true, shape: 'sweetheart',
+    appearance: 'white tanned woman, long dark hair with caramel highlights, big expressive eyes, bubbly glam with fluttery lashes, a bikini top, bare shoulders' },
+  { id: 'zara', name: 'Zara', gender: 'girl', vibe: 'model, knows your partner from home', face: '📸', bombshell: true, shape: 'slowburner',
+    appearance: 'East Asian British woman, sleek long black hair, striking editorial cheekbones, cool and aloof, minimal chic glam, a bikini top, bare shoulders' },
 ];
 
 export function castById(id: string | null | undefined): CastMember | null {

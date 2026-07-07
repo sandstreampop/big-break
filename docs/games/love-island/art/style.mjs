@@ -27,7 +27,7 @@ export const HERO_EXPRESSION =
 // Styling baseline (villa-summer glam). Gender + vibe + any cast.ts `appearance`
 // differentiate the person.
 export const STYLING =
-  'polished natural-glam styling: glossy sun-kissed skin, sleek styled hair, subtle gold jewellery, a villa-summer wardrobe (swimwear or light linen); aspirational, groomed and camera-ready';
+  'polished natural-glam styling: glossy sun-kissed skin, sleek styled hair, subtle gold jewellery; villa SWIMWEAR only — a bikini top for women, bare-chested for men — bare shoulders framed in a chest-up crop, tasteful and PG-13; aspirational, groomed and camera-ready';
 
 // Never-wants — the anti-candid guards (mirrors the direction's negative prompt).
 export const NEGATIVE = [
