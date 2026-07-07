@@ -63,6 +63,20 @@ export function failLabelFor(endingKey): string | undefined {
   return PRES.failLabels?.[endingKey];
 }
 
+// Career-Wall unlocks of a given kind: the targets of every owned wall item of
+// that kind, read from the active pack's wall catalog (PRES.wallItems). Generic
+// — `meta.unlockedWall` is a neutral list of purchased ids; the pack's catalog
+// maps each to its kind + target. (Music-specific unlock pools — instruments,
+// contracts — live in the music pack and call through here.)
+export function wallUnlocks(m: any, kind: string): string[] {
+  const owned = new Set(m.unlockedWall);
+  return (PRES?.wallItems || []).filter((w: any) => w.kind === kind && owned.has(w.id)).map((w: any) => w.target);
+}
+// The wall-unlocked pack modules and perks — the genre-neutral args the engine's
+// newRun takes. (Packs are keyed by a `pack_` id prefix; perks are a wall kind.)
+export const unlockedPackIds = (m: any): string[] => m.unlockedWall.filter((id: string) => id.startsWith('pack_'));
+export const unlockedPerkIds = (m: any): string[] => wallUnlocks(m, 'perk');
+
 // Display name/icon for ANY taxonomy key — stat, burnout, or resource — read
 // from the pack manifest. A genre whose gates name any stat or resource
 // renders them without the shell knowing the vocabulary.

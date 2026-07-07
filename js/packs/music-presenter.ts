@@ -10,6 +10,7 @@ import { generateHeadlines } from '../headlines.js';
 import { generateDMs } from '../dms.js';
 import { buildDiscography } from '../discography.js';
 import { equipAccessory } from './plugins/gear.js';
+import { MUSIC_ART } from './music-art.js';
 import { rivalById } from '../data/rivals.js';
 import { genreById } from '../data/genres.js';
 import { venueById } from '../data/venues.js';
@@ -66,8 +67,10 @@ export const musicPresenter: Presenter = {
   itemById: (id) => accessoryById(id),
   equipItem: (state: any, id: string, dropId?: string) => equipAccessory(state, id, dropId),
 
-  // The art system's reactive-scene inputs, mapped from music's meters.
+  // The art system's reactive-scene inputs, mapped from music's meters, plus
+  // music's slot -> {emoji, scene} table (registered with the scene painter).
   vibe: (state: any) => ({ fame: state.fame, network: state.stats.network, burnout: state.stats.burnout }),
+  art: MUSIC_ART,
 
   // The HUD's music readout: the counter chips (fame/money/hits + encore &
   // momentum) and the gear row (instrument + kit). Both are descriptors the

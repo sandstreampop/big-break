@@ -15,14 +15,15 @@ import { INSTRUMENTS } from '../data/instruments.js';
 import { artFor } from '../art.js';
 import { sfx } from '../audio.js';
 import { el, $, keyable, btn, show, hashStr, weekStr } from '../ui/dom.js';
-import { activePack, run, meta, setRun, PRES } from '../ui/context.js';
+import { activePack, run, meta, setRun, PRES, unlockedPackIds, unlockedPerkIds } from '../ui/context.js';
 import { nav } from '../ui/nav.js';
+import { musicUnlockedInstrumentIds, musicUnlockedContractIds } from './music-save.js';
 
 // The music loadout pool: a contract may force a single instrument; otherwise
 // it's the default set plus Career-Wall unlocks.
 export function musicLoadoutPool(m: any, sel: any): string[] {
   const cMods: any = contractById(sel.contract)?.mods || {};
-  return cMods.forceInstrument ? [cMods.forceInstrument] : save.unlockedInstrumentIds(m);
+  return cMods.forceInstrument ? [cMods.forceInstrument] : musicUnlockedInstrumentIds(m);
 }
 
 // The icons for the chosen extras, shown on the sticky commit button.
@@ -61,7 +62,7 @@ export function musicRenderSetupExtras(host: HTMLElement, ctx: { seed: number; s
   }
   host.append(gRow);
   // Contract picker (Pass 9): optional clause, at most one
-  const contracts = save.unlockedContractIds(meta).map((id) => contractById(id)).filter(Boolean);
+  const contracts = musicUnlockedContractIds(meta).map((id) => contractById(id)).filter(Boolean);
   if (contracts.length && !daily) {
     host.append(el('h3', 'contract-head', 'Optional: sign a contract'));
     const row = el('div', 'contract-row');
@@ -125,7 +126,7 @@ export function musicStartGauntlet() {
     `${contract.icon} <b>${contract.name}</b> ×${contract.lpMult} LP — ${contract.desc}`));
   card.addEventListener('click', () => {
     sfx.commit();
-    setRun(engine.newRun(activePack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta)));
+    setRun(engine.newRun(activePack, inst.id, unlockedPackIds(meta), engine.mulberry32(seed + 1), unlockedPerkIds(meta)));
     engine.applyMastery(run, masteryLevel(inst.id));
     run.seed = seed + 2;
     run.gauntlet = week;

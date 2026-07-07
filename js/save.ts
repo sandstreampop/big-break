@@ -1,9 +1,6 @@
 // Persistence (spec §9): meta progression + in-progress run resume.
 // iOS Safari unloads tabs aggressively, so the run is saved on every swipe.
 
-import { INSTRUMENTS } from './data/instruments.js';
-import { WALL_ITEMS } from './data/meta.js';
-
 // Per-game storage namespace. The music game keeps the original keys (so
 // existing players' saves survive); a second game sets its own suffix at boot
 // so the two never clobber each other's meta or in-progress run.
@@ -99,25 +96,7 @@ export function resetAll() {
   } catch (e) {}
 }
 
-function wallUnlocks(meta, kind) {
-  const owned = new Set(meta.unlockedWall);
-  return WALL_ITEMS.filter((w) => w.kind === kind && owned.has(w.id)).map((w) => w.target);
-}
-
-export function unlockedInstrumentIds(meta) {
-  const fromWall = new Set(wallUnlocks(meta, 'instrument'));
-  return INSTRUMENTS.filter((i) => i.unlockedByDefault || fromWall.has(i.id)).map((i) => i.id);
-}
-
-export function unlockedPackIds(meta) {
-  return meta.unlockedWall.filter((id) => id.startsWith('pack_'));
-}
-
-export function unlockedPerkIds(meta) {
-  return wallUnlocks(meta, 'perk');
-}
-
-export function unlockedContractIds(meta) {
-  if (meta.runs < 1) return []; // contracts appear after your first finished run
-  return ['nepo_baby', 'straight_edge', ...wallUnlocks(meta, 'contract')];
-}
+// Note: the pack-aware unlock pools (wall unlocks, unlocked packs/perks) live
+// in js/ui/context.ts (they read the active pack's wall catalog), and the
+// music-specific pools (instruments, contracts) live in the music pack. This
+// module stays pure persistence — it names no genre.

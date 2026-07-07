@@ -12,7 +12,7 @@ import { track } from '../analytics.js';
 import { artFor } from '../art.js';
 import { sfx, music } from '../audio.js';
 import { el, $, activatable, btn, show, hashStr, todayStr } from './dom.js';
-import { activePack, run, PRES, meta, setRun, STAT_META, vibeFor } from './context.js';
+import { activePack, run, PRES, meta, setRun, STAT_META, vibeFor, unlockedPackIds, unlockedPerkIds } from './context.js';
 import { nav } from './nav.js';
 
 // ---------- Instrument select ----------
@@ -31,7 +31,7 @@ export function startNewRun(daily = false, comeback = false) {
     const inst = activePack.loadoutById(chosenInst);
     if (!inst) return;
     sfx.commit();
-    setRun(engine.newRun(activePack, inst.id, save.unlockedPackIds(meta), engine.mulberry32(seed + 1), save.unlockedPerkIds(meta)));
+    setRun(engine.newRun(activePack, inst.id, unlockedPackIds(meta), engine.mulberry32(seed + 1), unlockedPerkIds(meta)));
     engine.applyMastery(run, masteryLevel(inst.id));
     run.seed = seed + 2;
     run.daily = daily ? todayStr() : null;
