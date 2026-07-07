@@ -1,0 +1,110 @@
+name: Generate Love Island portraits
+
+# Manual, on-demand contestant-portrait generation — the "run it for me" path.
+# The Gemini key lives ONLY as the repo secret GEMINI_API_KEY (Settings →
+# Secrets and variables → Actions); it never touches a machine, a session, or
+# the repo. This runs on GitHub's own runners (open network — no agent proxy),
+# renders with Nano Banana Pro via tools/gen-li-art.mjs, commits the images back
+# to the branch it ran on, and uploads the contact sheet as an artifact to
+# review. Merge that branch to main to deploy the portraits via pages.yml.
+#
+# COST SAFETY: dispatch defaults to the ~$1.88 pilot (Marco + Priya). The ~$15
+# full cast requires explicitly choosing scope=full. The estimate prints in the
+# log before anything is spent.
+
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: 'How much to render'
+        type: choice
+        default: pilot
+        options: [pilot, full]
+      only:
+        description: 'Specific contestants (comma list, e.g. marco,priya,amber). Overrides scope.'
+        required: false
+        default: ''
+      reroll:
+        description: 'Redo one slot only (e.g. marco_fuming). Overrides scope/only.'
+        required: false
+        default: ''
+      tier:
+        description: 'Quality tier'
+        type: choice
+        default: pro2k
+        options: [pro2k, pro4k, draft]
+      model:
+        description: 'Override the Pro model id (blank = tool default). Use if the preview id changed.'
+        required: false
+        default: ''
+
+# Commit the rendered images back to the branch.
+permissions:
+  contents: write
+
+concurrency:
+  group: li-portraits-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install pinned toolchain
+        run: npm ci
+      - name: Build dist/ (tools import the built pack)
+        run: npm run build
+
+      - name: Compose the driver flags
+        id: flags
+        # reroll > only > scope. The driver prints the cost estimate itself.
+        run: |
+          if   [ -n "${{ inputs.reroll }}" ]; then SEL="--reroll=${{ inputs.reroll }}";
+          elif [ -n "${{ inputs.only }}"   ]; then SEL="--only=${{ inputs.only }}";
+          elif [ "${{ inputs.scope }}" = "full" ]; then SEL="";
+          else SEL="--pilot"; fi
+          echo "sel=$SEL" >> "$GITHUB_OUTPUT"
+
+      - name: Generate portraits (Nano Banana Pro)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Blank input leaves the tool default (gemini-3-pro-image-preview).
+          GEMINI_IMAGE_MODEL: ${{ inputs.model }}
+        run: node tools/gen-li-art.mjs --generate ${{ steps.flags.outputs.sel }} --tier=${{ inputs.tier }}
+
+      - name: Verify the wired portraits still compile
+        # The generate step rewrote js/packs/love-island/portraits.data.ts; make
+        # sure the built graph is still green before committing.
+        run: npm run build
+
+      - name: Upload contact sheet + plan (review surface)
+        uses: actions/upload-artifact@v4
+        with:
+          name: li-portraits-contact-sheet
+          path: |
+            docs/games/love-island/art/contact-sheet.html
+            docs/games/love-island/art/manifest.json
+          if-no-files-found: warn
+
+      - name: Commit portraits back to the branch
+        # Only the deployables: the source-of-truth renders, the deploy copies,
+        # and the generated path map. drafts/, manifest, and the sheet are
+        # gitignored (the sheet ships as the artifact above).
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/games/love-island/art/final \
+                  docs/games/love-island/public/art \
+                  js/packs/love-island/portraits.data.ts
+          if git diff --cached --quiet; then
+            echo "No new portraits to commit (nothing rendered?)."
+          else
+            git commit -m "Generate Love Island contestant portraits (${{ steps.flags.outputs.sel || 'full cast' }}, ${{ inputs.tier }})"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
