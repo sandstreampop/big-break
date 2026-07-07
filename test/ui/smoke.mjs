@@ -152,6 +152,7 @@ async function playToFinale(page, label, pathIndex = 0) {
   const deadline = Date.now() + 90000;
   let guard = 0;
   let scannedCard = false;
+  let lightboxRuns = 0;
   while (Date.now() < deadline && guard++ < 800) {
     if (errors.length) break;
     const k = await page.evaluate(() => {
@@ -164,6 +165,34 @@ async function playToFinale(page, label, pathIndex = 0) {
     });
     if (k === 'ending') break;
     if (k === 'overlay') {
+      // Regression guard — the portrait soft-lock (2026-07): a portrait opened
+      // from WITHIN this overlay (a result beat's reacting face) must stack on
+      // the dedicated #overlay-top layer and leave THIS overlay — and its
+      // pending advance() — fully intact. The original bug reused the single
+      // #overlay, so closing the lightbox destroyed the result overlay without
+      // advancing the run, dead-ending the game. If that regressed, the run
+      // would never reach the finale asserted below; these checks localize it.
+      // Twice per run is plenty to guard the path; exercising every result
+      // overlay (30+/run) only lengthens the run and the parallel-Chromium
+      // window under `node --test` without adding coverage.
+      const faceSel = '#overlay.active .result-face-tappable, #overlay.active .inspect-face-tappable';
+      if (lightboxRuns < 2 && await page.$(faceSel)) {
+        await page.evaluate((s) => document.querySelector(s).click(), faceSel);
+        await page.waitForSelector('#overlay-top.active .portrait-lightbox-img', { timeout: 4000 });
+        const stacked = await page.evaluate(() =>
+          !!document.querySelector('#overlay-top.active') && !!document.querySelector('#overlay.active'));
+        if (!stacked) throw new Error(`[${label}] portrait lightbox did not stack over its parent overlay`);
+        await page.waitForFunction(() => {
+          const t = document.querySelector('#overlay-top.active');
+          return !t || t.hasAttribute('data-armed');
+        }, { timeout: 4000 });
+        await page.evaluate(() => document.querySelector('#overlay-top.active')?.click());
+        await page.waitForTimeout(150);
+        const survived = await page.evaluate(() =>
+          !document.querySelector('#overlay-top.active') && !!document.querySelector('#overlay.active'));
+        if (!survived) throw new Error(`[${label}] closing the lightbox destroyed the underlying overlay (soft-lock regression)`);
+        lightboxRuns++;
+      }
       // Wait for the overlay to be dismissable rather than racing a fixed
       // sleep against the arm delay: either the click-to-dismiss listener is
       // live (data-armed) or there's a gear button we click directly.
@@ -201,6 +230,7 @@ async function playToFinale(page, label, pathIndex = 0) {
   if (!reached) throw new Error(`[${label}] never reached #screen-ending (finale) within budget`);
   const hasVerdict = await page.$('#screen-ending .verdict, #screen-ending .ending-title');
   if (!hasVerdict) throw new Error(`[${label}] ending screen rendered but has no verdict/title`);
+  return { lightboxRuns };
 }
 
 const PORT = 8199;
@@ -232,8 +262,9 @@ for (const g of GAMES) {
     const page = await ctx.newPage();
     try {
       await page.goto(g.url, { waitUntil: 'domcontentloaded' });
-      await playToFinale(page, `${g.label} path#${pi}`, pi);
-      console.log(`✓  ${g.label} path#${pi}: booted and played to a terminal screen, no page errors`);
+      const { lightboxRuns } = await playToFinale(page, `${g.label} path#${pi}`, pi);
+      const lb = lightboxRuns ? ` (portrait-lightbox stack verified ×${lightboxRuns})` : '';
+      console.log(`✓  ${g.label} path#${pi}: booted and played to a terminal screen, no page errors${lb}`);
     } catch (e) {
       failed++;
       console.error(`✗  ${e.message}`);

@@ -66,6 +66,40 @@
   game to its finale in headless Chromium — the only coverage the goldens
   don't have. Judge feel with `node tools/simulate.mjs 4000 narrative` (music)
   or `node tools/simulate-pack.mjs <packId> 3000` (any pack, generic driver).
+- **Ship UI the way it's played: verify the FLOW, not the feature.** A change
+  isn't done when the new thing renders — it's done when the game still reaches
+  an ending *after you interact with it*. Presence ≠ behaviour. This rule is
+  written in blood: the portrait lightbox (2026-07) rendered perfectly and
+  passed every gate, but tapping-to-close it on a **result** overlay soft-locked
+  the run. Root cause (5 whys): (1) the lightbox rendered into the single shared
+  `#overlay`; (2) `openOverlay` is a strict **singleton per node** — on open it
+  wipes the node and drops the previous overlay's listeners *without running its
+  `onClose`*; (3) the result overlay's `onClose` is what calls
+  `routeAdvance(engine.advance(run))`, so the run never advanced → dead end;
+  (4) the "one overlay at a time / never nest on `#overlay`" invariant lived
+  only in a code comment; (5) verification checked the *benign* path
+  (stage→inspector→lightbox, which isn't progression-gated) and asserted "the
+  image shows", never the *gated* path (result→lightbox→continue). The process
+  fixes, now mandatory:
+  - **A new interactive control must be driven on EVERY surface it appears on —
+    and the progression-gated surfaces first** (result / ceremony / finale
+    overlays, the crossroads, the finale). A control that's harmless on one
+    surface can be gamebreaking on another. After interacting, assert the run
+    still advances to a terminal screen.
+  - **Never open an overlay from within an overlay on the shared `#overlay`.**
+    A modal opened from inside a modal renders on the dedicated top layer
+    (`openPortrait` / `openOverlay(..., { host: '#overlay-top' })`). `#overlay`
+    holds exactly one overlay; opening a second destroys the first (and its
+    pending `advance()`). This is the one true overlay-stacking rule.
+  - **Any new control inside an overlay gets a smoke assertion** that clicks it
+    and then confirms the run still reaches the finale (see the portrait-lightbox
+    guard in `test/ui/smoke.mjs` — it stacks the lightbox off live result
+    overlays 30+×/run and checks the parent overlay survives). The smoke suite's
+    generic "dismiss every overlay" loop is blind to controls *inside* overlays,
+    so new ones need their own explicit exercise or they ship untested.
+  - **Goldens/sims are DOM-free and can't see any of this.** UI regressions are
+    caught only by driving real Chromium to an ending — so the finale-reached
+    assertion is load-bearing, not a formality.
 - **Phones are the platform.** `test/ui/mobile-matrix.mjs` is the
   phone-playability contract and a CI gate (pages.yml installs Chromium so all
   three browser suites really run): both games across every phone class down

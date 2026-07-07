@@ -598,7 +598,7 @@ body.big-text #app { zoom: 1.18; }
 .choice-right .choice-meta { flex-direction: row-reverse; }
 
 /* ---------- Overlay / result cards ---------- */
-#overlay {
+#overlay, #overlay-top {
   position: absolute;
   inset: 0;
   display: none;
@@ -609,7 +609,11 @@ body.big-text #app { zoom: 1.18; }
   -webkit-backdrop-filter: blur(6px);
   z-index: 50;
 }
-#overlay.active { display: grid; }
+/* The lightbox layer stacks ABOVE the shared overlay so a portrait opened from
+   within a result/inspect sheet floats on top and dismisses independently —
+   closing it leaves the overlay (and its pending advance) intact. */
+#overlay-top { z-index: 60; }
+#overlay.active, #overlay-top.active { display: grid; }
 
 .result-card {
   width: min(100%, 380px);

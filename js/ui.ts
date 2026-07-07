@@ -18,7 +18,7 @@ import { registerArt } from './art.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 import { initAnalytics, track } from './analytics.js';
 import { PRES, meta, run, selectPack, setMeta } from './ui/context.js';
-import { $, show, healStaleStylesheets } from './ui/dom.js';
+import { $, show, healStaleStylesheets, topOverlay, anyOverlayActive } from './ui/dom.js';
 import { nav, type Nav } from './ui/nav.js';
 import { dealCard, commitSwipe } from './ui/card.js';
 import { renderCrossroads, actInterstitial, renderFinalSet } from './ui/progression.js';
@@ -78,7 +78,7 @@ export function boot(pack: Pack) {
   // Keyboard support: arrow keys swipe, when a card is up and no overlay
   document.addEventListener('keydown', (e) => {
     if (!$('#screen-game').classList.contains('active')) return;
-    if ($('#overlay').classList.contains('active')) return;
+    if (anyOverlayActive()) return; // a modal (incl. the lightbox layer) has focus
     if (e.key === 'ArrowLeft') commitSwipe('left');
     else if (e.key === 'ArrowRight') commitSwipe('right');
   });
@@ -118,8 +118,10 @@ function installPersistOnHide() {
 function installBackGuard() {
   try { history.pushState({ bb: 1 }, ''); } catch (e) { /* history unavailable */ }
   window.addEventListener('popstate', () => {
-    const ov = $('#overlay');
-    if (ov && ov.classList.contains('active')) {
+    // Dismiss the TOPMOST overlay layer (the lightbox before the sheet beneath
+    // it), so Back peels one layer at a time instead of blowing past them.
+    const ov = topOverlay();
+    if (ov) {
       try { history.pushState({ bb: 1 }, ''); } catch (e) {}
       ov.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
       return;

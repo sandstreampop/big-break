@@ -87,11 +87,37 @@ export function show(id, dir: 'forward' | 'back' = 'forward') {
 // bug the copies shared: opening a new overlay during the arm window used to
 // leave the previous overlay's click listener attached to the shared node —
 // here a stale listener is torn down on open, and close() is idempotent.
+// The overlay layers, back to front. #overlay is the single shared modal
+// surface every screen's sheets/results render into; #overlay-top is a
+// dedicated layer ABOVE it for a modal opened FROM WITHIN another modal (the
+// portrait lightbox opened off a result/inspector face). They are SEPARATE
+// nodes on purpose: openOverlay is a strict singleton per node (it wipes its
+// host and tears down the host's listeners on open), so a lightbox that reused
+// #overlay would destroy the result overlay underneath it WITHOUT running that
+// overlay's onClose — the run's `advance()` — and closing the lightbox would
+// leave the game soft-locked. A second node keeps the underlying overlay (and
+// its pending onClose) fully intact.
+const OVERLAY_LAYERS = ['#overlay-top', '#overlay'];
+// The active overlay closest to the user — the one Escape/Back should act on,
+// so a keypress dismisses only the top layer, never the one beneath it.
+export function topOverlay(): HTMLElement | null {
+  for (const sel of OVERLAY_LAYERS) {
+    const n = $(sel);
+    if (n && n.classList.contains('active')) return n as HTMLElement;
+  }
+  return null;
+}
+// True while ANY overlay layer is up — used to suppress screen-level input
+// (arrow-key swipes) behind a modal, whichever layer it's on.
+export function anyOverlayActive(): boolean {
+  return OVERLAY_LAYERS.some((sel) => $(sel)?.classList.contains('active'));
+}
+
 export function openOverlay(
   build: (ov: HTMLElement, close: () => void) => void,
-  opts: { armMs?: number; onClose?: () => void; dismissable?: boolean } = {},
+  opts: { armMs?: number; onClose?: () => void; dismissable?: boolean; host?: string } = {},
 ) {
-  const ov = $('#overlay');
+  const ov = $(opts.host || '#overlay');
   const stale = (ov as any)._bbClose;
   if (stale) { ov.removeEventListener('click', stale); (ov as any)._bbClose = null; }
   ov.innerHTML = '';
@@ -105,7 +131,11 @@ export function openOverlay(
   ov.setAttribute('aria-modal', 'true');
   ov.setAttribute('tabindex', '-1');
   let closed = false;
-  const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+  // Escape closes only the TOPMOST layer, so a lightbox stacked over a result
+  // dismisses the lightbox first (and leaves the result — and its pending
+  // advance — untouched). Both layers listen on document; the guard makes the
+  // non-topmost listener a no-op for this keypress.
+  const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && topOverlay() === ov) close(); };
   const close = () => {
     if (closed) return;
     closed = true;
@@ -149,6 +179,10 @@ export function openPortrait(
   cap: { name?: string; sub?: string | null; note?: string | null; mood?: string | null } = {},
 ): void {
   if (!src) return;
+  // Render on the dedicated TOP layer (#overlay-top), never the shared
+  // #overlay — a portrait is almost always opened from WITHIN another overlay
+  // (a result beat, an inspect sheet), and reusing #overlay would tear that
+  // overlay down (see OVERLAY_LAYERS) and soft-lock the run.
   openOverlay((ov) => {
     const box = el('div', 'portrait-lightbox');
     const frame = el('div', 'portrait-lightbox-frame',
@@ -164,7 +198,7 @@ export function openPortrait(
     }
     box.append(el('div', 'tap-hint', 'tap to close'));
     ov.append(box);
-  });
+  }, { host: '#overlay-top' });
 }
 
 export function spawnConfetti(host) {
