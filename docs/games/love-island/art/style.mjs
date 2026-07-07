@@ -17,14 +17,14 @@
 export const STYLE_PREAMBLE = [
   'A candid front-facing iPhone selfie of a FICTIONAL dating-show villa contestant (an invented person — no real-celebrity likeness).',
   'Shot on a phone front camera held at arm’s length, slightly above eye level, one shoulder closer to the lens, with mild wide-angle selfie distortion and an imperfect, casual crop.',
-  'Authentic phone-camera imperfections: uneven HDR, overexposed highlights, slight motion blur, compressed social-media quality; natural skin texture with visible pores, tiny makeup creases and flyaway hairs.',
+  'Authentic phone-camera imperfections: uneven harsh HDR, blown-out sun highlights, slight motion blur, sensor grain, visible JPEG compression, compressed social-media quality; real skin with oily T-zone shine, visible pores, tiny makeup creases and flyaway hairs.',
   'Setting: a white-stucco Mediterranean villa terrace beside a turquoise pool — sun loungers, palm shadows, colourful towels, a half-empty iced drink on a side table, blurred young contestants chatting behind, party lights beginning to glow.',
   'Warm golden-hour or late-night terrace light. It should read like a real phone photo taken between filming moments, NOT a professional photoshoot.',
 ].join(' ');
 
 // The base (hero) micro-expression — the contradiction that reads as real.
 export const HERO_EXPRESSION =
-  'relaxed half-smile, squinting a little in bright sun, looking at the phone SCREEN rather than the lens, head slightly tilted, mouth barely open as if about to say something — confident but subtly tired from villa life, candid "just checked myself in the camera" energy';
+  'caught mid-word or half-blink, squinting into the sun, glancing at the phone SCREEN rather than the lens — confident but subtly tired from villa life, candid "just checked myself in the camera" energy, unposed';
 
 // Villa-coded styling baseline. Gender + the contestant's own vibe (and any
 // per-contestant `appearance` in cast.ts) differentiate the person.
@@ -37,6 +37,7 @@ export const NEGATIVE = [
   'professional studio lighting', 'DSLR or editorial portrait look', 'airbrushed or AI-smooth skin',
   'beauty-filter plastic sheen', 'perfect symmetry', 'fashion-editorial or red-carpet pose',
   'doll-like face', 'unrealistic body proportions', 'over-sexualised posing',
+  'smooth retouched skin', 'symmetrical centred composition', 'professional headshot',
   'official Love Island logos or branding', 'recognisable real contestants or celebrity likeness',
   'text', 'watermark', 'captions', 'fake influencer backdrop',
 ].join(', ');
