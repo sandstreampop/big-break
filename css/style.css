@@ -217,6 +217,37 @@ body {
   opacity: 1; color: var(--dim);
   background: var(--bg2); border-color: #3b3352;
 }
+
+/* ---------- Identity setup (name → gender → personality) ---------- */
+.identity-setup { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+.identity-field { display: flex; flex-direction: column; gap: 6px; }
+.identity-label {
+  font-size: 12px; color: var(--dim);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.identity-name {
+  appearance: none; width: 100%; box-sizing: border-box;
+  background: var(--bg2); border: 1px solid #4b4066; color: var(--ink);
+  border-radius: 12px; padding: 12px 14px; font-size: 17px; font-weight: 700;
+  font-family: inherit;
+}
+.identity-name::placeholder { color: var(--dim); font-weight: 500; }
+.identity-name:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.gender-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.identity-gender-chip {
+  appearance: none; flex: 1 1 0; min-width: 96px;
+  background: var(--bg2); border: 1px solid #4b4066; color: var(--ink);
+  border-radius: 12px; padding: 12px 10px; font-size: 15px; font-weight: 700;
+  font-family: inherit; cursor: pointer; transition: transform .1s;
+}
+.identity-gender-chip:active { transform: scale(.97); }
+.identity-gender-chip.selected {
+  border-color: var(--accent); background: #3b2b1c;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.identity-wait { color: var(--dim); font-size: 14px; padding: 8px 2px 16px; text-align: center; }
+.drawer-identity { font-size: 15px; margin-bottom: 2px; }
+
 .pick-card h3 { grid-column: 2; font-size: 18px; }
 .mastery { color: var(--accent); font-size: 14px; letter-spacing: 1px; }
 .pick-art {

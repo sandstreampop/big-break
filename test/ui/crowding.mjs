@@ -81,6 +81,14 @@ for (const vp of VIEWPORTS) {
   await page.goto(`http://127.0.0.1:${PORT}/love-island/`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#screen-title.active', { timeout: 15000 });
   await page.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent.includes('New Run'))?.click());
+  // Identity step first (name → gender → personality): the villa's pick-cards
+  // only appear once a gender is chosen.
+  await page.waitForSelector('#screen-instruments.active #player-name', { timeout: 10000 });
+  await page.evaluate(() => {
+    const n = document.querySelector('#player-name');
+    if (n && !n.value.trim()) { n.value = 'Tester'; n.dispatchEvent(new Event('input', { bubbles: true })); }
+    document.querySelector('.identity-gender-chip')?.click();
+  });
   await page.waitForSelector('#screen-instruments.active .pick-card', { timeout: 10000 });
   await page.evaluate(() => document.querySelector('.pick-card')?.click());
   await page.evaluate(() => document.querySelector('#start-run-btn')?.click());

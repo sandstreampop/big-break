@@ -128,6 +128,10 @@ export function musicStartGauntlet() {
     sfx.commit();
     setRun(engine.newRun(activePack, inst.id, unlockedPackIds(meta), engine.mulberry32(seed + 1), unlockedPerkIds(meta)));
     engine.applyMastery(run, masteryLevel(inst.id));
+    // Player identity carries over from the remembered meta (the Gauntlet skips
+    // the setup screen, but the run is still yours).
+    if (meta.playerName) run.name = meta.playerName;
+    if (meta.playerGender) run.gender = meta.playerGender;
     run.seed = seed + 2;
     run.gauntlet = week;
     run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)

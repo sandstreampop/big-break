@@ -5,7 +5,7 @@
 // styling). All copy obeys VOICE.md; the shell renders music defaults for any
 // hook a pack omits.
 
-import { castById, couplePool, sameGenderPool, islanderTypeById } from './cast.js';
+import { castById, couplePool, sameGenderPool, islanderTypeById, ISLANDER_TYPES } from './cast.js';
 import { angleById } from './angles.js';
 import { FACTIONS, movePublicFactional } from './plugins/factions.js';
 import { PATHS } from './manifest.js';
@@ -400,6 +400,20 @@ export const loveIslandPresenter: Presenter = {
   dms,
   failLabels: { burnout: 'WALKED', dumped: 'DUMPED' },
   offerAllLoadouts: true,
+  // Gender is mechanical here (ADR-0003): it sets the pool you couple from and
+  // your side of every recoupling. The shell asks for it between the name and
+  // the personality pick, and loadoutPool narrows the Types to that gender — so
+  // the persona pick IS the Type, gender already chosen.
+  genderOptions: [
+    { id: 'girl', label: 'Girl', icon: '♀' },
+    { id: 'boy', label: 'Boy', icon: '♂' },
+  ],
+  // The personalities available for the chosen gender (empty until it's picked,
+  // which keeps the order name → gender → personality). Each id is a Type×gender
+  // persona; coupling.onConstruct reads the gender back off the suffix.
+  loadoutPool: (m: any, sel: any) => sel?.gender
+    ? ISLANDER_TYPES.filter((t) => t.gender === sel.gender && (t.unlockedByDefault || t.unlockedBy?.(m))).map((t) => t.id)
+    : [],
   // ADR-0009: the villa runs the compact HUD — one ambient strip, the full
   // picture one tap away. The scene takes space first.
   compactHud: true,

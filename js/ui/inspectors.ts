@@ -8,7 +8,7 @@
 // route the game forward, so they sit safely below the flow.
 
 import { openOverlay, el, activatable } from './dom.js';
-import { activePack, run, STAT_META, PRES, metaFor, itemById } from './context.js';
+import { activePack, run, STAT_META, PRES, metaFor, itemById, genderLabelFor } from './context.js';
 import { sfx } from '../audio.js';
 import { artFor } from '../art.js';
 
@@ -33,6 +33,13 @@ export function showStatusDrawer() {
   const box = el('div', 'result-card drawer-sheet');
   box.append(el('div', 'tier-badge', 'THE FULL PICTURE'));
 
+  // Who you are (name → gender → personality), the same order you set it in.
+  // Neutral: the name is universal, the gender label resolves through the pack's
+  // own axis, and the persona is the loadout.
+  if (run.name || run.gender) {
+    const gl = genderLabelFor(run.gender);
+    box.append(el('p', 'drawer-identity', `👤 <b>${run.name || 'You'}</b>${gl ? ` · ${gl}` : ''}`));
+  }
   const inst = activePack.loadoutById(run.loadout);
   if (inst) {
     box.append(el('p', 'drawer-persona', `<b>${inst.name}</b>${inst.quirk ? ` — <b>${inst.quirk.name}:</b> ${inst.quirk.desc}` : ''}`));

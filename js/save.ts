@@ -16,6 +16,8 @@ function defaultMeta() {
     lp: 0,
     lpEarnedTotal: 0,
     runs: 0,
+    playerName: '',             // the playable character's name, remembered across runs (editable each start)
+    playerGender: null,         // the last-picked gender id, pre-selected next start
     unlockedWall: [],           // Career Wall item ids purchased
     trophies: [],               // trophy ids earned
     successPaths: [],           // paths won (for EGOT-Adjacent)

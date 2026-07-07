@@ -21,7 +21,15 @@ export function startNewRun(daily = false, comeback = false) {
   const seed = daily ? hashStr('bigbreak-daily-' + todayStr()) : Math.floor(Math.random() * 1e9) + 1;
   // The pack's optional pre-run selections (music: contract/genre/venue). The
   // shell treats it as an opaque bag; only the pack's setup hooks read it.
-  const sel: any = {};
+  // The player's own name/gender ride here too — universal identity the shell
+  // seeds from the remembered meta and lets the player edit before each run.
+  const sel: any = { name: meta.playerName || '', gender: meta.playerGender || null };
+  // A pack's gender axis may be absent (no gender step); when present, gender is
+  // required before the personality pick — name → gender → personality.
+  const genderOpts = PRES.genderOptions || [];
+  const needsGender = genderOpts.length > 0;
+  // Only offer a remembered gender the pack still knows about.
+  if (sel.gender && !genderOpts.some((g) => g.id === sel.gender)) sel.gender = null;
   let chosenInst = null;
   const s = $('#screen-instruments');
 
@@ -33,6 +41,15 @@ export function startNewRun(daily = false, comeback = false) {
     sfx.commit();
     setRun(engine.newRun(activePack, inst.id, unlockedPackIds(meta), engine.mulberry32(seed + 1), unlockedPerkIds(meta)));
     engine.applyMastery(run, masteryLevel(inst.id));
+    // Player identity (genre-neutral): stamp the name onto the run and remember
+    // it for next time; gender the shell owns too (a pack whose loadout already
+    // encodes gender — the villa — derives the same value in its onConstruct, so
+    // this only re-affirms it). Both are cosmetic to the seeded stream.
+    run.name = (sel.name || '').trim();
+    if (sel.gender) run.gender = sel.gender;
+    meta.playerName = run.name;
+    if (sel.gender) meta.playerGender = sel.gender;
+    save.saveMeta(meta);
     run.seed = seed + 2;
     run.daily = daily ? todayStr() : null;
     run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)
@@ -54,10 +71,13 @@ export function startNewRun(daily = false, comeback = false) {
   };
 
   const buildScreen = () => {
+    // The personality pool. A pack whose personas encode gender (the villa)
+    // narrows it to the chosen gender via loadoutPool(meta, sel); until a
+    // gender is picked that pool is empty, which is what holds the order
+    // (name → gender → personality).
     const pool = PRES.loadoutPool?.(meta, sel)
       || activePack.loadouts.filter((i) => i.unlockedByDefault || i.unlockedBy?.(meta)).map((i) => i.id);
-    // A pack may offer its whole roster (persona × gender picks) instead of a
-    // seeded three.
+    // A pack may offer its whole roster (persona picks) instead of a seeded three.
     const offered = PRES.offerAllLoadouts
       ? pool.map((id) => activePack.loadoutById(id)).filter(Boolean)
       : engine.offerLoadouts(pool, engine.mulberry32(seed));
@@ -70,23 +90,101 @@ export function startNewRun(daily = false, comeback = false) {
     s.append(el('p', 'screen-sub', comeback ? (PRES.comeback?.sub || '')
       : daily ? 'Same run for everyone today: same loadouts, same deck, same luck. Only the swipes are yours.'
       : picker.sub));
-    renderInstrumentRow(s, offered, chosenInst, (id) => { chosenInst = id; buildScreen(); });
-    // The pack's optional pre-run choices (music's venue/genre/contract).
-    PRES.setupExtras?.(s, { seed, sel, rebuild: buildScreen, daily });
 
-    // Sticky commit bar: always visible, states the full loadout
-    const inst = chosenInst ? activePack.loadoutById(chosenInst) : null;
+    // The sticky commit bar's live state, recomputed on a name keystroke too
+    // (renderIdentity calls this so typing a name doesn't force a rebuild).
+    const syncStartBtn = () => {
+      const sb = $('#start-run-btn') as HTMLButtonElement | null;
+      if (!sb) return;
+      const inst = chosenInst ? activePack.loadoutById(chosenInst) : null;
+      const hasName = !!(sel.name || '').trim();
+      const ready = hasName && (!needsGender || !!sel.gender) && !!inst;
+      const extras = PRES.setupSummary?.(sel) || '';
+      sb.textContent = !hasName ? 'Enter your name to start'
+        : (needsGender && !sel.gender) ? 'Choose who you are to start'
+        : !inst ? (picker.head.includes('player') ? 'Pick your player to start' : 'Pick an instrument to start')
+        : `▶ Start the run — ${inst.name}${extras ? ' · ' + extras : ''}`;
+      sb.disabled = !ready;
+      sb.classList.toggle('primary', ready);
+    };
+
+    // Identity first: the name (universal, remembered, editable) and — if the
+    // pack offers one — the gender axis, both above the personality pick.
+    renderIdentity(s, sel, genderOpts, () => { chosenInst = null; buildScreen(); }, syncStartBtn);
+
+    // Personality. Hold it back until a required gender is chosen so the steps
+    // stay in order; a pack with no gender axis shows the picker straight away.
+    if (needsGender && !sel.gender) {
+      s.append(el('p', 'identity-wait', '↑ Pick who you are, then choose your personality.'));
+    } else {
+      renderInstrumentRow(s, offered, chosenInst, (id) => { chosenInst = id; buildScreen(); });
+      // The pack's optional pre-run choices (music's venue/genre/contract).
+      PRES.setupExtras?.(s, { seed, sel, rebuild: buildScreen, daily });
+    }
+
+    // Sticky commit bar: always visible, states the full build once ready.
     const bar = el('div', 'start-bar');
-    const extras = PRES.setupSummary?.(sel) || '';
-    const sb = btn(inst ? `▶ Start the run — ${inst.name}${extras ? ' · ' + extras : ''}` : (picker.head.includes('player') ? 'Pick your player to start' : 'Pick an instrument to start'), inst ? 'primary' : '', beginRun);
+    const sb = btn('', '', beginRun);
     sb.id = 'start-run-btn';
-    if (!inst) sb.disabled = true;
     bar.append(sb);
     s.append(bar);
+    syncStartBtn();
     s.scrollTop = keepScroll;
   };
   buildScreen();
   show('#screen-instruments');
+}
+
+// The identity step (ADR: name → gender → personality). The name is universal —
+// the shell owns it, seeds it from the remembered meta, and lets the player edit
+// it every run; gender is the pack's axis (presenter.genderOptions), rendered
+// only when offered. Both are compact and sit above the personality pick, so the
+// heavy visual choice stays last (progressive disclosure).
+function renderIdentity(host, sel, genderOpts, onGenderChange, onNameInput) {
+  const box = el('div', 'identity-setup');
+
+  const nameField = el('label', 'identity-field');
+  nameField.append(el('span', 'identity-label', 'Your name'));
+  const input = document.createElement('input');
+  input.id = 'player-name';
+  input.className = 'identity-name';
+  input.type = 'text';
+  input.maxLength = 24;
+  input.placeholder = 'Who are you?';
+  input.autocomplete = 'off';
+  input.value = sel.name || '';
+  input.setAttribute('aria-label', 'Your name');
+  input.addEventListener('input', () => {
+    sel.name = input.value;
+    meta.playerName = input.value.trim();
+    save.saveMeta(meta);
+    // Flip the sticky start button live as the name fills/empties, without a
+    // full rebuild (which would steal focus mid-type).
+    onNameInput();
+  });
+  nameField.append(input);
+  box.append(nameField);
+
+  if (genderOpts.length) {
+    const gField = el('div', 'identity-field');
+    gField.append(el('span', 'identity-label', 'You are'));
+    const gRow = el('div', 'gender-row');
+    for (const g of genderOpts) {
+      const chip = el('button', 'identity-gender-chip' + (sel.gender === g.id ? ' selected' : ''),
+        `${g.icon ? g.icon + ' ' : ''}${g.label}`);
+      chip.setAttribute('data-gender', g.id);
+      chip.addEventListener('click', () => {
+        sfx.ui();
+        sel.gender = sel.gender === g.id ? null : g.id;
+        if (sel.gender) { meta.playerGender = sel.gender; save.saveMeta(meta); }
+        onGenderChange();
+      });
+      gRow.append(chip);
+    }
+    gField.append(gRow);
+    box.append(gField);
+  }
+  host.append(box);
 }
 
 function renderInstrumentRow(s, offered, chosenId, onPick) {
@@ -95,8 +193,9 @@ function renderInstrumentRow(s, offered, chosenId, onPick) {
     const card = el('div', 'pick-card' + (inst.id === chosenId ? ' selected' : ''));
     card.append(artFor(inst.art, 'pick-art'));
     const lv = masteryLevel(inst.id);
-    // A persona may carry a gender tag (packs where the pick is persona × gender).
-    const genderTag = inst.genderLabel ? ` <span class="mastery">${inst.genderLabel}</span>` : '';
+    // A persona may carry a gender tag, but only show it when gender ISN'T its
+    // own setup step — otherwise it's redundant with the identity pick above.
+    const genderTag = (inst.genderLabel && !(PRES.genderOptions || []).length) ? ` <span class="mastery">${inst.genderLabel}</span>` : '';
     card.append(el('h3', '', inst.name + genderTag + (lv ? ` <span class="mastery">${'★'.repeat(lv)}</span>` : '')));
     card.append(el('p', 'pick-flavor', inst.flavor || ''));
     card.append(el('p', 'pick-mods', modsText(inst.modifiers) + (lv ? ` · Mastery +${lv} to all stats` : '')));
@@ -130,6 +229,7 @@ export function resumeRun() {
 export function startTutorial() {
   const seed = Math.floor(Math.random() * 1e9) + 1;
   setRun(engine.newTutorialRun(activePack, engine.mulberry32(seed)));
+  if (meta.playerName) run.name = meta.playerName;
   run.seed = seed + 2;
   save.saveRun(run);
   track('tutorial_start', { replay: !!meta.tutorialDone });
