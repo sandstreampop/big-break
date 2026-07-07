@@ -118,9 +118,40 @@ for (const t of TARGETS) {
     console.error('');
   }
 }
-if (failed) {
-  console.error('Move the genre-specific logic into the owning pack plugin (see Epic 3).');
+// ── Shell import-graph guard ──────────────────────────────────────────────
+// The vocabulary scan above proves the CORE names no genre. This proves the
+// SHELL/SHARED layer doesn't reach into a genre either: no file under js/ui/
+// or the shared js/*.ts modules may import anything under js/packs/. Packs are
+// composed in exactly two places — the entry points (main*.ts) and the pack
+// registry — so the shell reads a pack ONLY through the Presenter interface.
+// (A pack may still import the neutral shell toolkit, e.g. js/ui/dom.js, for a
+// bespoke screen; this guard is one-directional — shell must not import pack.)
+import { readdirSync } from 'node:fs';
+const SHARED_ROOT = [
+  'engine.ts', 'types.ts', 'config.ts', 'save.ts', 'art.ts', 'audio.ts',
+  'analytics.ts', 'platform.ts', 'version.ts', 'ui.ts',
+]; // shared js/*.ts (entry points main*.ts + globals.d.ts are the exceptions)
+const shellFiles = [
+  ...readdirSync(resolve(root, 'js/ui')).filter((f) => f.endsWith('.ts')).map((f) => `js/ui/${f}`),
+  ...SHARED_ROOT.map((f) => `js/${f}`),
+];
+const IMPORT_RE = /(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g;
+let shellLeaks = 0;
+for (const rel of shellFiles) {
+  const src = stripComments(readFileSync(resolve(root, rel), 'utf8'));
+  for (const m of src.matchAll(IMPORT_RE)) {
+    if (/(^|\/)packs\//.test(m[1])) {
+      shellLeaks++;
+      console.error(`SHELL NEUTRALITY: ${rel} imports a pack — "${m[1]}"`);
+      console.error('   The shared layer must read packs only through the Presenter interface.\n');
+    }
+  }
+}
+
+if (failed || shellLeaks) {
+  if (failed) console.error('Move the genre-specific logic into the owning pack plugin (see Epic 3).');
   process.exit(1);
 }
 
 console.log(`ENGINE NEUTRAL — js/engine.ts + js/types.ts name none of ${blocked.size} pack tokens across ${GAME_PACKS.length} packs (types allowlist: ${TYPES_ALLOW.size}).`);
+console.log(`SHELL NEUTRAL — ${shellFiles.length} shell/shared files import nothing under js/packs/ (packs compose only in main*.ts + registry.ts).`);
