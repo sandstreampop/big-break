@@ -6,6 +6,45 @@
 // music path ids), and its chart-legacy + contract-multiplier ending lines.
 
 import { contractById } from './data/contracts.js';
+import { instrumentById } from './data/instruments.js';
+import { PATHS } from './manifest.js';
+
+// The Résumé's lifetime-stat rows (a `head` row is a section label). Music owns
+// its whole résumé — the shell just lays out label/value rows — so the shared
+// menu names no fame/hit/instrument. A pack without this hook gets the shell's
+// minimal neutral résumé (runs/swipes/incredibles/legacy).
+export function musicResume(meta: any): { label: string; value: string; head?: boolean }[] {
+  const lt = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
+  const rows: { label: string; value: string; head?: boolean }[] = [
+    { label: 'Careers attempted', value: String(meta.runs) },
+    { label: 'Decisions swiped', value: String(lt.swipes) },
+    { label: 'Incredibles rolled', value: String(lt.incredibles) },
+    { label: 'Faceplants survived', value: String(lt.bads) },
+    { label: 'Hits written', value: String(lt.hits) },
+    { label: 'Best bank balance', value: `$${lt.moneyBest}` },
+    { label: 'Best fame', value: `★${meta.best.fame}` },
+    { label: 'Legacy earned', value: `${meta.lpEarnedTotal} LP` },
+    { label: 'Dailies played', value: String(Object.keys(meta.dailyResults || {}).length) },
+  ];
+  const mgPlays = Object.values(meta.minigamesPlayed || {}).reduce((a: any, b: any) => a + b, 0) as number;
+  if (mgPlays) rows.push({ label: 'Performances played', value: `${mgPlays} (${Object.keys(meta.minigamesPlayed).length} kinds)` });
+  if (meta.mgGolden) rows.push({ label: 'GOLDEN moments', value: String(meta.mgGolden) });
+  rows.push({ label: 'By path', value: '', head: true });
+  for (const [pid, p] of Object.entries<any>(lt.byPath)) {
+    rows.push({ label: `${PATHS[pid]?.icon || ''} ${PATHS[pid]?.name || pid}`, value: `${p.wins}/${p.runs} won (${p.runs ? Math.round((100 * p.wins) / p.runs) : 0}%)` });
+  }
+  const instRuns = Object.entries<any>(lt.byInstrument).sort((a, b) => b[1].runs - a[1].runs);
+  if (instRuns.length) {
+    rows.push({ label: 'Weapon of choice', value: '', head: true });
+    for (const [iid, st] of instRuns.slice(0, 3)) {
+      rows.push({ label: instrumentById(iid)?.name || iid, value: `${st.runs} run${st.runs === 1 ? '' : 's'}, ${st.wins} win${st.wins === 1 ? '' : 's'}` });
+    }
+  }
+  return rows;
+}
+
+// The trailing stat shown on each Past-Lives history row (music: peak fame).
+export const musicHistoryStat = (h: any): string => `★${h.fame}`;
 
 // Pack-specific meta writes at the end of a run (best score, nemesis ledger,
 // the music-only lifetime aggregates). The shell does the neutral bookkeeping.

@@ -196,9 +196,10 @@ function renderTrophies() {
       const res = h.result ? h.result.toUpperCase()
         : failLabelFor(h.endingKey) || 'DNF';
       const pathName = h.path ? PATHS[h.path].name : '—';
+      const stat = PRES.historyStat?.(h) || '';
       hist.append(el('div', 'history-row res-' + (h.result || 'fail'),
         `<span>${h.daily ? '📅 ' : ''}${inst ? inst.name : '?'} → ${pathName}</span>` +
-        `<b>${res}</b><span class="hist-fame">★${h.fame}</span>`));
+        `<b>${res}</b><span class="hist-fame">${stat}</span>`));
     }
     s.append(hist);
   }
@@ -214,40 +215,24 @@ function renderResume() {
   const s = $('#screen-settings'); // reuse a spare screen container
   s.innerHTML = '';
   s.append(el('h2', 'screen-head', 'The Résumé'));
-  s.append(el('p', 'screen-sub', 'References available upon request. The references are Todd and Curtis.'));
-  const lt = meta.lifetime || { swipes: 0, incredibles: 0, bads: 0, byInstrument: {}, byPath: {}, hits: 0, moneyBest: 0 };
+  s.append(el('p', 'screen-sub', 'References available upon request.'));
 
+  // The lifetime-stat rows are the pack's (presenter.resume) — the shell knows
+  // the label/value/section layout, never the meters. A pack without the hook
+  // gets this minimal neutral record.
+  const rows = PRES.resume?.(meta) || [
+    { label: 'Careers attempted', value: String(meta.runs) },
+    { label: 'Decisions swiped', value: String(meta.lifetime?.swipes || 0) },
+    { label: 'Incredibles rolled', value: String(meta.lifetime?.incredibles || 0) },
+    { label: 'Legacy earned', value: `${meta.lpEarnedTotal} LP` },
+  ];
   const list = el('div', 'wall-list');
-  const row = (label, value) => {
-    const r = el('div', 'wall-item');
-    r.append(el('div', 'wall-info', `<b>${label}</b>`));
-    r.append(el('span', 'resume-val', String(value)));
-    list.append(r);
-  };
-  row('Careers attempted', meta.runs);
-  row('Decisions swiped', lt.swipes);
-  row('Incredibles rolled', lt.incredibles);
-  row('Faceplants survived', lt.bads);
-  row('Hits written', lt.hits);
-  row('Best bank balance', `$${lt.moneyBest}`);
-  row('Best fame', `★${meta.best.fame}`);
-  row('Legacy earned', `${meta.lpEarnedTotal} LP`);
-  row('Dailies played', Object.keys(meta.dailyResults || {}).length);
-  const mgPlays = Object.values(meta.minigamesPlayed || {}).reduce((a: any, b: any) => a + b, 0);
-  if (mgPlays) row('Performances played', `${mgPlays} (${Object.keys(meta.minigamesPlayed).length} kinds)`);
-  if (meta.mgGolden) row('GOLDEN moments', meta.mgGolden);
-
-  list.append(el('h3', 'wall-tier', 'By path'));
-  for (const [pid, p] of Object.entries<any>(lt.byPath)) {
-    row(`${PATHS[pid]?.icon || ''} ${PATHS[pid]?.name || pid}`,
-      `${p.wins}/${p.runs} won (${p.runs ? Math.round((100 * p.wins) / p.runs) : 0}%)`);
-  }
-  const instRuns = Object.entries<any>(lt.byInstrument).sort((a, b) => b[1].runs - a[1].runs);
-  if (instRuns.length) {
-    list.append(el('h3', 'wall-tier', 'Weapon of choice'));
-    for (const [iid, st] of instRuns.slice(0, 3)) {
-      row(activePack.loadoutById(iid)?.name || iid, `${st.runs} run${st.runs === 1 ? '' : 's'}, ${st.wins} win${st.wins === 1 ? '' : 's'}`);
-    }
+  for (const r of rows) {
+    if (r.head) { list.append(el('h3', 'wall-tier', r.label)); continue; }
+    const item = el('div', 'wall-item');
+    item.append(el('div', 'wall-info', `<b>${r.label}</b>`));
+    item.append(el('span', 'resume-val', r.value));
+    list.append(item);
   }
   s.append(list);
   const menu = el('div', 'menu');
@@ -296,12 +281,15 @@ function renderSettings() {
     meta.settings.bigText = !meta.settings.bigText;
     document.body.classList.toggle('big-text', meta.settings.bigText);
   });
-  toggleRow('Minigames', meta.settings.minigames !== false, () => {
-    meta.settings.minigames = meta.settings.minigames === false;
-  });
-  toggleRow('Relaxed minigames', meta.settings.relaxedMinigames === true, () => {
-    meta.settings.relaxedMinigames = meta.settings.relaxedMinigames !== true;
-  });
+  // Minigame toggles only for packs that ship on-swipe performance beats.
+  if (PRES.minigameSettings) {
+    toggleRow('Minigames', meta.settings.minigames !== false, () => {
+      meta.settings.minigames = meta.settings.minigames === false;
+    });
+    toggleRow('Relaxed minigames', meta.settings.relaxedMinigames === true, () => {
+      meta.settings.relaxedMinigames = meta.settings.relaxedMinigames !== true;
+    });
+  }
   toggleRow('Anonymous analytics', analyticsEnabled(), () => {
     meta.settings.analytics = !analyticsEnabled();
     setAnalyticsEnabled(meta.settings.analytics);

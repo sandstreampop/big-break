@@ -28,7 +28,7 @@ import { showBrammies } from './brammies.js';
 import { musicFinalSet } from './finalset.js';
 import { musicActBreakChart } from './chart.js';
 import { musicShareText, musicShareImage } from './share.js';
-import { musicRecordMeta, musicTrophySpecials, musicEndingExtras } from './meta.js';
+import { musicRecordMeta, musicTrophySpecials, musicEndingExtras, musicResume, musicHistoryStat } from './meta.js';
 import {
   musicLoadoutPool, musicSetupSummary, musicRenderSetupExtras, musicApplySetup, musicStartGauntlet,
 } from './setup.js';
@@ -99,6 +99,9 @@ export const musicPresenter: Presenter = {
   recordMeta: musicRecordMeta,
   trophySpecials: musicTrophySpecials,
   endingExtras: musicEndingExtras,
+  resume: musicResume,
+  historyStat: musicHistoryStat,
+  minigameSettings: true,
   choiceMinigame: musicChoiceMinigame,
   recordPerf: musicRecordPerf,
   hideRisk: musicHideRisk,

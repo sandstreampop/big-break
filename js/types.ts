@@ -453,6 +453,14 @@ export interface Presenter {
   };
   // The Settings screen's "about" footer line (the pack's tagline/credit).
   aboutLine?: string;
+  // The Résumé's lifetime-stat rows (a `head` row is a section label) and the
+  // trailing stat on each Past-Lives history row. Pack-owned so the shared menu
+  // names no meter; a pack without them gets the shell's minimal neutral résumé.
+  resume?: (meta: any) => { label: string; value: string; head?: boolean }[];
+  historyStat?: (h: any) => string;
+  // Whether this pack ships on-swipe minigames (gates the Settings toggles for
+  // them; a pack without minigames doesn't show the rows).
+  minigameSettings?: boolean;
   // 1-indexed act names (HUD strip, scrapbook) + act-break interstitial copy.
   actNames?: string[];
   actIntro?: Record<number, { name: string; text: string }>;
