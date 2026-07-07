@@ -198,7 +198,7 @@ export const NATION_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You go full pantomime and overshoot into actually-a-bit-much, and the chaos wing’s love curdles. Being hate-watched is a tightrope. You just looked down.', effects: { drama: 3, romantics: -2, selfrespect: -2, burnout: 3 } },
           good: { text: 'You wink at the camera and own it — a smirk here, a raised brow there. The chaos wing goes feral for a villain in on the joke. Sofas shout your name, fondly, furiously.', effects: { drama: 6, romantics: -2, selfrespect: 1, followers: 5, charisma: 4 } },
-          incredible: { text: 'You do a Beach Hut so knowingly wicked it loops back to iconic. “They’re not switching off while I’m in here.” The chaos wing crowns you. Even the sofas that hate you set a reminder for tomorrow.', effects: { drama: 8, romantics: -2, followers: 7, public: 3, charisma: 4 } },
+          incredible: { text: 'You do a Beach Hut so knowingly wicked it loops back to iconic. “Say what you want about me — I’m not shrinking for anybody in here.” The chaos wing crowns you. Even the sofas that hate you set a reminder.', effects: { drama: 8, romantics: -2, followers: 7, public: 3, charisma: 4 } },
         },
       },
       right: {

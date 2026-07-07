@@ -249,4 +249,65 @@ export const GOSSIP_EVENTS: GameEvent[] = [
       },
     },
   },
+  // Two more open gather vectors (same mechanic — gainIntel about the Rival):
+  // dirt offered by your Ex from the outside world, and a scheme overheard
+  // while playing dead on the wobbly lounger.
+  {
+    id: 'li_gossip_ex_dirt', act: [1, 2], tags: ['strategy', 'gossip'],
+    art: 'li_kitchen',
+    context: 'The sink · a confidential offer · from an unlikely source',
+    prompt: '{ex} sidles up at the sink, all confidential. “Look — I know we’re not each other’s favourite. But I follow the same people you do, out there, and there’s chat about {rival}. Proper chat. The kind that’d change how you play them.” A pause, watching you want it. “Say the word and it’s yours.”',
+    recap: 'Your {ex} offers you outside dirt on {rival} — for reasons of their own.',
+    choices: {
+      left: {
+        label: 'Take everything they’ve got',
+        tags: ['strategy', 'gossip'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You take it and it’s mostly {ex} settling an old score dressed up as a favour — half rumour, half spite, no receipt. Now you owe your ex, for vapour. Poor trade.', effects: { savvy: 2, burnout: 3, gainIntel: { about: 'rival', label: 'outside chat about {rival} — half of it {ex}’s own spite' } } },
+          good: { text: '{ex} hands you the outside version of {rival}: what people are actually saying, dates and all. It’s real, it’s useful, and it cost you nothing but a chat with your past.', effects: { savvy: 5, gainIntel: { about: 'rival', label: 'what the outside is really saying about {rival}' } } },
+          incredible: { text: 'You get the lot, corroborated, and clock exactly why {ex} wants you to have it — which makes it twice as useful. Their agenda and {rival}’s secret, both in your pocket. Tidy.', effects: { savvy: 8, followers: 2, gainIntel: { about: 'rival', label: 'the outside story on {rival}, plus why {ex} wanted you armed' } } },
+        },
+      },
+      right: {
+        label: 'Not from you. Not like this',
+        tags: ['loyal', 'code'],
+        governingStats: { loyalty: 0.8, savvy: 0.2 },
+        outcomes: {
+          bad: { text: 'You refuse, and {ex} takes it as a snub, then tells someone louder and messier instead. The intel’s in the villa now anyway, minus any say of yours in its shape. Principled, costly.', effects: { loyalty: 2, drama: 2, burnout: 3 } },
+          good: { text: '“I’m not doing my {rival} business through my {ex}. No offence.” Clean line, held in daylight. {ex} shrugs. The villa never clocks you turned down free ammunition. You clock it. It sits well.', effects: { loyalty: 5, selfrespect: 3 } },
+          incredible: { text: 'You shut it down so cleanly {ex} almost respects it, and later {rival} hears you buried free dirt rather than use it. Two people recalibrate you at once. Your past stays your past. Rare air.', effects: { loyalty: 8, selfrespect: 3, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_gossip_fake_nap', act: [1, 2], tags: ['strategy', 'gossip'],
+    art: 'li_lawn',
+    context: 'The wobbly lounger · eyes shut · ears very much open',
+    prompt: 'You’re half-asleep on the wobbly lounger when {rival} and two others settle on the grass beside you, assuming you’re out cold. “—they don’t suspect a thing, that’s the beauty of it,” {rival} is murmuring. Your eyes stay shut. Your ears clock in for overtime. One twitch and the whole thing stops.',
+    recap: 'Playing dead on the lounger, you overhear {rival} laying out a scheme.',
+    choices: {
+      left: {
+        label: 'Stay under. Collect it all',
+        tags: ['strategy', 'code'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You hold dead still for the crucial line and the lounger picks that moment to wobble. {rival} freezes. “You awake?” You fake a snore. You’re left with half a plan and a racing heart.', effects: { savvy: 2, burnout: 3, gainIntel: { about: 'rival', label: 'half {rival}’s plan, cut off by a wobble' } } },
+          good: { text: 'You stay boneless and collect the lot — the plan, the timing, the name they say twice. The lounger holds its wobble for once. You get up from that nap considerably better informed.', effects: { savvy: 5, gainIntel: { about: 'rival', label: '{rival}’s whole plan, overheard playing dead' } } },
+          incredible: { text: '{rival} lays the whole scheme out to a body they think is asleep. You rise off the lounger knowing every move before they make it, thank them for the lovely sun, and stroll off. They wave, none the wiser.', effects: { savvy: 8, followers: 3, gainIntel: { about: 'rival', label: '{rival}’s entire scheme, timings and names' } } },
+        },
+      },
+      right: {
+        label: 'Sit up. Refuse to lurk',
+        tags: ['loyal', 'code'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You sit up too sharply and it’s obvious you heard something — now {rival} knows you know, and knows you’re the sort who won’t use it. Worst of both: no intel, full suspicion.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You yawn, sit up, and join the circle before you can hear the damning bit. {rival} pivots to the weather. You’ve no ammunition and a clear conscience — which in here is its own luxury.', effects: { loyalty: 5, selfrespect: 3 } },
+          incredible: { text: 'You break up the huddle by “waking up” and offering everyone a drink, killing the plot mid-sentence without a soul clocking why. You heard nothing usable. You stopped something anyway. Quietly ace.', effects: { loyalty: 6, selfrespect: 3, public: 2 } },
+        },
+      },
+    },
+  },
 ];

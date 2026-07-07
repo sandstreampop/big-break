@@ -1170,4 +1170,372 @@ export const BEAT_EVENTS: GameEvent[] = [
       },
     },
   },
+
+  // ---------- v5: more tentpole variants (wider pool at the most-seen beats) ----------
+
+  // -- Bombshells (week 1) --
+  {
+    id: 'li_bomb1_yourtype', act: 1, weight: 1, tags: ['beat:bomb1', 'text', 'flirt'],
+    art: 'li_bombshell',
+    context: 'Golden hour · a text, and then a problem in good shoes',
+    prompt: '“Islanders, {bombshell} is arriving tonight — and they’re EXACTLY someone’s type on paper. #uhoh” — The newcomer walks in and it becomes immediately, publicly obvious whose type: yours. The lawn does the maths. So does {partner}.',
+    recap: '{bombshell} arrives and is, awkwardly, exactly your type on paper.',
+    choices: {
+      left: {
+        label: 'Own it to {partner} first',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: '“Not gonna lie, they’re my type,” you tell {partner}, going for honest and landing on tactless. “Cheers for that,” they say, filing it somewhere cold.', effects: { loyalty: 2, bond: -2, burnout: 3 } },
+          good: { text: '“They’re my type on paper,” you say to {partner}, quietly, first. “You’re my type off it.” Getting there before the gossip did buys you the benefit of the doubt.', effects: { loyalty: 5, bond: 4, savvy: 2 } },
+          incredible: { text: '“My type on paper just walked in,” you announce to {partner}, loud enough for the lawn. “Shame I don’t date paper.” The honesty defuses it and the line does numbers by breakfast.', effects: { loyalty: 6, bond: 5, public: 4, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Prove you’re unmoved',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 1 },
+        outcomes: {
+          bad: { text: 'You overdo the indifference so hard you won’t even make eye contact with the bombshell, which reads, on camera, as a man not trusting himself. Interesting choice.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You clock your type, clock your partner, and choose your partner with your whole body language. Being tempted and not moving is more romantic than never being tempted.', effects: { loyalty: 5, bond: 5 } },
+          incredible: { text: 'The bombshell aims straight at you and bounces clean off. {partner} watches the whole thing and relaxes an inch they didn’t know they were holding. Solid, on camera, on day one of the test.', effects: { loyalty: 8, bond: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_bomb1_formate', act: 1, weight: 1, tags: ['beat:bomb1', 'text', 'drama'],
+    art: 'li_bombshell',
+    context: 'Golden hour · the text lands · they’ve come for your mate',
+    prompt: '“Islanders, please welcome {bombshell} — here to turn a head or two tonight. #freshmeat” — The newcomer walks in and makes a beeline not for you, but for {mate}, whose current couple was already wobbling. Your best pal shoots you a look: what do I DO.',
+    recap: '{bombshell} arrives and heads straight for {mate}, who wants your read.',
+    choices: {
+      left: {
+        label: 'Back {mate}’s call, whatever it is',
+        tags: ['loyal', 'code'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You give {mate} a heartfelt speech about following their gut and they follow it directly into a mess you now co-own. Loyalty, filed under “accessory to.”', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: '“It’s your call. I’ve got you whatever it is,” you tell {mate}. Not advice — backup. The one thing worth more than a good opinion in here.', effects: { loyalty: 5, bond: 3, graft: 2 } },
+          incredible: { text: '“Go and find out. I’ll run interference with the old couple,” you say, and do exactly that, buying {mate} a clean run. Wingman of the year, unpaid, uncredited, iconic.', effects: { loyalty: 8, graft: 4, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Read the bombshell’s game',
+        tags: ['strategy', 'camera'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You announce your read of the bombshell’s strategy at kitchen volume and the bombshell, who has ears, adjusts it on the spot. You’ve upgraded your own opponent.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'You watch the bombshell work {mate} and clock the tell: they glance to camera before every compliment. “They’re performing,” you murmur. {mate} nods. Forewarned.', effects: { savvy: 5, graft: 2 } },
+          incredible: { text: 'You map the bombshell’s whole play in four minutes — the beeline, the sob story, the camera glance — and hand {mate} the manual. They walk in already knowing the ending. Unbeatable.', effects: { savvy: 8, graft: 3, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_bomb1_mystery', act: 1, weight: 1, tags: ['beat:bomb1', 'text', 'camera'],
+    art: 'li_bombshell',
+    context: 'Golden hour · a text, and then a very quiet arrival',
+    prompt: '“Islanders, {bombshell} has entered the villa.” — And then… nothing. The newcomer says hi, gets a drink, and sits down to watch, unbothered, revealing precisely zero. Within an hour the entire villa is fighting over what the silence MEANS. It means nothing. That’s the trick.',
+    recap: '{bombshell} arrives, reveals nothing, and the villa spirals over the silence.',
+    choices: {
+      left: {
+        label: 'Crack the mystery',
+        tags: ['chat', 'strategy'],
+        governingStats: { savvy: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You interrogate the quiet one so eagerly you become the story — the villa’s watching YOU chase, not them. The mystery just recruited a hype man for free.', effects: { savvy: 2, burnout: 3, followers: 2 } },
+          good: { text: 'You skip the questions and just… sit with them, in the quiet, until they talk on their own. Turns out they were nervous, not mysterious. Most people are.', effects: { savvy: 4, charisma: 3, graft: 2 } },
+          incredible: { text: 'You’re the only one who doesn’t chase, so you’re the one they open up to first. Intel the whole villa wanted, handed to you for the crime of being calm.', effects: { savvy: 6, charisma: 4, graft: 4, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Out-mystery them',
+        tags: ['camera', 'rest'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'You go enigmatic to compete and just come across as sulking on a daybed. Two people being mysterious at each other is, it turns out, a very boring film.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You match the unbothered energy and let the villa spiral about both of you instead. Say less, mean more, let the group chat write your story for free.', effects: { charisma: 5, followers: 4 } },
+          incredible: { text: 'You do less than the mystery bombshell and somehow become MORE interesting. The nation writes fan theories about a person who simply had an early night. Stardom is unfair.', effects: { charisma: 8, followers: 8, public: 4 } },
+        },
+      },
+    },
+  },
+
+  // -- Bombshell steals (week 5, coupled) --
+  {
+    id: 'li_bomb2_charm', act: 2, weight: 2, tags: ['beat:bomb2', 'text', 'drama', 'temptation'],
+    art: 'li_bombshell',
+    requires: { singleIs: false },
+    context: 'Afternoon · “I’VE GOT A TEXT!!”',
+    prompt: '“Islanders, {bombshell} joins tonight — and they’re here to charm, not to fight. #smoothoperator” — The new arrival is disarmingly, genuinely lovely to everyone, including you, including {partner}. No threat you can point at. The worst kind.',
+    recap: '{bombshell} arrives all charm and no visible threat — the dangerous kind.',
+    choices: {
+      left: {
+        label: 'Match the warmth, hold the line',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You’re so busy being charming back that {partner} watches you and the bombshell get on famously and quietly reaches their own conclusions. Warmth, mis-aimed.', effects: { loyalty: 2, bond: -2, burnout: 3, addFlag: 'li_rival_active' } },
+          good: { text: 'You’re lovely to the bombshell AND visibly, boringly devoted to {partner}. Charm can’t find a gap where there isn’t one. Nice try, gorgeous.', effects: { loyalty: 5, bond: 4, savvy: 2 } },
+          incredible: { text: 'You befriend the bombshell so completely they end up championing your couple to the whole villa. You turned the wolf into a shepherd. On telly. By being decent.', effects: { loyalty: 6, bond: 5, public: 4, graft: 3 } },
+        },
+      },
+      right: {
+        label: 'Distrust the niceness, loudly',
+        tags: ['drama', 'strategy'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: '“Nobody’s that nice,” you announce, and the bombshell keeps being that nice, and now YOU’RE the villain who accused the friendly one. The edit thanks you.', effects: { savvy: 2, drama: 2, burnout: 3 } },
+          good: { text: 'You keep the bombshell at arm’s length and your read out loud but calm: “Lovely. Watching anyway.” Suspicion, delivered with manners. The villa splits on you; the group chat loves it.', effects: { savvy: 5, drama: 2, followers: 3 } },
+          incredible: { text: 'You clock, correctly, that the charm is the strategy, and say so with such precision the bombshell drops the act and respects you for it. Game recognised game, on the lawn, at teatime.', effects: { savvy: 8, drama: 2, public: 3, followers: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_bomb2_lads', act: 2, weight: 2, tags: ['beat:bomb2', 'text', 'drama'],
+    art: 'li_bombshell',
+    requires: { singleIs: false },
+    context: 'Afternoon · “I’VE GOT A TEXT!!”',
+    prompt: '“Islanders, {bombshell} enters tonight — and they’ve already told the Beach Hut exactly who they’re here for. #calledit” — Word travels before they’ve unpacked: it’s {partner} they’ve clocked. {partner} finds out from the gossip, not from you, because you only just found out too.',
+    recap: '{bombshell} arrives having already named {partner} as their target.',
+    choices: {
+      left: {
+        label: 'Get to {partner} before the gossip does',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You reach {partner} third, after two other people have already told them, wrong, with embellishments. Now you’re defending a version of events you didn’t author.', effects: { loyalty: 2, burnout: 3, drama: 2 } },
+          good: { text: '“You’ll hear it in a minute so hear it from me,” you tell {partner}. “They’ve clocked you. I’m not worried. Are you?” “No,” they say, and mean it more for being asked.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: '“Someone’s about to graft on you. Want to watch me not panic about it?” {partner} laughs. You spend the evening secure and visible, and the bombshell’s target politely relocates.', effects: { loyalty: 7, bond: 6, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Let them make the first move',
+        tags: ['strategy', 'rest'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You play it so cool you play it cold, and {partner} reads the calm as not-caring. There’s a version of unbothered that looks a lot like uninterested. You found it.', effects: { savvy: 2, bond: -2, burnout: 3 } },
+          good: { text: 'You give the bombshell all the rope and none of the reaction. They pull {partner} for a chat; {partner} comes straight back and tells you all of it. Trust, tested, held.', effects: { savvy: 5, bond: 4, loyalty: 2 } },
+          incredible: { text: 'You don’t flinch once, and the bombshell’s move dies on contact with a couple that clearly isn’t going anywhere. They regroup and pick easier grass. You were never the grass.', effects: { savvy: 8, bond: 5, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_bomb2_single_spark', act: 2, weight: 2, tags: ['beat:bomb2', 'text', 'flirt'],
+    art: 'li_bombshell',
+    requires: { singleIs: true },
+    context: 'Afternoon · “I’VE GOT A TEXT!!”',
+    prompt: '“Islanders, {bombshell} enters tonight — single, and so, conveniently, are you. #freshstart” — For once the bombshell isn’t a threat to your couple, because you haven’t got one. They walk in and the whole villa turns to see if the two loose ends find each other.',
+    recap: '{bombshell} arrives single — and so are you. The villa watches.',
+    choices: {
+      left: {
+        label: 'Make your move first',
+        tags: ['flirt', 'date'],
+        governingStats: { rizz: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You get in first and get in fast, and the speed reads as strategy rather than spark. “Keen,” the bombshell notes, not entirely as a compliment. Recalibrate.', effects: { rizz: 2, burnout: 3, followers: 2 } },
+          good: { text: 'You pull them for a chat before anyone else can find the nerve. Twenty minutes, real laughter, one shared opinion about airports. In here, that’s a head start.', effects: { rizz: 5, bond: 3, public: 3 } },
+          incredible: { text: 'You skip the villa script entirely and just have an actual conversation. By the time anyone else works up the courage, the two of you are already an inside joke. First come, first coupled.', effects: { rizz: 8, bond: 4, public: 4, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Let them come to you',
+        tags: ['strategy', 'rest'],
+        governingStats: { savvy: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You play so hard to get that the bombshell, reasonably, gets someone else. Mystery is a seasoning, not a meal, and you served a plate of it.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'You stay warm, stay busy, and let the bombshell notice you noticing nothing. They cross the lawn on their own steam. Chosen beats chasing, most nights.', effects: { savvy: 5, rizz: 3, public: 2 } },
+          incredible: { text: 'You do so little so well that the bombshell decides YOU’RE the prize to win. The whole villa watches a newcomer graft on the one person who didn’t lift a finger. Masterclass.', effects: { savvy: 8, rizz: 4, public: 4, followers: 3 } },
+        },
+      },
+    },
+  },
+
+  // -- Movie Night (week 4) — more reveal + clean variants --
+  {
+    id: 'li_movienight_reveal_casa', act: 2, weight: 1, tags: ['beat:movienight', 'host', 'drama'],
+    art: 'li_movienight',
+    requires: { anyOf: [
+      { flagsAll: ['li_casa_kiss'] },
+      { flagsAll: ['li_head_turned'] },
+      { flagsAll: ['li_strayed_official'] },
+      { partnerKissedIs: true },
+    ] },
+    context: 'The lawn · the screen · the Casa reel specifically',
+    prompt: '“Tonight’s feature is a little something we filmed… elsewhere.” — The Host doesn’t need to say Casa. The title card does. Your footage from the other villa is about to play to the person you came back to, in HD, with the sound UP.',
+    recap: 'Movie Night, and it’s the Casa reel — your footage, to {partner}, loud.',
+    choices: {
+      left: {
+        label: 'Get in front of it',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You start explaining before the clip even plays, which makes the clip look worse than it is, which is a genuine achievement. {partner} watches your mouth, then the screen.', effects: { loyalty: 2, reveal: 'movienight', bond: -3, burnout: 5 } },
+          good: { text: '“Before it plays — I told you all of this. Watch it knowing I already told you.” {partner} watches with that in mind, and the footage lands as confirmation, not ambush.', effects: { loyalty: 5, reveal: 'movienight', bond: 2, burnout: 3 } },
+          incredible: { text: '“Whatever’s on there, I chose you at the end of it.” You say it, then let the clip play without flinching. {partner} takes your hand DURING your own worst moment. The nation dissolves.', effects: { loyalty: 8, reveal: 'movienight', bond: 5, public: 5, burnout: 2 } },
+        },
+      },
+      right: {
+        label: 'Let the footage speak',
+        tags: ['strategy', 'camera'],
+        governingStats: { savvy: 1 },
+        outcomes: {
+          bad: { text: 'You say nothing and let it play, betting the footage is milder than the rumour. It is not milder than the rumour. The bet was bold. The knee, again, betrays you.', effects: { savvy: 2, reveal: 'movienight', bond: -4, burnout: 5 } },
+          good: { text: 'You watch your own Casa reel like it happened to someone else, calm and unbothered, and let {partner} draw their own conclusion. It’s a risk. It reads as confidence.', effects: { savvy: 5, reveal: 'movienight', burnout: 3 } },
+          incredible: { text: 'The clip ends and you simply raise an eyebrow: “Well. Could’ve been worse.” The nerve of it disarms the whole firepit. Even {partner} fights a smile they don’t want to give.', effects: { savvy: 8, reveal: 'movienight', public: 4, burnout: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_movienight_clean_others', act: 2, weight: 1, tags: ['beat:movienight', 'host', 'banter'],
+    art: 'li_movienight',
+    requires: { flagsNone: ['li_casa_kiss', 'li_head_turned', 'li_strayed_official'], partnerKissedIs: false },
+    context: 'The lawn · the screen · this one’s not about you',
+    prompt: '“Tonight, Islanders, you’re watching a film.” — The reel rolls and it is, gloriously, someone else’s reckoning. Two couples across the firepit are about to have a very public evening. You and {partner} have a blanket and the best seats in the house.',
+    recap: 'Movie Night, and for once the reel belongs to other people entirely.',
+    choices: {
+      left: {
+        label: 'Be a good friend about it',
+        tags: ['loyal', 'code'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You try to comfort the couple imploding beside you mid-implosion and get told, fairly, to read the room. Kindness has a queue and you jumped it.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You don’t gloat, don’t pile on, and check on {mate} once the credits roll. Being the calm one on Movie Night is its own kind of edit — the good kind.', effects: { loyalty: 5, bond: 3, public: 3 } },
+          incredible: { text: 'While the firepit eats itself, you quietly get {mate} out of the splash zone and away for a debrief. The nation clocks who stayed kind when it cost nothing to be cruel.', effects: { loyalty: 8, public: 5, graft: 3 } },
+        },
+      },
+      right: {
+        label: 'Enjoy it thoroughly',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 1 },
+        outcomes: {
+          bad: { text: 'Your popcorn is too loud in a silent, wounded moment and the camera catches you enjoying a stranger’s heartbreak. The reaction gif is not flattering.', effects: { charisma: 2, public: -2, burnout: 2 } },
+          good: { text: 'You keep a running whisper-commentary for {partner} alone, wry and low, and the two of you have the best night at a screening nobody wanted to be in. Together, in the good seats.', effects: { charisma: 5, bond: 4, followers: 3 } },
+          incredible: { text: 'You call every twist a beat before it lands — “watch the face… THERE it is” — and {partner} realises, delighted, that you’d be lethal if you ever turned it on them. You won’t. Probably.', effects: { charisma: 8, bond: 4, followers: 6, public: 3 } },
+        },
+      },
+    },
+  },
+
+  // -- Challenge (week 2) — more beat:challenge1 formats --
+  {
+    id: 'li_challenge_raunchy', act: 1, tags: ['beat:challenge1', 'challenge', 'flirt'],
+    art: 'li_challenge',
+    context: 'Afternoon · the challenge everyone pretends to dread',
+    prompt: 'It’s the raunchy one — the challenge production denies planning and schedules every series. A spin of a wheel, a dare on each wedge, and a lawn full of people in fancy dress deciding how committed they are to a bit. The wheel is slowing. It’s pointing at you.',
+    recap: 'The raunchy challenge — the wheel spins and lands on you.',
+    choices: {
+      left: {
+        label: 'Keep it for {partner}',
+        tags: ['loyal', 'flirt'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You do the dare so demurely the lawn boos and {partner} has to insist they “liked it, honestly.” A challenge you passed by refusing to play it.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
+          good: { text: 'You aim the whole dare squarely at {partner} and nobody else, and it’s cheeky and specific and theirs. The wheel is a formality. You were always doing it for one person.', effects: { loyalty: 5, bond: 5, rizz: 3 } },
+          incredible: { text: 'You turn a party-game dare into a moment so genuinely charged the lawn goes quiet, then loud. {partner} has to sit down. The clip is a “kids, look away” caption by morning.', effects: { loyalty: 6, bond: 6, rizz: 5, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Play it for the whole lawn',
+        tags: ['camera', 'banter'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You go big for the cameras and clip {partner}’s good mood on the way past. The lawn cheers; your couch, later, is quieter than the cheer suggested.', effects: { charisma: 2, followers: 3, bond: -2, burnout: 3 } },
+          good: { text: 'You commit to the bit with full theatrical nonsense and the challenge becomes your highlight reel. {partner} rolls their eyes and films it anyway. Fondly.', effects: { charisma: 5, followers: 5, rizz: 2 } },
+          incredible: { text: 'You take a daft dare and produce ninety seconds of pure television nobody will fully explain later. The wheel challenge has a headliner and it’s you. The gallery weeps with joy.', effects: { charisma: 8, followers: 9, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_challenge_pieface', act: 1, tags: ['beat:challenge1', 'challenge', 'banter'],
+    art: 'li_challenge',
+    context: 'Afternoon · gunge, custard, and questions written by production',
+    prompt: 'The messy quiz: answer a question about the villa, get it wrong, get a bucket of gunge to the face. Production wrote the questions and production is not your friend. The first card is about you. Specifically, about who you fancied on day one versus now.',
+    recap: 'The gunge quiz — and question one is about your day-one head.',
+    choices: {
+      left: {
+        label: 'Answer honestly, take the gunge',
+        tags: ['loyal', 'banter'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You answer honestly, the honesty stings {partner}, AND you get the gunge, which is the losing-est way to win a point for integrity. Custard AND consequences.', effects: { loyalty: 2, bond: -2, burnout: 3 } },
+          good: { text: 'You give the true answer, cop the gunge with a grin, and {partner} respects the honesty more than they’d have liked the lie. Dignity, briefly, under two litres of custard.', effects: { loyalty: 5, bond: 3, public: 3 } },
+          incredible: { text: 'You answer so honestly and so warmly — “day one? no idea. day forty? obvious” — that the gunge feels like a crown. The nation replays the custard in slow motion, adoringly.', effects: { loyalty: 6, bond: 5, public: 5, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Dodge with a joke, stay dry',
+        tags: ['banter', 'strategy'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'Your dodge is so slick the host gunges you anyway “for cowardice,” and the lawn agrees with the host. You lost the point AND the moral high ground AND stayed sticky.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You deflect the landmine question with a joke clean enough to stay dry and kind enough to keep {partner} smiling. Slalomed the gunge and the drama both.', effects: { charisma: 5, savvy: 3, followers: 2 } },
+          incredible: { text: 'You turn every trap question into a bit, stay bone dry the whole round, and narrate everyone else’s gunging like a sports pundit. The one clean shirt on a lawn of custard. Untouchable.', effects: { charisma: 8, savvy: 3, followers: 6, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_challenge_debate', act: 1, tags: ['beat:challenge1', 'challenge', 'banter'],
+    art: 'li_challenge',
+    context: 'Afternoon · the villa debate · podiums from somewhere',
+    prompt: 'Today’s challenge is a formal debate, because production heard the villa can’t agree on anything and decided to monetise it. Two podiums, one motion — “This House believes the ick is always right” — and you’ve been handed the side you don’t agree with. The lawn is the jury. The jury has snacks.',
+    recap: 'A villa debate — and you’ve been assigned the side you don’t believe.',
+    choices: {
+      left: {
+        label: 'Argue it straight',
+        tags: ['strategy', 'banter'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You argue your side so convincingly you accidentally insult half the couples in the room — who are, crucially, the jury. Won the point, lost the vote, gained a rival.', effects: { savvy: 2, drama: 2, burnout: 3 } },
+          good: { text: 'You make the daft motion sound like a TED talk, cite three villa “case studies” by name (kindly), and win the room on rhetoric alone. Debate club never had it this good.', effects: { savvy: 5, charisma: 3, public: 3 } },
+          incredible: { text: 'You argue the indefensible side so well the jury votes for it against their own beliefs. The Beach Hut calls you “dangerous.” Somewhere a debating society weeps with pride.', effects: { savvy: 8, charisma: 4, public: 5, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Play it for laughs',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You turn your speech into a bit and forget to make an argument, and the motion collapses under you mid-punchline. Funny, briefly. Pointless, lastingly.', effects: { charisma: 2, followers: 2, burnout: 3 } },
+          good: { text: 'You lean into the absurdity — cross-examining {rival} about their own ick like a barrister — and the lawn is in bits. Nobody remembers who won. Everybody remembers you.', effects: { charisma: 5, followers: 4, public: 2 } },
+          incredible: { text: 'You reduce the whole debate to a running joke so good production keeps it as a segment. You lose the motion and win the edit, the room, and a catchphrase. Order in the court.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_challenge_dance', act: 1, tags: ['beat:challenge1', 'challenge', 'camera'],
+    art: 'li_challenge',
+    context: 'Afternoon · the lawn · a routine to learn by sundown',
+    prompt: 'A choreographer has been flown in — an actual professional, radiating patience — to teach the villa a group routine to perform tonight. Half the villa has rhythm; the other half has enthusiasm. You’ve been put front and centre, which is either a compliment or a trap. With this lot, both.',
+    recap: 'A flown-in choreographer puts you front and centre of a group routine.',
+    choices: {
+      left: {
+        label: 'Nail the routine',
+        tags: ['challenge', 'camera'],
+        governingStats: { savvy: 0.5, charisma: 0.5 },
+        outcomes: {
+          bad: { text: 'You drill it so hard you peak in rehearsal and blank in the performance, freezing front-and-centre while the villa dances around you. The choreographer looks away, pained.', effects: { charisma: 2, burnout: 4 } },
+          good: { text: 'You put the hours in, hit every mark, and drag three of the rhythmless along by sheer commitment. The routine lands. The choreographer, moved, nods once. High praise.', effects: { charisma: 5, public: 3, followers: 2 } },
+          incredible: { text: 'You nail it AND carry the whole back row, and the performance becomes the clip of the week — you, front and centre, grinning, a villa moving as one behind you. Star billing, earned.', effects: { charisma: 8, public: 5, followers: 5 } },
+        },
+      },
+      right: {
+        label: 'Be the comic relief',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You commit to the funny-bad-dancer bit so hard the choreographer thinks you’re not trying, and the edit agrees. There’s a line between “can’t dance” and “won’t.” You blurred it.', effects: { charisma: 2, burnout: 3, followers: 2 } },
+          good: { text: 'You lean into being gloriously, deliberately terrible and become the routine’s beating heart — the one everyone watches, wheezing. Precision is overrated. Commitment isn’t.', effects: { charisma: 5, followers: 4, public: 2 } },
+          incredible: { text: 'Your intentionally-catastrophic dancing upstages the entire professional routine, and the clip of you doing the worst worm in television history outlives the season. No rhythm required.', effects: { charisma: 8, followers: 6, public: 4 } },
+        },
+      },
+    },
+  },
 ];

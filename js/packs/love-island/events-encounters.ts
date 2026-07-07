@@ -787,7 +787,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         tags: ['strategy', 'chat'],
         governingStats: { savvy: 1 },
         outcomes: {
-          bad: { text: 'You press for specifics and get vapour — “just a vibe, babe.” Now you’ve shown you’ll chase it. {rival} files that under useful.', effects: { savvy: 2, rivalOpinion: 2, burnout: 3 } },
+          bad: { text: 'You press for specifics and get vapour — “just a vibe, babe.” Now you’ve shown you’ll chase it, and {rival} has learned exactly which string to pull next time.', effects: { savvy: 2, rivalOpinion: 2, burnout: 3 } },
           good: { text: '“Go on — what exactly did you see?” The story shrinks with every question until there’s nothing left in it but its author.', effects: { savvy: 5, gainIntel: { about: 'rival', label: 'the “off” story was theirs, not {partner}’s' } } },
           incredible: { text: '“What did you see, word for word?” {rival} can’t produce it. You smile, thank them for the heads-up, and hand the seed back unplanted.', effects: { savvy: 8, rivalOpinion: -2, public: 3 } },
         },
@@ -1020,7 +1020,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You say the wrong comforting thing — “only a few weeks left” — and it lands as a countdown, not a comfort. Still, you stay. Staying counts.', effects: { loyalty: 3, bond: 3, burnout: 2 } },
           good: { text: 'You make a fresh tea, sit down, and let them talk about their mum’s kitchen for an hour. By the end {partner}’s smiling. “Ta for not fixing it.”', effects: { loyalty: 4, bond: 6, partnerMood: 'buzzing' } },
-          incredible: { text: 'You don’t fix it, you just get homesick alongside them — your nan’s roast, their mum’s radio — till 3 a.m. feels less like exile. Two people, one kitchen, no cameras that matter.', effects: { loyalty: 5, bond: 8, partnerMood: 'buzzing', public: 3 } },
+          incredible: { text: 'You don’t fix it, you just get homesick alongside them — your nan’s roast, their mum’s radio — till 3 a.m. feels less like exile and more like a kitchen you both half-recognise.', effects: { loyalty: 5, bond: 8, partnerMood: 'buzzing', public: 3 } },
         },
       },
       right: {
@@ -1354,7 +1354,7 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, savvy: 0.4 },
         outcomes: {
           bad: { text: 'You accept it, but the old grievance leaks out too — a footnote, then an appendix. {ex} takes it. “Fair,” they say. Closure, with a rider.', effects: { loyalty: 2, selfrespect: 2, burnout: 3 } },
-          good: { text: '“Thank you. I mean it.” You take the apology, hand back one of your own, and let the whole thing finally set. Two people, done properly. Rare.', effects: { loyalty: 4, selfrespect: 3, bond: 2 } },
+          good: { text: '“Thank you. I mean it.” You take the apology, hand back one of your own, and let the whole thing finally set. Two years of leftover it, closed on a beach in about ninety seconds.', effects: { loyalty: 4, selfrespect: 3, bond: 2 } },
           incredible: { text: 'You accept it cleanly, wish them well, and feel the last little hook come loose. {ex} smiles, lighter too. You walk back to {partner} genuinely free of it. That’s the win.', effects: { loyalty: 5, selfrespect: 3, bond: 3, public: 3 } },
         },
       },
@@ -1486,6 +1486,244 @@ export const ENCOUNTER_EVENTS: GameEvent[] = [
           bad: { text: 'You tell it straight and watch them beeline for exactly the couple you should’ve protected. Honesty’s lovely. Timing’s everything. Oops.', effects: { savvy: 2, bond: -2, drama: 3, burnout: 3 } },
           good: { text: 'You give an honest read, your couple included, and trust it to hold. {bombshell} respects the straightness and picks a different fight. It held.', effects: { savvy: 4, bond: 3, selfrespect: 2 } },
           incredible: { text: 'You give the true map and, in the giving, learn everything about how {bombshell} plans to spend their week. They walk off armed. So do you, better.', effects: { savvy: 6, public: 2, gainIntel: { about: 'rival', label: 'the late arrival’s whole week-one plan' } } },
+        },
+      },
+    },
+  },
+
+  // ---------- Final doubling pass · fresh one-on-one situations (open cards) ----------
+  // Novel villa micro-situations not covered elsewhere: the sweepstake, the
+  // sleep-talk, the one book, real-job-vs-persona, the recoupling rehearsal,
+  // teaching a mate to swim, the adopted gecko, the un-clocked birthday.
+  // Dialogue-first; sincere argot in quotes, dry narration between.
+  {
+    id: 'li_enc_nickname', act: 2, weight: 1, tags: ['encounter', 'banter', 'camera'],
+    art: 'li_lawn',
+    context: 'Afternoon · the loungers · a name being fitted',
+    prompt: '“We’ve been trying to land your nickname.” {rival} says it like a gift, grinning. “Everyone gets one, it’s villa law. I put a couple of options forward for you—” a beat, delighted “—and I’m not gonna lie, the frontrunner’s not the flattering one. But it’s stuck now, babe. That’s just how these things go.”',
+    recap: '{rival} reveals the villa’s coined you a nickname — an unflattering one.',
+    choices: {
+      left: {
+        label: 'Own the bad nickname',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: '“Love it, put it on a T-shirt.” You say it a beat too fast and {rival} clocks that it stung. The nickname sticks precisely because you flinched. Villa physics, that.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You wear the daft name like a medal and it loses its teeth by lunch. {rival} looks faintly robbed. You can’t weaponise a nickname its owner’s already laughing at.', effects: { charisma: 5, public: 3, followers: 2 } },
+          incredible: { text: 'You lean so hard into the bad nickname it becomes a catchphrase, a bit, a whole personality. By teatime it’s affectionate. {rival} has accidentally made you the villa’s favourite. Whoops.', effects: { charisma: 8, public: 5, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Rebrand yourself first',
+        tags: ['strategy', 'banter'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You try to launch a cooler nickname yourself and the villa smells the campaign instantly. Now you’re “the one who named themselves.” Worse. Objectively, measurably worse.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'You quietly seed a better name through {mate} and let it spread on its own. By evening {rival}’s version has died a natural death. Nobody clocks you did it. That’s the craft.', effects: { savvy: 5, selfrespect: 2 } },
+          incredible: { text: '“Call me what you like — I’ll answer to whichever one wins the public.” {rival}’s grin falters. You’ve turned a nickname into a vote strategy in one sentence. They almost applaud.', effects: { savvy: 8, public: 3, selfrespect: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_daft_debate', act: 2, weight: 1, tags: ['encounter', 'banter', 'date'],
+    art: 'li_daybed',
+    context: 'Afternoon · the daybed · a very serious silly question',
+    prompt: '“No, listen — this is important.” {partner} is deadly serious about something extremely not. “If the villa flooded, right, and you could only save one person and one snack — and the snack was the good cheese — who’s the person? And don’t say me to be nice. I need to know how your head actually works.” Arms folded. This is, apparently, a test.',
+    recap: '{partner} traps you in a ludicrous hypothetical and treats it as a real test.',
+    choices: {
+      left: {
+        label: 'Play it dead straight',
+        tags: ['banter', 'chat'],
+        governingStats: { charisma: 0.5, rizz: 0.5 },
+        outcomes: {
+          bad: { text: 'You over-engineer it — flood logistics, cheese refrigeration, an evacuation plan — until {partner} regrets asking. “I wanted a laugh, not a risk assessment.” You gave them a seminar.', effects: { charisma: 2, burnout: 2 } },
+          good: { text: 'You commit fully to the stupid premise and defend your pick — the cheese, obviously — so earnestly {partner} loses it. Ten minutes of nonsense, and somehow you know each other better.', effects: { charisma: 5, bond: 4 } },
+          incredible: { text: 'The debate escalates into a full villa referendum with sides and a manifesto, and it’s the week’s running joke — but under it, the two of you in perfect daft sync, is the actual thing.', effects: { charisma: 8, bond: 5, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Turn it back on them',
+        tags: ['flirt', 'banter'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You flip the question back and it comes out competitive instead of playful. {partner} narrows their eyes. “Why won’t you just ANSWER.” The game curdles into a small real standoff.', effects: { rizz: 2, bond: -1, burnout: 2 } },
+          good: { text: 'You lob back a worse dilemma and now you’re both deep in a hypothetical arms race, howling. The daft debate is its own date — better than half the ones production arranges.', effects: { rizz: 5, bond: 4, followers: 2 } },
+          incredible: { text: 'You two build an entire absurd rulebook for the flooded villa — cheese priorities, a line of succession — and by the end you’ve accidentally mapped exactly how you’d look after each other. Under the daft, the real.', effects: { rizz: 8, bond: 6, romantics: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_impression', act: 2, weight: 1, tags: ['encounter', 'banter', 'camera'],
+    art: 'li_lawn',
+    context: 'Afternoon · the lawn · a performance of you',
+    prompt: '“You have NOT seen my impression of you? Everyone’s seen it.” {rival} is already up, doing the walk, the catchphrase, the way you apparently hold your drink. It is, devastatingly, accurate. The lawn is crying. “I do it with love,” they add, not entirely with love. “Don’t take it bad, babe. Means you’re memorable.”',
+    recap: '{rival} performs a devastatingly accurate impression of you for the lawn.',
+    choices: {
+      left: {
+        label: 'Do them right back',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You launch an impression of {rival} and fumble it — too mean, not sharp enough — and the lawn’s laughter curdles. {rival} takes the crown back with a bow. Out-done on your own turf.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You fire back an impression of {rival} so fond and so accurate they have to laugh at themselves. Mutual demolition, no blood. The lawn calls it a draw and demands an encore.', effects: { charisma: 5, public: 3, followers: 2 } },
+          incredible: { text: 'You top their bit with one of your own that nails a tiny true thing about {rival} nobody else clocked. They gasp, delighted and slightly exposed. You won the lawn and read them in one go.', effects: { charisma: 8, public: 5, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Ask what they actually see',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You ask what the impression’s based on and {rival} gleefully lists your habits back to you. Now you can’t stop noticing yourself doing them. Self-consciousness, gift-wrapped.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'You ask, genuinely, and under the caricature there’s a sharp, almost fond read of exactly who you are in here. {rival} clocks more than they let on. Useful, knowing what they see.', effects: { savvy: 5, selfrespect: 2 } },
+          incredible: { text: '“Do it again — I want to know what I look like to you.” {rival} obliges, and inside the joke is a whole map of how they’ve read you all season. You take the map. They didn’t mean to draw it.', effects: { savvy: 8, public: 3, selfrespect: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_real_job', act: 2, weight: 1, tags: ['encounter', 'chat', 'strategy'],
+    art: 'li_pool',
+    context: 'Afternoon · the pool steps · the gloss and the truth under it',
+    prompt: '“Can I trust you with something daft?” {bombshell} drops their voice by the pool. “My bio says ‘model.’ I’m a mortgage adviser. From Slough. I panicked at the casting and now I’ve got to be this—” they gesture at the whole glossy package “—for six weeks. You seem sound. Please don’t out me over the Instagram.”',
+    recap: 'A {bombshell} confesses their villa persona is nothing like their real job.',
+    choices: {
+      left: {
+        label: 'Keep their secret',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You swear to keep it and then can’t look at their bio without smirking. {bombshell} clocks the smirk immediately. “You’re gonna be weird about this, aren’t you.” You are, a bit.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: '“Safe with me. Mortgage adviser’s fitter than model anyway.” {bombshell} sags with relief. One person in here who’s met the real them. That buys a lot of goodwill.', effects: { loyalty: 5, selfrespect: 2 } },
+          incredible: { text: 'You keep it so completely that when the villa tries to catch them out, you cover before they even ask. {bombshell} owes you now, quietly and permanently. Best kind of ally to bank.', effects: { loyalty: 6, public: 3, selfrespect: 2 } },
+        },
+      },
+      right: {
+        label: 'Trade a truth back',
+        tags: ['strategy', 'chat'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You swap them a secret of your own and instantly regret the exchange rate. Now you’re both holding grenades and hoping neither of you fumbles one. Tense, poolside.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'You trade one real thing for another — your dull day job for theirs — and suddenly it’s two humans by the pool, not two brands circling. Levelling, that.', effects: { savvy: 5, followers: 2 } },
+          incredible: { text: 'You trade honesty for honesty and walk off knowing exactly who {bombshell} really is under the gloss. Useful. Also, annoyingly, you now quite like them.', effects: { savvy: 8, followers: 2, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_recoup_rehearsal', act: 2, weight: 1, tags: ['encounter', 'chat', 'date'],
+    art: 'li_bedroom',
+    context: 'Evening · the dressing room · caught mid-rehearsal',
+    prompt: 'You catch {partner} mouthing something at the mirror, hand on heart, then dropping it the second they clock you. “Nothing. Wasn’t doing anything.” A beat. “Fine — I was practising. For if there’s a recoupling. I wanted the words right for once, instead of bottling it. Don’t tell anyone I rehearse. Ruins the magic.”',
+    recap: 'You catch {partner} secretly rehearsing a speech they won’t admit to.',
+    choices: {
+      left: {
+        label: 'Help them get it right',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You give notes and it balloons into a whole production — cue cards, a second draft, blocking. By the end the speech is flawless and sounds nothing like them. Back to the mirror.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You cut it to one true line and drill it till it’s theirs. “That’s the one,” {partner} says, steadier. Whatever the villa throws now, they’ve got their words ready.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: 'You help them find the sentence they actually mean, and hearing it out loud in rehearsal wrecks you both a little. The speech is ready. So, quietly, are you.', effects: { loyalty: 8, bond: 6, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Tell them not to script it',
+        tags: ['chat', 'rest'],
+        governingStats: { rizz: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: '“Just say what you feel” — easy for you, apparently. {partner} deflates. “That’s the bit I can’t do without practising.” You’ve talked them out of their only safety net.', effects: { rizz: 2, burnout: 2 } },
+          good: { text: '“You don’t need a script for me.” {partner} lets the imaginary cue cards drop. “Yeah?” “Yeah.” Simpler than they’d feared — saying it to a face, not a mirror.', effects: { loyalty: 4, bond: 5 } },
+          incredible: { text: 'You get them to bin the speech and just tell you the messy real version now, no ceremony. It’s better than anything rehearsed. “Oh,” says {partner}. “That’s what I meant to say.”', effects: { loyalty: 5, bond: 8, romantics: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_teach_swim', act: 1, weight: 1, tags: ['encounter', 'rest', 'loyal'],
+    art: 'li_pool',
+    context: 'Afternoon · the shallow end · a quiet confession',
+    prompt: '“Right, this is mortifying, so.” {mate} pulls you to the shallow end, glancing round. “I can’t actually swim. Never learned. And there’s a water challenge coming and I’m bricking it. Can you teach us? On the quiet? If this villa finds out I’ll never hear the end of it. Please. I trust you.”',
+    recap: '{mate} admits they can’t swim and asks you to teach them, quietly.',
+    choices: {
+      left: {
+        label: 'Teach them, patiently',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You go full instructor and {mate} panics at waist-deep, swallows half the pool, and calls it there. “Maybe I’m a land animal.” You’ll try again tomorrow. Progress: damp.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'An hour of floats and patience and {mate} does a whole width, wobbly and triumphant. “I swam.” Quietly said, hugely felt. Nobody saw. That was the entire point.', effects: { loyalty: 5, graft: 2 } },
+          incredible: { text: 'By week’s end {mate} does the water challenge and doesn’t sink, and only you two know why. They catch your eye mid-splash. A whole secret, taught in a shallow end.', effects: { loyalty: 8, graft: 3, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Make it a laugh, low-stakes',
+        tags: ['banter', 'chat'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'Your “just vibe with the water” method makes more splashing than swimming and a lifeguard-shaped producer starts hovering. {mate} laughs, still can’t float. Fun, though, technically.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You keep it daft — noodle races, breath-holding contests — and {mate} learns without noticing they’re learning. Best kind of lesson. They’re doing widths by sundown.', effects: { charisma: 5, followers: 2 } },
+          incredible: { text: 'You turn the lesson into such a laugh that {mate} forgets to be scared and just swims. “When did that happen?” Between the jokes, mate. That’s where it always happens.', effects: { charisma: 8, followers: 4, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_worst_habit', act: 2, weight: 1, tags: ['encounter', 'chat', 'date'],
+    art: 'li_bedroom',
+    context: 'Evening · the dressing room · a fond accusation',
+    prompt: '“Can I tell you your worst habit? Lovingly.” {partner} has clearly been saving this. “You make a tea, drink half, abandon the mug somewhere mad, and start a NEW tea. There are six of your mugs in this villa right now. Six. I’ve been collecting them like Easter eggs.” They’re not annoyed. They’re fond, which is worse.',
+    recap: '{partner} lovingly calls out your worst villa habit — the abandoned mugs.',
+    choices: {
+      left: {
+        label: 'Take the note, sweetly',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You get weirdly defensive about the mugs and it becomes A Thing about being “managed.” {partner} backs off, hands up. It was six mugs and a fond joke. You turned it into a summit.', effects: { loyalty: 2, bond: 1, burnout: 3 } },
+          good: { text: '“You’ve been tracking my mugs?” — “Obviously.” The fact they know your daft habit and find it endearing lands bigger than any compliment. You bin the mug. You’ll do it again tomorrow.', effects: { loyalty: 5, bond: 5 } },
+          incredible: { text: 'You realise being clocked this closely — mugs and all — is what being properly known feels like, and you say so, badly, out loud. {partner} goes soft. The mug graveyard is a love language now.', effects: { loyalty: 8, bond: 7, romantics: 2 } },
+        },
+      },
+      right: {
+        label: 'Turn it back on them',
+        tags: ['banter', 'flirt'],
+        governingStats: { charisma: 0.5, rizz: 0.5 },
+        outcomes: {
+          bad: { text: 'You lob back their worst habit and get the aim wrong — too true, not fond enough. {partner}’s smile tightens. “Right.” The mug bit was a gift. You handed it back as a receipt.', effects: { charisma: 2, bond: -2, burnout: 2 } },
+          good: { text: '“You leave one sock on, always, all night.” {partner} gasps, caught. Turns out you’ve both been quietly cataloguing each other. That’s just what couples do. Filed, fondly.', effects: { charisma: 5, bond: 4 } },
+          incredible: { text: 'You two spend an hour trading tiny observed habits — the sock, the mugs, the way they hum getting ready — and it’s plain you’ve each been paying enormous attention. The villa’s realest audit.', effects: { charisma: 8, bond: 6, followers: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_enc_birthday', act: 2, weight: 1, tags: ['encounter', 'chat', 'loyal'],
+    art: 'li_kitchen',
+    context: 'Late afternoon · the kitchen · a date nobody clocked',
+    prompt: '“It’s honestly fine.” {mate} says it too fast, stirring a coffee they’re not drinking. “It’s my birthday. I wasn’t gonna say. Everyone’s got their own stuff on and I didn’t want a fuss, and now it’s four o’clock and — yeah. Fine. Ignore me, I’m being soft.” They are, quite plainly, not fine.',
+    recap: 'It’s {mate}’s birthday and nobody in the villa clocked it.',
+    choices: {
+      left: {
+        label: 'Throw something together',
+        tags: ['loyal', 'banter'],
+        governingStats: { charisma: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: 'You rally the villa in a panic and the surprise is more chaos than party — a cake of stacked Mini Milks, everyone singing in three keys. {mate} cries anyway. Right result, rough craft.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You mobilise the villa inside an hour — a banner in eyeliner, a cake of stacked biscuits, dreadful singing. {mate} welds their face shut and fails. “You didn’t have to.” You did, though.', effects: { charisma: 5, loyalty: 3, public: 2 } },
+          incredible: { text: 'By teatime the villa’s thrown {mate} the best worst party ever assembled, and they spend it insisting they’re fine while sobbing into a paper crown. Nobody was letting it slide. Least of all you.', effects: { charisma: 8, loyalty: 3, public: 4, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Just be with them',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You sit with them instead of making it big, and {mate} half-wishes you’d made it big. “This is nice,” they say, meaning it and not, both. Read the room again tomorrow.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You skip the fuss and give {mate} your whole afternoon — a proper chat, no cameras worth it, one card drawn on a napkin. Sometimes the small version is the one that lands.', effects: { loyalty: 5, graft: 2 } },
+          incredible: { text: 'You clock that {mate} didn’t want a party, they wanted to not be forgotten — so you remember, out loud, in small ways, all day. By evening they’re not being brave about it. They’re just happy.', effects: { loyalty: 8, selfrespect: 2, graft: 2 } },
         },
       },
     },

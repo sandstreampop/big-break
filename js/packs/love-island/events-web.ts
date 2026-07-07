@@ -825,7 +825,7 @@ export const WEB_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“Start a fight, on purpose?” Priya looks scandalised, then intrigued, then guilty, then intrigued again. You may have taught a sweetheart chaos. Sorry, villa.', effects: { threadBeat: 'politeones', addFlag: 'li_web_politeones_in', loyalty: 2, burnout: 2 } },
           good: { text: '“Safe isn’t the same as sure,” you say. “Have one honest row and see if you miss him after.” Priya nods slowly. “…That’s terrifying advice.” It is. It’s also right.', effects: { bond: 4, threadBeat: 'politeones', addFlag: 'li_web_politeones_in', loyalty: 5, romantics: 2 } },
-          incredible: { text: '“Politeness is a lovely place to visit,” you tell her. “Don’t buy a flat there.” Priya laughs, properly, for once not checking who heard. She’s going to poke it. Good.', effects: { bond: 5, threadBeat: 'politeones', addFlag: 'li_web_politeones_in', loyalty: 8, romantics: 3 } },
+          incredible: { text: '“Nice is comfy,” you say. “I just don’t know if you’d pick him on a bad day.” You only name what Priya already suspects. Whether she goes and finds out is hers — but she’s stopped pretending she doesn’t know.', effects: { bond: 5, threadBeat: 'politeones', addFlag: 'li_web_politeones_in', loyalty: 8, romantics: 3 } },
         },
       },
       right: {
@@ -1127,7 +1127,7 @@ export const WEB_EVENTS: GameEvent[] = [
         tags: ['chat', 'code'],
         governingStats: { charisma: 0.5, loyalty: 0.5 },
         outcomes: {
-          bad: { text: '“So brave,” you say, a touch too reverent, and Zara snorts. “It’s a breakup, not a marathon.” It was a bit of a marathon, actually. Two years’ worth. But point taken.', effects: { threadResolve: 'oldflame:closure', selfrespect: 3, burnout: 1 } },
+          bad: { text: '“So brave,” you say, a touch too reverent, and Zara snorts. “It’s a breakup, not a bloody triathlon.” It was a bit of a triathlon, actually. Two years’ worth. But point taken.', effects: { threadResolve: 'oldflame:closure', selfrespect: 3, burnout: 1 } },
           good: { text: '“Most people never close the door,” you tell her. “They just move house.” Zara laughs. “God, that’s me usually.” Not this time. The spine wing has a new favourite.', effects: { bond: 4, threadResolve: 'oldflame:closure', selfrespect: 4, romantics: 1 } },
           incredible: { text: 'You say nothing and just bump her shoulder with yours, watching the sea. “Thanks for making me say it out loud,” Zara says. “It stopped being a ghost.” Some hauntings only need a witness.', effects: { bond: 5, threadResolve: 'oldflame:closure', selfrespect: 5, graft: 2 } },
         },
@@ -1161,7 +1161,7 @@ export const WEB_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You tip them off and it comes out that you did, and now you’re “the one stirring,” while Bella floats above it, innocent as a hurricane. You did a good thing, badly, on camera.', effects: { threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', loyalty: 2, drama: 2, burnout: 2 } },
           good: { text: '“Heads up — Bella’s got a plan, and it’s you.” The couple close ranks, forewarned. Bella clocks the sudden solidarity and narrows her eyes at you. You’ve made an enemy and a friend.', effects: { bond: 4, threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', loyalty: 5, selfrespect: 2 } },
-          incredible: { text: '“A couple that talks can’t be split,” you tell them. “So talk.” They do — all night, honestly — and Bella’s wrecking ball meets a wall it can’t swing through. You quietly reinforced the building.', effects: { bond: 5, threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', loyalty: 8, selfrespect: 3 } },
+          incredible: { text: '“All I’ll say is: talk to each other tonight.” You leave it there. They do — all night, honestly, their idea — and by morning Bella’s wrecking ball meets a wall it can’t swing through. Their wall. You just pointed at it.', effects: { bond: 5, threadBeat: 'wrecking', addFlag: 'li_web_wrecking_in', loyalty: 8, selfrespect: 3 } },
         },
       },
       right: {
@@ -1250,7 +1250,7 @@ export const WEB_EVENTS: GameEvent[] = [
         governingStats: { charisma: 0.6, loyalty: 0.4 },
         outcomes: {
           bad: { text: 'You congratulate them so loudly Bella hears and takes it as a challenge. You’ve pointed the hurricane at the one house that survived. Well done. Genuinely, well done, you plum.', effects: { threadResolve: 'wrecking:fizzle', romantics: 2, drama: 2, burnout: 2 } },
-          good: { text: '“A couple that talks can’t be wrecked,” you tell them. “You just proved it on telly.” They shrug, still holding hands, still boring, still standing. The nation adores a wall.', effects: { bond: 4, threadResolve: 'wrecking:fizzle', romantics: 3, public: 2 } },
+          good: { text: '“You just out-boring-ed a wrecking ball on live telly,” you tell them. They shrug, still holding hands, still admin-brained, still standing. The nation adores a wall it can’t knock down.', effects: { bond: 4, threadResolve: 'wrecking:fizzle', romantics: 3, public: 2 } },
           incredible: { text: '“Bella brought a wrecking ball to a couple made of admin,” you announce, delighted. “Never stood a chance.” The lawn laughs. The solid couple gets a standing ovation for the crime of being fine.', effects: { bond: 5, threadResolve: 'wrecking:fizzle', romantics: 3, charisma: 4, followers: 4 } },
         },
       },

@@ -515,7 +515,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         tags: ['flirt', 'camera'],
         governingStats: { rizz: 0.6, charisma: 0.4 },
         outcomes: {
-          bad: { text: 'You go down the line like a wedding receiving line and blank the second name. It was {mate}’s. {mate} clocks it. First impression: filed under “forgot me.”', effects: { rizz: 2, burnout: 2, public: -1 } },
+          bad: { text: 'You go down the line like a wedding receiving line and blank the second name. It was {mate}’s. {mate} clocks it. You are now, to one person in here, the one who forgot them on sight.', effects: { rizz: 2, burnout: 2, public: -1 } },
           good: { text: 'You greet each of them like you mean it, land two jokes, and leave nobody out. The lawn thaws. Eleven strangers become eleven maybes in under a minute.', effects: { rizz: 5, charisma: 2, public: 3 } },
           incredible: { text: 'You read the line-up like a room and give each one exactly the hello they wanted. By the time you sit, three of them are already quoting you. The lawn is yours.', effects: { rizz: 8, charisma: 3, public: 5, followers: 4 } },
         },
@@ -527,7 +527,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You lock onto the kindest face and cling. Sweet, safe, and the other ten now think you’re shy. Shy plays badly on a show that runs on volume.', effects: { loyalty: 2, burnout: 2 } },
           good: { text: 'You skip the parade and find the one person actually holding eye contact. A real two-minute chat while everyone else performs. Substance over splash.', effects: { loyalty: 5, bond: 4 } },
-          incredible: { text: 'You ignore the fireworks and clock the quiet one clocking you. One honest hello, and you’ve got an ally before you’ve got a drink. Slow game, best game.', effects: { loyalty: 8, bond: 5, public: 4 } },
+          incredible: { text: 'You ignore the fireworks and clock the quiet one clocking you. One honest hello, and you’ve got an ally before you’ve got a drink — while the loud ones are still shaking hands with the wrong people.', effects: { loyalty: 8, bond: 5, public: 4 } },
         },
       },
     },
@@ -546,7 +546,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“Do you snore?” is a bold opener and the answer, it turns out, is a saga. You learn about their deviated septum until 2 a.m. Romance: pending. Sleep: cancelled.', effects: { charisma: 2, burnout: 3 } },
           good: { text: 'You whisper-chat about nothing till the room goes quiet, then keep going quieter. No moves, no pressure, just two people getting the giggles under a duvet.', effects: { charisma: 3, bond: 4 } },
-          incredible: { text: '“I’ve not laughed like this in ages,” {partner} whispers, and means it. You talked till the birds started. Nothing happened. Everything happened.', effects: { charisma: 3, bond: 6, public: 4 } },
+          incredible: { text: '“I’ve not laughed like this in ages,” {partner} whispers, and means it. You talk till the birds start — until {mate} sits bolt upright and hisses, “will you two SHUT UP, some of us are grafting tomorrow.”', effects: { charisma: 3, bond: 6, public: 4 } },
         },
       },
       right: {
@@ -565,7 +565,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     id: 'li_firepit_funfact', act: 1, tags: ['banter', 'camera'],
     art: 'li_firepit',
     context: 'Night 1 · the firepit · “tell us a fun fact”',
-    prompt: '“Go round the circle — fun fact each,” someone decides, and the firepit braces. The bar is a man who once met a soap actor in a Nando’s. Your turn is coming. The nation is deciding if you’re interesting in real time.',
+    prompt: '“Go round the circle — fun fact each,” someone decides, and the firepit braces. So far the bar is a man who once met a soap actor in a Nando’s. Your turn is coming, and the last two facts were a tattoo nobody asked about and a cousin who was “nearly on Gladiators.” The bar is on the floor.',
     recap: 'Night 1 firepit — the dreaded fun-fact round goes round the circle.',
     choices: {
       left: {
@@ -623,7 +623,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     id: 'li_bombshell_incoming', act: 1, tags: ['loyal', 'strategy'],
     art: 'li_firepit_day',
     context: 'Afternoon · the firepit · a text lands wrong',
-    prompt: '“I’VE GOT A TEXT!!” The words that stop the villa dead. It reads: a new arrival lands tonight. Eyes flick to partners; partners flick to the floor. Somewhere out there {bombshell} is doing their hair, and the villa is already recalculating.',
+    prompt: 'The gallery lights shift and a runner scuttles past clutching a clipboard, which in villa terms is a weather warning. Word outruns the text: a new arrival lands tonight. Eyes flick to partners; partners flick to the floor. Somewhere out there {bombshell} is doing their hair, and the villa is already recalculating.',
     recap: 'A text warns a new arrival lands tonight — the villa starts recalculating.',
     choices: {
       left: {
@@ -672,7 +672,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You’re so mysterious {partner} leaves the daybed unsure you even like them. Intrigue’s a knife; you held it by the blade.', effects: { savvy: 2, burnout: 2, bond: -2 } },
           good: { text: 'You give a little, hold a little, and leave {partner} wanting the next chat. The graft is a slow build, and you just laid a good brick.', effects: { savvy: 5, bond: 3, graft: 3 } },
-          incredible: { text: 'You leave the daybed having said almost nothing and somehow raised the temperature. {partner} spends all evening replaying it. Best graft is the one they finish.', effects: { savvy: 8, bond: 4, graft: 4, public: 3 } },
+          incredible: { text: 'You leave the daybed having said almost nothing and somehow raised the temperature. {partner} spends all evening replaying it, and pulls YOU for the next chat before you’ve had to ask.', effects: { savvy: 8, bond: 4, graft: 4, public: 3 } },
         },
       },
     },
@@ -707,30 +707,30 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     },
   },
   {
-    id: 'li_tea_round', act: 1, tags: ['loyal', 'banter'],
+    id: 'li_first_cook', act: 1, tags: ['loyal', 'banter'],
     art: 'li_kitchen',
-    context: 'Morning · the kitchen · the kettle is on',
-    prompt: 'You’ve offered to do a tea round, which in this villa means memorising eleven increasingly deranged orders. One oat, one “builder’s but weak,” one that is legally a dessert. The kettle clicks. The nation judges a person by their tea admin.',
-    recap: 'You offered a tea round — eleven deranged orders and one kettle.',
+    context: 'Night 1 · the kitchen · the first group dinner',
+    prompt: 'First communal dinner, and the villa has discovered that eleven people who all “can cook, actually” have produced one raw chicken, three burnt pans and a bowl of something. The kitchen is chaos. Somebody needs to grab the wooden spoon before the smoke alarm does it for them.',
+    recap: 'The villa’s first chaotic group dinner — eleven cooks, one raw chicken.',
     choices: {
       left: {
-        label: 'Nail every order',
+        label: 'Take charge',
         tags: ['loyal', 'chat'],
         governingStats: { loyalty: 0.6, savvy: 0.4 },
         outcomes: {
-          bad: { text: 'You mix up the oat and the “builder’s” and a small cold war opens over a mug. It is, everyone agrees, not about the tea. It is entirely about the tea.', effects: { loyalty: 2, burnout: 3 } },
-          good: { text: 'Eleven teas, eleven correct, delivered in order of who needs caffeine most. Nobody says thank you properly. Everybody clocks the competence.', effects: { loyalty: 5, graft: 3, public: 3 } },
-          incredible: { text: '“How did you remember mine?” Because you listen, which in here is a superpower. The dessert-tea person nearly proposes. Loyalty, brewed to spec.', effects: { loyalty: 6, graft: 4, bond: 2, public: 3 } },
+          bad: { text: 'You appoint yourself head chef and lose the room in seconds — nobody takes orders from someone they met at teatime. The chicken stays raw out of pure spite. Mutiny, over a hob.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You quietly organise the chaos — you on the hob, {mate} on veg, someone banished to laying the table — and a real dinner appears. Nobody says thanks. Everybody eats, and clocks who fixed it.', effects: { loyalty: 5, graft: 3, public: 3 } },
+          incredible: { text: 'You turn eleven panicking strangers into a working kitchen and land a dinner that tastes like a plan. Night one, and you’re already the one the villa runs to when it’s on fire. Literally, tonight.', effects: { loyalty: 6, graft: 4, bond: 2, public: 3 } },
         },
       },
       right: {
-        label: 'Wing it with flair',
+        label: 'Charm your way out',
         tags: ['banter', 'camera'],
         governingStats: { charisma: 0.7, rizz: 0.3 },
         outcomes: {
-          bad: { text: 'You freestyle the orders and invent a tea nobody asked for. It has cinnamon in it. The villa will discuss this beverage for the rest of the week.', effects: { charisma: 2, burnout: 2 } },
-          good: { text: 'You do the whole round in a butler voice and the kitchen loses it. The tea’s wrong but the service is five stars. Content from a kettle.', effects: { charisma: 5, followers: 3, public: 3 } },
-          incredible: { text: 'Your tea round becomes a full sketch, complete with a trolley you built from a laundry basket. Nobody drinks. Everybody films. The bit runs itself.', effects: { charisma: 8, followers: 6, public: 4 } },
+          bad: { text: 'You dodge kitchen duty with a bit and get put on washing-up as punishment, where you break a plate for a laugh nobody was after. Charm has limits, and you found the sink.', effects: { charisma: 2, burnout: 2 } },
+          good: { text: 'You talk your way out of cooking and into hosting — pouring drinks, running commentary, keeping the panicking chefs laughing. You did nothing useful and everyone had the best night. A gift, that.', effects: { charisma: 5, followers: 3, public: 3 } },
+          incredible: { text: 'You turn the burnt-dinner disaster into the funniest night of the week without touching a pan, narrating the chaos like a cookery show gone wrong. Zero cooking, total legend. The chicken stays raw.', effects: { charisma: 8, followers: 6, public: 4 } },
         },
       },
     },
@@ -787,7 +787,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { charisma: 0.7, rizz: 0.3 },
         outcomes: {
           bad: { text: 'You try to host from a hot tub and knock the whole thing into a splash war. Fun, briefly. Then someone’s extensions are wet and it’s a whole thing.', effects: { charisma: 2, burnout: 3 } },
-          good: { text: 'You referee the star-sign debate into actual comedy and the tub becomes the best seat in the villa. Nine people, one host, zero exits.', effects: { charisma: 5, followers: 4, public: 3 } },
+          good: { text: 'You referee the star-sign debate into actual comedy and the tub becomes the best seat in the villa. Even the person losing the argument refuses to get out and cede the floor.', effects: { charisma: 5, followers: 4, public: 3 } },
           incredible: { text: 'You turn the overcrowded tub into the episode’s centrepiece — a talk show in bubbles. Even {rival} laughs, against their own interests.', effects: { charisma: 8, followers: 6, public: 4 } },
         },
       },
@@ -823,30 +823,30 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
     },
   },
   {
-    id: 'li_dares_postbox', act: 1, tags: ['flirt', 'drama'],
+    id: 'li_pool_float', act: 1, tags: ['flirt', 'drama'],
     art: 'li_firepit',
-    context: 'Night · the firepit · a bowl of folded dares',
-    prompt: 'Production has posted a bowl of dares, which is how the villa manufactures its first proper scandal. The folded slips escalate fast: “kiss the fittest,” “rate the villa,” one that just says “demonstrate.” Your hand’s already in the bowl.',
-    recap: 'A bowl of dares at the firepit — the villa’s first manufactured scandal.',
+    context: 'Day 1 · the pool · one giant flamingo float',
+    prompt: 'The villa contains exactly one good pool float — a giant inflatable flamingo the size of a small car — and everyone has clocked it at the same moment. Whoever claims it first owns the pool, the photo, and the day. {rival} is already eyeing it. So, frankly, are you.',
+    recap: 'One giant flamingo float, one villa — and the land-grab is on.',
     choices: {
       left: {
-        label: 'Go all in',
+        label: 'Claim it outright',
         tags: ['flirt', 'drama'],
         governingStats: { rizz: 0.6, charisma: 0.4 },
         outcomes: {
-          bad: { text: 'Your dare says “kiss who you fancy most” and you overthink it into a lap of the firepit, kissing no one, disappointing everyone. Nerve: failed at volume.', effects: { rizz: 2, burnout: 3, public: -1 } },
-          good: { text: 'You do your dare with a grin and zero hesitation and the firepit erupts. {partner} pretends to be fine about it. The nation is not fine, deliciously.', effects: { rizz: 5, followers: 4, public: 3 } },
-          incredible: { text: 'Your dare turns into the moment the whole season gets trailered on. Frank, funny, over in five seconds. The group chat at home combusts.', effects: { rizz: 8, followers: 7, public: 5, drama: 3 } },
+          bad: { text: 'You sprint for the flamingo, misjudge the leap, and go straight over the far side into the deep end while it sails off riderless. The villa will replay the belly-flop for weeks. Nerve: failed, wetly.', effects: { rizz: 2, burnout: 3, public: -1 } },
+          good: { text: 'You claim the flamingo with a running dive and a pose, and hold court from its back like a throne. Everyone wants a go. You decide who gets one. Day one, and you own the pool.', effects: { rizz: 5, followers: 4, public: 3 } },
+          incredible: { text: 'You take the flamingo, pull {partner} up beside you, and turn it into the season’s first proper flirt — floating, laughing, the villa watching from the shallow end. Poster shot, day one.', effects: { rizz: 8, followers: 7, public: 5, drama: 3 } },
         },
       },
       right: {
-        label: 'Keep it cheeky, not chaos',
+        label: 'Share it clever',
         tags: ['banter', 'strategy'],
         governingStats: { savvy: 0.5, charisma: 0.5 },
         outcomes: {
-          bad: { text: 'You water your dare down to “rate the villa out of ten” and give everyone a seven. Safe. Also, now eleven people know you called them a seven.', effects: { savvy: 2, burnout: 2, public: -1 } },
-          good: { text: 'You play the game clever — big laughs, no landmines — and pick the dare that flatters {partner} in front of everyone. Chaos, sidestepped with a wink.', effects: { savvy: 5, charisma: 2, bond: 3 } },
-          incredible: { text: 'You defuse the nuclear dares and keep the fun, steering the whole game without anyone clocking the wheel. A scandal, expertly not-had.', effects: { savvy: 8, graft: 3, public: 3 } },
+          bad: { text: 'You propose a fair flamingo rota and are told, coldly, that it’s “just a float.” It is not just a float. You’ve turned a laugh into legislation, and nobody’s laughing now.', effects: { savvy: 2, burnout: 2, public: -1 } },
+          good: { text: 'You wave {rival} onto the flamingo and quietly commandeer the good lounger in the shade instead — with the spot beside you saved for {partner}. Everyone chased the bird. You took the better seat.', effects: { savvy: 5, charisma: 2, bond: 3 } },
+          incredible: { text: 'You broker the flamingo into a villa-wide game — timed goes, a leaderboard, {partner} as judge — and turn one inflatable into everyone’s best afternoon. You gave it away and somehow ran the whole thing.', effects: { savvy: 8, graft: 3, public: 3 } },
         },
       },
     },
@@ -864,7 +864,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.7, charisma: 0.3 },
         outcomes: {
           bad: { text: 'You reach for a Deep Chat and land on your ex, at length, under the stars. {partner} listens, kindly, wondering why they’re on this daybed. Timing, again.', effects: { loyalty: 2, burnout: 3, bond: -1 } },
-          good: { text: 'You talk about the real stuff — home, fears, the plan — and the villa dissolves. Two people, one duvet, no performance. It counts double out here.', effects: { loyalty: 5, bond: 5, public: 3 } },
+          good: { text: 'You talk about the real stuff — home, fears, the plan — and the villa dissolves. No cameras crowding, no audience notes, just the two of you under a sky nobody’s producing. It counts double out here.', effects: { loyalty: 5, bond: 5, public: 3 } },
           incredible: { text: '“I feel like I’ve known you ages,” {partner} says to the sky. You stayed out till the stars quit. Nothing was filmed. Everything shifted.', effects: { loyalty: 8, bond: 7, public: 4 } },
         },
       },
@@ -875,7 +875,7 @@ export const ARRIVAL_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You keep it so light it never gets off the ground, and {partner} heads in unsure if you’re into them or just bored. Playful tipped into aloof.', effects: { rizz: 2, burnout: 2, bond: -1 } },
           good: { text: 'You trade daft would-you-rathers till you’re both wheezing and the stars are forgotten. Not deep. Definitely real. The giggles are the tell.', effects: { rizz: 5, bond: 4 } },
-          incredible: { text: 'You keep it feather-light and somehow it turns into the most honest laugh either of you has had all week. Best chats sneak up sideways.', effects: { rizz: 8, bond: 6, public: 3 } },
+          incredible: { text: 'You keep it feather-light and somehow it turns into the most honest laugh either of you has had all week — the kind where {partner} snorts, then dies of embarrassment, then does it again.', effects: { rizz: 8, bond: 6, public: 3 } },
         },
       },
     },

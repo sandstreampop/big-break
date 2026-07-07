@@ -313,7 +313,7 @@ const WING_MOOD: Record<string, Record<Mood, Frag[]>> = {
     lost: [
       { author: '@scrolling.past', avatar: '📱', body: 'who is {me}. why are they on my feed. the algorithm is WRONG today', meta: '💬 view all 120 comments' },
       { author: '@unfollowing.rn', avatar: '👋', body: 'muting the {me} tag until further notice 🧘‍♀️ my peace is worth more than this arc', meta: '💬 view all 96 comments' },
-      { author: '@notinterested.rn', avatar: '🙅', body: 'the algorithm keeps serving me {me} and i keep swiping and it keeps SERVING 🧍 we are in a standoff. i WILL win. my feed is my TEMPLE and they are not on the guest list', meta: '💬 view all 88 comments' },
+      { author: '@nextbig.edits', avatar: '📱', body: 'pausing {me} content, the numbers just aren’t numbering 🙏 pivoting the page to whoever pops off next 🫶 (lash code still VILLA20 though, mama’s gotta eat) 💅', meta: '💬 view all 88 comments' },
     ],
   },
   clock: {
@@ -417,7 +417,7 @@ const FAMILY: Partial<Record<Family, Partial<Record<string, Partial<Record<Valen
   },
   challenge: {
     bird: {
-      good: [{ author: 'ratio enthusiast', avatar: '🔥', body: 'the CHALLENGE. {me} understood the assignment and then some. someone’s partner is fuming in the background and i am ZOOMING IN' }, { author: 'zoom and enhance', avatar: '🐦', body: 'the CHALLENGE and {me} said the unsayable through a mouthful of whipped cream while someone’s partner went grey in the background. i’m cropping that reaction and framing it' }],
+      good: [{ author: 'ratio enthusiast', avatar: '🔥', body: 'the CHALLENGE. {me} understood the assignment and then some. someone’s partner is fuming in the background and i am ZOOMING IN' }, { author: 'zoom and enhance', avatar: '🐦', body: 'the CHALLENGE and {me} took a whipped-cream pie to the FACE and kept going while someone’s partner went grey in the background. cropping that reaction. framing it. printing it' }],
       bad: [{ author: 'chaos gremlin 🍿', avatar: '😈', body: '{me} in that challenge. custard everywhere. dignity nowhere. THIS is what i pay for. frame it' }, { author: 'pie enthusiast', avatar: '😈', body: '{me} pied the WRONG one in the challenge and now there’s a Chat brewing on the daybed and squirty cream on the decking. this is why i renew my subscription to being awake. glorious' }],
       mid: [{ author: 'the timeline', avatar: '🐦', body: 'challenge day = the one day the producers admit it’s a game show with feelings attached. love it here' }, { author: 'sports commentator', avatar: '🐦', body: 'challenge day is the one day production admits this is a competition with a leaderboard made of feelings. {me} is currently top of a table nobody can see. commentating anyway' }],
     },
@@ -433,10 +433,10 @@ const FAMILY: Partial<Record<Family, Partial<Record<string, Partial<Record<Valen
       ],
     },
     grid: {
-      good: [{ author: '@villa.edits.daily', avatar: '🎬', body: 'the challenge clip is going VIRAL and rightly so 😭 {me} said the quiet part with their WHOLE chest. saving this forever', meta: '💬 view all 5,540 comments' }, { author: '@challenge.clips', avatar: '🎬', body: 'the challenge moment is EVERYWHERE and rightly so 😭 {me} said it with the WHOLE chest and full body glitter. saving on three devices. iconic behaviour honestly', meta: '💬 view all 4,900 comments' }],
+      good: [{ author: '@villa.edits.daily', avatar: '🎬', body: 'the challenge clip is going VIRAL and rightly so 😭 {me} said the quiet part with their WHOLE chest. saving this forever', meta: '💬 view all 5,540 comments' }, { author: '@challenge.clips', avatar: '🎬', body: 'the challenge leaderboard has {me} at NUMBER ONE 🏆 and the slow-mo of them crossing the line covered in foam is going in the highlight reel forever 😭 saving on three devices', meta: '💬 view all 4,900 comments' }],
     },
     clock: {
-      good: [{ author: 'creator', avatar: '⏰', body: 'the challenge did what the last three recouplings couldn’t: gave me a reason to live. {me} we are so back', pinned: true }, { author: 'up all night', avatar: '⏰', body: 'the challenge gave me more will to live than my actual life. {me} in the relay covered in foam, saying the quiet part LOUD. we are so unbelievably back tonight' }],
+      good: [{ author: 'creator', avatar: '⏰', body: 'the challenge did what the last three recouplings couldn’t: gave me a reason to live. {me} we are so back', pinned: true }, { author: 'up all night', avatar: '⏰', body: 'the challenge gave me more will to live than my actual life. {me} in the relay, foam everywhere, zero dignity and MAXIMUM commitment. we are so unbelievably back tonight' }],
       bad: [{ author: 'sleepy but here', avatar: '🥱', body: 'the challenge was RIGHT there and {me} played it safe. babe the point of the game is the game. i’m going to bed disappointed' }, { author: 'doomscroller', avatar: '🥱', body: 'the challenge hands you a microphone and a dare and {me} played it SAFE. babe. the whole point is the mess. i stayed up for mess. going to sleep annoyed and covered in crisps' }],
     },
   },
@@ -675,7 +675,7 @@ const FAMILY: Partial<Record<Family, Partial<Record<string, Partial<Record<Valen
       mid: [{ author: '@justhereforthedrama', avatar: '🍸', body: 'the ICK arc 😭 {me}’s face did NOT recover. respectfully this is the most relatable they’ve ever been', meta: '💬 view all 1,400 comments' }, { author: '@relatable.villa', avatar: '💗', body: 'the ick arc 😭 {me}’s face said everything we’ve all felt on a third date. clipping it for the girls’ group chat immediately. too real 🫠', meta: '💬 view all 1,200 comments' }],
     },
     clock: {
-      mid: [{ author: 'doomscroller', avatar: '🌀', body: 'not {me} catching the ick in real time. i have watched this transition 30 times. the little inspector behind their ribs put down a clipboard. we know' }, { author: '3am diagnosis', avatar: '🌀', body: 'watched {me} get the ick in real time and felt it in my OWN body. the little inspector behind the ribs. we know her. she’s never wrong. rip. anyway rewatching' }],
+      mid: [{ author: 'doomscroller', avatar: '🌀', body: 'not {me} catching the ick in real time. i’ve scrubbed this frame 30 times. you can see the EXACT second their face changed. we all clocked it. rip' }, { author: '3am diagnosis', avatar: '🌀', body: 'watched {me} get the ick in real time and felt it in my OWN body at 3am. the little exhale. the polite nod. the eyes going somewhere else. we’ve all been there. rip. anyway rewatching' }],
     },
   },
   repair: {
@@ -729,7 +729,7 @@ const FAMILY: Partial<Record<Family, Partial<Record<string, Partial<Record<Valen
 // pun-forward, ≤1 bang. Rotated by family so the tap-prompt never reads twice
 // the same in a season.
 const TEASERS: Partial<Record<Family, string[]>> = {
-  arrival: ['Behind the wall, the nation is deciding whether you have a personality.', 'Somewhere, five apps just clocked your walk down the stairs.', 'You’ve met four people. Four million have met you.', 'The intro VT ran once. The screenshots are already forever.'],
+  arrival: ['Behind the wall, the nation is deciding whether you have a personality.', 'Somewhere, five apps just clocked your walk down the stairs.', 'Sandra has already picked her favourite. Sandra is two hundred thousand people.', 'The intro VT ran once. The screenshots are already forever.'],
   bombshell: ['The internet has already picked a side. Both sides, actually.', 'Five group chats just lit up at once. None of them are yours.', 'A new arrival, and the timeline skipped its own tea to watch.', 'The wall can’t hear the gasp. You’re lucky. It’s loud out here.'],
   date: ['The nation watched. The nation has notes.', 'Two chairs, one drone, and a country with opinions about the fountain.', 'The date lasted an hour. The commentary’s going long.', 'Somewhere, someone paused it to analyse where your feet were pointing.'],
   challenge: ['The clip went home before you did.', 'The feeds are up. Someone made a sticker pack already.', 'One challenge, five recaps, and a nation of armchair judges.', 'The scoreboard says one thing. The comments have a different tally.'],
@@ -737,9 +737,9 @@ const TEASERS: Partial<Record<Family, string[]>> = {
   temptation: ['The verb was doing work, and the nation noticed.', 'Somewhere, a mum is watching through her fingers.', 'The whole country is watching where your feet point. So are we.', 'Nothing happened, allegedly. The feeds are reviewing the footage.'],
   casa: ['Casa Amor: the one week the feeds do not sleep.', 'A postcode away, the whole internet is holding its breath.', 'Five feeds, one loyalty test, no context.', 'The nation has cleared its schedule. The nation regrets nothing.'],
   postcard: ['One photo. Zero context. Several thousand opinions.', 'The crop did numbers. So did the reactions.', 'A producer cropped it. The internet un-cropped it in nine minutes.', 'One postcard, and five feeds became forensic labs.'],
-  movienight: ['The reel rolled. The feeds are feasting.', 'Nobody wins Movie Night. The internet does, though.', 'Someone made a meme of your face before the credits.', 'The villa watched it once. The nation is on its ninth rewind.'],
+  movienight: ['The reel rolled. The feeds are feasting.', 'Nobody wins Movie Night. The internet does, though.', 'Someone made a meme of your face before the credits.', 'Someone slowed your reaction to 0.25x. They found three new things. They will tell you all of them.'],
   recoupling: ['Everyone stood up. So did the like counts.', 'The firepit went quiet. The feeds did not.', 'The names got read. The threads got long.', 'A pause before a name, dissected in five dialects.'],
-  dumping: ['The suitcase is on the gravel. The phone is already warm.', 'The villa forgets in a day. The internet does not.', 'Somewhere, a petition is being started on your behalf.', 'A taxi pulls away. A tribute edit uploads.'],
+  dumping: ['The suitcase is on the gravel. The phone is already warm.', 'The villa forgets in a day. The internet does not.', 'Somewhere, a petition is being started on your behalf.', 'The tribute edit is already rendering, sad piano and all.'],
   vote: ['This is the week your opinions load-bear. The feeds know it.', 'The app has spoken. Loudly. In five dialects.', 'Five communities, one ballot, zero agreement.', 'The nation charged three phones for this. Use its power wisely.'],
   hut: ['You told the Beach Hut. The Beach Hut told everyone.', 'One chair, one mic, a nation of armchairs.', 'The realest thing you said all week, and it was to furniture.', 'The mask came off in the Hut. The screenshots put it online.'],
   parents: ['The mums are in. So are the mums online.', 'A family read the room. So did the timeline.', 'One parent’s eyebrow moved. Five feeds transcribed it.', 'The families landed, and so did every armchair in-law watching.'],
@@ -747,7 +747,7 @@ const TEASERS: Partial<Record<Family, string[]>> = {
   repair: ['The grovel is logistics. The nation is grading the logistics.', 'Coffees, towels, a public apology. The feeds are tallying.', 'The apology tour is being marked out of ten. Show your working.', 'One good deed a day, and a nation keeping the ledger.'],
   final: ['Every sofa in the country is holding a remote.', 'The nation is voting. It has been rehearsing all season.', 'Whatever the envelope says, the feeds have already decided.', 'Six weeks of feeds, one last ballot, zero calm.'],
   recap: ['A week happened. The outside world had a week too.', 'While you were in there, the nation was very much out here.', 'You missed a week of the country having opinions. Here they are.', 'The villa moved. So did five feeds, faster.'],
-  ending: ['They hand you your phone. It is warm.', 'The villa is behind you. The feeds are forever.', 'The gates open. The notifications do not stop.', 'You leave the villa. The villa does not leave the timeline.'],
+  ending: ['They hand you your phone. It is warm.', 'The villa is behind you. The feeds are forever.', 'Forty thousand unread messages. Start with the ones from your nan.', 'You leave the villa. The villa does not leave the timeline.'],
 };
 
 // ---------- Assembling one channel ----------

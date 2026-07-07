@@ -330,7 +330,7 @@ export const DAY_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“I’m sweet enough,” you say, which is a line, and they know it’s a line, and it drips down their wrist through the pause you left a beat too long. You both pretend that was smooth.', effects: { rizz: 2, burnout: 3 } },
           good: { text: '“All yours.” {partner} eats the whole thing holding eye contact like a threat. The kitchen has never been this loud at zero decibels. Flirting via frozen dairy, a villa first.', effects: { rizz: 5, bond: 3, followers: 2 } },
-          incredible: { text: 'You feed them the last bite off the stick and neither of you breathes. Somewhere a night-vision camera earns its budget. The clip is trending before the freezer door shuts.', effects: { rizz: 8, bond: 4, followers: 5, public: 3 } },
+          incredible: { text: 'You feed them the last bite off the stick and neither of you breathes. The freezer door swings shut on its own, quietly appalled. The clip is trending before it clicks.', effects: { rizz: 8, bond: 4, followers: 5, public: 3 } },
         },
       },
     },
@@ -417,7 +417,7 @@ export const DAY_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You go in with the eyeliner and immediately understand why this is a licensed profession. {partner} ends up with one confident wing and one apology. They wear both out proudly.', effects: { rizz: 2, burnout: 3 } },
           good: { text: '“Look up. Don’t blink. Don’t — okay, breathe.” The concentration is its own flirtation, faces this close this long. You nail the wings. They nail the exit line: “do mine forever.”', effects: { rizz: 5, bond: 4, followers: 2 } },
-          incredible: { text: 'Matching wings, matching smug, and a video of the steady-handed operation set to slow music. The nation decides you’re the couple who does each other’s makeup now. A brand is born.', effects: { rizz: 8, bond: 5, followers: 5, public: 3 } },
+          incredible: { text: 'Matching wings, matching smug, and a video of the steady-handed operation set to slow music. By lunch three other couples are attempting it and one has drawn a wing halfway up a forehead.', effects: { rizz: 8, bond: 5, followers: 5, public: 3 } },
         },
       },
     },
@@ -436,7 +436,7 @@ export const DAY_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: 'You lie rigid being the perfect nap partner, don’t move a muscle for forty minutes, and wake with a dead arm and the exact posture of someone guarding a nap. Restful for one of you.', effects: { loyalty: 2, burnout: -2 } },
           good: { text: 'You both actually sleep, properly, in the daytime, which the villa makes near impossible. You wake first and just let the afternoon sit there. No agenda. Rare as anything.', effects: { loyalty: 5, bond: 4, burnout: -6 } },
-          incredible: { text: 'You wake to find you’ve drifted into the exact same shape without planning it, {partner}’s hand loose in yours, both dead to the world. The nation captions the photo. You never saw it happen.', effects: { loyalty: 8, bond: 6, burnout: -7, public: 3 } },
+          incredible: { text: 'You wake to find you’ve drifted into the exact same shape without planning it, {partner}’s hand loose in yours, both dead to the world. Someone’s drawn a moustache on you in eyeliner. Worth it.', effects: { loyalty: 8, bond: 6, burnout: -7, public: 3 } },
         },
       },
       right: {
@@ -584,7 +584,7 @@ export const DAY_EVENTS: GameEvent[] = [
         governingStats: { loyalty: 0.6, rizz: 0.4 },
         outcomes: {
           bad: { text: 'You get in and immediately regret it audibly, and the audible regret wakes the terrace, and now there’s an audience for what was supposed to be a private goodbye to a pool.', effects: { loyalty: 2, burnout: 3 } },
-          good: { text: 'It’s freezing and stupid and you tread water talking rubbish until your teeth chatter. No camera worth the angle at this hour. Just two idiots and a pool they finally used.', effects: { loyalty: 5, bond: 5, burnout: -5 } },
+          good: { text: 'It’s freezing and stupid and you tread water talking rubbish until your teeth chatter. No camera worth the angle at this hour. Weeks sat beside this pool, and you finally get in the night before you leave.', effects: { loyalty: 5, bond: 5, burnout: -5 } },
           incredible: { text: 'You float on your backs looking at the one bit of sky the villa doesn’t light, not talking, and the whole loud season goes quiet a minute. You’ll remember the cold. You’ll mostly remember this.', effects: { loyalty: 8, bond: 8, burnout: -6 } },
         },
       },
@@ -596,6 +596,420 @@ export const DAY_EVENTS: GameEvent[] = [
           bad: { text: 'You go for the cinematic push and slip on the wet tile, taking yourself into the deep end and {partner} into a laughing fit that definitely woke somebody. The dismount scored low.', effects: { charisma: 2, burnout: 3 } },
           good: { text: 'You bomb in beside them sending a wave over the loungers, and the splash and the shriek and the laughing is the least strategic thing you’ve done all season. Overdue.', effects: { charisma: 5, bond: 4, followers: 2 } },
           incredible: { text: 'The midnight bomb, the wave, the two of you surfacing laughing — a night camera catches all of it, unplanned and unbeatable. The season’s realest clip, filmed by accident at 1 a.m.', effects: { charisma: 8, bond: 5, followers: 5, public: 3 } },
+        },
+      },
+    },
+  },
+
+  // ---------- v5: more daily texture (novel villa micro-moments) ----------
+  {
+    id: 'li_shared_wardrobe', act: 1, tags: ['flirt', 'banter'],
+    art: 'li_bedroom',
+    context: 'Morning · the dressing room · the communal clothing economy',
+    prompt: 'Nobody in this villa owns their own clothes anymore. Your shorts are on {rival}, {mate}’s in your shirt, and {partner} is wearing something of yours with the tags of ownership long surrendered. “It’s giving me,” {partner} says, doing a twirl. It is, in fairness, giving them.',
+    recap: 'The villa’s clothes have gone communal and {partner}’s in yours.',
+    choices: {
+      left: {
+        label: 'Let them keep it',
+        tags: ['loyal', 'flirt'],
+        governingStats: { loyalty: 0.5, rizz: 0.5 },
+        outcomes: {
+          bad: { text: 'You gift the shirt with a flourish and it becomes {partner}’s favourite thing, worn constantly, meaning you never see it again. Generosity has a cost and the cost is laundry.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
+          good: { text: '“Keep it. Looks better on you anyway.” {partner} beams and doesn’t take it off for two days. Your wardrobe is a love language now, and you’re not getting it back.', effects: { loyalty: 5, bond: 4, rizz: 2 } },
+          incredible: { text: 'You start a proper swap — their hoodie for your shirt, terms and all. By dinner the whole villa’s wearing each other and the group photo looks like a very confused family reunion.', effects: { loyalty: 6, bond: 5, rizz: 3, followers: 2 } },
+        },
+      },
+      right: {
+        label: 'Reclaim your wardrobe',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You mount a recovery operation and get caught mid-drawer by {rival}, who christens you “the villa laundry police.” The nickname sticks harder than the shirt ever did.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You stage a full inventory audit, reading out garments like a court clerk. The villa surrenders your things one guilty item at a time. Order, briefly, restored.', effects: { charisma: 5, savvy: 2, followers: 2 } },
+          incredible: { text: 'Your wardrobe audit — “and WHOSE is this” held aloft like evidence — becomes the morning’s clip. You get your clothes back AND the segment. Rare double.', effects: { charisma: 8, followers: 5, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_food_shop', act: 2, tags: ['banter', 'strategy'],
+    art: 'li_kitchen',
+    context: 'Morning · the kitchen · the food order is due',
+    prompt: 'The weekly shop order is a democracy and, like all democracies, a disaster. The shared list already reads: “12 avocados (WHO), protein only, one (1) grape, chilli con carne but make it healthy.” {mate} hands you the pen. “You’re sensible. Sort it before {rival} adds more oat milk than the villa can physically drink.”',
+    recap: 'The villa’s food order is chaos and {mate} hands you the pen.',
+    choices: {
+      left: {
+        label: 'Impose order',
+        tags: ['strategy', 'code'],
+        governingStats: { savvy: 0.7, charisma: 0.3 },
+        outcomes: {
+          bad: { text: 'You draft a rational, balanced order and the villa mutinies over the removal of the twelve avocados. “Those are ASPIRATIONAL,” says someone. Democracy defeats sense, as ever.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'You wrangle the list into something a human could cook, quietly leaving one absurd item in as a peace offering. The villa eats properly all week and never knows who saved them.', effects: { savvy: 5, graft: 3 } },
+          incredible: { text: 'You run the shop like a hostage negotiation and come out with a balanced order, a fed villa, and everyone thinking it was their idea. Nobody thanks the person who does the admin. You do it anyway.', effects: { savvy: 8, graft: 4, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Add the most chaotic thing possible',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'Your novelty order — a catering tub of squirty cream, nothing else useful — is funny for exactly one meal, after which the hungry villa remembers you did this. Comedy has a shelf life. So does cream.', effects: { charisma: 2, burnout: 3, followers: 2 } },
+          good: { text: 'You slip in one gloriously stupid item — a two-metre inflatable, a wheel of the wrong cheese — and it becomes the week’s best running joke. The villa eats badly and laughs well.', effects: { charisma: 5, followers: 4 } },
+          incredible: { text: 'Your chaos order arrives and the mystery item — a piñata, a kazoo, forty limes — kicks off the best unplanned afternoon of the season. Production films all of it. Malnutrition, but make it content.', effects: { charisma: 8, followers: 6, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_aux_wars', act: 1, tags: ['banter', 'camera'],
+    art: 'li_kitchen',
+    context: 'Afternoon · the kitchen · one speaker, one aux, one throne',
+    prompt: 'There is one Bluetooth speaker in this villa and it is, functionally, a throne. Whoever holds the aux holds the kitchen. Right now it’s {rival}, playing something with no chorus and a lot of opinions about itself, and the room is quietly dying. Your phone is in your pocket. Your playlist is a weapon.',
+    recap: '{rival} has seized the villa speaker and the kitchen is dying of it.',
+    choices: {
+      left: {
+        label: 'Stage a coup',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You seize the aux and open with a song so divisive the kitchen empties in twelve seconds. Turns out the throne comes with a mob. {rival} reclaims it, smug, to silence.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You wait for {rival}’s track to end and drop one everyone knows. The kitchen fills, the washing-up speeds up, and the aux is yours by public demand. Bloodless coup.', effects: { charisma: 5, public: 3, followers: 2 } },
+          incredible: { text: 'You build a set that has the whole villa cooking and dancing, and by the second song nobody remembers {rival} ever held the aux. That’s not music taste. That’s governance.', effects: { charisma: 8, public: 5, followers: 4 } },
+        },
+      },
+      right: {
+        label: 'Let them have the throne',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You cede the aux for peace and spend the afternoon hostage to {rival}’s chorus-free deep cuts. Peace has a soundtrack and the soundtrack is punishing you specifically.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'You let {rival} DJ into an empty kitchen and take your actual friends to the good loungers with a portable speaker and a better vibe. The party follows the host, not the throne.', effects: { savvy: 5, followers: 2, burnout: -2 } },
+          incredible: { text: 'You do nothing, and one by one the villa drifts from {rival}’s dead kitchen to wherever you are. By dusk you’re holding court with no speaker at all. The aux was never the power. You were.', effects: { savvy: 8, public: 3, followers: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_sunburn_aid', act: 1, tags: ['loyal', 'chat'],
+    art: 'li_bedroom',
+    context: 'Evening · the bedroom · {mate} is the colour of the firepit',
+    prompt: '{mate} fell asleep by the pool at midday and is now, medically, a tomato. “I’m FINE,” they insist, wincing as the aloe touches a shoulder that has clearly filed a formal complaint. “I tan, I don’t burn.” They are burning. They have always been burning.',
+    recap: '{mate} has caught a catastrophic sunburn and won’t admit it.',
+    choices: {
+      left: {
+        label: 'Do the aftercare properly',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You slather on so much aloe {mate} slides off the daybed. Care delivered; dignity not. They squeak away, greased, to reconsider the friendship.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You do the shoulders, the neck, the bit they can’t reach, no fuss. {mate} goes quiet. “Nobody’s done that since my mum.” In here, that’s the whole speech.', effects: { loyalty: 5, bond: 3, graft: 2 } },
+          incredible: { text: 'You run full triage — aloe, water, shade, the good after-sun you were saving — and {mate} recovers by morning genuinely moved. A favour and a friend, for the price of some lotion.', effects: { loyalty: 8, graft: 4, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Roast them mercilessly',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'Your tomato material runs long and {mate}, peeling and raw, stops finding it funny somewhere around the fourth tan-line joke. Read the burn, and the room.', effects: { charisma: 2, burnout: 2 } },
+          good: { text: 'You christen them “Lobster” and it takes instantly. {mate} wears it well, mostly because turning to protest hurts too much. The kindest cruelty in the villa.', effects: { charisma: 5, followers: 3 } },
+          incredible: { text: 'You do five minutes on the tan lines — “you’ve got a watch you’re not wearing” — and {mate} laughs so hard they hurt themselves further. The clip is a public-health advert by morning.', effects: { charisma: 8, followers: 5, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_lost_ring', act: 2, tags: ['chat', 'loyal'],
+    art: 'li_lawn',
+    context: 'Afternoon · the whole lawn on its knees · a search party',
+    prompt: '{partner} has lost the ring — not THE ring, a ring, their nan’s, the one thing from home they weren’t meant to bring and did. The whole villa is now crawling the lawn in a grid. “It’s fine,” {partner} says, in the voice of someone for whom it is very much not fine.',
+    recap: '{partner} has lost their nan’s ring and the villa mounts a search.',
+    choices: {
+      left: {
+        label: 'Lead the search, calmly',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You organise a grid search so thoroughly it becomes about the system, not the ring. Two hours later: no ring, one excellent map of the lawn. {partner} appreciates the effort more than the result.', effects: { loyalty: 3, burnout: 3 } },
+          good: { text: 'You keep {partner} calm and the search methodical, and it’s you who spots it — in the plughole of the outdoor shower, saved by a hair. {partner} nearly takes your arm off hugging you.', effects: { loyalty: 6, bond: 5 } },
+          incredible: { text: 'You find the ring, clean it, and slide it back onto {partner}’s finger yourself, no words. They look at you like you’ve just done something you can’t take back. Maybe you have.', effects: { loyalty: 8, bond: 7, romantics: 2 } },
+        },
+      },
+      right: {
+        label: 'Comfort them, forget the ring',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You tell {partner} “it’s just a ring” and watch the exact moment that was the wrong sentence land on their face. It was not just a ring. Recover, fast.', effects: { loyalty: 2, bond: -2, burnout: 3 } },
+          good: { text: '“The ring matters ’cause she matters,” you say, “so we’ll find it — but you’re not in trouble.” {partner} exhales. They needed permission to be upset more than they needed the ring.', effects: { loyalty: 5, bond: 5 } },
+          incredible: { text: 'You sit {partner} down while the others search and get them talking about their nan — the real stuff — till the panic passes. The ring turns up in a trainer. The conversation was what got found.', effects: { loyalty: 8, bond: 6, romantics: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_firepit_wish', act: 3, tags: ['rest', 'loyal'],
+    art: 'li_firepit',
+    context: 'Final Week · the firepit · the last-night ritual',
+    prompt: 'The villa’s invented a ritual for the last quiet night: everyone writes one thing on a scrap of paper — a wish, a regret, a thank-you — and reads it, or doesn’t, before it goes in the fire. {partner} is folding theirs very small. {mate} is pretending they’ve got something in their eye. Your turn is coming round the circle.',
+    recap: 'The villa’s last-night firepit ritual reaches you: read it, or burn it.',
+    choices: {
+      left: {
+        label: 'Read yours out',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You reach for a joke to cut the tension and it lands wrong in a circle that came to be sincere. The paper goes in the fire; so does the moment. You misread the one night that asked for honesty.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You read the true thing — short, unshowy, meant — and the firepit goes quiet in the good way. {partner} finds your hand. Some sentences only work said out loud once, then burned.', effects: { loyalty: 5, bond: 5, romantics: 1 } },
+          incredible: { text: 'You read a line so plainly true the whole circle feels it, then feed it to the fire without waiting for a reaction. {partner} unfolds their tiny paper and reads theirs back. It’s about you. The fire gets the rest.', effects: { loyalty: 8, bond: 7, romantics: 2 } },
+        },
+      },
+      right: {
+        label: 'Burn it unread',
+        tags: ['rest', 'loyal'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You bottle it and toss the paper in fast, and {partner} clocks the flinch. “You could’ve said it,” they murmur. The fire ate a sentence they’d have liked to hear. Missed, narrowly.', effects: { loyalty: 2, bond: -2, burnout: 2 } },
+          good: { text: 'You keep yours private and let the fire have it unread — some things are for you, not the circle. {partner} respects it, and says theirs was “basically your name anyway.” You didn’t need the paper.', effects: { loyalty: 5, bond: 5 } },
+          incredible: { text: 'You burn yours unread, then lean over and say the actual thing to {partner} alone, off to the side, no circle, no cameras worth it. The ritual was public. This wasn’t. This was the real one.', effects: { loyalty: 8, bond: 7, romantics: 2, burnout: -2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_dawn_bootcamp', act: 1, tags: ['rest', 'banter'],
+    art: 'li_lawn',
+    context: 'Seven a.m. · the lawn · {rival} has whistled',
+    prompt: '{rival} has appointed themselves the villa’s personal trainer and whistled everyone onto the lawn for “bootcamp,” which is squats and shouting. A hierarchy forms instantly: the keen, the hungover, and you, holding a coffee like a shield. “No cups on my lawn,” barks {rival}.',
+    recap: '{rival} has whistled the villa into a 7 a.m. bootcamp.',
+    choices: {
+      left: {
+        label: 'Out-drill the drill sergeant',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You go too hard to show off and pull something in front of everyone. Now {rival}’s bootcamp has a casualty and a cautionary tale, and it’s you. On the floor. Groaning.', effects: { charisma: 2, burnout: 4 } },
+          good: { text: 'You match {rival} rep for rep with a commentary that has the hungover crowd howling. Bootcamp becomes your show. {rival} blows the whistle harder, which only helps.', effects: { charisma: 5, followers: 3, rizz: 2 } },
+          incredible: { text: 'You stage a mutiny mid-squat, lead a breakaway “gentle stretching and gossip” faction, and by half seven you’ve got the bigger class. A fitness coup. Nobody did a push-up. Everyone won.', effects: { charisma: 8, followers: 5, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Protect the coffee, opt out',
+        tags: ['rest', 'strategy'],
+        governingStats: { savvy: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You refuse so visibly that {rival} makes an example of you, and you spend bootcamp doing burpees as punishment while the coffee, abandoned, goes cold. Both battles: lost.', effects: { savvy: 2, burnout: 3 } },
+          good: { text: 'You sit the whole thing out with your coffee and your dignity, narrating {rival}’s form to {mate} under your breath. Some mornings the strong move is the deckchair.', effects: { savvy: 5, burnout: -2, followers: 2 } },
+          incredible: { text: 'You do nothing, beautifully, and the class defects to your deckchair one gasping recruit at a time. {rival} finishes bootcamp alone. You finish your coffee. The lawn has spoken.', effects: { savvy: 8, burnout: -2, followers: 4, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_letter_home', act: 2, tags: ['chat', 'rest'],
+    art: 'li_daybed',
+    context: 'Afternoon · the daybed · a rare envelope',
+    prompt: 'Production doesn’t do letters from home often — it’s a nuclear option, saved for when the villa needs a cry. Today there’s one, and it’s for you. {partner} watches you turn it over, not opening it. “You don’t have to read it out,” they say. Everyone, very obviously, wants you to read it out.',
+    recap: 'A rare letter from home arrives — and the villa wants it read aloud.',
+    choices: {
+      left: {
+        label: 'Read it to the villa',
+        tags: ['chat', 'camera'],
+        governingStats: { charisma: 0.5, loyalty: 0.5 },
+        outcomes: {
+          bad: { text: 'You read it aloud and your voice goes at “your nan says,” and now the whole villa’s gone, and so have you, on camera, in HD. Cathartic. Also entirely un-editable. Production is thrilled.', effects: { charisma: 2, public: 3, burnout: 3 } },
+          good: { text: 'You read it out and let the villa cry with you — the nan, the dog, the “we’re so proud.” Shared, it’s lighter. The nation clips the good bit and captions it kindly, for once.', effects: { charisma: 5, public: 4, bond: 2 } },
+          incredible: { text: 'You read it beautifully, land the funny line your dad snuck in, and turn a private letter into the villa’s best communal cry of the season. Everyone needed it. You gave it to them.', effects: { charisma: 8, public: 6, followers: 3 } },
+        },
+      },
+      right: {
+        label: 'Read it alone with {partner}',
+        tags: ['loyal', 'rest'],
+        governingStats: { loyalty: 0.7, rizz: 0.3 },
+        outcomes: {
+          bad: { text: 'You take it somewhere private and {partner} hovers, unsure whether to stay, and the moment goes logistical. “Do you want me here or not?” Fair question. You should’ve answered it first.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You read it just to {partner}, and letting them hear your nan’s handwriting is its own kind of introduction. “She sounds ace,” they say. “She’d love you,” you say, before you clock what you said.', effects: { loyalty: 5, bond: 5, romantics: 1 } },
+          incredible: { text: 'You read it to {partner} alone and, at the end, they’re crying harder than you are — for people they’ve never met, because they’re yours. Home came to the villa, and {partner} was already part of it.', effects: { loyalty: 8, bond: 7, romantics: 2 } },
+        },
+      },
+    },
+  },
+
+  // ---------- Final doubling pass · more fresh ambient texture (open cards) ----------
+  // Novel villa micro-rhythms across the phases, occupying situations the rest
+  // of the deck doesn’t: an accidental matching-outfit day, the 3 a.m. fire-drill,
+  // a food-portion injustice, the breakfast wasp, a power cut, and signing the
+  // villa beam for whoever’s here next summer.
+  {
+    id: 'li_matching_outfits', act: 1, tags: ['flirt', 'camera'],
+    art: 'li_kitchen',
+    context: 'Morning · the kitchen · a coincidence in colour',
+    prompt: 'You come down for breakfast in the exact same colour as {partner}. Neither of you planned it. “We look like we did a briefing,” {partner} says, delighted and faintly appalled. Across the kitchen {rival} mouths “matching” and mimes being sick. The villa has clocked it.',
+    recap: 'You and {partner} turn up to breakfast in accidentally matching colours.',
+    choices: {
+      left: {
+        label: 'Lean all the way in',
+        tags: ['flirt', 'camera'],
+        governingStats: { rizz: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You commit to the matching bit and it curdles into a couples’-costume energy nobody asked for. By lunch even {partner} looks a bit embarrassed. “Maybe we retire the theme.” Maybe you do.', effects: { rizz: 2, burnout: 2 } },
+          good: { text: 'You own it — matching all day, straight-faced, like it’s policy. The villa can’t decide if it’s sweet or a threat. {partner} keeps catching your eye across rooms, grinning like a fool.', effects: { rizz: 5, bond: 4, followers: 2 } },
+          incredible: { text: 'You go so all-in on coordinating that by evening three other couples have accidentally colour-matched too. You’ve started a villa-wide uniform. {partner} calls it “our finest work.”', effects: { rizz: 8, bond: 5, followers: 5, public: 3 } },
+        },
+      },
+      right: {
+        label: 'One of you change',
+        tags: ['banter', 'chat'],
+        governingStats: { charisma: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You go to change and take so long the moment’s gone, then come back in a colour that clashes with {partner}’s. Now you look like a statement. You are not a statement.', effects: { charisma: 2, burnout: 2 } },
+          good: { text: '“One of us has to have dignity,” you say, changing. {partner} refuses, wears the colour proudly all day, alone. Somehow they win the bit by losing it. Respect.', effects: { charisma: 5, bond: 3 } },
+          incredible: { text: 'You change three times and somehow keep landing on {partner}’s exact colour each go, like the villa’s laundry is conspiring. You give up, matching, defeated and delighted. The breakfast everyone screenshots.', effects: { charisma: 8, bond: 4, followers: 4, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_night_fire_drill', act: 2, tags: ['banter', 'chat'],
+    art: 'li_lawn',
+    context: 'Three a.m. · the lawn · a drill nobody warned about',
+    prompt: 'Three a.m. A siren nobody’s heard before, then a producer’s voice, flat as ever: “Islanders, evacuate to the lawn. This is a drill.” Nine people on the grass in mismatched pyjamas and eye masks, blinking. “A DRILL,” someone repeats, betrayed. {partner} finds your hand in the dark. “If this were real I’d have grabbed the wrong shoes,” they whisper.',
+    recap: 'A 3 a.m. fire-drill turns the whole villa out onto the lawn in their pyjamas.',
+    choices: {
+      left: {
+        label: 'Turn it into a laugh',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You do a bit about the villa’s fire-safety budget, but it’s three a.m. and nobody’s laughing and you’re asked to “return to your marks.” Even your material needs a lie-down.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You get the shivering lawn giggling — a roll-call of who grabbed what, the eye masks, the one person who brought a drink out. The drill becomes the funniest ten minutes of the week.', effects: { charisma: 5, followers: 3, public: 2 } },
+          incredible: { text: 'By the time they let you back in, the fire-drill’s a full villa legend with catchphrases and a re-enactment planned. You made a 3 a.m. inconvenience the thing everyone quotes for days.', effects: { charisma: 8, followers: 5, public: 3 } },
+        },
+      },
+      right: {
+        label: 'Clock who you grabbed for',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'In the scramble you grabbed for {partner} on instinct, and now you spend the whole shivering drill overthinking what that means. They noticed. You noticed them noticing. Long lawn.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You clock it the second the siren went: you reached for {partner} before you were even properly awake. So did they. Neither says it out on the lawn. Both bank it, hard.', effects: { loyalty: 5, bond: 5 } },
+          incredible: { text: 'Half-asleep, you’d checked {partner} was up before yourself — reflex, not decision. On the dark lawn they quietly admit they did the exact same. The drill turned up something real by accident.', effects: { loyalty: 8, bond: 7, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_portion_justice', act: 2, tags: ['banter', 'chat'],
+    art: 'li_kitchen',
+    context: 'Dinner · the big table · an uneven plate',
+    prompt: 'Dinner’s served and the injustice is immediate: the portions are not equal and everyone can see it. {mate} stares at their plate, then yours, then back. “How’ve you got two sausages? I’ve got one sausage and a look of betrayal.” Around the table, quiet audits begin. This is how villa wars actually start. Over a sausage.',
+    recap: 'Uneven dinner portions threaten to start a villa war at the big table.',
+    choices: {
+      left: {
+        label: 'Redistribute, keep the peace',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.6, charisma: 0.4 },
+        outcomes: {
+          bad: { text: 'You start reallocating sausages and open a negotiation that outlasts the meal. By the time it’s fair, everything’s cold and three people are quietly furious. Diplomacy: expensive.', effects: { loyalty: 2, burnout: 2 } },
+          good: { text: 'You halve your extra sausage onto {mate}’s plate without ceremony, and the table exhales. Tiny gesture, big read: the villa clocks who shares when nobody’s making them.', effects: { loyalty: 5, public: 2 } },
+          incredible: { text: 'You quietly sort the whole table into fair shares before it can boil over, and the sausage crisis dies unborn. {mate} toasts you with a fork. “This is why you’ll win, you know.”', effects: { loyalty: 8, public: 3, graft: 2 } },
+        },
+      },
+      right: {
+        label: 'Defend your plate',
+        tags: ['banter', 'drama'],
+        governingStats: { charisma: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: '“Finders keepers, mate.” You defend the second sausage and it becomes a whole thing — a running grievance with your name on it. Over a sausage. This place does that to people.', effects: { charisma: 2, drama: 2, burnout: 3 } },
+          good: { text: '“I earned this sausage. I did the washing-up.” The table can’t argue with the ledger. {mate} concedes, laughing. You keep the sausage and the moral high ground. Rare double.', effects: { charisma: 5, followers: 2 } },
+          incredible: { text: 'You mount such a ludicrous legal defence of your extra sausage that the table’s in bits and {mate} forgets to be aggrieved. Injustice, defused by sheer commitment to the bit.', effects: { charisma: 8, followers: 4, public: 2 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_wasp_breakfast', act: 1, tags: ['banter', 'camera'],
+    art: 'li_kitchen',
+    context: 'Morning · the big table · one uninvited guest',
+    prompt: 'A single wasp has discovered the breakfast table and the villa’s hard-won cool evaporates in about four seconds. {mate} is up on a chair. Someone’s weaponised a magazine. “Do NOT antagonise it,” hisses {mate}, antagonising it. The wasp, drunk on jam, weighs its options. Nine adults, one insect, no dignity left.',
+    recap: 'A single wasp reduces the whole breakfast table to chaos.',
+    choices: {
+      left: {
+        label: 'Calmly deal with it',
+        tags: ['loyal', 'banter'],
+        governingStats: { charisma: 0.5, savvy: 0.5 },
+        outcomes: {
+          bad: { text: 'You go full calm-hero with a glass and a bit of card, and the wasp, sensing a professional, brings friends. Now there are three. The table relocates to the pool. You stay, outnumbered.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You cup the wasp under a glass, walk it to the lawn, and release it like a tiny convict. The table erupts in relief. {mate} climbs down off the chair, restoring what’s left of their dignity.', effects: { charisma: 5, public: 2 } },
+          incredible: { text: 'You handle the whole wasp crisis so calmly the villa treats you like you defused a bomb. {mate} demands you go “on wasp duty permanently.” A tiny hero, over breakfast, for no reward but jam.', effects: { charisma: 6, public: 3, followers: 2 } },
+        },
+      },
+      right: {
+        label: 'Join the chaos',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You grab the magazine and miss spectacularly, taking out a jug of orange juice instead. The wasp survives. The tablecloth does not. {mate}, still on the chair, awards you zero points.', effects: { charisma: 2, burnout: 3 } },
+          good: { text: 'You lean all the way into the panic — a running commentary, a mock evacuation plan — and the terror becomes the funniest breakfast of the week. The wasp leaves of its own accord, unbothered.', effects: { charisma: 5, followers: 3, public: 2 } },
+          incredible: { text: 'You choreograph the villa into a wasp-based farce — assigned lookouts, a code word, {mate} as the one who screams — and it’s the best ten minutes of telly nobody planned. The wasp exits to applause.', effects: { charisma: 8, followers: 5, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_blackout', act: 2, tags: ['rest', 'loyal'],
+    art: 'li_terrace',
+    context: 'Night · the terrace · the power trips',
+    prompt: 'The villa’s power trips all at once — the AC dies, the pool lights go black, and for a minute it’s properly dark and properly quiet, which never happens in here. A producer’s voice, somewhere, promises a fix. {partner} finds your hand in the dark. “Mad, isn’t it. First time I can actually hear the sea.” You can. It’s been there the whole time.',
+    recap: 'A power cut leaves the villa dark, quiet, and unexpectedly real.',
+    choices: {
+      left: {
+        label: 'Sit in the dark with them',
+        tags: ['rest', 'loyal'],
+        governingStats: { loyalty: 0.6, savvy: 0.4 },
+        outcomes: {
+          bad: { text: 'You try to hold the quiet and your brain fills the dark with tomorrow’s recoupling instead — who’s safe, who isn’t, the maths. {partner} hears you thinking. “You’re somewhere else.” You are. The lights beat you back.', effects: { loyalty: 2, burnout: 3 } },
+          good: { text: 'You sit in the black with {partner} and the sea, saying almost nothing, for as long as the power stays off. No camera worth the angle. Just the dark and the two of you in it. Rare, that.', effects: { loyalty: 5, bond: 5, burnout: -4 } },
+          incredible: { text: 'In the dark, unmiked and unlit, {partner} says the thing they’d never say to a camera — quiet, plain, true. The generators kick back in mid-sentence. You’re the only one who’ll ever have heard it.', effects: { loyalty: 8, bond: 8, burnout: -5 } },
+        },
+      },
+      right: {
+        label: 'Turn the dark into a party',
+        tags: ['banter', 'camera'],
+        governingStats: { charisma: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You try to start a blackout singalong and it curdles — someone brings up the last recoupling, and now there’s a row in the dark where nobody can read a face. You lit that, in a manner of speaking.', effects: { charisma: 2, drama: 2, burnout: 3 } },
+          good: { text: 'You get the villa singing in the dark, no music, just voices and the sea, and it’s better than anything the speaker ever managed. The lights come back to a room that doesn’t really want them.', effects: { charisma: 5, followers: 3, public: 2 } },
+          incredible: { text: 'You turn the blackout into the villa’s quietest triumph — a singalong, then stories, then just the sound of the sea, everyone letting the dark do the talking. When the power returns, the room groans.', effects: { charisma: 8, followers: 5, public: 3 } },
+        },
+      },
+    },
+  },
+  {
+    id: 'li_villa_signature', act: 3, tags: ['loyal', 'date'],
+    art: 'li_daybed',
+    context: 'Final Week · under the daybed · a beam full of names',
+    prompt: 'There’s a beam under the daybed where every series has signed their name, tiny and hidden, and it’s tradition to add yours before you leave. {partner} hands you the pen. “Go on. Proof we were here. Whoever’s on this daybed next summer won’t know us, but they’ll know we existed.” They’ve already signed. Yours is meant to go next to it.',
+    recap: '{partner} hands you the pen to sign the villa’s hidden beam of past names.',
+    choices: {
+      left: {
+        label: 'Sign it as one mark',
+        tags: ['loyal', 'date'],
+        governingStats: { loyalty: 0.6, rizz: 0.4 },
+        outcomes: {
+          bad: { text: 'You go to draw a joint little symbol and overthink it into a smudge. {partner} laughs. “Future series’ll think a pigeon signed it.” You leave the smudge. Honest, at least.', effects: { loyalty: 2, bond: 2, burnout: 2 } },
+          good: { text: 'You add your names side by side with a small daft symbol only you two get. Nobody next summer will know what it means. That’s exactly why it’s yours. The pen goes back warm.', effects: { loyalty: 5, bond: 5 } },
+          incredible: { text: 'You sign it as one mark — two names, joined — and {partner} goes quiet looking at it. “That’s staying there for years,” they say. “After us. Whatever Friday does.” Ink, outlasting the edit.', effects: { loyalty: 8, bond: 8, public: 2 } },
+        },
+      },
+      right: {
+        label: 'Sign your own name, plainly',
+        tags: ['loyal', 'chat'],
+        governingStats: { loyalty: 0.7, savvy: 0.3 },
+        outcomes: {
+          bad: { text: 'You sign just your own name and {partner} clocks the solo signature. “Not next to mine?” You fix it, but the pause is on the beam now too, invisibly. You’ll both remember it.', effects: { loyalty: 2, bond: 1, burnout: 2 } },
+          good: { text: 'You add your name to the years of others, plain and clear, right beside {partner}’s. Two names among hundreds, but yours. “We were here,” you say. “We were here,” they agree.', effects: { loyalty: 5, bond: 4 } },
+          incredible: { text: 'You sign, then read out the oldest name up there — someone from years back — and wonder aloud if they made it. {partner} takes your hand. “We’ll be the ones someone else wonders about.” Chilling. Lovely.', effects: { loyalty: 6, bond: 6, romantics: 2 } },
         },
       },
     },

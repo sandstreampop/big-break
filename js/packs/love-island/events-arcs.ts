@@ -455,9 +455,9 @@ export const ARC_EVENTS: GameEvent[] = [
         tags: ['loyal', 'chat'],
         governingStats: { loyalty: 0.7, charisma: 0.3 },
         outcomes: {
-          bad: { text: 'You forgive so fast the villa does the maths out loud. “Two teas?” mouths {mate}. The Romantics cheer; the spine wing writes you off before your tea’s even cold.', effects: { addFlag: 'li_repaired', bond: 5, romantics: 4, selfrespect: -4, storyBeat: 'Cracked, chose it again — fast. The nation argues about you at dinner tables.' } },
-          good: { text: '“The tea counted. The no-speech counted more. We’re alright.” Clean, dated, done. Half the country stands; the other half respects the paperwork. {partner} exhales a week.', effects: { addFlag: 'li_repaired', bond: 7, romantics: 4, selfrespect: -2, storyBeat: 'Questioned it, cracked, chose it again — the arc the envelope loves.' } },
-          incredible: { text: '“I watched you show up when you could’ve hidden,” you say, to the group, not just them. “I’m keeping the person who did that.” Forgiveness with a spine in it. Even the spine wing allows it.', effects: { addFlag: 'li_repaired', bond: 8, romantics: 5, selfrespect: 1, public: 2, storyBeat: 'Forgiveness delivered as a verdict, not a surrender. The complete storyline.' } },
+          bad: { text: 'You forgive so fast the villa does the maths out loud. “Two teas?” mouths {mate}. The Romantics cheer; the spine wing writes you off before your tea’s even cold.', effects: { addFlag: 'li_repaired', bond: 5, romantics: 4, selfrespect: -4, storyBeat: 'Forgave the two-tea apology by day two — the villa timed it. Cracked and chose again, maybe a beat too quick.' } },
+          good: { text: '“The tea counted. The no-speech counted more. We’re alright.” Clean, dated, done. Half the country stands; the other half respects the paperwork. {partner} exhales a week.', effects: { addFlag: 'li_repaired', bond: 7, romantics: 4, selfrespect: -2, storyBeat: 'Two mornings of tea on the wall, no speech, then forgiven plainly. Repair by logistics, not oratory.' } },
+          incredible: { text: '“I watched you show up when you could’ve hidden,” you say, to the group, not just them. “I’m keeping the person who did that.” Forgiveness with a spine in it. Even the spine wing allows it.', effects: { addFlag: 'li_repaired', bond: 8, romantics: 5, selfrespect: 1, public: 2, storyBeat: 'Earned back one silent tea round at a time, then forgiven out loud — the no-speech redemption the nation frames.' } },
         },
       },
       right: {

@@ -112,6 +112,10 @@ const DESCRIPTORS = {
       id: 'li_scheduled_beats',
       setup: ['li_bomb1', 'li_bomb2', 'li_bomb2_steal', 'li_bomb2_single',
         'li_movienight_reveal', 'li_movienight_clean',
+        // v5 tentpole variants (gated ones only; the no-requires bomb1/
+        // challenge1 variants aren't dark and need no registration).
+        'li_bomb2_charm', 'li_bomb2_lads', 'li_bomb2_single_spark',
+        'li_movienight_reveal_casa', 'li_movienight_clean_others',
         'li_recoup1_choose', 'li_recoup1_choose_single',
         'li_recoup1_exposed', 'li_recoup1_exposed_single',
         'li_parents', 'li_parents_messy',
