@@ -197,16 +197,18 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # --ignore-unmatch: stage whichever of these exist and don't error on
-          # the ones that don't (proof runs only create proofs/; sync runs have
-          # no batch-state.json; etc.). Without it, git add aborts on the first
-          # missing pathspec and stages NOTHING.
-          git add --ignore-unmatch \
-                  docs/games/love-island/art/final \
-                  docs/games/love-island/art/proofs \
-                  docs/games/love-island/public/art \
-                  docs/games/love-island/art/batch-state.json \
-                  js/packs/love-island/portraits.data.ts || true
+          # Stage each path independently so a missing one (proof runs create
+          # only proofs/; sync runs have no batch-state.json) doesn't abort the
+          # rest. (git add has no --ignore-unmatch; a single multi-path add
+          # aborts and stages nothing when any pathspec is missing.)
+          for p in \
+            docs/games/love-island/art/final \
+            docs/games/love-island/art/proofs \
+            docs/games/love-island/public/art \
+            docs/games/love-island/art/batch-state.json \
+            js/packs/love-island/portraits.data.ts; do
+            git add "$p" 2>/dev/null || true
+          done
           if git diff --cached --quiet; then
             echo "Nothing to commit (dry run, or no new images)."
           else
