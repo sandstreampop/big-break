@@ -84,9 +84,23 @@ export const metaFor = (key: string): StatMeta =>
   STAT_META[key] || RESOURCE_META[key] || { name: key, icon: '' };
 
 // Fill a card's {token} placeholders with this run's identities, using the
-// active pack's token vocabulary (presenter.fillTokens). A pack with no tokens
-// leaves the text untouched.
+// active pack's token vocabulary (presenter.fillTokens). The neutral
+// {playerName} token (the player's own name) is resolved by the shell first —
+// it's universal, not a genre concept — so any pack's copy can address the
+// player by name for free. (Deliberately NOT {me}: the villa already owns {me}
+// as a per-channel nickname, so the shell stays off that token.)
 export function fillText(s: string): string {
   if (!s || !run) return s;
-  return PRES.fillTokens ? PRES.fillTokens(run, s) : s;
+  const named = run.name ? s.replaceAll('{playerName}', run.name) : s;
+  return PRES.fillTokens ? PRES.fillTokens(run, named) : named;
+}
+
+// Human-readable label for a gender id, resolved through the active pack's
+// gender axis (presenter.genderOptions). Neutral: the shell reads it to show
+// the player's identity where stats live, without naming any option itself.
+// Falls back to the raw id when the pack declares no matching option.
+export function genderLabelFor(id: string | undefined | null): string {
+  if (!id) return '';
+  const opt = (PRES?.genderOptions || []).find((o) => o.id === id);
+  return opt ? `${opt.icon ? opt.icon + ' ' : ''}${opt.label}` : id;
 }

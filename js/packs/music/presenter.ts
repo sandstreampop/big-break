@@ -180,6 +180,12 @@ export const musicPresenter: Presenter = {
   // The loadout screen: music's copy, its instrument pool, and its optional
   // venue/genre/contract pickers + the run-init those drive (music-setup.ts).
   loadoutPicker: { head: 'Choose your weapon', sub: 'Each one is almost useless. That’s the point.', empty: 'Pick an instrument to start' },
+  // The gender axis (cosmetic here — it flavours who’s on stage, not the odds).
+  // The shell shows it between the name and the instrument pick.
+  genderOptions: [
+    { id: 'woman', label: 'Woman', icon: '♀' },
+    { id: 'man', label: 'Man', icon: '♂' },
+  ],
   loadoutPool: musicLoadoutPool,
   setupExtras: musicRenderSetupExtras,
   setupSummary: musicSetupSummary,

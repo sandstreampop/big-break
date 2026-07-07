@@ -172,6 +172,11 @@ function auditFn() {
     const r = pick.getBoundingClientRect();
     if (r.width && (r.left < -1 || r.right > vw + 1)) { problems.push('pick-card overflows horizontally'); break; }
   }
+  // The identity step (name field + gender chips) must fit the narrowest phone too.
+  for (const id of document.querySelectorAll('.screen.active .identity-name, .screen.active .identity-gender-chip')) {
+    const r = id.getBoundingClientRect();
+    if (r.width && (r.left < -1 || r.right > vw + 1)) { problems.push('identity control overflows horizontally'); break; }
+  }
   return problems;
 }
 
@@ -195,6 +200,14 @@ async function driveSeason(browser, base, game, vp, tag) {
     await page.waitForSelector('#screen-title.active', { timeout: 15000 });
     await audit('title');
     await page.evaluate(() => document.querySelector('button.btn.primary')?.click());
+    // Identity step (name → gender → personality): fill the name and pick a
+    // gender so the personality cards appear (the villa gates them on gender).
+    await page.waitForSelector('#screen-instruments.active #player-name', { timeout: 10000 });
+    await page.evaluate(() => {
+      const n = document.querySelector('#player-name');
+      if (n && !n.value.trim()) { n.value = 'Tester'; n.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (!document.querySelector('.identity-gender-chip.selected')) document.querySelector('.identity-gender-chip')?.click();
+    });
     await page.waitForSelector('#screen-instruments.active .pick-card', { timeout: 10000 });
     await audit('setup');
     await page.evaluate(() => document.querySelector('.pick-card')?.click());

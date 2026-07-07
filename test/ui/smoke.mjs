@@ -94,6 +94,20 @@ async function clickJS(page, sel, timeout = 10000) {
   await page.evaluate((s) => document.querySelector(s)?.click(), sel);
 }
 
+// The setup screen now opens on the identity step (name → gender → personality):
+// type a name and, if the pack offers a gender axis, pick one — the personality
+// cards only appear once a required gender is chosen. Idempotent and pack-safe.
+async function enterIdentity(page) {
+  await page.waitForSelector('#screen-instruments.active #player-name', { timeout: 10000 });
+  await page.evaluate(() => {
+    const n = document.querySelector('#player-name');
+    if (n && !n.value.trim()) { n.value = 'Tester'; n.dispatchEvent(new Event('input', { bubbles: true })); }
+    if (!document.querySelector('.identity-gender-chip.selected')) {
+      document.querySelector('.identity-gender-chip')?.click();
+    }
+  });
+}
+
 // axe-core a11y gate (Epic 7 / decision 3). Inject the bundled axe source into
 // the page and scan the current screen for WCAG 2 A/AA violations. We gate on
 // SERIOUS + CRITICAL only (the ones that actually lock out AT/keyboard users);
@@ -124,6 +138,7 @@ async function playToFinale(page, label, pathIndex = 0) {
   await page.waitForSelector('#screen-title.active', { timeout: 15000 });
   await clickJS(page, 'button.btn.primary');
   await page.waitForSelector('#screen-instruments.active', { timeout: 10000 });
+  await enterIdentity(page);
   await clickJS(page, '.pick-card');
   await clickJS(page, '#start-run-btn');
   // The first #screen-crossroads is the path pick; commit the requested summit

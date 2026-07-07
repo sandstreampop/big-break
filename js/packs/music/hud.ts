@@ -11,6 +11,7 @@ import { genreById } from './data/genres.js';
 import { venueById, VENUE_TIERS } from './data/venues.js';
 import { bandmateById } from './data/band.js';
 import { hustleById } from './data/hustles.js';
+import { genderLabelFor } from '../../ui/context.js';
 
 export function musicHudCounters(s: any) {
   const out: { html: string; cls?: string }[] = [];
@@ -32,8 +33,14 @@ export function musicGearChips(run: any) {
   const push = (cls: string, html: string, sheet: any) => chips.push({ cls, html, sheet });
 
   const inst = instrumentById(run.loadout);
+  // The persona chip stays the instrument (glanceable, and narrow enough for a
+  // 320px HUD); the player's own name + gender ride the tap-to-inspect sheet —
+  // progressive disclosure, one tap away, same as the villa's status drawer.
+  const gl = genderLabelFor(run.gender);
+  const identityLine = run.name ? `<b>Playing as:</b> ${run.name}${gl ? ` (${gl})` : ''}` : null;
   push('gear-chip inst-chip', inst.name, {
-    art: inst.art, title: inst.name, lines: [
+    art: inst.art, title: run.name ? `${run.name} — ${inst.name}` : inst.name, lines: [
+      ...(identityLine ? [identityLine] : []),
       inst.flavor,
       ...(inst.quirk ? [`<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`] : []),
       ...(inst.family ? [`Family: ${inst.family} — gear with a family requirement only works when it matches.`] : []),

@@ -662,6 +662,13 @@ export interface Presenter {
   art?: Record<string, { e: string; s: string }>;
   // Offer every unlocked persona at run start instead of a random 3.
   offerAllLoadouts?: boolean;
+  // The player-gender axis the shell offers between the (universal, shell-owned)
+  // name field and the personality picker — name → gender → personality. Each
+  // option is { id, label, icon? }; the shell stores the pick on run.gender and
+  // remembers it in meta. A pack that omits this shows no gender step (and the
+  // shell renders name → personality). The id is the pack's to interpret: the
+  // villa keys its coupling pool off it; music treats it as cosmetic.
+  genderOptions?: { id: string; label: string; icon?: string }[];
   // ── Run setup (the loadout screen). The shell owns the loadout pick + start
   // button; these let a pack add its own selection layer. ──
   // The loadout-screen title/sub copy (music: "Choose your weapon"). Default
@@ -785,6 +792,12 @@ export interface RunState {
   seed: number | null;
   rngUses?: number;
   path: string | null;
+  // The playable character's name — genre-neutral player identity, entered at
+  // setup (remembered across runs in meta, always editable). Cosmetic: the sims
+  // never set it, so it's absent in golden state. Packs may surface it in
+  // flavor via the {me} token.
+  name?: string;
+  gender?: string;                  // the player's chosen gender id (pack-owned meaning)
   loadout: string;                  // the run's persona/instrument id
   perks?: string[];
   usedEvents: string[];
