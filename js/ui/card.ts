@@ -562,7 +562,7 @@ function showResult(result) {
   // invitation — not a footnote below the fold. On the big moments only;
   // ambient cards return null and stay quiet.
   const feedBundle = PRES.feeds?.(run, { kind: 'result', ev: result.event, tier: result.tier, side: result.side });
-  if (feedBundle) box.append(feedTeaser(feedBundle, true));
+  if (feedBundle) box.append(feedTeaser(feedBundle, true, { key: `result:${result.event?.id || '?'}:${run.cardLog?.length ?? 0}` }));
 
   // Numeric stat deltas: compact uniform chips (minus any key the pack's
   // result beat already voiced qualitatively).

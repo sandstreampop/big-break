@@ -154,6 +154,7 @@ async function playToFinale(page, label, pathIndex = 0) {
   let scannedCard = false;
   let lightboxRuns = 0;
   let cardCastRuns = 0;
+  let feedRuns = 0;
   while (Date.now() < deadline && guard++ < 800) {
     if (errors.length) break;
     const k = await page.evaluate(() => {
@@ -216,6 +217,35 @@ async function playToFinale(page, label, pathIndex = 0) {
         if (!survived) throw new Error(`[${label}] closing the lightbox destroyed the underlying overlay (soft-lock regression)`);
         lightboxRuns++;
       }
+      // The unread-feed notification (2026-07): the "Read the feeds" CTA now
+      // only shows with a badge when the nation has posted something new, and
+      // opening it must (1) stack the phone browser OVER this overlay without
+      // destroying it (it lives outside #overlay — same soft-lock class as the
+      // lightbox), (2) surface the arrivals HIGHLIGHTED as new, and (3) collapse
+      // the CTA to a "caught up" chip afterwards so there's no button left to
+      // re-press for stale content. Then the run must still reach the finale
+      // (working agreement rule 1: drive the new control, then assert advance).
+      const ctaSel = '#overlay.active .feed-open-btn-new';
+      if (feedRuns < 2 && await page.$(ctaSel)) {
+        const badged = await page.evaluate((s) => !!document.querySelector(s + ' .feed-badge'), ctaSel);
+        if (!badged) throw new Error(`[${label}] the feed CTA is showing without an unread badge`);
+        await page.evaluate((s) => document.querySelector(s).click(), ctaSel);
+        await page.waitForSelector('#feed-layer .feed-post', { timeout: 4000 });
+        const view = await page.evaluate(() => ({
+          overlayAlive: !!document.querySelector('#overlay.active'),
+          hasNew: !!document.querySelector('#feed-layer .feed-post-new'),
+          hasNewMark: !!document.querySelector('#feed-layer .feed-newmark'),
+        }));
+        if (!view.overlayAlive) throw new Error(`[${label}] opening the feeds destroyed the result overlay (soft-lock regression)`);
+        if (!view.hasNew || !view.hasNewMark) throw new Error(`[${label}] the feeds opened but new posts are not highlighted`);
+        await page.evaluate(() => document.querySelector('#feed-layer .feed-close')?.click());
+        await page.waitForFunction(() => !document.querySelector('#feed-layer'), { timeout: 4000 });
+        const collapsed = await page.evaluate(() =>
+          !!document.querySelector('#overlay.active .feed-caughtup') &&
+          !document.querySelector('#overlay.active .feed-open-btn-new'));
+        if (!collapsed) throw new Error(`[${label}] the feed CTA did not collapse to "caught up" after reading`);
+        feedRuns++;
+      }
       // Wait for the overlay to be dismissable rather than racing a fixed
       // sleep against the arm delay: either the click-to-dismiss listener is
       // live (data-armed) or there's a gear button we click directly.
@@ -274,7 +304,7 @@ async function playToFinale(page, label, pathIndex = 0) {
   if (!reached) throw new Error(`[${label}] never reached #screen-ending (finale) within budget`);
   const hasVerdict = await page.$('#screen-ending .verdict, #screen-ending .ending-title');
   if (!hasVerdict) throw new Error(`[${label}] ending screen rendered but has no verdict/title`);
-  return { lightboxRuns, cardCastRuns };
+  return { lightboxRuns, cardCastRuns, feedRuns };
 }
 
 const PORT = 8199;
@@ -306,10 +336,11 @@ for (const g of GAMES) {
     const page = await ctx.newPage();
     try {
       await page.goto(g.url, { waitUntil: 'domcontentloaded' });
-      const { lightboxRuns, cardCastRuns } = await playToFinale(page, `${g.label} path#${pi}`, pi);
+      const { lightboxRuns, cardCastRuns, feedRuns } = await playToFinale(page, `${g.label} path#${pi}`, pi);
       const lb = lightboxRuns ? ` (portrait-lightbox stack verified ×${lightboxRuns})` : '';
       const cc = cardCastRuns ? ` (card-cast lightbox verified ×${cardCastRuns})` : '';
-      console.log(`✓  ${g.label} path#${pi}: booted and played to a terminal screen, no page errors${lb}${cc}`);
+      const fd = feedRuns ? ` (unread-feed notification verified ×${feedRuns})` : '';
+      console.log(`✓  ${g.label} path#${pi}: booted and played to a terminal screen, no page errors${lb}${cc}${fd}`);
     } catch (e) {
       failed++;
       console.error(`✗  ${e.message}`);

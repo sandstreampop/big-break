@@ -311,7 +311,7 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   const endFeed = PRES.feeds?.(run, { kind: 'ending', endingKey: summary?.endingKey || 'finale' });
   if (endFeed) {
     wrap.append(el('h3', 'wall-tier', 'Your Phone, Returned'));
-    wrap.append(feedTeaser(endFeed, false));
+    wrap.append(feedTeaser(endFeed, false, { key: `ending:${summary?.endingKey || 'finale'}`, always: true }));
   }
 
   if (summary?.tierLog?.length) {

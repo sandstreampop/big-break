@@ -1966,3 +1966,60 @@ details.recap-fold[open] { display: flex; flex-direction: column; gap: 8px; }
 .feed-moodline.mood-up { color: #7fe0a6; border-color: #2c5a3f; }
 .feed-moodline.mood-split { color: #ffcf8a; border-color: #5a4a2c; }
 .feed-moodline.mood-down { color: #ff8a80; border-color: #5a2c2c; }
+
+/* ── The unread notification (2026-07) ──
+   The CTA is a notification: it only shows with unread posts and wears a count.
+   When there's something new the button lifts out of the ghost styling and
+   gently pulses once to earn a glance; a badge carries the number. */
+.feed-open-btn-new {
+  background: linear-gradient(160deg, #6a4ea8, #4a3f7a);
+  border-color: #8b78d0; color: #fff;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  box-shadow: 0 4px 16px rgba(120,96,210,.28);
+  animation: feed-cta-pulse 1.6s ease-out 1;
+}
+@keyframes feed-cta-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(139,120,208,.55); }
+  70% { box-shadow: 0 0 0 10px rgba(139,120,208,0); }
+  100% { box-shadow: 0 4px 16px rgba(120,96,210,.28); }
+}
+.feed-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: #ff4d6d; color: #fff;
+  font-size: 12px; font-weight: 800; line-height: 1;
+  padding: 3px 8px; border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.14);
+}
+.feed-badge-lbl { font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .9; }
+@media (prefers-reduced-motion: reduce) { .feed-open-btn-new { animation: none; } }
+
+/* The caught-up state: no button, just quiet closure — nothing to re-press. */
+.feed-teaser-quiet { cursor: default; background: none; border-color: #2c2640; }
+.feed-caughtup {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; color: #8f86ab; letter-spacing: .01em;
+}
+
+/* New vs. read, inside the browser. New arrivals get an accent rail + a NEW
+   flag; read posts sit dimmed under the "earlier" divider so the fresh stuff
+   never hides among what you've already seen. */
+.feed-newmark {
+  font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+  color: #cbb8ff; padding: 2px 2px 0;
+}
+.feed-new-tag {
+  font-size: 9px; font-weight: 800; letter-spacing: .06em;
+  color: #fff; background: #ff4d6d; border-radius: 4px; padding: 2px 5px; line-height: 1;
+}
+.feed-post-new { box-shadow: inset 3px 0 0 0 #8b78d0; }
+.feed-post-seen { opacity: .62; }
+.feed-divider {
+  text-align: center; font-size: 10.5px; font-weight: 700; letter-spacing: .08em;
+  color: #6f6788; padding: 6px 0 2px;
+}
+.feed-tab-new {
+  min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+  display: inline-grid; place-items: center;
+  background: #ff4d6d; color: #fff; font-size: 9.5px; font-weight: 800; line-height: 1;
+}
+.feed-tab.has-new { border-color: #8b78d0; }

@@ -192,7 +192,7 @@ export function actInterstitial(step) {
   }
   // ADR-0014 — the week from the outside: the nation's feeds at the act break.
   const recapFeed = PRES.feeds?.(run, { kind: 'recap', act: step.act });
-  if (recapFeed) box.append(feedTeaser(recapFeed, true));
+  if (recapFeed) box.append(feedTeaser(recapFeed, true, { key: `recap:${step.act}` }));
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);
   if (chart?.celebrate) { spawnConfetti(ov); sfx.win(); vibrate([30, 40, 30, 40, 80]); }
