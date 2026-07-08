@@ -92,7 +92,10 @@ const SCENE_CAST: Record<string, string[]> = {
 // feature the villa, not your couple.
 const PARTNER_SCENES = new Set([
   'li_hideaway_key', 'li_exclusive', 'li_public_promise',
-  'li_challenge_couples', 'li_compatibility_quiz',
+  // The couple-quizzes and the two challenge cards whose VISIBLE copy names your
+  // Partner as present ("Perform for your partner" / "Your partner is watching
+  // which way you walk") in prose rather than the {partner} token.
+  'li_challenge_couples', 'li_compatibility_quiz', 'li_challenge_heartrate', 'li_snog_marry_pie',
   'li_final_winvilla', 'li_final_realthing', 'li_final_brand',
 ]);
 
