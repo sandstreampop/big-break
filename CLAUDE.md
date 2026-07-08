@@ -2,6 +2,31 @@
 
 - Push work to `main`. CI gates it, then Pages deploys `dist/` (see
   `.github/workflows/pages.yml`).
+- **Working agreement (human + agent).** The full process — seven rules, the
+  pre-merge contract, the hand-off format — is `docs/WORKING-AGREEMENT.md`;
+  escaped defects are logged in `docs/INCIDENTS.md`. The rules that bind every
+  task, in short:
+  - **Verify behaviour, not presence.** A change is done when the app reaches a
+    terminal state *after you interact with the new thing*, gated surfaces first
+    (see "Ship UI the way it's played" below) — not when it renders.
+  - **Invariants are executable, not commentary.** A rule that matters becomes a
+    test / hook / type, never only a comment.
+  - **Writer ≠ grader.** Before merging non-trivial or multi-surface work, get a
+    fresh-context check — the `verifier` subagent (`.claude/agents/verifier.md`)
+    or `/code-review` — then run the skeptic's behavioural check. Don't pass your
+    own happy path.
+  - **Small, reversible batches.** Prefer three small merges to one wide one; say
+    what each slice does and doesn't cover.
+  - **Guardrail the irreversible.** Merge/deploy only with the full gate suite
+    green *and named*. Genuinely destructive commands (force-push without lease,
+    `reset --hard`, `rm -rf`, history rewrite, remote deletes, `DROP`) are
+    planning-only until the human confirms — enforced by the `guard-destructive`
+    PreToolUse hook in `.claude/settings.json`, not left to memory.
+  - **Every incident becomes a rule.** Close each escaped defect with an
+    `INCIDENTS.md` entry + a rule + (where possible) a test that would catch it.
+  - **End every hand-off** with three phone-readable lines —
+    `verified ✓ … / not verified ⚠ … / watch-out …` — so oversight has something
+    to interrogate instead of a wall of confidence.
 - Source is TypeScript, built to `dist/` with `npm run build`. Tools and tests
   import the built `dist/` — **build before you test**.
 - Run `npm install` first (pins TypeScript 5.7.3). The build/golden oracle is
@@ -93,8 +118,9 @@
     pending `advance()`). This is the one true overlay-stacking rule.
   - **Any new control inside an overlay gets a smoke assertion** that clicks it
     and then confirms the run still reaches the finale (see the portrait-lightbox
-    guard in `test/ui/smoke.mjs` — it stacks the lightbox off live result
-    overlays 30+×/run and checks the parent overlay survives). The smoke suite's
+    guard in `test/ui/smoke.mjs` — it stacks the lightbox off a live result
+    overlay and checks the parent overlay survives, then that the run still
+    reaches the finale; bounded to twice/run to keep the suite fast). The smoke suite's
     generic "dismiss every overlay" loop is blind to controls *inside* overlays,
     so new ones need their own explicit exercise or they ship untested.
   - **Goldens/sims are DOM-free and can't see any of this.** UI regressions are
