@@ -5,13 +5,15 @@
 // styling). All copy obeys VOICE.md; the shell renders music defaults for any
 // hook a pack omits.
 
-import { castById, couplePool, sameGenderPool, islanderTypeById, ISLANDER_TYPES } from './cast.js';
+import { castById, islanderTypeById, ISLANDER_TYPES } from './cast.js';
+import { mateFor, bombshellFor, exFor } from './roles.js';
 import { angleById } from './angles.js';
 import { FACTIONS, movePublicFactional } from './plugins/factions.js';
 import { PATHS } from './manifest.js';
 import { intelCount } from './plugins/gossip.js';
 import { stirlingDealNote } from './plugins/stirling.js';
 import { villaStage, villaResultStage, villaRecap, villaSetPiece, villaEndingPortraits, villaRoster } from './clarity.js';
+import { villaCardCast } from './cardcast.js';
 import { villaFeeds } from './feeds.js';
 import { PORTRAIT_VARIANTS } from './portraits.data.js';
 import { mulberry32 } from '../../engine.js';
@@ -211,30 +213,11 @@ const TROPHIES = [
 
 // ---------- Token filling ----------
 
-function bombshellFor(state: RunState) {
-  // The active bombshell (the characters plugin's seat) when one is in the
-  // villa; a flavour pick otherwise, so pre-arrival teasers still have a name.
-  const active = castById(state.bombshellId);
-  if (active) return active;
-  const want = state.gender === 'girl' ? 'boy' : 'girl';
-  const pool = couplePool(state, { bombshells: true }).filter((c) => c.bombshell && c.gender === want);
-  if (!pool.length) return null;
-  return pool[(state.flavorSeed || 1) % pool.length];
-}
-function mateFor(state: RunState) {
-  // The Bestie seat (R7/D2) — one person, all Season. Flavour pick only as
-  // a fallback for pre-bestie saves.
-  const seated = castById(state.bestie);
-  if (seated) return seated;
-  const pool = sameGenderPool(state).filter((c) => c.id !== state.rival);
-  if (!pool.length) return null;
-  return pool[(state.flavorSeed || 1) % pool.length];
-}
 function fillTokens(state: RunState, s: string): string {
   if (!s) return s;
   const partner = castById(state.partner);
   const rival = castById(state.rival);
-  const ex = castById((state.exes || [])[Math.max(0, (state.exes || []).length - 1)]);
+  const ex = exFor(state);
   return s
     .replaceAll('{partner}', partner?.name || 'your partner')
     .replaceAll('{rival}', rival?.name || 'your rival')
@@ -477,6 +460,9 @@ export const loveIslandPresenter: Presenter = {
   // result beat, the "previously, in the villa" act recap, and set-piece
   // framing for ceremonies/Casa/Movie Night. All pure reads — clarity.ts.
   stage: villaStage,
+  // The people in this scene, on the dealt card (presenter.cardCast): portraits
+  // during the decision, read from the card's own tokens + web-thread tag.
+  cardCast: villaCardCast,
   resultStage: villaResultStage,
   recap: villaRecap,
   setPiece: villaSetPiece,

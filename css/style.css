@@ -1782,6 +1782,12 @@ details.recap-fold[open] { display: flex; flex-direction: column; gap: 8px; }
   #stage.stage-compact .stage-face { width: 32px; height: 32px; font-size: 19px; }
   #stage.stage-compact .stage-read { display: none; }
   .set-piece.set-piece-slim .set-piece-banner { font-size: 11px; }
+  /* ADR-0009 Tier 1: on a short phone a set-piece card is already at its height
+     limit (banner + stakes + the live stage all naming the couple), so the
+     in-card cast strip — which duplicates the people the framing names — yields
+     before the prompt can clip. Ordinary cards keep it; roomier phones keep it
+     everywhere. Pinned at 320×568 / 360×640 by test/ui/mobile-matrix.mjs. */
+  .card.in-set-piece .card-cast { display: none; }
 }
 
 /* The ambient strip never wraps its act label; counters wrap instead. */
