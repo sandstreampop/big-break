@@ -137,6 +137,22 @@
   `js/version.js` contract that `js/ui.ts` verifies and self-heals at boot);
   and on the smallest phones the ambient tiers yield before the prompt clips
   (ADR-0009 Tier 1).
+- **Raster images have ONE road: preprocess, then serve responsively — never a
+  raw `<img>`.** A master image is never shipped or rendered directly (the cast
+  portraits' first drop did that: 750KB 1024² files served to 30px chips — see
+  ADR-0015, love-island). The two generic halves: authoring is
+  `tools/image-core.mjs` `buildResponsiveSet` (master → a `[96,192,384,768]` ×
+  `{AVIF,WebP,JPEG}` ladder + a descriptor; sharp-backed, a devDependency, NEVER
+  in the Pages build — variants are committed and copied 1:1); serving is
+  `js/ui/dom.ts` `responsivePicture(src, opts)`, which emits a `<picture>`
+  (AVIF→WebP sources + an `<img>` with `srcset`/`sizes`, intrinsic `width`/
+  `height`, and loading hints). A pack registers its `src → ImageVariant` map via
+  `Presenter.imageVariants` (wired at boot like `registerArt`); the shell stays
+  genre-neutral. EVERY portrait render site routes through `responsivePicture`,
+  so a new image is SOTA by construction — a raw portrait `<img>` string in
+  `js/ui/` is a regression `test/portrait-serving.test.mjs` fails on. Paved road
+  for new art: masters → the pack's `--wire` (preprocess + regen manifest) →
+  `Presenter.imageVariants` → render via `responsivePicture`.
 - Docs site lives in `docs-site/` (Starlight, isolated toolchain — its own
   `package.json`/`node_modules`, never touches the engine's pinned tsc). It
   deploys as a sibling at `/big-break/docs/` from the same Pages workflow, and
