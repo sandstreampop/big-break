@@ -153,6 +153,7 @@ async function playToFinale(page, label, pathIndex = 0) {
   let guard = 0;
   let scannedCard = false;
   let lightboxRuns = 0;
+  let cardCastRuns = 0;
   while (Date.now() < deadline && guard++ < 800) {
     if (errors.length) break;
     const k = await page.evaluate(() => {
@@ -239,6 +240,27 @@ async function playToFinale(page, label, pathIndex = 0) {
       await page.waitForTimeout(60);
     } else if (k === 'card') {
       if (!scannedCard) { await axeScan(page, label, 'game-card'); scannedCard = true; }
+      // The card-cast strip (presenter.cardCast) puts scene portraits ON the
+      // dealt card, and a real portrait taps through to the full-size lightbox.
+      // Unlike the result beat, the card is NOT an overlay — so the lightbox
+      // opens on the dedicated #overlay-top and closing it must return to a live
+      // card that still swipes to the finale (working agreement rule 1: drive a
+      // new control, then assert the run still advances). Once per run is plenty.
+      const chipSel = '#screen-game.active .card-cast .cast-chip-tappable';
+      if (cardCastRuns < 1 && await page.$(chipSel)) {
+        await page.evaluate((s) => document.querySelector(s).click(), chipSel);
+        await page.waitForSelector('#overlay-top.active .portrait-lightbox-img', { timeout: 4000 });
+        await page.waitForFunction(() => {
+          const t = document.querySelector('#overlay-top.active');
+          return !t || t.hasAttribute('data-armed');
+        }, { timeout: 4000 });
+        await page.evaluate(() => document.querySelector('#overlay-top.active')?.click());
+        await page.waitForTimeout(120);
+        const cardLives = await page.evaluate(() =>
+          !document.querySelector('#overlay-top.active') && !!document.querySelector('#screen-game.active .choice-btn.choice-left'));
+        if (!cardLives) throw new Error(`[${label}] closing a card-cast lightbox left no live card behind`);
+        cardCastRuns++;
+      }
       await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
       await page.waitForTimeout(60);
     } else {
@@ -252,7 +274,7 @@ async function playToFinale(page, label, pathIndex = 0) {
   if (!reached) throw new Error(`[${label}] never reached #screen-ending (finale) within budget`);
   const hasVerdict = await page.$('#screen-ending .verdict, #screen-ending .ending-title');
   if (!hasVerdict) throw new Error(`[${label}] ending screen rendered but has no verdict/title`);
-  return { lightboxRuns };
+  return { lightboxRuns, cardCastRuns };
 }
 
 const PORT = 8199;
@@ -284,9 +306,10 @@ for (const g of GAMES) {
     const page = await ctx.newPage();
     try {
       await page.goto(g.url, { waitUntil: 'domcontentloaded' });
-      const { lightboxRuns } = await playToFinale(page, `${g.label} path#${pi}`, pi);
+      const { lightboxRuns, cardCastRuns } = await playToFinale(page, `${g.label} path#${pi}`, pi);
       const lb = lightboxRuns ? ` (portrait-lightbox stack verified ×${lightboxRuns})` : '';
-      console.log(`✓  ${g.label} path#${pi}: booted and played to a terminal screen, no page errors${lb}`);
+      const cc = cardCastRuns ? ` (card-cast lightbox verified ×${cardCastRuns})` : '';
+      console.log(`✓  ${g.label} path#${pi}: booted and played to a terminal screen, no page errors${lb}${cc}`);
     } catch (e) {
       failed++;
       console.error(`✗  ${e.message}`);

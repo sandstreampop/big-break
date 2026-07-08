@@ -32,15 +32,25 @@ if (!chromium) {
 const root = fileURLToPath(new URL('../../dist', import.meta.url));
 if (!existsSync(root)) { console.error('dist/ not found — run `npm run build` first.'); process.exit(1); }
 
-const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.webmanifest': 'application/manifest+json' };
+const MIME = {
+  '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.webmanifest': 'application/manifest+json',
+  '.avif': 'image/avif', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml',
+};
 const server = createServer(async (req, res) => {
   try {
     let p = decodeURIComponent((req.url || '/').split('?')[0]);
     if (p.endsWith('/')) p += 'index.html';
     const abs = normalize(join(root, p));
     if (!abs.startsWith(root)) { res.writeHead(403).end(); return; }
+    // Read BEFORE sending headers: the card-cast strip (presenter.cardCast) now
+    // fetches portrait variants on far more cards, so a missing asset (a 404) is
+    // routine. Writing the 200 header first and only then awaiting readFile meant
+    // a failed read hit the catch's writeHead(404) after headers were already
+    // sent → ERR_HTTP_HEADERS_SENT crashed the whole run. Read first (as smoke.mjs
+    // does), so the catch owns the response.
+    const body = await readFile(abs);
     res.writeHead(200, { 'content-type': MIME[extname(abs)] || 'application/octet-stream' });
-    res.end(await readFile(abs));
+    res.end(body);
   } catch { res.writeHead(404).end(); }
 });
 const PORT = 8207;
