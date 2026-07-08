@@ -149,8 +149,8 @@
   `height`, and loading hints). A pack registers its `src → ImageVariant` map via
   `Presenter.imageVariants` (wired at boot like `registerArt`); the shell stays
   genre-neutral. EVERY portrait render site routes through `responsivePicture`,
-  so a new image is SOTA by construction — a raw portrait `<img>` string in
-  `js/ui/` is a regression `test/portrait-serving.test.mjs` fails on. Paved road
+  so a new image is SOTA by construction — a raw portrait `<img>` string
+  anywhere in `js/` is a regression `test/portrait-serving.test.mjs` fails on. Paved road
   for new art: masters → the pack's `--wire` (preprocess + regen manifest) →
   `Presenter.imageVariants` → render via `responsivePicture`.
 - Docs site lives in `docs-site/` (Starlight, isolated toolchain — its own

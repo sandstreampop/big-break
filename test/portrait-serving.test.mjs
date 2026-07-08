@@ -31,18 +31,23 @@ function tsFiles(dir) {
   return out;
 }
 
-// A raw <img> literal that carries a portrait class — the exact shape of the
-// pre-pipeline render sites. responsivePicture builds its <img> from a `cls`
-// VARIABLE, so it never contains these class names as a literal; a match here
-// therefore means someone hand-rolled a portrait image outside the road.
-const RAW_PORTRAIT_IMG = /<img\b[^>]*\b(?:face-portrait|portrait-lightbox-img)\b/;
+// A raw <img> literal that reveals a hand-rolled portrait — either by carrying
+// a portrait class (the exact shape of the pre-pipeline render sites) OR by
+// interpolating a `portraitSrc` straight into the tag (the same regression with
+// the class dropped). responsivePicture builds its <img> from a `cls` VARIABLE
+// and takes its src as a parameter, so its own source matches neither pattern; a
+// hit here therefore means a portrait image was built outside the one road.
+const RAW_PORTRAIT_IMG = [
+  /<img\b[^>]*\b(?:face-portrait|portrait-lightbox-img)\b/,
+  /<img\b[^>]*\bportraitSrc\b/,
+];
 
 test('no hand-rolled portrait <img> anywhere in js/ — all go through responsivePicture', () => {
   const offenders = [];
   for (const file of tsFiles(JS_ROOT)) {
     const src = readFileSync(file, 'utf8');
     src.split('\n').forEach((line, i) => {
-      if (RAW_PORTRAIT_IMG.test(line)) offenders.push(`${file}:${i + 1}  ${line.trim()}`);
+      if (RAW_PORTRAIT_IMG.some((re) => re.test(line))) offenders.push(`${file}:${i + 1}  ${line.trim()}`);
     });
   }
   assert.equal(

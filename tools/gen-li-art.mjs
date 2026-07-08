@@ -18,7 +18,7 @@
 //
 // Build first (tools import dist/): npm run build.
 
-import { readdirSync, copyFileSync, mkdirSync, existsSync, writeFileSync, readFileSync } from 'node:fs';
+import { readdirSync, existsSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CAST, castById } from '../dist/js/packs/love-island/cast.js';
