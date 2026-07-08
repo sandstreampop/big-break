@@ -2023,3 +2023,22 @@ details.recap-fold[open] { display: flex; flex-direction: column; gap: 8px; }
   background: #ff4d6d; color: #fff; font-size: 9.5px; font-weight: 800; line-height: 1;
 }
 .feed-tab.has-new { border-color: #8b78d0; }
+
+/* Bar controls: "mark all read" sits beside the close button. */
+.feed-bar-btns { display: flex; align-items: center; gap: 8px; }
+.feed-markall {
+  height: 30px; padding: 0 11px; border-radius: 999px;
+  border: 1px solid #4a4266; background: #241f36; color: #cbb8ff;
+  font-size: 11.5px; font-weight: 800; cursor: pointer; white-space: nowrap;
+}
+.feed-markall:hover { background: #2c2545; }
+@media (max-width: 340px) { .feed-markall { padding: 0 8px; font-size: 10.5px; } }
+
+/* Tap-to-read affordance on a new post: the whole card is a button, with a
+   quiet hint that fades in. Tapping drops it into the dimmed "earlier" group. */
+.feed-post-new { cursor: pointer; }
+.feed-post-new:hover { border-color: #8b78d0; }
+.feed-tap-hint {
+  align-self: flex-end; font-size: 9.5px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: #9a8fc4; opacity: .75;
+}

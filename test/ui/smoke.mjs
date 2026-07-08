@@ -217,33 +217,48 @@ async function playToFinale(page, label, pathIndex = 0) {
         if (!survived) throw new Error(`[${label}] closing the lightbox destroyed the underlying overlay (soft-lock regression)`);
         lightboxRuns++;
       }
-      // The unread-feed notification (2026-07): the "Read the feeds" CTA now
-      // only shows with a badge when the nation has posted something new, and
-      // opening it must (1) stack the phone browser OVER this overlay without
-      // destroying it (it lives outside #overlay — same soft-lock class as the
-      // lightbox), (2) surface the arrivals HIGHLIGHTED as new, and (3) collapse
-      // the CTA to a "caught up" chip afterwards so there's no button left to
-      // re-press for stale content. Then the run must still reach the finale
-      // (working agreement rule 1: drive the new control, then assert advance).
+      // The unread-feed notification (2026-07): the "Read the feeds" CTA only
+      // shows with a badge when the nation has posted something new. Opening it
+      // must (1) stack the phone browser OVER this overlay without destroying it
+      // (it lives outside #overlay — same soft-lock class as the lightbox) and
+      // (2) surface the arrivals HIGHLIGHTED as new. Reading is per-post: tapping
+      // a new post marks it read (the unread badge ticks DOWN); "mark all read"
+      // clears the rest and (3) collapses the CTA to a "caught up" chip so
+      // there's no button left to re-press for stale content. The count is now
+      // pool-randomised (5–25), so we assert a sane range, not a fixed number.
+      // Then the run must still reach the finale (working agreement rule 1:
+      // drive the new control, then assert advance).
       const ctaSel = '#overlay.active .feed-open-btn-new';
       if (feedRuns < 2 && await page.$(ctaSel)) {
-        const badged = await page.evaluate((s) => !!document.querySelector(s + ' .feed-badge'), ctaSel);
-        if (!badged) throw new Error(`[${label}] the feed CTA is showing without an unread badge`);
+        const badge0 = await page.evaluate((s) => {
+          const b = document.querySelector(s + ' .feed-badge');
+          return b ? parseInt(b.textContent, 10) : NaN;
+        }, ctaSel);
+        if (!Number.isFinite(badge0)) throw new Error(`[${label}] the feed CTA is showing without an unread badge`);
+        if (badge0 < 5 || badge0 > 99) throw new Error(`[${label}] unread badge ${badge0} outside the expected pool range (5–25, 99+ cap)`);
         await page.evaluate((s) => document.querySelector(s).click(), ctaSel);
-        await page.waitForSelector('#feed-layer .feed-post', { timeout: 4000 });
+        await page.waitForSelector('#feed-layer .feed-post-new', { timeout: 4000 });
         const view = await page.evaluate(() => ({
           overlayAlive: !!document.querySelector('#overlay.active'),
-          hasNew: !!document.querySelector('#feed-layer .feed-post-new'),
+          newPosts: document.querySelectorAll('#feed-layer .feed-post-new').length,
           hasNewMark: !!document.querySelector('#feed-layer .feed-newmark'),
         }));
         if (!view.overlayAlive) throw new Error(`[${label}] opening the feeds destroyed the result overlay (soft-lock regression)`);
-        if (!view.hasNew || !view.hasNewMark) throw new Error(`[${label}] the feeds opened but new posts are not highlighted`);
+        if (!view.newPosts || !view.hasNewMark) throw new Error(`[${label}] the feeds opened but new posts are not highlighted`);
+        // Tap one new post to mark it read — the CTA badge must drop by one.
+        await page.evaluate(() => document.querySelector('#feed-layer .feed-post-new')?.click());
+        await page.waitForFunction((prev) => {
+          const b = document.querySelector('#overlay.active .feed-open-btn-new .feed-badge');
+          return !!b && parseInt(b.textContent, 10) === prev - 1;
+        }, badge0, { timeout: 4000 }).catch(() => { throw new Error(`[${label}] tapping a new post did not decrement the unread badge`); });
+        // Clear the rest, then confirm the CTA collapses to "caught up".
+        await page.evaluate(() => document.querySelector('#feed-layer .feed-markall')?.click());
         await page.evaluate(() => document.querySelector('#feed-layer .feed-close')?.click());
         await page.waitForFunction(() => !document.querySelector('#feed-layer'), { timeout: 4000 });
         const collapsed = await page.evaluate(() =>
           !!document.querySelector('#overlay.active .feed-caughtup') &&
           !document.querySelector('#overlay.active .feed-open-btn-new'));
-        if (!collapsed) throw new Error(`[${label}] the feed CTA did not collapse to "caught up" after reading`);
+        if (!collapsed) throw new Error(`[${label}] the feed CTA did not collapse to "caught up" after reading all`);
         feedRuns++;
       }
       // Wait for the overlay to be dismissable rather than racing a fixed
