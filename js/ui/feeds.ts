@@ -92,9 +92,12 @@ function ingest(bundle: any, key: string): number {
       // it reflects where the wing sits NOW, not where it sat when you last read.
       entry.mood = ch.mood; entry.handle = ch.handle; entry.header = ch.header;
       entry.name = ch.name; entry.icon = ch.icon; entry.skin = ch.skin;
-      // The above-fold `posts` are the arrivals we count as "new"; the `more`
-      // fold rides along after them so nothing's lost, but the timeline itself
-      // is now the "show more", so we don't count the fold in the badge.
+      // The whole moment's reaction becomes new arrivals: the above-fold
+      // `posts` AND the old `more` fold, flattened into one timeline (the
+      // accumulating inbox IS the "show more" now — there's no per-moment fold
+      // to expand any more). Everything here is counted in the badge and the
+      // per-channel "N new" mark and rendered as a highlighted NEW post, so the
+      // number the player sees always equals the posts they can actually read.
       entry.unread.push(...(ch.posts || []), ...(ch.more || []));
     }
   }
