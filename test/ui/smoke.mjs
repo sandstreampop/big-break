@@ -179,6 +179,28 @@ async function playToFinale(page, label, pathIndex = 0) {
       if (lightboxRuns < 2 && await page.$(faceSel)) {
         await page.evaluate((s) => document.querySelector(s).click(), faceSel);
         await page.waitForSelector('#overlay-top.active .portrait-lightbox-img', { timeout: 4000 });
+        // SOTA image serving (2026-07): a wired portrait must render as a
+        // responsive <picture> — AVIF+WebP <source>s and an <img> carrying a
+        // srcset/sizes plus intrinsic width/height. This is the ONLY coverage
+        // that the preprocessing→<picture> pipeline actually reaches the DOM
+        // (goldens/sims are DOM-free), and it rides the gated result→lightbox
+        // path so a break here also blocks the finale-reached assertion below.
+        const pic = await page.evaluate(() => {
+          const img = document.querySelector('#overlay-top.active .portrait-lightbox-img');
+          const picture = img?.closest('picture');
+          const types = picture ? [...picture.querySelectorAll('source')].map((s) => s.type) : [];
+          return {
+            inPicture: !!picture,
+            hasAvif: types.includes('image/avif'),
+            hasWebp: types.includes('image/webp'),
+            hasSrcset: !!img?.getAttribute('srcset'),
+            hasDims: !!img?.getAttribute('width') && !!img?.getAttribute('height'),
+          };
+        });
+        if (!pic.inPicture || !pic.hasAvif || !pic.hasWebp)
+          throw new Error(`[${label}] wired portrait is not a responsive <picture> (avif=${pic.hasAvif} webp=${pic.hasWebp})`);
+        if (!pic.hasSrcset || !pic.hasDims)
+          throw new Error(`[${label}] portrait <img> missing srcset/intrinsic dimensions (srcset=${pic.hasSrcset} dims=${pic.hasDims})`);
         const stacked = await page.evaluate(() =>
           !!document.querySelector('#overlay-top.active') && !!document.querySelector('#overlay.active'));
         if (!stacked) throw new Error(`[${label}] portrait lightbox did not stack over its parent overlay`);

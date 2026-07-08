@@ -14,7 +14,7 @@ import { CONFIG } from '../config.js';
 import { artFor } from '../art.js';
 import { sfx, music } from '../audio.js';
 import { track } from '../analytics.js';
-import { el, $, btn, show, openOverlay, openPortrait, activatable, todayStr } from './dom.js';
+import { el, $, btn, show, openOverlay, openPortrait, activatable, todayStr, responsivePicture } from './dom.js';
 import { activePack, run, PRES, PATHS, meta, metaFor, fillText, vibeFor, failLabelFor } from './context.js';
 import { gateReadout } from './gates.js';
 import { feedTeaser } from './feeds.js';
@@ -253,7 +253,9 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
       const chip = el('div', 'ending-portrait' + (c.cls ? ' ' + c.cls : ''));
       const badge = c.moodFace ? `<span class="stage-moodface">${c.moodFace}</span>` : '';
       const face = el('div', 'ending-face',
-        (c.portraitSrc ? `<img class="face-portrait" src="${c.portraitSrc}" alt="" draggable="false">` : (c.face || '')) + badge);
+        (c.portraitSrc
+          ? responsivePicture(c.portraitSrc, { className: 'face-portrait', sizes: '84px', eager: true })
+          : (c.face || '')) + badge);
       if (c.portraitSrc) {
         face.classList.add('ending-face-tappable');
         activatable(face, (e) => { e.stopPropagation(); sfx.ui(); openPortrait(c.portraitSrc, { name: c.name, sub: c.sub }); }, `Enlarge ${c.name}`);

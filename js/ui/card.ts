@@ -16,7 +16,7 @@ import { sfx, ambient } from '../audio.js';
 import { track } from '../analytics.js';
 import {
   el, $, activatable, btn, reducedMotion, vibrate, openOverlay, openPortrait,
-  spawnConfetti, coachMark, show,
+  spawnConfetti, coachMark, show, responsivePicture,
 } from './dom.js';
 import {
   activePack, run, PRES, meta, metaFor, fillText, itemById, vibeFor, STAT_META,
@@ -40,8 +40,9 @@ let lastSwipeSide = null; // Epic 6 morph: the direction the last card flew, so
 // whatever the pack's face object carries; only packs that generate portraits
 // set the field.
 function faceInner(f: { face?: string; moodFace?: string | null; portraitSrc?: string }): string {
+  // Stage/result faces (44–64px CSS) — in view immediately, so load eagerly.
   const base = f.portraitSrc
-    ? `<img class="face-portrait" src="${f.portraitSrc}" alt="" draggable="false">`
+    ? responsivePicture(f.portraitSrc, { className: 'face-portrait', sizes: '64px', eager: true })
     : (f.face || '');
   return `${base}${f.moodFace ? `<span class="stage-moodface">${f.moodFace}</span>` : ''}`;
 }
@@ -163,7 +164,7 @@ function renderDealtCard(ev, sp) {
     const strip = el('div', 'card-cast');
     for (const c of cast) {
       const inner = c.portraitSrc
-        ? `<img class="face-portrait" src="${c.portraitSrc}" alt="" draggable="false">`
+        ? responsivePicture(c.portraitSrc, { className: 'face-portrait', sizes: '30px', eager: true })
         : (c.face || '');
       const chip = el('div', 'cast-chip' + (c.cls ? ' ' + c.cls : ''),
         `<span class="cast-face">${inner}${c.moodFace ? `<span class="cast-moodface">${c.moodFace}</span>` : ''}</span>` +

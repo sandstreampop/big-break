@@ -18,7 +18,7 @@ import { registerArt } from './art.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
 import { initAnalytics, track } from './analytics.js';
 import { PRES, meta, run, selectPack, setMeta } from './ui/context.js';
-import { $, show, healStaleStylesheets, topOverlay, anyOverlayActive } from './ui/dom.js';
+import { $, show, healStaleStylesheets, topOverlay, anyOverlayActive, registerImageVariants } from './ui/dom.js';
 import { nav, type Nav } from './ui/nav.js';
 import { dealCard, commitSwipe } from './ui/card.js';
 import { renderCrossroads, actInterstitial, renderFinalSet } from './ui/progression.js';
@@ -59,6 +59,7 @@ export function boot(pack: Pack) {
   // games never clobber each other's meta or in-progress run.
   selectPack(pack);
   registerArt(PRES.art); // a pack's own art slots join the scene painter
+  registerImageVariants(PRES.imageVariants); // a pack's responsive portraits join the <picture> layer
   save.setSaveNamespace(pack.saveNamespace ?? pack.id);
   setMeta(save.loadMeta());
   engine.useContentPack(pack); // this game's content; set before any engine call

@@ -7,7 +7,7 @@
 // data. (A pack's bespoke screens — music's Hot 10 — live in the pack.) None
 // route the game forward, so they sit safely below the flow.
 
-import { openOverlay, openPortrait, el, activatable, escapeHtml } from './dom.js';
+import { openOverlay, openPortrait, el, activatable, escapeHtml, responsivePicture } from './dom.js';
 import { activePack, run, STAT_META, PRES, metaFor, itemById, genderLabelFor } from './context.js';
 import { sfx } from '../audio.js';
 import { artFor } from '../art.js';
@@ -26,7 +26,7 @@ export function showInspect(sheet) {
       const badge = sheet.moodFace ? `<span class="stage-moodface">${sheet.moodFace}</span>` : '';
       const face = el('div', 'inspect-face' + (sheet.faceCls ? ' ' + sheet.faceCls : ''),
         (sheet.portraitSrc
-          ? `<img class="face-portrait" src="${sheet.portraitSrc}" alt="" draggable="false">`
+          ? responsivePicture(sheet.portraitSrc, { className: 'face-portrait', sizes: '88px', eager: true })
           : (sheet.face || '')) + badge);
       if (sheet.portraitSrc) {
         face.classList.add('inspect-face-tappable');

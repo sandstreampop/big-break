@@ -10,6 +10,7 @@
 import { sfx } from '../audio.js';
 import { CSS_CONTRACT } from '../version.js';
 import { meta } from './context.js';
+import type { ImageVariant } from '../types.js';
 
 export const $ = (sel) => document.querySelector(sel);
 
@@ -55,6 +56,59 @@ export function keyable<T extends HTMLElement>(node: T, label?: string): T {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); node.click(); }
   });
   return node;
+}
+
+// ---------- Responsive image serving (the SOTA `<picture>` layer) ----------
+// The runtime half of the image pipeline; the authoring half that produces the
+// files + descriptors is tools/image-core.mjs. A pack registers its variant
+// descriptors at boot (registerImageVariants, wired from js/ui.ts exactly like
+// registerArt), and every portrait `<img>` the shell renders flows through
+// responsivePicture(). The browser then fetches the smallest format it supports
+// at the exact rendered size — a 96px AVIF for a face chip, a 768px one for the
+// lightbox — instead of one giant master everywhere. Genre-neutral: the shell
+// is handed a generic src→variant map and names no game.
+const IMG_VARIANTS: Record<string, ImageVariant> = {};
+
+// Merge a pack's variant map into the registry (first registration wins, like
+// registerArt). Keyed by the fallback src a face object carries (`portraitSrc`).
+export function registerImageVariants(map?: Record<string, ImageVariant>): void {
+  for (const [src, v] of Object.entries(map || {})) {
+    if (!(src in IMG_VARIANTS)) IMG_VARIANTS[src] = v;
+  }
+}
+
+export interface PictureOpts {
+  className?: string;   // class on the <img> — the styling target (e.g. face-portrait)
+  sizes?: string;       // the CSS layout width, e.g. "44px" or "min(78vw, 360px)"
+  alt?: string;
+  eager?: boolean;      // loading="eager" (default lazy) — for a portrait already in view
+  priority?: boolean;   // fetchpriority="high" — for the single most important portrait
+}
+
+// Build the markup for one responsive image. When variants are registered for
+// `src`, emits a `<picture>` with AVIF→WebP→JPEG `<source>`s (the browser takes
+// the first it can decode) plus an `<img>` fallback carrying width/height (the
+// box is reserved before load → zero layout shift), a jpeg `srcset`+`sizes` (the
+// right rung), and loading/decoding/fetchpriority hints. With NO variants
+// registered (music, or art not yet preprocessed) it degrades to a plain `<img>`
+// that still gets the loading hints — correct everywhere, fastest where wired.
+export function responsivePicture(src: string, opts: PictureOpts = {}): string {
+  const { className, sizes, alt = '', eager = false, priority = false } = opts;
+  const cls = className ? ` class="${className}"` : '';
+  const load = eager ? 'eager' : 'lazy';
+  const prio = priority ? ' fetchpriority="high"' : '';
+  const sz = sizes ? ` sizes="${sizes}"` : '';
+  const v = IMG_VARIANTS[src];
+  const img =
+    `<img${cls} src="${src}"` +
+    (v ? `${v.jpeg ? ` srcset="${v.jpeg}"${sz}` : ''} width="${v.w}" height="${v.h}"` : '') +
+    ` alt="${alt}" loading="${load}" decoding="async"${prio} draggable="false">`;
+  if (!v || (!v.avif && !v.webp)) return img;
+  const source = (type: string, srcset?: string) =>
+    srcset ? `<source type="${type}" srcset="${srcset}"${sz}>` : '';
+  // `.rp { display: contents }` keeps the <img> sizing against the real circular
+  // parent (.cast-face etc.), not the inline <picture> box it lives in.
+  return `<picture class="rp">${source('image/avif', v.avif)}${source('image/webp', v.webp)}${img}</picture>`;
 }
 
 export function btn(label, cls, onTap) {
@@ -194,8 +248,14 @@ export function openPortrait(
   // overlay down (see OVERLAY_LAYERS) and soft-lock the run.
   openOverlay((ov) => {
     const box = el('div', 'portrait-lightbox');
+    // The lightbox is the largest a portrait renders (≤360px CSS → up to the
+    // 768 rung on a 2×/3× phone). It opens on demand and is the focus of the
+    // screen, so load it eagerly at high priority.
     const frame = el('div', 'portrait-lightbox-frame',
-      `<img class="portrait-lightbox-img" src="${src}" alt="${cap.name || ''}" draggable="false">`);
+      responsivePicture(src, {
+        className: 'portrait-lightbox-img', sizes: 'min(78vw, 360px)',
+        alt: cap.name || '', eager: true, priority: true,
+      }));
     if (cap.mood) frame.append(el('span', 'portrait-lightbox-mood', cap.mood));
     box.append(frame);
     if (cap.name || cap.sub || cap.note) {

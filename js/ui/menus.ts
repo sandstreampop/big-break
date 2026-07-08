@@ -9,7 +9,7 @@
 import * as save from '../save.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled } from '../audio.js';
 import { track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from '../analytics.js';
-import { el, $, activatable, btn, show, openPortrait, reducedMotion, hashStr, todayStr, weekStr } from './dom.js';
+import { el, $, activatable, btn, show, openPortrait, responsivePicture, reducedMotion, hashStr, todayStr, weekStr } from './dom.js';
 import { activePack, PATHS, PRES, meta, run, setRun, setMeta, failLabelFor } from './context.js';
 import { showHelp } from './inspectors.js';
 import { nav } from './nav.js';
@@ -231,7 +231,9 @@ function renderRoster() {
     for (const m of group.members) {
       const cell = el('div', 'roster-cell' + (m.cls ? ' ' + m.cls : ''));
       const face = el('div', 'roster-face',
-        m.portraitSrc ? `<img class="face-portrait" src="${m.portraitSrc}" alt="" draggable="false">` : (m.face || ''));
+        m.portraitSrc
+          ? responsivePicture(m.portraitSrc, { className: 'face-portrait', sizes: '84px' })
+          : (m.face || ''));
       cell.append(face);
       cell.append(el('div', 'roster-name', m.name));
       if (m.sub) cell.append(el('div', 'roster-shape', m.sub));
