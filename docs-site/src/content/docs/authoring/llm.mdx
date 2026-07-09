@@ -1,0 +1,168 @@
+---
+title: Authoring with an LLM
+description: The official prompt for generating a game pack from a concept, and the validate → report → repair loop that makes generated content safe to ship.
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+The pack format is a data contract, which makes it a good **generation
+target**: an LLM writes the content (a manifest, a deck, the words) while the
+engine keeps the guarantees (a stable loop, seeded replay, saves, balance
+gates). This page is the paved road for that — a prompt that tells a model
+exactly what to produce, and the loop that rejects bad output automatically.
+
+<Aside type="caution" title="The one rule">
+The model writes **packs**, never engine code. Generated content is hostile
+input until it passes `validatePack`, the linter, and the simulation gates —
+that's what lets you accept it at all. See
+[Validation & the repair loop](/big-break/docs/authoring/validation/).
+</Aside>
+
+## The loop
+
+<Steps>
+
+1. **Generate.** Give the model the prompt below with your concept filled in.
+   It produces one TypeScript file — a pack shaped exactly like
+   `js/packs/probe.ts`, just bigger.
+
+2. **Register.** Drop the file in `js/packs/`, add one line to
+   `js/packs/registry.ts`, and build:
+
+   ```bash
+   npm run build
+   ```
+
+3. **Validate.** Structural + semantic contract, with repairable errors:
+
+   ```bash
+   node tools/validate-packs.mjs my-game
+   ```
+
+4. **Repair.** Paste any errors *verbatim* back to the model — each one names
+   the offending path, the declared vocabulary, and a suggested fix; models
+   repair reliably from them. Rebuild, revalidate, repeat until clean.
+
+5. **Read the report.** Does it *play* well?
+
+   ```bash
+   node tools/pack-report.mjs my-game
+   ```
+
+   Dead cards, unused stats, out-of-band success rates, and one-path-dominates
+   are all tuning conversations to have with the model ("act 2 has 4 open
+   cards and needs ~12 more", "success is 61% against a 25–40 band — tighten
+   the winGates").
+
+6. **Gate it.** The same bars the shipping games clear:
+
+   ```bash
+   node tools/simulate-pack.mjs my-game --check
+   node tools/lint-content.mjs
+   node --test test/*.test.mjs
+   ```
+
+7. **Play it.** Add a `my-game.html` entry and the data-driven build serves it
+   at `/my-game/` (see [Building & shipping](/big-break/docs/shipping/build/)).
+
+</Steps>
+
+Accept the pack only when every step is green. That is the whole trust model:
+the model is creative, the gates are suspicious, and nothing merges on vibes.
+
+## The official prompt
+
+Copy this whole block, fill in the four `<<…>>` slots, and give it to the
+model together with the contents of `js/packs/probe.ts` (the smallest real
+pack — it is the best few-shot example there is).
+
+````text
+You are authoring a CONTENT PACK for Big Break, a swipe-left/right narrative
+roguelike engine. You write pack DATA only — never engine code. Produce ONE
+complete TypeScript module, no prose around it.
+
+CONCEPT
+- Theme: <<e.g. a young dragon learning to guard a mountain village>>
+- Audience/tone: <<e.g. family-safe, warm, a little funny — never cruel>>
+- Stats (3–4, the 0–100 meters choices roll against): <<e.g. bravery, kindness, magic>>
+- Resources (1–3 unbounded counters): <<e.g. renown, gold>>
+
+THE CONTRACT (violations are rejected by an automated validator)
+1. Shape: export a `Pack` object with `id`, `manifest`, `events`,
+   `tutorialEvents: []`, `loadouts` (≥1, one with `unlockedByDefault: true`),
+   and `loadoutById`. Mirror js/packs/probe.ts exactly, including the
+   `declare module '../types.js'` Effect augmentation that declares your
+   stat/resource keys.
+2. Manifest: `stats`, `resources`, `segments` (e.g. three acts
+   `[{ length: 8, crossroads: true }, { length: 12 }, { length: 8 }]` — the
+   crossroads is where the player commits to a path; never on the last
+   segment), 1–3 `paths` with matching `winGates` (the finale's bars),
+   `statMeta` with a { name, icon } for every stat PLUS 'burnout' (the
+   engine's built-in attrition meter — rename it in your theme's words, e.g.
+   'Doubt'), and `balanceBand: { successMin: 25, successMax: 40 }`.
+3. Events: each is { id (unique), act (1..segments.length, or an array),
+   prompt (the situation, ≤220 chars), recap (a one-line reminder), choices:
+   { left, right } }. EVERY choice has label, optional tags,
+   governingStats (keys MUST be manifest stats — never resources), and
+   outcomes with ALL THREE tiers: bad, good, incredible — each { text,
+   effects }.
+4. Effects may ONLY use: your declared stats and resources, `burnout`
+   (positive = wear, negative = recovery), `addFlag`/`removeFlag` (strings),
+   and `chainEventId` (must name a real event id — use sparingly for 2-card
+   beats). Magnitudes: stats ±2..9, burnout ±2..8. Good > bad; incredible is
+   the showpiece.
+5. Gating (`requires`) is optional and only: { flagsAll, flagsNone,
+   burnoutMin, min: { <stat-or-resource>: n }, max: { … }, anyOf: […] }.
+   Any flag you require must be set by some card's addFlag. Keep well over
+   half of each act's cards ungated.
+6. Volume: enough cards per act to outrun the segment lengths with variety —
+   at least 2× each act's length, more in act 1. Every path gets a few
+   `pathAffinity` cards; one `finaleCard: true` climax card per path
+   (chain-delivered; give it weight 0 and the path's id in pathAffinity).
+7. Voice: prompts are concrete moments, not summaries; outcomes SHOW what
+   happens (a said line, a physical beat) rather than tell ("things went
+   well" is banned). At most one exclamation mark per text; no "!!" or "!?".
+   Family-safe if the audience says so.
+
+OUTPUT
+- One fenced TypeScript code block containing the complete module.
+- No commentary before or after.
+- I will run an automated validator and paste its errors back; when I do,
+  return the complete corrected module (not a diff).
+````
+
+## Repairing from validator output
+
+The errors are written for exactly this hand-off. A real exchange looks like:
+
+```text
+✗ [governing-stat-unknown] events[12] "gate_dragon".choices.right.governingStats
+  Event "gate_dragon" governs its right choice on "renown", but "renown" is
+  not a declared stat — it reads as aptitude 0 while its weight still counts,
+  silently dragging the roll down. Declared stats: bravery, kindness, magic.
+  Suggested fix: Govern on one of the declared stats ("renown" is a resource;
+  resources cannot govern rolls).
+```
+
+Paste that back untouched. The model swaps in a stat, you rebuild and rerun —
+two or three iterations typically reach `PACK CONTRACT CLEAN`. Then move the
+conversation from *correctness* to *feel* with the
+[pack report](/big-break/docs/authoring/validation/#the-report-stage-3--4-in-one-page):
+success band, dead cards, run length, unused stats.
+
+<Aside type="tip" title="What the engine gives you for free">
+Everything the prompt doesn't mention is already handled: seeded resume-safe
+runs, the tier roll (aptitude + burnout + pity + encores), act structure and
+the crossroads, fail states, Legacy Points, saves, the phone UI, offline play.
+The model's job is only the part it's actually good at — the world, the words,
+and the numbers on the cards.
+</Aside>
+
+## Scaling past one file
+
+A generated pack that earns its keep can grow into the full folder shape the
+shipping games use (`js/packs/<id>/` with a manifest, deck modules, plugins,
+and a presenter) — see
+[Case study: the villa pack](/big-break/docs/shipping/second-genre/). Plugins
+and presenter hooks are a *later* conversation with the model, one subsystem
+at a time, each landing behind the same gates.

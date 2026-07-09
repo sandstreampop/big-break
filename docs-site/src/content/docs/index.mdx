@@ -3,7 +3,7 @@ title: Big Break Engine
 description: Build your own swipe-roguelike season. A game is a Pack.
 template: splash
 hero:
-  tagline: A swipe-roguelike SDK. A game is a <em>Pack</em> — adding a genre edits new files only, no shared type, no engine line.
+  tagline: An LLM-friendly content-pack engine for generating, validating, and running replayable narrative games. A game is a <em>Pack</em> — adding one edits new files only, no shared type, no engine line.
   actions:
     - text: Quickstart — your first pack
       link: /big-break/docs/quickstart/
@@ -51,8 +51,10 @@ const rolled: Tier = 'good';
     the prose samples are the real pack source, type-checked at build.
   </Card>
   <Card title="Ship with a safety net" icon="rocket">
-    Deterministic sims, golden masters, cross-pack invariants, a content
-    linter, and a headless-browser smoke test. Build the same net for your game.
+    A pack-contract validator with LLM-repairable errors, deterministic sims,
+    golden masters, cross-pack invariants, a content linter, and a
+    headless-browser smoke test. Generated packs are hostile input until the
+    net says otherwise.
   </Card>
 </CardGrid>
 
@@ -63,6 +65,11 @@ const rolled: Tier = 'good';
 - **Want the mental model first?** Read
   [The run lifecycle](/big-break/docs/concepts/lifecycle/) and
   [The Pack contract](/big-break/docs/concepts/pack/).
+- **Generating a game with a model?**
+  [Authoring with an LLM](/big-break/docs/authoring/llm/) is the official
+  prompt + repair loop, and
+  [Validation & the repair loop](/big-break/docs/authoring/validation/) is the
+  contract that makes generated content safe to accept.
 - **Looking for a type or function?** The
   [types reference](/big-break/docs/reference/types/readme/) covers the
   pack-authoring contract; the

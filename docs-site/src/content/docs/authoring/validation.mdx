@@ -1,0 +1,119 @@
+---
+title: Validation & the repair loop
+description: The pack contract's runtime half — schema + semantic checks with errors an author (or an LLM) can repair from, plus the report and balance tools on top.
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+TypeScript checks the pack a **developer** writes, at compile time. It cannot
+check the pack an **LLM generates**, a teammate imports, or a tool assembles —
+those are external input even when the file lands in your repo. The runtime
+half of the contract is `validatePack`, and the rule is simple:
+
+> **A generated or imported pack is hostile input until it passes.**
+
+## The four stages
+
+<Steps>
+
+1. **Schema** — is the pack *shaped* correctly? Required fields, value types,
+   all three outcome tiers on every choice, a well-formed segment list.
+
+2. **Semantics** — do its *references resolve*? Every effect verb is a declared
+   stat, resource, core verb, or plugin-owned verb; every `requires` key is a
+   neutral predicate or plugin-registered; `chainEventId` targets exist;
+   `governingStats` name real stats; `winGates`/`failStates` keys resolve;
+   `act` values fit the declared segments; paths, loadouts, interstitials, and
+   the tutorial setup all point at things that exist.
+
+3. **Simulation** — does it *play*? Thousands of seeded runs on the
+   genre-neutral driver: runs terminate, no act runs dry, no card is
+   unreachable, the success rate sits in the pack's own `balanceBand`.
+
+4. **Report** — everything above, rendered in language an author or an LLM can
+   repair from, worst first.
+
+</Steps>
+
+Stages 1–2 are `validatePack` (`js/validate.ts` — engine-side, genre-neutral,
+DOM-free). Stages 3–4 are the tooling ring on top of it.
+
+## Anatomy of an error
+
+Every issue is designed to be pasted straight back into whoever (or whatever)
+wrote the pack — it names the offending path, states the defect, lists the
+declared vocabulary it failed against, and suggests the closest match:
+
+```text
+✗ [effect-verb-unknown] events[17] "dragon-at-the-gate" → choices.left.outcomes.good.effects
+  Event "dragon-at-the-gate" uses effect key "courage", but "courage" is not
+  declared anywhere — the engine would silently drop it. An effect key must be
+  a declared stat (bravery, kindness, magic), a resource (renown), a core verb
+  (burnout, addFlag, removeFlag, chainEventId, addPromise), or a plugin-owned
+  verb (none declared).
+  Suggested fix: use "bravery" (closest match), or declare "courage" in
+  manifest.stats/resources or a plugin's effectVerbs.
+```
+
+An issue is `{ severity, code, path, message, fix }` — the `code` is a stable
+machine key, so a harness can branch on it; the `message` is self-contained, so
+a human (or a model) never needs engine source to act on it.
+
+<Aside type="note" title="Errors block; warnings don't">
+`ok` is true at zero **errors**. Warnings (a weight-0 card nothing can deal, a
+priced choice with no `costResource`, an interstitial pointing at a normal deck
+card) are ship-with-eyes-open signals.
+</Aside>
+
+## Running it
+
+```bash
+npm run validate                        # every registered pack (CI runs this)
+node tools/validate-packs.mjs my-game   # just yours, while iterating
+```
+
+Programmatically — the same function, through the public surface:
+
+```js
+import { validatePack, formatValidation } from './dist/js/api.js';
+import { myPack } from './dist/js/packs/my-game/pack.js';
+
+const report = validatePack(myPack);
+if (!report.ok) console.error(formatValidation(myPack.id, report));
+```
+
+`validatePack` **never throws** — a hostile value (a throwing getter, a BigInt
+payload, a circular structure) comes back as an issue in the list, not an
+exception, because a repair loop wants the whole list every time.
+
+## The report: stage 3 + 4 in one page
+
+```bash
+npm run report -- my-game        # or: node tools/pack-report.mjs my-game
+node tools/pack-report.mjs my-game --json   # machine/LLM-readable
+```
+
+The report answers "is this pack sound, and how does it actually play?" in
+repair-first order: contract issues, the taxonomy at a glance, deck counts per
+segment, **vocabulary usage** (including declared stats no card ever moves —
+dead taxonomy), then a seeded Monte-Carlo: run length, outcome mix against the
+pack's own `balanceBand`, fail-state rates, path pick/win rates, dead and rare
+cards, and finale averages. Deterministic by default — two reports on the same
+build are byte-identical, so a diff means the *pack* changed.
+
+## The gates behind you
+
+Everything above also runs as CI teeth, so the contract can't drift:
+
+| Gate | What it holds |
+|---|---|
+| `node tools/validate-packs.mjs` | every registered pack passes stages 1–2 |
+| `node tools/simulate-pack.mjs <id> --check` | success band (from your manifest's `balanceBand`), zero dead ungated cards, zero deck-dry acts |
+| `node --test test/*.test.mjs` | golden masters + cross-pack invariants (plugin ownership, gate resolution, sim/browser parity) |
+| `node tools/lint-content.mjs` | the words: taste floors, tokens, style |
+
+Declare your band in the manifest and the balance gate reads it — no tool edit:
+
+```ts
+balanceBand: { successMin: 25, successMax: 40 },
+```

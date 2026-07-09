@@ -138,7 +138,30 @@ engine edit:
 
 <Code code={whole(registryRaw)} lang="ts" title="js/packs/registry.ts" mark={['probePack']} />
 
-## 6. Run it
+## 6. Validate it
+
+Before you run a card, prove the contract holds. The validator checks the
+shape (schema) and every reference (semantics — effect verbs, requires keys,
+chain targets, gate keys, acts vs segments), and its errors name the declared
+vocabulary plus a suggested fix, so a typo is a ten-second repair:
+
+```bash
+npm run build && node tools/validate-packs.mjs probe
+# ✓ [probe] pack contract OK (0 warnings)
+```
+
+While tuning, the one-page report adds the numbers (deck counts, vocabulary
+usage, a seeded outcome mix):
+
+```bash
+node tools/pack-report.mjs probe
+```
+
+See [Validation & the repair loop](/big-break/docs/authoring/validation/) for
+the whole net — and if a model is writing your cards,
+[Authoring with an LLM](/big-break/docs/authoring/llm/) is the paved road.
+
+## 7. Run it
 
 The repo ships a **genre-agnostic** driver that reads everything from your
 manifest. Play a fully deterministic career from a seed and inspect the finale:

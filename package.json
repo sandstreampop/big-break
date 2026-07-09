@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Big Break — a genre-agnostic swipe-roguelike engine with swappable content packs, powering a music-career game.",
+  "description": "Big Break — an LLM-friendly content-pack engine for generating, validating, and running replayable narrative (swipe-roguelike) games; ships a music-career game and a villa game on one genre-agnostic core.",
   "scripts": {
     "build": "node tools/build.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.strict.json",

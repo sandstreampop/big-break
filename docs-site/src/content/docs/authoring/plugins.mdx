@@ -108,6 +108,49 @@ finale — reusing the engine's own song machinery:
 
 <Code code={region(songsRaw, 'act-break')} lang="ts" title="js/packs/music/plugins/songs.ts" />
 
+## What a plugin OWNS (the contract, in full)
+
+Beyond the lifecycle hooks, a plugin makes three kinds of **declarations** —
+each one is checked by the pack validator and the cross-pack invariants, so an
+undeclared use fails the build instead of silently no-opping:
+
+- **`effectVerbs`** — the effect keys this plugin handles in `onEffect`. A
+  card may only name a manifest stat/resource, a core verb (`burnout`,
+  `addFlag`, `removeFlag`, `chainEventId`, `addPromise`), or a verb exactly
+  one plugin declares here.
+- **`requires`** — the deck-eligibility predicates this plugin registers:
+  `{ venueIs: (state, arg) => boolean }` lets a card gate on
+  `requires: { venueIs: 'basement' }`. Each key has exactly **one** owner
+  across the pack (two plugins claiming the same key is a validation error).
+  Predicates must be pure and consume no RNG — the deck evaluates them freely.
+- **`stateDefaults`** — the run-state slots this plugin owns, with fresh-run
+  defaults. `newRun` applies them generically (arrays copied per run), and
+  keys materialize top-level on `state`, so `gateValue` resolves them — a
+  `winGates`/`failStates`/`requires` gate can read a plugin-owned counter with
+  no engine change.
+
+## The modify-hooks (bending a core mechanic)
+
+Where the lifecycle hooks *react*, the modify-hooks let a subsystem *bend* a
+mechanic the engine keeps. The engine folds each in priority order; returning
+`undefined` (or omitting the hook) contributes the fold's identity, so an
+unimplemented hook costs nothing:
+
+| Hook | Fold | Bends |
+|---|---|---|
+| `modifyRoll(state, choice, ctx)` | sum | additive roll bonus (push items whose bonus fired onto `ctx.applied`) |
+| `modifyJitter(state, [lo,hi], ctx)` | chain | the roll's jitter band |
+| `modifyBurnout(state, v, ctx)` | chain | a card's burnout delta |
+| `gainHooks(state)` | collect | per-resolution multiplier bags (`statGainMult`, `burnoutGainMult`, `burnoutHealMult`) |
+| `weightDeck(state, ev, w)` | chain | a card's draw weight |
+| `refineDeck(state, pool, ctx)` | chain | force a scheduled category into the pool (the shop-slot mechanism) |
+| `modifyActLength(state, act, n)` | chain | how many cards a segment runs |
+| `scoreMult(state)` | product | a Legacy Points multiplier |
+| `blocksEncore(state)` | OR | disable the Encore mechanic this run |
+
+`modifyRoll` is also called for the **risk tell** (the odds preview), so it
+must be pure and consume no RNG.
+
 ## The pattern to copy
 
 `favor` above and `songs` are the same shape at two sizes. To add a subsystem:

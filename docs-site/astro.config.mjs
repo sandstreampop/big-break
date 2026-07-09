@@ -104,6 +104,8 @@ export default defineConfig({
             { label: 'Subsystems (plugins)', slug: 'authoring/plugins' },
             { label: 'Progression: perks, interstitials, tutorial', slug: 'authoring/progression' },
             { label: 'The presenter', slug: 'authoring/presenter' },
+            { label: 'Validation & the repair loop', slug: 'authoring/validation' },
+            { label: 'Authoring with an LLM', slug: 'authoring/llm' },
           ],
         },
         {

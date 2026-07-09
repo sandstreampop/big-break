@@ -1,13 +1,15 @@
 # BIG BREAK
 
-**An engine, and a game built on it.** A swipe-left/right roguelike *core* —
-seeded, DOM-free, genre-agnostic — with swappable **content packs**. Pack #1 is
-a satirical music-career game. The core carries no genre shape, so another game
-can ride the same engine and the same UI shell without forking either.
+**An LLM-friendly content-pack engine for generating, validating, and running
+replayable narrative games.** The *core* is a swipe-left/right roguelike —
+seeded, DOM-free, genre-agnostic — and a game is a swappable **content pack**:
+a data contract a human (or a model) authors, a validator holds to account,
+and the engine runs. Two shipped games ride it today without forking anything.
 
 **Play (no install; phone Safari/Chrome, works offline as a PWA):**
 
 - 🎸 **Big Break** — the music game: https://sandstreampop.github.io/big-break/
+- 🌴 **Love Island** — the villa game: https://sandstreampop.github.io/big-break/love-island/
 
 **Build a game on the engine:** 📚 **Docs** — https://sandstreampop.github.io/big-break/docs/
 
@@ -44,6 +46,31 @@ it.
                  │  songs plugins      │      │  (no engine edits)  │
                  └─────────────────────┘      └─────────────────────┘
 ```
+
+---
+
+## Author a pack (human or LLM)
+
+The pack format is the product boundary, and it is **validated, not assumed**:
+
+```bash
+npm run build
+node tools/validate-packs.mjs my-game   # schema + semantics, repairable errors
+node tools/pack-report.mjs my-game      # contract → deck → seeded simulation
+node tools/simulate-pack.mjs my-game --check   # balance gate (your manifest's band)
+```
+
+`validatePack` treats a generated or imported pack as hostile input: every
+error names the offending path, the declared vocabulary it failed against, and
+a suggested fix — written to be pasted straight back into an LLM. The docs
+ship the official generation prompt and the repair loop:
+[Authoring with an LLM](https://sandstreampop.github.io/big-break/docs/authoring/llm/) ·
+[Validation](https://sandstreampop.github.io/big-break/docs/authoring/validation/) ·
+[Quickstart](https://sandstreampop.github.io/big-break/docs/quickstart/).
+
+The public authoring surface is one import (`js/api.ts`): `definePack` ·
+`validatePack` · `createEngine(pack)` (isolated engine instances — no global
+active-pack state) plus the boundary types.
 
 ---
 
