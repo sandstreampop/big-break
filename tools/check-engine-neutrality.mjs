@@ -103,6 +103,9 @@ function scanFile(path, extraAllow) {
 const TARGETS = [
   { label: 'js/engine.ts', path: resolve(root, 'js/engine.ts'), allow: new Set() },
   { label: 'js/types.ts', path: resolve(root, 'js/types.ts'), allow: TYPES_ALLOW },
+  // The pack-contract validator is shared mechanism like the engine: it reads
+  // every vocabulary off the candidate pack itself, so it must name none.
+  { label: 'js/validate.ts', path: resolve(root, 'js/validate.ts'), allow: new Set(['pathProgress']) },
 ];
 
 let failed = 0;
@@ -130,7 +133,7 @@ for (const t of TARGETS) {
 import { readdirSync } from 'node:fs';
 const SHARED_ROOT = [
   'engine.ts', 'types.ts', 'config.ts', 'save.ts', 'art.ts', 'audio.ts',
-  'analytics.ts', 'platform.ts', 'version.ts', 'ui.ts',
+  'analytics.ts', 'platform.ts', 'version.ts', 'ui.ts', 'validate.ts',
 ]; // shared js/*.ts (entry points main*.ts + globals.d.ts are the exceptions)
 const shellFiles = [
   ...readdirSync(resolve(root, 'js/ui')).filter((f) => f.endsWith('.ts')).map((f) => `js/ui/${f}`),
@@ -154,5 +157,5 @@ if (failed || shellLeaks) {
   process.exit(1);
 }
 
-console.log(`ENGINE NEUTRAL — js/engine.ts + js/types.ts name none of ${blocked.size} pack tokens across ${GAME_PACKS.length} packs (types allowlist: ${TYPES_ALLOW.size}).`);
+console.log(`ENGINE NEUTRAL — ${TARGETS.map((t) => t.label).join(' + ')} name none of ${blocked.size} pack tokens across ${GAME_PACKS.length} packs (types allowlist: ${TYPES_ALLOW.size}).`);
 console.log(`SHELL NEUTRAL — ${shellFiles.length} shell/shared files import nothing under js/packs/ (packs compose only in main*.ts + registry.ts).`);

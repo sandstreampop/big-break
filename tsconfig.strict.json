@@ -27,6 +27,7 @@
     "js/engine.ts",
     "js/types.ts",
     "js/config.ts",
-    "js/platform.ts"
+    "js/platform.ts",
+    "js/validate.ts"
   ]
 }

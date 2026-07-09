@@ -268,10 +268,22 @@ function meetsRequires(ev: GameEvent, state: RunState) {
 }
 
 // The neutral keys requiresOk resolves inline; every other key is dispatched to
-// a pack-registered predicate. Kept in sync with the core Requires type.
-const REQUIRES_NEUTRAL = new Set([
+// a pack-registered predicate. Mirrors the core Requires type, and is EXPORTED
+// so the validator (js/validate.ts), the cross-pack invariants, and the content
+// linter all check against the engine's real vocabulary instead of a copy.
+export const REQUIRES_NEUTRAL_KEYS: readonly string[] = [
   'anyOf', 'flagsAll', 'flagsNone', 'burnoutMin', 'stats', 'min', 'max',
-]);
+];
+const REQUIRES_NEUTRAL = new Set(REQUIRES_NEUTRAL_KEYS);
+
+// The genre-neutral effect verbs the CORE owns: the engine's burnout slot plus
+// flag/chain/promise control. Every other key an eligible card may name must be
+// a manifest stat/resource or a verb exactly one plugin declares (effectVerbs).
+// Exported for the same reason as REQUIRES_NEUTRAL_KEYS: the "no unknown verb"
+// checks guard the engine's real set, not a copy of it.
+export const CORE_EFFECT_VERBS: readonly string[] = [
+  'burnout', 'addFlag', 'removeFlag', 'chainEventId', 'addPromise',
+];
 
 // The merged predicate registry for the active pack — each plugin's `requires`
 // map contributes its keys, and requiresOk dispatches a non-neutral key here.

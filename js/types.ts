@@ -811,6 +811,26 @@ export interface Pack {
   summarize?: (state: RunState) => Record<string, any>;
 }
 
+// ---------- Pack validation (the pack contract's runtime half) ----------
+// TypeScript checks a hand-authored pack at compile time; validatePack
+// (js/validate.ts) checks a GENERATED or imported pack at tool/run time —
+// LLM output is external input even when it lands in the repo. One issue is
+// one repairable defect: a stable machine code, the path to the offending
+// field, a one-sentence message that names the declared vocabulary it failed
+// against, and (where one is plausible) a suggested fix.
+export interface PackIssue {
+  severity: 'error' | 'warning';
+  code: string;    // stable machine key, e.g. 'effect-verb-unknown'
+  path: string;    // where, e.g. 'events[17] "dragon-at-the-gate" → …effects'
+  message: string; // the defect, self-contained (includes declared vocabulary)
+  fix?: string;    // the actionable repair, pasteable back into an LLM
+}
+export interface PackValidation {
+  ok: boolean; // zero errors (warnings don't block)
+  errors: PackIssue[];
+  warnings: PackIssue[];
+}
+
 // The flow step advance() returns — what the UI should render next. A
 // discriminated union so a consumer's switch is exhaustively checkable (the
 // old untyped return had a doc-comment that even omitted the tutorialEnd case).

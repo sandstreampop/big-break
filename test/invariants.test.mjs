@@ -92,13 +92,13 @@ for (const pack of PACKS) {
   // silent no-op the engine would swallow; this catches it. ──
   test(`[${pack.id}] no eligible card names an unknown effect verb`, () => {
     // The genuinely genre-neutral effect verbs — the engine's burnout slot plus
-    // flag/chain/promise control. Every music structural verb (setInstrument,
-    // grant/removeBandmate, grantHustle, removeGear, grantGear) and chartTitle
-    // has left this list for its owning plugin's effectVerbs (WP4); that the
-    // list SHRANK to this is the proof the leak is gone.
-    const CORE_VERBS = ['burnout', 'addFlag', 'removeFlag', 'chainEventId', 'addPromise'];
+    // flag/chain/promise control, imported from the engine so this guards the
+    // REAL set. Every music structural verb (setInstrument, grant/removeBandmate,
+    // grantHustle, removeGear, grantGear) and chartTitle has left this list for
+    // its owning plugin's effectVerbs (WP4); that the list SHRANK to this is the
+    // proof the leak is gone.
     const known = new Set([
-      ...pack.manifest.stats, ...pack.manifest.resources, ...CORE_VERBS,
+      ...pack.manifest.stats, ...pack.manifest.resources, ...engine.CORE_EFFECT_VERBS,
       ...(pack.plugins || []).flatMap((p) => p.effectVerbs || []),
     ]);
     const scan = (effects, where) => {
@@ -129,8 +129,7 @@ for (const pack of PACKS) {
   // it. Sibling of the effect-verb invariant, and the proof that the core
   // Requires names no genre's subsystems. ──
   test(`[${pack.id}] no eligible card names an unknown requires key`, () => {
-    const NEUTRAL = ['anyOf', 'flagsAll', 'flagsNone', 'burnoutMin',
-      'stats', 'min', 'max'];
+    const NEUTRAL = engine.REQUIRES_NEUTRAL_KEYS;
     // Merge every plugin's predicate registry; assert no two plugins claim the
     // same key ("registered by exactly one plugin").
     const owners = new Map();

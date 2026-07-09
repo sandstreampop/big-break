@@ -82,8 +82,17 @@
   `tools/gen-probe-golden.mjs`).
 - Cross-pack invariants (`test/invariants.test.mjs`) guard the class of bug
   per-pack goldens are blind to (a core that behaves differently per genre).
+- **The pack contract is validated, not assumed.** `validatePack`
+  (`js/validate.ts`) is the runtime half of the authoring contract: schema +
+  semantic checks (unknown effect verbs/requires keys, dangling chains,
+  unresolvable gates, out-of-range acts, missing tiers…) with author-facing,
+  LLM-repairable errors (path + declared vocabulary + suggested fix).
+  TypeScript guards hand-written packs at compile time; this guards *generated
+  or imported* packs — treat those as hostile input until
+  `node tools/validate-packs.mjs` (a `npm run check` gate) passes.
 - Before pushing a balance/content change: `npm run build`, then
-  `node tools/lint-content.mjs && node tools/simulate.mjs --check &&
+  `node tools/validate-packs.mjs && node tools/lint-content.mjs &&
+  node tools/simulate.mjs --check &&
   node --test && node test/ui/smoke.mjs && node test/ui/crowding.mjs &&
   node test/ui/mobile-matrix.mjs`
   (`npm run check` runs all but `node --test`; `npm run ci` runs both, and

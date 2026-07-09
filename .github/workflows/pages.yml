@@ -74,6 +74,12 @@ jobs:
         # manifest + plugins, so a third genre is policed automatically. Runs
         # against the built registry in dist/.
         run: node tools/check-engine-neutrality.mjs
+      - name: Pack contract gate (validatePack over every registered pack)
+        # The runtime half of the authoring contract (js/validate.ts): schema +
+        # semantic validation with author-facing errors. Generated/imported
+        # packs are hostile input until this passes; the shipped packs are held
+        # to the same bar so the contract can't drift.
+        run: node tools/validate-packs.mjs
       - name: Content lint
         run: node tools/lint-content.mjs
       - name: Balance & reach gate (music, against dist/)

@@ -39,10 +39,11 @@ import { MUSIC_TASTE } from '../docs/games/music/taste.mjs';
 // flat corpus so the feed floor can lint it (bodies + Narrator chrome).
 import { feedBodyCorpus, feedChromeCorpus } from '../dist/js/packs/love-island/feeds.js';
 
-// The engine's NEUTRAL deck-eligibility vocabulary (the core Requires type);
-// each pack adds the predicate keys its own plugins register (Plugin.requires),
+// The engine's NEUTRAL deck-eligibility vocabulary, imported from the engine's
+// own exported set (single source — a drift here was a silent lint hole); each
+// pack adds the predicate keys its own plugins register (Plugin.requires),
 // mirroring how requiresOk actually dispatches. 'gear' is a legacy music key.
-const NEUTRAL_REQ = ['anyOf', 'flagsAll', 'flagsNone', 'burnoutMin', 'stats', 'min', 'max', 'gear'];
+const NEUTRAL_REQ = [...engine.REQUIRES_NEUTRAL_KEYS, 'gear'];
 const knownReqFor = (pack) => new Set([
   ...NEUTRAL_REQ,
   ...(pack.plugins || []).flatMap((p) => Object.keys(p.requires || {})),

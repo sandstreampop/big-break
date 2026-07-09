@@ -5024,7 +5024,7 @@ export const EVENTS2: GameEvent[] = [
       },
       "right": {
         "label": "Let them honor you",
-        "governingStats": { "fame": 1, "network": 0.3 },
+        "governingStats": { "network": 1, "cred": 0.3 },
         "tags": ["fame", "mainstream"],
         "outcomes": {
           "bad": {
