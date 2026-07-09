@@ -8,17 +8,17 @@
     "results": [
       [
         "swipe",
-        1965,
+        1998,
         10
       ],
       [
         "$pageview",
-        217,
+        235,
         22
       ],
       [
         "$pageleave",
-        164,
+        178,
         7
       ],
       [
@@ -28,7 +28,7 @@
       ],
       [
         "run_start",
-        84,
+        89,
         5
       ],
       [
@@ -63,8 +63,8 @@
     "results": [
       [
         "2026-07-02T11:11:48.171000Z",
-        "2026-07-07T22:51:32.943000Z",
-        2709,
+        "2026-07-08T19:34:38.303000Z",
+        2779,
         22
       ]
     ]
@@ -88,12 +88,12 @@
       ],
       [
         "2.3",
-        411,
+        449,
         4
       ],
       [
         null,
-        381,
+        413,
         22
       ],
       [
@@ -153,6 +153,13 @@
         0,
         53,
         3
+      ],
+      [
+        "2026-07-08",
+        5,
+        0,
+        33,
+        1
       ]
     ]
   },
@@ -188,7 +195,7 @@
         "prod",
         "false",
         9,
-        1061
+        1131
       ]
     ]
   },
@@ -203,7 +210,7 @@
       [
         "sandstreampop.github.io",
         21,
-        2708,
+        2778,
         52
       ],
       [
@@ -224,7 +231,7 @@
       [
         "SE",
         21,
-        2708
+        2778
       ],
       [
         "NL",
@@ -247,7 +254,7 @@
         "Mobile Safari",
         "iOS",
         12,
-        2628
+        2698
       ],
       [
         "Mobile",
@@ -322,7 +329,7 @@
         1
       ],
       [
-        6,
+        7,
         1
       ]
     ]
@@ -382,20 +389,28 @@
         26
       ],
       [
-        "li_arrival",
-        33,
-        64,
-        36,
-        64,
-        30
-      ],
-      [
         "a3_shop_last",
         37,
         62,
         38,
         62,
         0
+      ],
+      [
+        "li_arrival",
+        37,
+        62,
+        38,
+        62,
+        32
+      ],
+      [
+        "li_enc_rival_1",
+        22,
+        59,
+        41,
+        59,
+        32
       ],
       [
         "coping_50",
@@ -406,36 +421,28 @@
         3
       ],
       [
-        "li_enc_rival_1",
-        21,
-        57,
-        43,
-        57,
-        33
-      ],
-      [
-        "li_daybed_1",
-        31,
-        45,
-        55,
-        55,
-        26
-      ],
-      [
-        "li_enc_partner_3close",
-        20,
-        55,
-        45,
-        55,
-        15
-      ],
-      [
         "li_bomb1",
         24,
         54,
         46,
         54,
         8
+      ],
+      [
+        "li_enc_partner_3close",
+        24,
+        54,
+        46,
+        54,
+        17
+      ],
+      [
+        "li_daybed_1",
+        35,
+        49,
+        51,
+        51,
+        23
       ]
     ]
   },
@@ -898,6 +905,14 @@
         22
       ],
       [
+        "li_enc_partner_2_real",
+        16,
+        75,
+        25,
+        75,
+        12
+      ],
+      [
         "a2_playlist",
         12,
         75,
@@ -936,14 +951,6 @@
         25,
         75,
         12
-      ],
-      [
-        "li_enc_partner_2_real",
-        14,
-        71,
-        29,
-        71,
-        14
       ],
       [
         "a1_algorithm_oracle",
@@ -1263,15 +1270,15 @@
     "results": [
       [
         1,
-        650,
+        680,
         16,
-        78,
+        77,
         4,
-        2
+        3
       ],
       [
         2,
-        710,
+        713,
         7,
         74,
         17,
@@ -1721,7 +1728,7 @@
     "results": [
       [
         "normal",
-        76,
+        81,
         4
       ],
       [
@@ -1802,7 +1809,7 @@
       ],
       [
         null,
-        14
+        19
       ],
       [
         "chipfolk",
@@ -2818,7 +2825,7 @@
       ],
       [
         "li_arrival",
-        33
+        37
       ],
       [
         "li_arrival_bomb",
@@ -2829,11 +2836,23 @@
         1
       ],
       [
+        "li_bed_share_night_one",
+        1
+      ],
+      [
         "li_bomb1",
         24
       ],
       [
+        "li_bomb1_formate",
+        1
+      ],
+      [
         "li_bomb1_mystery",
+        2
+      ],
+      [
+        "li_bomb1_yourtype",
         1
       ],
       [
@@ -2847,6 +2866,10 @@
       [
         "li_bomb2_steal",
         4
+      ],
+      [
+        "li_bombshell_outside",
+        1
       ],
       [
         "li_br_catchphrase",
@@ -2918,7 +2941,7 @@
       ],
       [
         "li_daybed_1",
-        31
+        35
       ],
       [
         "li_daybed_2",
@@ -2927,6 +2950,10 @@
       [
         "li_daybed_3",
         10
+      ],
+      [
+        "li_daybed_nap",
+        1
       ],
       [
         "li_dressing_room_summit",
@@ -2966,11 +2993,11 @@
       ],
       [
         "li_enc_partner_1_game",
-        7
+        8
       ],
       [
         "li_enc_partner_1_slow",
-        4
+        7
       ],
       [
         "li_enc_partner_1_sweet",
@@ -2978,19 +3005,23 @@
       ],
       [
         "li_enc_partner_2_real",
-        14
+        16
       ],
       [
         "li_enc_partner_2_show",
-        7
+        9
       ],
       [
         "li_enc_partner_3close",
-        20
+        24
+      ],
+      [
+        "li_enc_partner_handshake",
+        1
       ],
       [
         "li_enc_rival_1",
-        21
+        22
       ],
       [
         "li_enc_rival_2_open",
@@ -3023,6 +3054,10 @@
       [
         "li_enc_rmove_show",
         6
+      ],
+      [
+        "li_enc_teach_swim",
+        1
       ],
       [
         "li_ex_arrives",
@@ -3066,7 +3101,7 @@
       ],
       [
         "li_hideaway_key",
-        4
+        5
       ],
       [
         "li_hot_tub_debut",
@@ -3181,6 +3216,10 @@
         2
       ],
       [
+        "li_pool_float",
+        1
+      ],
+      [
         "li_recoup1_choose",
         5
       ],
@@ -3281,6 +3320,10 @@
         3
       ],
       [
+        "li_villa_threshold",
+        1
+      ],
+      [
         "li_vote_surge",
         1
       ],
@@ -3351,6 +3394,10 @@
       [
         "li_workout_audience",
         5
+      ],
+      [
+        "li_wrong_name",
+        1
       ],
       [
         "li_wv_nation_darling",
@@ -3967,7 +4014,7 @@
       ],
       [
         null,
-        14
+        19
       ],
       [
         "basement",
