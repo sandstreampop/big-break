@@ -17,6 +17,7 @@ import { villaCardCast } from './cardcast.js';
 import { villaFeeds } from './feeds.js';
 import { PORTRAIT_VARIANTS } from './portraits.data.js';
 import { mulberry32 } from '../../engine.js';
+import { CONFIG } from '../../config.js';
 import type { Presenter, RunState } from '../../types.js';
 
 // ---------- Endings ----------
@@ -449,6 +450,19 @@ export const loveIslandPresenter: Presenter = {
 
   hudCounters,
   itemById: angleById,
+  // Equip an Angle into the run's Edit slots. The shell's gear-slot result
+  // flow calls THIS (never a pack import), so a pack without it renders the
+  // "🧰 it's yours" notice while equipping nothing — the sim/browser
+  // divergence of INCIDENTS #2. Same semantics as music's equipAccessory:
+  // drop first, respect the slot cap, push. Angles carry no onAcquire
+  // payload, so there are no extra deltas to return.
+  equipItem: (state: any, id: string, dropId?: string) => {
+    if (dropId) state.accessories = (state.accessories || []).filter((a: string) => a !== dropId);
+    state.accessories = state.accessories || [];
+    if (state.accessories.length >= CONFIG.accessorySlots) return [];
+    if (!state.accessories.includes(id)) state.accessories.push(id);
+    return [];
+  },
   fillTokens,
   cardClass: (ev: any) => (ev.tags || []).includes('host') ? 'card-host'
     : (ev.tags || []).includes('text') ? 'card-text'

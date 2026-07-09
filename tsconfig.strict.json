@@ -28,6 +28,7 @@
     "js/types.ts",
     "js/config.ts",
     "js/platform.ts",
-    "js/validate.ts"
+    "js/validate.ts",
+    "js/api.ts"
   ]
 }

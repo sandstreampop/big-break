@@ -11,6 +11,54 @@ Each entry: what broke, the 5-whys root cause, the **rule** it produced, and the
 
 ---
 
+## #2 · Love Island Angles announced but never equipped — 2026-07-09
+
+**Severity:** feature-dead (not a soft-lock). Shipped to the deployed Love
+Island build: the whole Angle/Edit progression layer was inert in the browser.
+
+**Symptom:** winning an Angle at the daybed showed the "🧰 it's yours" notice,
+but the Angle never appeared in the Edit slots — no roll bonuses, no per-week
+compounding, no villain-edit flavor. Every gate stayed green.
+
+**Root cause (5 whys):**
+
+1. The Angle never took effect → it was never pushed onto `run.accessories`.
+2. Nothing pushed it → the shell's only equip path is `PRES.equipItem?.(…)`
+   (optional presenter hook), and the Love Island presenter never implemented
+   `equipItem` — the optional chain made the miss silent.
+3. The sims didn't catch the dead layer → the "genre-neutral" sim driver
+   (`tools/pack-core.mjs`) had a leak: it imported **music's** `equipAccessory`
+   and hand-equipped pending gear for *every* pack — so the balance gates and
+   goldens simulated a game where Angles worked, while the browser played one
+   where they didn't.
+4. The leak existed because the driver predated the presenter's `equipItem`
+   seam and was never rewired when the seam landed.
+5. No gate compared the sim's equip path with the shell's — the two paths were
+   allowed to diverge silently.
+
+**Class:** sim/browser divergence — a tool simulating a *different game* than
+the shell plays; a genre import inside a genre-neutral tool; an optional hook
+whose absence is silent.
+
+**Rules produced:**
+- A genre-neutral driver must exercise the SAME pack seam the shell uses
+  (`presenter.*`), never a pack's internals by import — otherwise the gates
+  certify a game nobody is playing.
+- A pack whose plugins emit a shell channel (here `pendingGear`/
+  `pendingGearChoices`) must implement the hook the shell answers it with
+  (`equipItem`) — enforced, not assumed.
+
+**Guard (now in place):**
+- Fix: `js/packs/love-island/presenter.ts` implements `equipItem` (drop →
+  slot-cap → push, music-equivalent semantics); `tools/pack-core.mjs` equips
+  through `pack.presenter.equipItem` and imports nothing from any pack.
+- Test: `test/invariants.test.mjs` — for every registered pack, if any seeded
+  run grants gear, `presenter.equipItem` must exist **and** the granted item
+  must actually land in `state.accessories` (counted end-to-end by the
+  driver's `gearGrants`/`gearEquipped`).
+
+---
+
 ## #1 · Portrait-lightbox soft-lock — 2026-07-07
 
 **Severity:** gamebreaking (soft-lock). Shipped to the deployed Love Island

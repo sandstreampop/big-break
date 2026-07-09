@@ -107,6 +107,8 @@ const TARGETS = [
   // every vocabulary off the candidate pack itself, so it must name none —
   // no allowlist.
   { label: 'js/validate.ts', path: resolve(root, 'js/validate.ts'), allow: new Set() },
+  // The public authoring surface re-exports mechanism only — same bar.
+  { label: 'js/api.ts', path: resolve(root, 'js/api.ts'), allow: new Set() },
 ];
 
 let failed = 0;
@@ -134,7 +136,7 @@ for (const t of TARGETS) {
 import { readdirSync } from 'node:fs';
 const SHARED_ROOT = [
   'engine.ts', 'types.ts', 'config.ts', 'save.ts', 'art.ts', 'audio.ts',
-  'analytics.ts', 'platform.ts', 'version.ts', 'ui.ts', 'validate.ts',
+  'analytics.ts', 'platform.ts', 'version.ts', 'ui.ts', 'validate.ts', 'api.ts',
 ]; // shared js/*.ts (entry points main*.ts + globals.d.ts are the exceptions)
 const shellFiles = [
   ...readdirSync(resolve(root, 'js/ui')).filter((f) => f.endsWith('.ts')).map((f) => `js/ui/${f}`),

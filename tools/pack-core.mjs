@@ -9,7 +9,6 @@
 // drawNextCard / resolveSwipe on the seeded play RNG.
 
 import * as engine from '../dist/js/engine.js';
-import { equipAccessory } from '../dist/js/packs/music/plugins/gear.js';
 
 // Sum of (value / gate target) across a path's winGates, read generically via
 // the engine's gateValue — no per-resource special-casing.
@@ -44,7 +43,7 @@ export function simulatePackRun(pack, seed, policy = 'narrative') {
   const pathIds = Object.keys(pack.manifest.paths);
 
   const cards = [];
-  let dry = 0, finale = null, gameover = null, guard = 0;
+  let dry = 0, finale = null, gameover = null, guard = 0, gearGrants = 0, gearEquipped = 0;
   while (state.phase !== 'ended' && guard++ < 300) {
     if (state.phase === 'crossroads') {
       const best = pathIds.slice().sort((a, b) => pathScore(pack, state, b) - pathScore(pack, state, a))[0];
@@ -64,9 +63,19 @@ export function simulatePackRun(pack, seed, policy = 'narrative') {
       const act = state.act;
       const result = engine.resolveSwipe(state, side, play, {});
       cards.push({ id: ev.id, side, tier: result.tier, act, deltas: result.deltas.map((d) => [d.key, d.amount]) });
+      // Gear grants equip through the pack's OWN presenter hook — the same
+      // seam the shell's gear-slot flow uses — so this driver names no genre
+      // and, critically, simulates the game the BROWSER actually plays. (It
+      // used to import music's equipAccessory for every pack: love-island's
+      // Angles worked in the sims while the real UI, which only calls
+      // presenter.equipItem, silently dropped them — INCIDENTS #2.)
       const pend = result.deltas.pendingGear ||
         (result.deltas.pendingGearChoices ? result.deltas.pendingGearChoices[0] : null);
-      if (pend) equipAccessory(state, pend.id);
+      if (pend) {
+        gearGrants++;
+        pack.presenter?.equipItem?.(state, pend.id);
+        if ((state.accessories || []).includes(pend.id)) gearEquipped++;
+      }
     }
     const step = engine.advance(state);
     if (step.kind === 'finale') {
@@ -77,7 +86,7 @@ export function simulatePackRun(pack, seed, policy = 'narrative') {
       gameover = step.endingKey;
     }
   }
-  return { seed, cards, dry, finale, gameover, lp: engine.legacyPoints(state), state };
+  return { seed, cards, dry, finale, gameover, gearGrants, gearEquipped, lp: engine.legacyPoints(state), state };
 }
 
 // JSON-serializable trace: the manifest's stats + resources by name, the

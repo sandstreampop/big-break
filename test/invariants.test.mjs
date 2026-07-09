@@ -205,6 +205,26 @@ for (const pack of PACKS) {
     }
   });
 
+  // ── Sim/browser parity for gear grants (INCIDENTS #2). The shell's ONLY
+  // equip path is presenter.equipItem — a pack whose subsystems emit the
+  // pendingGear/pendingGearChoices channel without providing that hook plays
+  // one game in the sims (where drivers used to hand-equip) and a different,
+  // broken one in the browser (announced, never equipped). If any seeded run
+  // grants gear, the hook must exist and must actually equip. ──
+  test(`[${pack.id}] a pack that grants gear provides presenter.equipItem, and it equips`, () => {
+    let grants = 0, equipped = 0;
+    for (const seed of [11, 424242, 987654321]) {
+      const run = simulatePackRun(pack, seed);
+      grants += run.gearGrants;
+      equipped += run.gearEquipped;
+    }
+    if (!grants) return; // this pack never grants gear — nothing to honor
+    assert.equal(typeof pack.presenter?.equipItem, 'function',
+      'plugins emit pendingGear but the presenter has no equipItem — the browser announces gear it never equips');
+    assert.ok(equipped >= 1,
+      `${grants} gear grant(s) across the seeded runs but equipItem landed none in state.accessories`);
+  });
+
   // ── Plugin registration order (per-pack, seeded-stream-critical). ──
   test(`[${pack.id}] plugin registration order is stable`, () => {
     const ids = (pack.plugins || []).map((p) => p.id);
