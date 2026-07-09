@@ -51,7 +51,11 @@ export function renderHud() {
   }
   top.append(actWrap);
   const counters = el('span', 'hud-counters');
-  for (const c of PRES.hudCounters?.(run) || []) counters.append(el('span', c.cls || 'hud-counter', c.html));
+  // Progressive disclosure (ADR-0009, salience over permanence): during the
+  // scripted tutorial the scoreboard hasn't been taught, so an unexplained row
+  // of counters is just noise on the very first cards. They arrive with the
+  // real run — same gate the burnout pip and hot-streak chip use just below.
+  if (!run.tutorial) for (const c of PRES.hudCounters?.(run) || []) counters.append(el('span', c.cls || 'hud-counter', c.html));
   if (compact) {
     // Salience over permanence (ADR-0009): the danger meter earns a chip
     // only once it matters; the hot streak rides as a small chip, not a

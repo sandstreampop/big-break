@@ -85,6 +85,23 @@ function seedScript(nsSuffix) {
   `;
 }
 
+// A TRUE first-install seed: no tutorialDone, zero runs — the state a brand-new
+// player boots into, where the title opens on the playable tutorial. Used by the
+// FTUE guard below; the main suite keeps tutorialDone:true for fast seeded runs.
+function seedScriptFresh(nsSuffix) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 0, runs: 0, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
+  };
+  return `
+    try {
+      localStorage.setItem('bigbreak_meta_v1${nsSuffix}', ${JSON.stringify(JSON.stringify(meta))});
+      localStorage.removeItem('bigbreak_run_v1${nsSuffix}');
+    } catch (e) {}
+  `;
+}
+
 // Click a selector by dispatching a NATIVE click (element.click()) inside the
 // page. This bypasses Playwright's pointer-interception actionability check —
 // the game's handlers are plain click listeners, and overlays with a delayed
@@ -322,6 +339,81 @@ async function playToFinale(page, label, pathIndex = 0) {
   return { lightboxRuns, cardCastRuns, feedRuns };
 }
 
+// FTUE guard (2026-07): the first-install flow the main suite skips (it seeds
+// tutorialDone:true). Boots a brand-new player, plays the scripted tutorial to
+// its wrap-up, then hands off into a real Season — and asserts the two things
+// the FTUE polish depends on:
+//   1. the scoreboard counters stay HIDDEN during the tutorial (progressive
+//      disclosure — an unexplained row of numbers on card one is noise), and
+//      APPEAR for the real run;
+//   2. tutorial → wrap-up → setup → first real card actually connects (working
+//      agreement rule 1: drive the flow, assert it reaches a live card).
+// Love-island only — it's the pack whose FTUE this exercises; music's tutorial
+// rides the same shell gate and is covered by construction.
+async function playTutorialFtue(page, label) {
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  page.on('console', (m) => { if (m.type() === 'error' && !/ERR_(TUNNEL|CONNECTION|NAME)/.test(m.text())) errors.push(`console.error: ${m.text()}`); });
+
+  await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+  // Fresh install → the primary button is the playable tutorial.
+  await clickJS(page, '#screen-title.active button.btn.primary');
+  await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 10000 });
+
+  // Assertion 1a: no scoreboard counters during the tutorial.
+  const tutCounters = await page.$$eval('#hud .hud-counters > *', (els) => els.length);
+  if (tutCounters !== 0) throw new Error(`[${label}] tutorial HUD is showing ${tutCounters} scoreboard counter(s) — should be hidden until the real run`);
+
+  // Play the scripted chain: dismiss the coach mark, take the left choice, clear
+  // the result beat, repeat — until the wrap-up screen. Bounded well above the
+  // three-card tutorial so a stall fails loudly rather than hanging.
+  const deadline = Date.now() + 40000;
+  let guard = 0;
+  while (Date.now() < deadline && guard++ < 40) {
+    if (errors.length) break;
+    if (await page.$('#screen-ending.active')) break;
+    await page.evaluate(() => document.querySelector('.coach')?.click());
+    const onCard = await page.$('#screen-game.active .choice-btn.choice-left');
+    if (onCard) {
+      await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+    }
+    await page.waitForTimeout(150);
+    // Clear any result overlay (wait for its arm delay, then click to dismiss).
+    if (await page.$('#overlay.active')) {
+      await page.waitForFunction(() => {
+        const ov = document.querySelector('#overlay.active');
+        return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+      }, { timeout: 4000 }).catch(() => {});
+      await page.evaluate(() => {
+        const ov = document.querySelector('#overlay.active');
+        if (ov) (ov.querySelector('.gear-choices button') || ov).click();
+      });
+      await page.waitForTimeout(120);
+    }
+  }
+  await page.waitForSelector('#screen-ending.active', { timeout: 8000 });
+
+  // Assertion 2a: the wrap-up teaches by recap — a handful of lessons, not a
+  // manual — and hands off with a "start your Season" button.
+  const lessons = await page.$$eval('#screen-ending.active .result-notices .notice', (els) => els.length);
+  if (lessons < 3 || lessons > 6) throw new Error(`[${label}] tutorial wrap-up shows ${lessons} lessons — expected a tight 3–6`);
+
+  await clickJS(page, '#screen-ending.active button.btn.primary');
+  await page.waitForSelector('#screen-setup.active', { timeout: 8000 });
+  await enterIdentity(page);
+  await clickJS(page, '.pick-card');
+  await clickJS(page, '#start-run-btn');
+
+  // Assertion 1b + 2b: the real Season deals a live card AND the scoreboard
+  // counters now show — proving the tutorial gate flipped and the handoff works.
+  await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 10000 });
+  const realCounters = await page.$$eval('#hud .hud-counters > *', (els) => els.length);
+  if (realCounters === 0) throw new Error(`[${label}] real run has no scoreboard counters — the tutorial HUD gate didn't flip`);
+
+  if (errors.length) throw new Error(`[${label}] page errors during FTUE:\n  ${errors.join('\n  ')}`);
+  return { lessons };
+}
+
 const PORT = 8199;
 await new Promise((r) => server.listen(PORT, r));
 const base = `http://127.0.0.1:${PORT}`;
@@ -365,7 +457,25 @@ for (const g of GAMES) {
   }
 }
 
+// FTUE guard: the first-install tutorial flow (love-island), which the seeded
+// main loop above deliberately skips.
+{
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(seedScriptFresh('_love-island'));
+  const page = await ctx.newPage();
+  try {
+    await page.goto(`${base}/love-island/`, { waitUntil: 'domcontentloaded' });
+    const { lessons } = await playTutorialFtue(page, 'love-island FTUE');
+    console.log(`✓  love-island FTUE: first-install tutorial → wrap-up (${lessons} lessons) → real Season, counters gated correctly`);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 await browser.close();
 server.close();
 if (failed) { console.error(`\n✗ ${failed} game(s) failed the UI smoke test.`); process.exit(1); }
-console.log(`\n✓ all ${GAMES.length} games passed the UI smoke test.`);
+console.log(`\n✓ all ${GAMES.length} games + FTUE guard passed the UI smoke test.`);

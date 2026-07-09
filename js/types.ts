@@ -547,6 +547,7 @@ export interface Presenter {
       verdict: string; title: string; art?: string; text: string;
       lessons: { cls: string; html: string }[];
       next?: string; // the "start the real thing" button label
+      lpNote?: string; // the first-time LP-award caption (genre-neutral default in the shell)
     };
   };
   // Crossroads copy, and the pre-finale choice screen (head/sub/options; an

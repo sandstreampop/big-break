@@ -484,15 +484,20 @@ export const loveIslandPresenter: Presenter = {
       verdict: 'FIRST NIGHT SURVIVED',
       title: 'Welcome to the Villa',
       art: 'li_arrival',
-      text: 'One morning, one text, one firepit — and nobody’s gone home yet. That’s the whole rehearsal. The real Season has recouplings, bombshells, a cinema screen with your name on it, and a nation holding the remote. Sleep well.',
+      text: 'One morning, one text, one firepit — and nobody’s gone home yet. That was the rehearsal. Six weeks start tomorrow, and the villa will explain the rest as it happens: recouplings, a bombshell or two, a cinema screen with your name on it, a nation holding the remote. Sleep while you can.',
+      // Teach-by-doing (FTUE): recap only the three things the morning actually
+      // taught — the gesture, the tell, the head — then hand over the ONE hook
+      // that gives the Season a shape (the three summits). Everything else
+      // (recouplings, Casa, Movie Night, texts) the player meets in fiction,
+      // with Stirling narrating it live on the first Season (his tutor pool).
       lessons: [
-        { cls: 'notice-gear', html: '👆 <b>Swipe or tap</b> — every villa moment is one decision.' },
-        { cls: 'notice-gear', html: '😏 <b>Stat icons</b> show what a choice rolls on; the shape is the risk tell: ● safe · ▲ dicey · ■ likely bad · ✦ big upside.' },
-        { cls: 'notice-bad', html: '🌀 <b>In Your Head</b> ends Seasons at the top — and Final Week’s line is lower. Rest is a real move.' },
-        { cls: 'notice-good', html: '💘 <b>Recouplings</b> check the Connection OR the public. Hold one and you stay.' },
-        { cls: 'notice-encore', html: '📱 <b>Texts run the villa.</b> When the phone screams, everything stops.' },
+        { cls: 'notice-gear', html: '👆 <b>One swipe, one decision.</b> Drag left or right, or tap a button. That’s the whole villa.' },
+        { cls: 'notice-gear', html: '😏 <b>Read the tell before you commit.</b> The icons are the stats a choice leans on; the shape is the risk — ● safe · ▲ dicey · ■ likely bad · ✦ big upside. And a bad card stings; it doesn’t send you home.' },
+        { cls: 'notice-bad', html: '🌀 <b>In Your Head</b> climbs on drama and ends your Season at the top — Final Week’s line is lower still. A quiet day is a move, not a wasted turn.' },
+        { cls: 'notice-good', html: '🏆 <b>Three ways to leave a winner:</b> the £50k envelope, the real thing, or a following. You pick which one at the Crossroads — and the nation votes the whole way there.' },
       ],
       next: '▶ Start your Season',
+      lpNote: '+15 Legacy Points — banked for the Career Wall, where LP widens who and what the villa deals you.',
     },
   },
 
