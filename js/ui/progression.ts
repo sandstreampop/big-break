@@ -68,7 +68,11 @@ function closerImpact(opt) {
 export function renderFinalSet() {
   // The pre-finale set piece is the pack's (head/sub/options); the shared
   // screen below renders it and annotates each closer against the win gates.
-  const fs = PRES.finalSet!(run);
+  // The hook is OPTIONAL: a pack without one (the probe, a fresh starter)
+  // goes straight to judgment — no dead screen, no crash (caught by the
+  // createGame embed test, which plays a presenter-less pack to its ending).
+  const fs = PRES.finalSet?.(run);
+  if (!fs) { nav.finale(); return; }
   renderFinalSetScreen(fs.head, fs.sub, fs.options);
 }
 

@@ -12,8 +12,8 @@
     "report": "npm run build && node tools/pack-report.mjs",
     "lint": "npm run build && node tools/lint-content.mjs",
     "smoke": "npm run build && node test/ui/smoke.mjs",
-    "test:ui": "npm run build && node test/ui/smoke.mjs && node test/ui/crowding.mjs && node test/ui/mobile-matrix.mjs",
-    "check": "npm run build && npm run typecheck && node tools/check-engine-neutrality.mjs && node tools/validate-packs.mjs && node tools/lint-content.mjs && node tools/simulate.mjs --check && node test/ui/smoke.mjs && node test/ui/crowding.mjs && node test/ui/mobile-matrix.mjs",
+    "test:ui": "npm run build && node test/ui/smoke.mjs && node test/ui/crowding.mjs && node test/ui/mobile-matrix.mjs && node test/ui/creategame.mjs",
+    "check": "npm run build && npm run typecheck && node tools/check-engine-neutrality.mjs && node tools/validate-packs.mjs && node tools/lint-content.mjs && node tools/simulate.mjs --check && node test/ui/smoke.mjs && node test/ui/crowding.mjs && node test/ui/mobile-matrix.mjs && node test/ui/creategame.mjs",
     "test": "npm run build && node --test test/*.test.mjs",
     "ci": "npm run check && node --test test/*.test.mjs",
     "sim": "npm run build && node tools/simulate.mjs",
@@ -21,7 +21,8 @@
     "android": "npm run build && node tools/android/run.mjs",
     "android:quick": "npm run build && node tools/android/run.mjs --quick",
     "ios": "npm run build && node tools/ios/run.mjs",
-    "ios:quick": "npm run build && node tools/ios/run.mjs --quick"
+    "ios:quick": "npm run build && node tools/ios/run.mjs --quick",
+    "new-pack": "node tools/new-pack.mjs"
   },
   "devDependencies": {
     "axe-core": "^4.12.1",

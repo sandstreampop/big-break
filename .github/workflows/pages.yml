@@ -122,6 +122,11 @@ jobs:
           REQUIRE_BROWSER: '1'
       - name: Mobile-matrix gate (every phone class × legacy engines × stale-CSS delivery)
         run: node test/ui/mobile-matrix.mjs
+      - name: createGame embed test (bare page + zero-presenter pack to a terminal screen)
+        # The outside-embedder contract: createGame({ pack }).start() on a page
+        # with one stylesheet and a five-line script builds the scaffold,
+        # rejects invalid packs, and plays to an ending in real Chromium.
+        run: node test/ui/creategame.mjs
         env:
           REQUIRE_BROWSER: '1'
       - name: Install docs toolchain (isolated from the engine's pinned tsc)

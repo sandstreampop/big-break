@@ -33,7 +33,12 @@ export function selectPack(pack: Pack) {
   PATHS = pack.manifest.paths;
   STAT_META = pack.manifest.statMeta;
   RESOURCE_META = pack.manifest.resourceMeta || {};
-  PRES = pack.presenter as Presenter;
+  // The presenter is OPTIONAL on the Pack contract: a pack that omits it gets
+  // the shell's neutral fallbacks everywhere (every PRES read is a `?.` or a
+  // defaulted lookup). Defaulting to {} here is what makes that true — the
+  // shell would otherwise crash on its first `PRES.art` read (caught by the
+  // createGame embed test, which boots the presenter-less probe).
+  PRES = (pack.presenter ?? {} as Presenter) as Presenter;
 }
 
 // The two reassignments. Screens mutate `run`/`meta` fields freely (that's an

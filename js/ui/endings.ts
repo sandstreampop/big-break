@@ -151,7 +151,7 @@ export function renderFinale() {
   }
   const earned = finishMeta(summary, lp);
 
-  const ending = PRES.endings[run.path][evalr.result];
+  const ending = endingCopy(run.path, evalr.result);
   track('run_end', {
     outcome: evalr.result, path: run.path, cause: 'finale', mode: runMode(run),
     cards: (summary.cardLog || []).length, burnout: run.stats.burnout, lp,
@@ -180,7 +180,28 @@ export function renderGameOver(endingKey) {
     ...(PRES.runProps?.(run, 'end') || {}),
   });
   sfx.gameover();
-  renderEndingScreen(PRES.endings[endingKey], lp, earned, null, summary);
+  renderEndingScreen(endingCopy(endingKey, null), lp, earned, null, summary);
+}
+
+// The ending copy for a path/fail key, with a NEUTRAL fallback for a pack
+// whose presenter (or endings table) doesn't cover it — the presenter is
+// optional on the Pack contract, and the verdict ribbon already carries the
+// outcome, so a missing entry degrades to plain copy instead of a crash at
+// the very last screen of a run (caught by the createGame embed test, which
+// plays the presenter-less probe to its ending).
+function endingCopy(key, result) {
+  const table = PRES.endings?.[key];
+  const authored = result ? table?.[result] : table;
+  if (authored) return authored;
+  const titles = {
+    success: 'You made it.',
+    partial: 'Close — genuinely close.',
+    failure: 'Not this run.',
+  };
+  return {
+    title: (result && titles[result]) || 'The run ends here.',
+    text: 'This pack has not authored copy for this ending yet. The numbers above are the real verdict.',
+  };
 }
 
 // The Exit Interview (Pass 45): one final choice inside a fail state

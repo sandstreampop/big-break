@@ -216,7 +216,9 @@ function masteryLevel(loadoutId) {
 }
 
 function modsText(mods) {
-  return Object.entries(mods)
+  // Loadout `modifiers` are optional (the engine defaults them to {}) — a
+  // starter pack's plain personas render with no mod line, not a crash.
+  return Object.entries(mods || {})
     .map(([k, v]: [string, any]) => `${v > 0 ? '+' : ''}${v} ${STAT_META[k]?.name || k}`)
     .join(' · ');
 }

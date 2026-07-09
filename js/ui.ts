@@ -45,6 +45,41 @@ const wiring: Nav = {
   wall: renderWall,
 };
 
+// The shell's DOM contract, in one place: every screen section and the two
+// overlay layers the modules under js/ui/ render into. The shipped games
+// carry this scaffold in their HTML (index.html / love-island.html);
+// ensureScaffold builds it on a BARE page so an outside embedder
+// (api.ts createGame) needs no copy of our markup. Idempotent: if #app
+// exists, the host page owns the scaffold and nothing is touched.
+const SCAFFOLD_SCREENS = ['title', 'setup', 'crossroads', 'ending', 'wall', 'trophies', 'roster', 'settings'];
+export function ensureScaffold(doc: Document = document): void {
+  if (doc.getElementById('app')) return;
+  const app = doc.createElement('div');
+  app.id = 'app';
+  const section = (id: string, cls: string) => {
+    const s = doc.createElement('section');
+    s.id = id;
+    s.className = cls;
+    return s;
+  };
+  for (const id of SCAFFOLD_SCREENS) {
+    app.append(section(`screen-${id}`, id === 'title' ? 'screen active' : 'screen'));
+  }
+  const game = section('screen-game', 'screen');
+  for (const id of ['hud', 'stage', 'card-area', 'encore-bar', 'choice-buttons']) {
+    const d = doc.createElement('div');
+    d.id = id;
+    game.append(d);
+  }
+  app.append(game);
+  for (const id of ['overlay', 'overlay-top']) {
+    const d = doc.createElement('div');
+    d.id = id;
+    app.append(d);
+  }
+  doc.body.prepend(app);
+}
+
 export function boot(pack: Pack) {
   Object.assign(nav, wiring);
   // Guard the CSS↔JS pairing before anything renders; re-check once the DOM
