@@ -84,8 +84,14 @@ function renderFinalSetScreen(head, sub, options) {
   const { readings } = pathFit(run.path);
   const gates = gateReadout(readings, { className: 'gate-readout compass finalset-gates' });
   gates.prepend(el('div', 'trades-head', `🎯 ${pathName.toUpperCase()} — WHAT YOU STILL NEED`));
-  if ((run.pathProgress || 0) > 0) {
-    gates.append(el('p', 'momentum-note', `▲ Momentum ×${run.pathProgress} — near-met gates can still upgrade to a win.`));
+  // The clutch readout for the manifest's momentum ROLE — the shell names no
+  // resource (music: Momentum; the villa: Surge; a pack without the role shows
+  // nothing). Mirrors evaluateFinale's momentum-clutch read exactly.
+  const mr = activePack.manifest.momentumResource;
+  const momentum = mr ? engine.gateValue(run, mr) : 0;
+  if (mr && momentum > 0) {
+    gates.append(el('p', 'momentum-note',
+      `${metaFor(mr).icon} ${metaFor(mr).name} ×${momentum} — near-met gates can still upgrade to a win.`));
   }
   s.append(gates);
 

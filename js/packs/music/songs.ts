@@ -13,7 +13,27 @@ import { CONFIG } from '../../config.js';
 import { stateRng } from '../../engine.js';
 import { weatherHooks } from './data/weather.js';
 import { contractById } from './data/contracts.js';
-import type { Song } from '../../types.js';
+
+// A song, first-class citizen of the charts subsystem. Lives HERE (not on the
+// shared types) because a song is a music concept: the shared RunState gains
+// its `songs` slot via the pack's declaration-merging in pack.ts, the same way
+// every other music field rides the core.
+export interface Song {
+  id: string;
+  title: string;
+  quality: number;
+  hype: number;
+  status: 'demo' | 'charting' | 'faded';
+  origin: string | null;
+  act: number;
+  pos: number | null;
+  prevPos: number | null;
+  peak: number | null;
+  weeks: number;
+  crowned: boolean;
+  releasedAct?: number;
+  viral?: boolean;
+}
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 

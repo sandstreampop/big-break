@@ -7,6 +7,7 @@ import { EVENTS } from './data/events.js';
 import { TUTORIAL_EVENTS } from './data/tutorial.js';
 import { INSTRUMENTS, instrumentById } from './data/instruments.js';
 import { musicManifest } from './manifest.js';
+import type { Song } from './songs.js';
 import { venuePlugin } from './plugins/venue.js';
 import { rivalPlugin } from './plugins/rival.js';
 import { bandPlugin } from './plugins/band.js';
@@ -73,8 +74,11 @@ declare module '../../types.js' {
   interface Effect {
     // music core stats
     skill?: number; cred?: number; creativity?: number; network?: number;
-    // music resources (moved off the shared Effect — the core names no genre)
+    // music resources (moved off the shared Effect — the core names no genre).
+    // pathProgress ("Momentum") included: the engine reads it only through the
+    // manifest's momentumResource ROLE, never by name.
     fame?: number; money?: number; hits?: number; rivalry?: number;
+    pathProgress?: number;
     // venue subsystem
     adoptVenue?: string; venueLove?: number; venueLoveStart?: number;
     // songs subsystem
@@ -105,9 +109,11 @@ declare module '../../types.js' {
   // the shared RunState from THIS file so the core type names no music resource
   // or subsystem — the sibling of the Effect/Requires augmentations above.
   interface RunState {
-    // resources
+    // resources (pathProgress = Momentum, read via the momentumResource role)
     fame?: number; money?: number; hits?: number; rivalry?: number;
+    pathProgress?: number;
     // subsystems: venue · band · hustle · genre · rival · weather · songs · Brammies · seeds
+    songs?: Song[];
     venue?: string | null; venueLevel?: number; venueShows?: number;
     band?: string[]; hustles?: string[];
     genre?: string | null; contract?: string | null;

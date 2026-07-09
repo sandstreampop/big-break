@@ -78,11 +78,11 @@ function stripComments(src) {
 // shell genericization). Everything else in types.ts must stay genre-neutral,
 // so a NEW genre token leaking onto a shared type trips this.
 const TYPES_ALLOW = new Set([
-  'pathProgress', // the engine's own generic momentum accumulator (RunState + Effect)
   'comeback',     // an optional Pack/Presenter capability HOOK name (PACK.comeback the
-]);               // engine feature-detects — not the flag literal). Music's own resource
-                  // verbs (fame/money/hits/rivalry) now live in its Effect augmentation,
-                  // and the scene-vibe axes are neutral (SceneVibe), so neither is here.
+]);               // engine feature-detects — not the flag literal). Music's resource
+                  // verbs (fame/money/hits/rivalry) AND pathProgress/Song/songs now live
+                  // in the pack's own augmentations (pack.ts / songs.ts), and the
+                  // scene-vibe axes are neutral (SceneVibe) — none needs an entry here.
 
 // Scan one file's CODE (comments stripped, PACK.<name> dispatches blanked) for
 // any blocked token not in this file's allowlist. Returns the offending lines.

@@ -78,12 +78,10 @@ export interface PromiseSpec {
 export interface Effect {
   // The engine's universal burnout slot.
   burnout?: number;
-  // The engine's generic momentum accumulator (RunState.pathProgress). Every
-  // other resource verb is the owning genre's, declared in that pack's own
-  // `declare module` Effect augmentation (music: fame/money/hits/rivalry/…;
+  // Flag / chain / promise control — the genuinely genre-neutral control
+  // verbs. EVERY resource verb is the owning genre's, declared in that pack's
+  // own `declare module` Effect augmentation (music: fame/money/pathProgress/…;
   // love-island: public/bond/…) — so this shared interface names no genre.
-  pathProgress?: number;
-  // Flag / chain / promise control — the genuinely genre-neutral control verbs.
   addFlag?: string; removeFlag?: string; chainEventId?: string;
   addPromise?: PromiseSpec;
 }
@@ -843,24 +841,6 @@ export type AdvanceStep =
   | { kind: 'tutorialEnd' };
 
 // ---------- Runtime run state ----------
-// A song, first-class citizen of the charts subsystem.
-export interface Song {
-  id: string;
-  title: string;
-  quality: number;
-  hype: number;
-  status: 'demo' | 'charting' | 'faded';
-  origin: string | null;
-  act: number;
-  pos: number | null;
-  prevPos: number | null;
-  peak: number | null;
-  weeks: number;
-  crowned: boolean;
-  releasedAct?: number;
-  viral?: boolean;
-}
-
 // The mutable per-run state. The genre-neutral runtime fields are declared here;
 // each pack adds its OWN subsystem fields (resources, subsystem slots) by
 // declaration-merging this interface in the pack's own file — the same pattern
@@ -908,11 +888,9 @@ export interface RunState {
   encoreChained?: boolean;
   hotStreak?: number;
   badStreak?: number;
-  pathProgress?: number;            // momentum toward the committed path
   promises?: any[];
   mastery?: number;
   accessories?: string[];           // equipped item ids (gear / edit; pack-owned data)
-  songs?: Song[];
   // ── mode / meta ──
   gauntlet?: string | number | null;
   daily?: string | null;
