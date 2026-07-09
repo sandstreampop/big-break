@@ -266,7 +266,7 @@ export function renderTutorialEnd() {
   const list = el('div', 'result-notices');
   for (const l of tend.lessons) list.append(el('div', 'notice ' + l.cls, l.html));
   wrap.append(list);
-  if (firstTime) wrap.append(el('p', 'lp-award', '+15 Legacy Points — walk-in money for the Career Wall'));
+  if (firstTime) wrap.append(el('p', 'lp-award', tend.lpNote || '+15 Legacy Points — walk-in money for the Career Wall'));
   const menu = el('div', 'menu');
   menu.append(btn(PRES.tutorial?.end.next || '▶ Start your real career', 'primary', () => nav.newRun()));
   menu.append(btn('🏠 Title', '', () => { nav.title(); show('#screen-title', 'back'); }));
