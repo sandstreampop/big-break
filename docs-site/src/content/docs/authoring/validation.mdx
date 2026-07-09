@@ -76,7 +76,9 @@ Programmatically — the same function, through the public surface:
 
 ```js
 import { validatePack, formatValidation } from './dist/js/api.js';
-import { myPack } from './dist/js/packs/my-game/pack.js';
+// single-file pack (the LLM/quickstart shape); a grown pack imports
+// './dist/js/packs/my-game/pack.js' instead
+import { myPack } from './dist/js/packs/my-game.js';
 
 const report = validatePack(myPack);
 if (!report.ok) console.error(formatValidation(myPack.id, report));
