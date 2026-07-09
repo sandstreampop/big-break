@@ -19,6 +19,12 @@ import { ARCS, arcById } from '../dist/js/packs/music/data/arcs.js';
 import * as engine from '../dist/js/engine.js';
 import { arcLit } from '../dist/js/packs/music/plugins/seeds.js';
 import { simulateRun } from './sim-core.mjs';
+import { musicPack } from '../dist/js/packs/music/pack.js';
+
+// The success band is the PACK's declared contract (manifest.balanceBand),
+// not this tool's opinion — one source for every driver (simulate-pack,
+// pack-report, and this music-specific gate all read the same numbers).
+const BAND = musicPack.manifest.balanceBand || { successMin: 25, successMax: 40 };
 
 const args = process.argv.slice(2);
 const seedArg = args.find((a) => a.startsWith('--seed='));
@@ -146,11 +152,11 @@ console.log(`  → success ${pct(rollup.success)} | partial ${pct(rollup.partial
 // mints and crowns songs.
 gates.hitfactorySuccessPct = (100 * (tally.byPathResult['hitfactory:success'] || 0)) / RUNS;
 {
-  // R4 gate: careers should be losable — success band 25–40% (narrative)
+  // R4 gate: careers should be losable — the manifest's declared success band
   const s = (100 * rollup.success) / RUNS;
-  const inBand = s >= 25 && s <= 40;
+  const inBand = s >= BAND.successMin && s <= BAND.successMax;
   gates.successPct = s;
-  console.log(`  success band 25–40%: ${inBand ? '✓ in band' : `✗ OUT OF BAND (${s.toFixed(1)}%)`}`);
+  console.log(`  success band ${BAND.successMin}–${BAND.successMax}%: ${inBand ? '✓ in band' : `✗ OUT OF BAND (${s.toFixed(1)}%)`}`);
 }
 if (tally.finaleStats.count) {
   const f = tally.finaleStats, c = f.count;
@@ -265,8 +271,8 @@ if (CHECK) {
   // healthy game lives today (success ~32%, seed-lit ~87%, 0 dead cards)
   // with margin, so noise never trips them but real regressions do.
   const checks = [
-    { name: 'success band 25–40%',
-      ok: gates.successPct >= 25 && gates.successPct <= 40,
+    { name: `success band ${BAND.successMin}–${BAND.successMax}%`,
+      ok: gates.successPct >= BAND.successMin && gates.successPct <= BAND.successMax,
       detail: `${gates.successPct.toFixed(1)}%` },
     { name: 'never-drawn ungated cards = 0',
       ok: gates.neverOpen === 0,

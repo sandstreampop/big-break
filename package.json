@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.strict.json",
     "neutrality": "npm run build && node tools/check-engine-neutrality.mjs",
     "validate": "npm run build && node tools/validate-packs.mjs",
+    "report": "npm run build && node tools/pack-report.mjs",
     "lint": "npm run build && node tools/lint-content.mjs",
     "smoke": "npm run build && node test/ui/smoke.mjs",
     "test:ui": "npm run build && node test/ui/smoke.mjs && node test/ui/crowding.mjs && node test/ui/mobile-matrix.mjs",

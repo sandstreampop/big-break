@@ -107,4 +107,9 @@ export const musicManifest: PackManifest = {
 
   failStates: FAIL_STATES,
   declinePenalty: { cred: -2 }, // the walk-of-shame when your card declines
+  // The roguelike success band the balance gates hold this pack to — the same
+  // 25–40% music's own --check enforced before packs declared their numbers.
+  // Declared here so every driver (simulate.mjs, simulate-pack.mjs,
+  // pack-report.mjs) reads ONE source instead of a hardcoded copy.
+  balanceBand: { successMin: 25, successMax: 40 },
 };
