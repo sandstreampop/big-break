@@ -106,7 +106,8 @@ reviewable, minimal record of exactly what your change moved.
 
 1. Add the pack to `GAME_PACKS` in the registry.
 2. Add `js/yourgame-main.ts` → `boot(yourgamePack)`.
-3. Add `yourgame.html` (copy `index.html` and point its module script at
-   `js/yourgame-main.js`); the build emits `/yourgame/`.
+3. Or skip 1–2 entirely: `npm run new-pack -- yourgame "Your Game"` scaffolds
+   the pack, the entry page, and the registry entry in one command — see
+   [Three commands to a game](/big-break/docs/three-commands/).
 
 → [Building & shipping](/big-break/docs/shipping/build/)

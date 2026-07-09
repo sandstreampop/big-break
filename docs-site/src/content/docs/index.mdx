@@ -1,29 +1,64 @@
 ---
 title: Big Break Engine
-description: Build your own swipe-roguelike season. A game is a Pack.
+description: An LLM-friendly content-pack engine for generating, validating, and running replayable narrative games.
 template: splash
 hero:
-  tagline: An LLM-friendly content-pack engine for generating, validating, and running replayable narrative games. A game is a <em>Pack</em> — adding one edits new files only, no shared type, no engine line.
+  tagline: An LLM-friendly content-pack engine for generating, validating, and running replayable narrative games. A game is a <em>Pack</em> — a data contract you (or a model) write, a validator holds to account, and the engine runs.
   actions:
-    - text: Quickstart — your first pack
+    - text: Your first game in three commands
+      link: /big-break/docs/three-commands/
+      icon: rocket
+      variant: primary
+    - text: Quickstart — build a pack by hand
       link: /big-break/docs/quickstart/
       icon: right-arrow
-      variant: primary
     - text: View on GitHub
       link: https://github.com/sandstreampop/big-break
       icon: external
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## Sixty seconds, honestly
+
+```bash
+npm run new-pack -- space-cats "Space Cats" 🐈   # a complete, valid starter game
+npm run build && node tools/validate-packs.mjs space-cats
+npx http-server dist                              # → play at /space-cats/
+```
+
+That's a registered, playable, gate-passing game — yours to reshape. The
+engine keeps everything an LLM (or a tired human) gets wrong across
+iterations: a stable seeded game loop, saves and resume, validation with
+repairable errors, balance simulation, and a phone-first UI shell. The pack —
+the world, the words, the numbers — is the part you write.
+
+Two shipped games run on it today, unchanged engine:
+**[Big Break](https://sandstreampop.github.io/big-break/)** (a satirical music
+career) and **[The Villa](https://sandstreampop.github.io/big-break/love-island/)**
+(a reality-TV season). Both are reference implementations you can read.
+
+## Pick your lane
+
+<CardGrid>
+  <LinkCard title="⚡ I want a game NOW" href="/big-break/docs/three-commands/"
+    description="Scaffold a complete starter game, watch the gates hold it, make it yours. Three commands, ten minutes." />
+  <LinkCard title="🔨 I want to understand what I'm building" href="/big-break/docs/quickstart/"
+    description="Build the smallest possible pack line by line — the effect vocabulary, the manifest, the deck, the registration." />
+  <LinkCard title="🤖 I want a model to write it" href="/big-break/docs/authoring/llm/"
+    description="The official generation prompt, and the validate → repair → report loop that makes LLM output safe to accept." />
+  <LinkCard title="🧠 I want the mental model first" href="/big-break/docs/concepts/lifecycle/"
+    description="What the engine does between a draw and a finale — tiers, pity, encores, segments, the crossroads, judgment." />
+</CardGrid>
 
 ## What you're building on
 
-Big Break is a **swipe-roguelike engine**. The core runs one lifecycle —
-deck assembly → draw a card → swipe left or right → roll to a `bad` / `good` /
-`incredible` tier → apply effects → segment breaks → crossroads → finale — over
-a seeded, resume-safe RNG, across a manifest-declared list of run segments
-(three acts, six weeks — the pack's call). It knows nothing about *your* game.
+The core runs one lifecycle — deck assembly → draw a card → swipe left or
+right → roll to a `bad` / `good` / `incredible` tier → apply effects → segment
+breaks → crossroads → finale — over a seeded, resume-safe RNG, across a
+manifest-declared list of run segments (three acts, six weeks — the pack's
+call). It knows nothing about *your* game.
 
 A game is a **`Pack`**: a manifest, a deck, optional subsystems, and a
 presenter. The whole surface is typed, and a truly unknown key is a compile
@@ -37,39 +72,37 @@ const rolled: Tier = 'good';
 ```
 
 <CardGrid stagger>
-  <Card title="Two sizes of example" icon="seti:typescript">
-    The **probe** pack (one stat, one summit, zero subsystems) and the **music**
-    pack (everything the engine can do). Every code sample on this site is pulled
-    from these real files.
+  <Card title="Generated content is hostile input" icon="approve-check">
+    A pack-contract validator with LLM-repairable errors (path + declared
+    vocabulary + suggested fix), a one-page pack report, and per-pack balance
+    gates. Nothing merges on vibes — yours or a model's.
   </Card>
   <Card title="Add a genre, edit new files only" icon="add-document">
-    No shared type to widen, no engine line to touch. Your stats, your verbs,
-    your subsystems all live in your pack's own files.
+    No shared type to widen, no engine line to touch — enforced by a
+    neutrality gate in CI, not by good intentions. Your stats, your verbs,
+    your subsystems live in your pack's own files.
   </Card>
-  <Card title="Reference that can't drift" icon="approve-check">
-    The API reference is generated straight from the engine's typed contract;
-    the prose samples are the real pack source, type-checked at build.
+  <Card title="Three sizes of example" icon="seti:typescript">
+    The <b>probe</b> (one stat, one summit, ~100 lines), the <b>scaffolded
+    starter</b> (two summits, a chain beat), and the <b>music pack</b>
+    (everything the engine can do). Every code sample on this site is pulled
+    from real, shipping files at build time.
   </Card>
   <Card title="Ship with a safety net" icon="rocket">
-    A pack-contract validator with LLM-repairable errors, deterministic sims,
-    golden masters, cross-pack invariants, a content linter, and a
-    headless-browser smoke test. Generated packs are hostile input until the
-    net says otherwise.
+    Deterministic sims, golden masters, cross-pack invariants, a content
+    linter, headless-browser smoke tests down to 320px phones — the same
+    gates that block the shipping games' deploys hold your pack.
   </Card>
 </CardGrid>
 
 ## Where to go next
 
-- **New here?** Start with the [Quickstart](/big-break/docs/quickstart/) — a
-  playable pack in about ten minutes, built on the real probe pack.
-- **Want the mental model first?** Read
-  [The run lifecycle](/big-break/docs/concepts/lifecycle/) and
-  [The Pack contract](/big-break/docs/concepts/pack/).
-- **Generating a game with a model?**
-  [Authoring with an LLM](/big-break/docs/authoring/llm/) is the official
-  prompt + repair loop, and
-  [Validation & the repair loop](/big-break/docs/authoring/validation/) is the
-  contract that makes generated content safe to accept.
+- **New here?** [Your first game in three commands](/big-break/docs/three-commands/),
+  then reshape it with the [authoring chapters](/big-break/docs/authoring/manifest/).
+- **Want the mental model?** [The run lifecycle](/big-break/docs/concepts/lifecycle/)
+  and [The Pack contract](/big-break/docs/concepts/pack/).
+- **Generating with a model?** [Authoring with an LLM](/big-break/docs/authoring/llm/)
+  + [Validation & the repair loop](/big-break/docs/authoring/validation/).
 - **Looking for a type or function?** The
   [types reference](/big-break/docs/reference/types/readme/) covers the
   pack-authoring contract; the

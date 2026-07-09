@@ -1,0 +1,117 @@
+---
+title: Your first game in three commands
+description: Scaffold a complete, valid, playable game; watch the gates hold it; make it yours. The fastest true start.
+---
+
+import { Aside, Steps, LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+At the end of this page you have **your own registered game** — playable in a
+browser, passing every gate the shipping games pass — and you know the loop
+for reshaping it into the game you actually want. Ten minutes, three commands,
+no internal files to understand first.
+
+## 0. One-time setup
+
+```bash
+git clone https://github.com/sandstreampop/big-break.git
+cd big-break
+npm ci        # the PINNED toolchain (the build oracle is emit-sensitive)
+```
+
+## 1. Scaffold
+
+```bash
+npm run new-pack -- space-cats "Space Cats" 🐈
+```
+
+Three things appear, and nothing else changes:
+
+| File | What it is |
+|---|---|
+| `js/packs/space-cats.ts` | your game — a complete starter pack (search `TODO`) |
+| `space-cats.html` | the entry page (five lines of script; the engine does the rest) |
+| `js/packs/registry.ts` | one import + two array entries — your game is now registered |
+
+The starter is **not lorem ipsum**. It's a working game: two stats, one
+resource, two summits with a real crossroads decision, twenty-two cards
+including a two-card chain beat, and a declared balance band. A test in the
+repo (`test/newpack.test.mjs`) holds the template itself to the gates, so
+what you scaffold today is valid, balanced, and playable *by construction*.
+
+## 2. Prove it
+
+```bash
+npm run build && node tools/validate-packs.mjs space-cats
+```
+
+```text
+✓ [space-cats] pack contract OK (0 warnings)
+```
+
+That's the pack contract — schema and semantics, the same gate CI runs. Now
+look at how it actually plays:
+
+```bash
+node tools/pack-report.mjs space-cats
+```
+
+You get the whole picture on one page: deck counts per act, which stats your
+cards actually move, seeded outcome rates against your declared band, dead
+cards, run length. This report is your tuning conversation from here on.
+
+## 3. Play it
+
+```bash
+npx http-server dist
+# → open http://localhost:8080/space-cats/
+```
+
+Swipe. Hit the crossroads, commit a summit, reach an ending. That's your
+game's whole skeleton, live.
+
+<Aside type="tip" title="How the entry page works">
+`space-cats.html` is five lines: `createGame({ pack }).start()`. It validates
+the pack, builds the screen scaffold on the bare page, and boots the shell —
+there is no per-game UI code to maintain. A gate in CI drives exactly this
+embedding in headless Chromium, so it can't silently rot.
+</Aside>
+
+## Make it yours: refactor from green
+
+The starter's job is to be **deletable in safe slices**. The loop:
+
+<Steps>
+
+1. Change one thing — rename a stat, rewrite a card, retune a gate. The
+   `TODO` markers in `js/packs/space-cats.ts` point at every seam.
+
+2. Re-run the pair:
+
+   ```bash
+   npm run build && node tools/validate-packs.mjs space-cats
+   node tools/pack-report.mjs space-cats
+   ```
+
+   A typo'd key comes back with the declared vocabulary and a suggested fix.
+   A balance drift shows up as an out-of-band success rate.
+
+3. When a change survives both, play it. Repeat.
+
+</Steps>
+
+Every mistake you can make has a gate that names it — that's the whole design.
+You are never more than one command away from knowing whether the game still
+works.
+
+## Where to go next
+
+<CardGrid>
+  <LinkCard title="Quickstart: build a pack by hand" href="/big-break/docs/quickstart/"
+    description="The same shape, built line by line on the probe pack — the fastest way to UNDERSTAND what the scaffolder wrote." />
+  <LinkCard title="Authoring with an LLM" href="/big-break/docs/authoring/llm/"
+    description="Hand the starter's contract to a model: the official prompt and the validate → repair loop." />
+  <LinkCard title="The manifest, in depth" href="/big-break/docs/authoring/manifest/"
+    description="More summits, gate tuning, fail states, resource roles — the taxonomy that IS your genre." />
+  <LinkCard title="Validation & the repair loop" href="/big-break/docs/authoring/validation/"
+    description="Everything the contract checks, and the report/balance tooling on top." />
+</CardGrid>

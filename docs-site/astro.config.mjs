@@ -85,7 +85,8 @@ export default defineConfig({
           label: 'Start here',
           items: [
             { label: 'What is Big Break?', link: '/' },
-            { label: 'Quickstart', slug: 'quickstart' },
+            { label: 'Three commands to a game', slug: 'three-commands' },
+            { label: 'Quickstart (build it by hand)', slug: 'quickstart' },
           ],
         },
         {
@@ -104,8 +105,13 @@ export default defineConfig({
             { label: 'Subsystems (plugins)', slug: 'authoring/plugins' },
             { label: 'Progression: perks, interstitials, tutorial', slug: 'authoring/progression' },
             { label: 'The presenter', slug: 'authoring/presenter' },
-            { label: 'Validation & the repair loop', slug: 'authoring/validation' },
+          ],
+        },
+        {
+          label: 'Generate & validate',
+          items: [
             { label: 'Authoring with an LLM', slug: 'authoring/llm' },
+            { label: 'Validation & the repair loop', slug: 'authoring/validation' },
           ],
         },
         {

@@ -33,6 +33,11 @@ that's what lets you accept it at all. See
    npm run build
    ```
 
+   Or skip the hand-wiring: `npm run new-pack -- my-game "My Game"` first
+   (see [Three commands](/big-break/docs/three-commands/)), then have the
+   model **rewrite the scaffolded starter** — registration and the entry
+   page come for free, and the model gets a valid example to overwrite.
+
 3. **Validate.** Structural + semantic contract, with repairable errors:
 
    ```bash
@@ -62,8 +67,9 @@ that's what lets you accept it at all. See
    node --test test/*.test.mjs
    ```
 
-7. **Play it.** Add a `my-game.html` entry and the data-driven build serves it
-   at `/my-game/` (see [Building & shipping](/big-break/docs/shipping/build/)).
+7. **Play it.** The scaffolded `my-game.html` (or one copied from it) is
+   served at `/my-game/` by the data-driven build — `npx http-server dist`
+   and swipe (see [Building & shipping](/big-break/docs/shipping/build/)).
 
 </Steps>
 
@@ -166,3 +172,6 @@ and a presenter) — see
 [Case study: the villa pack](/big-break/docs/shipping/second-genre/). Plugins
 and presenter hooks are a *later* conversation with the model, one subsystem
 at a time, each landing behind the same gates.
+
+Next: [Balance & the safety net](/big-break/docs/shipping/balance/) — the wider
+net (goldens, invariants, browser suites) your generated game ships behind.
