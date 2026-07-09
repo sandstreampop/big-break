@@ -17,7 +17,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
-import { validPackId, packExportName, starterPackSource, starterHtml, patchRegistry } from '../tools/newpack-core.mjs';
+import { validPackId, packExportName, starterPackSource, starterMainSource, starterHtml, patchRegistry } from '../tools/newpack-core.mjs';
 import { validatePack, formatValidation } from '../dist/js/validate.js';
 import { simulatePackRun } from '../tools/pack-core.mjs';
 
@@ -50,13 +50,20 @@ test('the starter plays to a terminal state and lands inside its own balance ban
   const pack = await loadStarter('space-cats', 'Space Cats');
   // Deterministic mini Monte-Carlo on the same driver the balance gate uses.
   const RUNS = 300;
-  let success = 0, terminal = 0;
+  let success = 0, terminal = 0, dry = 0;
   for (let seed = 1; seed <= RUNS; seed++) {
     const run = simulatePackRun(pack, seed * 7919);
     if (run.state.phase === 'ended') terminal++;
     if (run.finale?.result === 'success') success++;
+    dry += run.dry;
   }
   assert.equal(terminal, RUNS, 'every seeded run must reach a terminal state');
+  // The invariant the real balance gate enforces (deck-dry events = 0): an
+  // act must never run out of eligible cards, INCLUDING runs where the act
+  // twist stretches a segment by +2. The first template shipped exactly
+  // segment-length decks and failed simulate-pack --check while this suite
+  // was green — this assertion is why that can't recur.
+  assert.equal(dry, 0, `${dry} deck-dry events across ${RUNS} runs — acts need a card buffer (twist adds +2)`);
   const pct = (100 * success) / RUNS;
   const band = pack.manifest.balanceBand;
   assert.ok(pct >= band.successMin && pct <= band.successMax,
@@ -111,10 +118,18 @@ test('the registry patch registers the pack in the REAL registry source', () => 
   assert.throws(() => patchRegistry('// nothing here', 'space-cats'), /register the pack by hand/);
 });
 
-test('the entry html wires createGame against the built module paths', () => {
+test('the entry html references the entry module via a stampable src attribute', () => {
   const html = starterHtml('space-cats', 'Space Cats', '🐈');
-  assert.match(html, /import \{ createGame \} from '\.\.\/js\/api\.js';/);
-  assert.match(html, /import \{ spaceCatsPack \} from '\.\.\/js\/packs\/space-cats\.js';/);
-  assert.match(html, /createGame\(\{ pack: spaceCatsPack \}\)\.start\(\)/);
+  // src= (not an inline import): tools/build.mjs stamps ?v= onto attributes
+  // only, so an inline module would dodge the cache-busting contract.
+  assert.match(html, /<script type="module" src="\.\.\/js\/main-space-cats\.js"><\/script>/);
+  assert.ok(!/import \{/.test(html), 'no inline module imports in the entry html');
   assert.match(html, /..\/css\/style.css/);
+});
+
+test('the entry module boots through createGame', () => {
+  const main = starterMainSource('space-cats', 'Space Cats');
+  assert.match(main, /import \{ createGame \} from '\.\/api\.js';/);
+  assert.match(main, /import \{ spaceCatsPack \} from '\.\/packs\/space-cats\.js';/);
+  assert.match(main, /createGame\(\{ pack: spaceCatsPack \}\)\.start\(\)/);
 });

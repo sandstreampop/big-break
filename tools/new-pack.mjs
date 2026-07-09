@@ -4,9 +4,10 @@
 //   npm run new-pack -- <id> "<Display Name>" [emoji]
 //   node tools/new-pack.mjs space-cats "Space Cats" 🐈
 //
-// Writes three things and nothing else:
+// Writes four things and nothing else:
 //   js/packs/<id>.ts      a complete, VALID, playable starter pack
-//   <id>.html             the game's entry page (createGame boots it)
+//   js/main-<id>.ts       the entry module (createGame: validate → boot)
+//   <id>.html             the game's entry page (version-stamped script src)
 //   js/packs/registry.ts  + one import and the two array entries
 //
 // The starter passes every gate on day one (test/newpack.test.mjs holds the
@@ -20,7 +21,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validPackId, packExportName, starterPackSource, starterHtml, patchRegistry } from './newpack-core.mjs';
+import { validPackId, starterPackSource, starterMainSource, starterHtml, patchRegistry } from './newpack-core.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const [id, name, icon] = process.argv.slice(2);
@@ -36,9 +37,11 @@ if (!id || !name) die('need a pack id and a display name.');
 if (!validPackId(id)) die(`'${id}' is not a valid pack id — kebab-case letters/digits, starting with a letter (e.g. space-cats).`);
 
 const packPath = resolve(root, `js/packs/${id}.ts`);
+const mainPath = resolve(root, `js/main-${id}.ts`);
 const htmlPath = resolve(root, `${id}.html`);
 const registryPath = resolve(root, 'js/packs/registry.ts');
 if (existsSync(packPath)) die(`js/packs/${id}.ts already exists — pick another id.`);
+if (existsSync(mainPath)) die(`js/main-${id}.ts already exists — pick another id.`);
 if (existsSync(htmlPath)) die(`${id}.html already exists — pick another id.`);
 if (existsSync(resolve(root, `js/packs/${id}`))) die(`js/packs/${id}/ already exists — pick another id.`);
 
@@ -47,11 +50,13 @@ if (existsSync(resolve(root, `js/packs/${id}`))) die(`js/packs/${id}/ already ex
 const registry = patchRegistry(readFileSync(registryPath, 'utf8'), id);
 
 writeFileSync(packPath, starterPackSource(id, name));
+writeFileSync(mainPath, starterMainSource(id, name));
 writeFileSync(htmlPath, starterHtml(id, name, icon || '🎲'));
 writeFileSync(registryPath, registry);
 
 console.log(`✓ scaffolded '${name}' (${id})
   js/packs/${id}.ts      the pack — your game lives here (search TODO)
+  js/main-${id}.ts       the entry module (createGame: validate → boot)
   ${id}.html             the entry page (served at /${id}/ by the build)
   js/packs/registry.ts   registered (import + PACKS + GAME_PACKS)
 

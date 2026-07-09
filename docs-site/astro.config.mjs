@@ -108,10 +108,10 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Generate & validate',
+          label: 'Validate & generate',
           items: [
-            { label: 'Authoring with an LLM', slug: 'authoring/llm' },
             { label: 'Validation & the repair loop', slug: 'authoring/validation' },
+            { label: 'Authoring with an LLM', slug: 'authoring/llm' },
           ],
         },
         {

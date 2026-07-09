@@ -104,10 +104,17 @@ reviewable, minimal record of exactly what your change moved.
 
 ## Ship a new game entry
 
+The paved road is one command — `npm run new-pack -- yourgame "Your Game"`
+scaffolds the pack, the entry module, the entry page, and the registry entry
+together (see [Three commands to a game](/big-break/docs/three-commands/)).
+
+By hand, the same three pieces are:
+
 1. Add the pack to `GAME_PACKS` in the registry.
-2. Add `js/yourgame-main.ts` → `boot(yourgamePack)`.
-3. Or skip 1–2 entirely: `npm run new-pack -- yourgame "Your Game"` scaffolds
-   the pack, the entry page, and the registry entry in one command — see
-   [Three commands to a game](/big-break/docs/three-commands/).
+2. Add `js/main-yourgame.ts` → `createGame({ pack: yourgamePack }).start()`.
+3. Add `yourgame.html` with `<script type="module" src="../js/main-yourgame.js">`
+   (`../` because the page is served at `/yourgame/`; copy a scaffolded one for
+   the head boilerplate) — the data-driven build then emits `/yourgame/`.
+   Without the html, the build SKIPS the pack and nothing is served.
 
 → [Building & shipping](/big-break/docs/shipping/build/)

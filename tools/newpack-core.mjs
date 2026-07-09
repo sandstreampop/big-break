@@ -3,6 +3,7 @@
 // needs and the registry patch that registers it:
 //
 //   starterPackSource(id, name)  → js/packs/<id>.ts   (a complete, VALID pack)
+//   starterMainSource(id, name)  → js/main-<id>.ts    (the entry module)
 //   starterHtml(id, name, icon)  → <id>.html          (the game's entry page)
 //   patchRegistry(src, id)       → the edited js/packs/registry.ts source
 //
@@ -291,6 +292,21 @@ const EVENTS: GameEvent[] = [
     recap: 'The long, quiet night.',
     left: 'Ride it till morning', right: 'Bank it and rest',
   }),
+  card('a2_ledger', 2, {
+    prompt: 'Someone has been keeping score of your choices. They show you the ledger.',
+    recap: 'Someone kept score. They showed you.',
+    left: 'Own every line', right: 'Correct the errors first',
+  }),
+  card('a2_detour', 2, {
+    prompt: 'A detour appears: slower, stranger, and possibly better than the plan.',
+    recap: 'A slower, stranger detour appeared.',
+    left: 'Take the detour', right: 'Note it for later',
+  }),
+  card('a2_small_win', 2, {
+    prompt: 'A small win lands on a day you needed one. Suspiciously well-timed.',
+    recap: 'A well-timed small win.',
+    left: 'Celebrate it loudly', right: 'Bank it quietly',
+  }),
 
   card('a3_stakes', 3, {
     prompt: 'The finish is visible now, which somehow makes everything heavier.',
@@ -323,6 +339,22 @@ const EVENTS: GameEvent[] = [
     recap: 'Back where it started.',
     left: 'Say the thing out loud', right: 'Let it stay a feeling',
   }),
+  card('a3_price', 3, {
+    prompt: 'The bill for every shortcut arrives at once, itemized.',
+    recap: 'The itemized bill for the shortcuts.',
+    left: 'Pay it and move on', right: 'Contest the worst lines',
+    risky: true,
+  }),
+  card('a3_witness', 3, {
+    prompt: 'Someone saw the whole thing, start to finish. They want to tell you what they saw.',
+    recap: 'A witness to the whole run.',
+    left: 'Hear all of it', right: 'Ask only what they would change',
+  }),
+  card('a3_early_exit', 3, {
+    prompt: 'An easy off-ramp, dressed as a reward. Take it and the story ends smaller.',
+    recap: 'The easy off-ramp, dressed up.',
+    left: 'Refuse it', right: 'Ask what it costs',
+  }),
 ];
 
 // ── 4. The pack ────────────────────────────────────────────────────────────
@@ -343,10 +375,28 @@ export const ${exportName}: Pack = {
 `;
 }
 
+// ---------- the entry module ----------
+// A real module file (not an inline script) so the html references it with a
+// src= attribute — which tools/build.mjs VERSION-STAMPS (?v=) like every
+// shipped game's entry. Inline module imports get no stamp, so a scaffolded
+// game's logic could be served stale from HTTP/SW cache; this keeps the
+// cache-busting contract (CLAUDE.md: shipped script URLs are always stamped).
+export function starterMainSource(id, name) {
+  const exportName = packExportName(id);
+  return `// ${name} — game entry (served at /${id}/). createGame validates the
+// pack, builds the screen scaffold on the bare page, installs the mobile
+// guards, and boots the shell — there is no per-game UI code to maintain.
+import { createGame } from './api.js';
+import { ${exportName} } from './packs/${id}.js';
+
+createGame({ pack: ${exportName} }).start();
+`;
+}
+
 // ---------- the entry HTML ----------
 // Mirrors love-island.html: served at /<id>/ by the data-driven build, so the
-// shared assets resolve with ../. The entry module is inline: on the paved
-// road a new pack needs NO main-<id>.ts — createGame does scaffold + boot.
+// shared assets resolve with ../. The entry references js/main-<id>.js via a
+// src= attribute so the build's version stamp applies (see starterMainSource).
 export function starterHtml(id, name, icon = '🎲') {
   const exportName = packExportName(id);
   return `<!doctype html>
@@ -366,13 +416,7 @@ export function starterHtml(id, name, icon = '🎲') {
   <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-  <script type="module">
-    import { createGame } from '../js/api.js';
-    import { ${exportName} } from '../js/packs/${id}.js';
-    // createGame validates the pack, builds the screen scaffold on this bare
-    // page, installs the mobile guards, and boots the shell.
-    createGame({ pack: ${exportName} }).start();
-  </script>
+  <script type="module" src="../js/main-${id}.js"></script>
 </body>
 </html>
 `;

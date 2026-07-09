@@ -24,16 +24,17 @@ npm ci        # the PINNED toolchain (the build oracle is emit-sensitive)
 npm run new-pack -- space-cats "Space Cats" 🐈
 ```
 
-Three things appear, and nothing else changes:
+Four things appear, and nothing else changes:
 
 | File | What it is |
 |---|---|
 | `js/packs/space-cats.ts` | your game — a complete starter pack (search `TODO`) |
-| `space-cats.html` | the entry page (five lines of script; the engine does the rest) |
+| `js/main-space-cats.ts` | the entry module — `createGame({ pack }).start()`, three lines |
+| `space-cats.html` | the entry page (one version-stamped script tag) |
 | `js/packs/registry.ts` | one import + two array entries — your game is now registered |
 
 The starter is **not lorem ipsum**. It's a working game: two stats, one
-resource, two summits with a real crossroads decision, twenty-two cards
+resource, two summits with a real crossroads decision, twenty-eight cards
 including a two-card chain beat, and a declared balance band. A test in the
 repo (`test/newpack.test.mjs`) holds the template itself to the gates, so
 what you scaffold today is valid, balanced, and playable *by construction*.
@@ -70,7 +71,7 @@ Swipe. Hit the crossroads, commit a summit, reach an ending. That's your
 game's whole skeleton, live.
 
 <Aside type="tip" title="How the entry page works">
-`space-cats.html` is five lines: `createGame({ pack }).start()`. It validates
+The entry module is three lines: `createGame({ pack }).start()`. It validates
 the pack, builds the screen scaffold on the bare page, and boots the shell —
 there is no per-game UI code to maintain. A gate in CI drives exactly this
 embedding in headless Chromium, so it can't silently rot.
