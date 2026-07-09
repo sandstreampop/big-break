@@ -36,6 +36,18 @@ const isStr = (v: unknown): v is string => typeof v === 'string' && v.length > 0
 const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 const isInt = (v: unknown): v is number => Number.isInteger(v);
 
+// Render an already-invalid value inside an error message WITHOUT trusting it:
+// JSON.stringify throws on BigInt and circular structures — exactly the kind
+// of value a hostile pack carries — so the renderer itself must be total.
+function show(v: unknown): string {
+  try {
+    const s = JSON.stringify(v);
+    return s === undefined ? String(v) : s;
+  } catch {
+    return Object.prototype.toString.call(v);
+  }
+}
+
 // Render a declared-vocabulary list for an error message. Complete when short,
 // truncated with a count when long — the reader needs the shape, not a wall.
 function list(keys: Iterable<string>): string {
@@ -99,13 +111,29 @@ class Collector {
 // `ok` true only when there are zero errors. Warnings are ship-with-eyes-open.
 export function validatePack(candidate: unknown): PackValidation {
   const c = new Collector();
+  // The never-throws contract is structural, not aspirational: a genuinely
+  // adversarial pack (throwing getters, Proxies, revoked references) must
+  // still come back as a REPORT, not an exception — so the walk itself is
+  // fenced. Anything that escapes the targeted guards below lands here as an
+  // invalid-pack verdict with whatever issues were already collected.
+  try {
+    walkPack(c, candidate);
+  } catch (e) {
+    c.error('validator-crash', 'pack',
+      `The validator crashed while reading this pack: ${e instanceof Error ? e.message : String(e)}. A field is actively hostile (a throwing getter, a Proxy) or malformed beyond the checks above.`,
+      'Make the pack plain data: literal objects/arrays/strings/numbers plus the loadoutById/plugin functions — no getters, no Proxies.');
+  }
+  return finish(c);
+}
+
+function walkPack(c: Collector, candidate: unknown): void {
   const pack = candidate as Pack;
 
   if (!isObj(candidate)) {
     c.error('pack-not-object', 'pack',
       `A pack must be an object, got ${candidate === null ? 'null' : typeof candidate}.`,
       'Export an object literal implementing the Pack interface (see js/packs/probe.ts for the smallest valid pack).');
-    return finish(c);
+    return;
   }
   if (!isStr(pack.id)) {
     c.error('pack-id-missing', 'pack.id',
@@ -120,7 +148,7 @@ export function validatePack(candidate: unknown): PackValidation {
     c.error('manifest-missing', 'pack.manifest',
       'A pack must carry a `manifest` object — it declares the stats, resources, run segments, paths, and winGates the engine reads.',
       'Add a PackManifest (see the manifest section of js/packs/probe.ts).');
-    return finish(c);
+    return;
   }
 
   const stats: string[] = Array.isArray(m.stats) ? m.stats.filter(isStr) : [];
@@ -214,7 +242,11 @@ export function validatePack(candidate: unknown): PackValidation {
   // resource or a plugin-owned slot (e.g. a momentum counter a plugin ticks).
   const resourceLike = new Set([...resources, ...pluginStateKeys]);
   const resourceLikeLine = `Declared resources: ${list(resources)}; plugin-owned state slots: ${list(pluginStateKeys)}.`;
-  const gateKeys = new Set([...stats, 'burnout', ...resourceLike]);
+  // Core RunState mechanics counters newRun ALWAYS initializes — gateValue
+  // resolves them via `key in state`, so a pack may legitimately gate on them
+  // (they are genre-neutral, declared on the shared RunState).
+  const GATEABLE_CORE_FIELDS = ['act', 'cardsPlayedInAct', 'encore', 'hotStreak', 'badStreak'];
+  const gateKeys = new Set([...stats, 'burnout', ...resourceLike, ...GATEABLE_CORE_FIELDS]);
   const gateVocabLine = `Gate keys resolve to a manifest stat (${list(stats)}), a resource (${list(resources)}), "burnout", or a plugin-owned state slot (${list(pluginStateKeys)}).`;
 
   for (const [pid, gates] of Object.entries(winGates)) {
@@ -443,14 +475,14 @@ export function validatePack(candidate: unknown): PackValidation {
       }
       // Numeric payloads for the numeric vocabulary; control verbs have their
       // own shapes. Plugin verbs carry plugin-defined payloads — not checked.
-      if ((stats.includes(k) || resources.includes(k) || k === 'burnout' || k === 'pathProgress') && !isNum(v)) {
+      if ((stats.includes(k) || resources.includes(k) || k === 'burnout') && !isNum(v)) {
         c.error('effect-value-invalid', where,
-          `Event "${evId}": effect "${k}" must be a number, got ${JSON.stringify(v)}.`,
+          `Event "${evId}": effect "${k}" must be a number, got ${show(v)}.`,
           `Set "${k}" to the numeric delta to apply.`);
       }
       if ((k === 'addFlag' || k === 'removeFlag' || k === 'chainEventId') && !isStr(v)) {
         c.error('effect-value-invalid', where,
-          `Event "${evId}": "${k}" must be a non-empty string, got ${JSON.stringify(v)}.`);
+          `Event "${evId}": "${k}" must be a non-empty string, got ${show(v)}.`);
       }
     }
     if (isStr(effects.chainEventId) && !eventIds.has(effects.chainEventId)) {
@@ -504,7 +536,7 @@ export function validatePack(candidate: unknown): PackValidation {
         }
         if (!isNum(val)) {
           c.error('requires-gate-value-invalid', `${where}.${field}.${key}`,
-            `Event "${evId}": requires.${field}.${key} must be a number, got ${JSON.stringify(val)}.`);
+            `Event "${evId}": requires.${field}.${key} must be a number, got ${show(val)}.`);
         }
       }
     }
@@ -543,9 +575,18 @@ export function validatePack(candidate: unknown): PackValidation {
     } else if (segments.length) {
       for (const a of acts) {
         if (a < 1 || a > segments.length) {
-          c.error('event-act-out-of-range', `${label}.act`,
-            `Event "${evId}" declares act ${a}, but this pack's run has only ${segments.length} segment(s) — the card could never be drawn.`,
-            `Use an act between 1 and ${segments.length}, or add segments to the manifest.`);
+          // chainOnly/finaleCard cards are dealt directly (chains, the climax
+          // queue) and never pass through actMatches — a wrong act there is
+          // inert metadata, not a dead card. Everything else it kills.
+          if (ev.chainOnly || ev.finaleCard) {
+            c.warn('event-act-out-of-range', `${label}.act`,
+              `Event "${evId}" declares act ${a}, but this pack's run has only ${segments.length} segment(s). Inert here (the card is chain/finale-delivered, which ignores act) — but it reads as a mistake.`,
+              `Use an act between 1 and ${segments.length}.`);
+          } else {
+            c.error('event-act-out-of-range', `${label}.act`,
+              `Event "${evId}" declares act ${a}, but this pack's run has only ${segments.length} segment(s) — the card could never be drawn.`,
+              `Use an act between 1 and ${segments.length}, or add segments to the manifest.`);
+          }
         }
       }
     }
@@ -582,7 +623,7 @@ export function validatePack(candidate: unknown): PackValidation {
         }
         if (!FORCE_TIERS.includes(ft as string)) {
           c.error('forcetier-value-invalid', `${label}.forceTier.${side}`,
-            `Event "${evId}": forceTier must be one of ${FORCE_TIERS.map((t) => `"${t}"`).join(', ')}, got ${JSON.stringify(ft)}.`);
+            `Event "${evId}": forceTier must be one of ${FORCE_TIERS.map((t) => `"${t}"`).join(', ')}, got ${show(ft)}.`);
         }
       }
     }
@@ -695,7 +736,10 @@ export function validatePack(candidate: unknown): PackValidation {
     if (!isObj(ts) || !isStr(ts.loadout)) {
       c.error('tutorialstart-invalid', 'pack.tutorialStart', 'tutorialStart needs at least { loadout, stats }.');
     } else {
-      if (typeof (pack as any).loadoutById === 'function' && !(pack as any).loadoutById(ts.loadout)) {
+      let tsLoadout: unknown = null;
+      try { tsLoadout = typeof (pack as any).loadoutById === 'function' ? (pack as any).loadoutById(ts.loadout) : true; }
+      catch { tsLoadout = null; } // a throwing lookup = unresolved
+      if (!tsLoadout) {
         c.error('tutorialstart-loadout-unknown', 'pack.tutorialStart.loadout',
           `tutorialStart starts as loadout "${ts.loadout}", but loadoutById does not resolve it. Declared loadouts: ${list(loadouts.filter((l) => isObj(l) && isStr(l.id)).map((l) => l.id))}.`,
           'Name a declared loadout id.');
@@ -724,7 +768,6 @@ export function validatePack(candidate: unknown): PackValidation {
     }
   }
 
-  return finish(c);
 }
 
 function finish(c: Collector): PackValidation {

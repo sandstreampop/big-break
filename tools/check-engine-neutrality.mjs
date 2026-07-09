@@ -104,8 +104,9 @@ const TARGETS = [
   { label: 'js/engine.ts', path: resolve(root, 'js/engine.ts'), allow: new Set() },
   { label: 'js/types.ts', path: resolve(root, 'js/types.ts'), allow: TYPES_ALLOW },
   // The pack-contract validator is shared mechanism like the engine: it reads
-  // every vocabulary off the candidate pack itself, so it must name none.
-  { label: 'js/validate.ts', path: resolve(root, 'js/validate.ts'), allow: new Set(['pathProgress']) },
+  // every vocabulary off the candidate pack itself, so it must name none —
+  // no allowlist.
+  { label: 'js/validate.ts', path: resolve(root, 'js/validate.ts'), allow: new Set() },
 ];
 
 let failed = 0;

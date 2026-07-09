@@ -344,6 +344,64 @@ test('closestKey suggests near-misses but not unrelated words', () => {
   assert.equal(closestKey('zzzzz', ['focus', 'points']), null);
 });
 
+// ── Adversarial-input regressions (found by the fresh-context review): the
+// never-throws contract must hold against ACTIVELY hostile values, not just
+// wrong ones. ──
+
+test('hostile payload values (BigInt, circular) are reported, not thrown', () => {
+  const p = fixture();
+  p.events[0].choices.left.outcomes.good.effects = { focus: 10n };
+  const v = validatePack(p);
+  assert.equal(v.ok, false);
+  assert.ok(v.errors.some((e) => e.code === 'effect-value-invalid'));
+
+  const q = fixture();
+  const circular = {};
+  circular.self = circular;
+  q.events[0].choices.left.outcomes.good.effects = { focus: circular };
+  assert.equal(validatePack(q).ok, false);
+
+  const r = fixture();
+  r.events[0].forceTier = { left: 123n };
+  assert.equal(validatePack(r).ok, false);
+});
+
+test('a throwing loadoutById on tutorialStart is unresolved, not a crash', () => {
+  const p = fixture();
+  p.tutorialEvents = [card('t1', 1)];
+  p.tutorialStart = { loadout: 'ghost', stats: {} };
+  p.loadoutById = (id) => { if (id === 'ghost') throw new Error('boom-tut'); return p.loadouts.find((l) => l.id === id) ?? null; };
+  const v = validatePack(p);
+  assert.ok(v.errors.some((e) => e.code === 'tutorialstart-loadout-unknown'));
+});
+
+test('a throwing getter is caught by the crash fence and reported as an issue', () => {
+  const hostile = { manifest: {}, events: [], tutorialEvents: [], loadouts: [] };
+  Object.defineProperty(hostile, 'id', { get() { throw new Error('boom-id'); }, enumerable: true });
+  const v = validatePack(hostile);
+  assert.equal(v.ok, false);
+  assert.ok(v.errors.some((e) => e.code === 'validator-crash' && /boom-id/.test(e.message)));
+});
+
+// ── Engine-fidelity regressions: the validator must accept what gateValue
+// actually resolves, and only kill cards the engine would really strand. ──
+
+test('gating on a core RunState mechanics counter (encore, hotStreak) is valid', () => {
+  const p = fixture();
+  p.manifest.failStates = [{ key: 'hotStreak', cmp: '>=', value: 99, ending: 'streaking' }];
+  p.events[0].requires = { min: { encore: 1 } };
+  const v = validatePack(p);
+  assert.deepEqual(v.errors, []);
+});
+
+test('an out-of-range act on a chain/finale-delivered card warns instead of erroring', () => {
+  const p = fixture();
+  p.events.push(card('c_chain', 9, { chainOnly: true }));
+  const v = validatePack(p);
+  assert.ok(!v.errors.some((e) => e.code === 'event-act-out-of-range'), 'chainOnly act is inert — not an error');
+  assert.ok(v.warnings.some((w) => w.code === 'event-act-out-of-range'));
+});
+
 test('validatePack never throws, even on adversarial shapes', () => {
   for (const hostile of [
     undefined, null, 42, 'pack', [],
