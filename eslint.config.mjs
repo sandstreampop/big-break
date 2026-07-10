@@ -65,7 +65,7 @@ export default [
   // page.evaluate() — those callbacks execute in the BROWSER context, so the
   // browser globals are real there even though the file runs under Node.
   {
-    files: ['test/ui/**/*.mjs', 'tools/ios/**/*.mjs', 'tools/android/**/*.mjs'],
+    files: ['test/ui/**/*.mjs', 'tools/ios/**/*.mjs', 'tools/android/**/*.mjs', 'tools/device-pass.mjs'],
     languageOptions: {
       globals: {
         window: 'readonly', document: 'readonly', localStorage: 'readonly',
