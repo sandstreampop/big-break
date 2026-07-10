@@ -124,7 +124,6 @@ function analyze(events) {
   const tStart = events.filter((e) => nameOf(e) === 'tutorial_start').length;
   const tDone = events.filter((e) => nameOf(e) === 'tutorial_complete').length;
   const tSkip = events.filter((e) => nameOf(e) === 'tutorial_skip').length;
-  const firstRuns = runEnds.length; // proxy; PostHog funnels give true per-user
   if (tStart || tSkip) {
     out.push('## Tutorial funnel  (per-session counts; use PostHog funnels for per-player)');
     out.push(`  started ${tStart} · completed ${tDone} (${pct(tDone, tStart)}%) · skipped ${tSkip}`);

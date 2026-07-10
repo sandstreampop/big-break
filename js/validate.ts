@@ -19,7 +19,7 @@
 // Genre-neutral and DOM-free like the engine: it imports no pack, names no
 // genre's stats or verbs, and reads everything off the candidate pack itself.
 
-import type { Pack, GameEvent, Requires, PackIssue, PackValidation } from './types.js';
+import type { Pack, Requires, PackIssue, PackValidation } from './types.js';
 import { CORE_EFFECT_VERBS, REQUIRES_NEUTRAL_KEYS } from './engine.js';
 
 export type { PackIssue, PackValidation } from './types.js';

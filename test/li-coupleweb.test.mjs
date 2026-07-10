@@ -20,7 +20,7 @@ import assert from 'node:assert/strict';
 import * as engine from '../dist/js/engine.js';
 import { loveIslandPack } from '../dist/js/packs/love-island/pack.js';
 import {
-  COUPLEWEB, THREADS, threadState, threadBroken, litThreads, addStory,
+  COUPLEWEB, THREADS, threadState, threadBroken, litThreads,
 } from '../dist/js/packs/love-island/plugins/coupleweb.js';
 import { simulatePackRun } from '../tools/pack-core.mjs';
 
@@ -204,7 +204,7 @@ test('the drama manager is deterministic: same seed, same thread history', () =>
 });
 
 test('threads state is re-minted per run (no cross-run leakage)', () => {
-  const a = simulatePackRun(loveIslandPack, 111);
+  simulatePackRun(loveIslandPack, 111); // run A first — its state must not leak into B
   const b = simulatePackRun(loveIslandPack, 222);
   // If the stateDefaults object leaked, run B would begin with run A's
   // resolutions and its threads could never light again.

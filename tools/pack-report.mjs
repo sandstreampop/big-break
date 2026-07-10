@@ -22,7 +22,7 @@
 
 import { PACKS } from '../dist/js/packs/registry.js';
 import { validatePack, formatIssue } from '../dist/js/validate.js';
-import { CORE_EFFECT_VERBS, mulberry32 } from '../dist/js/engine.js';
+import { mulberry32 } from '../dist/js/engine.js';
 import { simulatePackRun } from './pack-core.mjs';
 
 const args = process.argv.slice(2);

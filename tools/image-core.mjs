@@ -113,7 +113,7 @@ export async function buildResponsiveSet(masterPath, outDir, opts = {}) {
 // from a renamed/removed slot (a stale variant would still deploy). Guarded to
 // only clear a directory that looks like a variant sink (or is empty/absent).
 export function cleanVariantDir(dir) {
-  let entries = [];
+  let entries;
   try { entries = readdirSync(dir); } catch { return; }
   const stray = entries.filter((f) => !/\.(avif|webp|jpg|jpeg|png)$/i.test(f));
   if (stray.length) {

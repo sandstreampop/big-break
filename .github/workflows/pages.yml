@@ -58,6 +58,12 @@ jobs:
           cache: 'npm' # cache ~/.npm keyed on package-lock.json — cold npm ci was uncached
       - name: Install pinned toolchain
         run: npm ci
+      - name: Dependency audit gate (known-vuln toolchain drift blocks the deploy)
+        # The dep tree is dev-only (build/test toolchain — nothing ships to the
+        # client), but a vulnerable toolchain is still a supply-chain risk to
+        # every contributor and CI run. High+ severity fails; Dependabot
+        # (.github/dependabot.yml) files the fix PRs.
+        run: npm audit --audit-level=high
       - name: Build dist/ (tsc emit + static copy)
         run: npm run build
       - name: Strict typecheck gate (engine core — Epic 1)
@@ -68,6 +74,11 @@ jobs:
         # can never move a golden; the `include` glob in tsconfig.strict.json is
         # the migration frontier — widen it as each module is brought to strict.
         run: npm run typecheck
+      - name: Lint gate (correctness rules — eslint.config.mjs)
+        # A correctness net, not a style cop: the tooling/test ring gets
+        # eslint recommended; TS files follow the same frontier as the strict
+        # typecheck. Config documents the deliberate carve-outs.
+        run: npm run lint:code
       - name: Engine neutrality gate (Epic 3)
         # The genre-agnostic core (js/engine.ts) must name no pack stat/resource/
         # effect-verb/flag. The blocklist is DERIVED from every registered pack's
@@ -132,6 +143,9 @@ jobs:
       - name: Install docs toolchain (isolated from the engine's pinned tsc)
         working-directory: docs-site
         run: npm ci
+      - name: Dependency audit gate (docs toolchain)
+        working-directory: docs-site
+        run: npm audit --audit-level=high
       - name: Build docs site (gate)
         # The docs site transcludes real pack source and type-checks its samples
         # with Twoslash; TypeDoc reads js/types.ts + js/engine.ts. A type rename

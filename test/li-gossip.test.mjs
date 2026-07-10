@@ -6,8 +6,6 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as engine from '../dist/js/engine.js';
-import { loveIslandPack } from '../dist/js/packs/love-island/pack.js';
 import { gossipPlugin, heldIntel, intelCount, GOSSIP } from '../dist/js/packs/love-island/plugins/gossip.js';
 import { moodOf, opinionOf } from '../dist/js/packs/love-island/plugins/characters.js';
 

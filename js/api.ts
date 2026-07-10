@@ -71,7 +71,9 @@ export function createGame(opts: { pack: Pack; validate?: boolean; mobileGuards?
       // graph under `strict` and break the frontier. The runtime resolves the
       // same files either way; the local annotations keep the call shapes
       // typed at this seam.
+      // eslint-disable-next-line prefer-const -- `let` IS the mechanism (see comment above): const would let tsc resolve the import statically
       let uiPath = './ui.js';
+      // eslint-disable-next-line prefer-const -- same late-binding trick
       let platformPath = './platform.js';
       const [ui, platform] = await Promise.all([import(uiPath), import(platformPath)]) as [
         { boot(p: Pack): void; ensureScaffold(): void },

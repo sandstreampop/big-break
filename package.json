@@ -11,9 +11,10 @@
     "validate": "npm run build && node tools/validate-packs.mjs",
     "report": "npm run build && node tools/pack-report.mjs",
     "lint": "npm run build && node tools/lint-content.mjs",
+    "lint:code": "eslint .",
     "smoke": "npm run build && node test/ui/smoke.mjs",
     "test:ui": "npm run build && node test/ui/smoke.mjs && node test/ui/crowding.mjs && node test/ui/mobile-matrix.mjs && node test/ui/creategame.mjs",
-    "check": "npm run build && npm run typecheck && node tools/check-engine-neutrality.mjs && node tools/validate-packs.mjs && node tools/lint-content.mjs && node tools/simulate.mjs --check && node test/ui/smoke.mjs && node test/ui/crowding.mjs && node test/ui/mobile-matrix.mjs && node test/ui/creategame.mjs",
+    "check": "npm run build && npm run typecheck && eslint . && node tools/check-engine-neutrality.mjs && node tools/validate-packs.mjs && node tools/lint-content.mjs && node tools/simulate.mjs --check && node test/ui/smoke.mjs && node test/ui/crowding.mjs && node test/ui/mobile-matrix.mjs && node test/ui/creategame.mjs",
     "test": "npm run build && node --test test/*.test.mjs",
     "ci": "npm run check && node --test test/*.test.mjs",
     "sim": "npm run build && node tools/simulate.mjs",
@@ -25,9 +26,12 @@
     "new-pack": "node tools/new-pack.mjs"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "axe-core": "^4.12.1",
+    "eslint": "10.6.0",
     "playwright": "^1.56.1",
     "sharp": "^0.35.3",
-    "typescript": "5.7.3"
+    "typescript": "5.7.3",
+    "typescript-eslint": "8.63.0"
   }
 }

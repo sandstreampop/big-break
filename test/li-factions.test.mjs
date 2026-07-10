@@ -12,7 +12,7 @@ import * as engine from '../dist/js/engine.js';
 import { loveIslandPack } from '../dist/js/packs/love-island/pack.js';
 import {
   FACTION_KEYS, FACTIONS, factionLean, factionTier,
-  movePublicFactional, recomputePublic, setFactions,
+  movePublicFactional, setFactions,
 } from '../dist/js/packs/love-island/plugins/factions.js';
 
 import { fresh, apply } from './li-harness.mjs';

@@ -398,7 +398,6 @@ createGame({ pack: ${exportName} }).start();
 // shared assets resolve with ../. The entry references js/main-<id>.js via a
 // src= attribute so the build's version stamp applies (see starterMainSource).
 export function starterHtml(id, name, icon = '🎲') {
-  const exportName = packExportName(id);
   return `<!doctype html>
 <html lang="en">
 <head>

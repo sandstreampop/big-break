@@ -1,0 +1,36 @@
+# Dependency update automation (2026-07 staff review, Pass 3).
+#
+# Three ecosystems, all weekly and batched into one PR per ecosystem so update
+# noise stays reviewable. Two deliberate carve-outs:
+#   - typescript stays PINNED at 5.7.3: the build/golden oracle is
+#     toolchain-sensitive (a newer tsc's emit differs and moves goldens), so
+#     tsc upgrades are a manual, deliberate re-baseline — never automated.
+#   - majors for the engine's devDeps arrive as PRs like everything else; CI
+#     (build → goldens → browser suites) is the gate that decides them.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dev-toolchain:
+        patterns: ['*']
+    ignore:
+      - dependency-name: typescript # pinned; see CLAUDE.md — emit differences move goldens
+
+  - package-ecosystem: npm
+    directory: /docs-site
+    schedule:
+      interval: weekly
+    groups:
+      docs-toolchain:
+        patterns: ['*']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

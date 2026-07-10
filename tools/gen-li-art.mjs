@@ -25,7 +25,7 @@ import { CAST, castById } from '../dist/js/packs/love-island/cast.js';
 import { MOODS } from '../dist/js/packs/love-island/plugins/characters.js';
 import { STYLE_PREAMBLE, HERO_EXPRESSION, STYLING, NEGATIVE, MOOD_EXPRESSIONS, SHAPE_HINTS, genderNote } from '../docs/games/love-island/art/style.mjs';
 import {
-  MODELS, generateWithRetry, writeManifest, readManifest, writeContactSheet,
+  MODELS, generateWithRetry, writeManifest, writeContactSheet,
   estimateCost, promptHash, submitBatch, getBatch, collectBatch, isBatchFailed,
 } from './art-core.mjs';
 import { buildResponsiveSet, cleanVariantDir } from './image-core.mjs';
