@@ -1,69 +1,69 @@
 ---
 title: Building & shipping
-description: The build, the data-driven multi-entry output, adding a game entry, and save/telemetry namespacing.
+description: One build command, one folder to serve — how your game goes from source to a playable URL.
 ---
 
-Shipping a Big Break game is deliberately boring: there's no bundler and no
-per-game build step. The source is TypeScript compiled 1:1 to `dist/`, and every
-registered pack ships from that one build.
+Shipping a Big Break game is deliberately boring. There is one build command,
+it produces one folder, and every registered game ships from it. There is no
+bundler to configure and no per-game build step to maintain.
 
-## The build
+## Build
 
 ```bash
-npm run build   # node tools/build.mjs
+npm run build
 ```
 
-Two steps, no magic:
+This compiles the TypeScript to `dist/` and copies the static files (HTML,
+CSS, assets, the offline service worker) alongside it. `dist/` is the complete,
+servable site.
 
-1. `tsc` emits the JS module graph to `dist/` (ESM, `es2022`, 1:1 layout — the
-   import paths in `dist/` are structurally identical to source).
-2. static deployables (HTML, CSS, assets, the service worker) are copied verbatim.
-
-Because `target` is `es2022`, `tsc` does no down-levelling and injects no
-helpers — the emit is behaviorally identical to the source, which is what lets
-the golden master police it.
-
-## The multi-entry output is data-driven
+## Where your game appears
 
 The build reads the [registry](/big-break/docs/concepts/pack/#the-registry-one-place-a-genre-is-declared)
-and emits an entry for **every** game pack — no hand-copied per-pack step:
+and emits an entry for **every** registered game — you never edit a build file:
 
-- the music pack is the site root (`dist/index.html`);
-- every other pack in `GAME_PACKS` becomes a sibling at `dist/<id>/`, served by
-  its own `<id>.html`, which references the shared compiled `js/`/`css/`/`assets`
-  with `../`.
+- the first game owns the site root (`dist/index.html`);
+- every other pack in `GAME_PACKS` gets its own folder at `dist/<id>/`, sharing
+  the same compiled engine, styles, and assets.
 
-So a second game would live at `/<its-id>/` and share the exact same compiled
-engine as the root game.
+So after `npm run new-pack -- space-cats "Space Cats"` and a build, your game
+is at `dist/space-cats/`:
 
-## Adding a game entry
+```bash
+npx http-server dist
+# → http://localhost:8080/space-cats/
+```
 
-To put your pack in front of players:
+## Adding a game entry by hand
 
-1. Register it in `GAME_PACKS` (see [The Pack contract](/big-break/docs/concepts/pack/)).
-2. Add a thin entry module — `js/yourgame-main.ts` that calls `boot(yourgamePack)`.
-3. Add an HTML entry `yourgame.html` (copy `index.html` and point its module
-   script at `js/yourgame-main.js`). The build copies it to
-   `dist/yourgame/index.html` automatically.
+The scaffolder does all of this for you. If you're wiring a pack manually
+instead, a playable entry is three small pieces:
 
-That's it — the build maps over the registry, so there's no build file to edit.
-A pack in `GAME_PACKS` without a matching `<id>.html` is skipped with a warning.
+1. Add your pack to `GAME_PACKS` in the registry.
+2. Add a three-line entry module — `js/main-yourgame.ts` calling
+   `createGame({ pack: yourgamePack }).start()`.
+3. Add `yourgame.html` (copy a scaffolded one and point its script tag at
+   `js/main-yourgame.js`). The build turns it into `dist/yourgame/index.html`.
 
-## Save and telemetry namespacing
+A registered pack with no matching HTML entry is skipped with a warning, so
+you can register a pack for testing long before you give it a page.
 
-Because multiple games share one origin, per-pack isolation matters:
+## Two games, one site, separate saves
 
-- **Saves** are namespaced by pack id, and share/replay codes are pack-tagged, so
-  one game's save never loads into another.
-- **Telemetry** events carry a `pack` dimension, so analytics slice cleanly per
-  genre. If you wire analytics, keep that dimension — it's what makes a shared
-  build measurable per game. (See the engine's analytics schema in the repo.)
+Because every game is served from the same place, isolation is handled for
+you:
 
-## Deploy
+- **Saves** are namespaced per game, and save codes are tagged with the game
+  they came from — a player can't paste one game's career into another.
+- **Analytics** (if you wire them) carry the game's id on every event, so a
+  shared site still measures each game separately.
 
-Deploy is a single path: push to `main` → CI builds `dist/`, runs the full
-[safety net](/big-break/docs/shipping/balance/), and — only if green — publishes
-`dist/` to GitHub Pages. Both games (and this docs site) ship from that one
-workflow, one artifact. There's no `gh-pages` branch and no second deployer.
+## Publishing
 
-See the CI workflow at `.github/workflows/pages.yml` for the exact gate order.
+Pushing to `main` publishes: the site rebuilds, the full test suite runs —
+contract validation, balance gates, and browser playthroughs of every game —
+and only if everything passes does the new build go live on GitHub Pages.
+A failing check blocks the publish, so a broken build can't reach players.
+
+That's the entire pipeline. If `npm run check` passes on your machine, the
+publish will pass too.

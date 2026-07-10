@@ -15,7 +15,7 @@ no internal files to understand first.
 ```bash
 git clone https://github.com/sandstreampop/big-break.git
 cd big-break
-npm ci        # the PINNED toolchain (the build oracle is emit-sensitive)
+npm ci        # installs the exact toolchain the repo is tested with
 ```
 
 ## 1. Scaffold
@@ -35,9 +35,9 @@ Four things appear, and nothing else changes:
 
 The starter is **not lorem ipsum**. It's a working game: two stats, one
 resource, two summits with a real crossroads decision, twenty-eight cards
-including a two-card chain beat, and a declared balance band. A test in the
-repo (`test/newpack.test.mjs`) holds the template itself to the gates, so
-what you scaffold today is valid, balanced, and playable *by construction*.
+including a two-card chain beat, and a declared balance band. The template
+itself is held to the same checks as the shipping games, so what you scaffold
+today is valid, balanced, and playable *by construction*.
 
 ## 2. Prove it
 
@@ -49,8 +49,8 @@ npm run build && node tools/validate-packs.mjs space-cats
 ✓ [space-cats] pack contract OK (0 warnings)
 ```
 
-That's the pack contract — schema and semantics, the same gate CI runs. Now
-look at how it actually plays:
+That's the pack contract — schema and semantics, the same check that runs
+before every publish. Now look at how it actually plays:
 
 ```bash
 node tools/pack-report.mjs space-cats
@@ -73,8 +73,8 @@ game's whole skeleton, live.
 <Aside type="tip" title="How the entry page works">
 The entry module is three lines: `createGame({ pack }).start()`. It validates
 the pack, builds the screen scaffold on the bare page, and boots the shell —
-there is no per-game UI code to maintain. A gate in CI drives exactly this
-embedding in headless Chromium, so it can't silently rot.
+there is no per-game UI code to maintain. An automated browser test drives
+exactly this embedding to an ending, so it can't silently rot.
 </Aside>
 
 ## Make it yours: refactor from green

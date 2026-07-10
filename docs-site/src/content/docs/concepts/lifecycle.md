@@ -48,8 +48,8 @@ persona's modifiers apply. Then, in order:
 :::note[Seeded and resume-safe]
 Every run carries a `seed` and a draw counter, so it replays byte-identically
 after a tab death — and two players on the same daily seed get the same run.
-This is why the golden masters can pin behavior: a seed is a run. If your doc or
-test shows a trace, it's stable.
+A seed is a run: share one and someone else replays it exactly, and any trace
+you print in a test today is the same trace tomorrow.
 :::
 
 ## 2. Draw

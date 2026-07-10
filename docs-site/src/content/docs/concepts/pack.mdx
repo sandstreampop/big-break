@@ -9,8 +9,8 @@ import probeRaw from '@engine/packs/probe.ts?raw';
 import { region } from '@snippet';
 
 A [`Pack`](/big-break/docs/reference/types/interfaces/pack/) is the composition
-root of a genre — one object the engine boots via `useContentPack(pack)` (or
-`newRun(pack, …)`). It has a small **required** core and a long tail of
+root of a genre — one object you hand to `createGame({ pack })` (or, headless,
+to `createEngine(pack)`). It has a small **required** core and a long tail of
 **optional capabilities** the engine feature-detects.
 
 ## Required: the irreducible minimum
@@ -74,7 +74,7 @@ its own effect verbs without editing a shared type — covered in
 ## The registry: one place a genre is declared
 
 A pack becomes a game when it's listed in the registry. This is the single index
-the invariants sweep, the tooling reads, and the build maps over. Adding a genre
+the tooling reads and the build maps over. Adding a genre
 is adding a line here — and touching no engine file:
 
 ```ts title="js/packs/registry.ts"

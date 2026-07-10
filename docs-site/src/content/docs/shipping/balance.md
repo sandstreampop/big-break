@@ -1,114 +1,115 @@
 ---
 title: Balance & the safety net
-description: Deterministic sims, --check gates, golden masters, cross-pack invariants, the content linter, and the UI smoke test.
+description: How to know your game is winnable, losable, and fun — and the tests that keep it that way while you keep editing.
 ---
 
-The engine's superpower is that a run is a **seed**: fully reproducible. That
-turns balance and regression from vibes into machinery. This chapter is the net
-the shipping games use — and the one you should build for your genre, because a
-seeded engine makes it cheap.
+Every run in Big Break is driven by a seed: the same seed always produces the
+same run. That one property turns balancing from vibes into measurement — you
+can play your game thousands of times in a second, get the same numbers twice,
+and know that a change in the numbers means *your content* changed.
 
-## Build before you test
+## Build first
 
-Tools and tests import the **emitted `dist/`**, not the TypeScript source — so
-what's tested is what ships. Always build first:
-
-```bash
-npm ci        # pinned TypeScript 5.7.3 (the golden oracle is emit-sensitive)
-npm run build # tsc → dist/
-```
-
-`npm run check` runs the whole net except the golden tests; run those with
-`node --test`.
-
-## The five layers
-
-### 1. Deterministic simulation with `--check` gates
-
-Each genre has a headless simulator that plays thousands of seeded runs and
-asserts on the distribution — success rate in a target band, no never-drawn
-cards, every summit winnable. These are hard gates: they fail the build.
+Every tool below reads the built output, so always:
 
 ```bash
-node tools/simulate.mjs --check      # music balance/reach gates
+npm run build
 ```
 
-The music gates, for example: success 25–40%, zero never-drawn ungated cards, a
-story-seed funnel ≥ 65%, and a guard that the songs win-path still works. Your
-pack should assert the equivalent for its own summits.
+## Is it balanced? Simulate it
 
-### 2. Golden masters
-
-A golden master pins **seeded runtime behavior**: a fixed corpus of seeds, each
-producing a one-line-per-run trace. A diff means seeded behavior changed — a bug
-unless you meant it. The shipping corpus is 72 music traces plus the
-zero-subsystem probe.
+The simulator plays thousands of seeded runs of your game and reports the
+distribution — how often players win, how long runs last, which endings come
+up, which cards never get seen:
 
 ```bash
-node --test test/*.test.mjs   # golden masters + invariants
+node tools/simulate-pack.mjs my-game 3000
 ```
 
-When you *intend* a behavior change, re-baseline deliberately and eyeball the
-diff:
+Declare the win rate you're aiming for in your manifest and the same tool
+becomes a pass/fail check:
+
+```ts
+balanceBand: { successMin: 25, successMax: 40 },
+```
 
 ```bash
-node tools/gen-golden.mjs          # music
-node tools/gen-probe-golden.mjs    # the zero-subsystem probe
+node tools/simulate-pack.mjs my-game --check
 ```
 
-The genre-agnostic driver in `tools/pack-core.mjs` traces *any* pack from its
-manifest, so a new genre gets a golden corpus with almost no new code.
+`--check` fails if your success rate leaves the band, if any act's deck runs
+dry, or if a card can never be drawn (its gate is unsatisfiable, or nothing
+sets the flag it needs). Those aren't warnings — they fail the build, so a
+balance regression can't quietly ship.
 
-### 3. Cross-pack invariants
+For the richer, human-readable picture, the one-page report combines contract
+issues, deck counts, vocabulary usage, and the simulation:
 
-`test/invariants.test.mjs` guards the bug class per-pack goldens are blind to: a
-core that quietly behaves differently per genre. It sweeps every registered pack
-and asserts genre-neutral properties — including the **"no unknown verb"**
-invariant (every card's effect keys are owned by a stat, resource, core key, or
-plugin — see [Effects](/big-break/docs/authoring/effects/)).
+```bash
+node tools/pack-report.mjs my-game
+```
 
-### 4. The content linter
+## Is the writing clean? Lint it
 
 ```bash
 node tools/lint-content.mjs
 ```
 
-A template/style/gating audit over the decks — it catches unsatisfiable
-`requires` gates, stranded cards, and style slips before they reach players.
+The content linter audits the deck itself: stranded cards, impossible
+`requires` gates, style slips, duplicate ids. It's the fastest of the checks —
+run it early and often.
 
-### 5. The headless UI smoke test
+## Does it actually play? Smoke it
 
 ```bash
-node test/ui-smoke.mjs   # drives each game to its finale in headless Chromium
+node test/ui/smoke.mjs
 ```
 
-This is the only coverage the goldens don't have: it boots the real UI shell,
-swipes each game to its finale, and asserts it doesn't crash — exactly the
-presenter path that a missing ending would break.
+This boots your real game in a headless browser and swipes it all the way to
+an ending. It's the one check the simulators can't replace: it catches the
+bug where everything computes correctly but the game can't be *finished* on a
+real screen — a broken ending, an overlay that won't dismiss.
 
-## The pre-push ritual
+## Locking in behavior while you refactor
 
-Before pushing a balance or content change, run the full net:
+Once your game feels right, you can pin its behavior: record what a fixed set
+of seeds produces today, and let the test suite flag any future change to
+those runs. The repo does this for its shipping games, and your pack can opt
+in with a few lines (the seeded driver already works for any pack — see the
+generator scripts in `tools/`).
+
+The payoff is confidence in *unrelated* edits: rewrite a card's prose, retune
+a gate, restructure your files — if the pinned runs still match, you provably
+changed only what you meant to. If the check fails after a change you *meant*
+to make (a rebalance), you regenerate the recorded runs and review the diff:
+it reads as a one-line-per-run summary of exactly what your change moved.
+
+## The pre-ship ritual
+
+Before publishing a balance or content change:
 
 ```bash
 npm run build
-node tools/lint-content.mjs \
-  && node tools/simulate.mjs --check \
-  && node --test \
-  && node test/ui-smoke.mjs
+node tools/lint-content.mjs
+node tools/simulate-pack.mjs my-game --check
+node --test test/*.test.mjs
+node test/ui/smoke.mjs
 ```
 
-This is exactly what CI gates the deploy on — see
-[Building & shipping](/big-break/docs/shipping/build/).
+Publishing runs the same checks again automatically — a red check blocks the
+deploy — so this ritual is about *your* feedback loop, not about protecting
+production. See [Building & shipping](/big-break/docs/shipping/build/).
 
 ## Judging feel
 
-Gates keep a genre *correct*; they don't tell you if it's *fun*. For that, read
-the Monte-Carlo narrative report — it models a human following the story:
+Checks keep a game *correct*; they can't tell you it's *fun*. For that, read
+the simulator's narrative report — it plays like a human following the story,
+not like an optimizer:
 
 ```bash
-node tools/simulate.mjs 4000 narrative
+node tools/simulate-pack.mjs my-game 4000
 ```
 
-Tune `winGates` and `config.ts` knobs against this, then re-run the `--check`
-gate and the golden test to confirm you changed only what you meant to.
+Watch run length, the ending mix, and how often each path gets picked. Tune
+your `winGates` and card numbers against it, re-run `--check`, and play a run
+yourself before you call it done.

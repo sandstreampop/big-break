@@ -69,8 +69,9 @@ order:
 
 <Aside type="caution" title="Ordering is deterministic — and load-bearing">
 Plugins fire in ascending `priority` (default 0), ties broken by registration
-order. Because subsystems can consume RNG, their order fixes the seeded draw
-stream — so the golden masters pin it. The music pack registers `[band, songs]`
+order. Because subsystems can consume RNG, their order shapes every seeded
+run — reordering plugins changes existing runs the way reordering manifest
+stats does. The music pack registers `[band, songs]`
 specifically so band quirks draw before the chart tick. Set `priority`
 deliberately, and don't reorder casually.
 </Aside>
@@ -97,9 +98,8 @@ The songs plugin owns `hits` — an "instant classic" mints a charting song:
 
 <Code code={region(songsRaw, 'apply-resource')} lang="ts" title="js/packs/music/plugins/songs.ts" />
 
-Notice it consumes `ctx.rng` and pushes song debuts onto `ctx.deltas` — exactly
-at the resource's ordinal slot, so the RNG stream stays byte-identical to when
-this logic lived inline in the engine.
+Notice it consumes `ctx.rng` (never `Math.random`) and pushes song debuts onto
+`ctx.deltas` so the UI can stage them.
 
 ## A full subsystem at act breaks
 
@@ -111,7 +111,7 @@ finale — reusing the engine's own song machinery:
 ## What a plugin OWNS (the contract, in full)
 
 Beyond the lifecycle hooks, a plugin makes three kinds of **declarations** —
-each one is checked by the pack validator and the cross-pack invariants, so an
+each one is checked by the pack validator and the test suite, so an
 undeclared use fails the build instead of silently no-opping:
 
 - **`effectVerbs`** — the effect keys this plugin handles in `onEffect`. A

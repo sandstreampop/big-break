@@ -40,7 +40,7 @@ full story.
 
 1. Add the key to your pack's `Effect` `declare module` block (compile-time).
 2. Declare it in the owning plugin's `effectVerbs` and handle it in `onEffect`
-   (the "no unknown verb" invariant will otherwise fail).
+   (the "no unknown verb" check will otherwise fail).
 3. Use it in a card outcome.
 
 → [Effects & the open vocabulary](/big-break/docs/authoring/effects/)
@@ -68,37 +68,29 @@ full story.
 ```js
 import { tracePackRun } from '../tools/pack-core.mjs';
 import { yourPack } from '../dist/js/packs/yourpack.js';
-import { useContentPack } from '../dist/js/engine.js';
 
-useContentPack(yourPack);
 console.log(tracePackRun(yourPack, 12345)); // deterministic from the seed
 ```
 
 → [Quickstart](/big-break/docs/quickstart/) ·
 [Balance & the safety net](/big-break/docs/shipping/balance/)
 
-## Give a new pack a golden corpus
+## Pin your game's behavior against future edits
 
-1. The genre-agnostic driver (`tools/pack-core.mjs`) already traces any pack from
-   its manifest.
-2. Pin a seed corpus and a golden file the way `gen-probe-golden.mjs` does.
-3. Wire the golden test into `node --test` and the `--check` gate into CI.
+Record what a fixed set of seeds produces today, so any later change to those
+runs fails a test instead of slipping through:
 
-→ [Balance & the safety net](/big-break/docs/shipping/balance/)
+1. The seeded driver (`tools/pack-core.mjs`) already traces any pack — no new
+   driver code.
+2. Copy one of the small `tools/gen-*-golden.mjs` scripts, point it at your
+   pack, and commit the recorded traces it writes.
+3. Add the matching few-line test so `node --test` compares fresh traces to
+   the recording.
 
-## Re-baseline a golden (on purpose)
-
-You changed seeded behavior deliberately and the golden test now fails. Confirm
-the change is intended, then regenerate and **eyeball the one-line-per-run diff**:
-
-```bash
-npm run build
-node tools/gen-golden.mjs          # music
-node tools/gen-probe-golden.mjs    # probe
-```
-
-A golden diff you didn't intend is a bug. A golden diff you did intend is a
-reviewable, minimal record of exactly what your change moved.
+When the comparison fails after a change you *meant* to make (a rebalance),
+re-run your generator script and review the diff — it reads as one line per
+run, showing exactly what your change moved. If you didn't mean to change
+behavior, the failure just caught a bug.
 
 → [Balance & the safety net](/big-break/docs/shipping/balance/)
 

@@ -40,8 +40,8 @@ push to `main`.
 
 <Steps>
 
-1. Clone the repo and install the **pinned** toolchain. The build oracle is
-   emit-sensitive, so use `npm ci`, not a fresh `npm install`:
+1. Clone the repo and install. Use `npm ci` (not `npm install`) so you get
+   the exact toolchain versions the repo is tested with:
 
    ```bash
    git clone https://github.com/sandstreampop/big-break.git
@@ -50,10 +50,10 @@ push to `main`.
    npm run build # tsc → dist/  (tools and tests import the built dist/)
    ```
 
-2. Confirm the net is green before you touch anything:
+2. Confirm everything passes before you touch anything:
 
    ```bash
-   node --test test/*.test.mjs   # 150 seeded traces + invariants
+   node --test test/*.test.mjs   # the full test suite — all green
    ```
 
 </Steps>
@@ -178,9 +178,7 @@ manifest. Play a fully deterministic career from a seed and inspect the finale:
 // scratch/run-probe.mjs  —  node scratch/run-probe.mjs
 import { tracePackRun } from '../tools/pack-core.mjs';
 import { probePack } from '../dist/js/packs/probe.js';
-import { useContentPack } from '../dist/js/engine.js';
 
-useContentPack(probePack);
 const trace = tracePackRun(probePack, 12345);
 console.log('ending:', trace.ending, '\nfinal stats:', trace.stats);
 ```
@@ -189,9 +187,9 @@ console.log('ending:', trace.ending, '\nfinal stats:', trace.stats);
 npm run build && node scratch/run-probe.mjs
 ```
 
-Because the run is seeded, the same seed always produces the same career — which
-is exactly what the golden masters pin. Your new pack can have its own golden
-corpus with the same one-line-per-run diff (see
+Because the run is seeded, the same seed always produces the same career — you
+can share a seed like a puzzle, and you can pin your game's behavior against
+future edits (see
 [Balance & the safety net](/big-break/docs/shipping/balance/)).
 
 <Aside type="tip" title="Playing it in a browser">

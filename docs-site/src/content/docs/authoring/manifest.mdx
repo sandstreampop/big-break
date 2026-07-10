@@ -32,8 +32,8 @@ interface PackManifest {
 
 <Aside type="caution" title="Order is load-bearing">
 `stats` and `resources` are arrays, not sets: the engine applies deltas in list
-order, and that order is part of what the golden masters pin. Reorder them and
-seeded runs change. Add new ones at the end.
+order, and that order feeds the seeded rolls. Reorder them and every existing
+seeded run changes — players' shared seeds included. Add new ones at the end.
 </Aside>
 
 ## stats and resources

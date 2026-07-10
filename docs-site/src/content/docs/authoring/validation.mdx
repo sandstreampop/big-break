@@ -35,8 +35,8 @@ half of the contract is `validatePack`, and the rule is simple:
 
 </Steps>
 
-Stages 1–2 are `validatePack` (`js/validate.ts` — engine-side, genre-neutral,
-DOM-free). Stages 3–4 are the tooling ring on top of it.
+Stages 1–2 are `validatePack`; stages 3–4 are the report and simulation tools
+built on top of it.
 
 ## Anatomy of an error
 
@@ -105,13 +105,14 @@ build are byte-identical, so a diff means the *pack* changed.
 
 ## The gates behind you
 
-Everything above also runs as CI teeth, so the contract can't drift:
+Everything above also runs automatically before every publish, so a
+regression can't quietly ship:
 
 | Gate | What it holds |
 |---|---|
 | `node tools/validate-packs.mjs` | every registered pack passes stages 1–2 |
 | `node tools/simulate-pack.mjs <id> --check` | success band (from your manifest's `balanceBand`), zero dead ungated cards, zero deck-dry acts |
-| `node --test test/*.test.mjs` | golden masters + cross-pack invariants (plugin ownership, gate resolution, sim/browser parity) |
+| `node --test test/*.test.mjs` | the regression suite — pinned seeded runs, verb/key ownership, gate resolution |
 | `node tools/lint-content.mjs` | the words: taste floors, tokens, style |
 
 Declare your band in the manifest and the balance gate reads it — no tool edit:

@@ -1,6 +1,6 @@
 ---
 title: Effects & the open vocabulary
-description: The core verb set, adding your genre's verbs via declaration merging, and the no-unknown-verb invariant.
+description: The core verb set, how your game adds its own verbs, and the rule that no card can name a verb nobody owns.
 ---
 
 import { Aside, Code } from '@astrojs/starlight/components';
@@ -40,17 +40,9 @@ handle the same way:
 
 <Code code={region(musicRaw, 'effect-augmentation')} lang="ts" title="js/packs/music/pack.ts" />
 
-This is the Open/Closed Principle made literal: the shared type is **closed** to
-modification (you never edit `types.ts` to add a genre) but **open** to
-extension (your `declare module` block adds exactly what you need). Adding a
-genre touches new files only.
-
-<Aside type="note" title="Why not one big union?">
-An earlier design enumerated every genre's keys on one `Effect` union — a
-"god-union" that every new genre had to edit, and that leaked one genre's
-vocabulary into another's types. Declaration merging removes the shared edit
-while keeping the compile-time safety. That's the whole idea in one interface.
-</Aside>
+You never edit a shared file to add your game's verbs — the `declare module`
+block in your own file adds exactly the keys you need, and everything else
+stays a compile error. Adding a genre touches new files only.
 
 ## Who applies a verb
 
@@ -63,9 +55,9 @@ When an outcome lands, the engine routes each effect key:
 4. every **other** key must be a verb some plugin declares in its `effectVerbs`
    and handles in `onEffect`.
 
-## The "no unknown verb" invariant
+## The "no unknown verb" rule
 
-There's a runtime guardrail behind the types. A cross-pack invariant checks that
+There's a runtime guardrail behind the types: the test suite checks that
 **every** effect key any card names is accounted for — it must be in
 `manifest.stats` ∪ `manifest.resources` ∪ the core neutral set ∪ some plugin's
 declared `effectVerbs`. A verb no one owns is a test failure, not a silent no-op.
@@ -80,7 +72,7 @@ interface Plugin {
   onEffect?(state: any, effects: Effect, ctx: any): void;
 }
 // ---cut---
-// A plugin declares the verbs it owns, so the invariant can account for them:
+// A plugin declares the verbs it owns, so the check can account for them:
 const favorPlugin: Plugin = {
   id: 'favor',
   effectVerbs: ['favor'],
@@ -92,7 +84,7 @@ const favorPlugin: Plugin = {
 
 So the rule for a pack author is simple: **if a card names a verb, either it's a
 stat/resource in your manifest, or a plugin declares and handles it.** The type
-system catches the typo; the invariant catches the orphan.
+system catches the typo; the runtime check catches the orphan.
 
 Next: [Subsystems (plugins)](/big-break/docs/authoring/plugins/) — where custom
 verbs and state live.

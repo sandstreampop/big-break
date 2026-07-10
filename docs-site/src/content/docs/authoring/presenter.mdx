@@ -11,11 +11,10 @@ presenter turns it into the ending screen, the act interstitials, and the trophy
 room. Without one, a run reaches a generic finale; with one, it reaches *your*
 game's finale.
 
-<Aside type="note" title="Why this exists">
-The presenter is the seam that lets each genre render its own ending from the
-engine's neutral summary, instead of the UI reaching for one genre's ending copy
-and flavor lookups. It's optional, and the UI falls back to neutral behavior for
-anything a pack omits.
+<Aside type="note" title="Optional, piece by piece">
+Every field here is à la carte: provide it and the UI uses it; omit it and the
+UI falls back to a neutral default. You can ship with only `endings` filled in
+and add the flavor generators later.
 </Aside>
 
 ## The shape
@@ -85,7 +84,8 @@ export function buildEpilogue(state) {
 <Aside type="caution" title="Seed off the run, not the clock">
 These generators must be deterministic — seed the RNG from `state.seed` (with
 `mulberry32`), never from wall-clock time. A run's ending screen should be
-identical on replay, and the UI smoke test drives exactly this path to the finale.
+identical on replay — and the automated browser playthrough exercises exactly
+this path, so a crash here blocks publishing.
 </Aside>
 
 ## Trophies
