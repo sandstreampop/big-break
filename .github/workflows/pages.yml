@@ -100,6 +100,11 @@ jobs:
         # music's does. Success band is pack-declared (manifest.balanceBand); the
         # dead-card / deck-dry gates are universal.
         run: node tools/simulate-pack.mjs love-island --check
+      - name: Balance gate (odyssey, generic driver against dist/)
+        # Found by the 2026-07 odyssey staff review's claim audit (Pass 0):
+        # the odyssey band was declared and green locally but never gated a
+        # deploy. Same driver, same contract as love-island's.
+        run: node tools/simulate-pack.mjs odyssey --check
       - name: Golden-master regression (music + probe, against dist/)
         # The golden/invariant oracles (DOM-free, no browser). The browser
         # suites live under test/ui/ (explicit paths below), so this top-level
