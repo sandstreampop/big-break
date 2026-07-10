@@ -126,6 +126,25 @@ test('loadRun resumes only a live v1 run', () => {
   assert.equal(save.loadRun(), null, 'a corrupt run payload does not resume');
 });
 
+test('loadRun refuses a run from another pack (cross-pack guard)', () => {
+  // The comment in save.ts always promised a belt-and-suspenders packId check
+  // for a run written by a bad import; the 2026-07 staff review caught that
+  // the check was never implemented. Pinned here so it can't regress.
+  useStorage();
+  save.setSaveNamespace('');
+
+  save.saveRun({ version: 1, phase: 'playing', packId: 'music' });
+  assert.ok(save.loadRun('music'), 'a run resumes in its own pack');
+  assert.equal(save.loadRun('love-island'), null,
+    'a foreign pack\'s run must NOT resume — silent cross-pack corruption');
+
+  save.saveRun({ version: 1, phase: 'playing' }); // pre-packId build
+  assert.ok(save.loadRun('music'), 'a legacy run without packId still resumes (back-compat)');
+
+  save.saveRun({ version: 1, phase: 'playing', packId: 'music' });
+  assert.ok(save.loadRun(), 'callers that pass no expectation keep the old behavior');
+});
+
 test('clearRun / resetAll remove keys', () => {
   const s = useStorage();
   save.setSaveNamespace('');

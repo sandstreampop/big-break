@@ -63,10 +63,13 @@ export function saveMeta(meta) {
 
 // A run resumes only if it belongs to THIS namespace's pack. Namespacing keeps
 // packs' localStorage separate already; the packId check is belt-and-suspenders
-// for a run written by an older build (no packId) or a bad import.
-export function loadRun() {
+// for a run written by a bad import or a pre-tag export code. A run from an
+// older build (no packId stamped) still resumes — back-compat.
+export function loadRun(expectedPackId?: string) {
   const run = read(runKey());
-  return run && run.version === 1 && run.phase !== 'ended' ? run : null;
+  if (!(run && run.version === 1 && run.phase !== 'ended')) return null;
+  if (expectedPackId && run.packId && run.packId !== expectedPackId) return null;
+  return run;
 }
 export function saveRun(state) {
   write(runKey(), state);

@@ -37,7 +37,7 @@ export function renderTitle() {
   const taglines = PRES.title?.taglines || [];
   if (taglines.length) s.append(el('p', 'title-tag', taglines[dayNum % taglines.length]));
 
-  const saved = save.loadRun();
+  const saved = save.loadRun(activePack.id);
   const menu = el('div', 'menu');
   if (saved) {
     menu.append(btn('▶ Resume Run', 'primary', () => {
