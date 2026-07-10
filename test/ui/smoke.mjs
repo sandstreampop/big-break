@@ -147,7 +147,7 @@ async function axeScan(page, label, where) {
   return bad.length;
 }
 
-async function playToFinale(page, label, pathIndex = 0) {
+async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0) {
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(`console.error: ${m.text()}`); });
@@ -293,7 +293,7 @@ async function playToFinale(page, label, pathIndex = 0) {
         (gear || ov).click(); // gear-shelf / exit-interview button, else dismiss
       });
     } else if (k === 'cross') {
-      const idx = pickedPath ? 0 : pathIndex;
+      const idx = pickedPath ? finaleDoor : pathIndex;
       pickedPath = true;
       await page.evaluate((i) => {
         const cards = document.querySelectorAll('#screen-crossroads.active .pick-card');
@@ -431,7 +431,10 @@ try {
 const GAMES = [
   { label: 'music', url: `${base}/`, ns: '', paths: 3 },
   { label: 'love-island', url: `${base}/love-island/`, ns: '_love-island', paths: 3 },
-  { label: 'odyssey', url: `${base}/odyssey/`, ns: '_odyssey', paths: 2 },
+  // paths counts PASSES here: odyssey cycles its 2 paths and drives a
+  // different Hall door each pass (the gated pre-finale surface — working
+  // agreement: a new control on a gated surface gets an explicit exercise).
+  { label: 'odyssey', url: `${base}/odyssey/`, ns: '_odyssey', paths: 3, pathCycle: 2 },
 ];
 
 let failed = 0;
@@ -444,7 +447,8 @@ for (const g of GAMES) {
     const page = await ctx.newPage();
     try {
       await page.goto(g.url, { waitUntil: 'domcontentloaded' });
-      const { lightboxRuns, cardCastRuns, feedRuns } = await playToFinale(page, `${g.label} path#${pi}`, pi);
+      const pathPick = g.pathCycle ? pi % g.pathCycle : pi;
+      const { lightboxRuns, cardCastRuns, feedRuns } = await playToFinale(page, `${g.label} path#${pi}`, pathPick, g.pathCycle ? pi : 0);
       const lb = lightboxRuns ? ` (portrait-lightbox stack verified ×${lightboxRuns})` : '';
       const cc = cardCastRuns ? ` (card-cast lightbox verified ×${cardCastRuns})` : '';
       const fd = feedRuns ? ` (unread-feed notification verified ×${feedRuns})` : '';

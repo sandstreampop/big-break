@@ -96,7 +96,48 @@ const DESCRIPTORS = {
   // cap 420). Wired ahead of the pack per the working agreement: no content
   // before the taste gate exists; the floor activates the moment the pack
   // registers.
-  odyssey: { tokens: [], weatherIds: [], taste: ODYSSEY_TASTE },
+  odyssey: {
+    tokens: [], weatherIds: [], taste: ODYSSEY_TASTE,
+    // The itinerary's requires-gated landmark variants (delivered by force —
+    // the odyssey_itinerary beat windows), same delivery-owned class as LI's
+    // scheduled beats.
+    arcs: [{ id: 'ody_itinerary', setup: ['ody_cyclops_strong'], payoffs: [] }],
+    // The bard's frame prose lives on the presenter; hold it to the same
+    // floor as the deck. State-dependent hooks are exercised across their
+    // flag variants so every authored branch is scanned.
+    presenterCopy(pack) {
+      const pres = pack.presenter || {};
+      const out = [pres.aboutLine];
+      out.push(pres.title?.logo, ...(pres.title?.taglines || []));
+      out.push(pres.actWord, ...(pres.actNames || []));
+      for (const a of Object.values(pres.actIntro || {})) out.push(a.name, a.text);
+      out.push(pres.crossroads?.head, pres.crossroads?.sub);
+      out.push(pres.loadoutPicker?.head, pres.loadoutPicker?.sub);
+      for (const e of Object.values(pres.endings || {})) {
+        if (e.title) out.push(e.title, e.text);
+        else for (const v of Object.values(e)) out.push(v.title, v.text);
+      }
+      for (const l of pack.loadouts) out.push(l.name, l.flavor, l.quirk?.name, l.quirk?.desc);
+      for (const pth of Object.values(pack.manifest.paths)) out.push(pth.name, pth.blurb, pth.gateLabel);
+      const flagStates = [[], ['ody_named', 'ody_fore_bow'], ['ody_nobody', 'ody_fore_sea']];
+      for (const flags of flagStates) {
+        const mock = { flags, stats: { might: 50, guile: 50, lore: 50 }, athena: 2, path: 'nostos' };
+        const fs = pres.finalSet?.(mock);
+        if (fs) {
+          out.push(fs.head, fs.sub);
+          for (const o of fs.options) out.push(o.title, o.blurb, o.label);
+        }
+        for (const c of pres.gearChips?.(mock) || []) {
+          out.push(c.html, c.sheet?.title, ...(c.sheet?.lines || []));
+        }
+      }
+      for (const ev of pack.events.filter((e) => (e.tags || []).includes('landmark'))) {
+        const sp = pres.setPiece?.({ flags: [] }, ev);
+        if (sp) out.push(sp.banner, sp.sub);
+      }
+      return out.filter(Boolean);
+    },
+  },
   // Love Island: the taste block (cliché blocklist + outcome-length cap) is the
   // game's own data (docs/games/love-island/taste.mjs, mirroring VOICE.md).
   // Tokens are the pack's presenter-filled identities. The "arc" here is the
@@ -383,6 +424,30 @@ for (const pack of PACKS) {
     for (const x of reactive) {
       if (/\{\w+\}/.test(x)) tag(`reactive: unfilled token: ${x.slice(0, 60)}`);
       if (/\bundefined\b|\bnull\b/.test(x)) tag(`reactive: undefined leak: ${x.slice(0, 60)}`);
+    }
+  }
+
+  // Presenter copy (endings, act intros, crossroads, taglines, the pre-finale
+  // set…) is player-facing prose the deck checker never sees — goldens and
+  // sims are DOM-free, so without this floor a cliché in an ending ships
+  // silently (the odyssey slice-2 verifier's finding). A pack declares
+  // presenterCopy() on its descriptor returning its authored presenter
+  // strings (exercising state-dependent hooks in their reachable variants);
+  // they get the same taste + structural floor as deck copy.
+  if (desc.presenterCopy) {
+    const copy = desc.presenterCopy(pack);
+    totalReactive += copy.length;
+    for (const t of copy) {
+      if (!t) continue;
+      if (/\w'\w/.test(t)) tag(`presenter: straight apostrophe: ${t.slice(0, 60)}`);
+      if (t.includes('  ')) tag(`presenter: double space: ${t.slice(0, 60)}`);
+      if (desc.taste) {
+        for (const i of tasteIssues(t, desc.taste)) tag(`presenter: ${i}`);
+        for (const i of tellIssues(t, desc.taste.tells)) tag(`presenter: ${i}`);
+      } else {
+        const b = bangIssue(t);
+        if (b) tag(`presenter: ${b}`);
+      }
     }
   }
 }

@@ -150,6 +150,20 @@
   padding: 6px 0;
 }
 
+/* The landmarks (slice 3): the gold fret is the gods' border — the meander
+   thesis at its loudest surface. The deep gets its hush: ash text, no gold. */
+.sp-ody .set-piece-banner {
+  border-top: 3px double var(--accent);
+  border-bottom: 3px double var(--accent);
+  color: var(--accent);
+}
+.sp-ody-deep .set-piece-banner {
+  border-top-color: var(--dim);
+  border-bottom-color: var(--dim);
+  color: var(--dim);
+  letter-spacing: .3em;
+}
+
 /* Motion is ember-slow; nothing pulses. */
 .tier-incredible .tier-badge, .verdict-success { animation: none; }
 .stat-burnout.danger .stat-icon { animation: none; }

@@ -31,6 +31,7 @@ function freshRun(pack) {
 const EXPECTED_PLUGIN_ORDER = {
   music: ['venue', 'rival', 'seeds', 'contract', 'weather', 'genre', 'loadout', 'gear', 'hustle', 'band', 'songs', 'economy'],
   'love-island': ['coupling', 'profile', 'characters', 'gossip', 'factions', 'coupleweb', 'producers', 'stirling'],
+  odyssey: ['odyssey_fires', 'odyssey_itinerary'],
 };
 
 for (const pack of PACKS) {
