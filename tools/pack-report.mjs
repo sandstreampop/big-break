@@ -162,7 +162,10 @@ function buildReport(pack) {
       resources: m.resources,
       segments: m.segments.map((s) => s.crossroads ? `${s.length}✕` : s.length),
       paths: Object.keys(m.paths),
-      failStates: (m.failStates || []).map((f) => `${f.ending} (${f.key} ${f.cmp} ${f.value})`),
+      failStates: [
+        ...(m.failStates || []).map((f) => `${f.ending} (${f.key} ${f.cmp} ${f.value})`),
+        ...(m.terminalRules || []).map((r) => `${r.ending} (${condText(r.when)})`),
+      ],
       plugins: (pack.plugins || []).map((p) => p.id),
     },
     deck: {
@@ -199,6 +202,14 @@ function buildReport(pack) {
       },
     },
   };
+}
+
+// Render a TerminalCondition for the taxonomy line: thresholds as-is, flags
+// as flag=..., conjunctions joined with ' & '.
+function condText(cond) {
+  if ('all' in cond) return cond.all.map(condText).join(' & ');
+  if ('flag' in cond) return `flag ${cond.flag}`;
+  return `${cond.key} ${cond.cmp} ${cond.value}`;
 }
 
 function printReport(r, pack) {

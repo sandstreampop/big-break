@@ -4,7 +4,7 @@
 // balance-tuned at Phase D, the SHAPE is the genre.
 // Vocabulary: docs/games/love-island/CONTEXT.md. Decisions: the adr/ folder.
 
-import type { PackManifest, PathDef, StatMeta, FailStateRule, SegmentDef } from '../../types.js';
+import type { PackManifest, PathDef, StatMeta, TerminalRule, SegmentDef } from '../../types.js';
 
 // The season's structure (v4 S2, ADR-0011 on ADR-0010's machinery): SIX WEEKS.
 // A week is a run of quiet daily beats that ENDS on a tentpole (peak-end rule
@@ -125,21 +125,23 @@ export const RESOURCE_META: Record<string, StatMeta> = {
   story: { name: 'A Story', icon: '📖' },
 };
 
-// Fail states beyond the engine's universal In-Your-Head Walk (fromAct is in
-// WEEK space — the first week of the phase the rule used to name):
+// Terminal rules beyond the engine's universal In-Your-Head Walk (fromAct is
+// in WEEK space — the first week of the phase the rule used to name):
 //  · dumped-by-vote — the public craters (live once The Turn starts, week 3;
 //    Arrival is grace)
 //  · dumped-single — left standing at a Recoupling; the Coupling plugin sets
-//    the flag, this rule (bond ≥ 0 is always true) turns it into the ending.
+//    the flag, and the flag IS the rule. (This was a failStates entry with an
+//    always-true `bond >= 0` comparison until the 2026-07 odyssey review
+//    named the pattern; terminalRules is the honest shape.)
 //  · the Final Week wall — In Your Head at 79+ once Final Week (week 6)
 //    starts and you walk (R1/A2: the pack's second real mortality).
 //    Telegraphed three ways before it can fire: the wobble ladder
 //    (50 → 75 → the break), the Final Week recap's warning, and Stirling.
 //    Weeks 1–5 keep the engine's 100 line.
-export const FAIL_STATES: FailStateRule[] = [
-  { key: 'public', cmp: '<=', value: 4, fromAct: 3, ending: 'dumped' },
-  { key: 'bond', cmp: '>=', value: 0, flag: 'li_dumped_single', ending: 'dumped' },
-  { key: 'burnout', cmp: '>=', value: 79, fromAct: 6, ending: 'burnout' },
+export const TERMINAL_RULES: TerminalRule[] = [
+  { when: { key: 'public', cmp: '<=', value: 4 }, fromAct: 3, ending: 'dumped' },
+  { when: { flag: 'li_dumped_single' }, ending: 'dumped' },
+  { when: { key: 'burnout', cmp: '>=', value: 79 }, fromAct: 6, ending: 'burnout' },
 ];
 
 export const loveIslandManifest: PackManifest = {
@@ -165,7 +167,7 @@ export const loveIslandManifest: PackManifest = {
   costResource: 'graft',
   incredibleResources: ['public', 'followers', 'romantics', 'selfrespect', 'drama'],
   momentumResource: 'surge',
-  failStates: FAIL_STATES,
+  terminalRules: TERMINAL_RULES,
   declinePenalty: { public: -1 },
   declineText: 'You haven’t got the Graft for it. You announce you’re “keeping your options open.” The options heard you.',
   // Balance gate (tools/simulate-pack.mjs --check): a villa season should be

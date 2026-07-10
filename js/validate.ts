@@ -329,8 +329,8 @@ function walkPack(c: Collector, candidate: unknown): void {
         near ? `Use "${near}" (closest match).` : `Name a declared resource (or plugin state slot), or drop the field to opt out.`);
     }
   }
-  // Fail states: shape + key resolution (a typo here is a fail that can never
-  // fire — or one that fires instantly).
+  // Fail states (legacy shape): shape + key resolution (a typo here is a fail
+  // that can never fire — or one that fires instantly).
   const failStates: any[] = Array.isArray(m.failStates) ? m.failStates : [];
   failStates.forEach((rule, i) => {
     const where = `manifest.failStates[${i}]`;
@@ -346,6 +346,67 @@ function walkPack(c: Collector, candidate: unknown): void {
         `Fail state "${rule.ending}" watches "${rule.key}", but "${rule.key}" is not a declared stat, resource, or plugin state slot — the rule could never trip. ${gateVocabLine}`,
         near ? `Use "${near}" (closest match), or declare "${rule.key}" in the manifest.` : `Watch a declared key instead.`);
     }
+    // The dummy-comparison smell the 2026-07 odyssey review flagged: a flag
+    // rule whose numeric half can never gate anything (a sentinel like
+    // `>= -999` or `>= 0` on a non-negative key). The flag is doing all the
+    // work — say so in the honest shape.
+    if (isStr(rule.flag) && rule.cmp === '>=' && rule.value <= 0) {
+      c.warn('failstate-dummy-comparison', where,
+        `This rule's comparison ("${rule.key}" >= ${rule.value}) looks always-true — the flag "${rule.flag}" is the real trigger. failStates can only say "threshold", so flag endings need a dummy number; terminalRules can say what is meant.`,
+        `Move it to manifest.terminalRules: { when: { flag: '${rule.flag}' }, ending: '${rule.ending}' }.`);
+    }
+  });
+  // Terminal rules: the honest shape — { when: threshold | flag | all[], ending }.
+  // Same never-throws bar as everything else; conditions validate recursively.
+  const checkTerminalCondition = (cond: any, where: string): void => {
+    if (!isObj(cond)) {
+      c.error('terminalrule-condition-invalid', where,
+        `A terminal condition must be an object: { key, cmp, value } (threshold), { flag } (run flag), or { all: [...] } (every condition holds).`,
+        'Pick one of the three condition shapes (see TerminalCondition in js/types.ts).');
+      return;
+    }
+    if ('all' in cond) {
+      if (!Array.isArray(cond.all) || cond.all.length === 0) {
+        c.error('terminalrule-condition-invalid', `${where}.all`,
+          `"all" must be a non-empty array of conditions (an empty conjunction would be vacuously true — the run would end instantly).`,
+          'List the conditions that must all hold, or use a single condition directly.');
+        return;
+      }
+      cond.all.forEach((sub: any, j: number) => checkTerminalCondition(sub, `${where}.all[${j}]`));
+      return;
+    }
+    if ('flag' in cond) {
+      if (!isStr(cond.flag)) {
+        c.error('terminalrule-condition-invalid', `${where}.flag`,
+          `"flag" must be a non-empty string naming a run flag.`,
+          'Name the flag a card/plugin sets (addFlag).');
+      }
+      return;
+    }
+    if (!isStr(cond.key) || !isNum(cond.value) || !CMPS.includes(cond.cmp)) {
+      c.error('terminalrule-condition-invalid', where,
+        `A threshold condition needs { key, cmp (one of ${CMPS.join(' ')}), value }.`,
+        'Fix the condition shape (see TerminalCondition in js/types.ts).');
+      return;
+    }
+    if (!gateKeys.has(cond.key)) {
+      const near = closestKey(cond.key, gateKeys);
+      c.error('terminalrule-key-unresolved', `${where}.key`,
+        `This terminal condition watches "${cond.key}", but "${cond.key}" is not a declared stat, resource, or plugin state slot — the rule could never trip. ${gateVocabLine}`,
+        near ? `Use "${near}" (closest match), or declare "${cond.key}" in the manifest.` : `Watch a declared key instead.`);
+    }
+  };
+  const terminalRules: any[] = Array.isArray(m.terminalRules) ? m.terminalRules : [];
+  terminalRules.forEach((rule, i) => {
+    const where = `manifest.terminalRules[${i}]`;
+    if (!isObj(rule) || !isStr(rule.ending) || rule.when === undefined
+      || (rule.fromAct !== undefined && !isInt(rule.fromAct))) {
+      c.error('terminalrule-invalid', where,
+        `Each terminal rule needs { when: <condition>, ending } (optional integer fromAct).`,
+        'Fix the rule shape (see TerminalRule in js/types.ts).');
+      return;
+    }
+    checkTerminalCondition(rule.when, `${where}.when`);
   });
   if (m.balanceBand !== undefined) {
     const b = m.balanceBand;

@@ -101,16 +101,17 @@ const manifest: PackManifest = {
   // (costResource deliberately unset — the probe proves the slot optional).
   // Deeds sung tonight are the bard's repertoire tomorrow.
   lpResources: ['renown'],
-  // The sea takes you: Poseidon's wrath at maximum is the second fail state
-  // (Despair, the universal burnout fail, is the first).
-  // The sea takes you (wrath at maximum) — and the three banked tellings:
-  // a temptation's choice sets a flag, the rule reads it (the always-true
-  // numeric is the LI li_dumped_single shape — the flag is the trigger).
-  failStates: [
-    { key: 'poseidon', cmp: '>=', value: 10, ending: 'wrath' },
-    { key: 'poseidon', cmp: '>=', value: -999, flag: 'ody_stayed_lotus', ending: 'lotus' },
-    { key: 'poseidon', cmp: '>=', value: -999, flag: 'ody_stayed_circe', ending: 'circe' },
-    { key: 'poseidon', cmp: '>=', value: -999, flag: 'ody_stayed_calypso', ending: 'calypso' },
+  // The ways a telling ends early (after Despair, the universal burnout
+  // fail): the sea takes you at maximum wrath, and the three banked tellings
+  // — a temptation accepted sets its flag, and the flag IS the rule. (These
+  // were failStates with an always-true `poseidon >= -999` comparison until
+  // the 2026-07 review called the encoding what it was; terminalRules is the
+  // honest shape.)
+  terminalRules: [
+    { when: { key: 'poseidon', cmp: '>=', value: 10 }, ending: 'wrath' },
+    { when: { flag: 'ody_stayed_lotus' }, ending: 'lotus' },
+    { when: { flag: 'ody_stayed_circe' }, ending: 'circe' },
+    { when: { flag: 'ody_stayed_calypso' }, ending: 'calypso' },
   ],
   // The grill's band: 35–50% standard win for a reasonable build.
   balanceBand: { successMin: 35, successMax: 50 },

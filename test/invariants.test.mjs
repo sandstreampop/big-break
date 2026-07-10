@@ -216,6 +216,14 @@ for (const pack of PACKS) {
     for (const rule of m.failStates || []) {
       assert.ok(known.has(rule.key), `failState '${rule.ending}' key '${rule.key}' is not a declared stat/resource`);
     }
+    // terminalRules watch the same vocabulary, through the condition union.
+    const conditionKeys = (cond) => 'all' in cond ? cond.all.flatMap(conditionKeys)
+      : 'flag' in cond ? [] : [cond.key];
+    for (const rule of m.terminalRules || []) {
+      for (const key of conditionKeys(rule.when)) {
+        assert.ok(known.has(key), `terminalRule '${rule.ending}' key '${key}' is not a declared stat/resource`);
+      }
+    }
   });
 
   // ── Sim/browser parity for gear grants (INCIDENTS #2). The shell's ONLY

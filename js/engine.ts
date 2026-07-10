@@ -21,7 +21,7 @@
 // hook is synchronous, so dynamic scoping here is exact, not approximate.
 
 import { CONFIG } from './config.js';
-import type { Pack, RunState, Plugin, GameEvent, Choice, Side, Requires, Tier, GainBag, RollCtx, BurnoutCtx, DeckRefineCtx, SwipeResult, AdvanceStep, SegmentDef, PerkDef } from './types.js';
+import type { Pack, RunState, Plugin, GameEvent, Choice, Side, Requires, Tier, GainBag, RollCtx, BurnoutCtx, DeckRefineCtx, SwipeResult, AdvanceStep, SegmentDef, PerkDef, TerminalRule, TerminalCondition, FailStateRule } from './types.js';
 
 // ---------- Shared, pack-independent mechanism ----------
 
@@ -982,21 +982,41 @@ export function createEngine(pack: Pack) {
     return notes;
   }
 
+  // The pack's terminal rules, normalized once: legacy failStates rules map
+  // onto the TerminalRule shape (flag + threshold = a conjunction) and are
+  // evaluated before the terminalRules list, so the two compose in declared
+  // order and one evaluator serves both.
+  const TERMINAL_RULES: TerminalRule[] = [
+    ...(PACK.manifest.failStates || []).map((r: FailStateRule): TerminalRule => ({
+      when: r.flag
+        ? { all: [{ flag: r.flag }, { key: r.key, cmp: r.cmp, value: r.value }] }
+        : { key: r.key, cmp: r.cmp, value: r.value },
+      ending: r.ending,
+      ...(r.fromAct !== undefined ? { fromAct: r.fromAct } : {}),
+    })),
+    ...(PACK.manifest.terminalRules || []),
+  ];
+
+  function terminalConditionMet(state: RunState, cond: TerminalCondition): boolean {
+    if ('all' in cond) return cond.all.every((c) => terminalConditionMet(state, c));
+    if ('flag' in cond) return state.flags.includes(cond.flag);
+    const v = gateValue(state, cond.key);
+    return cond.cmp === '<=' ? v <= cond.value
+      : cond.cmp === '>=' ? v >= cond.value
+      : cond.cmp === '<' ? v < cond.value : v > cond.value;
+  }
+
   function checkFailStates(state: RunState) {
     if (state.tutorial) return null; // the tutorial can't end a run
     // The one universal fail: the engine owns the burnout slot, so every pack
-    // fails when it maxes out. Every other fail is pack-declared (manifest
-    // failStates), read through gateValue, and evaluated in declared order after
-    // burnout — so a pack controls its own fail precedence.
+    // fails when it maxes out. Every other terminal state is pack-declared
+    // (manifest failStates/terminalRules), read through gateValue, and
+    // evaluated in declared order after burnout — so a pack controls its own
+    // precedence.
     if (state.stats.burnout >= CONFIG.burnoutFail) return 'burnout';
-    for (const rule of PACK.manifest.failStates || []) {
+    for (const rule of TERMINAL_RULES) {
       if (rule.fromAct !== undefined && state.act < rule.fromAct) continue;
-      if (rule.flag && !state.flags.includes(rule.flag)) continue;
-      const v = gateValue(state, rule.key);
-      const hit = rule.cmp === '<=' ? v <= rule.value
-        : rule.cmp === '>=' ? v >= rule.value
-        : rule.cmp === '<' ? v < rule.value : v > rule.value;
-      if (hit) return rule.ending;
+      if (terminalConditionMet(state, rule.when)) return rule.ending;
     }
     return null;
   }

@@ -93,6 +93,9 @@
     "events-empty": [
       "error"
     ],
+    "failstate-dummy-comparison": [
+      "warning"
+    ],
     "failstate-invalid": [
       "error"
     ],
@@ -247,6 +250,15 @@
       "error"
     ],
     "statmeta-missing": [
+      "error"
+    ],
+    "terminalrule-condition-invalid": [
+      "error"
+    ],
+    "terminalrule-invalid": [
+      "error"
+    ],
+    "terminalrule-key-unresolved": [
       "error"
     ],
     "tutorialevents-missing": [

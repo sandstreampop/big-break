@@ -126,7 +126,7 @@ undeclared use fails the build instead of silently no-opping:
 - **`stateDefaults`** — the run-state slots this plugin owns, with fresh-run
   defaults. `newRun` applies them generically (arrays copied per run), and
   keys materialize top-level on `state`, so `gateValue` resolves them — a
-  `winGates`/`failStates`/`requires` gate can read a plugin-owned counter with
+  `winGates`/`terminalRules`/`requires` gate can read a plugin-owned counter with
   no engine change.
 
 ## The modify-hooks (bending a core mechanic)

@@ -56,6 +56,35 @@ export interface FailStateRule {
   ending: string;
 }
 
+// ---------- Terminal rules (the honest generalization of FailStateRule) ----------
+// A run can end for reasons that are not threshold failures: a temptation
+// accepted, a debt called in, a flag a card set. FailStateRule could only say
+// "resource crosses value", so flag-triggered endings were encoded as an
+// always-true comparison with the flag doing the real work (love-island's
+// li_dumped_single, odyssey's banked tellings — see the 2026-07 odyssey
+// review, Required #1). TerminalRule models exactly the conditions the engine
+// actually supports — a threshold, a flag, or a conjunction of both — and
+// nothing more: this is deliberately NOT an expression language.
+export type TerminalCondition =
+  // A stat/resource threshold: `key` is any manifest stat, "burnout", a
+  // resource, or a plugin-owned state slot, read through gateValue.
+  | { key: string; cmp: '<=' | '>=' | '<' | '>'; value: number }
+  // A run flag is set.
+  | { flag: string }
+  // Every listed condition holds.
+  | { all: TerminalCondition[] };
+
+// When `when` holds (checked after every card, in declared order, after the
+// engine's universal burnout fail), the run ends with `ending`. `fromAct`
+// arms the rule from that act onward. Legacy `failStates` rules are
+// normalized onto this shape at engine creation and evaluated first, so the
+// two lists compose deterministically.
+export interface TerminalRule {
+  when: TerminalCondition;
+  ending: string;
+  fromAct?: number;
+}
+
 // ---------- Effects (the payload a choice outcome applies) ----------
 // A short-horizon objective a card can arm (Promises).
 export interface PromiseSpec {
@@ -182,8 +211,16 @@ export interface PackManifest {
   incredibleResources?: string[];
   momentumResource?: string;
   // Pack-declared fail states, evaluated in order after the engine's universal
-  // burnout fail. A pack that declares none can only fail on burnout.
+  // burnout fail. LEGACY shape, kept working: rules here are normalized onto
+  // terminalRules at engine creation (and evaluated before it). New packs
+  // should declare terminalRules — this shape can only express thresholds, so
+  // flag-triggered endings need a dummy always-true comparison.
   failStates?: FailStateRule[];
+  // Pack-declared terminal rules — the honest shape for every non-burnout way
+  // a run can end: thresholds, flag triggers, or conjunctions (TerminalRule).
+  // Evaluated in declared order after failStates. A pack that declares
+  // neither list can only fail on burnout.
+  terminalRules?: TerminalRule[];
   // The penalty for declining a shop card you can't afford. Pack-declared so the
   // core names no stat; a pack that omits it declines for free.
   declinePenalty?: Effect;
