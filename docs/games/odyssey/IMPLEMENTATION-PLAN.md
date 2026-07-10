@@ -30,6 +30,37 @@ fresh-context adversarial review between passes, per the working agreement.
 - The heckler ensemble has canon seeds but no in-game surface yet beyond the
   bard's asides — candidates: overlay notes, act recaps.
 
+### Added by the 2026-07 staff-review action plan (Pass 11 — tickets, not builds)
+
+- **P-B half 2 — landmark variants where entropy is worst** *(evidence-gated:
+  built only if the playtest verdict sheet promotes it).* The measured gaps
+  (`SIM-FINDINGS.md`): Circe, Calypso, and the Underworld's within-state
+  reading are single-presentation (H = 0); the Cyclops shows its alternate
+  face in 1 run of 6. New variants must be driven by state the player
+  *caused* (their Fire, a prior sea event, fragments held), not a random
+  roll — and each addition raises the floors in
+  `test/odyssey-entropy.test.mjs` in the same commit.
+- **P-C — the bard's-note (shelf-ready sketch, NOT built).** The cheapest
+  instance of "failures that reveal useful knowledge": a run-ending mistake
+  writes ONE bard's-note into the existing meta machinery
+  (`meta.odyssey.notes: string[]`, union-not-count, exactly like
+  `fragments`), and `applySetup` stamps it as a flag that changes ONE line
+  next run — e.g. dying to the wrath after shouting the name unlocks the
+  bard opening Act I with "This time, friends, I will try to keep his mouth
+  shut." Knowledge, not power; reuses recordMeta/applySetup wholesale; no
+  engine edit. Build the day the playtest says replay motivation collapses,
+  and not before.
+- **Lotus offer-rate tuning.** The "weak offer" fires in < 1% of runs
+  (burnout ≥ 18 is almost never true by Act I slot 4 — `SIM-FINDINGS.md`).
+  Either the threshold drops, the window widens, or the design accepts the
+  meadow as near-mythical — a taste call to make WITH the playtest data,
+  not from the sim alone.
+- **Kleos as ratification.** Committed in ~20% of runs and 93.8% successful
+  once committed — closer to an end-of-run check than a strategy. If the
+  playtest confirms nobody *plans* toward Kleos, the lever is early-renown
+  visibility (making the gate feel reachable at the crossroads), not gate
+  numbers.
+
 ## Watch-outs carried from the grill, and where they landed
 
 - *Full-pixel body at 320px* — shipped; mobile-matrix green; big-text mode is

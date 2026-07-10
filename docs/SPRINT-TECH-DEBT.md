@@ -657,3 +657,42 @@ deliberately **deferred**, each with the trigger that should revive it:
 - **Bundle/performance budgets, changelog automation.** The no-bundler build
   is a deliberate simplicity stance; releases are manual at v0.1. *Trigger:*
   publish time (with the package split).
+
+### From the 2026-07 Odyssey staff review (Pass 11 — tickets only, build none now)
+
+- **The JSON-only external-pack experiment** — the review's product-defining
+  recommendation, with its constraint list intact: JSON data only; **no
+  module augmentation; no executable plugin code; no bespoke CSS beyond
+  declared theme tokens; loaded at runtime by an unchanged host.** It need
+  not support every Odyssey feature — the goal is discovering what
+  *percentage* of a compelling game survives as pure data, which answers the
+  product-identity fork below. *Trigger:* first external-author demand, or
+  the next strategy discussion — whichever comes first.
+- **The product-identity fork, decided by evidence:** (1) an SDK/framework
+  for TypeScript developers and coding agents, or (2) a content-pack runtime
+  for non-developers and LLM generation. Today it is (1) despite some
+  language suggesting (2) — README now says so (Pass 9). The JSON experiment
+  is the deciding instrument; ADR-0001's remedies follow the verdict.
+  *Trigger:* the experiment's outcome.
+- **Replay-depth layers beyond the single three-fragment secret** (the
+  review's list: alternative landmark knowledge, contradictory bardic
+  variants, hidden causal relationships, Fire-specific repertoires,
+  route-specific lines, unlockable narrative lenses, failures that teach).
+  The cheap first instance (bard's-note) is sketched in the odyssey
+  IMPLEMENTATION-PLAN; everything further is gated on the playtest proving
+  the appetite. *Trigger:* playtest verdict sheet.
+- **Odyssey key art** — already in the odyssey backlog (black-figure pixel
+  silhouettes); the review confirms shipping text-forward was a legitimate
+  bet to test, not an oversight. *Trigger:* after the playtest reads on the
+  text-forward first impression.
+- **A generalized narrative DSL** — the review says don't ("do not build a
+  large expression language"); recorded here so nobody rediscovers the idea
+  as new. terminalRules deliberately models exactly the two supported
+  condition shapes and stops. *Trigger:* none; this is a tombstone.
+- **Perfect type-level pack isolation** — ADR-0001 carries the analysis and
+  the tripwires. *Trigger:* ADR-0001's tripwires.
+- **`PerkDef.keepGearOnBad` placement** (Pass 4 seam-audit residue): music's
+  gear vocabulary sits on the shared perk contract instead of being merged
+  in by the pack. Runtime is clean (generic `perkFlag` service); the type
+  placement moves when perk definitions are next touched. *Trigger:*
+  opportunistic, with Epic-1-style strictness work on packs.
