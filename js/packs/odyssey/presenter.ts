@@ -6,21 +6,21 @@
 
 import type { Pack, RunState } from '../../types.js';
 
-// The prophecy meta-arc (slice 6). The finale hook notes the judged run so
-// the endings table below can render the Oar Road — the truer ending — as a
-// VARIANT of the nostos success (same ending key; the fire decides which
-// verses it gets). Module state is safe here: the note is written at each
-// finale and read once, immediately after, by the same session's render.
-let judgedRun: RunState | null = null;
-export function noteFinale(state: RunState) { judgedRun = state; }
-
+// The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
+// VARIANT of the nostos success (same ending key; the run decides which
+// verses it gets), rendered through the presentFinale hook: the shell hands
+// the judged run in explicitly and this derives the copy from its arguments
+// alone. (Until the 2026-07 review this was a noteFinale side-channel — a
+// plugin writing module state for an endings-table getter to read later —
+// which leaked across engine instances: judge A, judge B, render A → A got
+// B's ending. Pinned by test/odyssey-prophecy.test.mjs now.)
+//
 // The Oar Road is walked when the whole prophecy was carried (the third
 // question pressed THIS run), the sea was kept unprovoked, and the
 // homecoming judged a full success. Well under one telling in ten, even
 // for the bard who knows all three turnings — the knowing is the easy half.
-function oarRoadWalked(): boolean {
-  const s = judgedRun;
-  return !!s && s.ending?.result === 'success'
+function oarRoadWalked(s: RunState): boolean {
+  return s.ending?.result === 'success'
     && s.flags.includes('ody_oar_road')
     && (s.poseidon || 0) <= 3;
 }
@@ -74,10 +74,15 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     head: 'The name in your mouth',
     sub: 'The prow is out of stone-throw, and the bard leans in: does this telling row for home, or for the song? Homecoming counts hulls and keeps the sea unprovoked; glory is bought in deeds and paid for in wrath.',
   },
+  // The hollow win — unless tonight's telling walked the whole prophecy.
+  // Pure: everything the variant depends on arrives as the argument.
+  presentFinale({ run, ending, result }) {
+    if (ending === 'nostos' && result === 'success' && oarRoadWalked(run)) return OAR_ROAD;
+    return null;
+  },
   endings: {
     nostos: {
-      // The hollow win — unless tonight's telling walked the whole prophecy.
-      get success() { return oarRoadWalked() ? OAR_ROAD : NOSTOS_SUCCESS; },
+      success: NOSTOS_SUCCESS,
       partial: {
         title: 'Home, and Unrecognized',
         text: 'He reaches Ithaca — hear me, he does reach it — but thinner than the prophecy promised: hulls short, men short, the goddess looking elsewhere. The dog knows him. The swineherd knows him. The house takes longer, and some of it never quite believes, and at feasts for years there is an empty-chair silence where a name used to sit. A homecoming, friends. Not the homecoming.',

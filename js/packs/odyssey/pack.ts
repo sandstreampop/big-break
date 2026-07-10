@@ -15,7 +15,7 @@ import { ACT1_EVENTS } from './events-act1.js';
 import { ACT2_EVENTS } from './events-act2.js';
 import { ACT3_EVENTS } from './events-act3.js';
 import { LANDMARKS } from './landmarks.js';
-import { odysseyPresenter, noteFinale } from './presenter.js';
+import { odysseyPresenter } from './presenter.js';
 
 // ── Effect vocabulary ────────────────────────────────────────────────────
 // Might / Guile / Lore: the three approaches to any confrontation — fight
@@ -242,12 +242,9 @@ const itineraryPlugin: Plugin = {
       effects.chainEventId = 'ody_tiresias_oar';
     }
   },
-  // The finale hook fires before judgment; the presenter notes the run so
-  // the ending table can read the JUDGED result at render time (the Oar
-  // Road is a success variant, not a separate ending key).
-  onFinale(state) {
-    noteFinale(state);
-  },
+  // (No onFinale hook: the Oar Road success variant renders through the
+  // presenter's pure presentFinale — the shell passes the judged run in
+  // explicitly, so nothing needs to be noted across layers.)
 };
 
 // ── The pack ─────────────────────────────────────────────────────────────

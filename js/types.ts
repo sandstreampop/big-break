@@ -489,6 +489,22 @@ export interface Presenter {
   // Ending copy: path id → { success, partial, failure } and fail-state keys
   // → { title, art?, text } (see data/meta.ts shape).
   endings: Record<string, any>;
+  // Run-state-dependent ending copy, PURE: the shell passes the judged run
+  // and everything else the presentation may depend on, explicitly, at the
+  // moment it renders the ending screen. Return `{ title, text }` to replace
+  // the static `endings` entry, or null/undefined to fall through to it.
+  // This is the sanctioned way to vary an ending on the run that earned it
+  // (odyssey's Oar Road success variant): derive from the ARGUMENTS. Do not
+  // note run state from a plugin hook into presenter-module scope for a
+  // getter to read later — that side-channel leaked across engine instances
+  // (judge A, judge B, render A → A gets B's ending) until the 2026-07
+  // odyssey review had it removed.
+  presentFinale?: (ctx: {
+    run: RunState;
+    ending: string;
+    result: 'success' | 'partial' | 'failure' | null;
+    meta: any;
+  }) => { title: string; text: string } | null | undefined;
   exitInterviews?: Record<string, any>;
   wallItems?: any[];
   trophies?: any[];

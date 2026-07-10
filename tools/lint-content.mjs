@@ -39,10 +39,6 @@ import { ODYSSEY_TASTE } from '../docs/games/odyssey/taste.mjs';
 // The second screen's content (ADR-0014) isn't in pack.events, so import its
 // flat corpus so the feed floor can lint it (bodies + Narrator chrome).
 import { feedBodyCorpus, feedChromeCorpus } from '../dist/js/packs/love-island/feeds.js';
-// The odyssey's ending table varies by the judged run (the Oar Road is a
-// nostos-success VARIANT behind a getter); the harvest below notes a mock
-// finale so the variant's prose is scanned too.
-import { noteFinale as odysseyNoteFinale } from '../dist/js/packs/odyssey/presenter.js';
 
 // The engine's NEUTRAL deck-eligibility vocabulary, imported from the engine's
 // own exported set (single source — a drift here was a silent lint hole); each
@@ -117,18 +113,18 @@ const DESCRIPTORS = {
       for (const a of Object.values(pres.actIntro || {})) out.push(a.name, a.text);
       out.push(pres.crossroads?.head, pres.crossroads?.sub);
       out.push(pres.loadoutPicker?.head, pres.loadoutPicker?.sub);
-      // Endings — read once per finale variant: the plain table, then with a
-      // mock oar-road finale noted so the true-victory verses are scanned.
-      const harvestEndings = () => {
-        for (const e of Object.values(pres.endings || {})) {
-          if (e.title) out.push(e.title, e.text);
-          else for (const v of Object.values(e)) out.push(v.title, v.text);
-        }
-      };
-      harvestEndings();
-      odysseyNoteFinale({ ending: { result: 'success' }, flags: ['ody_oar_road'], poseidon: 0 });
-      harvestEndings();
-      odysseyNoteFinale(null);
+      // Endings — the static table, plus the run-varied finale copy: the Oar
+      // Road success variant is derived purely by presentFinale from a mock
+      // judged run, so its verses are scanned at the same floor.
+      for (const e of Object.values(pres.endings || {})) {
+        if (e.title) out.push(e.title, e.text);
+        else for (const v of Object.values(e)) out.push(v.title, v.text);
+      }
+      const oar = pres.presentFinale?.({
+        run: { ending: { result: 'success' }, flags: ['ody_oar_road'], poseidon: 0 },
+        ending: 'nostos', result: 'success', meta: {},
+      });
+      out.push(oar?.title, oar?.text);
       out.push(...Object.values(pres.failLabels || {}));
       for (const m of [undefined, { odyssey: { fragments: ['bow'] } }, { odyssey: { oarRoad: true } }]) {
         out.push(pres.title?.foot?.(m));

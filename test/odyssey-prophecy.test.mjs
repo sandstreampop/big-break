@@ -9,7 +9,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { odysseyPack } from '../dist/js/packs/odyssey/pack.js';
-import { noteFinale } from '../dist/js/packs/odyssey/presenter.js';
 import * as engine from '../dist/js/engine.js';
 
 const PRES = odysseyPack.presenter;
@@ -82,13 +81,40 @@ test('the Oar Road renders as the nostos-success variant, and only then', () => 
       && state.flags.includes('ody_oar_road') && (state.poseidon || 0) <= 3) walked = state;
   }
   assert.ok(walked, 'no seed in 400 produced an oar-road-qualifying success');
-  noteFinale(walked);
-  assert.equal(PRES.endings.nostos.success.title, 'The Oar Road');
+  const present = (run) => PRES.presentFinale({ run, ending: 'nostos', result: 'success', meta: {} })
+    ?? PRES.endings.nostos.success;
+  assert.equal(present(walked).title, 'The Oar Road');
   assert.equal(odysseyPack.summarize(walked).trueVictory, true);
   // …and a qualifying-but-provoked run gets the hollow win.
   const hollow = { ...walked, poseidon: 9 };
-  noteFinale(hollow);
-  assert.equal(PRES.endings.nostos.success.title, 'The Bed of Living Oak');
+  assert.equal(present(hollow).title, 'The Bed of Living Oak');
+});
+
+test('finale presentation is pure: no cross-instance or cross-run leak (2026-07 review, Required #2)', () => {
+  // The bug this pins (demonstrated on the pre-refactor build): engine A's
+  // oar-road finale was judged, then engine B's plain daily was judged, and
+  // A's ending screen rendered B's copy — because a plugin noted the judged
+  // run into presenter-module state for a getter to read later. With the
+  // side-channel gone, presentation depends only on its arguments, so
+  // interleaving judgments in any order cannot change what either run shows.
+  const oarRun = { ending: { result: 'success' }, flags: ['ody_oar_road'], poseidon: 0 };
+  const plainDaily = { ending: { result: 'success' }, flags: [], poseidon: 5 };
+  const engineA = engine.createEngine(odysseyPack);
+  const engineB = engine.createEngine(odysseyPack);
+  assert.notEqual(engineA, engineB);
+  const present = (run) => PRES.presentFinale({ run, ending: 'nostos', result: 'success', meta: {} })
+    ?? PRES.endings.nostos.success;
+  // Judge A, then B (the leaking order), then present both — and again in
+  // the opposite order. Every presentation must match the run it was given.
+  for (const order of [[oarRun, plainDaily], [plainDaily, oarRun]]) {
+    for (const run of order) for (const p of odysseyPack.plugins) p.onFinale?.(run);
+    assert.equal(present(oarRun).title, 'The Oar Road');
+    assert.equal(present(plainDaily).title, 'The Bed of Living Oak');
+  }
+  // And the presenter module holds no mutable finale note at all: the pack
+  // exports no noteFinale, and repeated presentation of the same run is
+  // stable (nothing to go stale).
+  assert.equal(present(oarRun).title, 'The Oar Road');
 });
 
 test('the true victory stays well under 10% even post-unlock', () => {

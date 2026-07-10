@@ -190,6 +190,11 @@ export function renderGameOver(endingKey) {
 // the very last screen of a run (caught by the createGame embed test, which
 // plays the presenter-less probe to its ending).
 function endingCopy(key, result) {
+  // A run-state-dependent variant first, derived PURELY from explicit input
+  // (presenter.presentFinale — the post-review replacement for the noteFinale
+  // side-channel); the static table is the base case.
+  const varied = PRES.presentFinale?.({ run, ending: key, result, meta });
+  if (varied) return varied;
   const table = PRES.endings?.[key];
   const authored = result ? table?.[result] : table;
   if (authored) return authored;
