@@ -22,7 +22,7 @@ servable site.
 The build reads the [registry](/big-break/docs/concepts/pack/#the-registry-one-place-a-genre-is-declared)
 and emits an entry for **every** registered game — you never edit a build file:
 
-- the first game owns the site root (`dist/index.html`);
+- the music game owns the site root (`dist/index.html`);
 - every other pack in `GAME_PACKS` gets its own folder at `dist/<id>/`, sharing
   the same compiled engine, styles, and assets.
 

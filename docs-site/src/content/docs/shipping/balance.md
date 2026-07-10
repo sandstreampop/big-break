@@ -38,9 +38,10 @@ node tools/simulate-pack.mjs my-game --check
 ```
 
 `--check` fails if your success rate leaves the band, if any act's deck runs
-dry, or if a card can never be drawn (its gate is unsatisfiable, or nothing
-sets the flag it needs). Those aren't warnings — they fail the build, so a
-balance regression can't quietly ship.
+dry, or if an ungated card is never drawn across thousands of runs. (A *gated*
+card that can never appear — an unsatisfiable gate, a flag nothing sets — is
+the content linter's job; see below.) These aren't warnings: they fail the
+build, so a balance regression can't quietly ship.
 
 For the richer, human-readable picture, the one-page report combines contract
 issues, deck counts, vocabulary usage, and the simulation:
