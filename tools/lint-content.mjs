@@ -35,6 +35,7 @@ import { bangIssue, tasteIssues, hasDialogue, quotedSpans, argotPresenceIssues, 
 // Each pack's taste DATA lives with the game; the checker above is genre-neutral.
 import { LOVE_ISLAND_TASTE } from '../docs/games/love-island/taste.mjs';
 import { MUSIC_TASTE } from '../docs/games/music/taste.mjs';
+import { ODYSSEY_TASTE } from '../docs/games/odyssey/taste.mjs';
 // The second screen's content (ADR-0014) isn't in pack.events, so import its
 // flat corpus so the feed floor can lint it (bodies + Narrator chrome).
 import { feedBodyCorpus, feedChromeCorpus } from '../dist/js/packs/love-island/feeds.js';
@@ -90,6 +91,12 @@ const DESCRIPTORS = {
     },
   },
   probe: { tokens: [], weatherIds: [] },
+  // The Odyssey: taste is the game's own data (docs/games/odyssey/taste.mjs,
+  // mirroring its VOICE.md — cliché + tells blocklists, maxBang: 2, outcome
+  // cap 420). Wired ahead of the pack per the working agreement: no content
+  // before the taste gate exists; the floor activates the moment the pack
+  // registers.
+  odyssey: { tokens: [], weatherIds: [], taste: ODYSSEY_TASTE },
   // Love Island: the taste block (cliché blocklist + outcome-length cap) is the
   // game's own data (docs/games/love-island/taste.mjs, mirroring VOICE.md).
   // Tokens are the pack's presenter-filled identities. The "arc" here is the

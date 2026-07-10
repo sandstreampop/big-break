@@ -25,10 +25,14 @@ export function stripQuoted(t) {
 
 // House rule, every pack: no hype punctuation. One '!' is fine — genuine
 // excitement, the "I've got a text!" ritual. Two, or an interrobang, is hype.
-export function bangIssue(text) {
+// A pack whose register EARNS more (the Odyssey's bard performing the frame —
+// its VOICE.md law 5) may raise the per-string cap via taste.maxBang; stacked
+// bangs and interrobangs stay banned at every cap.
+export function bangIssue(text, cap = 1) {
   if (!text) return null;
   if (/!!|!\?|\?!/.test(text)) return `hype punctuation: ${snippet(text)}`;
-  if ((text.match(/!/g) || []).length > 1) return `multiple '!': ${snippet(text)}`;
+  const n = (text.match(/!/g) || []).length;
+  if (n > cap) return cap === 1 ? `multiple '!': ${snippet(text)}` : `more than ${cap} '!': ${snippet(text)}`;
   return null;
 }
 
@@ -164,7 +168,7 @@ export function tasteIssues(text, taste, { outcome = false } = {}) {
   // waiver is the whole point of a ritual, so it beats the ≤1-'!' house rule.
   const bangWaived = (taste?.bangExempt || []).some((re) => re.test(text));
   if (!bangWaived) {
-    const b = bangIssue(text);
+    const b = bangIssue(text, taste?.maxBang || 1);
     if (b) out.push(b);
   }
   if (taste?.cliches) out.push(...clicheIssues(text, taste.cliches));

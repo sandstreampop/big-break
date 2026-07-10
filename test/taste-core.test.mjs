@@ -13,6 +13,7 @@ import {
 // Genre-neutral checker (tools/) exercised against real game taste data (the
 // game's own folder) — proving the wiring end to end before any card exists.
 import { LOVE_ISLAND_TASTE, LOVE_ISLAND_CLICHES } from '../docs/games/love-island/taste.mjs';
+import { ODYSSEY_TASTE, ODYSSEY_CLICHES } from '../docs/games/odyssey/taste.mjs';
 
 test('bangIssue: one “!” is fine, two or an interrobang is hype', () => {
   assert.equal(bangIssue('I’ve got a text!'), null);
@@ -21,6 +22,28 @@ test('bangIssue: one “!” is fine, two or an interrobang is hype', () => {
   assert.ok(bangIssue('So much drama!!'));
   assert.ok(bangIssue('Wait, what?!'));
   assert.ok(bangIssue('Two! Whole! Bangs!'));
+});
+
+test('bangIssue cap: a pack may EARN more bangs (Odyssey maxBang), stacked stays banned', () => {
+  // The default cap is 1 — LI and music are unaffected by the knob existing.
+  assert.ok(bangIssue('Two! Bangs!'));
+  // The bard performing the frame earns 2 per string (Odyssey VOICE.md law 5)…
+  assert.equal(bangIssue('A drum! The sea does not need a drum!', 2), null);
+  assert.ok(bangIssue('One! Two! Three!', 2));
+  // …but hype punctuation is banned at EVERY cap.
+  assert.ok(bangIssue('A drum!!', 2));
+  assert.ok(bangIssue('A drum?!', 99));
+});
+
+test('ODYSSEY_TASTE: maxBang threads through tasteIssues; blocklists bite', () => {
+  const t = ODYSSEY_TASTE;
+  assert.equal(t.maxBang, 2);
+  assert.deepEqual(tasteIssues('A drum! The sea does not need a drum!', t), []);
+  assert.equal(tasteIssues('Row! Row! Row!', t).length, 1);
+  // Stock Homeric formulas are lapses in this pack — the bard coins his own.
+  assert.equal(clicheIssues('Rosy-fingered dawn found the fleet', ODYSSEY_CLICHES).length, 1);
+  // …but a quoted heckler may reach for the stock phrase; quoted mouths are exempt.
+  assert.deepEqual(clicheIssues('“Sing the wine-dark sea,” calls the woman by the woodpile.', ODYSSEY_CLICHES), []);
 });
 
 test('stripQuoted: removes curly and straight quoted spans', () => {
