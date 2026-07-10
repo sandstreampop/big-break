@@ -25,7 +25,13 @@ let loaded = false;
 let activePackId = 'music';
 
 // ---- local ring buffer (never depends on network) ----
-function pushRing(rec) {
+interface RingRecord {
+  event: string;
+  props: Record<string, unknown>;
+  ts: number;
+}
+
+function pushRing(rec: RingRecord): void {
   try {
     const raw = localStorage.getItem(RING_KEY);
     const arr = raw ? JSON.parse(raw) : [];
@@ -35,7 +41,7 @@ function pushRing(rec) {
   } catch (e) { /* private mode / quota — telemetry is best-effort */ }
 }
 
-export function exportEvents() {
+export function exportEvents(): string {
   return localStorage.getItem(RING_KEY) || '[]';
 }
 
@@ -50,7 +56,7 @@ export function exportEvents() {
 const OWNER_KEY = 'bigbreak_owner';
 const INSTALL_KEY = 'bigbreak_install_id';
 
-function installId() {
+function installId(): string | null {
   try {
     let id = localStorage.getItem(INSTALL_KEY);
     if (!id) {
@@ -98,13 +104,13 @@ function loadPostHog() {
 }
 
 // ---- public API ----
-export function initAnalytics(settings, packId = 'music') {
+export function initAnalytics(settings: { analytics?: boolean } | null | undefined, packId = 'music'): void {
   enabled = settings?.analytics !== false;
   activePackId = packId;
   if (enabled) loadPostHog();
 }
 
-export function setAnalyticsEnabled(on) {
+export function setAnalyticsEnabled(on: boolean): void {
   enabled = on;
   try {
     if (!on) window.posthog?.opt_out_capturing?.();
@@ -112,9 +118,9 @@ export function setAnalyticsEnabled(on) {
   } catch (e) {}
 }
 
-export function analyticsEnabled() { return enabled; }
+export function analyticsEnabled(): boolean { return enabled; }
 
-export function track(event, props = {}) {
+export function track(event: string, props: Record<string, unknown> = {}): void {
   const tagged = { ...props, pack: activePackId };
   const rec = { event, props: tagged, ts: Date.now() };
   pushRing(rec);

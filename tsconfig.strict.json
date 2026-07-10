@@ -29,6 +29,10 @@
     "js/config.ts",
     "js/platform.ts",
     "js/validate.ts",
-    "js/api.ts"
+    "js/api.ts",
+    "js/save.ts",
+    "js/analytics.ts",
+    "js/version.ts",
+    "js/globals.d.ts"
   ]
 }

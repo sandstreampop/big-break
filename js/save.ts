@@ -4,6 +4,8 @@
 // Per-game storage namespace. The music game keeps the original keys (so
 // existing players' saves survive); a second game sets its own suffix at boot
 // so the two never clobber each other's meta or in-progress run.
+import type { RunState } from './types.js';
+
 let NS = '';
 export function setSaveNamespace(ns: string): void {
   NS = ns ? `_${ns}` : '';
@@ -11,7 +13,36 @@ export function setSaveNamespace(ns: string): void {
 const metaKey = () => `bigbreak_meta_v1${NS}`;
 const runKey = () => `bigbreak_run_v1${NS}`;
 
-function defaultMeta() {
+// Player-facing toggles persisted in meta. `reducedMotion: null` = follow the
+// system preference; `analytics` is the telemetry opt-out (absent = on).
+export interface SaveSettings {
+  sound: boolean;
+  music: boolean;
+  reducedMotion: boolean | null;
+  analytics?: boolean;
+  [key: string]: any; // pack/shell-added toggles
+}
+
+// Meta progression as persisted. The named fields are the genre-neutral core
+// every pack shares; the open extension is the honest shape of the rest —
+// meta is extended dynamically by packs and subsystems (lifetime.byPath/
+// byLoadout, rivalCounts, minigamesPlayed…), each owner reading its own keys.
+export interface MetaState {
+  lp: number;
+  lpEarnedTotal: number;
+  runs: number;
+  playerName: string;
+  playerGender: string | null;
+  unlockedWall: string[];
+  trophies: string[];
+  successPaths: string[];
+  firstTimeBonuses: string[];
+  best: { lp: number; [key: string]: any }; // neutral score record; a pack adds its own (music: best.fame)
+  settings: SaveSettings;
+  [key: string]: any; // pack/subsystem-owned progression
+}
+
+function defaultMeta(): MetaState {
   return {
     lp: 0,
     lpEarnedTotal: 0,
@@ -27,7 +58,7 @@ function defaultMeta() {
   };
 }
 
-function read(key) {
+function read(key: string): any {
   try {
     const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : null;
@@ -36,16 +67,13 @@ function read(key) {
   }
 }
 
-function write(key, value) {
+function write(key: string, value: unknown): void {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (e) { /* storage full or private mode — play on without saving */ }
 }
 
-// Meta is deserialized JSON progression, extended dynamically across many
-// subsystems (lifetime.byPath/byLoadout, rivalCounts, minigamesPlayed…),
-// so it's typed as an open record during the strictness ramp.
-export function loadMeta(): any {
+export function loadMeta(): MetaState {
   const meta = { ...defaultMeta(), ...(read(metaKey()) || {}) };
   // Migration: the per-loadout mastery aggregate was once keyed `byInstrument`
   // (a music noun in genre-neutral persistence). Rename in place so existing
@@ -57,7 +85,7 @@ export function loadMeta(): any {
   }
   return meta;
 }
-export function saveMeta(meta) {
+export function saveMeta(meta: MetaState): void {
   write(metaKey(), meta);
 }
 
@@ -65,27 +93,27 @@ export function saveMeta(meta) {
 // packs' localStorage separate already; the packId check is belt-and-suspenders
 // for a run written by a bad import or a pre-tag export code. A run from an
 // older build (no packId stamped) still resumes — back-compat.
-export function loadRun(expectedPackId?: string) {
+export function loadRun(expectedPackId?: string): RunState | null {
   const run = read(runKey());
   if (!(run && run.version === 1 && run.phase !== 'ended')) return null;
   if (expectedPackId && run.packId && run.packId !== expectedPackId) return null;
   return run;
 }
-export function saveRun(state) {
+export function saveRun(state: RunState): void {
   write(runKey(), state);
 }
-export function clearRun() {
+export function clearRun(): void {
   try { localStorage.removeItem(runKey()); } catch (e) {}
 }
 
 // Save portability: the whole career as a compact code. Tagged with the active
 // pack's namespace so a code can't be pasted into the wrong game.
-export function exportSave() {
+export function exportSave(): string {
   const payload = { v: 1, ns: NS, meta: read(metaKey()), run: read(runKey()) };
   return 'BB1.' + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
 }
 
-export function importSave(code) {
+export function importSave(code: string): boolean {
   try {
     const raw = code.trim().replace(/^BB1\./, '');
     const payload = JSON.parse(decodeURIComponent(escape(atob(raw))));
