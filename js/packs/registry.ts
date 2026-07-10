@@ -13,7 +13,7 @@ import type { Pack } from '../types.js';
 import { musicPack } from './music/pack.js';
 import { probePack } from './probe.js';
 import { loveIslandPack } from './love-island/pack.js';
-import { odysseyPack } from './odyssey.js';
+import { odysseyPack } from './odyssey/pack.js';
 
 // The shipping genres plus the probe. The probe is a deliberately minimal pack
 // (one stat, one resource, one path, a tiny deck, zero subsystems) whose only

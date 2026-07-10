@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { odysseyPack } from '../dist/js/packs/odyssey.js';
+import { odysseyPack } from '../dist/js/packs/odyssey/pack.js';
 import { tracePackRun, packCorpus, ODYSSEY_GOLDEN_SEED, ODYSSEY_CORPUS_SIZE } from '../tools/pack-core.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));

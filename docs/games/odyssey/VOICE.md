@@ -214,10 +214,11 @@ tests: [`tools/taste-core.mjs`](../../../tools/taste-core.mjs) +
   narrating voice with quoted speech stripped.
 - **Tells blocklist** (Odyssey): the show-don't-tell offenders above, same
   scan.
-- **Outcome-length cap**: outcomes ≤ 420 characters — the long breath is
-  licensed in results (music's cap is 600, LI's 240; the odyssey rolls longer
-  than the villa and lands harder than the tour bus), but a result is still a
-  landing, not a chapter.
+- **Outcome-length cap**: outcomes ≤ 650 characters — the long breath is
+  licensed in results (music's cap is 600, LI's 240; the odyssey rolls
+  longest by design). Recalibrated from 420 in the slice-4 writing pass: the
+  authored sea proved the tighter cap fought law 3's own license. A result
+  is still a landing, not a chapter — the cap is where landing ends.
 - (Inherited structural checks: curly apostrophes only, no double spaces,
   known tokens.)
 

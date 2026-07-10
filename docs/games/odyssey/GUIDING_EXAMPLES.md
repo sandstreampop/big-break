@@ -4,7 +4,7 @@ Whole moments rendered end-to-end, so content authors pattern-match against
 **scenes**, not isolated lines. Every weather from [`VOICE.md`](./VOICE.md) is
 labelled where it speaks. These are *reference*, not shipping cards — but
 they're written to pass the lint floor (≤2 `!` and no stacked bangs, no
-blocklist cliché or tell in narration, outcomes ≤420 chars, curly quotes).
+blocklist cliché or tell in narration, outcomes ≤650 chars, curly quotes).
 
 **Provenance:** [`grill.md`](./grill.md) names this canon set (cold open ·
 Act I intro · the Squall · three result tiers · the bard slips · Cyclops
@@ -276,7 +276,7 @@ tellings; their gags accumulate like the prophecy does.
 |---|---|---|---|---|
 | Cold open, act intros, recaps | Frame | long | earned, ≤2 | direct address, questions, the hecklers |
 | Card prompts | Telling | middle | rare | concrete detail, named crew, no crowd-work |
-| Outcomes / results | Telling | middle-long (≤420) | rare | the turn in the last clause |
+| Outcomes / results | Telling | middle-long (≤650) | rare | the turn in the last clause |
 | Underworld, god-beats, Despair | The Deep | shortening | **zero** | dread is quiet; nothing pulses |
 | Choice labels / buttons | Tale-copy | 2–6 words | never | a verb with the door’s flavor |
 | Endings | Telling → Frame | long | earned | the frame gets the last word |

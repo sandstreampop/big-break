@@ -76,8 +76,10 @@ export const ODYSSEY_TASTE = {
   cliches: ODYSSEY_CLICHES,
   tells: ODYSSEY_TELLS,
   // The long breath is licensed in results (VOICE law 3) — the odyssey rolls
-  // longer than the villa (240) and lands harder than the tour bus (600).
-  maxOutcomeLen: 420,
+  // longest of the three games (LI 240, music 600). Recalibrated in slice 4:
+  // the authored sea proved 420 too tight for the result register the law
+  // itself licenses; 650 keeps a landing a landing, not a chapter.
+  maxOutcomeLen: 650,
   // VOICE law 5: exclamations are performance beats, earned not rationed to
   // death — the house ≤1-'!' cap is raised to 2 for this pack. Stacked bangs
   // ('!!' / '!?' / '?!') stay banned everywhere; the deep's zero-bang law is

@@ -8,7 +8,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { odysseyPack } from '../dist/js/packs/odyssey.js';
+import { odysseyPack } from '../dist/js/packs/odyssey/pack.js';
 import * as engine from '../dist/js/engine.js';
 
 // One full seeded run; policy(ev, state) picks the side ('left'|'right').
@@ -114,4 +114,37 @@ test('the Hall is the finale: the path climax lands as the last card', () => {
     }
   }
   assert.ok(judged >= 4, `too few judged runs to trust the assertion (${judged})`);
+});
+
+test('the temptations are told endings: bank sets the flag, ends the telling', () => {
+  // Drive with a policy that banks at any temptation (right side) and courts
+  // burnout otherwise (left on everything raises wear via bads over time).
+  let banked = 0;
+  for (let i = 0; i < 120 && banked < 3; i++) {
+    const { state } = driveRun(7000 + i, {
+      policy: (ev) => ((ev.tags || []).includes('temptation') ? 'right' : 'left'),
+    });
+    if (['lotus', 'circe', 'calypso'].includes(state.ending?.key)) {
+      banked++;
+      const flag = `ody_stayed_${state.ending.key}`;
+      assert.ok(state.flags.includes(flag), `${state.ending.key} ended without its flag`);
+      assert.equal(state.phase, 'ended');
+    }
+  }
+  assert.ok(banked >= 2, `too few banked tellings to trust the contract (${banked})`);
+});
+
+test('refusing a temptation sails on: the run continues past the offer', () => {
+  for (let i = 0; i < 60; i++) {
+    const { state, played } = driveRun(8000 + i, {
+      policy: (ev) => ((ev.tags || []).includes('temptation') ? 'left' : (i % 2 ? 'left' : 'right')),
+    });
+    const met = played.some((id) => id.startsWith('ody_tempt_'));
+    if (met) {
+      assert.ok(!['lotus', 'circe', 'calypso'].includes(state.ending?.key),
+        `refused every offer but still banked (${state.ending?.key})`);
+      return; // one witnessed refusal that sails on proves the contract
+    }
+  }
+  assert.fail('no run ever met a temptation under the courting policy');
 });
