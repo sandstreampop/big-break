@@ -139,7 +139,7 @@ const DESCRIPTORS = {
           out.push(fs.head, fs.sub);
           for (const o of fs.options) out.push(o.title, o.blurb, o.label);
         }
-        for (const c of pres.gearChips?.(mock) || []) {
+        for (const c of pres.carriedChips?.(mock) || []) {
           out.push(c.html, c.sheet?.title, ...(c.sheet?.lines || []));
         }
       }

@@ -108,7 +108,7 @@ export function renderHud() {
   // The shell renders whatever descriptors the pack returns; it names none of
   // the kit (instrument, venue, contract, hustle…).
   const gearRow = el('div', 'gear-row');
-  for (const c of PRES.gearChips?.(run) || []) {
+  for (const c of PRES.carriedChips?.(run) || []) {
     const chip = el('span', c.cls, c.html);
     activatable(chip, () => { sfx.ui(); showInspect(c.sheet); });
     gearRow.append(chip);

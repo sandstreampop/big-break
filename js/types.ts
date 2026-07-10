@@ -566,11 +566,14 @@ export interface Presenter {
   // The HUD's counter chips (top-right): the pack's resource readout (score,
   // currency, streak…). The shell renders whatever chips this returns.
   hudCounters?: (state: RunState) => { html: string; cls?: string }[];
-  // The HUD's gear row (full-HUD packs): the run's persona/loadout and its
-  // acquired kit as tappable chips. Each chip is a descriptor the shell renders
-  // and wires to a tap-to-inspect sheet; the pack owns what's on it. A pack
-  // that omits this (or opts into compactHud) shows no gear row.
-  gearChips?: (state: RunState) => { cls: string; html: string; sheet: any }[];
+  // The HUD's carried row (full-HUD packs): the run's persona/loadout and
+  // whatever the run has picked up — music's gear, odyssey's boons — as
+  // tappable chips. Each chip is a descriptor the shell renders and wires to a
+  // tap-to-inspect sheet; the pack owns what's on it. A pack that omits this
+  // (or opts into compactHud) shows no carried row. (Named gearChips until the
+  // 2026-07 odyssey review's seam audit: the channel is generic, the old name
+  // was one genre's.)
+  carriedChips?: (state: RunState) => { cls: string; html: string; sheet: any }[];
   // Extra HUD action buttons beside the act label (e.g. a chart/standings
   // screen). `badge` is an optional count bubble; `onTap` opens the pack's own
   // screen (packs render bespoke screens with the shell's dom toolkit). The

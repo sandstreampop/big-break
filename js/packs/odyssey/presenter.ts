@@ -129,7 +129,7 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   },
   // ── slice 3: the landmark surfaces ──
   // The boons on the HUD: the carried things (flags → chips → inspect).
-  gearChips(state) {
+  carriedChips(state) {
     const chips: { cls: string; html: string; sheet: any }[] = [];
     const flag = (f: string) => (state.flags || []).includes(f);
     if (flag('ody_named')) chips.push({ cls: 'gear-chip', html: '🗣 The Name, spent', sheet: {

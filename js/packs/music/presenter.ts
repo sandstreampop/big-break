@@ -76,7 +76,7 @@ export const musicPresenter: Presenter = {
   // momentum) and the gear row (instrument + kit). Both are descriptors the
   // shared HUD renders — see js/packs/music-hud.ts.
   hudCounters: musicHudCounters,
-  gearChips: musicGearChips,
+  carriedChips: musicGearChips,
 
   // The Hot 10 button beside the act label, once the songs subsystem is live;
   // it opens music's own chart + songbook screen (js/packs/music-chart.ts).
