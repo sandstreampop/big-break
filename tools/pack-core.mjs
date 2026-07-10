@@ -33,7 +33,12 @@ function sideScore(state, choice) {
 // picks a default persona, commits the compass-preferred summit, whim-swipes on
 // a seeded meta stream, and force-advances a dry act — all in terms the manifest
 // defines. Returns the record the invariants and golden both consume.
-export function simulatePackRun(pack, seed, policy = 'narrative') {
+// `observer` (optional) taps the run WITHOUT touching it — no RNG draws, no
+// state writes — so a telemetry pass sees what the balance gate can't
+// (resource state at choice time, the commit decision) while the run replays
+// byte-identically. onChoice fires before each resolveSwipe; onCommit fires
+// with the crossroads decision.
+export function simulatePackRun(pack, seed, policy = 'narrative', observer = null) {
   const meta = engine.mulberry32(seed >>> 0 || 1);
   const personas = pack.loadouts.filter((i) => i.unlockedByDefault).map((i) => i.id);
   const persona = personas[Math.floor(meta() * personas.length)] || pack.loadouts[0].id;
@@ -49,6 +54,7 @@ export function simulatePackRun(pack, seed, policy = 'narrative') {
       const best = pathIds.slice().sort((a, b) => pathScore(pack, state, b) - pathScore(pack, state, a))[0];
       const pick = policy === 'random' || meta() < 0.4
         ? pathIds[Math.floor(meta() * pathIds.length)] : best;
+      observer?.onCommit?.(state, pick);
       engine.commitPath(state, pick);
       continue;
     }
@@ -61,6 +67,7 @@ export function simulatePackRun(pack, seed, policy = 'narrative') {
         ? (meta() < 0.5 ? 'left' : 'right')
         : (sideScore(state, ev.choices.left) >= sideScore(state, ev.choices.right) ? 'left' : 'right');
       const act = state.act;
+      observer?.onChoice?.(state, ev, side);
       const result = engine.resolveSwipe(state, side, play, {});
       cards.push({ id: ev.id, side, tier: result.tier, act, deltas: result.deltas.map((d) => [d.key, d.amount]) });
       // Gear grants equip through the pack's OWN presenter hook — the same
@@ -110,6 +117,22 @@ export function tracePackRun(pack, seed) {
     resources,
     ending: s.ending,
   };
+}
+
+// Shannon entropy over a count table, plus the top share (the "how often do
+// you see the same thing at this landmark" number the 2026-07 odyssey
+// review's P-B measurement asked for). Genre-neutral: any distribution of
+// sighted variants.
+export function entropyOf(counts) {
+  const total = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
+  let h = 0;
+  for (const n of Object.values(counts)) {
+    if (!n) continue;
+    const p = n / total;
+    h -= p * Math.log2(p);
+  }
+  const top = Math.max(...Object.values(counts), 0);
+  return { h: +h.toFixed(3), variants: Object.keys(counts).length, topShare: +(top / total).toFixed(3), total };
 }
 
 // Golden corpus constants — kept HERE (a side-effect-free module) so each

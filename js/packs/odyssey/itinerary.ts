@@ -31,6 +31,18 @@ export const itineraryPlugin: Plugin = {
     const beats = pool.filter((e) => beatTag(e));
     const rest = pool.filter((e) => !beatTag(e));
     const len = actLength(state, state.act);
+    // Collect every due beat, then deal the LATEST-due one. (Chronological
+    // first-due priority shipped a real defect the Pass 6 telemetry sweep
+    // caught at 2-in-1,000 runs: a temptation whose `requires` flip late —
+    // lotus needs burnout ≥ 18, sometimes first true at the act's last slot —
+    // was due in the Landmark's protected end slot and displaced it; the
+    // act-scoped landmark card then couldn't roll forward, so the Cyclops
+    // was LOST and the crossroads posed its name-question before the cave.
+    // Latest-due wins: the landmark keeps its slot ('end' is always the
+    // act's maximum), and the late temptation expires with its act, exactly
+    // as an unaccepted offer should. Pinned by test/odyssey-entropy.test.mjs
+    // (occurrence ≥ runs-that-reach-the-window) and INCIDENTS #3.
+    const due: { at: number; hit: GameEvent[] }[] = [];
     for (const b of BEATS) {
       if (b.act > state.act) continue;
       if (state.flags.includes(`ody_done_${b.key}`)) continue;
@@ -40,7 +52,11 @@ export const itineraryPlugin: Plugin = {
       const at = b.act < state.act ? 0 : (b.at === 'end' ? len - 1 : b.at);
       if ((state.cardsPlayedInAct || 0) < at) continue;
       const hit = beats.filter((e) => beatTag(e) === `beat:${b.key}`);
-      if (hit.length) return hit;
+      if (hit.length) due.push({ at, hit });
+    }
+    if (due.length) {
+      due.sort((a, b) => b.at - a.at); // stable: ties keep chronological order
+      return due[0].hit;
     }
     return rest.length ? rest : pool;
   },

@@ -101,6 +101,47 @@ surface instead of the gated one; an invariant that lived in a comment.
 
 ---
 
+## #3 · The Cyclops could be lost to a late temptation — 2026-07-10
+
+**Severity:** shipped defect (main auto-deploys), low frequency (~0.2% of
+runs), high narrative cost: the run's defining landmark never occurs and the
+crossroads poses the name-question before the cave that raises it.
+**Symptom:** in 2 of 1,000 seeded runs, the telling reached Act II without
+ever meeting the Cyclops. Found by the Pass 6 strategy-telemetry sweep
+(2026-07 odyssey review), not by any existing gate.
+**Root cause (5 whys):**
+1. The Cyclops window ('end' of Act I) sometimes dealt the lotus instead →
+   both beats were *due* at the last slot and the itinerary picked the FIRST
+   due beat in chronological declaration order (lotus, at slot 4, precedes
+   cyclops).
+2. Why was the lotus due that late? Its `requires` (burnout ≥ 18) can first
+   become true at the act's final slot — a window that OPENS at slot 4 stays
+   open all act.
+3. Why wasn't the Cyclops recovered? Roll-forward re-deals an unfired beat at
+   the next act's first slot — but the landmark card is act-scoped
+   (`act: 1`), so Act II's eligible pool never contained it. "A landmark is
+   never lost" was a comment, not an invariant.
+4. Why did every gate miss it? The landmark tests drive seeds/policies that
+   never produce late-flipping lotus requires; the golden corpus (24 seeds)
+   contained no colliding seed; the balance gate counts outcomes, not beats.
+5. Why did the collision class exist at all? Beat priority conflated
+   *chronology* (when windows open) with *precedence* (who owns a contested
+   slot).
+**Class:** an invariant living in a comment; a rare-path collision no
+existing oracle sampled densely enough to hit.
+**Rules produced:**
+- A scheduling invariant ("X always occurs") must be asserted over a sample
+  DENSE enough to catch its rare-path collisions (the entropy suite runs
+  1,000 seeded careers), not just a handful of happy seeds.
+- When two scheduled beats contest one slot, precedence is an explicit rule,
+  never list order.
+**Guard (now in place):** fix — `js/packs/odyssey/itinerary.ts` deals the
+LATEST-due beat (the landmark's 'end' slot is the act's maximum, so it can
+never be displaced; the late temptation expires with its act, as an
+unaccepted offer should). Test — `test/odyssey-entropy.test.mjs` asserts
+landmark occurrence ≥ runs-that-reach-the-window across 1,000 seeded runs,
+plus the variant-entropy floors.
+
 <!-- Template for the next entry — copy above this line.
 
 ## #N · <title> — YYYY-MM-DD
