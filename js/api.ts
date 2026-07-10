@@ -91,9 +91,13 @@ export function createGame(opts: { pack: Pack; validate?: boolean; mobileGuards?
 export { validatePack, formatIssue, formatValidation, closestKey, PACK_CONTRACT_VERSION } from './validate.js';
 export type { PackIssue, PackValidation } from './validate.js';
 
-// The engine: isolated instances (createEngine) and the classic module-level
-// single-active-pack surface, plus the seeded RNG and the neutral
-// vocabularies the validator checks against. See js/engine.ts.
+// The engine. `createEngine(pack)` — an isolated instance — is THE story for
+// external code: no global state, safe side-by-side. `useContentPack`/
+// `activePack` are the COMPAT surface (the module-level single-active-pack
+// session the repo's own one-pack-per-page shell uses); they stay exported
+// for that shell and old callers, but new integrations shouldn't reach for
+// them first. Also here: the seeded RNG and the neutral vocabularies the
+// validator checks against. See js/engine.ts.
 export {
   createEngine, useContentPack, activePack,
   mulberry32, stateRng, gateValue,

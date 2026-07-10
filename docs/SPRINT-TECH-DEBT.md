@@ -618,3 +618,42 @@ Small, worth doing opportunistically inside a nearby epic:
   `stateRng` silently falls back to `Math.random` (`engine.ts:69,132`) — a tool
   author who forgets `state.seed` gets non-deterministic runs with no warning.
   (→ Epic 9, as an assertion)
+
+---
+
+## Addendum — deferrals from the 2026-07 external staff review
+
+The external review (`docs/reviews/2026-07-staff-review.md`; triage + what
+shipped: `docs/reviews/2026-07-staff-review-ACTION-PLAN.md`) surfaced items
+deliberately **deferred**, each with the trigger that should revive it:
+
+- **npm publish + `core`/`browser`/`cli` package split.** `"private": true`
+  is a decision, not an oversight — the contract still moves weekly.
+  *Trigger:* the first real external adopter, or PACK_CONTRACT_VERSION
+  stabilizing across a whole release cycle. `js/api.ts` already models the
+  core/browser seam (DOM-free front door, lazy shell import), so the split
+  has a paved path.
+- **`GameRuntime`/`createRuntime` object (engine+save+analytics+UI, with
+  `dispose()`).** `createGame()` is today's composition boundary and there is
+  one shell and one host page. *Trigger:* a second embedder that needs
+  teardown or adapter injection (side-by-side previews, host apps).
+- **De-globalizing save/analytics module state.** Matches the one-pack-per-
+  page PWA reality; now typed (strict frontier) and documented as the compat
+  surface in `js/api.ts`. *Trigger:* same as `GameRuntime`.
+- **Strictness for packs + presenter surfaces; narrowing `SwipeResult`'s
+  index signature.** The frontier idiom (tsconfig.strict.json + the lint
+  frontier in eslint.config.mjs) widens file-by-file; packs are the next
+  big migration. *Trigger:* opportunistic, per-file, whenever a pack file is
+  being edited anyway.
+- **Keyboard-nav / focus-order a11y coverage beyond the axe gate.** Real
+  gap, own sprint. *Trigger:* next UI-focused sprint.
+- **Child-safe / content-safety mode.** A design problem (what does "safe"
+  mean per pack?), not a patch. *Trigger:* external LLM authorship actually
+  landing in front of kids — revisit alongside pack metadata.
+- **Dev observability panel (visible seed, card id, plugin trace,
+  replay-from-seed UI).** The diagnostics blob (`exportEvents`) + seeded
+  goldens cover today's debugging. *Trigger:* the first balancing session
+  that needs in-browser state inspection.
+- **Bundle/performance budgets, changelog automation.** The no-bundler build
+  is a deliberate simplicity stance; releases are manual at v0.1. *Trigger:*
+  publish time (with the package split).

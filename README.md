@@ -72,6 +72,16 @@ The public authoring surface is one import (`js/api.ts`): `definePack` ·
 `validatePack` · `createEngine(pack)` (isolated engine instances — no global
 active-pack state) plus the boundary types.
 
+**Why an engine, when an LLM can build a swipe game from scratch?** Because a
+raw one-shot app is where the value *stops*. What this repo sells is the
+**authoring and safety stack around the game**: a validated contract with
+repairable, code-keyed errors (so generation failures loop instead of
+shipping), seeded determinism + golden masters (so a refactor or rebalance is
+provably behavior-safe), simulation gates (so "playable and winnable" is
+checked, not vibed), and a machine-readable contract artifact
+(`docs/pack-contract.json`) external tools can build against. Generate the
+game once; iterate on it for months without it silently rotting.
+
 ---
 
 ## Pack #1 — Big Break (music)
@@ -148,6 +158,10 @@ which models a human following the story:
 ```bash
 node tools/simulate.mjs 4000 narrative   # reach report, variance, seeds funnel
 ```
+
+Security posture and vulnerability reporting: see [SECURITY.md](SECURITY.md).
+Dependency updates are automated (`.github/dependabot.yml`) and a
+high-severity `npm audit` gates CI alongside the suites above.
 
 ## Deploy
 
