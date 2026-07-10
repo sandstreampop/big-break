@@ -16,11 +16,11 @@
 import { actLength } from '../../engine.js';
 import type { GameEvent, Plugin } from '../../types.js';
 
-const BEATS: { key: string; act: number; at: number | 'end' }[] = [
+const BEATS: { key: string; act: number; at: number | 'end'; landmark?: boolean }[] = [
   { key: 'lotus', act: 1, at: 4 },      // the weak offer, mid-act
-  { key: 'cyclops', act: 1, at: 'end' },    // the run's defining scar
+  { key: 'cyclops', act: 1, at: 'end', landmark: true },    // the run's defining scar
   { key: 'circe', act: 2, at: 5 },      // the soft year, offered again
-  { key: 'underworld', act: 2, at: 'end' }, // Tiresias
+  { key: 'underworld', act: 2, at: 'end', landmark: true }, // Tiresias
   { key: 'calypso', act: 3, at: 4 },    // the strong one
 ];
 const beatTag = (ev: GameEvent) => (ev.tags || []).find((t) => t.startsWith('beat:'));
@@ -42,7 +42,7 @@ export const itineraryPlugin: Plugin = {
     // act's maximum), and the late temptation expires with its act, exactly
     // as an unaccepted offer should. Pinned by test/odyssey-entropy.test.mjs
     // (occurrence ≥ runs-that-reach-the-window) and INCIDENTS #3.
-    const due: { at: number; hit: GameEvent[] }[] = [];
+    const due: { at: number; landmark: boolean; hit: GameEvent[] }[] = [];
     for (const b of BEATS) {
       if (b.act > state.act) continue;
       if (state.flags.includes(`ody_done_${b.key}`)) continue;
@@ -52,10 +52,15 @@ export const itineraryPlugin: Plugin = {
       const at = b.act < state.act ? 0 : (b.at === 'end' ? len - 1 : b.at);
       if ((state.cardsPlayedInAct || 0) < at) continue;
       const hit = beats.filter((e) => beatTag(e) === `beat:${b.key}`);
-      if (hit.length) due.push({ at, hit });
+      if (hit.length) due.push({ at, landmark: !!b.landmark, hit });
     }
     if (due.length) {
-      due.sort((a, b) => b.at - a.at); // stable: ties keep chronological order
+      // Latest-due first; a LANDMARK outranks a temptation on a tied slot
+      // (structural, not numeric — under today's act lengths 'end' always
+      // strictly exceeds every temptation slot, but that must not be the
+      // only thing keeping the itinerary contract true). Stable sort: full
+      // ties keep chronological order.
+      due.sort((a, b) => (b.at - a.at) || (Number(b.landmark) - Number(a.landmark)));
       return due[0].hit;
     }
     return rest.length ? rest : pool;
