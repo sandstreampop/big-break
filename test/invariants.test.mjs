@@ -31,7 +31,9 @@ function freshRun(pack) {
 const EXPECTED_PLUGIN_ORDER = {
   music: ['venue', 'rival', 'seeds', 'contract', 'weather', 'genre', 'loadout', 'gear', 'hustle', 'band', 'songs', 'economy'],
   'love-island': ['coupling', 'profile', 'characters', 'gossip', 'factions', 'coupleweb', 'producers', 'stirling'],
-  odyssey: ['odyssey_fires', 'odyssey_itinerary'],
+  // Pass 5 split the prophecy reroute out of the itinerary plugin — appended
+  // last, RNG-silent (modifyEffects only), goldens verified byte-identical.
+  odyssey: ['odyssey_fires', 'odyssey_itinerary', 'odyssey_prophecy'],
 };
 
 for (const pack of PACKS) {
