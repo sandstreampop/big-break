@@ -63,7 +63,7 @@ function checkDeliveryStamp() {
   const jsV = (verJs.match(/CSS_CONTRACT = '([a-f0-9]+)'/) || [])[1];
   if (!jsV) errs.push('dist/js/version.js has no stamped CSS_CONTRACT');
   if (cssV && jsV && cssV !== jsV) errs.push(`stamp mismatch: css "${cssV}" vs js "${jsV}"`);
-  for (const html of ['index.html', 'love-island/index.html']) {
+  for (const html of ['index.html', 'love-island/index.html', 'odyssey/index.html']) {
     const p = join(root, html);
     if (!existsSync(p)) continue;
     const t = readFileSync(p, 'utf8');
@@ -127,6 +127,7 @@ const MATRIX_VPS = QUICK ? VIEWPORTS.filter((v) => v.label === 'iPhone-SE1' || v
 const GAMES = [
   { label: 'music', path: '/', ns: '' },
   { label: 'love-island', path: '/love-island/', ns: '_love-island' },
+  { label: 'odyssey', path: '/odyssey/', ns: '_odyssey' },
 ];
 
 // The generic layout invariants, evaluated inside the page for whatever state

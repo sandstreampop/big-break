@@ -1,0 +1,155 @@
+/* The Odyssey — "black-figure, bitmap": Undertale's UI grammar × Greek vase
+   vocabulary, layered over the tokenized css/style.css. Only odyssey.html
+   loads it, so the siblings are untouched. Visual law:
+   docs/games/odyssey/STYLE.md. The rules this file exists to enforce:
+   hard-ruled boxes (radius 0, no shadows, no gradients), lamp-black field,
+   bone rules, terracotta panels, gold selection, flat fills only, motion
+   ember-slow. Bitmap type is a later pass (STYLE.md law 3 names it the
+   riskiest bet); until the OFL faces land, the system stack holds. */
+
+:root {
+  /* ── the palette (STYLE.md working values) ── */
+  --bg: #161210;            /* lamp-black, faintly warm — the night around the fire */
+  --bg2: #1d1713;
+  --card: #221a14;          /* terracotta lives INSIDE the boxes, dark side */
+  --ink: #e8e0cd;           /* bone-white rules and text */
+  --dim: #8f8577;           /* ash */
+  --accent: #d9a441;        /* gold — selection, emphasis, the gods */
+  --accent2: #c96f4a;       /* terracotta */
+  --good: #b5a642;          /* olive — the kind outcomes, aged not neon */
+  --bad: #cf6a52;           /* fired-clay red, raised to text legibility (axe AA) */
+  --hot: #c4707c;           /* the sea speaking — wine raised to text legibility;
+                               the DEEP oxblood (#722f37) stays on rules/washes below */
+
+  /* ── the box law: radius 0, everywhere ── */
+  --r-2: 0; --r-3: 0; --r-4: 0; --r-8: 0; --r-9: 0; --r-10: 0; --r-11: 0;
+  --r-12: 0; --r-14: 0; --r-16: 0; --r-18: 0; --r-22: 0; --r-26: 0;
+  --r-pill: 0; --r-round: 0;
+
+  /* ── no shadows, no glows: authority is a band, not a neon.
+       (0 0 0 0 transparent composes in shadow lists; `none` would not.) ── */
+  --elev-pop: 0 0 0 0 transparent;
+  --elev-note: 0 0 0 0 transparent;
+  --elev-float: 0 0 0 0 transparent;
+  --elev-card: 0 0 0 0 transparent;
+  --elev-deep: 0 0 0 0 transparent;
+  --glow-select: 0 0 0 0 transparent;
+  --glow-good: 0 0 0 0 transparent;
+  --glow-accent: 0 0 0 0 transparent;
+  --glow-accent-big: 0 0 0 0 transparent;
+  --tshadow-hot: none;
+  --dshadow-logo: 0 0 transparent;
+  --dshadow-ink: 0 0 transparent;
+  --dshadow-ink-lg: 0 0 transparent;
+  /* the ring survives — gold selection is Undertale's yellow, aged */
+  --ring-accent: 0 0 0 2px var(--accent);
+  /* despair runs as embers, not fire-alarm red */
+  --heat-vignette: inset 0 0 90px 20px rgba(114, 47, 55, .4);
+  --heat-vignette-hot: inset 0 0 120px 34px rgba(114, 47, 55, .55);
+
+  /* ── flat fills only: gradients collapse to their strong stop ── */
+  --grad-accent: var(--accent);
+  --grad-accent-bar: var(--accent);
+  --logo-sheen: var(--accent);
+
+  /* ── lines and panels: bone rules on black, terracotta wells ── */
+  --line: #4a4034;          /* the humble rule */
+  --line-card: #4a4034;
+  --line-strong: #8f8577;   /* the emphatic rule */
+  --line-faint: #332c24;
+  --line-ghost: rgba(232, 224, 205, .14);
+  --note-bg: #221a14;
+  --note-line: #8f8577;
+  --panel: #1d1713;
+  --panel-deep: #191410;
+  --meter: #332c24;
+  --btn-press: #2a221a;
+  --btn-armed: #33261a;
+  --chip-bg: #241d16;
+  --wash: rgba(232, 224, 205, .06);
+  --wash-faint: rgba(232, 224, 205, .045);
+  --wash-ghost: rgba(232, 224, 205, .035);
+  --well: rgba(0, 0, 0, .35);
+  --well-soft: rgba(0, 0, 0, .3);
+
+  /* ── status tints, fired in the same kiln ── */
+  --on-accent: #191410;     /* lamp-black text on gold */
+  --on-good: #191410;
+  --accent-dim: #3a2d14;    /* dark gold wash */
+  --accent-dim-line: #6e5522;
+  --accent-well: #2a2114;
+  --accent-ghost: rgba(217, 164, 65, .2);
+  --accent-ember: #3a2d14;
+  --accent2-ember: #38201a;
+  --hot-dim: #2e1a1d;       /* oxblood wash */
+  --hot-tint: #2e1a1d;
+  --hot-wash: #2e1a1d;
+  --hot-ink: #d8c8b8;
+  --good-dim: #2b2913;      /* olive wash */
+  --good-dim-line: #5a561f;
+  --good-line-soft: rgba(181, 166, 66, .55);
+  --bad-dim: #331610;       /* fired-clay wash */
+  --bad-dim-line: #6b2e1f;
+  --bad-wash: #2a1410;
+  --bad-line-soft: rgba(160, 59, 44, .6);
+  --neutral-dim: #2a2620;
+  --neutral-line: #4a4034;
+  --neutral-ink: #b8ae9c;
+  --vol: #d9a441;
+  --scrim: rgba(10, 8, 6, .78);
+  --scrim-bad: rgba(42, 16, 10, .8);
+  --scrim-card: rgba(22, 18, 16, .94);
+  --bg-fade: rgba(22, 18, 16, 0);
+  --warn-wash: rgba(217, 164, 65, .16);
+  --warn-line: rgba(217, 164, 65, .5);
+  --danger-wash: rgba(160, 59, 44, .22);
+  --danger-line: rgba(160, 59, 44, .65);
+  --streak-wash: rgba(201, 111, 74, .16);
+  --streak-line: rgba(201, 111, 74, .45);
+}
+
+/* The logo is bone caps on black — the banned gradient-clip text collapses to
+   a flat fill via --grad-accent above, but the letterform deserves the full
+   lapidary treatment: no sweep animation, no drop shadow, a chisel edge. */
+.title-logo {
+  background: none;
+  color: var(--ink);
+  animation: none;
+  filter: none;
+  letter-spacing: .02em;
+}
+/* the floating music-notes attract layer reads as another genre; the fire
+   supplies the motion here (ember-slow, nothing pulses) */
+.title-note { display: none; }
+
+/* Hard rules for humble boxes: where the base uses a soft border on a soft
+   radius, the vase wants a firm 2px rule on the load-bearing surfaces. */
+.card, .result-card {
+  border-width: 2px;
+}
+
+/* The bard speaks in asterisk-cadence boxes (STYLE.md law 5): the overlay
+   note is his voice, so it wears the plain double-rule of the teller. */
+.overlay-note {
+  border-width: 2px;
+  font-style: normal;
+}
+
+/* Gold is selection, not wallpaper: armed/selected states switch to the
+   gold rule (the ring token above already draws it). */
+.choice-btn.armed { border-color: var(--accent); }
+.pick-card.selected { border-color: var(--accent); }
+
+/* A meander-key frieze for the landmark/ceremony surfaces (set-piece banner)
+   — same grammar as a double rule, different civilization. Pure CSS border
+   so no asset ships; the gold fret is reserved for the gods (slice 3 wires
+   presenter.setPiece to it). */
+.set-piece-banner {
+  border-top: 3px double var(--ink);
+  border-bottom: 3px double var(--ink);
+  padding: 6px 0;
+}
+
+/* Motion is ember-slow; nothing pulses. */
+.tier-incredible .tier-badge, .verdict-success { animation: none; }
+.stat-burnout.danger .stat-icon { animation: none; }

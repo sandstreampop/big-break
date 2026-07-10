@@ -431,6 +431,7 @@ try {
 const GAMES = [
   { label: 'music', url: `${base}/`, ns: '', paths: 3 },
   { label: 'love-island', url: `${base}/love-island/`, ns: '_love-island', paths: 3 },
+  { label: 'odyssey', url: `${base}/odyssey/`, ns: '_odyssey', paths: 2 },
 ];
 
 let failed = 0;

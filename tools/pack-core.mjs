@@ -118,6 +118,8 @@ export const PROBE_GOLDEN_SEED = 0x9403B;
 export const PROBE_CORPUS_SIZE = 20;
 export const LI_GOLDEN_SEED = 0x10A11D;
 export const LI_CORPUS_SIZE = 24;
+export const ODYSSEY_GOLDEN_SEED = 0x17ACA;
+export const ODYSSEY_CORPUS_SIZE = 24;
 
 // A small pinned corpus for a pack, seeds drawn from one generator so the
 // generator and checker always agree.
