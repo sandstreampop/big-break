@@ -4,7 +4,36 @@
 // three doors. Every string here is held to the taste floor by the
 // presenterCopy lint rail (tools/lint-content.mjs).
 
-import type { Pack } from '../../types.js';
+import type { Pack, RunState } from '../../types.js';
+
+// The prophecy meta-arc (slice 6). The finale hook notes the judged run so
+// the endings table below can render the Oar Road — the truer ending — as a
+// VARIANT of the nostos success (same ending key; the fire decides which
+// verses it gets). Module state is safe here: the note is written at each
+// finale and read once, immediately after, by the same session's render.
+let judgedRun: RunState | null = null;
+export function noteFinale(state: RunState) { judgedRun = state; }
+
+// The Oar Road is walked when the whole prophecy was carried (the third
+// question pressed THIS run), the sea was kept unprovoked, and the
+// homecoming judged a full success. Well under one telling in ten, even
+// for the bard who knows all three turnings — the knowing is the easy half.
+function oarRoadWalked(): boolean {
+  const s = judgedRun;
+  return !!s && s.ending?.result === 'success'
+    && s.flags.includes('ody_oar_road')
+    && (s.poseidon || 0) <= 3;
+}
+
+const NOSTOS_SUCCESS = {
+  title: 'The Bed of Living Oak',
+  text: 'So the bow speaks, the hall is washed, and the queen tests him with the bed no man could move — and he answers like a carpenter, which is how she knows her husband. Ships came home. Men came home. That is the ending everyone pays for, friends. And still, some nights, he wakes before first light and goes down to stand on the shingle, and does not go into the water. The sea does not forget. There is a truer ending than this one. I do not have all of it. Yet.',
+};
+
+const OAR_ROAD = {
+  title: 'The Oar Road',
+  text: 'The bow speaks. The hall is washed. And THEN, friends — then, while the island is still learning to believe in him, he takes a well-cut oar from his own ship and walks INLAND, away from everything he crossed the world for, day after climbing day, until a man at a field-edge asks, neighborly, why he carries a winnowing fan on his shoulder. There. There he plants it, and pays the sea its bull, its boar, its ram, and the oldest debt in this telling closes like water behind a keel. He walks home unarmed and unhurried through the middle of his own kingdom. The years after are an ease the songs have no meter for; and death, when it finally thinks of him, comes up from the fields and not the foam — mild as evening, OFF the water, exactly as promised. That is the whole prophecy, friends, sung end to end at one fire. I have waited a long time to finish it. Bank the fire. Some tellings you do not follow with another.',
+};
 
 export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   aboutLine: 'The Odyssey — the long way home, sung at your fire.',
@@ -17,6 +46,13 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
       'The sea does not forget.',
     ],
     glyphs: ['⛵', '🔱', '🦉', '🏺'],
+    foot: (meta: any) => {
+      if (meta?.odyssey?.oarRoad) return 'The bard has sung the whole prophecy, end to end, at this fire.';
+      const n = (meta?.odyssey?.fragments || []).length;
+      return n === 0
+        ? 'The prophecy has three turnings. The bard has heard none of them. Yet.'
+        : `The bard carries ${n} of the prophecy’s three turnings.`;
+    },
   },
   actWord: 'ACT',
   actNames: ['', 'The Sack and the Sea', 'Witches and the Dead', 'The Narrow Way'],
@@ -40,10 +76,8 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   },
   endings: {
     nostos: {
-      success: {
-        title: 'The Bed of Living Oak',
-        text: 'So the bow speaks, the hall is washed, and the queen tests him with the bed no man could move — and he answers like a carpenter, which is how she knows her husband. Ships came home. Men came home. That is the ending everyone pays for, friends. And still, some nights, he wakes before first light and goes down to stand on the shingle, and does not go into the water. The sea does not forget. There is a truer ending than this one. I do not have all of it. Yet.',
-      },
+      // The hollow win — unless tonight's telling walked the whole prophecy.
+      get success() { return oarRoadWalked() ? OAR_ROAD : NOSTOS_SUCCESS; },
       partial: {
         title: 'Home, and Unrecognized',
         text: 'He reaches Ithaca — hear me, he does reach it — but thinner than the prophecy promised: hulls short, men short, the goddess looking elsewhere. The dog knows him. The swineherd knows him. The house takes longer, and some of it never quite believes, and at feasts for years there is an empty-chair silence where a name used to sit. A homecoming, friends. Not the homecoming.',
@@ -165,6 +199,32 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
       sub: 'The last door of the telling — the bow, the rags, or the goddess. Your path’s gates are judged after.',
       options,
     };
+  },
+  // ── The prophecy meta-save (slice 6) ──
+  // Setup stamps the bard's known fragments onto the fresh run as flags —
+  // the ONLY thing that crosses tellings, and it is knowledge, not power:
+  // the flags gate the third question; they add no number to anything.
+  applySetup(state, _sel, meta, daily) {
+    // Never on a daily: the shared telling is the same run for everyone
+    // (the musicApplySetup precedent) — a bard's private repertoire must
+    // not fork the day's seed at the trench.
+    if (daily) return;
+    const frags: string[] = meta?.odyssey?.fragments || [];
+    for (const f of frags) {
+      const flag = `ody_frag_${f}`;
+      if (!state.flags.includes(flag)) state.flags.push(flag);
+    }
+  },
+  // Run end banks tonight's turning (summarize().fragment) into the pack's
+  // namespace on the shell's meta save. Union, never count — knowledge does
+  // not stack.
+  recordMeta(meta, summary) {
+    if (!summary?.fragment) return;
+    meta.odyssey = meta.odyssey || {};
+    const frags: string[] = meta.odyssey.fragments || [];
+    if (!frags.includes(summary.fragment)) frags.push(summary.fragment);
+    meta.odyssey.fragments = frags;
+    if (summary.trueVictory) meta.odyssey.oarRoad = true;
   },
   // The cash-outs are BANKED tellings, not defeats: the verdict ribbon and
   // the history rows say so (told endings, never game-over screens).

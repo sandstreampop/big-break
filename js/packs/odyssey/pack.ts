@@ -15,7 +15,7 @@ import { ACT1_EVENTS } from './events-act1.js';
 import { ACT2_EVENTS } from './events-act2.js';
 import { ACT3_EVENTS } from './events-act3.js';
 import { LANDMARKS } from './landmarks.js';
-import { odysseyPresenter } from './presenter.js';
+import { odysseyPresenter, noteFinale } from './presenter.js';
 
 // ── Effect vocabulary ────────────────────────────────────────────────────
 // Might / Guile / Lore: the three approaches to any confrontation — fight
@@ -231,6 +231,22 @@ const itineraryPlugin: Plugin = {
       if (!state.flags.includes(flag)) state.flags.push(flag);
     }
   },
+  // The prophecy meta-arc (slice 6): a bard who has carried both other
+  // fragments home (stamped as run flags from the pack meta-save at setup)
+  // is offered the THIRD question — the Underworld's chain reroutes to the
+  // gated Tiresias variant. Knowledge-only: no stat, no power, a door.
+  modifyEffects(state, effects) {
+    if (effects.chainEventId === 'ody_tiresias'
+      && state.flags.includes('ody_frag_bow') && state.flags.includes('ody_frag_sea')) {
+      effects.chainEventId = 'ody_tiresias_oar';
+    }
+  },
+  // The finale hook fires before judgment; the presenter notes the run so
+  // the ending table can read the JUDGED result at render time (the Oar
+  // Road is a success variant, not a separate ending key).
+  onFinale(state) {
+    noteFinale(state);
+  },
 };
 
 // ── The pack ─────────────────────────────────────────────────────────────
@@ -243,4 +259,17 @@ export const odysseyPack: Pack = {
   loadouts: FIRES,
   loadoutById: (lid) => FIRES.find((f) => f.id === lid) ?? null,
   presenter: odysseyPresenter,
+  // The genre-neutral run summary (rides run_end + recordMeta): which
+  // turning of the prophecy tonight's telling carried home, and whether
+  // the truer ending was sung.
+  summarize: (state) => ({
+    fragment: state.flags.includes('ody_oar_road') ? 'oar'
+      : state.flags.includes('ody_fore_bow') ? 'bow'
+        : state.flags.includes('ody_fore_sea') ? 'sea' : null,
+    // The truer ending: the whole prophecy carried, the sea kept unprovoked,
+    // the homecoming judged whole. Same predicate the ending variant reads.
+    trueVictory: state.ending?.result === 'success' && state.path === 'nostos'
+      && state.flags.includes('ody_oar_road') && (state.poseidon || 0) <= 3,
+    named: state.flags.includes('ody_named'),
+  }),
 };

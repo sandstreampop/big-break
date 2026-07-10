@@ -274,4 +274,42 @@ export const LANDMARKS: GameEvent[] = [
       },
     },
   },
+
+  // The third question (slice 6): exists only for the bard who has carried
+  // both other fragments home across earlier Tellings. The itinerary plugin
+  // reroutes the Underworld's chain here when the run carries ody_frag_bow
+  // AND ody_frag_sea (stamped from the pack meta-save at setup). Knowledge-
+  // only, exactly as the grill demands: the door it opens is the Oar Road.
+  {
+    id: 'ody_tiresias_oar',
+    act: 2,
+    chainOnly: true,
+    tags: ['landmark'],
+    context: 'The prophet at the trench — the whole of it',
+    prompt: 'The blind man drinks, and straightens, and knows you — and this time, friends, you know HIM: two tellings’ worth of his answers are already in your keeping. “The bow. The sea’s price. You have both,” he says slowly. “Then there is only the road after the hall. No one asks me for the road after. Ask.”',
+    recap: 'The prophet offered the road after.',
+    forceTier: { left: 'good', right: 'good' },
+    choices: {
+      left: {
+        label: '“Speak the road after the hall.”',
+        tags: ['landmark', 'lore'],
+        governingStats: { lore: 1 },
+        outcomes: {
+          bad: { text: '“When the hall is washed,” he says, “take a well-cut oar and walk inland — inland, sailor — until someone asks why you carry a winnowing fan. Plant it there. Pay the sea its bull, its boar, its ram. Then home, and an ease of years, and death will come to you OFF the water, mild as evening. That is the whole of it. No man has ever walked it.” He waits. “Yet.”', effects: { athena: 1, addFlag: 'ody_oar_road' } },
+          good: { text: '“When the hall is washed,” he says, “take a well-cut oar and walk inland — inland, sailor — until someone asks why you carry a winnowing fan. Plant it there. Pay the sea its bull, its boar, its ram. Then home, and an ease of years, and death will come to you OFF the water, mild as evening. That is the whole of it. No man has ever walked it.” He waits. “Yet.”', effects: { athena: 1, addFlag: 'ody_oar_road' } },
+          incredible: { text: '“When the hall is washed,” he says, “take a well-cut oar and walk inland — inland, sailor — until someone asks why you carry a winnowing fan. Plant it there. Pay the sea its bull, its boar, its ram. Then home, and an ease of years, and death will come to you OFF the water, mild as evening. That is the whole of it. No man has ever walked it.” He waits. “Yet.”', effects: { athena: 1, addFlag: 'ody_oar_road' } },
+        },
+      },
+      right: {
+        label: '“The hall first. The bow.”',
+        tags: ['landmark', 'might'],
+        governingStats: { might: 1 },
+        outcomes: {
+          bad: { text: '“The bow,” he agrees, and gives the fighting answer whole — the axes, the slow stringing, the barred doors — and something in the dead man’s face closes like a ledger. The road after the hall goes unasked one more telling. He turns away. The dead, friends, do not sigh. It only sounds exactly like it.', effects: { addFlag: 'ody_fore_bow' } },
+          good: { text: '“The bow,” he agrees, and gives the fighting answer whole — the axes, the slow stringing, the barred doors — and something in the dead man’s face closes like a ledger. The road after the hall goes unasked one more telling. He turns away. The dead, friends, do not sigh. It only sounds exactly like it.', effects: { addFlag: 'ody_fore_bow' } },
+          incredible: { text: '“The bow,” he agrees, and gives the fighting answer whole — the axes, the slow stringing, the barred doors — and something in the dead man’s face closes like a ledger. The road after the hall goes unasked one more telling. He turns away. The dead, friends, do not sigh. It only sounds exactly like it.', effects: { addFlag: 'ody_fore_bow' } },
+        },
+      },
+    },
+  },
 ];
