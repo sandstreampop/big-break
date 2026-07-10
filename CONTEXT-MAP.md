@@ -13,6 +13,11 @@ with its own glossary and decisions under `docs/games/<game>/`.
 - [Love Island](./docs/games/love-island/grill.md) — a second game, in design.
   Glossary: [`docs/games/love-island/CONTEXT.md`](./docs/games/love-island/CONTEXT.md).
   Decisions: [`docs/games/love-island/adr/`](./docs/games/love-island/adr/).
+- [The Odyssey](./docs/games/odyssey/grill.md) — the third game: a bard at a
+  campfire retells the long way home (`js/packs/odyssey/`).
+  Glossary: [`docs/games/odyssey/CONTEXT.md`](./docs/games/odyssey/CONTEXT.md).
+  Voice law: [`docs/games/odyssey/VOICE.md`](./docs/games/odyssey/VOICE.md);
+  visual law: [`docs/games/odyssey/STYLE.md`](./docs/games/odyssey/STYLE.md).
 
 ## Convention
 

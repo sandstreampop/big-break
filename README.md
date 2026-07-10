@@ -10,6 +10,7 @@ and the engine runs. Two shipped games ride it today without forking anything.
 
 - 🎸 **Big Break** — the music game: https://sandstreampop.github.io/big-break/
 - 🌴 **Love Island** — the villa game: https://sandstreampop.github.io/big-break/love-island/
+- 🏺 **The Odyssey** — the bard's telling: https://sandstreampop.github.io/big-break/odyssey/
 
 **Build a game on the engine:** 📚 **Docs** — https://sandstreampop.github.io/big-break/docs/
 
