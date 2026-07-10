@@ -284,11 +284,17 @@ function walkPack(c: Collector, candidate: unknown): void {
         `Add \`${s}: { name: '…', icon: '…' }\` to manifest.statMeta.`);
     }
   }
-  // resourceMeta / resourceStart may only name declared resources.
+  // resourceMeta / resourceStart may only name declared resources. The issue
+  // codes are spelled as LITERALS at the call sites (a ternary, not a
+  // computed template): the contract-artifact generator
+  // (tools/gen-contract-artifact.mjs) extracts the catalog from these call
+  // sites and REJECTS a code it can't read, so every emittable code stays
+  // visible to external repair loops.
   for (const [field, rec] of [['resourceMeta', m.resourceMeta], ['resourceStart', m.resourceStart]] as const) {
     if (rec === undefined) continue;
     if (!isObj(rec)) {
-      c.error(`${field.toLowerCase()}-invalid`, `manifest.${field}`, `manifest.${field} must be an object keyed by resource name.`);
+      c.error(field === 'resourceMeta' ? 'resourcemeta-invalid' : 'resourcestart-invalid',
+        `manifest.${field}`, `manifest.${field} must be an object keyed by resource name.`);
       continue;
     }
     for (const k of Object.keys(rec)) {
@@ -298,7 +304,8 @@ function walkPack(c: Collector, candidate: unknown): void {
       const vocab = field === 'resourceStart' ? new Set(resources) : resourceLike;
       if (!vocab.has(k)) {
         const near = closestKey(k, vocab);
-        c.error(`${field.toLowerCase()}-unknown-resource`, `manifest.${field}.${k}`,
+        c.error(field === 'resourceMeta' ? 'resourcemeta-unknown-resource' : 'resourcestart-unknown-resource',
+          `manifest.${field}.${k}`,
           `manifest.${field} names "${k}", but "${k}" is not a declared resource${field === 'resourceStart' ? '' : ' or plugin-owned state slot'}. ${resourceLikeLine}`,
           near ? `Use "${near}" (closest match), or add "${k}" to manifest.resources.` : `Add "${k}" to manifest.resources, or remove this entry.`);
       }

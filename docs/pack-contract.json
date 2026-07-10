@@ -222,6 +222,18 @@
     "requires-key-unknown": [
       "error"
     ],
+    "resourcemeta-invalid": [
+      "error"
+    ],
+    "resourcemeta-unknown-resource": [
+      "error"
+    ],
+    "resourcestart-invalid": [
+      "error"
+    ],
+    "resourcestart-unknown-resource": [
+      "error"
+    ],
     "role-resource-unknown": [
       "error"
     ],

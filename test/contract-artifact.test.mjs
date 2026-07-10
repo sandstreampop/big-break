@@ -26,7 +26,9 @@ test('the artifact carries the load-bearing sections', async () => {
   assert.ok(Object.keys(a.issueCodes).length >= 50, 'the issue-code catalog is the full validator surface');
   // Spot-pin a few codes external repair loops key on — renaming one is a
   // BREAKING change for consumers (bump packContractVersion if intended).
-  for (const code of ['effect-verb-unknown', 'requires-key-unknown', 'chain-target-missing', 'event-id-duplicate']) {
+  // resourcestart-unknown-resource is the regression pin for the verifier's
+  // finding that template-literal codes silently vanished from the catalog.
+  for (const code of ['effect-verb-unknown', 'requires-key-unknown', 'chain-target-missing', 'event-id-duplicate', 'resourcestart-unknown-resource']) {
     assert.ok(a.issueCodes[code], `issue code '${code}' vanished — breaking for external tools`);
   }
 });

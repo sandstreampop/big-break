@@ -30,14 +30,34 @@ export async function buildContractArtifact() {
   const { PACK_CONTRACT_VERSION, TIERS, SIDES } = await import('../dist/js/validate.js');
   const { SAVE_SCHEMA_VERSION, EXPORT_CODE_VERSION } = await import('../dist/js/save.js');
 
-  // Issue-code catalog: every v.error/v.warn call site in the validator
-  // source. Severity is recorded per code; a code emitted at both severities
+  // Issue-code catalog: every .error/.warn call site in the validator source.
+  // Severity is recorded per code; a code emitted at both severities
   // (act-out-of-range on an event vs. a tutorial event, say) lists both.
+  //
+  // Two spellings are extractable, and ONLY these two:
+  //   c.error('some-code', …)                                — a literal
+  //   c.error(cond ? 'code-a' : 'code-b', …)                 — two literals
+  // The completeness claim is ENFORCED, not hoped for: any other first
+  // argument (a template literal, a variable) is invisible to this extractor,
+  // so it THROWS — which fails the drift test and CI — instead of emitting a
+  // knowingly-incomplete catalog. (This guard exists because the first
+  // version of the catalog silently missed four template-literal codes.)
   const src = readFileSync(join(ROOT, 'js/validate.ts'), 'utf8');
   const issues = {};
-  for (const [, sev, code] of src.matchAll(/\.(error|warn)\(\s*'([a-z0-9-]+)'/g)) {
+  const CODE = "'([a-z0-9-]+)'";
+  const site = new RegExp(
+    String.raw`\.(error|warn)\(\s*(?:${CODE}|[^()?]+\?\s*${CODE}\s*:\s*${CODE})\s*,`, 'g');
+  let sites = 0;
+  for (const [, sev, lit, ternA, ternB] of src.matchAll(site)) {
+    sites++;
     const severity = sev === 'warn' ? 'warning' : 'error';
-    (issues[code] ??= new Set()).add(severity);
+    for (const code of [lit, ternA, ternB]) {
+      if (code) (issues[code] ??= new Set()).add(severity);
+    }
+  }
+  const allSites = [...src.matchAll(/\.(?:error|warn)\(/g)].length;
+  if (sites !== allSites) {
+    throw new Error(`gen-contract-artifact: ${allSites - sites} validator call site(s) carry an issue code this extractor can't read (not a quoted literal or a two-literal ternary). Spell the code literally so the published catalog stays complete.`);
   }
   const issueCodes = Object.fromEntries(
     Object.keys(issues).sort().map((c) => [c, [...issues[c]].sort()]),
