@@ -142,6 +142,45 @@ unaccepted offer should). Test — `test/odyssey-entropy.test.mjs` asserts
 landmark occurrence ≥ runs-that-reach-the-window across 1,000 seeded runs,
 plus the variant-entropy floors.
 
+## #4 · Offline was silently dead for every game — 2026-07-10
+
+**Severity:** shipped defect, all three games, duration months (since the
+`js/data/*` refactor). The README promised "works offline as a PWA"; no game
+delivered it.
+**Symptom:** no offline support anywhere — the service worker never
+installed. Found by the review-mandated device pass (Required #4), the first
+time anyone actually cut the network and reloaded.
+**Root cause (5 whys):**
+1. Offline reload failed → the service worker was not controlling any page.
+2. The worker never installed → `cache.addAll(CORE)` rejects if ANY entry
+   404s, and install aborts.
+3. 20 of 32 CORE paths were stale → the list froze the pre-refactor layout
+   (`js/data/events.js`, `js/charts.js`, …) and nothing updated it when the
+   pack split moved every file.
+4. Nothing surfaced the failure → SW install errors are silent by design
+   (`.catch(() => {})` at registration; install rejection just leaves the
+   old/no worker), and no gate ever loaded the site offline.
+5. Two of three games ALSO never registered the worker at all (love-island
+   deliberately "online-first for now", odyssey by omission via createGame) —
+   so even a correct CORE would only have covered music.
+**Class:** a hard-coded manifest of another subsystem's file layout, with a
+failure mode that ships silent; a README claim no gate verified.
+**Rules produced:**
+- A precache list is a CONTRACT with the build output: it gets an executable
+  existence check, not hope.
+- Install must degrade per-entry, never abort-on-one (`Promise.allSettled`,
+  not bare `addAll`).
+- A capability the README claims (offline, resume, daily isolation) gets a
+  scenario in the device pass (`tools/device-pass.mjs`).
+**Guard (now in place):** fix — `sw.js` CORE rewritten to real files + per-
+entry resilient install + per-game navigation fallback; all three entries
+register the shared root worker. Test — `test/sw-core.test.mjs` (every CORE
+path exists in dist/, no bare addAll, every entry registers). Evidence —
+`tools/device-pass.mjs` scenario C cuts the network in real Chromium and
+plays a run offline.
+
+---
+
 <!-- Template for the next entry — copy above this line.
 
 ## #N · <title> — YYYY-MM-DD

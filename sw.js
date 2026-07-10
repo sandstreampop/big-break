@@ -1,20 +1,39 @@
 // BIG BREAK service worker: network-first (updates always win when online),
-// cache fallback (full game works offline once visited).
+// cache fallback (every game works offline once visited).
+//
+// Registered with scope '/' by all three game entries (js/main.ts,
+// js/main-love-island.ts, js/main-odyssey.ts), so whichever page a player
+// lands on first installs the one shared shell.
+//
+// Hard-learned rules (INCIDENTS #4 — offline was silently dead for months):
+//  · CORE lists only files that EXIST; test/sw-core.test.mjs fails the build
+//    if an entry rots. The old list kept the pre-refactor js/data/* layout —
+//    addAll rejected, install failed, and no game had offline at all while
+//    the README promised it.
+//  · Install must be RESILIENT anyway: entries cache individually, so one
+//    bad path degrades precaching instead of bricking the whole worker.
+//  · The deep JS module graph is NOT precached — the dynamic fetch handler
+//    caches every module the page actually loads, which is both complete
+//    and layout-proof. CORE is just the boot shell per game.
+//  · The navigation fallback is per-game: an offline /odyssey/ reload gets
+//    odyssey's shell, never the music page.
 
-const CACHE = 'bigbreak-v28';
+const CACHE = 'bigbreak-v29';
 const CORE = [
-  './', 'index.html', 'css/style.css', 'manifest.webmanifest',
-  'js/main.js', 'js/ui.js', 'js/engine.js', 'js/save.js', 'js/audio.js',
-  'js/art.js', 'js/charts.js', 'js/headlines.js', 'js/config.js', 'js/analytics.js', 'js/minigames.js',
-  'js/data/events.js', 'js/data/tutorial.js', 'js/data/instruments.js', 'js/data/accessories.js',
-  'js/data/meta.js', 'js/data/rivals.js', 'js/data/contracts.js',
-  'js/data/hustles.js', 'js/data/assets.js', 'js/data/genres.js', 'js/data/arcs.js',
-  'js/data/venues.js', 'js/data/band.js', 'js/dms.js', 'js/epilogue.js', 'js/sharecard.js', 'js/discography.js',
+  './', 'index.html', 'manifest.webmanifest',
+  'css/style.css', 'css/love-island.css', 'css/odyssey.css',
+  'love-island/index.html', 'odyssey/index.html',
   'assets/icon-180.png', 'assets/icon-512.png',
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE)
+      // Individually, tolerating failures: a missing file must degrade the
+      // precache, never abort the install (that failure mode ships silent).
+      .then((c) => Promise.allSettled(CORE.map((p) => c.add(p))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', (e) => {
@@ -41,9 +60,15 @@ self.addEventListener('fetch', (e) => {
         return res;
       })
       .catch(() => caches.match(e.request, { ignoreSearch: true })
-        // The app-shell fallback is for NAVIGATIONS only. Answering a failed
-        // CSS/JS fetch with cached HTML poisons the page (a stylesheet made
-        // of HTML renders the whole layout unstyled).
-        .then((hit) => hit || (e.request.mode === 'navigate' ? caches.match('./') : Response.error())))
+        // The app-shell fallback is for NAVIGATIONS only (answering a failed
+        // CSS/JS fetch with cached HTML poisons the page) — and it is
+        // per-game: fall back to the shell of the game being navigated to.
+        .then((hit) => {
+          if (hit) return hit;
+          if (e.request.mode !== 'navigate') return Response.error();
+          const shell = url.pathname.includes('/love-island') ? 'love-island/index.html'
+            : url.pathname.includes('/odyssey') ? 'odyssey/index.html' : './';
+          return caches.match(shell, { ignoreSearch: true });
+        }))
   );
 });

@@ -3,5 +3,13 @@
 // guards, and boots the shell — there is no per-game UI code to maintain.
 import { createGame } from './api.js';
 import { odysseyPack } from './packs/odyssey/pack.js';
+import { registerServiceWorker } from './platform.js';
+
+// The ROOT service worker (the music PWA's, scope '/'): registering it from
+// here too means a player who lands on /odyssey/ first still gets the
+// offline shell — its fetch handler caches whatever this page loads. Found
+// by the 2026-07 review's device pass (Required #4): the README promised
+// offline for all three games, but only the music entry ever registered.
+registerServiceWorker('../sw.js');
 
 createGame({ pack: odysseyPack }).start();

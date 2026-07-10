@@ -68,7 +68,14 @@ fresh-context adversarial review between passes, per the working agreement.
   `STYLE.md` if real phones disagree. Known wart: Pixelify Sans' bold capital
   C closes its aperture at small sizes ("Cut" can skim as "Out") — watch it
   in real play; the fallback position covers it. Ligatures are disabled
-  page-wide (the subset's fi/fl glyphs render corrupt).
+  page-wide (the subset's fi/fl glyphs render corrupt). **Second wart, found
+  by the 2026-07 device pass and empirically misread by its own author: the
+  digit '2' closes its loop at delta-chip size and reads as '8' ('-2 Might'
+  read as '-8 Might'); '5' reads as 'S'
+  (`device-pass/digit-glyphs.png`). Numbers are gameplay-critical — the
+  candidate fix is the clean body face or tabular numerals for CHIP NUMERALS
+  ONLY, a visual-identity call for the human (STYLE.md law owner), ticketed
+  with the key-art pass.**
 - *Epic breath on a phone card* — prompts stayed middle-length; the long
   breath lives in results (cap 650) and intros; crowding/matrix green.
 - *Two paths* — replay variety rides builds/boons/fires; judge with
