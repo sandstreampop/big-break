@@ -70,6 +70,14 @@ The bard does not joke inside the tale; his wit waits at the fire.
 - **Never:** stated emotion, summarized violence, stock Homeric formulas
   (they're on the blocklist — this bard makes his own), or the frame's
   crowd-work leaking in.
+- **But the tale is allowed to be funny the way HOMER is funny** (the
+  counter-register — 2026-07 review, risk #1): surprise, cruelty, stupidity,
+  bodily comedy, abrupt reversal, *sourced from the text*. The Nobody pun is
+  a dumb joke that works; Elpenor dies falling drunk off a roof; the Cretan
+  lies make Odysseus a fraud with a straight face; Irus is punched once in a
+  beggars' boxing match; men become pigs. What stays banned is comedy
+  *imported* from outside the poem's own registers — and the bard sneering
+  at the tale, which is a different thing from the tale being ridiculous.
 
 | ✅ good | ❌ bad |
 |---|---|
@@ -115,7 +123,11 @@ with the door's flavor in it.
    thing"), replace the pointer with the content. Enforced: the `tells`
    blocklist in [`taste.mjs`](./taste.mjs), grown as new offenders surface.
 2. **The bard never mocks the tale** — only himself, his rivals, his audience,
-   and his fee. Irony lives in the frame; the tale is told straight.
+   and his fee. Irony lives in the frame; the tale is told straight. Told
+   straight is not told solemn: Homer's own comedy — the dumb pun that
+   works, the drunk boy and the roof, the hero lying like a rug — is IN the
+   tale, and telling it straight means letting it be funny where the text
+   is funny.
 3. **The long breath lives where the screen can hold it.** Narration boxes,
    results, act intros roll; prompts and labels stay middle-length. (Watch-out
    from the grill: epic breath on a phone card is a named bet — judge it under
@@ -135,7 +147,9 @@ with the door's flavor in it.
    vanity and professional economics (wine, figs, payment, rival bards); the
    audience's memory; and the **retelling wink** — jokes about tellings
    varying are the roguelike winking at the player, fully in-fiction, landing
-   twice.
+   twice. (The slapstick ban is the FRAME's: the bard performs wit, not
+   pratfalls. The tale's own bodily comedy — Elpenor, Irus, the pigs — is
+   law 2's business, and it is licensed.)
 8. **The heckler ensemble is canon** across all tellings, so gags accumulate
    across runs like the prophecy does: the woman by the woodpile (the
    fact-checker; her grandfather knew a rower), the potter's boy (deadpan
@@ -154,7 +168,12 @@ with the door's flavor in it.
 — the rejected first calibration); hype (`amazing!!`); stage directions for
 the reader ("ominously"); explaining the joke or the dread; stock epic filler
 (see the blocklist); modern idiom inside the tale ("okay", "basically");
-sentimental swelling. If it could be the voiceover of *any* mythology
+sentimental swelling; and **the museum plaque** — a result that lands on a
+detachable aphorism (*"X, friends, is Y"*), named by the 2026-07 review as
+this pack's own signature lapse. One earned epigram is a spice; two stacked
+are a plaque; a card that ends on the abstraction instead of the man is
+reverence doing the AI voice's job. When in doubt, land on something a
+body did. If it could be the voiceover of *any* mythology
 documentary, it has failed the frame; if it could be *any* fantasy novel's
 narration, it has failed the telling.
 

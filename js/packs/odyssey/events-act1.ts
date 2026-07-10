@@ -100,13 +100,13 @@ export const ACT1_EVENTS: GameEvent[] = [
       label: 'Full rites, half a day', approach: 'lore',
       bad: 'The rites are right and long, and the wind that was fair for Ithaca spends itself on a beach where you stand singing. You buy the dead man his crossing at the fair price. The living do the paying, later, in oar-strokes.',
       good: 'Half a day, the cairn, the barley, the wine, his name said whole three times over water. The men row away quiet and easier, every one of them now certain of the fare he’ll be paid himself if it comes to it. That certainty pulls like a fifth bench.',
-      incredible: 'You give him the rites of a captain, though he pulled the ninth oar — and every rower aboard understands the message wrapped in the honor: there are no ninth oars on this fleet. Men have followed kings for less. Yours already do.',
+      incredible: 'You give him the rites of a captain, though he pulled the ninth oar — and every rower aboard understands the message wrapped in the honor: there are no ninth oars on this fleet. At the barley his benchmate remembers, aloud and wet-faced, that the dead man still owed him a knife — and pays the debt backwards, laying his own good blade in the cairn. Half the bench suddenly owes the dead something. The cairn does well out of it.',
     },
     right: {
       label: 'A soldier’s cairn, then oars', approach: 'might',
       bad: 'Quick stones, a fast word, wet eyes on dry duty — soldierly, and it lands wrong at sea, where the dead have so much more water to cross. The men row hard and say little, and the little they say is not about the weather.',
       good: 'A soldier’s cairn, built by soldiers, fast and square, and his oar set upright in it — the mark of a rower, seen a mile off. Then away on the tide he would not have wanted wasted. It is a grave a man from Troy reads correctly.',
-      incredible: 'You build it fast and right, and then, pulling out, you have the whole fleet ship oars for one stroke — twelve crews, one silence, one splashless glide past the point. No rite in the books does that. The books, friends, are missing one.',
+      incredible: 'You build it fast and right, and then, pulling out, you have the whole fleet ship oars for one stroke — twelve crews, one silence, one splashless glide past the point. Then a bench creaks, loud as a jest at a funeral, and twelve crews grin at the same instant — which the dead man, who laughed at everything including his wound, would have counted the better rite.',
     },
   }),
   sea('ody_a1_race', 1, {
@@ -123,7 +123,7 @@ export const ACT1_EVENTS: GameEvent[] = [
       label: 'Cut inside the shoal line', approach: 'guile',
       bad: 'The shoal has moved since the chart was young. You win the race and lose a strake, and the carpenter’s look as the water comes up through the boards is a verse of its own. Pumps, all the way to the next beach. Nestor’s son offers help. That is the worst part.',
       good: 'The old pilot’s trick: inside the shoal at half-tide, where a keel your draft can just slip. His deeper ship must go around; yours is anchored and smug when he arrives. “That is cheating,” he calls across. “That is seamanship,” you call back. Both true.',
-      incredible: 'You cut inside so clean the shoal never knows you passed, and the watching harbor takes up the story by nightfall: the captain who sails where water only rumors it goes. Nestor’s son asks, privately and properly, to be shown the line. You show him. Legends who teach make more legend.',
+      incredible: 'You cut inside so clean the shoal never knows you passed, and the watching harbor takes up the story by nightfall: the captain who sails where water only rumors it goes. Nestor’s son asks, privately and properly, to be shown the line. You show him — wrong, friends, by half an oar: enough to keep his keel honest and his opinion of himself damp. He runs it anyway, scrapes, and blames the tide. You agree warmly that it was certainly the tide.',
     },
   }),
   sea('ody_a1_stranger', 1, {

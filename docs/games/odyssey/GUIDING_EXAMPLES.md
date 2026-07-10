@@ -270,6 +270,49 @@ tellings; their gags accumulate like the prophecy does.
 
 ---
 
+## 11 · The counter-register — earned irreverence *(2026-07 review, risk #1)*
+
+The review's warning: the pack could become *"admire this tasteful
+adaptation"* rather than *"one more run."* The corrective is not pasted-on
+gags — it is that **Homer is already funny**, and the telling must not
+polish him solemn. The bar for every joke inside the tale: *surprise,
+cruelty, stupidity, reversal — from the text.*
+
+**The dumb pun that works** *(Nobody — canon, already in § 5)*
+> Later, howling in the dark, he tells his brothers that Nobody is hurting
+> him — and his brothers go back to bed, grumbling about the noise.
+
+**The stupid death** *(Elpenor — a boy, a roof, wine; the poem's own
+slapstick, and the tale keeps a straight face)*
+> *(Telling)* Sailing morning, and the muster is one short: young Elpenor,
+> who slept on the witch’s cool roof for the wine in him, heard the shouting
+> below and went to the ladder the fast way. The fast way was the edge. The
+> first dead man of the voyage the sea did not even bother to kill, friends
+> — the wine did it, and the roof helped.
+
+**The hero as fraud** *(the Cretan lies — a straight face doing tradecraft)*
+> *(Telling)* She asks the beggar where he is from, and the beggar — a
+> Cretan, suddenly, with a grandfather he invents mid-sentence and a limp
+> from a boar that never lived — grieves for lost Odysseus so movingly that
+> the man inside the rags nearly sends himself a condolence gift.
+
+**Bodily comedy, priced honestly** *(Irus — one punch, and the wince)*
+> *(Telling)* The beggars’ champion wants the doorway settled with fists,
+> and the suitors make a ring, delighted — free sport before supper. One
+> hook, measured to bruise and not to kill, and Iros sits down in sections,
+> like a tent losing its poles. The suitors roar. The disguised king rubs
+> his knuckles and reflects that royalty, friends, has fewer transferable
+> skills than it believes.
+
+**The plaque test** *(the lapse this section exists to prevent)*
+> ❌ *"Maps are mercy, drawn right."* · *"Speech, friends, is the one cargo
+> the sea cannot take off you."* — detachable aphorisms; the card ends on a
+> plaque instead of a person.
+> ✅ End on the body, the debt, the wince, the grumbling brothers: something
+> that happened, to someone, that the fire can see.
+
+---
+
 ## Micro-register cheat sheet
 
 | Surface | Weather | Length | `!` | Notes |
