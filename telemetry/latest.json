@@ -8,17 +8,17 @@
     "results": [
       [
         "swipe",
-        1998,
-        10
+        2161,
+        11
       ],
       [
         "$pageview",
-        235,
-        22
+        245,
+        23
       ],
       [
         "$pageleave",
-        178,
+        182,
         7
       ],
       [
@@ -28,28 +28,28 @@
       ],
       [
         "run_start",
-        89,
-        5
+        95,
+        6
       ],
       [
         "trophy",
-        77,
+        83,
         3
       ],
       [
         "run_end",
-        52,
+        55,
         4
       ],
       [
         "tutorial_start",
-        8,
-        8
+        11,
+        10
       ],
       [
         "tutorial_complete",
-        4,
-        4
+        6,
+        5
       ]
     ]
   },
@@ -63,9 +63,9 @@
     "results": [
       [
         "2026-07-02T11:11:48.171000Z",
-        "2026-07-08T19:34:38.303000Z",
-        2779,
-        22
+        "2026-07-10T06:39:39.157000Z",
+        2976,
+        23
       ]
     ]
   },
@@ -88,13 +88,13 @@
       ],
       [
         "2.3",
-        449,
-        4
+        632,
+        6
       ],
       [
         null,
-        413,
-        22
+        427,
+        23
       ],
       [
         "2.1",
@@ -160,6 +160,20 @@
         0,
         33,
         1
+      ],
+      [
+        "2026-07-09",
+        1,
+        1,
+        48,
+        1
+      ],
+      [
+        "2026-07-10",
+        5,
+        2,
+        115,
+        3
       ]
     ]
   },
@@ -171,9 +185,9 @@
     ],
     "results": [
       [
-        22,
-        10,
-        22
+        23,
+        12,
+        23
       ]
     ]
   },
@@ -194,8 +208,8 @@
       [
         "prod",
         "false",
-        9,
-        1131
+        11,
+        1328
       ]
     ]
   },
@@ -209,9 +223,9 @@
     "results": [
       [
         "sandstreampop.github.io",
-        21,
-        2778,
-        52
+        22,
+        2975,
+        55
       ],
       [
         "raw.githack.com",
@@ -230,8 +244,8 @@
     "results": [
       [
         "SE",
-        21,
-        2778
+        22,
+        2975
       ],
       [
         "NL",
@@ -254,7 +268,14 @@
         "Mobile Safari",
         "iOS",
         12,
-        2698
+        2871
+      ],
+      [
+        "Mobile",
+        "Facebook Mobile",
+        "iOS",
+        5,
+        48
       ],
       [
         "Mobile",
@@ -262,13 +283,6 @@
         "Android",
         4,
         49
-      ],
-      [
-        "Mobile",
-        "Facebook Mobile",
-        "iOS",
-        4,
-        24
       ],
       [
         "Desktop",
@@ -297,11 +311,11 @@
         2
       ],
       [
-        7,
+        8,
         1
       ],
       [
-        43,
+        45,
         1
       ]
     ]
@@ -318,18 +332,18 @@
       ],
       [
         2,
-        1
+        2
       ],
       [
         3,
         1
       ],
       [
-        5,
+        6,
         1
       ],
       [
-        7,
+        8,
         1
       ]
     ]
@@ -359,6 +373,10 @@
       [
         "2026-07-06",
         2
+      ],
+      [
+        "2026-07-10",
+        1
       ]
     ]
   },
@@ -372,6 +390,14 @@
       "bad_pct"
     ],
     "results": [
+      [
+        "li_casa_text",
+        21,
+        81,
+        19,
+        81,
+        5
+      ],
       [
         "a2_shop_gearhead",
         41,
@@ -389,6 +415,14 @@
         26
       ],
       [
+        "li_arrival",
+        41,
+        63,
+        37,
+        63,
+        29
+      ],
+      [
         "a3_shop_last",
         37,
         62,
@@ -397,20 +431,12 @@
         0
       ],
       [
-        "li_arrival",
-        37,
-        62,
-        38,
-        62,
-        32
-      ],
-      [
         "li_enc_rival_1",
-        22,
-        59,
-        41,
-        59,
-        32
+        24,
+        58,
+        42,
+        58,
+        29
       ],
       [
         "coping_50",
@@ -421,28 +447,36 @@
         3
       ],
       [
+        "li_enc_partner_3close",
+        27,
+        52,
+        48,
+        52,
+        15
+      ],
+      [
         "li_bomb1",
-        24,
-        54,
-        46,
-        54,
+        25,
+        52,
+        48,
+        52,
         8
       ],
       [
-        "li_enc_partner_3close",
-        24,
-        54,
-        46,
-        54,
-        17
+        "li_casa_night",
+        21,
+        52,
+        48,
+        52,
+        5
       ],
       [
         "li_daybed_1",
-        35,
+        39,
+        51,
         49,
         51,
-        51,
-        23
+        21
       ]
     ]
   },
@@ -465,6 +499,14 @@
         0
       ],
       [
+        "li_casa_held",
+        10,
+        100,
+        0,
+        100,
+        10
+      ],
+      [
         "a2_image_consultant",
         7,
         100,
@@ -481,7 +523,7 @@
         0
       ],
       [
-        "li_casa_held",
+        "li_recoup_held",
         7,
         100,
         0,
@@ -495,6 +537,14 @@
         100,
         100,
         17
+      ],
+      [
+        "li_enc_bestie_2_ride",
+        6,
+        100,
+        0,
+        100,
+        0
       ],
       [
         "li_enc_rmove_show",
@@ -545,11 +595,19 @@
         20
       ],
       [
-        "li_recoup_held",
+        "li_movienight_reveal",
         5,
-        100,
         0,
         100,
+        100,
+        0
+      ],
+      [
+        "li_casa_postcard_loyal",
+        11,
+        91,
+        9,
+        91,
         0
       ],
       [
@@ -558,30 +616,6 @@
         89,
         11,
         89,
-        0
-      ],
-      [
-        "li_casa_postcard_loyal",
-        9,
-        89,
-        11,
-        89,
-        0
-      ],
-      [
-        "li_daybed_2",
-        16,
-        88,
-        12,
-        88,
-        12
-      ],
-      [
-        "li_enc_p3_moment",
-        8,
-        12,
-        88,
-        88,
         0
       ],
       [
@@ -625,6 +659,46 @@
         0
       ],
       [
+        "li_enc_bestie_1",
+        7,
+        86,
+        14,
+        86,
+        0
+      ],
+      [
+        "li_factor50",
+        7,
+        86,
+        14,
+        86,
+        0
+      ],
+      [
+        "li_recoup1_exposed",
+        7,
+        86,
+        14,
+        86,
+        14
+      ],
+      [
+        "li_recoup2_exposed",
+        7,
+        86,
+        14,
+        86,
+        0
+      ],
+      [
+        "li_daybed_2",
+        19,
+        84,
+        16,
+        84,
+        11
+      ],
+      [
         "a1_shower_hook",
         6,
         83,
@@ -649,7 +723,7 @@
         0
       ],
       [
-        "li_factor50",
+        "li_enc_p3_low",
         6,
         83,
         17,
@@ -657,7 +731,15 @@
         0
       ],
       [
-        "li_recoup2_exposed",
+        "li_final_realthing",
+        6,
+        83,
+        17,
+        83,
+        0
+      ],
+      [
+        "li_recoup1_choose",
         6,
         83,
         17,
@@ -809,14 +891,6 @@
         20
       ],
       [
-        "li_final_realthing",
-        5,
-        80,
-        20,
-        80,
-        0
-      ],
-      [
         "li_first_date",
         5,
         20,
@@ -841,54 +915,6 @@
         20
       ],
       [
-        "li_minimilk",
-        5,
-        80,
-        20,
-        80,
-        40
-      ],
-      [
-        "li_recoup1_choose",
-        5,
-        80,
-        20,
-        80,
-        0
-      ],
-      [
-        "li_recoup1_exposed",
-        5,
-        80,
-        20,
-        80,
-        20
-      ],
-      [
-        "li_recoup_rescued",
-        5,
-        80,
-        20,
-        80,
-        60
-      ],
-      [
-        "li_wobble_50",
-        5,
-        80,
-        20,
-        80,
-        40
-      ],
-      [
-        "li_casa_text",
-        18,
-        78,
-        22,
-        78,
-        6
-      ],
-      [
         "a1_fragment",
         9,
         78,
@@ -903,14 +929,6 @@
         22,
         78,
         22
-      ],
-      [
-        "li_enc_partner_2_real",
-        16,
-        75,
-        25,
-        75,
-        12
       ],
       [
         "a2_playlist",
@@ -951,6 +969,30 @@
         25,
         75,
         12
+      ],
+      [
+        "li_wobble_50",
+        8,
+        75,
+        25,
+        75,
+        25
+      ],
+      [
+        "li_casa_return",
+        18,
+        72,
+        28,
+        72,
+        6
+      ],
+      [
+        "li_enc_partner_2_real",
+        18,
+        72,
+        28,
+        72,
+        11
       ],
       [
         "a1_algorithm_oracle",
@@ -1049,14 +1091,6 @@
         8
       ],
       [
-        "li_casa_return",
-        15,
-        67,
-        33,
-        67,
-        7
-      ],
-      [
         "a1_phone_demo",
         12,
         33,
@@ -1081,7 +1115,7 @@
         0
       ],
       [
-        "li_casa_postcard_stray",
+        "li_parents",
         9,
         67,
         33,
@@ -1177,6 +1211,70 @@
         0
       ],
       [
+        "li_bomb2",
+        6,
+        67,
+        33,
+        67,
+        0
+      ],
+      [
+        "li_connect_dots",
+        6,
+        33,
+        67,
+        67,
+        17
+      ],
+      [
+        "li_enc_rmove_confront",
+        6,
+        67,
+        33,
+        67,
+        0
+      ],
+      [
+        "li_enc_rmove_rumour",
+        6,
+        33,
+        67,
+        67,
+        17
+      ],
+      [
+        "li_hideaway_key",
+        6,
+        67,
+        33,
+        67,
+        33
+      ],
+      [
+        "li_minimilk",
+        6,
+        67,
+        33,
+        67,
+        33
+      ],
+      [
+        "li_recoup2_choose",
+        6,
+        67,
+        33,
+        67,
+        0
+      ],
+      [
+        "li_recoup_rescued",
+        6,
+        67,
+        33,
+        67,
+        50
+      ],
+      [
         "wt_berlin",
         6,
         33,
@@ -1191,70 +1289,6 @@
         67,
         67,
         0
-      ],
-      [
-        "a1_rival_intro",
-        11,
-        64,
-        36,
-        64,
-        9
-      ],
-      [
-        "finale_label_meeting",
-        16,
-        38,
-        62,
-        62,
-        6
-      ],
-      [
-        "a2_shed_offer",
-        8,
-        62,
-        38,
-        62,
-        12
-      ],
-      [
-        "li_parents",
-        8,
-        62,
-        38,
-        62,
-        25
-      ],
-      [
-        "a1_wedding",
-        10,
-        60,
-        40,
-        60,
-        0
-      ],
-      [
-        "a2_ar_listen",
-        5,
-        60,
-        40,
-        60,
-        0
-      ],
-      [
-        "a2_manager",
-        5,
-        40,
-        60,
-        60,
-        20
-      ],
-      [
-        "a2_pawn_upgrade",
-        5,
-        40,
-        60,
-        60,
-        20
       ]
     ]
   },
@@ -1270,50 +1304,50 @@
     "results": [
       [
         1,
-        680,
+        712,
         16,
-        77,
+        78,
         4,
         3
       ],
       [
         2,
-        713,
+        734,
         7,
-        74,
+        75,
         17,
         1
       ],
       [
         3,
-        501,
-        4,
+        528,
+        5,
         55,
-        40,
+        39,
         1
       ],
       [
         4,
-        23,
+        44,
         0,
-        91,
-        9,
+        70,
+        30,
         0
       ],
       [
         5,
-        15,
-        7,
-        47,
-        47,
+        40,
+        2,
+        50,
+        48,
         0
       ],
       [
         6,
-        20,
-        10,
-        40,
         50,
+        4,
+        60,
+        36,
         0
       ]
     ]
@@ -1350,24 +1384,24 @@
       ],
       [
         "realthing",
-        6,
-        67,
-        17,
-        17
+        7,
+        57,
+        29,
+        14
       ],
       [
         "winvilla",
-        3,
-        67,
-        0,
-        33
+        4,
+        50,
+        25,
+        25
       ],
       [
         "brand",
-        2,
-        50,
-        50,
-        0
+        3,
+        33,
+        33,
+        33
       ]
     ]
   },
@@ -1393,12 +1427,21 @@
       ],
       [
         "partial",
-        15,
-        30,
+        17,
+        32,
         107,
         1.8,
         56,
         2.7
+      ],
+      [
+        "gameover",
+        2,
+        34,
+        null,
+        null,
+        59,
+        null
       ],
       [
         "failure",
@@ -1407,15 +1450,6 @@
         null,
         null,
         78,
-        null
-      ],
-      [
-        "gameover",
-        1,
-        19,
-        null,
-        null,
-        38,
         null
       ]
     ]
@@ -1429,8 +1463,8 @@
     "results": [
       [
         "normal",
-        27,
-        67
+        29,
+        62
       ],
       [
         null,
@@ -1439,8 +1473,8 @@
       ],
       [
         "comeback",
-        1,
-        100
+        2,
+        50
       ],
       [
         "daily",
@@ -1455,6 +1489,10 @@
       "deaths"
     ],
     "results": [
+      [
+        "burnout",
+        1
+      ],
       [
         "dumped",
         1
@@ -1513,11 +1551,15 @@
       ],
       [
         48,
+        2
+      ],
+      [
+        49,
         1
       ],
       [
         51,
-        1
+        2
       ]
     ]
   },
@@ -1533,13 +1575,13 @@
     ],
     "results": [
       [
-        22,
-        8,
-        4,
-        0,
+        23,
+        10,
         5,
+        0,
+        6,
         4,
-        5
+        6
       ]
     ]
   },
@@ -1552,10 +1594,10 @@
     ],
     "results": [
       [
-        5,
+        6,
         3,
         3,
-        0
+        2
       ]
     ]
   },
@@ -1572,6 +1614,12 @@
         11,
         28,
         73
+      ],
+      [
+        null,
+        5,
+        49,
+        40
       ],
       [
         "own_voice",
@@ -1632,12 +1680,6 @@
         2,
         31,
         50
-      ],
-      [
-        null,
-        2,
-        50,
-        100
       ],
       [
         "bombshell_girl",
@@ -1728,12 +1770,12 @@
     "results": [
       [
         "normal",
-        81,
-        4
+        86,
+        5
       ],
       [
         "comeback",
-        4,
+        5,
         3
       ],
       [
@@ -1757,8 +1799,8 @@
       ],
       [
         null,
-        11,
-        73
+        14,
+        57
       ],
       [
         "showman",
@@ -1809,7 +1851,7 @@
       ],
       [
         null,
-        19
+        24
       ],
       [
         "chipfolk",
@@ -1849,6 +1891,10 @@
       ],
       [
         "cubicle_funk",
+        1
+      ],
+      [
+        "freak_polka",
         1
       ],
       [
@@ -2824,12 +2870,16 @@
         1
       ],
       [
+        "li_accent_divide",
+        1
+      ],
+      [
         "li_arrival",
-        37
+        41
       ],
       [
         "li_arrival_bomb",
-        1
+        2
       ],
       [
         "li_beach_date",
@@ -2840,16 +2890,20 @@
         1
       ],
       [
-        "li_bomb1",
-        24
-      ],
-      [
-        "li_bomb1_formate",
+        "li_bench_press_summit",
         1
       ],
       [
-        "li_bomb1_mystery",
+        "li_bomb1",
+        25
+      ],
+      [
+        "li_bomb1_formate",
         2
+      ],
+      [
+        "li_bomb1_mystery",
+        3
       ],
       [
         "li_bomb1_yourtype",
@@ -2857,11 +2911,15 @@
       ],
       [
         "li_bomb2",
-        5
+        6
+      ],
+      [
+        "li_bomb2_lads",
+        1
       ],
       [
         "li_bomb2_single",
-        3
+        4
       ],
       [
         "li_bomb2_steal",
@@ -2893,27 +2951,27 @@
       ],
       [
         "li_casa_held",
-        7
+        10
       ],
       [
         "li_casa_night",
-        18
+        21
       ],
       [
         "li_casa_postcard_loyal",
-        9
+        11
       ],
       [
         "li_casa_postcard_stray",
-        9
+        10
       ],
       [
         "li_casa_return",
-        15
+        18
       ],
       [
         "li_casa_text",
-        18
+        21
       ],
       [
         "li_challenge_couples",
@@ -2924,12 +2982,24 @@
         1
       ],
       [
+        "li_challenge_debate",
+        1
+      ],
+      [
         "li_challenge_heartrate",
         7
       ],
       [
-        "li_code_row",
+        "li_challenge_raunchy",
+        2
+      ],
+      [
+        "li_clear_the_air",
         1
+      ],
+      [
+        "li_code_row",
+        3
       ],
       [
         "li_code_vote_honour",
@@ -2937,23 +3007,27 @@
       ],
       [
         "li_connect_dots",
-        5
+        6
+      ],
+      [
+        "li_dawn_bootcamp",
+        1
       ],
       [
         "li_daybed_1",
-        35
+        39
       ],
       [
         "li_daybed_2",
-        16
+        19
       ],
       [
         "li_daybed_3",
-        10
+        13
       ],
       [
         "li_daybed_nap",
-        1
+        2
       ],
       [
         "li_dressing_room_summit",
@@ -2965,23 +3039,47 @@
       ],
       [
         "li_enc_bestie_1",
-        4
+        7
+      ],
+      [
+        "li_enc_bestie_2_pact",
+        1
       ],
       [
         "li_enc_bestie_2_ride",
-        4
+        6
+      ],
+      [
+        "li_enc_ex_arrival",
+        1
+      ],
+      [
+        "li_enc_mate_crush",
+        1
+      ],
+      [
+        "li_enc_mate_lastnight",
+        1
+      ],
+      [
+        "li_enc_mate_mediate",
+        1
+      ],
+      [
+        "li_enc_nickname",
+        1
       ],
       [
         "li_enc_p3_high",
-        4
+        5
       ],
       [
         "li_enc_p3_low",
-        4
+        6
       ],
       [
         "li_enc_p3_moment",
-        8
+        11
       ],
       [
         "li_enc_partner_1",
@@ -2989,15 +3087,15 @@
       ],
       [
         "li_enc_partner_1_again",
-        2
+        3
       ],
       [
         "li_enc_partner_1_game",
-        8
+        9
       ],
       [
         "li_enc_partner_1_slow",
-        7
+        8
       ],
       [
         "li_enc_partner_1_sweet",
@@ -3005,43 +3103,59 @@
       ],
       [
         "li_enc_partner_2_real",
-        16
+        18
       ],
       [
         "li_enc_partner_2_show",
-        9
+        10
       ],
       [
         "li_enc_partner_3close",
-        24
+        27
+      ],
+      [
+        "li_enc_partner_ex_ask",
+        1
       ],
       [
         "li_enc_partner_handshake",
         1
       ],
       [
+        "li_enc_partner_jealous",
+        1
+      ],
+      [
         "li_enc_rival_1",
-        22
+        24
+      ],
+      [
+        "li_enc_rival_1_again",
+        1
       ],
       [
         "li_enc_rival_2_open",
-        6
+        7
       ],
       [
         "li_enc_rival_2_test",
-        14
+        16
       ],
       [
         "li_enc_rival_3_pact",
-        9
+        11
       ],
       [
         "li_enc_rival_3_war",
-        10
+        11
+      ],
+      [
+        "li_enc_rival_confide",
+        1
       ],
       [
         "li_enc_rmove_confront",
-        3
+        6
       ],
       [
         "li_enc_rmove_poach",
@@ -3049,7 +3163,7 @@
       ],
       [
         "li_enc_rmove_rumour",
-        3
+        6
       ],
       [
         "li_enc_rmove_show",
@@ -3057,6 +3171,14 @@
       ],
       [
         "li_enc_teach_swim",
+        1
+      ],
+      [
+        "li_enc_worst_habit",
+        2
+      ],
+      [
+        "li_ex_amends",
         1
       ],
       [
@@ -3069,7 +3191,23 @@
       ],
       [
         "li_factor50",
-        6
+        7
+      ],
+      [
+        "li_fall_start",
+        2
+      ],
+      [
+        "li_fall_talk",
+        1
+      ],
+      [
+        "li_fame_start",
+        1
+      ],
+      [
+        "li_fame_talk",
+        1
       ],
       [
         "li_final_brand",
@@ -3081,11 +3219,11 @@
       ],
       [
         "li_final_realthing",
-        5
+        6
       ],
       [
         "li_final_winvilla",
-        3
+        4
       ],
       [
         "li_first_date",
@@ -3100,8 +3238,16 @@
         2
       ],
       [
+        "li_gossip_ex_dirt",
+        2
+      ],
+      [
+        "li_group_selfie",
+        1
+      ],
+      [
         "li_hideaway_key",
-        5
+        6
       ],
       [
         "li_hot_tub_debut",
@@ -3113,7 +3259,7 @@
       ],
       [
         "li_hut_confess_2",
-        1
+        2
       ],
       [
         "li_iced_coffee",
@@ -3125,7 +3271,7 @@
       ],
       [
         "li_ick_game2",
-        1
+        2
       ],
       [
         "li_ick_resurface",
@@ -3137,7 +3283,7 @@
       ],
       [
         "li_ick_talk",
-        2
+        3
       ],
       [
         "li_ick_watch",
@@ -3161,23 +3307,51 @@
       ],
       [
         "li_last_supper",
-        2
+        3
       ],
       [
         "li_legacy_chat",
         1
       ],
       [
+        "li_letter_home",
+        1
+      ],
+      [
+        "li_lounger_row",
+        1
+      ],
+      [
+        "li_matching_outfits",
+        1
+      ],
+      [
+        "li_mate_tipoff",
+        1
+      ],
+      [
         "li_minimilk",
-        5
+        6
+      ],
+      [
+        "li_mirror_scramble",
+        1
       ],
       [
         "li_movienight_clean",
         9
       ],
       [
+        "li_movienight_clean_others",
+        1
+      ],
+      [
         "li_movienight_reveal",
-        4
+        5
+      ],
+      [
+        "li_movienight_reveal_casa",
+        1
       ],
       [
         "li_nation_doormat",
@@ -3196,6 +3370,10 @@
         1
       ],
       [
+        "li_nation_villain",
+        1
+      ],
+      [
         "li_new_boy_graft",
         3
       ],
@@ -3209,19 +3387,27 @@
       ],
       [
         "li_parents",
-        8
+        9
       ],
       [
         "li_parents_messy",
-        2
+        4
       ],
       [
         "li_pool_float",
         1
       ],
       [
+        "li_pool_lineup",
+        1
+      ],
+      [
+        "li_prank_war",
+        1
+      ],
+      [
         "li_recoup1_choose",
-        5
+        6
       ],
       [
         "li_recoup1_choose_single",
@@ -3229,7 +3415,7 @@
       ],
       [
         "li_recoup1_exposed",
-        5
+        7
       ],
       [
         "li_recoup1_exposed_single",
@@ -3237,15 +3423,15 @@
       ],
       [
         "li_recoup2_choose",
-        4
-      ],
-      [
-        "li_recoup2_exposed",
         6
       ],
       [
+        "li_recoup2_exposed",
+        7
+      ],
+      [
         "li_recoup_cashout",
-        3
+        4
       ],
       [
         "li_recoup_dumped",
@@ -3253,11 +3439,19 @@
       ],
       [
         "li_recoup_held",
-        5
+        7
       ],
       [
         "li_recoup_rescued",
-        5
+        6
+      ],
+      [
+        "li_repair_mine_0",
+        1
+      ],
+      [
+        "li_repair_theirs_0",
+        1
       ],
       [
         "li_rt_bad_day",
@@ -3273,15 +3467,19 @@
       ],
       [
         "li_rumour_mill",
-        2
+        3
       ],
       [
         "li_second_wave",
+        3
+      ],
+      [
+        "li_shared_wardrobe",
         2
       ],
       [
         "li_snakewatch",
-        3
+        4
       ],
       [
         "li_snog_marry_pie",
@@ -3318,6 +3516,26 @@
       [
         "li_terrace_debrief",
         3
+      ],
+      [
+        "li_treats_delivery",
+        1
+      ],
+      [
+        "li_truth_or_dare",
+        2
+      ],
+      [
+        "li_two_truths_firepit",
+        1
+      ],
+      [
+        "li_villa_awards",
+        1
+      ],
+      [
+        "li_villa_roast",
+        1
       ],
       [
         "li_villa_threshold",
@@ -3357,11 +3575,11 @@
       ],
       [
         "li_web_slow_0",
-        4
+        5
       ],
       [
         "li_web_slow_1",
-        2
+        3
       ],
       [
         "li_web_slow_parked",
@@ -3377,7 +3595,7 @@
       ],
       [
         "li_web_tri_1",
-        2
+        3
       ],
       [
         "li_web_tri_showdown",
@@ -3385,7 +3603,7 @@
       ],
       [
         "li_wobble_50",
-        5
+        8
       ],
       [
         "li_wobble_75",
@@ -3397,7 +3615,7 @@
       ],
       [
         "li_wrong_name",
-        1
+        2
       ],
       [
         "li_wv_nation_darling",
@@ -3406,6 +3624,10 @@
       [
         "li_wv_publicity",
         2
+      ],
+      [
+        "li_you_good",
+        1
       ],
       [
         "m_alliance_pact",
@@ -3973,7 +4195,7 @@
       [
         "realthing",
         "partial",
-        1
+        2
       ],
       [
         "realthing",
@@ -3997,6 +4219,11 @@
       ],
       [
         "winvilla",
+        "partial",
+        1
+      ],
+      [
+        "winvilla",
         "success",
         2
       ]
@@ -4014,7 +4241,7 @@
       ],
       [
         null,
-        19
+        24
       ],
       [
         "basement",
@@ -4041,6 +4268,10 @@
         2
       ],
       [
+        "underpass",
+        2
+      ],
+      [
         "botanica",
         1
       ],
@@ -4054,10 +4285,6 @@
       ],
       [
         "rollercade",
-        1
-      ],
-      [
-        "underpass",
         1
       ],
       [
@@ -4086,6 +4313,10 @@
       ],
       [
         "priya",
+        3
+      ],
+      [
+        "marco",
         2
       ],
       [
@@ -4113,11 +4344,11 @@
         1
       ],
       [
-        "marco",
+        "meg",
         1
       ],
       [
-        "meg",
+        "ollie",
         1
       ],
       [
@@ -4146,7 +4377,11 @@
     "results": [
       [
         null,
-        51
+        53
+      ],
+      [
+        "cliffhanger",
+        1
       ],
       [
         "loud",
@@ -4166,6 +4401,10 @@
       ],
       [
         "li_first_season",
+        3
+      ],
+      [
+        "li_loyal_casa",
         3
       ],
       [
@@ -4205,6 +4444,14 @@
         2
       ],
       [
+        "li_cashout",
+        2
+      ],
+      [
+        "li_clean_reel",
+        2
+      ],
+      [
         "li_coven",
         2
       ],
@@ -4213,7 +4460,7 @@
         2
       ],
       [
-        "li_loyal_casa",
+        "li_followers_60",
         2
       ],
       [
@@ -4222,6 +4469,10 @@
       ],
       [
         "li_open_water",
+        2
+      ],
+      [
+        "li_second_wave_final",
         2
       ],
       [
@@ -4297,14 +4548,6 @@
         1
       ],
       [
-        "li_cashout",
-        1
-      ],
-      [
-        "li_clean_reel",
-        1
-      ],
-      [
         "li_dumped",
         1
       ],
@@ -4313,19 +4556,15 @@
         1
       ],
       [
-        "li_followers_60",
-        1
-      ],
-      [
-        "li_second_wave_final",
-        1
-      ],
-      [
         "li_serial",
         1
       ],
       [
         "li_villain_win",
+        1
+      ],
+      [
+        "li_walked",
         1
       ],
       [
@@ -4561,15 +4800,51 @@
     ],
     "results": [
       [
+        "tl_postcode",
+        5
+      ],
+      [
         "bb_golden",
         3
       ],
       [
         "bb_sunbed",
+        3
+      ],
+      [
+        "tl_fault",
+        3
+      ],
+      [
+        "tl_frame",
+        3
+      ],
+      [
+        "tl_nans",
+        3
+      ],
+      [
+        "bb_breath",
+        2
+      ],
+      [
+        "bb_comfy",
+        2
+      ],
+      [
+        "ch_insurance",
+        2
+      ],
+      [
+        "ep_policy",
         2
       ],
       [
         "fc_dyn_1",
+        2
+      ],
+      [
+        "sf_knows",
         2
       ],
       [
@@ -4585,20 +4860,32 @@
         2
       ],
       [
-        "tl_fault",
+        "sp_watched",
         2
       ],
       [
-        "tl_frame",
+        "sx_library",
         2
       ],
       [
-        "tl_nans",
+        "td_lunch",
         2
       ],
       [
-        "tl_postcode",
+        "td_schedule",
         2
+      ],
+      [
+        "tl_frame2",
+        2
+      ],
+      [
+        "tl_underfire",
+        2
+      ],
+      [
+        "bb_customs",
+        1
       ],
       [
         "cb_comeback",
@@ -4613,6 +4900,10 @@
         1
       ],
       [
+        "ch_suitcase",
+        1
+      ],
+      [
         "ep_lawyers",
         1
       ],
@@ -4621,7 +4912,23 @@
         1
       ],
       [
+        "ew_kickoff",
+        1
+      ],
+      [
         "ew_villain",
+        1
+      ],
+      [
+        "fb_seatbelt2",
+        1
+      ],
+      [
+        "fc_dyn_5",
+        1
+      ],
+      [
+        "fp_wave",
         1
       ],
       [
@@ -4629,11 +4936,35 @@
         1
       ],
       [
+        "mem_won",
+        1
+      ],
+      [
+        "mem_won2",
+        1
+      ],
+      [
         "ri_apology",
         1
       ],
       [
-        "sp_watched",
+        "sm_castplot",
+        1
+      ],
+      [
+        "sm_feature",
+        1
+      ],
+      [
+        "sm_screen",
+        1
+      ],
+      [
+        "sp_heartrate",
+        1
+      ],
+      [
+        "sp_liedetector",
         1
       ],
       [
@@ -4649,7 +4980,7 @@
         1
       ],
       [
-        "sx_library",
+        "tb_second",
         1
       ],
       [
@@ -4665,7 +4996,23 @@
         1
       ],
       [
+        "tcam_lens",
+        1
+      ],
+      [
+        "tcam_thumbs",
+        1
+      ],
+      [
         "td_flyers",
+        1
+      ],
+      [
+        "td_interval",
+        1
+      ],
+      [
+        "td_masterclass",
         1
       ],
       [
@@ -4677,11 +5024,31 @@
         1
       ],
       [
-        "tl_frame2",
+        "td_sponsor",
+        1
+      ],
+      [
+        "tl_admin",
+        1
+      ],
+      [
+        "tl_boring",
+        1
+      ],
+      [
+        "tl_lawyer",
+        1
+      ],
+      [
+        "tl_villa",
         1
       ],
       [
         "tr_pool",
+        1
+      ],
+      [
+        "tr_salute",
         1
       ],
       [
@@ -4697,11 +5064,27 @@
         1
       ],
       [
+        "vh_lifting",
+        1
+      ],
+      [
         "vr_bailout",
         1
       ],
       [
+        "vr_bailout2",
+        1
+      ],
+      [
         "vr_sofas",
+        1
+      ],
+      [
+        "vs_lifting",
+        1
+      ],
+      [
+        "wb_ask",
         1
       ],
       [
@@ -4710,6 +5093,14 @@
       ],
       [
         "wb_medicine",
+        1
+      ],
+      [
+        "wb_overcast",
+        1
+      ],
+      [
+        "wb_sleep",
         1
       ]
     ]
@@ -4720,6 +5111,10 @@
       "n"
     ],
     "results": [
+      [
+        "burnout",
+        1
+      ],
       [
         "dumped",
         1
@@ -4732,6 +5127,10 @@
       "n"
     ],
     "results": [
+      [
+        "cliffhanger",
+        1
+      ],
       [
         "loud",
         1
@@ -4747,16 +5146,16 @@
     ],
     "results": [
       [
+        "held",
+        "bond",
+        1,
+        3
+      ],
+      [
         "rescued",
         "bond",
         1,
-        2
-      ],
-      [
-        "held",
-        "bond",
-        0,
-        1
+        3
       ]
     ]
   },
@@ -4768,6 +5167,10 @@
     "results": [
       [
         "betrayed",
+        2
+      ],
+      [
+        "loyal",
         2
       ]
     ]
