@@ -4,7 +4,7 @@
 replayable narrative games.** The *core* is a swipe-left/right roguelike —
 seeded, DOM-free, genre-agnostic — and a game is a swappable **content pack**:
 a data contract a human (or a model) authors, a validator holds to account,
-and the engine runs. Two shipped games ride it today without forking anything.
+and the engine runs. Three shipped games ride it today without forking anything.
 
 **Play (no install; phone Safari/Chrome, works offline as a PWA):**
 
@@ -33,6 +33,21 @@ it.
   get a different game — no engine edits.
 - **The same UI shell** (`js/ui.ts`) drives either pack, reading the taxonomy
   from whichever pack booted.
+
+**Positioning, honestly** (recorded after the 2026-07 Odyssey staff review):
+the three shipped games prove **internal extensibility** — each pack is a
+compiled, first-party TypeScript module with its own entry HTML, registry
+line, and CSS theme, built by this repo's toolchain. That is a real result
+(three genres, zero forks), but it is **not yet external pack portability**:
+"hand an LLM a schema, get a pack artifact, validate it, and run it on an
+unchanged host without rebuilding" remains an open experiment. The named next
+step is a deliberately constrained JSON-only pack — no module augmentation,
+no executable plugin code, no bespoke CSS beyond theme tokens, loaded at
+runtime — to discover what fraction of a compelling game survives as pure
+data (ticketed in `docs/SPRINT-TECH-DEBT.md`). Until that experiment runs,
+this repo is an SDK for TypeScript developers and coding agents, not a
+content-pack runtime for non-developers — the docs and this README try to
+say which one they mean.
 
 ```
             ┌─────────────────────────── engine (genre-agnostic core) ───┐

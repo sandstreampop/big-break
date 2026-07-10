@@ -63,6 +63,13 @@ it.
   own happy path — that is exactly how the soft-lock passed.
 - Caveat: a reviewer told to find gaps will over-report. Act on **correctness**
   gaps, not style preferences; chasing everything yields defensive cruft.
+- **The taste gate is hygiene, never editorial approval** (2026-07 odyssey
+  review): the cliché/tells blocklists and caps catch recognizable lapses;
+  they cannot judge rhythm, tension, or whether prose stays pleasurable on
+  the third run. A green taste lint never substitutes for a human verdict on
+  content — writing is where writer ≠ grader binds hardest. Batches of
+  authored copy still go to the human loop (`docs/games/<game>/
+  taste-feedback/`), lint-clean or not.
 
 ## 5. Design against automation bias — the agent's and the human's
 
@@ -140,6 +147,14 @@ Process can rot a small team as surely as bugs can. Protect these:
   cut any rule a test has made redundant.
 - **Keep the gates fast.** Slow gates get skipped (the soft-lock assertion is
   bounded to twice per run for this reason).
+- **Don't turn "zero engine edits" into a goal.** It is a *diagnostic* (packs
+  should mostly be content), not a virtue to preserve by routing a pack
+  through a bad public seam — that is how the always-true `poseidon >= -999`
+  encoding shipped. Revised stance, per the 2026-07 odyssey review: an engine
+  edit is *welcome* when it simplifies the pack contract for the next game
+  (the terminalRules and presentFinale seams are the precedent). The bar is
+  "does the fourth game get easier to write," not "did the engine stay
+  frozen."
 
 ## Signals we're improving
 
