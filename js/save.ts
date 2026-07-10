@@ -6,6 +6,15 @@
 // so the two never clobber each other's meta or in-progress run.
 import type { RunState } from './types.js';
 
+// The persistence contracts, named so a bump is a deliberate act with a
+// migration, never a drive-by. SAVE_SCHEMA_VERSION is the in-progress run's
+// shape (the engine stamps it into every new run — pinned by an invariant
+// test); EXPORT_CODE_VERSION is the BB1 save-code envelope. Bump policy: only
+// when an OLD payload can no longer be read correctly — additive fields don't
+// bump, they get defaults on load (see loadMeta's merge + inline migrations).
+export const SAVE_SCHEMA_VERSION = 1;
+export const EXPORT_CODE_VERSION = 1;
+
 let NS = '';
 export function setSaveNamespace(ns: string): void {
   NS = ns ? `_${ns}` : '';
@@ -95,7 +104,7 @@ export function saveMeta(meta: MetaState): void {
 // older build (no packId stamped) still resumes — back-compat.
 export function loadRun(expectedPackId?: string): RunState | null {
   const run = read(runKey());
-  if (!(run && run.version === 1 && run.phase !== 'ended')) return null;
+  if (!(run && run.version === SAVE_SCHEMA_VERSION && run.phase !== 'ended')) return null;
   if (expectedPackId && run.packId && run.packId !== expectedPackId) return null;
   return run;
 }
@@ -109,7 +118,7 @@ export function clearRun(): void {
 // Save portability: the whole career as a compact code. Tagged with the active
 // pack's namespace so a code can't be pasted into the wrong game.
 export function exportSave(): string {
-  const payload = { v: 1, ns: NS, meta: read(metaKey()), run: read(runKey()) };
+  const payload = { v: EXPORT_CODE_VERSION, ns: NS, meta: read(metaKey()), run: read(runKey()) };
   return 'BB1.' + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
 }
 
@@ -117,7 +126,7 @@ export function importSave(code: string): boolean {
   try {
     const raw = code.trim().replace(/^BB1\./, '');
     const payload = JSON.parse(decodeURIComponent(escape(atob(raw))));
-    if (!payload || payload.v !== 1 || typeof payload.meta !== 'object') return false;
+    if (!payload || payload.v !== EXPORT_CODE_VERSION || typeof payload.meta !== 'object') return false;
     // Reject a code from another game (§2G: a cross-pack import used to write a
     // foreign career into the active pack's keys — silent corruption). Codes
     // predating the tag (ns === undefined) still import, for back-compat.

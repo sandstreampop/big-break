@@ -24,8 +24,15 @@ import { CORE_EFFECT_VERBS, REQUIRES_NEUTRAL_KEYS } from './engine.js';
 
 export type { PackIssue, PackValidation } from './types.js';
 
-const TIERS = ['bad', 'good', 'incredible'] as const;
-const SIDES = ['left', 'right'] as const;
+// The pack contract's version, for external tools and generated packs to pin
+// against (it also rides in docs/pack-contract.json, the machine-readable
+// contract artifact). Bump policy: a change that makes a previously-VALID
+// pack invalid (new required field, removed verb/requires key, tightened
+// semantics) bumps this; purely additive vocabulary or new WARNINGS do not.
+export const PACK_CONTRACT_VERSION = 1;
+
+export const TIERS = ['bad', 'good', 'incredible'] as const;
+export const SIDES = ['left', 'right'] as const;
 const FORCE_TIERS = ['bad', 'good', 'incredible', 'encoreUp'];
 const CMPS = ['<=', '>=', '<', '>'];
 

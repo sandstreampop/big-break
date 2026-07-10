@@ -220,7 +220,7 @@ export function createEngine(pack: Pack) {
     for (const s of PACK.manifest.stats) stats[s] = randInt(rng, CONFIG.statStartMin, CONFIG.statStartMax);
     stats.burnout = CONFIG.burnoutStart;
     const state: RunState = {
-      version: 1,
+      version: 1, // = SAVE_SCHEMA_VERSION (js/save.ts) — kept literal so the engine imports no persistence module; an invariants test pins the equality
       packId: PACK.id, // which genre this run belongs to (save/import guard, analytics)
       phase: 'card', // card | crossroads | ended
       act: 1,

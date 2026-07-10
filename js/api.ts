@@ -88,7 +88,7 @@ export function createGame(opts: { pack: Pack; validate?: boolean; mobileGuards?
 
 // The pack contract's runtime half: schema + semantic validation with
 // author-facing, LLM-repairable errors. See js/validate.ts.
-export { validatePack, formatIssue, formatValidation, closestKey } from './validate.js';
+export { validatePack, formatIssue, formatValidation, closestKey, PACK_CONTRACT_VERSION } from './validate.js';
 export type { PackIssue, PackValidation } from './validate.js';
 
 // The engine: isolated instances (createEngine) and the classic module-level

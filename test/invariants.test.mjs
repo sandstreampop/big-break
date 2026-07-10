@@ -12,6 +12,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as engine from '../dist/js/engine.js';
 import { PACKS } from '../dist/js/packs/registry.js';
+import { SAVE_SCHEMA_VERSION } from '../dist/js/save.js';
 import { simulatePackRun } from '../tools/pack-core.mjs';
 
 // A fresh, un-played run for a pack (default persona, no seed → construction
@@ -47,6 +48,17 @@ for (const pack of PACKS) {
     // paths and winGates describe the same set of summits.
     assert.deepEqual(Object.keys(m.paths).sort(), Object.keys(m.winGates).sort(),
       'paths and winGates key sets must match');
+  });
+
+  // ── Persistence contract: the engine stamps the run's save-schema version
+  // as a literal (it imports no persistence module by design), so this is the
+  // executable tie between that literal and js/save.ts SAVE_SCHEMA_VERSION.
+  // If either side bumps without the other, resume would silently refuse
+  // every new run — this fails loudly instead. ──
+  test(`[${pack.id}] a new run carries SAVE_SCHEMA_VERSION (${SAVE_SCHEMA_VERSION})`, () => {
+    const run = freshRun(pack);
+    assert.equal(run.version, SAVE_SCHEMA_VERSION);
+    assert.equal(run.packId, pack.id, 'run is stamped with its pack (the resume guard reads this)');
   });
 
   // ── Run structure (ADR-0010): the manifest's segment list is the run's
