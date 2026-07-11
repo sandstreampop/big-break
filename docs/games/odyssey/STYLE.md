@@ -50,12 +50,20 @@ reads as theft.
 7. **Figures:** flat black-figure pixel silhouettes (ship, oar, owl, trident,
    one-eyed giant) as chunky SVGs, `image-rendering: pixelated`. No portraits
    in v1 — key art needs its own identity, not the LI pipeline's aesthetics.
-8. **Authority = band, not neon.** No glow shadows, no gradient-clipped logo
-   text (the siblings' two loudest tics, banned here). Motion is ember-slow;
-   **nothing pulses.** The deep is still; the fire flickers, barely.
-   *(Motion clause renegotiated 2026-07-11: superseded by the Motion Law in
-   [`NORTH-STAR.md`](./NORTH-STAR.md) — diegetic motion + earned ceremony;
-   stillness stays the ground, chrome still never moves.)*
+8. **Authority = band, not neon — and the Motion Law.** No glow shadows, no
+   gradient-clipped logo text (the siblings' two loudest tics, banned here).
+   Motion (amended 2026-07-11, superseding "nothing pulses" — see
+   [`adr/0001-motion-law.md`](./adr/0001-motion-law.md) and
+   [`NORTH-STAR.md`](./NORTH-STAR.md)): **diegetic motion only** — a thing
+   may move if and only if it exists in the story (the sea, the fire, the
+   ship, the rowers, the crowd, the totems, the ember); the chrome — boxes,
+   rules, type, buttons, panels — never animates (law 9's
+   reveal-in-speaking-order is the one standing exception). Tempo stays
+   ember-slow: vase-frame `steps()`, never easing, nothing smooth. And
+   **earned ceremony**: screen-scale motion is rationed to the fixed list
+   (the three landmarks, every ending, the prophecy fragment); the gods stay
+   minor. Stillness stays the ground; the deep is still; the fire flickers,
+   barely.
 9. **Reading order is designed, not hoped for.** The eye enters a screen at
    the biggest, highest-contrast block — not at the top (Itti–Koch saliency;
    NN/g eyetracking: hierarchy overrides the F-pattern). So on any screen
@@ -80,6 +88,15 @@ reads as theft.
    Executable: the bard-beat check in `test/ui/smoke.mjs` pins all three
    (size ratio, contrast floor, monotonic reveal delays, cue shape, and that
    the beat still advances to a live card).
+
+**Cross-reference — the Sound Law** (set alongside the Motion Law,
+2026-07-11; canonical text in [`NORTH-STAR.md`](./NORTH-STAR.md), recorded in
+[`adr/0001-motion-law.md`](./adr/0001-motion-law.md)): silence is the
+identity. A sacred-few lexicon of authored sound-events (one meaning, one
+sound, never reused — enforced as a unit test, not a comment); the hearth
+alone may whisper; haptics are the percussion; no voice-blips, no ambient
+noise floor, no score. The frame crackles, the deep does not — the audio law
+mirrors the voice law.
 
 ---
 

@@ -157,6 +157,15 @@ with the door's flavor in it.
    (the unseen rival who "sings flat, but that is between him and whatever god
    he has offended"). Hecklers speak in quotes; their speech is exempt from
    the cliché blocklist the way all quoted mouths are.
+   *Cross-reference — the Memory Law* (2026-07-11,
+   [`NORTH-STAR.md`](./NORTH-STAR.md), recorded in
+   [`adr/0001-motion-law.md`](./adr/0001-motion-law.md)): cross-run memory is
+   a personality engine — the hecklers remember your previous tellings and
+   say so, the way the prophecy already accumulates. The named watch-out
+   binds every callback line: memory can curdle into the game mocking the
+   player, and law 2 extends to the teller — the crowd needles the bard and
+   each other, **never sneers at the player's play**. Callback copy goes
+   through the same verdict loop as all odyssey content.
 9. **Violence at the bard's discretion** — offscreen-in-language, never gore:
    "what the Cyclops did then, I will not sing at this fire." The aftermath
    may be exact (the morning count, the unshepherded sheep); the act is not
