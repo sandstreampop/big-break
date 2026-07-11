@@ -150,6 +150,15 @@
 .act-name { font-family: 'Press Start 2P', var(--font-body); font-size: 16px; line-height: 1.55; letter-spacing: 0; }
 .ending-title { font-family: 'Press Start 2P', var(--font-body); font-size: 17px; line-height: 1.6; }
 .set-piece-banner { font-family: 'Press Start 2P', var(--font-body); font-size: 12px; letter-spacing: .1em; }
+/* The full-screen beat inherits style.css's 30px banner — sized for the
+   narrow default face, not this one (~1em per glyph). THE UNDERWORLD
+   (10 unbreakable glyphs + the deep's .3em tracking) must fit the beat
+   card's ~236px interior on a 320px phone: 17px — the display-caps scale
+   above — is the widest that does. */
+.sp-beat .sp-beat-banner { font-size: 17px; line-height: 1.6; }
+/* Big-text zooms #app 1.18× (style.css), shrinking that interior to ~191px
+   on a 320px phone — the title needs 10 × (font + .3em) to stay unclipped. */
+body.big-text .sp-beat .sp-beat-banner { font-size: 14px; }
 .recap-card .act-name { font-size: 15px; }
 @media (max-height: 700px) { .set-piece-banner { font-size: 10px; } }
 

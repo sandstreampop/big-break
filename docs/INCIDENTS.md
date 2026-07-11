@@ -11,6 +11,62 @@ Each entry: what broke, the 5-whys root cause, the **rule** it produced, and the
 
 ---
 
+## #3 · Odyssey "THE UNDERWORLD" set-piece title clipped on every phone — 2026-07-11
+
+**Severity:** cosmetic but flagship-surface (no soft-lock). Shipped to the
+deployed Odyssey build: a landmark's full-screen title card — the loudest
+framing surface the game has — rendered as "THE UNDERWO" with the rest cut off.
+
+**Symptom:** the Underworld landmark's full-screen beat clipped its banner
+horizontally at every phone width (390px of text in a ~236px card interior at
+320px; still clipped at 412px). Every gate stayed green.
+
+**Root cause (5 whys):**
+
+1. The title clipped → the beat banner rendered at 30px in Odyssey's
+   `Press Start 2P` face (~1em per glyph) plus the deep's `.3em` tracking —
+   "UNDERWORLD" alone is 10 unbreakable glyphs ≈ 390px.
+2. Why 30px → `css/odyssey.css` re-sized `.set-piece-banner` (the slim ribbon,
+   12px) for the wide face but never the full-screen variant; `style.css`'s
+   higher-specificity `.sp-beat .sp-beat-banner { font-size: 30px }` won there.
+3. Why did no gate see it → `test/ui/mobile-matrix.mjs` audited the overlay
+   card's *bounding rect* only. The card's `overflow-y: auto` computes
+   `overflow-x` to `auto`, so oversize content clips *inside* the card —
+   the rect and the document scrollWidth never move.
+4. Why was the invariant rect-based → "overlays fit the viewport" was written
+   when overlay text was prose that wraps; a fixed-advance display face with a
+   long single word is a new content class it never anticipated.
+5. Nothing measured intra-container overflow → clipping inside a scrollable
+   box is invisible to every rect check by construction.
+
+**Class:** re-skinning a shared component per-pack without covering every
+variant of it; content clipped inside a scroll container is invisible to
+rect-based layout audits.
+
+**Rules produced:**
+- A pack that re-themes a shared component with a wider or fixed-advance
+  display face must size **every variant** of that component (slim ribbon AND
+  full-screen beat), and the longest unbreakable word must fit the smallest
+  supported phone — in every text-size mode (big-text zoom shrinks the
+  effective interior).
+- Layout audits measure `scrollWidth` vs `clientWidth` inside overlays, not
+  just bounding rects — a card can "fit the viewport" while eating its content.
+
+**Guard (now in place):**
+- Fix: `css/odyssey.css` sizes `.sp-beat .sp-beat-banner` for the pixel face
+  (17px; 14px under `body.big-text`), verified by driving a real season to the
+  Underworld beat at 320×568 in both modes.
+- Test: `test/ui/mobile-matrix.mjs` — any active overlay whose box
+  `scrollWidth > clientWidth + 1` is a violation. Verified red on the old CSS
+  (all odyssey cells, every viewport) and green on the fix, with music and
+  love-island unaffected. A dedicated big-text pass toggles the 1.18× zoom at
+  every set-piece beat of an odyssey season at 320px and requires the box
+  unclipped — so the text-size half of the rule is executable too. (A whole
+  big-text *season* is not gated: the mode has pre-existing vertical-layout
+  debt at 320px — buttons below the fold under zoom — its own remediation.)
+
+---
+
 ## #2 · Love Island Angles announced but never equipped — 2026-07-09
 
 **Severity:** feature-dead (not a soft-lock). Shipped to the deployed Love

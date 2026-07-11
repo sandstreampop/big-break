@@ -7,6 +7,10 @@
 //               Androids up to big flagships, both games. On every dealt
 //               card, overlay, and picker screen the layout invariants below
 //               must hold.
+//   1b. TEXT MODE — at every full-screen set-piece beat of an odyssey season
+//               at the 320px floor, big-text (body.big-text → #app zoomed
+//               1.18×) is toggled on and the beat box must stay unclipped
+//               horizontally (INCIDENTS.md #3).
 //   2. ENGINE — a legacy pass with every `:has()` rule stripped from the CSS
 //               (Safari < 15.4, Chrome < 105 drop them silently). The layout
 //               must not hang off modern selectors; JS-set classes are the
@@ -24,7 +28,8 @@
 //   - no horizontal overflow of the document;
 //   - both choice buttons fully on-screen and NOT overlapping the card;
 //   - the card fits the viewport and the PROMPT is never internally scrolled;
-//   - overlays (result cards / set-piece beats) fit the viewport;
+//   - overlays (result cards / set-piece beats) fit the viewport, and their
+//     content is never clipped/scrolled horizontally inside the card;
 //   - picker cards never overflow horizontally.
 //
 // Run: npm run build && node test/ui/mobile-matrix.mjs        (full matrix)
@@ -167,6 +172,12 @@ function auditFn() {
       const r = box.getBoundingClientRect();
       if (r.top < -1 || r.bottom > vh + 1) problems.push(`overlay card off-screen vertically (${Math.round(r.top)}..${Math.round(r.bottom)} of ${vh})`);
       if (r.left < -1 || r.right > vw + 1) problems.push(`overlay card off-screen horizontally`);
+      // Content wider than the card doesn't move its rect — the card's
+      // overflow-y:auto computes overflow-x to auto, so oversize text (e.g. a
+      // set-piece banner in a wide display face) silently clips inside it.
+      if (box.scrollWidth > box.clientWidth + 1) {
+        problems.push(`overlay content clipped horizontally inside the card (${box.scrollWidth} > ${box.clientWidth})`);
+      }
     }
   }
   for (const pick of document.querySelectorAll('.screen.active .pick-card')) {
@@ -270,6 +281,97 @@ async function driveSeason(browser, base, game, vp, tag) {
   return true;
 }
 
+// The big-text beat check (INCIDENTS.md #3): drive an odyssey season at the
+// 320px floor; at every full-screen set-piece beat, toggle body.big-text on,
+// require the beat box's content unclipped horizontally, toggle it back off
+// so the season keeps playing under the layout the SIZE pass already gates.
+// The landmarks fire in every telling (test/odyssey-landmarks.test.mjs), so
+// missing beats means the drive broke — fail loudly, never silently skip.
+async function driveBigTextBeatCheck(browser, base) {
+  const game = GAMES.find((g) => g.label === 'odyssey');
+  const vp = VIEWPORTS.find((v) => v.label === 'iPhone-SE1');
+  const ctx = await browser.newContext({
+    viewport: { width: vp.w, height: vp.h }, isMobile: true, hasTouch: true, reducedMotion: 'reduce',
+  });
+  await ctx.addInitScript(seedScript(game.ns));
+  const page = await ctx.newPage();
+  const violations = [];
+  let beatsChecked = 0;
+  page.on('pageerror', (e) => violations.push(`pageerror: ${e.message}`));
+  try {
+    await page.goto(`${base}${game.path}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await page.evaluate(() => document.querySelector('button.btn.primary')?.click());
+    await page.waitForSelector('#screen-setup.active #player-name', { timeout: 10000 });
+    await page.evaluate(() => {
+      const n = document.querySelector('#player-name');
+      if (n && !n.value.trim()) { n.value = 'Tester'; n.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (!document.querySelector('.identity-gender-chip.selected')) document.querySelector('.identity-gender-chip')?.click();
+    });
+    await page.waitForSelector('#screen-setup.active .pick-card', { timeout: 10000 });
+    await page.evaluate(() => document.querySelector('.pick-card')?.click());
+    await page.evaluate(() => document.querySelector('#start-run-btn')?.click());
+
+    const deadline = Date.now() + 90000;
+    let guard = 0;
+    while (Date.now() < deadline && guard++ < 800) {
+      const k = await page.evaluate(() => {
+        const q = (s) => document.querySelector(s);
+        if (q('#screen-ending.active')) return 'ending';
+        if (q('#overlay.active')) return 'overlay';
+        if (q('#screen-crossroads.active .pick-card')) return 'cross';
+        if (q('#screen-game.active .choice-btn.choice-left')) return 'card';
+        return 'wait';
+      });
+      if (k === 'ending') break;
+      if (k === 'overlay') {
+        await page.waitForFunction(() => {
+          const ov = document.querySelector('#overlay.active');
+          if (!ov) return true;
+          return ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+        }, { timeout: 5000 });
+        const beat = await page.evaluate(() => {
+          const box = document.querySelector('#overlay.active .sp-beat');
+          if (!box) return null;
+          const banner = box.querySelector('.sp-beat-banner')?.textContent || '?';
+          document.body.classList.add('big-text');
+          const m = { banner, sw: box.scrollWidth, cw: box.clientWidth };
+          document.body.classList.remove('big-text');
+          return m;
+        });
+        if (beat) {
+          beatsChecked++;
+          if (beat.sw > beat.cw + 1) violations.push(`big-text beat "${beat.banner}" clipped horizontally (${beat.sw} > ${beat.cw})`);
+        }
+        await page.evaluate(() => {
+          const ov = document.querySelector('#overlay.active');
+          (ov?.querySelector('.gear-choices button') || ov)?.click();
+        });
+      } else if (k === 'cross') {
+        await page.evaluate(() => document.querySelector('#screen-crossroads.active .pick-card')?.click());
+        await page.waitForTimeout(60);
+      } else if (k === 'card') {
+        await page.evaluate(() => { document.querySelector('.coach')?.remove(); document.querySelector('#screen-game.active .choice-btn.choice-left')?.click(); });
+        await page.waitForTimeout(70);
+      } else {
+        await page.waitForTimeout(80);
+      }
+    }
+    if (beatsChecked < 2) violations.push(`only ${beatsChecked} set-piece beats measured — the landmarks did not play out`);
+  } catch (e) {
+    violations.push(`drive error: ${e.message}`);
+  } finally {
+    await ctx.close();
+  }
+  const uniq = [...new Set(violations)];
+  if (uniq.length) {
+    console.error(`✗ big-text ${game.label} @ ${vp.label} (${vp.w}×${vp.h}) — ${uniq.length} violation(s):\n    ${uniq.slice(0, 10).join('\n    ')}`);
+    return false;
+  }
+  console.log(`✓ big-text ${game.label} @ ${vp.label} (${vp.w}×${vp.h}): ${beatsChecked} set-piece beats unclipped under 1.18× zoom`);
+  return true;
+}
+
 // The version-skew pass: serve a stamp-less stylesheet first (stale cache
 // emulation) and require the boot probe to detect the mismatch and heal it.
 async function driveSkewHeal(browser, base, expectV) {
@@ -335,6 +437,16 @@ for (const game of GAMES) {
     if (!(await driveSeason(browser, base, game, vp, 'matrix'))) failed++;
   }
 }
+
+// Pass 1b — TEXT MODE: big-text zooms #app 1.18× (style.css), shrinking every
+// card's effective interior. INCIDENTS.md #3's rule — a pack's display face
+// must keep the set-piece banner unclipped in every text-size mode — is
+// enforced surgically: at each full-screen beat of an odyssey season at the
+// 320px floor, flip big-text on, measure the box, flip it back. (A whole
+// big-text season is NOT gated yet: the mode has pre-existing vertical-layout
+// debt at 320px — buttons below the fold under zoom — which is its own
+// remediation, out of this guard's scope.)
+if (!(await driveBigTextBeatCheck(browser, base))) failed++;
 
 // Pass 2 — ENGINE: legacy engines drop :has() rules; the layout must survive.
 cssMode = { stripHas: true, stripStamp: false };
