@@ -12,7 +12,7 @@ import * as engine from '../engine.js';
 import * as save from '../save.js';
 import { CONFIG } from '../config.js';
 import { sfx } from '../audio.js';
-import { el, $, keyable, vibrate, openOverlay, spawnConfetti, show } from './dom.js';
+import { el, $, keyable, vibrate, openOverlay, spawnConfetti, show, reducedMotion } from './dom.js';
 import { activePack, run, PRES, PATHS, metaFor, fillText } from './context.js';
 import { pathFit, gateReadout } from './gates.js';
 import { feedTeaser } from './feeds.js';
@@ -143,6 +143,10 @@ export function actInterstitial(step) {
     box.append(el('div', 'tier-badge', `${PRES.actWord || 'ACT'} ${step.act}`));
     const intro = PRES.actIntro?.[step.act];
     if (intro) {
+      // The act intro's scene (pack-rendered markup — the odyssey's hearth
+      // between acts); packs without one keep the plain panel. px-still
+      // mirrors the in-game reduced-motion toggle (CSS can't see it).
+      if (intro.scene) box.append(el('div', 'beat-scene' + (reducedMotion() ? ' px-still' : ''), intro.scene));
       box.append(el('p', 'result-text act-name', intro.name));
       box.append(el('p', 'result-text', intro.text));
     }

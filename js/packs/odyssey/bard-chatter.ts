@@ -25,6 +25,7 @@
 // identical. Pinned by test/odyssey-bard.test.mjs.
 
 import { mulberry32 } from '../../engine.js';
+import { hearthScene } from './hearth.js';
 import type { Plugin, RunState, GameEvent } from '../../types.js';
 
 declare module '../../types.js' {
@@ -159,5 +160,11 @@ export function bardBeat(run: RunState, ev: GameEvent) {
   if ((ev.tags || []).includes('landmark')) return null;
   const id = run.bardLine;
   if (!id || !BY_ID[id]) return null;
-  return { blocks: BY_ID[id].blocks, cont: 'Go on —', cls: 'bard-beat' };
+  const blocks = BY_ID[id].blocks;
+  // The living hearth (I5): the beat plays in front of the fireside scene —
+  // the fire, the seated ensemble (tonight's speaker mid-shift), the cup.
+  return {
+    blocks, cont: 'Go on —', cls: 'bard-beat',
+    sceneHtml: hearthScene(run, blocks.map((b) => b.who)),
+  };
 }

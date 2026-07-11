@@ -543,8 +543,10 @@ export interface Presenter {
   // them; a pack without minigames doesn't show the rows).
   minigameSettings?: boolean;
   // 1-indexed act names (HUD strip, scrapbook) + act-break interstitial copy.
+  // An intro's optional `scene` is pack-rendered markup shown above the act
+  // name (the odyssey's hearth between acts); absent = the plain panel.
   actNames?: string[];
-  actIntro?: Record<number, { name: string; text: string }>;
+  actIntro?: Record<number, { name: string; text: string; scene?: string }>;
   // Whether the pack wants to intercept an act-start with its own special
   // overlay (music's Brammies) instead of the default act interstitial. The
   // shell no longer hardcodes the genre's trigger (music's "act 3, fame ≥ 25")
@@ -649,8 +651,13 @@ export interface Presenter {
   // the card. The shell wraps every block in quotes and gives it one tap to
   // continue (mirrors the set-piece beat). Same purity rule as overlayNote —
   // deals re-render on resume — so the pack consumes its own queue elsewhere.
+  // `sceneHtml` is an optional scene the beat plays in front of — a stage the
+  // pack renders (the odyssey's hearth: the fire, the seated crowd, the
+  // bard's cup), prepended above the dialogue. Pure pack markup; absent =
+  // the plain panel, byte-identical to before.
   preCardBeat?: (state: RunState, ev: GameEvent) => {
     blocks: { who?: string; text: string }[]; cont?: string; cls?: string;
+    sceneHtml?: string;
   } | null;
   // The people in this scene: a portrait strip rendered on the dealt card
   // (name + face, an optional mood face and sub-label, an optional class for

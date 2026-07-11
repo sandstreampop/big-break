@@ -7,8 +7,11 @@
 import type { Pack, RunState } from '../../types.js';
 import { bardBeat } from './bard-chatter.js';
 import { odysseyFeel } from './feel.js';
-import { odysseySoundscape } from './soundscape.js';
+import { odysseySoundscape, resultCue, endingCue, speak } from './soundscape.js';
 import { friezeTableau } from './frieze.js';
+import { hearthScene } from './hearth.js';
+import { odysseyTitleScene } from './threshold.js';
+import { vibrate } from '../../ui/dom.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -70,17 +73,23 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   },
   actWord: 'ACT',
   actNames: ['', 'The Sack and the Sea', 'Witches and the Dead', 'The Narrow Way'],
+  // The threshold (I5): the fireside before the telling — the player's first
+  // touch kindles the fire; Resume means it still burns from last time.
+  titleScene: odysseyTitleScene,
   actIntro: {
     1: {
       name: 'The Sack and the Sea',
+      scene: hearthScene({ act: 1 } as RunState),
       text: 'Twelve ships out of Troy, friends — riding low, heavy with bronze and with men who had lived, every rower pulling for a wife who had learned to run a farm without him. And listen how the water was, that first week: easy, foam like combed wool, the kind of sea that makes a captain generous at supper. That is the sea’s oldest trick. It shows you your harbour in your mind’s eye. Then it asks your name.',
     },
     2: {
       name: 'Witches and the Dead',
+      scene: hearthScene({ act: 2 } as RunState),
       text: 'Throw on a branch; the tale goes narrow here. The islands stop being places a chart would admit to, and the dangers stop being weather. What is left of the fleet sails into waters where the right word matters more than the strong arm — and where the wrong word is very, very easy to say.',
     },
     3: {
       name: 'The Narrow Way',
+      scene: hearthScene({ act: 3 } as RunState),
       text: 'Now the fire burns low, friends, and I will sing softer, because the last sea is a corridor with teeth on both walls, and beyond it — home, wearing a stranger’s face. Everything he still has fits in one hull. Everything he wants is one island further than the sea would like.',
     },
   },
@@ -249,6 +258,27 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     if (!frags.includes(summary.fragment)) frags.push(summary.fragment);
     meta.odyssey.fragments = frags;
     if (summary.trueVictory) meta.odyssey.oarRoad = true;
+  },
+  // The lexicon at the result (I6): at most ONE sound-event per landing —
+  // the wave, the owl-note, the fragment-chime, or the Hall's bow-string —
+  // plus the god-pulse (the heavy slow haptic when a god moves). The
+  // mapping is pure (resultCue, unit-tested); the side effects live here,
+  // browser-only (results render once; the sims never call presenter hooks).
+  resultExtras(result) {
+    const cue = resultCue(result);
+    if (cue) {
+      speak(cue as any);
+      if (cue === 'wave' || cue === 'owlNote') vibrate([120, 90, 200]);
+    }
+    return null;
+  },
+  // The lexicon at the ending: dawn birds for Ithaca, the gutter when the
+  // sea or the despair takes the run; kleos already sang at the Hall, and
+  // the banked tellings keep the quiet they chose.
+  endingExtras(_summary, state) {
+    const cue = endingCue(state.ending?.key ?? state.path, state.ending?.result ?? null);
+    if (cue) speak(cue as any);
+    return { lines: [], lpNote: '' };
   },
   // The cash-outs are BANKED tellings, not defeats: the verdict ribbon and
   // the history rows say so (told endings, never game-over screens).
