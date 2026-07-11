@@ -89,8 +89,11 @@ function checkBreath(): void {
     !document.querySelector('#overlay.active');
   document.body.classList.toggle('ody-breath', holding);
   // The hush reaches past the card area (the shell stamps mood-hush there;
-  // CSS can't climb to the band without :has(), so mirror it on the body).
-  document.body.classList.toggle('ody-hush', !!document.querySelector('#card-area.mood-hush'));
+  // CSS can't climb to the band without :has(), so mirror it on the body) —
+  // and only while the game screen is actually up (quit-to-title mid-hush
+  // must not leave the body marked).
+  document.body.classList.toggle('ody-hush',
+    !!document.querySelector('#screen-game.active #card-area.mood-hush'));
 }
 
 export function initOdysseyAlive(): void {

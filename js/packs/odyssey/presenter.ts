@@ -292,6 +292,7 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     if (meta?.odyssey?.tellings) {
       state.tellingLedger = {
         ...meta.odyssey.tellings,
+        byEnding: { ...(meta.odyssey.tellings.byEnding || {}) }, // never alias the save
         heard: [...(meta.odyssey.heardCallbacks || [])],
       };
     }
@@ -354,7 +355,10 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
       .filter((d: any) => d.key === 'expedition' && d.amount < 0)
       .reduce((n: number, d: any) => n + Math.abs(d.amount), 0);
     if (lost > 0 && state) {
-      const after = Math.max(0, crewAtLaunch(state.loadout) - Math.round(state.expedition ?? 0));
+      // Clamp to the roster: a fatal over-kill card can drive expedition
+      // below zero, and the dead must never outnumber the men aboard.
+      const launch = crewAtLaunch(state.loadout);
+      const after = Math.min(launch, Math.max(0, launch - Math.round(state.expedition ?? 0)));
       const first = Math.max(0, after - lost);
       const named: string[] = [];
       for (let k = first; k < after && k - first < 3; k++) {

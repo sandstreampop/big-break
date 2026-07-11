@@ -1,5 +1,24 @@
 # NORTH-STAR PLAN — executing the alive Odyssey
 
+> **Status (2026-07-11, end of the fabric build).** F0–F2 and I1–I8 are
+> implemented, gated, and on `main` — the feel fabric is complete: the law
+> amendment (ADR-0001), the six genre-neutral seams, the figure vocabulary,
+> the stroke + words-take, the ember, the living frieze + world-is-HUD, the
+> horizon, the hearth + kindling threshold, the sound lexicon + whisper +
+> haptic grammar, ceremony + the hush, and the telling-ledger with the
+> crowd's memory and names in the sand. Every named invariant in §2 landed
+> as a test (frieze-never-lies, one-meaning-one-sound, sibling isolation,
+> hush-is-not-a-trap, ceremony-advances incl. a forced wrath death,
+> kindling-skippable, reduced-motion truth under BOTH prefs).
+> **⛩ The playtest gate is now OPEN**: the standing playtest
+> (PLAYTEST-KIT.md) must run on this alive build with a human at the fire —
+> that verdict cannot be produced by the implementing agent. I9 (the
+> amphora), I10 (the Audience meter), and I11 (the Oar Road epilogue)
+> remain evidence-gated behind it, per the sequencing stance. Content
+> batches (heckler callbacks, crew names, hush/ceremony copy) are
+> lint-clean but await their human taste verdicts
+> (`taste-feedback/`) — writer ≠ grader binds hardest on writing.
+
 Implementation plan for [`NORTH-STAR.md`](./NORTH-STAR.md) (the creative
 vision — read it first; every slice below traces to a named section of it).
 Written for a fresh implementing model. Authority order when in doubt:

@@ -286,7 +286,7 @@ export const ACT3_EVENTS: GameEvent[] = [
     tags: ['temptation', 'beat:calypso'],
     requires: { anyOf: [{ burnoutMin: 62 }, { max: { expedition: 4 } }] },
     context: 'Ogygia — the island that asks nothing',
-    prompt: 'Seven veils of the world away from Ithaca there is an island where nothing has ever gone wrong, and a goddess who asks nothing except that you stop rowing. The fig trees bear all year. The bed is warm. She would make you deathless, and she means it. Here the telling can end. It has ended here before, at other fires.',
+    prompt: 'Seven veils of the world from Ithaca there is an island where nothing has ever gone wrong, and a goddess who asks nothing except that you stop rowing. She would make you deathless, and she means it. Here the telling can end. It has ended here before, at other fires.',
     recap: 'The island made the strong offer.',
     forceTier: { right: 'good' },
     choices: {

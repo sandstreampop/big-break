@@ -150,7 +150,7 @@ export const LANDMARKS: GameEvent[] = [
     act: 2,
     tags: ['landmark', 'beat:underworld'],
     context: 'The edge of the world — Landmark',
-    prompt: 'There is a shore where the sun does not so much set as give up. You beach the ship on grey sand that holds no footprints, dig the trench as the witch taught, and pour the honey, the milk, the wine, the barley, the blood. The dead come quietly, in no hurry, the way the poor come to a door they know will open.',
+    prompt: 'There is a shore where the sun does not so much set as give up. You dig the trench in grey sand that holds no footprints, and pour the honey, the wine, the blood. The dead come quietly, in no hurry, the way the poor come to a door they know will open.',
     recap: 'The trench, the blood, the dead.',
     choices: {
       left: {
@@ -286,7 +286,7 @@ export const LANDMARKS: GameEvent[] = [
     chainOnly: true,
     tags: ['landmark'],
     context: 'The prophet at the trench — the whole of it',
-    prompt: 'The blind man drinks, and straightens, and knows you — and this time, friends, you know HIM: two tellings’ worth of his answers are already in your keeping. “The bow. The sea’s price. You have both,” he says slowly. “Then there is only the road after the hall. No one asks me for the road after. Ask.”',
+    prompt: 'The blind man drinks, and straightens, and knows you — this time, friends, you know HIM. “The bow. The sea’s price. You have both,” he says slowly. “Then there is only the road after the hall. No one asks me for the road after. Ask.”',
     recap: 'The prophet offered the road after.',
     forceTier: { left: 'good', right: 'good' },
     choices: {
