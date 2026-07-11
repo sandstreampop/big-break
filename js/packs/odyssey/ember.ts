@@ -32,6 +32,12 @@ export function initOdysseyEmber(): void {
   if (typeof document === 'undefined') return;
   let host: HTMLElement | null = null;
 
+  // Battery (ADR-0001): the vase-frame animations pause when the tab is
+  // hidden — body.ody-hidden gates animation-play-state in css/odyssey.css.
+  document.addEventListener('visibilitychange', () => {
+    document.body.classList.toggle('ody-hidden', document.visibilityState === 'hidden');
+  });
+
   // The ember stands BETWEEN the two doors: mounted into #choice-buttons
   // (absolutely positioned over the gap — css/odyssey.css), re-mounted every
   // deal because renderDealtCard rebuilds that row. Pointer-events: none —
