@@ -158,38 +158,67 @@ function proceedDeal(ev) {
 // Reading order is data here, not luck: dialogue must be read top-to-bottom
 // (a heckle sets up the reply), but visual salience — the biggest, brightest
 // block — is what actually pulls the first fixation, and it can point at the
-// wrong line. So each line carries its sequence index (`--beat-i`) and the
-// hint carries the line count (`--beat-n`) as CSS custom properties; a pack's
-// stylesheet can turn those into a staggered reveal so the ONSET order equals
-// the reading order. Pure mechanism — the shell states the sequence, the
-// pack's CSS decides whether/how to animate it (and reduced-motion drops it).
+// wrong line. So the shell PACES the dialogue: lines enter in speaking order,
+// fireside-slow (BEAT_STEP_MS apart, marked `revealed` for the pack's CSS to
+// fade in), and a tap while lines are pending JUMPS to the next line instead
+// of dismissing — the patient hear the fire, the impatient read at their own
+// speed. Only when everything is on screen does a tap (or Escape, any time)
+// continue to the card, so the no-soft-lock guarantee holds. Reduced motion
+// (OS preference or the in-game toggle, which CSS media queries can't see —
+// hence the `beat-still` class) shows the whole panel at once.
 // A speaker cue is `who:` before the line — the script/chat convention for
 // "this person speaks what follows" (a dash-attribution reads as the SOURCE
 // of the quote above it, the epigraph convention, exactly backwards here).
+const BEAT_STEP_MS = 1500;
 function showBardBeat(beat, cont) {
+  let timer = 0;
   openOverlay((ov) => {
     // `beat-still` mirrors the player's in-game reduced-motion toggle, which
     // CSS media queries can't see (they only know the OS preference).
-    const box = el('div', 'bard-beat ' + (reducedMotion() ? 'beat-still ' : '') + (beat.cls || ''));
+    const still = reducedMotion();
+    const box = el('div', 'bard-beat ' + (still ? 'beat-still ' : '') + (beat.cls || ''));
     // The beat's scene (presenter-supplied markup): the stage the speaker
     // performs on — a pack without one gets the plain panel as before.
     if (beat.sceneHtml) box.append(el('div', 'beat-scene', beat.sceneHtml));
     box.append(el('div', 'bard-beat-kicker', 'AT THE FIRE'));
     const dlg = el('div', 'bard-beat-dialogue');
-    beat.blocks.forEach((b, i) => {
+    const lines = beat.blocks.map((b) => {
       const isBard = !b.who || b.who === 'bard';
       const line = el('div', 'bard-line ' + (isBard ? 'is-bard' : 'is-heckle'));
-      line.style.setProperty('--beat-i', String(i));
       if (!isBard) line.append(el('div', 'bard-who', b.who + ':'));
       line.append(el('div', 'bard-quote', '“' + fillText(b.text) + '”'));
       dlg.append(line);
+      return line;
     });
     box.append(dlg);
     const hint = el('p', 'tap-hint', beat.cont || 'tap to continue');
-    hint.style.setProperty('--beat-n', String(beat.blocks.length));
     box.append(hint);
     ov.append(box);
-  }, { armMs: 250, onClose: cont });
+
+    let next = 0;
+    const revealNext = () => {
+      clearTimeout(timer);
+      if (next < lines.length) lines[next++].classList.add('revealed');
+      if (next >= lines.length) hint.classList.add('revealed');
+      else timer = window.setTimeout(revealNext, BEAT_STEP_MS);
+    };
+    if (still) {
+      lines.forEach((l) => l.classList.add('revealed'));
+      next = lines.length;
+      hint.classList.add('revealed');
+    } else {
+      revealNext(); // the first line lands with the panel
+    }
+    // Capture-phase, registered before the overlay arms its own dismiss
+    // listener: while lines are pending, a tap advances the reveal and never
+    // reaches the dismiss handler. Pre-arm taps (the accidental double-tap
+    // window) are swallowed the same way the dismiss listener ignores them.
+    ov.addEventListener('click', (e) => {
+      if (next >= lines.length) return; // fully revealed — the tap dismisses
+      e.stopImmediatePropagation();
+      if (ov.hasAttribute('data-armed')) revealNext();
+    }, true);
+  }, { armMs: 250, onClose: () => { clearTimeout(timer); cont(); } });
 }
 
 // The framed moment: full-screen banner + stakes, one tap to the card.

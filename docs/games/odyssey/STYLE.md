@@ -72,7 +72,9 @@ reads as theft.
    sequence. Three rules, in order of force:
    - **Sequence by onset where order is load-bearing.** New-object onset
      captures attention involuntarily (Yantis & Jonides) — reveal the lines
-     in speaking order, ember-slow (opacity only, ~½s apart, nothing moves).
+     in speaking order, fireside-slow (opacity only, ~1.5s between onsets,
+     nothing moves), and let a tap jump to the next line so the impatient
+     read at their own speed; only a fully revealed panel dismisses on tap.
      Reduced motion (OS or in-game toggle) collapses to everything-at-once
      and leans on the next rule.
    - **Setup text is content, never chrome.** Text that must be read stays
@@ -86,8 +88,8 @@ reads as theft.
      name is the epigraph convention and attributes the quote *above* it —
      exactly backwards.
    Executable: the bard-beat check in `test/ui/smoke.mjs` pins all three
-   (size ratio, contrast floor, monotonic reveal delays, cue shape, and that
-   the beat still advances to a live card).
+   (size ratio, contrast floor, paced reveal in speaking order with the
+   tap-jump, cue shape, and that the beat still advances to a live card).
 
 **Cross-reference — the Sound Law** (set alongside the Motion Law,
 2026-07-11; canonical text in [`NORTH-STAR.md`](./NORTH-STAR.md), recorded in

@@ -203,11 +203,12 @@ body.big-text .sp-beat .sp-beat-banner { font-size: 14px; }
       so it can't be skimmed past as metadata. The bard still leads by
       warmth (bone vs ash-brown), size, and the cue-less register — never by
       dimming the setup into skippability.
-   2. The lines REVEAL in speaking order, ember-slow (one slow fade each,
-      ~half a second apart, driven by the shell's --beat-i/--beat-n): onset
-      order = reading order, the strongest ordering cue there is. Nothing
-      moves, nothing pulses; reduced-motion shows everything at once and
-      leans on defense 1. Pinned by the beat check in test/ui/smoke.mjs. */
+   2. The lines REVEAL in speaking order, fireside-slow (the shell paces the
+      onsets ~1.5s apart and a tap jumps to the next line; this sheet fades
+      whatever the shell marks `revealed`): onset order = reading order, the
+      strongest ordering cue there is. Nothing moves, nothing pulses;
+      reduced-motion shows everything at once and leans on defense 1.
+      Pinned by the beat check in test/ui/smoke.mjs. */
 .bard-beat {
   width: min(92%, 400px);
   display: flex;
@@ -248,29 +249,24 @@ body.big-text .sp-beat .sp-beat-banner { font-size: 14px; }
   letter-spacing: .08em;
   margin-top: 4px;
 }
-/* The staggered reveal (defense 2). Opacity only — motion stays ember-slow —
-   and `forwards` holds the end state. The tap-hint enters after the LAST
-   line (--beat-n), so the call to action never outshouts unspoken dialogue.
-   Guards: the opacity:0 floor lives here, beside its own animation, so a
-   stale/absent theme sheet (mobile-matrix delivery pass) can never hide
-   text it doesn't animate; reduced-motion collapses to everything-visible. */
-.bard-beat .bard-line {
-  opacity: 0;
-  animation: bard-line-in .55s ease-out forwards;
-  animation-delay: calc(var(--beat-i, 0) * .5s);
-}
-.bard-beat .tap-hint {
-  opacity: 0;
-  animation: bard-line-in .55s ease-out forwards;
-  animation-delay: calc(var(--beat-n, 1) * .5s + .1s);
-}
-@keyframes bard-line-in { from { opacity: 0; } to { opacity: 1; } }
+/* The paced reveal (defense 2). The shell (showBardBeat) speaks the lines in
+   order, fireside-slow — ~1.5s apart, a tap jumps to the next line — and
+   marks each one `revealed`; this sheet only owns the fade. Opacity only,
+   motion stays ember-slow. The tap-hint trails the last line so the call to
+   action never outshouts unspoken dialogue. Guards: the opacity:0 floor
+   lives here, beside its own transition, so a stale/absent theme sheet
+   (mobile-matrix delivery pass) can never hide text it doesn't reveal;
+   reduced-motion collapses to everything-visible. */
+.bard-beat .bard-line { opacity: 0; transition: opacity .9s ease; }
+.bard-beat .bard-line.revealed { opacity: 1; }
+.bard-beat .tap-hint { opacity: 0; transition: opacity .7s ease .5s; }
+.bard-beat .tap-hint.revealed { opacity: 1; }
 /* Everything at once when motion is off: the OS preference (media query) or
    the in-game toggle (.beat-still, stamped by the shell — CSS can't see it). */
 @media (prefers-reduced-motion: reduce) {
-  .bard-beat .bard-line, .bard-beat .tap-hint { animation: none; opacity: 1; }
+  .bard-beat .bard-line, .bard-beat .tap-hint { transition: none; opacity: 1; }
 }
-.bard-beat.beat-still .bard-line, .bard-beat.beat-still .tap-hint { animation: none; opacity: 1; }
+.bard-beat.beat-still .bard-line, .bard-beat.beat-still .tap-hint { transition: none; opacity: 1; }
 
 /* Gold is selection, not wallpaper: armed/selected states switch to the
    gold rule (the ring token above already draws it). */

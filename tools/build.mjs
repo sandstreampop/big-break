@@ -67,14 +67,17 @@ for (const pack of GAME_PACKS) {
 // flaky connection can pair fresh JS with a months-old stylesheet, and the
 // new markup renders unstyled (the collapsed-phone-layout bug class).
 // Three stamps make that skew both impossible to fetch and self-healing:
-//   a. cssV (style.css content hash) appended to dist/css/style.css as
-//      `--bb-css-v` AND written into dist/js/version.js — the runtime probe
-//      in js/ui.ts compares them at boot and re-pulls a stale stylesheet.
+//   a. cssV (content hash of EVERY shipped stylesheet — style.css alone once
+//      let a pack-css-only change ship under an unchanged ?v=, so caches kept
+//      serving the old theme) appended to dist/css/style.css as `--bb-css-v`
+//      AND written into dist/js/version.js — the runtime probe in js/ui.ts
+//      compares them at boot and re-pulls a stale stylesheet.
 //   b. every stylesheet/script URL in the shipped HTML gets ?v=<hash>, so a
 //      re-fetched HTML atomically re-fetches matching assets.
 // Pinned end-to-end by test/ui/mobile-matrix.mjs (skew-heal pass).
 const hashOf = (buf) => createHash('sha256').update(buf).digest('hex').slice(0, 12);
-const cssV = hashOf(readFileSync(resolve(dist, 'css/style.css')));
+const cssFiles = readdirSync(resolve(dist, 'css')).filter((f) => f.endsWith('.css')).sort();
+const cssV = hashOf(cssFiles.map((f) => f + '\n' + readFileSync(resolve(dist, 'css', f), 'utf8')).join('\n'));
 appendFileSync(resolve(dist, 'css/style.css'), `\n:root { --bb-css-v: "${cssV}"; }\n`);
 writeFileSync(resolve(dist, 'js/version.js'),
   `// stamped by tools/build.mjs — see js/version.ts\nexport const CSS_CONTRACT = '${cssV}';\n`);

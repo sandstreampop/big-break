@@ -625,10 +625,11 @@ for (const g of GAMES) {
 // asserted here because goldens/sims are DOM-free and blind to them:
 //   1. static hierarchy — the heckle is content, not chrome: near-body size
 //      (≥0.9× the bard's) and ≥7:1 contrast on the field, cued `who:`;
-//   2. temporal order — lines reveal in speaking order (monotonic
-//      animation-delays from the shell's --beat-i), the hint after the last
-//      line; with reduced motion everything is visible at once (no
-//      invisible-text lock).
+//   2. temporal order — the shell paces the lines in speaking order (the
+//      first line lands with the panel, later ones wait ~1.5s each), a tap
+//      while lines are pending JUMPS to the next line instead of dismissing,
+//      and only a fully revealed panel dismisses on tap; with reduced motion
+//      everything is visible at once (no invisible-text lock).
 // Then the beat must still advance to a live card (flow, not just presence).
 // The hush is not a trap, and the ceremonies advance (I7): force each
 // temptation through the app's own resume path (currentEventId — the
@@ -1100,20 +1101,17 @@ async function checkBardBeatHierarchy(browser, base) {
     await clickJS(page, '#start-run-btn');
 
     // The cold open always fires on the first deal — the wiring check: the
-    // shell must stamp the sequence custom properties the CSS stagger reads.
+    // shell marks lines `revealed` and the theme sheet owns a real fade.
     await page.waitForSelector('#overlay.active .bard-beat .bard-line', { timeout: 10000 });
     const open = await page.evaluate(() => {
       const line = document.querySelector('#overlay.active .bard-beat .bard-line');
-      const hint = document.querySelector('#overlay.active .bard-beat .tap-hint');
       return {
-        anim: getComputedStyle(line).animationName,
-        lineDelay: parseFloat(getComputedStyle(line).animationDelay),
-        hintDelay: parseFloat(getComputedStyle(hint).animationDelay),
+        revealed: line.classList.contains('revealed'),
+        fade: parseFloat(getComputedStyle(line).transitionDuration),
       };
     });
-    if (open.anim !== 'bard-line-in') throw new Error(`[${label}] beat line is not animated by the reveal (animation-name=${open.anim})`);
-    if (open.lineDelay !== 0) throw new Error(`[${label}] first line must reveal immediately (delay=${open.lineDelay}s)`);
-    if (open.hintDelay <= 0.4) throw new Error(`[${label}] tap-hint must enter after the dialogue (delay=${open.hintDelay}s)`);
+    if (!open.revealed) throw new Error(`[${label}] the first line must land with the panel (no 'revealed' mark)`);
+    if (!(open.fade > 0)) throw new Error(`[${label}] beat lines carry no reveal fade (transition-duration=${open.fade}s)`);
 
     // Force a heckle script (bc_horse: heckle → reply) onto the saved run and
     // resume: deterministic coverage of the two-voice hierarchy. Resume
@@ -1147,8 +1145,8 @@ async function checkBardBeatHierarchy(browser, base) {
       const bodyBg = getComputedStyle(document.body).backgroundColor;
       return {
         order: lines.map((l) => (l.classList.contains('is-heckle') ? 'heckle' : 'bard')),
-        delays: lines.map((l) => parseFloat(getComputedStyle(l).animationDelay)),
-        hintDelay: parseFloat(getComputedStyle(hint).animationDelay),
+        revealed: lines.map((l) => l.classList.contains('revealed')),
+        hintRevealed: hint.classList.contains('revealed'),
         whoText: (who?.textContent || '').trim(),
         sizeRatio: parseFloat(getComputedStyle(heckle).fontSize) / parseFloat(getComputedStyle(bard).fontSize),
         heckleContrast: contrast(getComputedStyle(heckle).color, bodyBg),
@@ -1157,12 +1155,10 @@ async function checkBardBeatHierarchy(browser, base) {
     });
     if (h.order[0] !== 'heckle' || !h.order.includes('bard'))
       throw new Error(`[${label}] dialogue order broken: ${h.order.join(' → ')}`);
-    for (let i = 1; i < h.delays.length; i++) {
-      if (!(h.delays[i] > h.delays[i - 1]))
-        throw new Error(`[${label}] reveal delays not in speaking order: ${h.delays.join(', ')}`);
-    }
-    if (!(h.hintDelay > h.delays[h.delays.length - 1]))
-      throw new Error(`[${label}] tap-hint (${h.hintDelay}s) must enter after the last line (${h.delays.join(', ')})`);
+    // Pacing: read within ms of the panel landing — the heckle (line 1) is on
+    // screen, the reply (line 2, due ~1.5s later) is not, nor is the hint.
+    if (!h.revealed[0] || h.revealed[1] || h.hintRevealed)
+      throw new Error(`[${label}] reveal must pace in speaking order (revealed=${h.revealed.join(',')} hint=${h.hintRevealed})`);
     if (!/^[^—–-].*:$/.test(h.whoText))
       throw new Error(`[${label}] speaker cue "${h.whoText}" must read as a cue (name + colon, no dash — a dash-attribution names the source of the quote ABOVE it)`);
     if (h.sizeRatio < 0.9)
@@ -1172,22 +1168,36 @@ async function checkBardBeatHierarchy(browser, base) {
     if (!h.bardBrighter)
       throw new Error(`[${label}] the bard must stay the brightest voice on the panel`);
 
-    // Reduced motion (OS preference): every line visible at once — the
-    // opacity:0 floor must never survive without its animation.
+    // Tap while the reply is pending: it must JUMP to the next line — the
+    // overlay stays up, the reply and the hint arrive early.
+    await page.waitForFunction(() => document.querySelector('#overlay.active')?.hasAttribute('data-armed'), { timeout: 5000 });
+    await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+    const jumped = await page.evaluate(() => ({
+      alive: !!document.querySelector('#overlay.active'),
+      revealed: [...document.querySelectorAll('#overlay.active .bard-beat .bard-line')].map((l) => l.classList.contains('revealed')),
+      hintRevealed: !!document.querySelector('#overlay.active .bard-beat .tap-hint.revealed'),
+    }));
+    if (!jumped.alive)
+      throw new Error(`[${label}] a tap during the reveal dismissed the beat — it must jump to the next line`);
+    if (jumped.revealed.some((r) => !r) || !jumped.hintRevealed)
+      throw new Error(`[${label}] the jump tap did not reveal the next line (revealed=${jumped.revealed.join(',')} hint=${jumped.hintRevealed})`);
+
+    // Reduced motion (OS preference): the still state — everything visible,
+    // no transition — the opacity:0 floor must never outlive its reveal.
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const still = await page.evaluate(() =>
       [...document.querySelectorAll('#overlay.active .bard-beat .bard-line, #overlay.active .bard-beat .tap-hint')]
-        .map((l) => ({ opacity: getComputedStyle(l).opacity, anim: getComputedStyle(l).animationName })));
-    if (still.some((s) => s.opacity !== '1' || s.anim !== 'none'))
+        .map((l) => ({ opacity: getComputedStyle(l).opacity, fade: parseFloat(getComputedStyle(l).transitionDuration) })));
+    if (still.some((s) => s.opacity !== '1' || s.fade !== 0))
       throw new Error(`[${label}] reduced motion must show all lines instantly: ${JSON.stringify(still)}`);
 
-    // The flow, not the feature: dismissing the beat must land on a live card.
-    await page.waitForFunction(() => document.querySelector('#overlay.active')?.hasAttribute('data-armed'), { timeout: 5000 });
+    // The flow, not the feature: a tap on the fully revealed panel dismisses
+    // and must land on a live card.
     await page.evaluate(() => document.querySelector('#overlay.active')?.click());
     await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 10000 });
 
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
-    console.log(`✓  ${label}: heckle reads as content (${h.heckleContrast.toFixed(1)}:1, ${h.sizeRatio.toFixed(2)}× size), reveal follows speaking order, reduced-motion safe, beat advances to the card`);
+    console.log(`✓  ${label}: heckle reads as content (${h.heckleContrast.toFixed(1)}:1, ${h.sizeRatio.toFixed(2)}× size), paced reveal in speaking order, tap jumps ahead, reduced-motion safe, beat advances to the card`);
     return true;
   } finally {
     await ctx.close();
