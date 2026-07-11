@@ -338,3 +338,102 @@ body, button, input { font-variant-ligatures: none; font-feature-settings: 'liga
   color: var(--dim);
   opacity: .55;
 }
+
+/* ── The figure vocabulary's frame engine (F2/I2; ADR-0001): vase-frames,
+   steps(), ember-slow. Frame groups stack inside one SVG; visibility cycles.
+   Reduced motion (OS pref, or the in-game toggle via a *-still class the
+   owning module stamps) collapses to frame 0 — still, and still truthful. */
+svg.px { image-rendering: pixelated; }
+svg.px .pxf { visibility: hidden; }
+svg.px .f0 { visibility: visible; }
+svg.px-anim[data-frames="2"] .f0 { animation: ody-px2a 1.7s steps(1, end) infinite; }
+svg.px-anim[data-frames="2"] .f1 { animation: ody-px2b 1.7s steps(1, end) infinite; }
+svg.px-anim[data-frames="3"] .f0 { animation: ody-px3a 1.8s steps(1, end) infinite; }
+svg.px-anim[data-frames="3"] .f1 { animation: ody-px3b 1.8s steps(1, end) infinite; }
+svg.px-anim[data-frames="3"] .f2 { animation: ody-px3c 1.8s steps(1, end) infinite; }
+@keyframes ody-px2a { 0%, 49.9% { visibility: visible; } 50%, 100% { visibility: hidden; } }
+@keyframes ody-px2b { 0%, 49.9% { visibility: hidden; } 50%, 100% { visibility: visible; } }
+@keyframes ody-px3a { 0%, 32.9% { visibility: visible; } 33%, 100% { visibility: hidden; } }
+@keyframes ody-px3b { 0%, 32.9% { visibility: hidden; } 33%, 65.9% { visibility: visible; } 66%, 100% { visibility: hidden; } }
+@keyframes ody-px3c { 0%, 65.9% { visibility: hidden; } 66%, 100% { visibility: visible; } }
+@media (prefers-reduced-motion: reduce) {
+  svg.px .pxf { animation: none !important; visibility: hidden; }
+  svg.px .f0 { visibility: visible; }
+}
+.ember-still svg.px .pxf, .px-still svg.px .pxf { animation: none !important; visibility: hidden; }
+.ember-still svg.px .f0, .px-still svg.px .f0 { visibility: visible; }
+
+/* ── I2 — the ember: the soul-cursor, standing between the two doors. It
+   mirrors the hand (leans with the drag, quantized into frames by the pack
+   module) and dims with Despair (opacity, set per deal). Never a control:
+   pointer-events none, out of flow, zero crowding cost. */
+#choice-buttons { position: relative; }
+#ody-ember {
+  position: absolute;
+  left: 50%;
+  top: -20px;
+  width: 14px;
+  height: 18px;
+  pointer-events: none;
+  transform-origin: 50% 100%;
+  transform: translateX(-50%) rotate(var(--ember-lean, 0deg)) scaleY(var(--ember-stretch, 1));
+}
+#ody-ember svg.px { width: 100%; height: 100%; display: block; }
+
+/* ── I3 — the living frieze: the figured rim of an amphora between the HUD
+   and the card. The band is the run's readout (rowers, sea, owl, deeds,
+   notch) — never a progress bar, never decoration. Hard rules top and
+   bottom (the meander thesis); flat fills; the whole strip is one tap to
+   the numeric truth. */
+#tableau.ody-frieze {
+  margin: 2px 0 4px;
+  cursor: pointer;
+}
+#tableau .frieze {
+  position: relative;
+  height: 44px;
+  overflow: hidden;
+  background: var(--accent2);
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+#tableau .frieze-sea {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 12px;
+}
+#tableau .frieze-sea svg { width: 100%; height: 100%; display: block; }
+#tableau .frieze-sea-wrath { height: 16px; }
+#tableau .frieze-ship {
+  position: absolute;
+  bottom: 6px;
+  width: 38%;
+  max-width: 110px; /* hull 38×12 px-logical — keeps the mast under the rim */
+  min-width: 96px;
+}
+#tableau .frieze-hull svg { width: 100%; height: auto; display: block; }
+#tableau .frieze-owl {
+  position: absolute;
+  top: -2px; /* perched at the yard, inside the band's clip */
+  left: 52%;
+  width: 12px;
+  height: 10px;
+}
+#tableau .frieze-owl svg { width: 100%; height: 100%; display: block; }
+#tableau .frieze-deeds {
+  position: absolute;
+  bottom: 1px;
+  right: 100%;
+  width: 34px;
+  height: 12px;
+  margin-right: 2px;
+}
+#tableau .frieze-deeds svg { width: auto; height: 100%; display: block; margin-left: auto; }
+/* The smallest phones: the band thins before anything else yields
+   (ADR-0009 pressure — the frieze's declared yield order). */
+@media (max-height: 700px), (max-width: 350px) {
+  #tableau .frieze { height: 34px; }
+  #tableau .frieze-sea { height: 9px; }
+  #tableau .frieze-sea-wrath { height: 12px; }
+  #tableau .frieze-ship { min-width: 84px; }
+}

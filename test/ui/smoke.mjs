@@ -150,6 +150,37 @@ async function axeScan(page, label, where) {
 async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect = {}) {
   let siblingChecked = false;
   let wordsTakeChecked = false;
+  let friezeChecked = 0;
+  let friezeTapped = false;
+
+  // The frieze never lies: the strip's data attributes must restate the
+  // saved RunState under the vision's own mappings — checked on the live
+  // card AND behind a result overlay (the state mutates on resolve and the
+  // shell re-renders the tableau with the result). Two independent
+  // statements of the mapping: this test and js/packs/odyssey/frieze.ts.
+  const friezeTruth = async (where) => {
+    const t = await page.evaluate((ns) => {
+      const run = JSON.parse(localStorage.getItem('bigbreak_run_v1' + ns) || 'null');
+      const f = document.querySelector('#tableau .frieze');
+      if (!run || !f) return { missing: !f, noRun: !run };
+      return {
+        exp: Math.round(run.expedition ?? 0), pos: Math.round(run.poseidon ?? 0),
+        ath: Math.round(run.athena ?? 0), ren: Math.round(run.renown ?? 0),
+        rowers: +f.dataset.rowers, sea: f.dataset.sea,
+        owl: f.dataset.owl === '1', deeds: +f.dataset.deeds,
+      };
+    }, expect.friezeNs);
+    if (t.missing) throw new Error(`[${label}] no frieze on the ${where}`);
+    if (t.noRun) return; // pre-save edge; the next check will have both
+    const wantRowers = Math.max(0, Math.min(12, t.exp));
+    const wantSea = t.pos >= 8 ? 'wrath' : t.pos >= 4 ? 'mid' : 'calm';
+    const wantOwl = t.ath >= 3;
+    const wantDeeds = Math.min(6, Math.ceil(Math.max(0, t.ren) / 2));
+    if (t.rowers !== wantRowers || t.sea !== wantSea || t.owl !== wantOwl || t.deeds !== wantDeeds) {
+      throw new Error(`[${label}] the frieze lies on the ${where}: state exp=${t.exp} pos=${t.pos} ath=${t.ath} ren=${t.ren} vs band rowers=${t.rowers} sea=${t.sea} owl=${t.owl} deeds=${t.deeds}`);
+    }
+    friezeChecked++;
+  };
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(`console.error: ${m.text()}`); });
@@ -280,6 +311,13 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
         if (!collapsed) throw new Error(`[${label}] the feed CTA did not collapse to "caught up" after reading all`);
         feedRuns++;
       }
+      if (expect.friezeNs && friezeChecked === 1) {
+        // Behind a live result overlay: the state just mutated, and the
+        // shell re-renders the tableau with the result — the band must
+        // already say so (the world updates WITH the outcome).
+        const isResult = await page.evaluate(() => !!document.querySelector('#overlay.active .tier-badge'));
+        if (isResult) await friezeTruth('result overlay');
+      }
       // Wait for the overlay to be dismissable rather than racing a fixed
       // sleep against the arm delay: either the click-to-dismiss listener is
       // live (data-armed) or there's a gear button we click directly.
@@ -308,6 +346,29 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
       // NOT implement presenter.tableau must render no #tableau node, and a
       // full-HUD pack without diegeticHud keeps its stat rail — the seams are
       // invisible until a pack opts in.
+      if (expect.friezeNs && friezeChecked < 1) await friezeTruth('live card');
+      // The tableau is a new interactive control on the play screen: drive
+      // it (tap → the hard-ruled inspect panel with the numbers → dismiss)
+      // and prove the card is still live after (working agreement rule 1).
+      if (expect.friezeNs && !friezeTapped && await page.$('#tableau')) {
+        friezeTapped = true;
+        await page.evaluate(() => document.querySelector('#tableau')?.click());
+        await page.waitForSelector('#overlay.active .inspect-panel', { timeout: 4000 });
+        const legible = await page.evaluate(() => {
+          const t = document.querySelector('#overlay.active .inspect-panel')?.textContent || '';
+          return /of 10/.test(t) && /Despair/.test(t) && /stroke \d+ of \d+/.test(t);
+        });
+        if (!legible) throw new Error(`[${label}] the frieze inspect panel does not state the numbers plainly`);
+        await page.waitForFunction(() => {
+          const ov = document.querySelector('#overlay.active');
+          return !ov || ov.hasAttribute('data-armed');
+        }, { timeout: 4000 });
+        await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+        await page.waitForTimeout(120);
+        const cardLives = await page.evaluate(() =>
+          !document.querySelector('#overlay.active') && !!document.querySelector('#screen-game.active .choice-btn.choice-left'));
+        if (!cardLives) throw new Error(`[${label}] closing the frieze inspect panel left no live card`);
+      }
       if (!siblingChecked) {
         siblingChecked = true;
         const shape = await page.evaluate(() => ({
@@ -472,7 +533,10 @@ const GAMES = [
   // paths counts PASSES here: odyssey cycles its 2 paths and drives a
   // different Hall door each pass (the gated pre-finale surface — working
   // agreement: a new control on a gated surface gets an explicit exercise).
-  { label: 'odyssey', url: `${base}/odyssey/`, ns: '_odyssey', paths: 3, pathCycle: 2, expect: { tableau: false, rail: true } },
+  // I3: odyssey opts into the tableau (the living frieze) + diegeticHud —
+  // the strip must exist, the numeric rail must be gone, and the frieze's
+  // data attributes must agree with the saved RunState (friezeNs).
+  { label: 'odyssey', url: `${base}/odyssey/`, ns: '_odyssey', paths: 3, pathCycle: 2, expect: { tableau: true, rail: false, friezeNs: '_odyssey' } },
 ];
 
 let failed = 0;
@@ -601,6 +665,15 @@ async function checkOdysseyStroke(browser, base) {
     });
     if (mid === null || !(mid > 30)) throw new Error(`[${label}] the card does not follow the pull (visual x=${mid} at raw 150px)`);
     if (!(mid < 130)) throw new Error(`[${label}] no water resistance: visual x=${mid} at raw 150px (expected saturation well below the raw travel)`);
+    // The ember (I2): standing between the doors, leaning with THIS drag.
+    const emberMid = await page.evaluate(() => {
+      const e = document.querySelector('#ody-ember');
+      return e && { lean: e.style.getPropertyValue('--ember-lean'), wind: e.classList.contains('ember-wind') };
+    });
+    if (!emberMid) throw new Error(`[${label}] the ember is not mounted between the doors`);
+    if (!emberMid.wind || !emberMid.lean || emberMid.lean === '0deg') {
+      throw new Error(`[${label}] the ember does not lean with the drag (lean=${emberMid.lean || 'unset'})`);
+    }
     // Haul past the threshold and release: the stroke commits.
     await page.mouse.move(box.x + 220, box.y, { steps: 4 });
     await page.mouse.up();
@@ -611,6 +684,14 @@ async function checkOdysseyStroke(browser, base) {
     }));
     if (!committed.stroke) throw new Error(`[${label}] release did not sweep the card (.ody-stroke missing)`);
     if (!committed.chosen || !committed.unchosen) throw new Error(`[${label}] the words did not take on a dragged commit (chosen=${committed.chosen} unchosen=${committed.unchosen})`);
+    // The ember snaps upright on release with the stroke.
+    const emberEnd = await page.evaluate(() => {
+      const e = document.querySelector('#ody-ember');
+      return e && { lean: e.style.getPropertyValue('--ember-lean'), wind: e.classList.contains('ember-wind') };
+    });
+    if (!emberEnd || emberEnd.wind || (emberEnd.lean && emberEnd.lean !== '0deg')) {
+      throw new Error(`[${label}] the ember did not snap upright on release (lean=${emberEnd && emberEnd.lean})`);
+    }
 
     // The gated half: the result overlay arms, dismissing advances the run.
     await page.waitForSelector('#overlay.active', { timeout: 8000 });
@@ -626,7 +707,7 @@ async function checkOdysseyStroke(browser, base) {
     { timeout: 8000 }).then(() => true).catch(() => false);
     if (!advanced) throw new Error(`[${label}] the run did not advance after the stroke's result`);
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
-    console.log(`✓  ${label}: resistance holds (150px pull → ${Math.round(mid)}px), the sweep commits, the words take, the run advances`);
+    console.log(`✓  ${label}: resistance holds (150px pull → ${Math.round(mid)}px), the ember leans and snaps, the sweep commits, the words take, the run advances`);
   } finally {
     await ctx.close();
   }

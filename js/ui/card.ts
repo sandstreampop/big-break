@@ -573,6 +573,12 @@ function showResult(result) {
   else if (result.tier === 'good') sfx.good();
   else { sfx.bad(); vibrateNamed('result-bad', 80); }
 
+  // Deltas land in the WORLD first (world-is-HUD): the pack's tableau
+  // re-reads the just-mutated state as the result shows — a lost rower
+  // vanishes from the bench with the sentence that lost him, and the strip
+  // never contradicts the state behind an open result. No-op without the hook.
+  renderTableau(result.event);
+
   // Forced-choice paths (shop shelf pick / gear-full chooser) don't arm the
   // tap-to-continue dismiss — you must pick a button. The normal path advances
   // on dismiss (tap or Escape). `handled` lets a button do its own routing and
