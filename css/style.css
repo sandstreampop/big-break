@@ -777,7 +777,11 @@ body.big-text #app { zoom: 1.18; }
 }
 .chart-week-row b { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cw-move { font-weight: 900; font-size: 12px; letter-spacing: .03em; }
-.cw-note { color: var(--dim); font-size: 11px; font-style: italic; white-space: nowrap; }
+/* The note may wrap inside its column — nowrap here made the row's
+   min-content wider than a 320px card's interior the moment a long rival
+   name landed in a rival-war line (the INCIDENTS #5 class: random-seed
+   seasons only sometimes audit the widest authored instance). */
+.cw-note { color: var(--dim); font-size: 11px; font-style: italic; }
 .chart-week-row.debut .cw-move { color: #7ec8ff; }
 .chart-week-row.climb .cw-move { color: #7dde8a; }
 .chart-week-row.slip .cw-move { color: #e0a34e; }
