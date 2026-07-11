@@ -16,7 +16,10 @@
 import { actLength } from '../../engine.js';
 import type { GameEvent, Plugin } from '../../types.js';
 
-const BEATS: { key: string; act: number; at: number | 'end'; landmark?: boolean }[] = [
+// Exported for the frieze's horizon (I4): geography is fate — the band shows
+// a landmark LOOMING two-three cards before its window opens, because the
+// distance is knowable from this table. (The gods stay surprises.)
+export const BEATS: { key: string; act: number; at: number | 'end'; landmark?: boolean }[] = [
   { key: 'lotus', act: 1, at: 4 },      // the weak offer, mid-act
   { key: 'cyclops', act: 1, at: 'end', landmark: true },    // the run's defining scar
   { key: 'circe', act: 2, at: 5 },      // the soft year, offered again

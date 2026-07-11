@@ -9,7 +9,7 @@ import assert from 'node:assert';
 
 const { ship, seaStrip, sternFigures, SHIP_MAX_ROWERS } =
   await import('../dist/js/packs/odyssey/art/figures.js');
-const { seaStateOf, notchOf, friezeTableau } =
+const { seaStateOf, notchOf, friezeTableau, horizonOf } =
   await import('../dist/js/packs/odyssey/frieze.js');
 const { odysseyManifest } = await import('../dist/js/packs/odyssey/manifest.js');
 
@@ -84,4 +84,28 @@ test('friezeTableau: data attributes state the run, inspect states the numbers',
   const low = friezeTableau({ ...state, athena: 2, poseidon: 3 }, null);
   assert.ok(low.html.includes('data-owl="0"'));
   assert.ok(low.html.includes('data-sea="calm"'));
+});
+
+test('the horizon looms on schedule and never for a finished landmark', () => {
+  const base = { stats: { burnout: 0 }, expedition: 12, poseidon: 0, athena: 0, renown: 0 };
+  // Act 1 runs 9 cards (end slot 8): the cave appears at played 6, grows in.
+  assert.equal(horizonOf({ ...base, act: 1, cardsPlayedInAct: 5, flags: [] }), null);
+  assert.deepEqual(horizonOf({ ...base, act: 1, cardsPlayedInAct: 6, flags: [] }), { kind: 'cave', near: 2 });
+  assert.deepEqual(horizonOf({ ...base, act: 1, cardsPlayedInAct: 8, flags: [] }), { kind: 'cave', near: 0 });
+  // A rolled-forward landmark is due immediately: full size, next act.
+  assert.deepEqual(horizonOf({ ...base, act: 2, cardsPlayedInAct: 0, flags: [] }), { kind: 'cave', near: 0 });
+  // Done means gone; the deep then drains act 2's tail (end slot 9).
+  const c = ['ody_done_cyclops'];
+  assert.equal(horizonOf({ ...base, act: 2, cardsPlayedInAct: 6, flags: c }), null);
+  assert.deepEqual(horizonOf({ ...base, act: 2, cardsPlayedInAct: 7, flags: c }), { kind: 'ash', near: 2 });
+  assert.deepEqual(horizonOf({ ...base, act: 2, cardsPlayedInAct: 9, flags: c }), { kind: 'ash', near: 0 });
+  // Gulls near Ithaca (act 3 end slot 8), only once both landmarks are told.
+  const cu = ['ody_done_cyclops', 'ody_done_underworld'];
+  assert.equal(horizonOf({ ...base, act: 3, cardsPlayedInAct: 5, flags: cu }), null);
+  assert.deepEqual(horizonOf({ ...base, act: 3, cardsPlayedInAct: 6, flags: cu }), { kind: 'gulls', near: 2 });
+  // The band carries the forecast as data.
+  const spec = friezeTableau({ ...base, act: 1, cardsPlayedInAct: 7, flags: [] }, null);
+  assert.ok(spec.html.includes('data-horizon="cave:1"'), 'band must carry the loom');
+  const clear = friezeTableau({ ...base, act: 1, cardsPlayedInAct: 2, flags: [] }, null);
+  assert.ok(clear.html.includes('data-horizon=""'), 'no forecast before the loom window');
 });

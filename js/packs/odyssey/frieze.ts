@@ -17,8 +17,10 @@
 
 import type { Presenter, RunState } from '../../types.js';
 import { odysseyManifest } from './manifest.js';
+import { BEATS } from './itinerary.js';
 import {
-  ship, seaStrip, sternFigures, owl, SHIP_MAX_ROWERS, type SeaState,
+  ship, seaStrip, sternFigures, owl, gulls, cyclopsIsland, ashBand,
+  SHIP_MAX_ROWERS, type SeaState,
 } from './art/figures.js';
 
 export function seaStateOf(poseidon: number): SeaState {
@@ -39,6 +41,45 @@ export function notchOf(s: RunState): { played: number; total: number } {
 
 const ACT_NAMES = ['', 'The Sack and the Sea', 'Witches and the Dead', 'The Narrow Way'];
 
+// ── The horizon (I4): geography looms, divinity strikes. Everything
+// ceremonial is visible before it arrives — the Cyclops's island grows on
+// the band's right edge two-three cards out, the band drains toward ash as
+// the Underworld nears, gulls appear near Ithaca. The distances are knowable
+// because THE ITINERARY IS FIXED (itinerary.ts BEATS: cyclops closes act 1,
+// the Underworld closes act 2, Ithaca closes the telling). The gods get no
+// forecast, deliberately. `near` counts down: 2 → far, 1 → close, 0 → upon
+// you (the set-piece then takes the whole screen).
+export type Horizon = { kind: 'cave' | 'ash' | 'gulls'; near: 0 | 1 | 2 } | null;
+const LOOM = 2; // cards of forewarning
+
+const beatActOf = (key: string) => BEATS.find((b) => b.key === key)?.act ?? 99;
+
+export function horizonOf(s: RunState): Horizon {
+  const flags = s.flags || [];
+  const act = s.act || 1;
+  const played = s.cardsPlayedInAct || 0;
+  const endSlot = (a: number) => (odysseyManifest.segments[a - 1]?.length || 1) - 1;
+  const looming = (beatAct: number): 0 | 1 | 2 | null => {
+    if (act > beatAct) return 0; // rolled forward — due immediately
+    if (act < beatAct) return null;
+    const d = endSlot(beatAct) - played;
+    return d <= LOOM ? (Math.max(0, d) as 0 | 1 | 2) : null;
+  };
+  if (!flags.includes('ody_done_cyclops')) {
+    const n = looming(beatActOf('cyclops'));
+    return n === null ? null : { kind: 'cave', near: n };
+  }
+  if (!flags.includes('ody_done_underworld')) {
+    const n = looming(beatActOf('underworld'));
+    return n === null ? null : { kind: 'ash', near: n };
+  }
+  if (act === 3) {
+    const d = endSlot(3) - played;
+    if (d <= LOOM) return { kind: 'gulls', near: Math.max(0, d) as 0 | 1 | 2 };
+  }
+  return null;
+}
+
 export const friezeTableau: NonNullable<Presenter['tableau']> = (s) => {
   const rowers = Math.max(0, Math.min(SHIP_MAX_ROWERS, Math.round(s.expedition ?? 0)));
   const wrath = Math.max(0, Math.round(s.poseidon ?? 0));
@@ -53,10 +94,25 @@ export const friezeTableau: NonNullable<Presenter['tableau']> = (s) => {
   // wide, so the travel stops short of the rim.
   const x = 2 + (played / Math.max(1, total)) * 58;
 
+  const hor = horizonOf(s);
+  const horAttr = hor ? `${hor.kind}:${hor.near}` : '';
+  let horHtml = '';
+  if (hor?.kind === 'cave') {
+    horHtml = `<span class="frieze-horizon frieze-cave near-${hor.near}">${cyclopsIsland()}</span>`;
+  } else if (hor?.kind === 'gulls') {
+    horHtml = `<span class="frieze-horizon frieze-gulls near-${hor.near}">${gulls()}</span>`;
+  } else if (hor?.kind === 'ash') {
+    // The deep doesn't rise on the horizon — the WORLD drains toward it:
+    // an ash veil over the whole band, thickening as the Underworld nears.
+    horHtml = `<span class="frieze-ashveil near-${hor.near}">${ashBand(128, { stretch: true })}</span>`;
+  }
+
   const html =
-    `<div class="frieze" data-rowers="${rowers}" data-sea="${sea}" data-owl="${hasOwl ? 1 : 0}"` +
-    ` data-deeds="${deeds}" data-notch="${played}">` +
+    `<div class="frieze${hor?.kind === 'ash' ? ` frieze-drain near-${hor.near}` : ''}"` +
+    ` data-rowers="${rowers}" data-sea="${sea}" data-owl="${hasOwl ? 1 : 0}"` +
+    ` data-deeds="${deeds}" data-notch="${played}" data-horizon="${horAttr}">` +
     `<div class="frieze-sea frieze-sea-${sea}">${seaStrip(sea, 128, { stretch: true })}</div>` +
+    horHtml +
     `<div class="frieze-ship" style="left:${x.toFixed(1)}%">` +
     (hasOwl ? `<span class="frieze-owl">${owl()}</span>` : '') +
     (deeds ? `<span class="frieze-deeds">${sternFigures(deeds)}</span>` : '') +

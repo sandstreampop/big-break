@@ -84,6 +84,10 @@ function renderTableau(ev) {
   if (!spec) { old?.remove(); return; }
   const host = el('div', 'tableau' + (spec.cls ? ' ' + spec.cls : ''), spec.html);
   host.id = 'tableau';
+  // The in-game reduced-motion toggle is invisible to CSS media queries
+  // (the bard beat's `beat-still` precedent): stamp it so a pack's strip
+  // animations collapse to their first frame under BOTH prefs.
+  host.classList.toggle('tableau-still', reducedMotion());
   if (spec.inspect?.length) {
     const blocks = spec.inspect;
     activatable(host, () => { sfx.ui(); showInspectPanel(blocks); }, 'Inspect');
@@ -167,6 +171,9 @@ function showBardBeat(beat, cont) {
     // `beat-still` mirrors the player's in-game reduced-motion toggle, which
     // CSS media queries can't see (they only know the OS preference).
     const box = el('div', 'bard-beat ' + (reducedMotion() ? 'beat-still ' : '') + (beat.cls || ''));
+    // The beat's scene (presenter-supplied markup): the stage the speaker
+    // performs on — a pack without one gets the plain panel as before.
+    if (beat.sceneHtml) box.append(el('div', 'beat-scene', beat.sceneHtml));
     box.append(el('div', 'bard-beat-kicker', 'AT THE FIRE'));
     const dlg = el('div', 'bard-beat-dialogue');
     beat.blocks.forEach((b, i) => {

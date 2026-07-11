@@ -437,3 +437,83 @@ svg.px-anim[data-frames="3"] .f2 { animation: ody-px3c 1.8s steps(1, end) infini
   #tableau .frieze-sea-wrath { height: 12px; }
   #tableau .frieze-ship { min-width: 84px; }
 }
+
+/* ── I4 — the horizon: geography looms, divinity strikes (ADR-0001). The
+   Cyclops's island grows on the band's right edge two-three cards out;
+   the band drains toward ash as the Underworld nears; gulls come out near
+   Ithaca. All still — looming is SIZE, not motion. */
+#tableau .frieze-horizon {
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+}
+#tableau .frieze-cave svg { display: block; height: auto; }
+#tableau .frieze-cave.near-2 svg { width: 22px; }
+#tableau .frieze-cave.near-1 svg { width: 34px; }
+#tableau .frieze-cave.near-0 svg { width: 48px; }
+#tableau .frieze-gulls { bottom: auto; top: 3px; right: 6px; }
+#tableau .frieze-gulls svg { display: block; width: 36px; height: auto; }
+/* The drain: the band's clay goes grey as the deep nears; the ash veil
+   thickens over everything (flat fills — a state, not an effect). */
+#tableau .frieze-drain.near-2 { background: #8a5a44; }
+#tableau .frieze-drain.near-1 { background: #6b5347; }
+#tableau .frieze-drain.near-0 { background: #4a423c; }
+#tableau .frieze-ashveil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#tableau .frieze-ashveil svg { width: 100%; height: 100%; display: block; }
+#tableau .frieze-ashveil.near-2 { opacity: .25; }
+#tableau .frieze-ashveil.near-1 { opacity: .5; }
+#tableau .frieze-ashveil.near-0 { opacity: .75; }
+
+/* ── I5 — the living hearth: frame beats are a SCENE. The fire breathes in
+   vase-frames; the ensemble sits in firelit clay; the cup empties across
+   the night. A speaking figure holds its second frame — a pose, not a
+   tween (ADR-0001). */
+.beat-scene { display: flex; justify-content: center; margin-bottom: 4px; }
+.beat-scene .hearth-row,
+.threshold .hearth-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 56px;
+}
+.fig svg { display: block; height: 100%; width: auto; }
+.fig { height: 42px; }
+.fig-fire { height: 50px; }
+.fig-boy { height: 34px; }
+.fig-cup { height: 20px; align-self: flex-end; }
+.fig-empty { height: 34px; opacity: .8; }
+/* the speaker shifts: frame two, held */
+.fig-speaking svg .pxf { animation: none !important; visibility: hidden; }
+.fig-speaking svg .f1 { visibility: visible; }
+
+/* ── I5 — the threshold: the fireside before the telling. The scene sits
+   behind the shell's title chrome (everything else lifts above it); while
+   veiled it is the one tappable thing, and the first touch kindles the
+   fire in three steps of warmth. */
+#screen-title { position: relative; }
+#screen-title > :not(.title-scene) { position: relative; z-index: 1; }
+.title-scene { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.title-veiled .title-scene { pointer-events: auto; cursor: pointer; }
+/* the veil: the fireside is all there is until the fire is lit */
+.title-veiled > :not(.title-scene) { visibility: hidden; }
+.threshold { position: absolute; inset: 0; }
+.threshold .hearth-row {
+  position: absolute;
+  left: 50%;
+  bottom: 18%;
+  transform: translateX(-50%);
+}
+.th-star { position: absolute; width: 10px; height: 10px; opacity: .8; }
+.th-star svg { width: 100%; height: 100%; display: block; }
+.th-star-1 { top: 9%; left: 18%; }
+.th-star-2 { top: 5%; left: 55%; }
+.th-star-3 { top: 14%; right: 12%; }
+/* kindling: three steps of warmth — opacity states, nothing moves */
+.threshold-dark .fig { opacity: .22; }
+.threshold.kindle-1 .fig { opacity: .45; }
+.threshold.kindle-2 .fig { opacity: .7; }
+.threshold.kindle-lit .fig { opacity: 1; }

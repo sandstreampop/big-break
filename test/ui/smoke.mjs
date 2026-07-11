@@ -111,6 +111,17 @@ async function clickJS(page, sel, timeout = 10000) {
   await page.evaluate((s) => document.querySelector(s)?.click(), sel);
 }
 
+// A pack title stage may VEIL the menu until its ritual runs (the odyssey's
+// kindling threshold). Play through it the way a player would: touch the
+// scene (twice — the second tap is the sanctioned skip), wait for the lift.
+// No-op for packs without a veil.
+async function passThreshold(page) {
+  const veiled = await page.evaluate(() => !!document.querySelector('#screen-title.title-veiled'));
+  if (!veiled) return;
+  await page.evaluate(() => { const sc = document.querySelector('.title-scene'); sc?.click(); sc?.click(); });
+  await page.waitForFunction(() => !document.querySelector('#screen-title.title-veiled'), { timeout: 3000 });
+}
+
 // The setup screen now opens on the identity step (name → gender → personality):
 // type a name and, if the pack offers a gender axis, pick one — the personality
 // cards only appear once a required gender is chosen. Idempotent and pack-safe.
@@ -160,16 +171,24 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
   // statements of the mapping: this test and js/packs/odyssey/frieze.ts.
   const friezeTruth = async (where) => {
     const t = await page.evaluate((ns) => {
+      // A commit in flight (state saved, result not yet rendered) is not a
+      // lie — the words-take marks flag exactly that window; sample later.
+      if (document.querySelector('#choice-buttons .choice-btn.chosen')) return { inFlight: true };
       const run = JSON.parse(localStorage.getItem('bigbreak_run_v1' + ns) || 'null');
       const f = document.querySelector('#tableau .frieze');
       if (!run || !f) return { missing: !f, noRun: !run };
       return {
         exp: Math.round(run.expedition ?? 0), pos: Math.round(run.poseidon ?? 0),
         ath: Math.round(run.athena ?? 0), ren: Math.round(run.renown ?? 0),
+        act: run.act || 1, played: run.cardsPlayedInAct || 0,
+        doneCyclops: (run.flags || []).includes('ody_done_cyclops'),
+        doneUnder: (run.flags || []).includes('ody_done_underworld'),
         rowers: +f.dataset.rowers, sea: f.dataset.sea,
         owl: f.dataset.owl === '1', deeds: +f.dataset.deeds,
+        horizon: f.dataset.horizon || '',
       };
     }, expect.friezeNs);
+    if (t.inFlight) return; // between commit and result — re-sampled next beat
     if (t.missing) throw new Error(`[${label}] no frieze on the ${where}`);
     if (t.noRun) return; // pre-save edge; the next check will have both
     const wantRowers = Math.max(0, Math.min(12, t.exp));
@@ -179,6 +198,18 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
     if (t.rowers !== wantRowers || t.sea !== wantSea || t.owl !== wantOwl || t.deeds !== wantDeeds) {
       throw new Error(`[${label}] the frieze lies on the ${where}: state exp=${t.exp} pos=${t.pos} ath=${t.ath} ren=${t.ren} vs band rowers=${t.rowers} sea=${t.sea} owl=${t.owl} deeds=${t.deeds}`);
     }
+    // The horizon (I4): geography's forecast restated independently. Acts
+    // run 9/10/9 cards; landmarks close acts 1 and 2; gulls close the tale.
+    const ends = { 1: 8, 2: 9, 3: 8 };
+    const loom = (beatAct) => (t.act > beatAct ? 0 : t.act < beatAct ? null
+      : (ends[beatAct] - t.played) <= 2 ? Math.max(0, ends[beatAct] - t.played) : null);
+    let wantHor = '';
+    if (!t.doneCyclops) { const n = loom(1); if (n !== null) wantHor = `cave:${n}`; }
+    else if (!t.doneUnder) { const n = loom(2); if (n !== null) wantHor = `ash:${n}`; }
+    else if (t.act === 3 && ends[3] - t.played <= 2) wantHor = `gulls:${Math.max(0, ends[3] - t.played)}`;
+    if (t.horizon !== wantHor) {
+      throw new Error(`[${label}] the horizon lies on the ${where}: act ${t.act} played ${t.played} done(c/u)=${t.doneCyclops}/${t.doneUnder} → want "${wantHor}", band says "${t.horizon}"`);
+    }
     friezeChecked++;
   };
   const errors = [];
@@ -186,6 +217,7 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
   page.on('console', (m) => { if (m.type() === 'error') errors.push(`console.error: ${m.text()}`); });
 
   await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+  await passThreshold(page);
   await clickJS(page, 'button.btn.primary');
   await page.waitForSelector('#screen-setup.active', { timeout: 10000 });
   await enterIdentity(page);
@@ -346,7 +378,7 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
       // NOT implement presenter.tableau must render no #tableau node, and a
       // full-HUD pack without diegeticHud keeps its stat rail — the seams are
       // invisible until a pack opts in.
-      if (expect.friezeNs && friezeChecked < 1) await friezeTruth('live card');
+      if (expect.friezeNs) await friezeTruth('live card');
       // The tableau is a new interactive control on the play screen: drive
       // it (tap → the hard-ruled inspect panel with the numbers → dismiss)
       // and prove the card is still live after (working agreement rule 1).
@@ -594,6 +626,122 @@ for (const g of GAMES) {
 //      line; with reduced motion everything is visible at once (no
 //      invisible-text lock).
 // Then the beat must still advance to a live card (flow, not just presence).
+// The threshold (I5): the kindling title. Contract (the plan's named
+// invariant — "kindling is skippable"): a fresh visit is veiled (the menu
+// is out of reach) until a touch kindles the fire; letting it play lifts
+// the veil in ~1s; a second tap mid-kindle completes it at once; and with a
+// run in progress there is NO veil (the fire still burns). Each path must
+// then reach the deal — ritual, never a lock.
+async function checkOdysseyThreshold(browser, base) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    settings: { sound: false, music: false, reducedMotion: false, minigames: false, haptics: false, analytics: false },
+  };
+  const label = 'odyssey threshold';
+  const boot = async (ctx) => {
+    const page = await ctx.newPage();
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    return page;
+  };
+  const veiled = (page) => page.evaluate(() => ({
+    veil: document.querySelector('#screen-title')?.classList.contains('title-veiled') || false,
+    menuHidden: (() => {
+      const b = document.querySelector('#screen-title .menu button');
+      return !!b && getComputedStyle(b).visibility === 'hidden';
+    })(),
+    lit: !!document.querySelector('.title-scene .threshold.kindle-lit'),
+  }));
+
+  // Pass A — let the kindling play out.
+  {
+    const ctx = await browser.newContext();
+    await ctx.addInitScript(`try {
+      localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+      localStorage.removeItem('bigbreak_run_v1_odyssey');
+    } catch (e) {}`);
+    try {
+      const page = await boot(ctx);
+      const before = await veiled(page);
+      if (!before.veil || !before.menuHidden) throw new Error(`[${label}] a fresh fire is not veiled (veil=${before.veil} hidden=${before.menuHidden})`);
+      await page.evaluate(() => document.querySelector('.title-scene').click());
+      await page.waitForFunction(() => !!document.querySelector('.title-scene .threshold.kindle-lit'), { timeout: 3000 });
+      await page.waitForFunction(() => !document.querySelector('#screen-title.title-veiled'), { timeout: 2000 });
+      const after = await veiled(page);
+      if (after.menuHidden) throw new Error(`[${label}] the fire lit but the menu never appeared`);
+      // The flow reaches the deal: kindle → new run → a live card.
+      await clickJS(page, 'button.btn.primary');
+      await enterIdentity(page);
+      await clickJS(page, '.pick-card');
+      await clickJS(page, '#start-run-btn');
+      const dealt = await page.waitForFunction(() =>
+        document.querySelector('#screen-game.active .choice-btn.choice-left') || document.querySelector('#overlay.active'),
+      { timeout: 15000 }).then(() => true).catch(() => false);
+      if (!dealt) throw new Error(`[${label}] kindled, but the telling never dealt`);
+    } finally { await ctx.close(); }
+  }
+
+  // Pass B — the same tap skips: two touches, lit at once.
+  {
+    const ctx = await browser.newContext();
+    await ctx.addInitScript(`try {
+      localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+      localStorage.removeItem('bigbreak_run_v1_odyssey');
+    } catch (e) {}`);
+    try {
+      const page = await boot(ctx);
+      await page.evaluate(() => {
+        const sc = document.querySelector('.title-scene');
+        sc.click();
+        sc.click();
+      });
+      const skipped = await page.waitForFunction(() =>
+        !!document.querySelector('.title-scene .threshold.kindle-lit') &&
+        !document.querySelector('#screen-title.title-veiled'),
+      { timeout: 700 }).then(() => true).catch(() => false);
+      if (!skipped) throw new Error(`[${label}] the second tap did not skip the kindling`);
+    } finally { await ctx.close(); }
+  }
+
+  // Pass C — Resume: the fire still burns; no veil at all.
+  {
+    const ctx = await browser.newContext();
+    await ctx.addInitScript(`try {
+      if (!sessionStorage.getItem('bb_th_seeded')) {
+        sessionStorage.setItem('bb_th_seeded', '1');
+        localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+        localStorage.removeItem('bigbreak_run_v1_odyssey');
+      }
+    } catch (e) {}`);
+    try {
+      const page = await boot(ctx);
+      // Kindle, start a run, play one card so a run is saved…
+      await page.evaluate(() => {
+        const sc = document.querySelector('.title-scene');
+        sc.click();
+        sc.click();
+      });
+      await clickJS(page, 'button.btn.primary');
+      await enterIdentity(page);
+      await clickJS(page, '.pick-card');
+      await clickJS(page, '#start-run-btn');
+      await page.waitForFunction(() =>
+        document.querySelector('#screen-game.active .choice-btn.choice-left') || document.querySelector('#overlay.active'),
+      { timeout: 15000 });
+      // …then come back: the fire must still be burning, unveiled.
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+      const back = await veiled(page);
+      if (back.veil || back.menuHidden || !back.lit) {
+        throw new Error(`[${label}] Resume re-veiled the fire (veil=${back.veil} hidden=${back.menuHidden} lit=${back.lit})`);
+      }
+    } finally { await ctx.close(); }
+  }
+  console.log(`✓  ${label}: veiled cold, kindles on touch, second tap skips, Resume burns unveiled — and the telling deals`);
+}
+
 // The oar-stroke (I1): the odyssey's swipe feel, driven with real pointer
 // input under motion ON. Three assertions, per the working agreement (drive
 // the new thing, then prove the run still advances):
@@ -624,6 +772,7 @@ async function checkOdysseyStroke(browser, base) {
   try {
     await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
     await clickJS(page, 'button.btn.primary');
     await enterIdentity(page);
     await clickJS(page, '.pick-card');
@@ -753,6 +902,7 @@ async function checkBardBeatHierarchy(browser, base) {
   try {
     await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
     await clickJS(page, 'button.btn.primary');
     await enterIdentity(page);
     await clickJS(page, '.pick-card');
@@ -861,6 +1011,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyStroke(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyThreshold(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);
