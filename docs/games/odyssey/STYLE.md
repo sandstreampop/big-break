@@ -53,6 +53,9 @@ reads as theft.
 8. **Authority = band, not neon.** No glow shadows, no gradient-clipped logo
    text (the siblings' two loudest tics, banned here). Motion is ember-slow;
    **nothing pulses.** The deep is still; the fire flickers, barely.
+   *(Motion clause renegotiated 2026-07-11: superseded by the Motion Law in
+   [`NORTH-STAR.md`](./NORTH-STAR.md) — diegetic motion + earned ceremony;
+   stillness stays the ground, chrome still never moves.)*
 9. **Reading order is designed, not hoped for.** The eye enters a screen at
    the biggest, highest-contrast block — not at the top (Itti–Koch saliency;
    NN/g eyetracking: hierarchy overrides the F-pattern). So on any screen
