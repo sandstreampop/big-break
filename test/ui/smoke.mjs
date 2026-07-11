@@ -480,6 +480,166 @@ for (const g of GAMES) {
   }
 }
 
+// Bard-beat reading-order guard (2026-07, "text hierarchy" pass): the beat
+// screen's dialogue must be READ top-to-bottom (a heckle sets up the bard's
+// reply), but first fixation goes to the biggest/brightest block — the reply.
+// The two defenses live in css/odyssey.css (STYLE.md law 9) and both are
+// asserted here because goldens/sims are DOM-free and blind to them:
+//   1. static hierarchy — the heckle is content, not chrome: near-body size
+//      (≥0.9× the bard's) and ≥7:1 contrast on the field, cued `who:`;
+//   2. temporal order — lines reveal in speaking order (monotonic
+//      animation-delays from the shell's --beat-i), the hint after the last
+//      line; with reduced motion everything is visible at once (no
+//      invisible-text lock).
+// Then the beat must still advance to a live card (flow, not just presence).
+async function checkBardBeatHierarchy(browser, base) {
+  const ctx = await browser.newContext(); // motion ON: the stagger is under test
+  // Same seed as the main loop but with the in-game motion toggle OFF, so the
+  // staggered reveal actually runs.
+  const meta = {
+    lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    settings: { sound: false, music: false, reducedMotion: false, minigames: false, haptics: false, analytics: false },
+  };
+  // Init scripts re-run on EVERY navigation — an unguarded removeItem here
+  // would delete the very run save the reload-and-resume loop below depends
+  // on. Clear it once, on the first document only. The bc_horse patch ALSO
+  // has to live here, not in a plain evaluate: the app flushes its in-memory
+  // run to localStorage on pagehide (installPersistOnHide), so a patch made
+  // before reload gets clobbered during the reload itself. An init script
+  // runs after that flush and before the app boots — the one safe window.
+  await ctx.addInitScript(`
+    try {
+      if (!sessionStorage.getItem('bb_beat_seeded')) {
+        sessionStorage.setItem('bb_beat_seeded', '1');
+        localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+        localStorage.removeItem('bigbreak_run_v1_odyssey');
+      }
+      const force = sessionStorage.getItem('bb_force_bard');
+      if (force) {
+        const key = 'bigbreak_run_v1_odyssey';
+        const run = JSON.parse(localStorage.getItem(key) || 'null');
+        if (run) { run.bardLine = force; localStorage.setItem(key, JSON.stringify(run)); }
+      }
+    } catch (e) {}
+  `);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(`console.error: ${m.text()}`); });
+  const label = 'odyssey bard-beat hierarchy';
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await clickJS(page, 'button.btn.primary');
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+
+    // The cold open always fires on the first deal — the wiring check: the
+    // shell must stamp the sequence custom properties the CSS stagger reads.
+    await page.waitForSelector('#overlay.active .bard-beat .bard-line', { timeout: 10000 });
+    const open = await page.evaluate(() => {
+      const line = document.querySelector('#overlay.active .bard-beat .bard-line');
+      const hint = document.querySelector('#overlay.active .bard-beat .tap-hint');
+      return {
+        anim: getComputedStyle(line).animationName,
+        lineDelay: parseFloat(getComputedStyle(line).animationDelay),
+        hintDelay: parseFloat(getComputedStyle(hint).animationDelay),
+      };
+    });
+    if (open.anim !== 'bard-line-in') throw new Error(`[${label}] beat line is not animated by the reveal (animation-name=${open.anim})`);
+    if (open.lineDelay !== 0) throw new Error(`[${label}] first line must reveal immediately (delay=${open.lineDelay}s)`);
+    if (open.hintDelay <= 0.4) throw new Error(`[${label}] tap-hint must enter after the dialogue (delay=${open.hintDelay}s)`);
+
+    // Force a heckle script (bc_horse: heckle → reply) onto the saved run and
+    // resume: deterministic coverage of the two-voice hierarchy. Resume
+    // re-deals the SAME saved card (engine.drawNextCard honors
+    // currentEventId), and the cold-open beat above already proved that card
+    // is non-landmark (a landmark suppresses beats), so bc_horse surfaces on
+    // the first attempt; the loop is a defensive bound, not a randomizer.
+    let shown = false;
+    await page.evaluate(() => sessionStorage.setItem('bb_force_bard', 'bc_horse'));
+    for (let attempt = 0; attempt < 4 && !shown; attempt++) {
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+      await clickJS(page, 'button.btn.primary'); // ▶ Resume Run
+      shown = await page.waitForSelector('#overlay.active .bard-beat .is-heckle', { timeout: 6000 })
+        .then(() => true).catch(() => false);
+    }
+    if (!shown) throw new Error(`[${label}] could not surface a heckle beat to measure`);
+
+    const h = await page.evaluate(() => {
+      const lum = (c) => {
+        const [r, g, b] = c.match(/\d+(\.\d+)?/g).map(Number);
+        const f = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+        return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+      };
+      const contrast = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+      const lines = [...document.querySelectorAll('#overlay.active .bard-beat .bard-line')];
+      const heckle = document.querySelector('#overlay.active .bard-beat .is-heckle .bard-quote');
+      const bard = document.querySelector('#overlay.active .bard-beat .is-bard .bard-quote');
+      const who = document.querySelector('#overlay.active .bard-beat .bard-who');
+      const hint = document.querySelector('#overlay.active .bard-beat .tap-hint');
+      const bodyBg = getComputedStyle(document.body).backgroundColor;
+      return {
+        order: lines.map((l) => (l.classList.contains('is-heckle') ? 'heckle' : 'bard')),
+        delays: lines.map((l) => parseFloat(getComputedStyle(l).animationDelay)),
+        hintDelay: parseFloat(getComputedStyle(hint).animationDelay),
+        whoText: (who?.textContent || '').trim(),
+        sizeRatio: parseFloat(getComputedStyle(heckle).fontSize) / parseFloat(getComputedStyle(bard).fontSize),
+        heckleContrast: contrast(getComputedStyle(heckle).color, bodyBg),
+        bardBrighter: lum(getComputedStyle(bard).color) > lum(getComputedStyle(heckle).color),
+      };
+    });
+    if (h.order[0] !== 'heckle' || !h.order.includes('bard'))
+      throw new Error(`[${label}] dialogue order broken: ${h.order.join(' → ')}`);
+    for (let i = 1; i < h.delays.length; i++) {
+      if (!(h.delays[i] > h.delays[i - 1]))
+        throw new Error(`[${label}] reveal delays not in speaking order: ${h.delays.join(', ')}`);
+    }
+    if (!(h.hintDelay > h.delays[h.delays.length - 1]))
+      throw new Error(`[${label}] tap-hint (${h.hintDelay}s) must enter after the last line (${h.delays.join(', ')})`);
+    if (!/^[^—–-].*:$/.test(h.whoText))
+      throw new Error(`[${label}] speaker cue "${h.whoText}" must read as a cue (name + colon, no dash — a dash-attribution names the source of the quote ABOVE it)`);
+    if (h.sizeRatio < 0.9)
+      throw new Error(`[${label}] heckle demoted below the hierarchy floor: ${h.sizeRatio.toFixed(2)}× the bard's size (need ≥0.9×)`);
+    if (h.heckleContrast < 7)
+      throw new Error(`[${label}] heckle contrast ${h.heckleContrast.toFixed(1)}:1 — setup text must stay content (≥7:1), not dim chrome`);
+    if (!h.bardBrighter)
+      throw new Error(`[${label}] the bard must stay the brightest voice on the panel`);
+
+    // Reduced motion (OS preference): every line visible at once — the
+    // opacity:0 floor must never survive without its animation.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const still = await page.evaluate(() =>
+      [...document.querySelectorAll('#overlay.active .bard-beat .bard-line, #overlay.active .bard-beat .tap-hint')]
+        .map((l) => ({ opacity: getComputedStyle(l).opacity, anim: getComputedStyle(l).animationName })));
+    if (still.some((s) => s.opacity !== '1' || s.anim !== 'none'))
+      throw new Error(`[${label}] reduced motion must show all lines instantly: ${JSON.stringify(still)}`);
+
+    // The flow, not the feature: dismissing the beat must land on a live card.
+    await page.waitForFunction(() => document.querySelector('#overlay.active')?.hasAttribute('data-armed'), { timeout: 5000 });
+    await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+    await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 10000 });
+
+    if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
+    console.log(`✓  ${label}: heckle reads as content (${h.heckleContrast.toFixed(1)}:1, ${h.sizeRatio.toFixed(2)}× size), reveal follows speaking order, reduced-motion safe, beat advances to the card`);
+    return true;
+  } finally {
+    await ctx.close();
+  }
+}
+{
+  try {
+    await checkBardBeatHierarchy(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+}
+
 await browser.close();
 server.close();
 if (failed) { console.error(`\n✗ ${failed} game(s) failed the UI smoke test.`); process.exit(1); }

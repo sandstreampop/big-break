@@ -69,6 +69,7 @@ export default [
     languageOptions: {
       globals: {
         window: 'readonly', document: 'readonly', localStorage: 'readonly',
+        sessionStorage: 'readonly',
         navigator: 'readonly', getComputedStyle: 'readonly',
         Event: 'readonly', PointerEvent: 'readonly',
       },

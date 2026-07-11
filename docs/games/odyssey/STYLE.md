@@ -53,6 +53,30 @@ reads as theft.
 8. **Authority = band, not neon.** No glow shadows, no gradient-clipped logo
    text (the siblings' two loudest tics, banned here). Motion is ember-slow;
    **nothing pulses.** The deep is still; the fire flickers, barely.
+9. **Reading order is designed, not hoped for.** The eye enters a screen at
+   the biggest, highest-contrast block — not at the top (Itti–Koch saliency;
+   NN/g eyetracking: hierarchy overrides the F-pattern). So on any screen
+   whose text only lands read in sequence (a heckle sets up the bard's
+   reply; a setup line precedes a payoff), salience must not invert the
+   sequence. Three rules, in order of force:
+   - **Sequence by onset where order is load-bearing.** New-object onset
+     captures attention involuntarily (Yantis & Jonides) — reveal the lines
+     in speaking order, ember-slow (opacity only, ~½s apart, nothing moves).
+     Reduced motion (OS or in-game toggle) collapses to everything-at-once
+     and leans on the next rule.
+   - **Setup text is content, never chrome.** Text that must be read stays
+     within one type-scale step of the body voice (≥0.9×) and in the
+     secondary band, not the dim band (≥7:1 on the field here — `--dim` at
+     ~5.5:1 is for true metadata only). Styling that says "caption/flavor"
+     trains the reader to skip it (banner blindness generalizes).
+   - **A speaker cue is `who:` above the line — never `— who`.** Every
+     convention meaning "this person speaks what follows" (screenplay cue,
+     play script, chat, VN name tag) is a plain name label; a dash-prefixed
+     name is the epigraph convention and attributes the quote *above* it —
+     exactly backwards.
+   Executable: the bard-beat check in `test/ui/smoke.mjs` pins all three
+   (size ratio, contrast floor, monotonic reveal delays, cue shape, and that
+   the beat still advances to a live card).
 
 ---
 

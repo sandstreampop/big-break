@@ -183,8 +183,22 @@
    showBardBeat): a full-screen fireside panel BETWEEN cards, deliberately
    distinct from a playable choice card — no swipe, no left/right, just the
    teller speaking and one tap on. The bard's lines and any heckler's are each
-   a quoted line; the heckler carries a dim attribution so it reads as
-   dialogue, not caption. */
+   a quoted line; the heckler carries a `who:` speaker cue so it reads as
+   dialogue, not caption.
+
+   READING ORDER (STYLE.md law 9). Dialogue only lands read top-to-bottom —
+   the heckle sets up the reply — but the eye enters a screen at the biggest,
+   highest-contrast block, which here is the bard's answer. Two defenses:
+   1. The heckle is a full CITIZEN of the hierarchy, not chrome: near-body
+      size and a readable secondary tone (--neutral-ink, ~9:1 on the field),
+      so it can't be skimmed past as metadata. The bard still leads by
+      warmth (bone vs ash-brown), size, and the cue-less register — never by
+      dimming the setup into skippability.
+   2. The lines REVEAL in speaking order, ember-slow (one slow fade each,
+      ~half a second apart, driven by the shell's --beat-i/--beat-n): onset
+      order = reading order, the strongest ordering cue there is. Nothing
+      moves, nothing pulses; reduced-motion shows everything at once and
+      leans on defense 1. Pinned by the beat check in test/ui/smoke.mjs. */
 .bard-beat {
   width: min(92%, 400px);
   display: flex;
@@ -209,12 +223,13 @@
   line-height: 1.5;
   color: var(--ink);
 }
-/* A heckler: attributed, set in, cooler — an interruption from the dark. */
-.bard-beat .is-heckle { padding-left: 12px; border-left: 2px solid var(--line); }
-.bard-beat .is-heckle .bard-quote { font-size: 13.5px; line-height: 1.45; color: var(--dim); }
+/* A heckler: cued, set in, cooler — an interruption from the dark, but a
+   SPOKEN one: one notch under the bard in size, secondary (not dim) in tone. */
+.bard-beat .is-heckle { padding-left: 12px; border-left: 2px solid var(--line-strong); }
+.bard-beat .is-heckle .bard-quote { font-size: 14px; line-height: 1.5; color: var(--neutral-ink); }
 .bard-beat .bard-who {
   font-size: 11px;
-  letter-spacing: .04em;
+  letter-spacing: .06em;
   color: var(--dim);
   font-style: normal;
 }
@@ -224,6 +239,29 @@
   letter-spacing: .08em;
   margin-top: 4px;
 }
+/* The staggered reveal (defense 2). Opacity only — motion stays ember-slow —
+   and `forwards` holds the end state. The tap-hint enters after the LAST
+   line (--beat-n), so the call to action never outshouts unspoken dialogue.
+   Guards: the opacity:0 floor lives here, beside its own animation, so a
+   stale/absent theme sheet (mobile-matrix delivery pass) can never hide
+   text it doesn't animate; reduced-motion collapses to everything-visible. */
+.bard-beat .bard-line {
+  opacity: 0;
+  animation: bard-line-in .55s ease-out forwards;
+  animation-delay: calc(var(--beat-i, 0) * .5s);
+}
+.bard-beat .tap-hint {
+  opacity: 0;
+  animation: bard-line-in .55s ease-out forwards;
+  animation-delay: calc(var(--beat-n, 1) * .5s + .1s);
+}
+@keyframes bard-line-in { from { opacity: 0; } to { opacity: 1; } }
+/* Everything at once when motion is off: the OS preference (media query) or
+   the in-game toggle (.beat-still, stamped by the shell — CSS can't see it). */
+@media (prefers-reduced-motion: reduce) {
+  .bard-beat .bard-line, .bard-beat .tap-hint { animation: none; opacity: 1; }
+}
+.bard-beat.beat-still .bard-line, .bard-beat.beat-still .tap-hint { animation: none; opacity: 1; }
 
 /* Gold is selection, not wallpaper: armed/selected states switch to the
    gold rule (the ring token above already draws it). */
