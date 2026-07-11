@@ -179,6 +179,22 @@
   font-style: normal;
 }
 
+/* The frame-chatter note (js/packs/odyssey/bard-chatter.ts) is the bard
+   LEANING IN between cards. It rides the base overlay-note channel — a
+   popover pinned to the TOP of the card-area — which on this page is safe
+   because odyssey hides the generated card art (.card-art.art-scene), so the
+   top zone is empty and the note never covers the prompt below it. A solid
+   fill (not the base's translucent note-bg) keeps the pixel body legible over
+   the dark scene, and the double-rule is the teller's border. Held honest at
+   320px by the phone-crowding gate (test/ui/crowding.mjs). */
+#card-area .overlay-note.bard-note {
+  top: 8px;
+  width: min(92%, 372px);
+  font-size: 12.5px;
+  color: var(--dim);
+  background: var(--surface, #1c140d);
+}
+
 /* Gold is selection, not wallpaper: armed/selected states switch to the
    gold rule (the ring token above already draws it). */
 .choice-btn.armed { border-color: var(--accent); }

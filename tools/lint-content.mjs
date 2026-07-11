@@ -39,6 +39,9 @@ import { ODYSSEY_TASTE } from '../docs/games/odyssey/taste.mjs';
 // The second screen's content (ADR-0014) isn't in pack.events, so import its
 // flat corpus so the feed floor can lint it (bodies + Narrator chrome).
 import { feedBodyCorpus, feedChromeCorpus } from '../dist/js/packs/love-island/feeds.js';
+// The odyssey bard's frame chatter — a flat pool of presenter-voice lines held
+// to the same taste floor as the rest of the presenter copy.
+import { CHATTER as ODYSSEY_CHATTER } from '../dist/js/packs/odyssey/bard-chatter.js';
 
 // The engine's NEUTRAL deck-eligibility vocabulary, imported from the engine's
 // own exported set (single source — a drift here was a silent lint hole); each
@@ -147,6 +150,8 @@ const DESCRIPTORS = {
         const sp = pres.setPiece?.({ flags: [] }, ev);
         if (sp) out.push(sp.banner, sp.sub);
       }
+      // The frame chatter (bard-chatter.ts): every line, scanned at the floor.
+      for (const c of ODYSSEY_CHATTER) out.push(c.text);
       return out.filter(Boolean);
     },
   },

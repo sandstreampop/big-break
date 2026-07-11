@@ -112,13 +112,6 @@ for (const [w, label] of [[390, '390'], [320, '320']]) {
   }, { html: buildDOM(LINES), style: STYLE });
   await page.waitForTimeout(400);
   await page.screenshot({ path: join(OUT, `bard-sample-${label}.png`), fullPage: true });
-  // Also a tight crop of two representative single notes at 390 for a clean look.
-  if (w === 390) {
-    for (const n of [3, 4, 10]) {
-      const el = await page.$(`#bard-sample .has-set-piece:nth-of-type(1)`);
-      void el;
-    }
-  }
   await ctx.close();
   console.log(`wrote bard-sample-${label}.png`);
 }

@@ -17,6 +17,7 @@ import { odysseyManifest } from './manifest.js';
 import { FIRES, firesPlugin } from './fires.js';
 import { itineraryPlugin } from './itinerary.js';
 import { prophecyPlugin, summarizeTelling } from './prophecy.js';
+import { bardPlugin } from './bard-chatter.js';
 import { ACT1_EVENTS } from './events-act1.js';
 import { ACT2_EVENTS } from './events-act2.js';
 import { ACT3_EVENTS } from './events-act3.js';
@@ -51,7 +52,7 @@ declare module '../../types.js' {
 export const odysseyPack: Pack = {
   id: 'odyssey',
   manifest: odysseyManifest,
-  plugins: [firesPlugin, itineraryPlugin, prophecyPlugin],
+  plugins: [firesPlugin, itineraryPlugin, prophecyPlugin, bardPlugin],
   events: [...ACT1_EVENTS, ...ACT2_EVENTS, ...ACT3_EVENTS, ...LANDMARKS],
   tutorialEvents: [],
   loadouts: FIRES,

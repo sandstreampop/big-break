@@ -33,7 +33,7 @@ const EXPECTED_PLUGIN_ORDER = {
   'love-island': ['coupling', 'profile', 'characters', 'gossip', 'factions', 'coupleweb', 'producers', 'stirling'],
   // Pass 5 split the prophecy reroute out of the itinerary plugin — appended
   // last, RNG-silent (modifyEffects only), goldens verified byte-identical.
-  odyssey: ['odyssey_fires', 'odyssey_itinerary', 'odyssey_prophecy'],
+  odyssey: ['odyssey_fires', 'odyssey_itinerary', 'odyssey_prophecy', 'odyssey_bard'],
 };
 
 for (const pack of PACKS) {
