@@ -1104,6 +1104,9 @@ async function checkBardBeatHierarchy(browser, base) {
     // `pending` mark must be visible by CSS default. A stylesheet whose BASE
     // state hides dialogue blanks the whole fire the moment it meets a
     // cached script from another deploy that never adds the reveal mark.
+    // "Visible" here means readable, not pixel-exact: the shared sheet dims
+    // the hint cosmetically (style.css .tap-hint opacity .8). The law is
+    // about HIDING — anything below half is a hidden state in disguise.
     const bare = await page.evaluate(() => {
       const probe = document.createElement('div');
       probe.className = 'bard-beat';
@@ -1116,7 +1119,7 @@ async function checkBardBeatHierarchy(browser, base) {
       probe.remove();
       return o;
     });
-    if (bare.line !== '1' || bare.hint !== '1')
+    if (parseFloat(bare.line) < 0.5 || parseFloat(bare.hint) < 0.5)
       throw new Error(`[${label}] SKEW LAW violated: un-marked dialogue is hidden by CSS alone (line=${bare.line} hint=${bare.hint}) — this blanks the fire under deploy skew`);
 
     // The cold open always fires on the first deal — the wiring check: the
