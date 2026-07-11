@@ -12,6 +12,22 @@ import { activePack, run, STAT_META, PRES, metaFor, itemById, genderLabelFor } f
 import { sfx } from '../audio.js';
 import { artFor } from '../art.js';
 
+// The tableau's inspect panel (world-is-HUD): the numeric truth behind a
+// pack's diegetic strip, stated plainly in hard-ruled blocks at a size where
+// the type is legible. Generic mechanism — the pack supplies the blocks.
+export function showInspectPanel(blocks: { title: string; lines: string[] }[]) {
+  openOverlay((ov) => {
+    const box = el('div', 'result-card inspect-panel');
+    box.append(el('div', 'tier-badge', 'INSPECT'));
+    for (const b of blocks) {
+      box.append(el('p', 'result-text inspect-panel-title', `<b>${b.title}</b>`));
+      for (const line of b.lines) box.append(el('p', 'gear-blurb', line));
+    }
+    box.append(el('p', 'tap-hint', 'tap to close'));
+    ov.append(box);
+  });
+}
+
 export function showInspect(sheet) {
   openOverlay((ov) => {
     const box = el('div', 'result-card');

@@ -77,32 +77,40 @@ export function renderHud() {
   // gear row live in the status drawer (Tier 3), one tap away.
   if (compact) return;
 
+  // World-is-HUD (presenter.diegeticHud): the pack's tableau is the primary
+  // state display, so the numeric stat rail leaves the permanent screen —
+  // numbers live in the tableau's inspect panel, one tap away. The streak
+  // banner and the carried row stay (they are things, not meters).
+  const diegetic = !!PRES.diegeticHud;
+
   // U3: the hot streak is a visible thing you're riding
   if (!run.tutorial && (run.hotStreak || 0) >= CONFIG.hotStreakAt) {
     const roll = el('div', 'on-a-roll', `🔥 ON A ROLL ×${run.hotStreak} — the deck is showing you things`);
     hud.append(roll);
   }
 
-  const rail = el('div', 'stat-rail');
-  for (const key of [...activePack.manifest.stats, 'burnout']) {
-    const v = run.stats[key];
-    const item = el('div', 'stat' + (key === 'burnout' ? ' stat-burnout' : ''));
-    item.dataset.stat = key;
-    activatable(item, () => { sfx.ui(); showInspectStat(key); });
-    if (key === 'burnout' && v >= 70) item.classList.add('danger');
-    else if (key === 'burnout' && v >= 45) item.classList.add('warn');
-    item.title = STAT_META[key].name;
-    const head = el('span', 'stat-head');
-    head.append(el('span', 'stat-icon', STAT_META[key].icon));
-    head.append(el('span', 'stat-val', String(v)));
-    item.append(head);
-    const bar = el('div', 'stat-bar');
-    bar.append(el('div', 'stat-fill', ''));
-    bar.querySelector('.stat-fill').style.width = `${v}%`;
-    item.append(bar);
-    rail.append(item);
+  if (!diegetic) {
+    const rail = el('div', 'stat-rail');
+    for (const key of [...activePack.manifest.stats, 'burnout']) {
+      const v = run.stats[key];
+      const item = el('div', 'stat' + (key === 'burnout' ? ' stat-burnout' : ''));
+      item.dataset.stat = key;
+      activatable(item, () => { sfx.ui(); showInspectStat(key); });
+      if (key === 'burnout' && v >= 70) item.classList.add('danger');
+      else if (key === 'burnout' && v >= 45) item.classList.add('warn');
+      item.title = STAT_META[key].name;
+      const head = el('span', 'stat-head');
+      head.append(el('span', 'stat-icon', STAT_META[key].icon));
+      head.append(el('span', 'stat-val', String(v)));
+      item.append(head);
+      const bar = el('div', 'stat-bar');
+      bar.append(el('div', 'stat-fill', ''));
+      bar.querySelector('.stat-fill').style.width = `${v}%`;
+      item.append(bar);
+      rail.append(item);
+    }
+    hud.append(rail);
   }
-  hud.append(rail);
 
   // The gear row: the pack's persona + acquired kit as tappable inspect chips.
   // The shell renders whatever descriptors the pack returns; it names none of

@@ -147,7 +147,8 @@ async function axeScan(page, label, where) {
   return bad.length;
 }
 
-async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0) {
+async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect = {}) {
+  let siblingChecked = false;
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(`console.error: ${m.text()}`); });
@@ -302,6 +303,24 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0) {
       await page.waitForTimeout(60);
     } else if (k === 'card') {
       if (!scannedCard) { await axeScan(page, label, 'game-card'); scannedCard = true; }
+      // Sibling isolation for the alive-fabric seams (F1): a pack that does
+      // NOT implement presenter.tableau must render no #tableau node, and a
+      // full-HUD pack without diegeticHud keeps its stat rail — the seams are
+      // invisible until a pack opts in.
+      if (!siblingChecked) {
+        siblingChecked = true;
+        const shape = await page.evaluate(() => ({
+          tableau: !!document.querySelector('#tableau'),
+          rail: !!document.querySelector('#hud .stat-rail'),
+          compact: !!document.querySelector('#hud .drawer-btn'),
+        }));
+        if (expect.tableau !== undefined && shape.tableau !== expect.tableau) {
+          throw new Error(`[${label}] tableau seam leaked: expected tableau=${expect.tableau}, got ${shape.tableau}`);
+        }
+        if (expect.rail !== undefined && shape.rail !== expect.rail && !shape.compact) {
+          throw new Error(`[${label}] stat rail shape changed: expected rail=${expect.rail}, got ${shape.rail}`);
+        }
+      }
       // The card-cast strip (presenter.cardCast) puts scene portraits ON the
       // dealt card, and a real portrait taps through to the full-size lightbox.
       // Unlike the result beat, the card is NOT an overlay — so the lightbox
@@ -429,12 +448,16 @@ try {
 }
 
 const GAMES = [
-  { label: 'music', url: `${base}/`, ns: '', paths: 3 },
-  { label: 'love-island', url: `${base}/love-island/`, ns: '_love-island', paths: 3 },
+  // `expect` pins each pack's HUD shape (sibling isolation for the F1 seams):
+  // tableau = does the pack render a #tableau strip; rail = does its full HUD
+  // keep the numeric stat rail. Flip a pack's entry ONLY when it deliberately
+  // opts into the seam.
+  { label: 'music', url: `${base}/`, ns: '', paths: 3, expect: { tableau: false, rail: true } },
+  { label: 'love-island', url: `${base}/love-island/`, ns: '_love-island', paths: 3, expect: { tableau: false } },
   // paths counts PASSES here: odyssey cycles its 2 paths and drives a
   // different Hall door each pass (the gated pre-finale surface — working
   // agreement: a new control on a gated surface gets an explicit exercise).
-  { label: 'odyssey', url: `${base}/odyssey/`, ns: '_odyssey', paths: 3, pathCycle: 2 },
+  { label: 'odyssey', url: `${base}/odyssey/`, ns: '_odyssey', paths: 3, pathCycle: 2, expect: { tableau: false, rail: true } },
 ];
 
 let failed = 0;
@@ -448,7 +471,7 @@ for (const g of GAMES) {
     try {
       await page.goto(g.url, { waitUntil: 'domcontentloaded' });
       const pathPick = g.pathCycle ? pi % g.pathCycle : pi;
-      const { lightboxRuns, cardCastRuns, feedRuns } = await playToFinale(page, `${g.label} path#${pi}`, pathPick, g.pathCycle ? pi : 0);
+      const { lightboxRuns, cardCastRuns, feedRuns } = await playToFinale(page, `${g.label} path#${pi}`, pathPick, g.pathCycle ? pi : 0, g.expect || {});
       const lb = lightboxRuns ? ` (portrait-lightbox stack verified ×${lightboxRuns})` : '';
       const cc = cardCastRuns ? ` (card-cast lightbox verified ×${cardCastRuns})` : '';
       const fd = feedRuns ? ` (unread-feed notification verified ×${feedRuns})` : '';

@@ -18,6 +18,22 @@ export function renderTitle() {
   music.setMood('title');
   const s = $('#screen-title');
   s.innerHTML = '';
+  s.classList.remove('title-veiled');
+  const saved = save.loadRun(activePack.id);
+  // A pack-rendered title stage behind the menu (presenter.titleScene — the
+  // odyssey's threshold). The pack draws into its own host; if it returns
+  // true it takes the veil: the screen wears .title-veiled (the pack's CSS
+  // hides the menu) until the pack calls lift(). Menu structure and
+  // routing below stay shell-owned; packs without the hook are untouched.
+  if (PRES.titleScene) {
+    const stageHost = el('div', 'title-scene');
+    s.append(stageHost);
+    const veiled = PRES.titleScene(stageHost, {
+      resumed: !!saved,
+      lift: () => s.classList.remove('title-veiled'),
+    });
+    if (veiled === true) s.classList.add('title-veiled');
+  }
   // floating notes (attract mode)
   if (!reducedMotion()) {
     const notes = el('div', 'title-notes');
@@ -37,7 +53,6 @@ export function renderTitle() {
   const taglines = PRES.title?.taglines || [];
   if (taglines.length) s.append(el('p', 'title-tag', taglines[dayNum % taglines.length]));
 
-  const saved = save.loadRun(activePack.id);
   const menu = el('div', 'menu');
   if (saved) {
     menu.append(btn('▶ Resume Run', 'primary', () => {

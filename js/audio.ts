@@ -6,9 +6,21 @@ let ctx = null;
 let enabled = true;
 let musicEnabled = true;
 
+// A pack's own audio identity (Presenter.soundscape). When set, the lo-fi
+// engine stays off and every shell cue routes to the pack: sfx.* → event(),
+// moods/scenes → ambience(). The shell still owns the settings gates (sound/
+// music toggles) and the iOS gesture-unlock; the pack synthesizes into the
+// shared context via getCtx(). Null = the original built-in synth, untouched.
+let scape = null;
+export function setSoundscape(s) { scape = s || null; }
+// The shared, gesture-unlocked WebAudio context, for a pack soundscape's own
+// synthesis. Null until the first user gesture (initAudio).
+export function getCtx() { return ctx; }
+
 export function setSoundEnabled(v) { enabled = v; }
 export function setMusicEnabled(v) {
   musicEnabled = v;
+  if (scape) { scape.ambience?.(v ? (music.mood || 'title') : 'off'); return; }
   if (!v) music.stop();
   else music.start(music.mood || 'title');
 }
@@ -27,6 +39,7 @@ export function initAudio() {
       if (ctx && ctx.state !== 'running' && ctx.state !== 'closed') ctx.resume?.().catch(() => {});
     });
   } catch (e) { /* no addEventListener on very old context impls */ }
+  if (scape) { if (musicEnabled) scape.ambience?.(music.mood || 'title'); return; }
   if (musicEnabled) music.start(music.mood || 'title');
 }
 
@@ -154,6 +167,7 @@ export const music = {
 
   start(mood) {
     this.mood = mood;
+    if (scape) return; // the pack's soundscape owns all continuous audio
     if (!ctx || !musicEnabled) return;
     if (!this._gain) {
       this._gain = ctx.createGain();
@@ -173,6 +187,7 @@ export const music = {
   setMood(mood) {
     if (this.mood === mood) return;
     this.mood = mood;
+    if (scape) { if (musicEnabled) scape.ambience?.(mood); return; }
     if (ctx && musicEnabled && !this._timer) this.start(mood);
   },
 
@@ -211,6 +226,7 @@ export const music = {
 
 // Scene ambiences: one subtle synthesized texture as a card deals
 export function ambient(scene) {
+  if (scape) { if (enabled && scene) scape.ambience?.(scene); return; }
   if (!ctx || !enabled) return;
   const t = ctx.currentTime + 0.05;
   const g = ctx.createGain();
@@ -237,7 +253,10 @@ export function ambient(scene) {
   }
 }
 
-export const sfx = {
+// The built-in cue synth (music's original voice). Exported through the
+// routed `sfx` below so a pack soundscape can re-voice any cue by name
+// without the shell's call sites changing.
+const SFX = {
   swipe() { blip(320, 0.08, 'sine', 0.05); },
   commit() { blip(440, 0.1, 'triangle', 0.06); blip(660, 0.12, 'triangle', 0.05, 0.06); },
   bad() { blip(220, 0.18, 'sawtooth', 0.05); blip(165, 0.25, 'sawtooth', 0.05, 0.12); },
@@ -272,4 +291,19 @@ export const sfx = {
   mgGolden() { [784, 988, 1175, 1568].forEach((f, i) => blip(f, 0.14, 'triangle', 0.06, i * 0.06)); },
   mgBotched() { blip(147, 0.3, 'sawtooth', 0.05); blip(139, 0.35, 'sawtooth', 0.04, 0.1); },
   cash() { blip(988, 0.07, 'square', 0.03); blip(1319, 0.09, 'square', 0.03, 0.05); },
+  // The hush (a set-piece mood): built-in silence — the cue EXISTS so a pack
+  // soundscape can hear the moment (thin its ambience, still its haptics);
+  // the default voice for silence is silence.
+  hush() {},
 };
+
+// The routed cue surface every shell call site uses. With no soundscape it IS
+// the built-in synth (byte-identical behavior for music/LI/probe); with one,
+// each cue becomes `event(name, arg)` on the pack — called only when sound is
+// on, so the pack never re-implements the settings gate.
+export const sfx: typeof SFX = Object.fromEntries(
+  Object.keys(SFX).map((k) => [k, (...args: any[]) => {
+    if (scape) { if (enabled) scape.event(k, args[0]); return; }
+    (SFX as any)[k](...args);
+  }]),
+) as typeof SFX;

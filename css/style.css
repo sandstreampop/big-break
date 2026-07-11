@@ -1593,6 +1593,12 @@ body.big-text #app { zoom: 1.18; }
 /* The persistent character stage: faces between the HUD and the card. */
 #stage { display: flex; gap: 8px; justify-content: center; margin: 2px 0 6px; }
 #stage:empty { display: none; }
+
+/* The tableau (presenter.tableau): a pack-rendered world-state strip between
+   the HUD and the stage. The shell owns only the slot; the pack's own
+   stylesheet owns everything inside it. Counts toward the ADR-0009 ambient
+   budget (test/ui/crowding.mjs). */
+#tableau:empty { display: none; }
 .stage-slot {
   flex: 1 1 0; max-width: 128px; min-width: 0;
   display: flex; flex-direction: column; align-items: center; gap: 2px;

@@ -15,14 +15,14 @@ import { artFor, sceneFor } from '../art.js';
 import { sfx, ambient } from '../audio.js';
 import { track } from '../analytics.js';
 import {
-  el, $, activatable, btn, reducedMotion, vibrate, openOverlay, openPortrait,
+  el, $, activatable, btn, reducedMotion, vibrate, vibrateNamed, openOverlay, openPortrait,
   spawnConfetti, coachMark, show, responsivePicture,
 } from './dom.js';
 import {
   activePack, run, PRES, meta, metaFor, fillText, itemById, vibeFor, STAT_META,
 } from './context.js';
 import { renderHud, spawnStatFloaters } from './hud.js';
-import { showInspect } from './inspectors.js';
+import { showInspect, showInspectPanel } from './inspectors.js';
 import { feedTeaser } from './feeds.js';
 import { routeAdvance } from './nav.js';
 
@@ -73,6 +73,25 @@ function renderStage(ev) {
   }
 }
 
+// The persistent world-state strip (presenter.tableau): a pack-rendered band
+// between the HUD and the stage — the odyssey's living frieze. The shell owns
+// the host node, the tap-to-inspect panel (numeric truth one tap away), and
+// nothing else: every pixel inside is the pack's html. Rebuilt every deal
+// (fresh node, so no listener stacking); absent hook = no node at all.
+function renderTableau(ev) {
+  const spec = PRES.tableau?.(run, ev || null);
+  const old = $('#tableau');
+  if (!spec) { old?.remove(); return; }
+  const host = el('div', 'tableau' + (spec.cls ? ' ' + spec.cls : ''), spec.html);
+  host.id = 'tableau';
+  if (spec.inspect?.length) {
+    const blocks = spec.inspect;
+    activatable(host, () => { sfx.ui(); showInspectPanel(blocks); }, 'Inspect');
+  }
+  if (old) old.replaceWith(host);
+  else ($('#stage') || $('#card-area')).before(host);
+}
+
 export function dealCard() {
   encoreArmed = false;
   show('#screen-game');
@@ -92,6 +111,8 @@ export function dealCard() {
   // people as first-class faces, re-read every deal, spotlighting whoever the
   // scene is about. Packs without one leave the slot empty.
   renderStage(ev);
+  // The persistent world-state strip (presenter.tableau), above the stage.
+  renderTableau(ev);
 
   // The bard's own beat (presenter.preCardBeat): a named speaker's full-screen
   // turn BEFORE the card — the odyssey bard leaning in between cards, distinct
@@ -168,10 +189,14 @@ function showBardBeat(beat, cont) {
 // The feel cues (R11's mood contract) play here, at the beat.
 function showSetPieceBeat(sp, cont) {
   openOverlay((ov) => {
-    vibrate(sp.mood === 'blow' ? [60, 40, 90] : [12, 30, 12]);
-    const box = el('div', 'result-card sp-beat ' + (sp.cls || ''));
+    // The hush (the inverted grammar): no haptic at all — the absence is the
+    // cue. Other moods keep their tick, re-voiceable by a pack soundscape.
+    if (sp.mood === 'hush') vibrateNamed('hush', []);
+    else vibrateNamed('set-piece' + (sp.mood === 'blow' ? '-blow' : ''), sp.mood === 'blow' ? [60, 40, 90] : [12, 30, 12]);
+    const box = el('div', 'result-card sp-beat ' + (sp.cls || '') + (sp.mood === 'hush' ? ' mood-hush' : ''));
     if (sp.mood === 'triumph') { spawnConfetti(ov); sfx.win(); }
     if (sp.mood === 'blow' && !reducedMotion()) box.classList.add('shake');
+    if (sp.mood === 'hush') sfx.hush();
     box.append(el('div', 'set-piece-banner sp-beat-banner', sp.banner));
     if (sp.sub) box.append(el('div', 'set-piece-sub sp-beat-sub', fillText(sp.sub)));
     if (sp.stakes?.length) {
@@ -194,6 +219,10 @@ function renderDealtCard(ev, sp) {
   // the banner/card stack collapses. The JS that inserts the set-piece is the
   // source of truth, so it marks the container itself.
   area.classList.toggle('has-set-piece', !!sp);
+  // The hush persists onto the card the beat framed (a real class, not
+  // :has()): the pack's stylesheet softens the world while the temptation is
+  // live; sibling packs have no mood-hush rules and are untouched.
+  area.classList.toggle('mood-hush', sp?.mood === 'hush');
   if (sp) {
     area.append(el('div', 'set-piece set-piece-slim ' + (sp.cls || ''),
       `<div class="set-piece-banner">${sp.banner}</div>`));
@@ -206,7 +235,7 @@ function renderDealtCard(ev, sp) {
   if (ev.flashpoint) {
     // U2: the moment must be LEGIBLE — foil frame, sting, badge
     sfx.flashpoint();
-    vibrate([20, 30, 20, 30, 60]);
+    vibrateNamed('flashpoint', [20, 30, 20, 30, 60]);
     card.append(el('div', 'flashpoint-badge', '⚡ FLASHPOINT'));
   }
   card.append(artFor(ev.art, 'card-art', vibeFor()));
@@ -403,8 +432,12 @@ function attachDrag(card, bL, bR) {
     samples.push([now, e.clientX]);
     while (samples.length > 2 && now - samples[0][0] > 90) samples.shift();
     if (!reducedMotion()) {
-      card.style.transform =
-        `translate3d(${dx}px, ${dy * 0.15}px, 0) rotate(${dx * 0.055}deg)`;
+      // A pack feel profile may bend the drag (water resistance); the
+      // default is today's 1:1 glide, untouched.
+      const f = PRES.feel?.drag?.(dx, dy);
+      card.style.transform = f
+        ? `translate3d(${f.x}px, ${f.y}px, 0) rotate(${f.rot}deg)`
+        : `translate3d(${dx}px, ${dy * 0.15}px, 0) rotate(${dx * 0.055}deg)`;
     }
     const t = Math.min(1, Math.abs(dx) / 70);
     card.querySelector('.hint-left').style.opacity = dx < 0 ? t : 0;
@@ -413,7 +446,7 @@ function attachDrag(card, bL, bR) {
     bL.classList.toggle('armed', dx < -threshold);
     bR.classList.toggle('armed', dx > threshold);
     const isArmed = bL.classList.contains('armed') || bR.classList.contains('armed');
-    if (isArmed && !wasArmed) vibrate(10); // tactile "past the point of no return"
+    if (isArmed && !wasArmed) vibrate(PRES.feel?.armVibrate ?? 10); // tactile "past the point of no return"
   });
   const release = (e) => {
     if (!dragging || (pid !== null && e.pointerId !== pid)) return;
@@ -502,6 +535,12 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
   if (reducedMotion()) {
     card.style.opacity = '0';
     setTimeout(fly, 120);
+  } else if (PRES.feel?.commitClass) {
+    // The pack's own commit animation (the oar-stroke sweep): the shell sets
+    // the direction and keeps its timing; the pack's CSS owns the motion.
+    card.style.setProperty('--commit-dir', side === 'left' ? '-1' : '1');
+    card.classList.add(PRES.feel.commitClass);
+    setTimeout(fly, 240);
   } else {
     const off = (side === 'left' ? -1 : 1) * (window.innerWidth * 1.1);
     card.style.transition = 'transform .38s cubic-bezier(.2,.7,.3,1), opacity .38s';
@@ -519,9 +558,9 @@ const TIER_LABEL = {
 };
 
 function showResult(result) {
-  if (result.tier === 'incredible') { sfx.incredible(); vibrate([30, 40, 30, 40, 60]); }
+  if (result.tier === 'incredible') { sfx.incredible(); vibrateNamed('result-incredible', [30, 40, 30, 40, 60]); }
   else if (result.tier === 'good') sfx.good();
-  else { sfx.bad(); vibrate(80); }
+  else { sfx.bad(); vibrateNamed('result-bad', 80); }
 
   // Forced-choice paths (shop shelf pick / gear-full chooser) don't arm the
   // tap-to-continue dismiss — you must pick a button. The normal path advances

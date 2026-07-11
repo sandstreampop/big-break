@@ -248,6 +248,41 @@ for (const pack of PACKS) {
       `${grants} gear grant(s) across the seeded runs but equipItem landed none in state.accessories`);
   });
 
+  // ── The alive-fabric seams (F1) hold their contracts for every pack. The
+  // seams are optional and feature-detected, so a MALFORMED value fails
+  // silently in the shell (`?.` swallows it) — this makes the shape loud:
+  // a declared seam must be the right kind of thing, and every setPiece a
+  // seeded run actually produces must use a mood the shell knows (a typo'd
+  // mood is a no-op cue the pack thinks it played). ──
+  test(`[${pack.id}] alive-fabric seams are well-formed and setPiece moods are known`, () => {
+    const pres = pack.presenter || {};
+    if (pres.tableau !== undefined) assert.equal(typeof pres.tableau, 'function', 'tableau must be a function');
+    if (pres.titleScene !== undefined) assert.equal(typeof pres.titleScene, 'function', 'titleScene must be a function');
+    if (pres.soundscape !== undefined) {
+      assert.equal(typeof pres.soundscape.event, 'function', 'soundscape.event must be a function');
+      for (const k of ['ambience', 'haptic']) {
+        if (pres.soundscape[k] !== undefined) assert.equal(typeof pres.soundscape[k], 'function', `soundscape.${k} must be a function`);
+      }
+    }
+    if (pres.feel !== undefined) {
+      if (pres.feel.drag !== undefined) assert.equal(typeof pres.feel.drag, 'function', 'feel.drag must be a function');
+      if (pres.feel.commitClass !== undefined) assert.equal(typeof pres.feel.commitClass, 'string', 'feel.commitClass must be a string');
+    }
+    if (typeof pres.setPiece === 'function') {
+      const KNOWN_MOODS = new Set(['triumph', 'blow', 'hush']);
+      const observer = {
+        onChoice(state, ev) {
+          const sp = pres.setPiece(state, ev);
+          if (sp?.mood !== undefined) {
+            assert.ok(KNOWN_MOODS.has(sp.mood),
+              `setPiece mood '${sp.mood}' on ${ev.id} is not a shell cue (${[...KNOWN_MOODS].join('/')}) — it would silently no-op`);
+          }
+        },
+      };
+      for (const seed of [11, 424242, 987654321]) simulatePackRun(pack, seed, 'narrative', observer);
+    }
+  });
+
   // ── Plugin registration order (per-pack, seeded-stream-critical). ──
   test(`[${pack.id}] plugin registration order is stable`, () => {
     const ids = (pack.plugins || []).map((p) => p.id);

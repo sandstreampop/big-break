@@ -15,7 +15,7 @@ import * as engine from './engine.js';
 import * as save from './save.js';
 import type { Pack } from './types.js';
 import { registerArt } from './art.js';
-import { sfx, music, setSoundEnabled, setMusicEnabled, initAudio } from './audio.js';
+import { sfx, music, setSoundEnabled, setMusicEnabled, setSoundscape, initAudio } from './audio.js';
 import { initAnalytics, track } from './analytics.js';
 import { PRES, meta, run, selectPack, setMeta } from './ui/context.js';
 import { $, show, healStaleStylesheets, topOverlay, anyOverlayActive, registerImageVariants } from './ui/dom.js';
@@ -108,6 +108,9 @@ export function boot(pack: Pack) {
   });
   setSoundEnabled(meta.settings.sound);
   setMusicEnabled(meta.settings.music !== false);
+  // A pack's own audio identity (presenter.soundscape): when present, every
+  // shell cue routes to the pack and the lo-fi engine stays off.
+  setSoundscape(PRES.soundscape);
   music.setMood('title');
   document.body.classList.toggle('big-text', !!meta.settings.bigText);
   document.addEventListener('pointerdown', initAudio, { once: true });

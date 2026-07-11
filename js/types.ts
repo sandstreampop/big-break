@@ -767,8 +767,10 @@ export interface Presenter {
   setPiece?: (state: RunState, ev: GameEvent) => {
     banner: string; sub?: string; stakes?: { html: string; cls?: string }[]; cls?: string;
     // Optional feel cue the shell plays generically: 'triumph' (confetti,
-    // win sting) or 'blow' (shake, heavy haptic). Content-free.
-    mood?: 'triumph' | 'blow';
+    // win sting), 'blow' (shake, heavy haptic), or 'hush' (the inverted
+    // grammar — no haptic, no sting, the beat and the following card wear
+    // mood-hush classes for the pack's stylesheet to soften). Content-free.
+    mood?: 'triumph' | 'blow' | 'hush';
     // Optional arc key: set-pieces sharing a key play their full-screen beat
     // once per run (the first card of the arc), and later cards in the arc
     // wear only the slim continuity ribbon — the frame is taught once.
@@ -832,6 +834,66 @@ export interface Presenter {
   // Comeback-mode copy (title button, persona-screen header/sub); the
   // TRANSFORM stays Pack.comeback. Music's Second Act is the default.
   comeback?: { label: string; head: string; sub: string };
+
+  // ── The alive-fabric seams (odyssey north star; all optional, all
+  // genre-neutral, all feature-detected — a pack that omits them renders the
+  // shell byte-for-byte as before). ──
+
+  // A persistent pack-rendered strip between the HUD and the card — a
+  // world-state readout (the odyssey's living frieze). The shell owns
+  // placement (#tableau, above the stage), the tap-to-inspect panel, and the
+  // crowding contract (the strip counts toward ADR-0009's ambient budget);
+  // the pack owns every pixel of the strip via `html` (+ `cls` on the host).
+  // `inspect` backs the tap: hard-ruled blocks where the numeric truth is
+  // stated plainly, one tap away. MUST be a pure read of state (deals
+  // re-render on resume; the sims never render). Return null to render no
+  // strip for this deal.
+  tableau?: (state: RunState, ev: GameEvent | null) => {
+    html: string; cls?: string;
+    inspect?: { title: string; lines: string[] }[];
+  } | null;
+  // World-is-HUD: suppress the numeric stat rail on the full HUD — the pack's
+  // tableau is the primary state display and numbers live in its inspect
+  // panel. The top strip (act, buttons) and the carried row stay. Packs that
+  // omit this (or run compactHud) are untouched.
+  diegeticHud?: boolean;
+  // The pack's own audio identity. When present, the shell's lo-fi soundtrack
+  // engine stays OFF for this pack and every shell sound cue routes here
+  // instead of the built-in synth: `event` receives the shell's cue names
+  // (swipe, good, bad, incredible, win, winPath, gameover, ui, flashpoint,
+  // cash, mgHit, …) and the pack decides what — usually silence — each
+  // means; `ambience` receives the shell's mood keys ('title', 'act1', …,
+  // 'ending', and 'off' when the player disables music) plus card scene ids,
+  // and owns any continuous bed; `haptic` lets the pack re-voice the shell's
+  // built-in vibration moments by name ('result-bad', 'result-incredible',
+  // 'set-piece', 'flashpoint', 'arm') — return a pattern, null for silence,
+  // or undefined for the shell default. All synthesis stays WebAudio (use
+  // getCtx() from js/audio.js — it is gesture-unlocked by the shell); sound/
+  // music/haptics settings are respected by the shell before it calls in.
+  soundscape?: {
+    event: (name: string, arg?: any) => void;
+    ambience?: (scene: string) => void;
+    haptic?: (name: string) => number[] | null | undefined;
+  };
+  // The pack's swipe feel (the core gesture, ~28× a run). `drag` maps a raw
+  // pointer offset to the card's visual transform (water resistance);
+  // `commitClass` replaces the default fly-off with a pack-styled commit
+  // animation (the shell sets --commit-dir to ±1 and keeps its own timing);
+  // `armVibrate` re-voices the past-the-threshold tick. Defaults preserve
+  // today's feel exactly.
+  feel?: {
+    drag?: (dx: number, dy: number) => { x: number; y: number; rot: number };
+    commitClass?: string;
+    armVibrate?: number[];
+  };
+  // A pack-rendered title stage behind the shell's menu (the odyssey's
+  // threshold). The shell mounts `host` as the screen's first child and
+  // builds its menu as always; a pack that returns true takes the veil — the
+  // screen wears .title-veiled (the pack's CSS hides the menu) until the
+  // pack calls `lift()` (the shell then removes the class). `resumed` says a
+  // run is in progress (the fire is still burning). Menu structure and
+  // routing stay shell-owned.
+  titleScene?: (host: HTMLElement, ctx: { resumed: boolean; lift: () => void }) => boolean | void;
 
   // ADR-0014 (the second screen): the outside world's reaction at a pivotal
   // moment, as platform-skinned social feeds. The shell renders a teaser +

@@ -9,7 +9,7 @@
 
 import { sfx } from '../audio.js';
 import { CSS_CONTRACT } from '../version.js';
-import { meta } from './context.js';
+import { meta, PRES } from './context.js';
 import type { ImageVariant } from '../types.js';
 
 export const $ = (sel) => document.querySelector(sel);
@@ -125,6 +125,16 @@ export function reducedMotion() {
 export function vibrate(pattern) {
   if (meta.settings.haptics === false) return;
   try { navigator.vibrate?.(pattern); } catch (e) {}
+}
+
+// A NAMED vibration moment (the haptic grammar seam): a pack soundscape may
+// re-voice the shell's built-in haptics by name — a pattern replaces the
+// default, null silences it, undefined (or no soundscape) keeps the shell's.
+// The settings gate stays in vibrate().
+export function vibrateNamed(name: string, fallback: number | number[]) {
+  const custom = PRES?.soundscape?.haptic?.(name);
+  if (custom === null) return;
+  vibrate(custom !== undefined ? custom : fallback);
 }
 
 // ---------- Screen router ----------
