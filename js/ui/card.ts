@@ -181,33 +181,53 @@ function showBardBeat(beat, cont) {
     // performs on — a pack without one gets the plain panel as before.
     if (beat.sceneHtml) box.append(el('div', 'beat-scene', beat.sceneHtml));
     box.append(el('div', 'bard-beat-kicker', 'AT THE FIRE'));
+    // SKEW LAW (2026-07 incident: blank fires on iOS): dialogue is VISIBLE by
+    // default; only the `pending` class this script adds may hide it, and the
+    // reveal clears it with an inline opacity no class rule can override. A
+    // client running mixed deploys (old JS + new CSS or the reverse — HTML,
+    // CSS and JS are cached and evicted independently on phones) must degrade
+    // to "everything shows at once", never to an empty panel. Same reason the
+    // pacing below first feature-detects that the ACTIVE stylesheet really
+    // hides pending lines: if it doesn't, paced taps would be invisible.
     const dlg = el('div', 'bard-beat-dialogue');
     const lines = beat.blocks.map((b) => {
       const isBard = !b.who || b.who === 'bard';
-      const line = el('div', 'bard-line ' + (isBard ? 'is-bard' : 'is-heckle'));
+      const line = el('div', 'bard-line ' + (isBard ? 'is-bard' : 'is-heckle') + (still ? '' : ' pending'));
       if (!isBard) line.append(el('div', 'bard-who', b.who + ':'));
       line.append(el('div', 'bard-quote', '“' + fillText(b.text) + '”'));
       dlg.append(line);
       return line;
     });
     box.append(dlg);
-    const hint = el('p', 'tap-hint', beat.cont || 'tap to continue');
+    const hint = el('p', 'tap-hint' + (still ? '' : ' pending'), beat.cont || 'tap to continue');
     box.append(hint);
     ov.append(box);
 
+    // `revealed` rides along for one deploy generation: the transition-era
+    // stylesheet keyed the SHOWN state on it (its base state was hidden — the
+    // very design this law retires), so a client still holding that sheet
+    // needs the class to see anything.
+    const show = (n) => {
+      n.classList.remove('pending');
+      n.classList.add('revealed');
+      n.style.opacity = '1';
+    };
     let next = 0;
     const revealNext = () => {
       clearTimeout(timer);
-      if (next < lines.length) lines[next++].classList.add('revealed');
-      if (next >= lines.length) hint.classList.add('revealed');
+      if (next < lines.length) show(lines[next++]);
+      if (next >= lines.length) show(hint);
       else timer = window.setTimeout(revealNext, BEAT_STEP_MS);
     };
-    if (still) {
-      lines.forEach((l) => l.classList.add('revealed'));
-      next = lines.length;
-      hint.classList.add('revealed');
+    if (!still && getComputedStyle(lines[0]).opacity === '0') {
+      revealNext(); // the stylesheet paces with us — the first line lands with the panel
     } else {
-      revealNext(); // the first line lands with the panel
+      // Reduced motion, or a stylesheet that doesn't hide pending lines
+      // (stale/foreign theme): the panel is already readable — pacing would
+      // only put invisible taps between the player and the card.
+      lines.forEach(show);
+      next = lines.length;
+      show(hint);
     }
     // Capture-phase, registered before the overlay arms its own dismiss
     // listener: while lines are pending, a tap advances the reveal and never

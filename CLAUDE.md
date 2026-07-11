@@ -145,7 +145,12 @@
   version-stamped (`tools/build.mjs` adds `?v=` and the `--bb-css-v` ↔
   `js/version.js` contract that `js/ui.ts` verifies and self-heals at boot);
   and on the smallest phones the ambient tiers yield before the prompt clips
-  (ADR-0009 Tier 1).
+  (ADR-0009 Tier 1). Delivery skew is part of the platform: HTML/CSS/JS cache
+  and evict independently on phones, so **a stylesheet may only HIDE content
+  under a class the same deploy's script adds** — the scriptless default is
+  visible, and any mixed-deploy pairing degrades to everything-shows-at-once,
+  never a blank surface (INCIDENTS.md #6; SKEW-LAW probe in
+  test/ui/smoke.mjs, per-sheet `--bb-css-v-<name>` stamps in the boot probe).
 - **Raster images have ONE road: preprocess, then serve responsively — never a
   raw `<img>`.** A master image is never shipped or rendered directly (the cast
   portraits' first drop did that: 750KB 1024² files served to 30px chips — see

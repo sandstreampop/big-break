@@ -79,6 +79,15 @@ const hashOf = (buf) => createHash('sha256').update(buf).digest('hex').slice(0, 
 const cssFiles = readdirSync(resolve(dist, 'css')).filter((f) => f.endsWith('.css')).sort();
 const cssV = hashOf(cssFiles.map((f) => f + '\n' + readFileSync(resolve(dist, 'css', f), 'utf8')).join('\n'));
 appendFileSync(resolve(dist, 'css/style.css'), `\n:root { --bb-css-v: "${cssV}"; }\n`);
+// EVERY sheet also carries its own per-file stamp (--bb-css-v-<name>): the
+// boot probe verifies each loaded stylesheet individually, because a pack
+// sheet can go stale independently of style.css (INCIDENTS.md 2026-07, the
+// blank-fires skew: style.css agreed with the JS while odyssey.css was from
+// another deploy — the legacy single stamp could not see it).
+for (const f of cssFiles) {
+  const key = f.replace(/\.css$/, '').replace(/[^a-z0-9-]/gi, '');
+  appendFileSync(resolve(dist, 'css', f), `\n:root { --bb-css-v-${key}: "${cssV}"; }\n`);
+}
 writeFileSync(resolve(dist, 'js/version.js'),
   `// stamped by tools/build.mjs — see js/version.ts\nexport const CSS_CONTRACT = '${cssV}';\n`);
 

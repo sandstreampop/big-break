@@ -257,14 +257,18 @@ body.big-text .sp-beat .sp-beat-banner { font-size: 14px; }
    lives here, beside its own transition, so a stale/absent theme sheet
    (mobile-matrix delivery pass) can never hide text it doesn't reveal;
    reduced-motion collapses to everything-visible. */
-.bard-beat .bard-line { opacity: 0; transition: opacity .9s ease; }
-.bard-beat .bard-line.revealed { opacity: 1; }
-.bard-beat .tap-hint { opacity: 0; transition: opacity .7s ease .5s; }
-.bard-beat .tap-hint.revealed { opacity: 1; }
+/* SKEW LAW (docs/INCIDENTS.md 2026-07, blank fires on iOS): the DEFAULT
+   state of dialogue is visible. Only `pending` — a class the same deploy's
+   script adds and clears — may hide a line; a base `opacity: 0` here once
+   met a cached older script that never revealed anything, and the fire went
+   blank. Under any deploy skew this design degrades to everything-visible. */
+.bard-beat .bard-line { transition: opacity .9s ease; }
+.bard-beat .tap-hint { transition: opacity .7s ease .5s; }
+.bard-beat .bard-line.pending, .bard-beat .tap-hint.pending { opacity: 0; }
 /* Everything at once when motion is off: the OS preference (media query) or
    the in-game toggle (.beat-still, stamped by the shell — CSS can't see it). */
 @media (prefers-reduced-motion: reduce) {
-  .bard-beat .bard-line, .bard-beat .tap-hint { transition: none; opacity: 1; }
+  .bard-beat .bard-line, .bard-beat .tap-hint { transition: none; }
 }
 .bard-beat.beat-still .bard-line, .bard-beat.beat-still .tap-hint { transition: none; opacity: 1; }
 

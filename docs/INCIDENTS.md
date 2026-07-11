@@ -11,6 +11,67 @@ Each entry: what broke, the 5-whys root cause, the **rule** it produced, and the
 
 ---
 
+## #6 · The fire went blank: dialogue hidden by CSS, revealed only by JS, on a client running mixed deploys — 2026-07-11
+
+**Severity:** shipped defect (main auto-deploys), gamebreaking-adjacent on the
+flagship surface: the odyssey bard beat rendered its scene and kicker but ZERO
+dialogue on a real iPhone; a tap skipped to the next screen, so the player
+lost every fireside line.
+
+**Symptom:** player report with screenshot — "No text at all at fires now.
+I've waited for 10 seconds. And if I tap I just go to next screen." All local
+gates and CI were green; the deployed pairing worked in every Chromium pass.
+
+**Root cause (5 whys):**
+1. No dialogue → the lines sat at the stylesheet's BASE `opacity: 0`,
+   waiting for a `revealed` class that never came.
+2. Why no reveal → the device paired the NEW `odyssey.css` (reveal keyed on
+   `revealed`) with an OLD cached `js/` bundle (which staggers via
+   `--beat-i` animation delays and never adds `revealed`). Old JS also has
+   no jump-tap handler, so the tap hit the overlay's dismiss — "tap → next
+   screen".
+3. Why could the deploys mix → HTML, CSS and JS cache and evict
+   independently on phones (Pages' max-age 600 HTML + iOS's aggressive
+   eviction): a cached HTML re-fetched an evicted `odyssey.css?v=old` — the
+   server ignores the query and returns the NEWEST sheet — while the still-
+   cached old JS was served locally.
+4. Why didn't the boot probe heal it → `healStaleStylesheets` verified ONE
+   stamp, `--bb-css-v` in `style.css`; the client's `style.css` agreed with
+   its JS, so the probe passed while the PACK sheet was from another deploy.
+   (And in this skew direction — old JS, new CSS — refetching CSS cannot
+   converge anyway; only degrading gracefully can.)
+5. Why was the failure total rather than graceful → the reveal design made
+   HIDDEN the stylesheet default and VISIBLE conditional on same-deploy JS —
+   an implicit cross-file, cross-deploy coupling nothing checked.
+
+**Class:** cross-deploy coupling between independently-cached files — CSS
+whose base state hides content that only matching-deploy JS can show. (Kin of
+the `:has()` and stale-stylesheet rules: the delivery, not the code, is the
+platform.)
+
+**Rules produced:**
+- **A stylesheet may only HIDE content under a class that the same deploy's
+  script adds** (here: `pending`). The default, scriptless rendering of any
+  text surface is VISIBLE — any deploy skew degrades to "everything shows at
+  once", never to an empty screen.
+- A reveal clears its hiding mark with an inline style (`opacity: 1`), so no
+  cached class-rule pairing can strand a revealed line.
+- Paced interaction feature-detects its stylesheet (does `pending` actually
+  hide?) before spending the player's taps on invisible steps.
+- Every shipped sheet carries its own per-file stamp (`--bb-css-v-<name>`),
+  and the boot probe verifies each loaded sheet individually — a pack sheet
+  can go stale independently of `style.css`.
+
+**Guard (now in place):** fix — `.bard-line`/`.tap-hint` hidden only via
+`.pending` (shell-added), reveal via pending-clear + `revealed` (one-generation
+compat with the transition-era sheet) + inline opacity, pacing gated on a
+computed-style probe; `tools/build.mjs` stamps every sheet, and
+`healStaleStylesheets` checks per-sheet stamps. Tests — the SKEW-LAW probe in
+`test/ui/smoke.mjs` (an un-marked bard line must compute `opacity: 1`; the
+pending mark must be doing the hiding on the live beat), and
+`test/ui/mobile-matrix.mjs`'s static delivery gate now requires the per-sheet
+stamps to exist and agree with `CSS_CONTRACT`.
+
 ## #5 · Odyssey finale card's prompt clipped at 320px — and the gate only sometimes saw it — 2026-07-11
 
 **Severity:** shipped defect (main auto-deploys), cosmetic-but-flagship: the

@@ -39,7 +39,7 @@
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { skipUnlessRequired } from './require-browser.mjs';
@@ -68,6 +68,16 @@ function checkDeliveryStamp() {
   const jsV = (verJs.match(/CSS_CONTRACT = '([a-f0-9]+)'/) || [])[1];
   if (!jsV) errs.push('dist/js/version.js has no stamped CSS_CONTRACT');
   if (cssV && jsV && cssV !== jsV) errs.push(`stamp mismatch: css "${cssV}" vs js "${jsV}"`);
+  // Every shipped sheet carries its own per-file stamp, so the boot probe can
+  // spot a stale PACK sheet next to an agreeing style.css — the skew that
+  // blanked the odyssey fires (INCIDENTS.md 2026-07).
+  for (const f of readdirSync(join(root, 'css')).filter((n) => n.endsWith('.css'))) {
+    const key = f.replace(/\.css$/, '').replace(/[^a-z0-9-]/gi, '');
+    const v = (readFileSync(join(root, 'css', f), 'utf8')
+      .match(new RegExp(`--bb-css-v-${key}:\\s*"([a-f0-9]+)"`)) || [])[1];
+    if (!v) errs.push(`dist/css/${f} has no per-sheet --bb-css-v-${key} stamp`);
+    else if (jsV && v !== jsV) errs.push(`per-sheet stamp mismatch: ${f} "${v}" vs js "${jsV}"`);
+  }
   for (const html of ['index.html', 'love-island/index.html', 'odyssey/index.html']) {
     const p = join(root, html);
     if (!existsSync(p)) continue;

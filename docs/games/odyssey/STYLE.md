@@ -87,9 +87,14 @@ reads as theft.
      play script, chat, VN name tag) is a plain name label; a dash-prefixed
      name is the epigraph convention and attributes the quote *above* it —
      exactly backwards.
-   Executable: the bard-beat check in `test/ui/smoke.mjs` pins all three
+   One boundary (INCIDENTS.md #6): the reveal is the SCRIPT's job — the
+   stylesheet may hide a line only under the shell's `pending` mark, and the
+   scriptless default is visible, so a mixed-deploy client gets the whole
+   panel at once instead of a blank fire.
+   Executable: the bard-beat check in `test/ui/smoke.mjs` pins all of it
    (size ratio, contrast floor, paced reveal in speaking order with the
-   tap-jump, cue shape, and that the beat still advances to a live card).
+   tap-jump, cue shape, the SKEW-LAW probe, and that the beat still
+   advances to a live card).
 
 **Cross-reference — the Sound Law** (set alongside the Motion Law,
 2026-07-11; canonical text in [`NORTH-STAR.md`](./NORTH-STAR.md), recorded in

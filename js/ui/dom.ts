@@ -345,11 +345,22 @@ export function hashStr(s) {
 // but we've warned, and the next online visit heals.
 export function healStaleStylesheets() {
   if (CSS_CONTRACT === 'dev') return; // unstamped source build — nothing to verify
-  const readV = () =>
-    (getComputedStyle(document.documentElement).getPropertyValue('--bb-css-v') || '').replace(/["'\s]/g, '');
-  if (readV() === CSS_CONTRACT) return;
-  console.warn(`stylesheet contract mismatch (css "${readV() || 'none'}" ≠ js "${CSS_CONTRACT}") — refetching styles`);
-  for (const link of Array.from(document.querySelectorAll('link[rel="stylesheet"]'))) {
+  const readVar = (name: string) =>
+    (getComputedStyle(document.documentElement).getPropertyValue(name) || '').replace(/["'\s]/g, '');
+  const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+  // Verify every loaded sheet by ITS OWN stamp (--bb-css-v-<name>), not just
+  // style.css's legacy --bb-css-v: each file caches and evicts independently,
+  // and a stale PACK sheet next to an agreeing style.css is exactly the skew
+  // that blanked the odyssey fires (INCIDENTS.md 2026-07).
+  const staleLink = links.some((link) => {
+    const base = (link.getAttribute('href') || '').split('?')[0];
+    if (!base.endsWith('.css')) return false;
+    const key = (base.split('/').pop() || '').replace(/\.css$/, '').replace(/[^a-z0-9-]/gi, '');
+    return readVar(`--bb-css-v-${key}`) !== CSS_CONTRACT;
+  });
+  if (readVar('--bb-css-v') === CSS_CONTRACT && !staleLink) return;
+  console.warn(`stylesheet contract mismatch (css "${readVar('--bb-css-v') || 'none'}"${staleLink ? ' + per-sheet stamp' : ''} ≠ js "${CSS_CONTRACT}") — refetching styles`);
+  for (const link of links) {
     const base = (link.getAttribute('href') || '').split('?')[0];
     if (base) link.setAttribute('href', `${base}?v=${CSS_CONTRACT}&heal=${Date.now()}`);
   }

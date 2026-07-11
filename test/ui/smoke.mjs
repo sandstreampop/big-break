@@ -1100,6 +1100,25 @@ async function checkBardBeatHierarchy(browser, base) {
     await clickJS(page, '.pick-card');
     await clickJS(page, '#start-run-btn');
 
+    // SKEW LAW (INCIDENTS.md 2026-07): a bard line WITHOUT the shell's
+    // `pending` mark must be visible by CSS default. A stylesheet whose BASE
+    // state hides dialogue blanks the whole fire the moment it meets a
+    // cached script from another deploy that never adds the reveal mark.
+    const bare = await page.evaluate(() => {
+      const probe = document.createElement('div');
+      probe.className = 'bard-beat';
+      probe.innerHTML = '<div class="bard-line"><div class="bard-quote">probe</div></div><p class="tap-hint">probe</p>';
+      document.body.appendChild(probe);
+      const o = {
+        line: getComputedStyle(probe.querySelector('.bard-line')).opacity,
+        hint: getComputedStyle(probe.querySelector('.tap-hint')).opacity,
+      };
+      probe.remove();
+      return o;
+    });
+    if (bare.line !== '1' || bare.hint !== '1')
+      throw new Error(`[${label}] SKEW LAW violated: un-marked dialogue is hidden by CSS alone (line=${bare.line} hint=${bare.hint}) — this blanks the fire under deploy skew`);
+
     // The cold open always fires on the first deal — the wiring check: the
     // shell marks lines `revealed` and the theme sheet owns a real fade.
     await page.waitForSelector('#overlay.active .bard-beat .bard-line', { timeout: 10000 });
@@ -1146,6 +1165,7 @@ async function checkBardBeatHierarchy(browser, base) {
       return {
         order: lines.map((l) => (l.classList.contains('is-heckle') ? 'heckle' : 'bard')),
         revealed: lines.map((l) => l.classList.contains('revealed')),
+        pendingHidden: lines.map((l) => l.classList.contains('pending') && getComputedStyle(l).opacity === '0'),
         hintRevealed: hint.classList.contains('revealed'),
         whoText: (who?.textContent || '').trim(),
         sizeRatio: parseFloat(getComputedStyle(heckle).fontSize) / parseFloat(getComputedStyle(bard).fontSize),
@@ -1159,6 +1179,11 @@ async function checkBardBeatHierarchy(browser, base) {
     // screen, the reply (line 2, due ~1.5s later) is not, nor is the hint.
     if (!h.revealed[0] || h.revealed[1] || h.hintRevealed)
       throw new Error(`[${label}] reveal must pace in speaking order (revealed=${h.revealed.join(',')} hint=${h.hintRevealed})`);
+    // …and the hiding is the shell's `pending` mark doing its job (the CSS
+    // pair of the SKEW LAW probe above): the unspoken line is marked and
+    // actually hidden; the spoken one is not marked.
+    if (h.pendingHidden[0] || !h.pendingHidden[1])
+      throw new Error(`[${label}] pending marks wrong (pendingHidden=${h.pendingHidden.join(',')}) — hiding must ride the shell's mark, not the stylesheet's default`);
     if (!/^[^—–-].*:$/.test(h.whoText))
       throw new Error(`[${label}] speaker cue "${h.whoText}" must read as a cue (name + colon, no dash — a dash-attribution names the source of the quote ABOVE it)`);
     if (h.sizeRatio < 0.9)
