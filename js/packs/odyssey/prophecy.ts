@@ -7,6 +7,7 @@
 // through the presenter's pure presentFinale hook.
 
 import type { Pack, Plugin } from '../../types.js';
+import { crewAtLaunch } from './crew.js';
 
 export const prophecyPlugin: Plugin = {
   id: 'odyssey_prophecy',
@@ -30,4 +31,12 @@ export const summarizeTelling: NonNullable<Pack['summarize']> = (state) => ({
   trueVictory: state.ending?.result === 'success' && state.path === 'nostos'
     && state.flags.includes('ody_oar_road') && (state.poseidon || 0) <= 3,
   named: state.flags.includes('ody_named'),
+  // The telling-ledger's raw material (I8, the Memory Law): how tonight
+  // ended, who was lost, whether the name went down with the anchor-stone,
+  // and which cross-run callbacks the crowd spent (no-repeat bookkeeping).
+  endingKey: state.ending?.key ?? null,
+  endingResult: state.ending?.result ?? null,
+  nobody: state.flags.includes('ody_nobody'),
+  crewLost: Math.max(0, crewAtLaunch(state.loadout) - Math.round(state.expedition ?? 0)),
+  heardCallbacks: (state.bardShown || []).filter((id) => id.startsWith('bcm_')),
 });

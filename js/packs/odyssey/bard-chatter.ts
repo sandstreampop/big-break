@@ -32,10 +32,25 @@ declare module '../../types.js' {
   interface RunState {
     bardLine?: string | null;
     bardShown?: string[];
+    // The Memory Law (I8): a snapshot of the pack meta-save's telling-ledger,
+    // stamped at setup (presenter.applySetup) — the crowd's cross-run memory.
+    // Knowledge only; the sims never stamp it, so memory scripts are simply
+    // ineligible there (flavor RNG, golden-safe either way).
+    tellingLedger?: {
+      count: number;
+      byEnding: Record<string, number>;
+      lastEnding?: string;
+      lastResult?: string | null;
+      named: number;
+      nobody: number;
+      crewLostTotal: number;
+      crewLostLast?: number;
+      heard: string[];
+    };
   }
 }
 
-type Kind = 'open' | 'reactive' | 'ambient';
+type Kind = 'open' | 'reactive' | 'memory' | 'ambient';
 // A dialogue block: the bard's own speech (`who` omitted) or a heckler's
 // interjection (`who` = the attribution the screen prints). Text is stored
 // WITHOUT surrounding quotes; the shell wraps every block in curly quotes so
@@ -107,6 +122,35 @@ export const CHATTER: Chatter[] = [
   { id: 'bc_deep', kind: 'ambient', when: (s) => (s.act || 1) >= 3, blocks: [
     { text: 'The fire burns low now, and I will sing softer, friends — the last sea is a corridor with teeth on both walls, and beyond it, home, wearing a stranger’s face.' },
   ] },
+
+  // ── Memory (I8): the crowd remembers previous tellings — gags accumulate
+  // across runs the way the prophecy does. Keyed to the telling-ledger the
+  // setup stamps; no-repeat-until-exhausted across runs (the heard set).
+  // VOICE law 8's fence: the crowd needles the BARD and the telling's
+  // variance (the retelling wink), never the player's play. ──
+  { id: 'bcm_one_eye', kind: 'memory', when: (s) => !!s.tellingLedger && s.tellingLedger.count >= 1, blocks: [
+    { who: 'the woman by the woodpile', text: 'Last night the Cyclops had one eye. Tonight also one eye. Progress.' },
+    { text: 'Count it again tomorrow. Some nights that eye is the only thing in this whole tale that holds still.' },
+  ] },
+  { id: 'bcm_again', kind: 'memory', when: (s) => !!s.tellingLedger && s.tellingLedger.count >= 2, blocks: [
+    { who: 'the potter’s boy', text: 'You told this one already.' },
+    { text: 'I told A telling already, boy. Tonight is tonight’s. Same sea, same man — sit still and find out what the water does differently when you are watching.' },
+  ] },
+  { id: 'bcm_drowned', kind: 'memory', when: (s) => s.tellingLedger?.lastEnding === 'wrath', blocks: [
+    { who: 'the woman by the woodpile', text: 'Last night the sea took the lot of you. My grandfather always poured before the last headland.' },
+    { text: 'Her grandfather, friends, poured so often he arrived everywhere dry-hulled and drunk. But pour. Tonight we row past the place it happened, and I want the god fed before we get there.' },
+  ] },
+  { id: 'bcm_meadow', kind: 'memory', when: (s) => s.tellingLedger?.lastEnding === 'lotus', blocks: [
+    { who: 'the potter’s boy', text: 'Last night he sat down in the flowers and you just stopped singing.' },
+    { text: 'And tonight he stands back up. That is what a new fire buys, boy — the meadow keeps whichever man you leave in it, and we left one. Listen for the bench with no oar in it.' },
+  ] },
+  { id: 'bcm_named_habit', kind: 'memory', when: (s) => (s.tellingLedger?.named || 0) >= 2, blocks: [
+    { who: 'the man at the back', text: 'He shouts his name at the giant again tonight? The horse never shouted.' },
+    { text: 'The horse, friend, was FULL of men not shouting — that was the whole art of it. Whether this captain learned the horse’s lesson, tonight will say.' },
+  ] },
+  { id: 'bcm_fee_nights', kind: 'memory', when: (s) => (s.tellingLedger?.count || 0) >= 5, blocks: [
+    { text: 'Five nights of the long way home, friends, and the bowl by the woodpile still rings like a temple at noon — which is to say, empty. The sea is not the only thing at this fire owed a debt.' },
+  ] },
 ];
 
 const BY_ID: Record<string, Chatter> = Object.fromEntries(CHATTER.map((c) => [c.id, c]));
@@ -120,6 +164,22 @@ const AMBIENT_P = 0.24;
 const eligible = (kind: Kind, s: RunState) =>
   CHATTER.filter((c) => c.kind === kind && !(s.bardShown || []).includes(c.id) && (!c.when || c.when(s)));
 
+// The memory pool with cross-run no-repeat-until-exhausted (LI bark-engine
+// precedent): a callback the fire has HEARD (any earlier telling) stays
+// quiet until every eligible callback has been heard once — then the pool
+// resets and the gags come back around.
+export function eligibleMemory(s: RunState): Chatter[] {
+  const pool = eligible('memory', s);
+  if (!pool.length) return pool;
+  const heard = new Set(s.tellingLedger?.heard || []);
+  const fresh = pool.filter((c) => !heard.has(c.id));
+  return fresh.length ? fresh : pool;
+}
+
+// How often the crowd spends a MEMORY on a silent card (between the
+// reactive scripts' always-fire and the ambient roll).
+const MEMORY_P = 0.5;
+
 // Deterministic in flavorSeed: a run's chatter is fixed for that run, varies
 // run-to-run; `salt` spreads successive decisions without touching play RNG.
 function pickId(s: RunState, salt: number): string | null {
@@ -128,9 +188,13 @@ function pickId(s: RunState, salt: number): string | null {
   const reactive = eligible('reactive', s);
   let chosen: Chatter | undefined;
   if (reactive.length) chosen = reactive[Math.floor(rng() * reactive.length)];
-  else if (rng() < AMBIENT_P) {
-    const amb = eligible('ambient', s);
-    if (amb.length) chosen = amb[Math.floor(rng() * amb.length)];
+  else {
+    const mem = eligibleMemory(s);
+    if (mem.length && rng() < MEMORY_P) chosen = mem[Math.floor(rng() * mem.length)];
+    else if (rng() < AMBIENT_P) {
+      const amb = eligible('ambient', s);
+      if (amb.length) chosen = amb[Math.floor(rng() * amb.length)];
+    }
   }
   if (!chosen) return null;
   s.bardShown = [...(s.bardShown || []), chosen.id];
