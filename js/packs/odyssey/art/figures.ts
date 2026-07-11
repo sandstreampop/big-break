@@ -506,33 +506,36 @@ export function cup(level: CupLevel, opts: SpriteOpts = {}): string {
 // Frame 0 is the CLOSED state (the still truth — reduced motion lands here);
 // frame 1 is open. The ceremony CSS plays open→closed ONCE (a one-shot,
 // steps): the doors close behind you.
+// Firelit clay, not figure-black — the doors must READ on the night field
+// (the Cyclops stays a shape in the dark on purpose; a door that cannot be
+// seen closing is just a rectangle).
 const DOORS_CLOSED = [
-  '####################',
-  '####################',
-  '#########..#########',
-  '#########..#########',
-  '#########..#########',
-  '#########..#########',
-  '#########..#########',
-  '#########..#########',
-  '#########..#########',
-  '#########..#########',
-  '#########..#########',
-  '####################',
+  'TTTTTTTTTTTTTTTTTTTT',
+  'TTTTTTTTTTTTTTTTTTTT',
+  'TTTTTTTTT..TTTTTTTTT',
+  'TTTTTTTTT..TTTTTTTTT',
+  'TTTTTTTTT..TTTTTTTTT',
+  'TTTTTTTTT..TTTTTTTTT',
+  'TTTTTTTTT..TTTTTTTTT',
+  'TTTTTTTTT..TTTTTTTTT',
+  'TTTTTTTTT..TTTTTTTTT',
+  'TTTTTTTTT..TTTTTTTTT',
+  'TTTTTTTTT..TTTTTTTTT',
+  'TTTTTTTTTTTTTTTTTTTT',
 ];
 const DOORS_OPEN = [
-  '####################',
-  '####################',
-  '#####..........#####',
-  '#####..........#####',
-  '#####..........#####',
-  '#####..........#####',
-  '#####..........#####',
-  '#####..........#####',
-  '#####..........#####',
-  '#####..........#####',
-  '#####..........#####',
-  '####################',
+  'TTTTTTTTTTTTTTTTTTTT',
+  'TTTTTTTTTTTTTTTTTTTT',
+  'TTTTT..........TTTTT',
+  'TTTTT..........TTTTT',
+  'TTTTT..........TTTTT',
+  'TTTTT..........TTTTT',
+  'TTTTT..........TTTTT',
+  'TTTTT..........TTTTT',
+  'TTTTT..........TTTTT',
+  'TTTTT..........TTTTT',
+  'TTTTT..........TTTTT',
+  'TTTTTTTTTTTTTTTTTTTT',
 ];
 export function hallDoors(opts: SpriteOpts = {}): string {
   return sprite([DOORS_CLOSED, DOORS_OPEN], { cls: 'ody-doors', label: 'the hall doors', ...opts });
