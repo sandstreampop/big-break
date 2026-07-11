@@ -134,7 +134,11 @@ export function vibrate(pattern) {
 export function vibrateNamed(name: string, fallback: number | number[]) {
   const custom = PRES?.soundscape?.haptic?.(name);
   if (custom === null) return;
-  vibrate(custom !== undefined ? custom : fallback);
+  const pattern = custom !== undefined ? custom : fallback;
+  // An empty pattern means "this moment has no default voice" — a no-op,
+  // NOT navigator.vibrate([]) (which cancels an in-flight vibration).
+  if (Array.isArray(pattern) && !pattern.length) return;
+  vibrate(pattern);
 }
 
 // ---------- Screen router ----------

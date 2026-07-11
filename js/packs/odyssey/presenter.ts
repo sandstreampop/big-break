@@ -6,6 +6,8 @@
 
 import type { Pack, RunState } from '../../types.js';
 import { bardBeat } from './bard-chatter.js';
+import { odysseyFeel } from './feel.js';
+import { odysseySoundscape } from './soundscape.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -38,6 +40,11 @@ const OAR_ROAD = {
 
 export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   aboutLine: 'The Odyssey — the long way home, sung at your fire.',
+  // The stroke (I1): water-resistance drag, oar-sweep commit, the arm knock.
+  feel: odysseyFeel,
+  // The Sound Law: silence is the identity — the lo-fi engine and generic
+  // blips are OFF; v0 voices only *the stroke* (the lexicon lands in I6).
+  soundscape: odysseySoundscape,
   title: {
     logo: 'THE<br>ODYSSEY',
     taglines: [

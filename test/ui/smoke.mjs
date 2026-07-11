@@ -149,6 +149,7 @@ async function axeScan(page, label, where) {
 
 async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect = {}) {
   let siblingChecked = false;
+  let wordsTakeChecked = false;
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(`console.error: ${m.text()}`); });
@@ -343,6 +344,20 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
         cardCastRuns++;
       }
       await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+      // The words take (I1, generic mechanism): finishSwipe marks the
+      // committed line synchronously — chosen on the swiped side, unchosen
+      // on the other. The classes persist until the next deal rebuilds the
+      // buttons, so right after the click both must be present.
+      if (!wordsTakeChecked) {
+        wordsTakeChecked = true;
+        const marks = await page.evaluate(() => ({
+          chosen: !!document.querySelector('#choice-buttons .choice-btn.choice-left.chosen'),
+          unchosen: !!document.querySelector('#choice-buttons .choice-btn.choice-right.unchosen'),
+        }));
+        if (!marks.chosen || !marks.unchosen) {
+          throw new Error(`[${label}] the words did not take: chosen=${marks.chosen} unchosen=${marks.unchosen} after a left commit`);
+        }
+      }
       await page.waitForTimeout(60);
     } else {
       await page.waitForTimeout(80);
@@ -515,6 +530,108 @@ for (const g of GAMES) {
 //      line; with reduced motion everything is visible at once (no
 //      invisible-text lock).
 // Then the beat must still advance to a live card (flow, not just presence).
+// The oar-stroke (I1): the odyssey's swipe feel, driven with real pointer
+// input under motion ON. Three assertions, per the working agreement (drive
+// the new thing, then prove the run still advances):
+//   1. water resistance — mid-drag, the card's visual x displacement is
+//      meaningfully SMALLER than the raw pointer travel (feel.drag), and
+//      non-zero (the card does follow the pull);
+//   2. the commit sweeps — releasing past the threshold puts the pack's
+//      commit class (.ody-stroke) on the card, and the chosen/unchosen marks
+//      land on the buttons (the words take);
+//   3. the flow survives — the result overlay arms and dismissing it deals
+//      the next beat (card or overlay), no soft-lock.
+async function checkOdysseyStroke(browser, base) {
+  const ctx = await browser.newContext(); // motion ON: the resistance is under test
+  const meta = {
+    lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    settings: { sound: false, music: false, reducedMotion: false, minigames: false, haptics: false, analytics: false },
+  };
+  await ctx.addInitScript(`try {
+    localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+    localStorage.removeItem('bigbreak_run_v1_odyssey');
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  const label = 'odyssey oar-stroke';
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await clickJS(page, 'button.btn.primary');
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+
+    // Reach a live card (the cold-open bard beat fires first — dismiss it).
+    const deadline = Date.now() + 30000;
+    let onCard = false;
+    while (Date.now() < deadline && !onCard) {
+      const k = await page.evaluate(() => {
+        if (document.querySelector('#overlay.active')) return 'overlay';
+        if (document.querySelector('#screen-game.active .card') &&
+            document.querySelector('#screen-game.active .choice-btn.choice-left')) return 'card';
+        return 'wait';
+      });
+      if (k === 'card') { onCard = true; break; }
+      if (k === 'overlay') {
+        await page.waitForFunction(() => {
+          const ov = document.querySelector('#overlay.active');
+          return !ov || ov.hasAttribute('data-armed');
+        }, { timeout: 8000 });
+        await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+      } else await page.waitForTimeout(80);
+    }
+    if (!onCard) throw new Error(`[${label}] never reached a live card`);
+
+    // Drag the card 150px right with a real pointer, sample mid-drag.
+    const box = await page.evaluate(() => {
+      const r = document.querySelector('#screen-game.active .card').getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    });
+    await page.mouse.move(box.x, box.y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + 150, box.y, { steps: 8 });
+    const mid = await page.evaluate(() => {
+      const t = document.querySelector('#screen-game.active .card').style.transform;
+      const m = /translate3d\((-?[\d.]+)px/.exec(t || '');
+      return m ? parseFloat(m[1]) : null;
+    });
+    if (mid === null || !(mid > 30)) throw new Error(`[${label}] the card does not follow the pull (visual x=${mid} at raw 150px)`);
+    if (!(mid < 130)) throw new Error(`[${label}] no water resistance: visual x=${mid} at raw 150px (expected saturation well below the raw travel)`);
+    // Haul past the threshold and release: the stroke commits.
+    await page.mouse.move(box.x + 220, box.y, { steps: 4 });
+    await page.mouse.up();
+    const committed = await page.evaluate(() => ({
+      stroke: !!document.querySelector('#screen-game .card.ody-stroke'),
+      chosen: !!document.querySelector('#choice-buttons .choice-btn.choice-right.chosen'),
+      unchosen: !!document.querySelector('#choice-buttons .choice-btn.choice-left.unchosen'),
+    }));
+    if (!committed.stroke) throw new Error(`[${label}] release did not sweep the card (.ody-stroke missing)`);
+    if (!committed.chosen || !committed.unchosen) throw new Error(`[${label}] the words did not take on a dragged commit (chosen=${committed.chosen} unchosen=${committed.unchosen})`);
+
+    // The gated half: the result overlay arms, dismissing advances the run.
+    await page.waitForSelector('#overlay.active', { timeout: 8000 });
+    await page.waitForFunction(() => {
+      const ov = document.querySelector('#overlay.active');
+      return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+    }, { timeout: 8000 });
+    await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+    const advanced = await page.waitForFunction(() =>
+      (document.querySelector('#screen-game.active .choice-btn.choice-left') && !document.querySelector('#overlay.active')) ||
+      document.querySelector('#overlay.active .bard-beat, #overlay.active .sp-beat') ||
+      document.querySelector('#screen-crossroads.active, #screen-ending.active'),
+    { timeout: 8000 }).then(() => true).catch(() => false);
+    if (!advanced) throw new Error(`[${label}] the run did not advance after the stroke's result`);
+    if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
+    console.log(`✓  ${label}: resistance holds (150px pull → ${Math.round(mid)}px), the sweep commits, the words take, the run advances`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 async function checkBardBeatHierarchy(browser, base) {
   const ctx = await browser.newContext(); // motion ON: the stagger is under test
   // Same seed as the main loop but with the in-game motion toggle OFF, so the
@@ -657,6 +774,12 @@ async function checkBardBeatHierarchy(browser, base) {
 {
   try {
     await checkBardBeatHierarchy(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyStroke(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

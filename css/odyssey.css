@@ -312,3 +312,29 @@ button, input { font-family: var(--font-body); }
 /* The subset's fi/fl ligature glyphs render corrupt ("first" → "Arst");
    pixel faces never wanted ligatures anyway. */
 body, button, input { font-variant-ligatures: none; font-feature-settings: 'liga' 0, 'clig' 0; }
+
+/* ── I1 — the stroke, and the words that take (NORTH-STAR: the core gesture,
+   ~28× a run). The commit is one oar-pull: the card sweeps FLAT across the
+   band in vase-frames — steps(), no easing, no spin (Motion Law, ADR-0001) —
+   and ends held off-screen (forwards) so nothing flashes back under the
+   result. Reduced motion never reaches this class (the shell branches first). */
+.card.ody-stroke {
+  animation: ody-stroke .24s steps(5, end) forwards;
+}
+@keyframes ody-stroke {
+  to { transform: translate3d(calc(var(--commit-dir, 1) * 130vw), 0, 0); opacity: 0; }
+}
+
+/* The words take: on release the chosen line brightens to gold and the
+   unchosen fades to ash before the next beat — the bard committing tonight's
+   telling to memory. Color only, nothing moves; the classes are shell-set
+   state (finishSwipe), so this survives reduced motion as pure information. */
+.choice-btn.chosen {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.choice-btn.unchosen {
+  border-color: var(--line);
+  color: var(--dim);
+  opacity: .55;
+}

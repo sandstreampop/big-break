@@ -500,6 +500,17 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
   currentCard = null;
   lastSwipeSide = side; // the result card will spring in from this side (morph)
   sfx.swipe();
+  // The commit's named haptic moment (no default voice — a pack soundscape
+  // may give it one: the odyssey's oar-stroke tick).
+  vibrateNamed('swipe', []);
+  // The words take: mark which line the teller committed to and which fades.
+  // Pure state classes on the persistent choice buttons — a pack styles them
+  // (odyssey's chosen-gold / unchosen-ash); packs without rules render
+  // exactly as before. Cleared when the next deal rebuilds the buttons.
+  for (const b of document.querySelectorAll('#choice-buttons .choice-btn')) {
+    const isChosen = b.classList.contains(side === 'left' ? 'choice-left' : 'choice-right');
+    b.classList.add(isChosen ? 'chosen' : 'unchosen');
+  }
 
   const armed = encoreArmed;
   const result = engine.resolveSwipe(run, side, engine.stateRng(run), {
