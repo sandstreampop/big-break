@@ -11,6 +11,57 @@ Each entry: what broke, the 5-whys root cause, the **rule** it produced, and the
 
 ---
 
+## #5 · Odyssey finale card's prompt clipped at 320px — and the gate only sometimes saw it — 2026-07-11
+
+**Severity:** shipped defect (main auto-deploys), cosmetic-but-flagship: the
+Suitors' Hall card — the run's climax — internally scrolled its prompt on the
+smallest phones, under late-run chrome.
+
+**Symptom:** `test/ui/mobile-matrix.mjs` failed on odyssey @ 320×568 with
+`card "Your own hall — the last door": prompt clipped (203 > 179)` — but only
+on SOME runs of the suite. The defect had been reaching `main` green.
+
+**Root cause (5 whys):**
+1. The prompt clipped → `ody_hall_nostos` carried a 323-char prompt on a card
+   that also wears the set-piece ribbon, the hot-streak banner, the encore
+   bar, and two carried chips — the tallest chrome any odyssey card gets.
+2. Why so long → the epic breath leaked from narration into a PROMPT;
+   VOICE.md law 3 ("prompts and labels stay middle-length so 320px never
+   chokes") was a named bet with no executable check.
+3. Why did the gate only sometimes fail → the matrix drives seasons off
+   RANDOM seeds; whether the hall card is audited under its worst chrome
+   (streak banner up, encore banked) varies run to run.
+4. Why was the coverage probabilistic → the suite equated "a full season
+   drove through" with "the worst case was seen"; the worst case is a
+   *specific* card × *specific* run state, which random seasons only sample.
+5. Nothing enumerated the worst case → no pass ever asked "which cards are
+   the tallest, and do they fit under maximum chrome?"
+
+**Class:** a probabilistic gate certifying a deterministic invariant; a
+voice-law length rule ("middle-length prompts") that lived as prose.
+
+**Rules produced:**
+- A layout invariant over authored content is checked against the WORST
+  authored instance deterministically, not against whatever a random season
+  happens to deal.
+- When a gate's failure depends on run state (banked encore, streak, carried
+  chips), the guard pins that state explicitly.
+
+**Guard (now in place):** fix — the two Suitors' Hall prompts trimmed to
+middle-length (VOICE law 3's own remedy; golden-safe, prompts are not
+serialized). Test — `test/ui/mobile-matrix.mjs` Pass 1c force-deals each
+pack's five longest-prompt cards through the app's own resume path
+(`currentEventId`, the smoke bard-check precedent) at 320×568 with worst-case
+run state patched in (hot streak, banked encore, the pack's carried flags)
+and runs the full generic audit on each. Verified red on the old prompt,
+green on the trim — and on its first red run the guard surfaced two MORE
+shipping instances of the same class that no random season had caught
+(`ody_cyclops`, 357 chars, and music's `nr_nemesis_toast`, 434 chars), both
+trimmed in the same fix. Dev loop: `BB_MATRIX_ONLY=worst` runs just this
+pass.
+
+---
+
 ## #3 · Odyssey "THE UNDERWORLD" set-piece title clipped on every phone — 2026-07-11
 
 **Severity:** cosmetic but flagship-surface (no soft-lock). Shipped to the

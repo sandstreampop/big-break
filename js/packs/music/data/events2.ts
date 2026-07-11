@@ -13250,7 +13250,7 @@ export const EVENTS2: GameEvent[] = [
     "art": "ev_nr_nemesis_toast",
     "context": "An industry dinner in your honor. {rival} stands. Taps the glass. Smiles.",
     "requires": { "nemesis": true },
-    "prompt": "Three careers, same face across the room. Tonight the industry is toasting YOU, and the organizers — historians of nothing — have invited {rival} to speak. They rise, {rivalVibe} to the last thread, and deliver a toast that is 60% threat by volume: “To the only one who ever made me better… by making everything harder. May the last act be worthy of the first.” Every eye in the room swings to you. Your glass is already in your hand.",
+    "prompt": "Three careers, same face across the room. Tonight the industry is toasting YOU — and the organizers have invited {rival} to speak. They rise, {rivalVibe} to the last thread, and deliver a toast that is 60% threat by volume: “To the only one who ever made me better… by making everything harder.” Every eye swings to you. Your glass is already in your hand.",
     "recap": "The industry toasts you, and {rival} takes the mic to speak.",
     "tags": ["rival", "fame"],
     "choices": {

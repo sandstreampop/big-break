@@ -19,7 +19,7 @@ export const LANDMARKS: GameEvent[] = [
     act: 1,
     tags: ['landmark', 'beat:cyclops'],
     context: 'The cave — Landmark',
-    prompt: 'The cave smells of curds, and under that of something older and worse. The sheep come home at dusk by themselves, sure of the path, and then the light at the cave mouth goes out all at once — not a cloud. A stone. A stone the size of your ship, set in the doorway the way you would set a cup on a table. Whatever shepherds here has just shut you in with it.',
+    prompt: 'The cave smells of curds, and under that of something older and worse. Then the light at the cave mouth goes out all at once — not a cloud. A stone, the size of your ship, set in the doorway the way you would set a cup on a table. Whatever shepherds here has just shut you in with it.',
     recap: 'The stone closed the cave.',
     choices: {
       left: {
@@ -217,7 +217,7 @@ export const LANDMARKS: GameEvent[] = [
     pathAffinity: ['nostos'],
     tags: ['landmark'],
     context: 'Your own hall — the last door',
-    prompt: 'Smoke you know, from a hearth you built, and at the long tables a hundred strangers eating your herds to the bone while your wife weaves upstairs and unweaves at night. You came home for this room. The beggar’s rags itch. The old dog by the gate has spent his welcome. One door left, friends — the one with your name on it.',
+    prompt: 'Smoke you know, from a hearth you built, and at the long tables a hundred strangers eating your herds to the bone while your wife weaves upstairs and unweaves at night. The beggar’s rags itch. One door left, friends — the one with your name on it.',
     recap: 'The hall, at last.',
     choices: {
       left: {
@@ -249,7 +249,7 @@ export const LANDMARKS: GameEvent[] = [
     pathAffinity: ['kleos'],
     tags: ['landmark'],
     context: 'Your own hall — the last verse',
-    prompt: 'They know the songs in this hall — that is the bitter joke of it. At your own tables a hundred suitors trade verses about the man who tricked Troy and shouted his name at a giant, never once looking at the beggar by the door. The name you bought with the sea’s hatred sits in their mouths. Time to collect it.',
+    prompt: 'They know the songs in this hall — that is the bitter joke of it. A hundred suitors trade verses about the man who tricked Troy, never once looking at the beggar by the door. The name you bought with the sea’s hatred sits in their mouths. Time to collect it.',
     recap: 'The hall that sang your song.',
     choices: {
       left: {

@@ -127,6 +127,10 @@ const VIEWPORTS = [
   { w: 412, h: 915, label: 'Pixel-7' },
 ];
 const QUICK = process.argv.includes('quick');
+// Dev escape hatch: BB_MATRIX_ONLY=worst runs just the worst-case card pass
+// (red/green verification of that guard without the full matrix). CI never
+// sets it, so the gate always runs everything.
+const ONLY = process.env.BB_MATRIX_ONLY || '';
 const MATRIX_VPS = QUICK ? VIEWPORTS.filter((v) => v.label === 'iPhone-SE1' || v.label === 'iPhone-X') : VIEWPORTS;
 
 const GAMES = [
@@ -188,6 +192,13 @@ function auditFn() {
   for (const id of document.querySelectorAll('.screen.active .identity-name, .screen.active .identity-gender-chip')) {
     const r = id.getBoundingClientRect();
     if (r.width && (r.left < -1 || r.right > vw + 1)) { problems.push('identity control overflows horizontally'); break; }
+  }
+  // The tableau strip (presenter.tableau) must fit and never scroll sideways.
+  const tab = document.querySelector('#tableau');
+  if (tab && tab.offsetHeight) {
+    const r = tab.getBoundingClientRect();
+    if (r.left < -1 || r.right > vw + 1) problems.push('tableau overflows horizontally');
+    if (tab.scrollWidth > tab.clientWidth + 1) problems.push(`tableau content clipped horizontally (${tab.scrollWidth} > ${tab.clientWidth})`);
   }
   return problems;
 }
@@ -372,6 +383,131 @@ async function driveBigTextBeatCheck(browser, base) {
   return true;
 }
 
+// The worst-case card pass (INCIDENTS.md #5): the SIZE pass drives seasons
+// off random seeds, so a game's single longest card — under its worst chrome
+// (hot-streak banner, encore bar, carried chips, set-piece ribbon) — can go
+// unaudited for many green runs, and a clipping prompt can reach main. This
+// pass is deterministic: it force-deals each pack's longest-prompt cards
+// through the app's own resume path (saved run's currentEventId — the smoke
+// suite's bard-check precedent) with worst-case run state patched in
+// (hotStreak, a banked encore, the pack's carried flags), at the 320px floor,
+// and requires the full generic audit to hold on every one.
+async function driveWorstCards(browser, base, game, candidates, worstFlags) {
+  const vp = VIEWPORTS.find((v) => v.label === 'iPhone-SE1');
+  const ctx = await browser.newContext({
+    viewport: { width: vp.w, height: vp.h }, isMobile: true, hasTouch: true, reducedMotion: 'reduce',
+  });
+  // Seed ONCE per tab (sessionStorage guard) — the plain seedScript wipes the
+  // saved run on every navigation, and this pass reloads to RESUME that run.
+  await ctx.addInitScript(`try {
+    if (!sessionStorage.getItem('bb_worst_seeded')) {
+      sessionStorage.setItem('bb_worst_seeded', '1');
+      localStorage.setItem('bigbreak_meta_v1${game.ns}', ${JSON.stringify(JSON.stringify(seedMeta))});
+      localStorage.removeItem('bigbreak_run_v1${game.ns}');
+    }
+  } catch (e) {}`);
+  // On every navigation: if a forced card is requested, patch the SAVED run
+  // before the app boots (an evaluate-time patch would be clobbered — the app
+  // flushes the run to localStorage on pagehide).
+  await ctx.addInitScript(`try {
+    const id = sessionStorage.getItem('bb_worst_card');
+    if (id) {
+      const key = 'bigbreak_run_v1${game.ns}';
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const run = JSON.parse(raw);
+        run.currentEventId = id;
+        run.pendingChainId = null;
+        run.hotStreak = 5;
+        run.encore = 1;
+        for (const f of ${JSON.stringify(worstFlags)}) if (!run.flags.includes(f)) run.flags.push(f);
+        localStorage.setItem(key, JSON.stringify(run));
+      }
+    }
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const violations = [];
+  let cardsForced = 0;
+  page.on('pageerror', (e) => violations.push(`pageerror: ${e.message}`));
+
+  // Reach a live dealt card from the current screen (dismissing beats/results).
+  const reachCard = async () => {
+    const deadline = Date.now() + 30000;
+    while (Date.now() < deadline) {
+      const k = await page.evaluate(() => {
+        const q = (s) => document.querySelector(s);
+        if (q('#overlay.active')) return 'overlay';
+        if (q('#screen-game.active .choice-btn.choice-left')) return 'card';
+        return 'wait';
+      });
+      if (k === 'card') return true;
+      if (k === 'overlay') {
+        await page.waitForFunction(() => {
+          const ov = document.querySelector('#overlay.active');
+          return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+        }, { timeout: 5000 });
+        await page.evaluate(() => {
+          const ov = document.querySelector('#overlay.active');
+          (ov?.querySelector('.gear-choices button') || ov)?.click();
+        });
+      } else {
+        await page.waitForTimeout(80);
+      }
+    }
+    return false;
+  };
+
+  try {
+    await page.goto(`${base}${game.path}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await page.evaluate(() => document.querySelector('button.btn.primary')?.click());
+    await page.waitForSelector('#screen-setup.active #player-name', { timeout: 10000 });
+    await page.evaluate(() => {
+      const n = document.querySelector('#player-name');
+      if (n && !n.value.trim()) { n.value = 'Tester'; n.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (!document.querySelector('.identity-gender-chip.selected')) document.querySelector('.identity-gender-chip')?.click();
+    });
+    await page.waitForSelector('#screen-setup.active .pick-card', { timeout: 10000 });
+    await page.evaluate(() => document.querySelector('.pick-card')?.click());
+    await page.evaluate(() => document.querySelector('#start-run-btn')?.click());
+    if (!(await reachCard())) violations.push('never reached a first dealt card');
+
+    for (const cand of candidates) {
+      if (violations.length > 10) break;
+      await page.evaluate((id) => sessionStorage.setItem('bb_worst_card', id), cand.id);
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+      // With a saved run present the primary button is Resume.
+      await page.evaluate(() => document.querySelector('button.btn.primary')?.click());
+      if (!(await reachCard())) { violations.push(`forced card ${cand.id}: never dealt`); continue; }
+      const dealt = await page.evaluate(() => document.querySelector('.card-prompt')?.textContent || '');
+      // Token-free sanity that the FORCED card is what we are measuring.
+      if (!cand.prompt.includes('{') && dealt.slice(0, 24) !== cand.prompt.slice(0, 24)) {
+        violations.push(`forced card ${cand.id}: a different card was dealt`);
+        continue;
+      }
+      cardsForced++;
+      for (const p of await page.evaluate(auditFn)) {
+        violations.push(`forced card ${cand.id} [prompt ${cand.prompt.length} chars]: ${p}`);
+      }
+    }
+    if (cardsForced < Math.min(3, candidates.length)) {
+      violations.push(`only ${cardsForced}/${candidates.length} worst cards force-dealt`);
+    }
+  } catch (e) {
+    violations.push(`drive error: ${e.message}`);
+  } finally {
+    await ctx.close();
+  }
+  const uniq = [...new Set(violations)];
+  if (uniq.length) {
+    console.error(`✗ worst-cards ${game.label} @ 320×568 — ${uniq.length} violation(s):\n    ${uniq.slice(0, 10).join('\n    ')}`);
+    return false;
+  }
+  console.log(`✓ worst-cards ${game.label} @ 320×568: ${cardsForced} longest-prompt cards dealt under worst-case run state, invariants hold`);
+  return true;
+}
+
 // The version-skew pass: serve a stamp-less stylesheet first (stale cache
 // emulation) and require the boot probe to detect the mismatch and heal it.
 async function driveSkewHeal(browser, base, expectV) {
@@ -432,7 +568,7 @@ const base = `http://127.0.0.1:${PORT}`;
 
 // Pass 1 — SIZE: the full viewport matrix, both games, honest CSS.
 cssMode = { stripHas: false, stripStamp: false };
-for (const game of GAMES) {
+if (!ONLY) for (const game of GAMES) {
   for (const vp of MATRIX_VPS) {
     if (!(await driveSeason(browser, base, game, vp, 'matrix'))) failed++;
   }
@@ -446,18 +582,38 @@ for (const game of GAMES) {
 // big-text season is NOT gated yet: the mode has pre-existing vertical-layout
 // debt at 320px — buttons below the fold under zoom — which is its own
 // remediation, out of this guard's scope.)
-if (!(await driveBigTextBeatCheck(browser, base))) failed++;
+if (!ONLY && !(await driveBigTextBeatCheck(browser, base))) failed++;
+
+// Pass 1c — WORST CASE: each pack's longest-prompt cards, force-dealt through
+// the app's resume path at the 320px floor under worst-case run state. The
+// random-seed SIZE seasons only sometimes catch the single tallest card under
+// its heaviest chrome (INCIDENTS.md #5).
+{
+  const { GAME_PACKS } = await import(new URL('js/packs/registry.js', `file://${root}/`).href);
+  // The carried-state flags that put maximum chrome on the HUD, per pack.
+  const WORST_FLAGS = { odyssey: ['ody_named', 'ody_fore_bow'] };
+  for (const game of GAMES) {
+    const pack = GAME_PACKS.find((p) => p.id === game.label);
+    if (!pack) { failed++; console.error(`✗ worst-cards: no pack for ${game.label}`); continue; }
+    const candidates = pack.events
+      .filter((e) => e.prompt)
+      .sort((a, b) => (b.prompt.length + (b.context || '').length) - (a.prompt.length + (a.context || '').length))
+      .slice(0, 5)
+      .map((e) => ({ id: e.id, prompt: e.prompt }));
+    if (!(await driveWorstCards(browser, base, game, candidates, WORST_FLAGS[game.label] || []))) failed++;
+  }
+}
 
 // Pass 2 — ENGINE: legacy engines drop :has() rules; the layout must survive.
 cssMode = { stripHas: true, stripStamp: false };
-for (const game of GAMES) {
+if (!ONLY) for (const game of GAMES) {
   const vp = VIEWPORTS.find((v) => v.label === 'iPhone-SE2'); // shortest mainstream phone
   if (!(await driveSeason(browser, base, game, vp, 'legacy-css'))) failed++;
 }
 cssMode = { stripHas: false, stripStamp: false };
 
 // Pass 3 — DELIVERY: stale stylesheet must be detected and healed at boot.
-if (!stamp.errs.length && !(await driveSkewHeal(browser, base, stamp.cssV))) failed++;
+if (!ONLY && !stamp.errs.length && !(await driveSkewHeal(browser, base, stamp.cssV))) failed++;
 
 await browser.close();
 server.close();

@@ -63,7 +63,7 @@ const meta = {
   settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
 };
 
-const AMBIENT_BUDGET = 190; // px: hud strip + stage, per ADR-0009
+const AMBIENT_BUDGET = 190; // px: hud strip + tableau + stage, per ADR-0009
 
 let browser;
 try { browser = await chromium.launch({ headless: true }); }
@@ -149,7 +149,8 @@ for (const vp of VIEWPORTS) {
         }
         const hud = document.querySelector('#hud');
         const stage = document.querySelector('#stage');
-        const ambient = (hud?.offsetHeight || 0) + (stage?.offsetHeight || 0);
+        const tableau = document.querySelector('#tableau');
+        const ambient = (hud?.offsetHeight || 0) + (stage?.offsetHeight || 0) + (tableau?.offsetHeight || 0);
         if (ambient > BUDGET) out.problems.push(`ambient tiers ${ambient}px > budget`);
         if (document.querySelector('#hud .stat-rail')) out.problems.push('stat rail resident (compact mode off)');
         return out;
