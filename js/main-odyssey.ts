@@ -3,6 +3,7 @@
 // guards, and boots the shell — there is no per-game UI code to maintain.
 import { createGame } from './api.js';
 import { odysseyPack } from './packs/odyssey/pack.js';
+import { initOdysseyEmber } from './packs/odyssey/ember.js';
 import { registerServiceWorker } from './platform.js';
 
 // The ROOT service worker (the music PWA's, scope '/'): registering it from
@@ -13,3 +14,6 @@ import { registerServiceWorker } from './platform.js';
 registerServiceWorker('../sw.js');
 
 createGame({ pack: odysseyPack }).start();
+// The ember (I2): the soul-cursor under the card — pack-side module, its own
+// listeners, mounted after the scaffold exists. The shell knows nothing.
+initOdysseyEmber();
