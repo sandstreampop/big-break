@@ -360,8 +360,11 @@ svg.px-anim[data-frames="3"] .f2 { animation: ody-px3c 1.8s steps(1, end) infini
   svg.px .pxf { animation: none !important; visibility: hidden; }
   svg.px .f0 { visibility: visible; }
 }
-.ember-still svg.px .pxf, .px-still svg.px .pxf { animation: none !important; visibility: hidden; }
-.ember-still svg.px .f0, .px-still svg.px .f0 { visibility: visible; }
+.ember-still svg.px .pxf, .px-still svg.px .pxf, .tableau-still svg.px .pxf, .beat-still svg.px .pxf { animation: none !important; visibility: hidden; }
+.ember-still svg.px .f0, .px-still svg.px .f0, .tableau-still svg.px .f0, .beat-still svg.px .f0 { visibility: visible; }
+/* Battery (ADR-0001): continuous vase-frames pause when the tab is hidden
+   (the pack's DOM module stamps body.ody-hidden on visibilitychange). */
+body.ody-hidden svg.px .pxf { animation-play-state: paused; }
 
 /* ── I2 — the ember: the soul-cursor, standing between the two doors. It
    mirrors the hand (leans with the drag, quantized into frames by the pack
@@ -517,3 +520,77 @@ svg.px-anim[data-frames="3"] .f2 { animation: ody-px3c 1.8s steps(1, end) infini
 .threshold.kindle-1 .fig { opacity: .45; }
 .threshold.kindle-2 .fig { opacity: .7; }
 .threshold.kindle-lit .fig { opacity: 1; }
+
+/* ── I7 — ceremony, rationed. Full-screen treatment belongs to exactly the
+   three landmarks, every ending, and the prophecy fragment (ADR-0001's
+   earned-ceremony list). Everything here is figures and states — no
+   particles, no glow, no shake beyond the shell's blow. */
+/* The Cyclops fills the band. */
+.sp-ody-cyclops .beat-scene .scene-cyclops svg { height: 120px; width: auto; display: block; }
+/* The Underworld drains the screen to ash: the beat goes grey, the veil
+   drifts. */
+.sp-ody-deep.sp-beat { background: #26221e; }
+.sp-ody-deep .beat-scene .scene-ash { display: block; width: 100%; height: 26px; opacity: .6; }
+.sp-ody-deep .beat-scene .scene-ash svg { width: 100%; height: 100%; display: block; }
+/* The Suitors' doors close behind you — once (a one-shot; frame 0 is the
+   closed truth reduced motion lands on). */
+.sp-ody-hall .beat-scene .scene-doors svg { height: 110px; width: auto; display: block; }
+.sp-ody-hall .beat-scene svg.ody-doors .f0 { animation: ody-door-shut 1.4s steps(1, end) forwards; }
+.sp-ody-hall .beat-scene svg.ody-doors .f1 { animation: ody-door-open 1.4s steps(1, end) forwards; }
+@keyframes ody-door-shut { 0%, 55% { visibility: hidden; } 56%, 100% { visibility: visible; } }
+@keyframes ody-door-open { 0%, 55% { visibility: visible; } 56%, 100% { visibility: hidden; } }
+
+/* The hush (the inverted grammar): the world SOFTENS while a temptation is
+   live — the band warms and calms, the doors go gentle, nothing pulses at
+   all. Comfort is the danger. */
+.sp-ody-hush .sp-beat-banner,
+.sp-beat.mood-hush .sp-beat-banner {
+  border-top: 3px double var(--dim);
+  border-bottom: 3px double var(--dim);
+  color: var(--ink);
+  letter-spacing: .2em;
+}
+#card-area.mood-hush .set-piece-slim .set-piece-banner { border-color: var(--dim); color: var(--dim); }
+/* The hush reaches the world through real classes the shell stamps (never
+   :has()): the card area wears mood-hush; the pack's DOM module mirrors it
+   onto the body so the band outside the card area softens too. The sea
+   keeps its slow water — the hush softens, it does not freeze. */
+#card-area.mood-hush .card { border-color: var(--line); }
+body.ody-hush #tableau .frieze { background: #d08055; }
+body.ody-hush #choice-buttons .choice-btn { border-color: var(--line); }
+
+/* The crowd holds its breath: every vase-frame stands still until the
+   commit. */
+body.ody-breath svg.px .pxf { animation-play-state: paused; }
+
+/* Every ending is told at the fire: the closing scene under the verdict —
+   and on a death, the ember gutters out in four steps to a cold hearth. */
+.ending-scene { display: flex; justify-content: center; align-items: flex-end; gap: 16px; margin: 10px 0 2px; }
+.ending-scene .fig { height: 44px; }
+.ending-scene .fig-cup { height: 20px; }
+.ending-scene .fig-ember { height: 26px; }
+.ending-scene svg { display: block; height: 100%; width: auto; }
+.ending-gutter svg.ody-ember { animation: ody-gutter 1.8s steps(4, end) forwards; }
+@keyframes ody-gutter { to { opacity: .08; } }
+@media (prefers-reduced-motion: reduce) {
+  .ending-gutter svg.ody-ember { animation: none; opacity: .08; }
+}
+.px-still.ending-gutter svg.ody-ember, .beat-still .ending-gutter svg.ody-ember { animation: none; opacity: .08; }
+
+/* The fragment: the one gold-fret moment of the Underworld. */
+.notice-ody-fret {
+  border-top: 3px double var(--accent);
+  border-bottom: 3px double var(--accent);
+  color: var(--ink);
+  background: none;
+  padding: 8px 6px;
+}
+
+/* ── I8 — names in the sand: the loss line is a plain hard rule, bone on
+   black — a record, not an alarm. */
+.notice-ody-loss {
+  border-top: 2px solid var(--ink);
+  background: none;
+  color: var(--ink);
+  padding-top: 8px;
+}

@@ -42,6 +42,8 @@ import { feedBodyCorpus, feedChromeCorpus } from '../dist/js/packs/love-island/f
 // The odyssey bard's frame chatter — a flat pool of presenter-voice lines held
 // to the same taste floor as the rest of the presenter copy.
 import { CHATTER as ODYSSEY_CHATTER } from '../dist/js/packs/odyssey/bard-chatter.js';
+// The crew pool (names in the sand) — every name/detail passes the floor.
+import { CREW as ODYSSEY_CREW } from '../dist/js/packs/odyssey/crew.js';
 
 // The engine's NEUTRAL deck-eligibility vocabulary, imported from the engine's
 // own exported set (single source — a drift here was a silent lint hole); each
@@ -146,10 +148,22 @@ const DESCRIPTORS = {
           out.push(c.html, c.sheet?.title, ...(c.sheet?.lines || []));
         }
       }
-      for (const ev of pack.events.filter((e) => (e.tags || []).includes('landmark'))) {
+      for (const ev of pack.events.filter((e) => (e.tags || []).includes('landmark') || (e.tags || []).includes('temptation'))) {
         const sp = pres.setPiece?.({ flags: [] }, ev);
         if (sp) out.push(sp.banner, sp.sub);
       }
+      // The result-side lexicon notices (the fragment's gold fret) and the
+      // names in the sand (a two-man loss composes the longest line).
+      const lossState = { loadout: 'kings_hall', flavorSeed: 7, expedition: 10, stats: {}, flags: [] };
+      for (const mock of [
+        { event: { id: 'ody_tiresias' }, deltas: [] },
+        { event: { id: 'ody_tiresias_oar' }, deltas: [] },
+        { event: { id: 'ody_a1_squall' }, deltas: [{ key: 'expedition', amount: -2 }] },
+      ]) {
+        for (const n of pres.resultExtras?.(mock, lossState)?.notices || []) out.push(n.html);
+      }
+      // Every crew name/detail (the pool the loss lines draw from).
+      for (const m of ODYSSEY_CREW) out.push(`${m.name}, ${m.detail}`);
       // The frame chatter (bard-chatter.ts): every dialogue block — the
       // bard's lines and the hecklers' — scanned at the presenter floor.
       for (const c of ODYSSEY_CHATTER) for (const b of c.blocks) out.push(b.text);

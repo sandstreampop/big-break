@@ -502,6 +502,42 @@ export function cup(level: CupLevel, opts: SpriteOpts = {}): string {
   return sprite([cupRows(level)], { cls: `ody-cup ody-cup-${level}`, label: `the cup, ${level}`, ...opts });
 }
 
+// ---------- The Suitors' Hall doors (ceremony) ----------
+// Frame 0 is the CLOSED state (the still truth — reduced motion lands here);
+// frame 1 is open. The ceremony CSS plays open→closed ONCE (a one-shot,
+// steps): the doors close behind you.
+const DOORS_CLOSED = [
+  '####################',
+  '####################',
+  '#########..#########',
+  '#########..#########',
+  '#########..#########',
+  '#########..#########',
+  '#########..#########',
+  '#########..#########',
+  '#########..#########',
+  '#########..#########',
+  '#########..#########',
+  '####################',
+];
+const DOORS_OPEN = [
+  '####################',
+  '####################',
+  '#####..........#####',
+  '#####..........#####',
+  '#####..........#####',
+  '#####..........#####',
+  '#####..........#####',
+  '#####..........#####',
+  '#####..........#####',
+  '#####..........#####',
+  '#####..........#####',
+  '####################',
+];
+export function hallDoors(opts: SpriteOpts = {}): string {
+  return sprite([DOORS_CLOSED, DOORS_OPEN], { cls: 'ody-doors', label: 'the hall doors', ...opts });
+}
+
 // ---------- The oar (the prophecy's key) ----------
 const OAR = [
   '....#',
@@ -583,6 +619,7 @@ export const GALLERY: Record<string, () => string> = {
   'the cup — half': () => cup('half'),
   'the cup — dregs': () => cup('dregs'),
   'the cup — set down': () => cup('down'),
+  'the hall doors': () => hallDoors(),
   'the oar': () => oar(),
   'gulls': () => gulls(),
   'a star': () => star(),

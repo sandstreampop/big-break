@@ -79,6 +79,20 @@ function checkStir(): void {
   stirredFor = beat;
 }
 
+// ── The crowd holds its breath (I7): while a landmark DECISION is live
+// (the card wears the presenter's ody-breath-card class and no overlay
+// covers it), every vase-frame in the world stands still — the spindle
+// stops — until the commit; on release the class drops and the room moves
+// at once. CSS: body.ody-breath pauses the frame engine.
+function checkBreath(): void {
+  const holding = !!document.querySelector('#screen-game.active .card.ody-breath-card') &&
+    !document.querySelector('#overlay.active');
+  document.body.classList.toggle('ody-breath', holding);
+  // The hush reaches past the card area (the shell stamps mood-hush there;
+  // CSS can't climb to the band without :has(), so mirror it on the body).
+  document.body.classList.toggle('ody-hush', !!document.querySelector('#card-area.mood-hush'));
+}
+
 export function initOdysseyAlive(): void {
   if (typeof document === 'undefined') return;
   const sync = () => {
@@ -86,6 +100,7 @@ export function initOdysseyAlive(): void {
     else whisperOff();
     checkDrain();
     checkStir();
+    checkBreath();
   };
   const arm = () => {
     const app = document.querySelector('#app') || document.body;

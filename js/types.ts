@@ -771,8 +771,13 @@ export interface Presenter {
   // Set-piece framing on a dealt card: a ceremonial banner plus explicit
   // stakes-in lines rendered above the card, and a class for scene styling.
   // The honest-forecast contract applies: stakes must reflect real state.
+  // `sceneHtml` is an optional pack-rendered stage for the FULL-SCREEN beat
+  // only (the slim continuity ribbon never carries it): the ceremony's
+  // figures — a Cyclops filling the band, closing doors. Absent = the plain
+  // banner beat, byte-identical to before.
   setPiece?: (state: RunState, ev: GameEvent) => {
     banner: string; sub?: string; stakes?: { html: string; cls?: string }[]; cls?: string;
+    sceneHtml?: string;
     // Optional feel cue the shell plays generically: 'triumph' (confetti,
     // win sting), 'blow' (shake, heavy haptic), or 'hush' (the inverted
     // grammar — no haptic, no sting, the beat and the following card wear

@@ -204,6 +204,10 @@ function showSetPieceBeat(sp, cont) {
     if (sp.mood === 'triumph') { spawnConfetti(ov); sfx.win(); }
     if (sp.mood === 'blow' && !reducedMotion()) box.classList.add('shake');
     if (sp.mood === 'hush') sfx.hush();
+    // The ceremony's stage (pack-rendered markup), on the full-screen beat
+    // only — the slim ribbon never carries it. px-still mirrors the in-game
+    // reduced-motion toggle for any vase-frames inside.
+    if (sp.sceneHtml) box.append(el('div', 'beat-scene' + (reducedMotion() ? ' px-still' : ''), sp.sceneHtml));
     box.append(el('div', 'set-piece-banner sp-beat-banner', sp.banner));
     if (sp.sub) box.append(el('div', 'set-piece-sub sp-beat-sub', fillText(sp.sub)));
     if (sp.stakes?.length) {

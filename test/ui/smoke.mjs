@@ -172,8 +172,12 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
   const friezeTruth = async (where) => {
     const t = await page.evaluate((ns) => {
       // A commit in flight (state saved, result not yet rendered) is not a
-      // lie — the words-take marks flag exactly that window; sample later.
-      if (document.querySelector('#choice-buttons .choice-btn.chosen')) return { inFlight: true };
+      // lie — the words-take marks flag that window, but ONLY until the
+      // result overlay opens (the marks persist under it, and the tableau
+      // re-renders WITH the result, so behind a live result the band must
+      // already be truthful again).
+      if (document.querySelector('#choice-buttons .choice-btn.chosen') &&
+          !document.querySelector('#overlay.active .tier-badge')) return { inFlight: true };
       const run = JSON.parse(localStorage.getItem('bigbreak_run_v1' + ns) || 'null');
       const f = document.querySelector('#tableau .frieze');
       if (!run || !f) return { missing: !f, noRun: !run };
@@ -626,6 +630,163 @@ for (const g of GAMES) {
 //      line; with reduced motion everything is visible at once (no
 //      invisible-text lock).
 // Then the beat must still advance to a live card (flow, not just presence).
+// The hush is not a trap, and the ceremonies advance (I7): force each
+// temptation through the app's own resume path (currentEventId — the
+// worst-cards precedent) and drive BOTH arms; force the wrath ending
+// (poseidon at the brink + the name shouted) so the death ceremony (the
+// guttering ember, the cold hearth) renders and the run terminates.
+async function checkOdysseyCeremony(browser, base) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
+  };
+  const label = 'odyssey ceremony';
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(`try {
+    if (!sessionStorage.getItem('bb_cer_seeded')) {
+      sessionStorage.setItem('bb_cer_seeded', '1');
+      localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+      localStorage.removeItem('bigbreak_run_v1_odyssey');
+    }
+    const patch = sessionStorage.getItem('bb_cer_patch');
+    if (patch) {
+      const key = 'bigbreak_run_v1_odyssey';
+      const run = JSON.parse(localStorage.getItem(key) || 'null');
+      if (run) {
+        Object.assign(run, JSON.parse(patch));
+        localStorage.setItem(key, JSON.stringify(run));
+      }
+    }
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+    await clickJS(page, 'button.btn.primary');
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+    // Reach a first card so a run is saved.
+    await page.waitForFunction(() =>
+      document.querySelector('#screen-game.active .choice-btn.choice-left') || document.querySelector('#overlay.active'),
+    { timeout: 15000 });
+
+    // Force a state, resume, reach the target card through its beats.
+    const force = async (patch) => {
+      await page.evaluate((p) => sessionStorage.setItem('bb_cer_patch', p), JSON.stringify(patch));
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+      await page.evaluate(() => document.querySelector('button.btn.primary')?.click()); // Resume
+      const deadline = Date.now() + 20000;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left') && !document.querySelector('#overlay.active')) return 'card';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          return 'wait';
+        });
+        if (k === 'card') return;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed');
+          }, { timeout: 8000 });
+          await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+        } else await page.waitForTimeout(80);
+      }
+      throw new Error(`[${label}] forced card never dealt`);
+    };
+    const dismissToState = async (want, timeout = 15000) => {
+      const deadline = Date.now() + timeout;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-ending.active')) return 'ending';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          if (document.querySelector('#screen-crossroads.active .pick-card')) return 'cross';
+          // A card is LIVE only while its buttons are unmarked — during the
+          // commit's flight the old buttons still stand, chosen/unchosen.
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left:not(.chosen):not(.unchosen)')) return 'card';
+          return 'wait';
+        });
+        if (k === want) return true;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+          }, { timeout: 8000 });
+          await page.evaluate(() => {
+            const ov = document.querySelector('#overlay.active');
+            (ov?.querySelector('.gear-choices button') || ov)?.click();
+          });
+        } else if (k === 'cross') {
+          await page.evaluate(() => document.querySelector('#screen-crossroads.active .pick-card')?.click());
+          await page.waitForTimeout(60);
+        } else if (k === 'card' && want === 'ending') {
+          await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+          await page.waitForTimeout(70);
+        } else await page.waitForTimeout(80);
+      }
+      return false;
+    };
+
+    // Arm 1 — the hush REFUSED: the temptation's beat plays as a hush (no
+    // shake, mood-hush on the beat and then the card), refuse (left), and
+    // the run continues to a live next beat.
+    await force({ currentEventId: 'ody_tempt_lotus', pendingChainId: null, spSeen: {} });
+    const hush = await page.evaluate(() => ({
+      beatSeen: !!sessionStorage.getItem('bb_cer_hush') || true, // beat already passed in force(); check the card instead
+      cardHush: !!document.querySelector('#card-area.mood-hush'),
+      bodyHush: !!document.body.classList.contains('ody-hush'),
+      banner: document.querySelector('#card-area .set-piece-banner')?.textContent || '',
+    }));
+    if (!hush.cardHush || !/MEADOW/.test(hush.banner)) {
+      throw new Error(`[${label}] the meadow did not hush (mood-hush=${hush.cardHush}, banner="${hush.banner}")`);
+    }
+    if (!hush.bodyHush) throw new Error(`[${label}] the hush did not reach the world (body.ody-hush missing)`);
+    await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+    if (!(await dismissToState('card'))) throw new Error(`[${label}] refusing the meadow did not continue the telling`);
+    const unhushed = await page.evaluate(() => !document.body.classList.contains('ody-hush'));
+    if (!unhushed) throw new Error(`[${label}] the hush outlived the temptation`);
+
+    // Arm 2 — the hush ACCEPTED: sitting down in the shade ENDS the telling
+    // at a told ending (banked, terminal) — the hush is never a soft-lock.
+    await force({ currentEventId: 'ody_tempt_lotus', pendingChainId: null, spSeen: {}, flags: [] });
+    await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-right')?.click());
+    if (!(await dismissToState('ending'))) throw new Error(`[${label}] accepting the meadow did not reach a terminal screen`);
+
+    // Arm 3 — the wrath ceremony: the sea at the brink + the name shouted =
+    // the death ending; the guttered-ember scene renders and the run ends.
+    await page.evaluate(() => sessionStorage.removeItem('bb_cer_patch'));
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+    // Arm 2 ended (and cleared) the run, so the primary button is New Run.
+    await clickJS(page, 'button.btn.primary');
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+    await page.waitForFunction(() =>
+      document.querySelector('#screen-game.active .choice-btn.choice-left') || document.querySelector('#overlay.active'),
+    { timeout: 15000 });
+    await force({ currentEventId: 'ody_cyclops_name', pendingChainId: null, spSeen: { cyclops: true }, poseidon: 8 });
+    await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-right')?.click()); // shout the name: poseidon +3 → 11
+    if (!(await dismissToState('ending'))) throw new Error(`[${label}] the sea's answer did not end the telling`);
+    const wrath = await page.evaluate(() => ({
+      gutter: !!document.querySelector('#screen-ending .ending-scene.ending-gutter'),
+      verdict: document.querySelector('#screen-ending .verdict, #screen-ending .ending-title')?.textContent || '',
+    }));
+    if (!wrath.gutter) throw new Error(`[${label}] the death ending did not gutter the ember (scene missing)`);
+    if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
+    console.log(`✓  ${label}: the meadow hushes and releases, accepting banks a terminal telling, the wrath ending gutters the ember`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 // The threshold (I5): the kindling title. Contract (the plan's named
 // invariant — "kindling is skippable"): a fresh visit is veiled (the menu
 // is out of reach) until a touch kindles the fire; letting it play lifts
@@ -761,9 +922,22 @@ async function checkOdysseyStroke(browser, base) {
     tutorialDone: true, coach: { card: true, result: true },
     settings: { sound: false, music: false, reducedMotion: false, minigames: false, haptics: false, analytics: false },
   };
+  // Seed ONCE per tab: the toggle assertion below reloads to resume, and an
+  // unguarded seed would wipe the saved run and the patched setting.
+  // Patches must ride the init script: the app flushes its in-memory run AND
+  // meta to localStorage on pagehide, clobbering evaluate-time edits during
+  // the reload itself (the bard-check precedent).
   await ctx.addInitScript(`try {
-    localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
-    localStorage.removeItem('bigbreak_run_v1_odyssey');
+    if (!sessionStorage.getItem('bb_stroke_seeded')) {
+      sessionStorage.setItem('bb_stroke_seeded', '1');
+      localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+      localStorage.removeItem('bigbreak_run_v1_odyssey');
+    }
+    if (sessionStorage.getItem('bb_stroke_rm')) {
+      const key = 'bigbreak_meta_v1_odyssey';
+      const m = JSON.parse(localStorage.getItem(key) || 'null');
+      if (m) { m.settings.reducedMotion = true; localStorage.setItem(key, JSON.stringify(m)); }
+    }
   } catch (e) {}`);
   const page = await ctx.newPage();
   const errors = [];
@@ -855,8 +1029,25 @@ async function checkOdysseyStroke(browser, base) {
       document.querySelector('#screen-crossroads.active, #screen-ending.active'),
     { timeout: 8000 }).then(() => true).catch(() => false);
     if (!advanced) throw new Error(`[${label}] the run did not advance after the stroke's result`);
+    // The in-game reduced-motion toggle must reach the frieze (ADR-0001:
+    // first-class under BOTH prefs; CSS media queries can't see this one, so
+    // the shell stamps .tableau-still and the frames must stop).
+    await page.evaluate(() => sessionStorage.setItem('bb_stroke_rm', '1'));
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+    await page.evaluate(() => document.querySelector('button.btn.primary')?.click()); // Resume
+    const still = await page.waitForFunction(() => {
+      const t = document.querySelector('#tableau.tableau-still');
+      if (!t) return null;
+      const f = t.querySelector('svg.px-anim .pxf');
+      return f ? { anim: getComputedStyle(f).animationName } : { anim: 'no-frames' };
+    }, { timeout: 15000 }).then((h) => h.jsonValue()).catch(() => null);
+    if (!still || (still.anim !== 'none' && still.anim !== 'no-frames')) {
+      throw new Error(`[${label}] the in-game reduced-motion toggle does not still the frieze (got ${still && still.anim})`);
+    }
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
-    console.log(`✓  ${label}: resistance holds (150px pull → ${Math.round(mid)}px), the ember leans and snaps, the sweep commits, the words take, the run advances`);
+    console.log(`✓  ${label}: resistance holds (150px pull → ${Math.round(mid)}px), the ember leans and snaps, the sweep commits, the words take, the run advances, the toggle stills the band`);
   } finally {
     await ctx.close();
   }
@@ -1017,6 +1208,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyThreshold(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyCeremony(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

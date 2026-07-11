@@ -9,8 +9,10 @@ import { bardBeat } from './bard-chatter.js';
 import { odysseyFeel } from './feel.js';
 import { odysseySoundscape, resultCue, endingCue, speak } from './soundscape.js';
 import { friezeTableau } from './frieze.js';
-import { hearthScene } from './hearth.js';
+import { hearthScene, cupLevelFor } from './hearth.js';
 import { odysseyTitleScene } from './threshold.js';
+import { cyclops, ashBand, hallDoors, fire, coldHearth, ember, cup } from './art/figures.js';
+import { lostMan, crewAtLaunch } from './crew.js';
 import { vibrate } from '../../ui/dom.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
@@ -178,21 +180,57 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     } });
     return chips;
   },
-  // Landmark framing: the ceremonial banner above the dealt card. The gold
-  // fret is the gods’ border (odyssey.css styles .sp-ody); the deep gets
-  // its hush (.sp-ody-deep). One full-screen beat per landmark (key).
+  // Ceremony, rationed (I7): full-screen treatment belongs to exactly the
+  // three landmarks (the Cyclops fills the band; the Underworld drains the
+  // screen to ash; the Suitors' doors close behind you) — and the
+  // temptations get the INVERTED grammar, the hush: no spectacle, the world
+  // softens (mood 'hush' — no haptic, no sting; css/odyssey.css calms the
+  // frieze and the doors go gentle). The gold fret is the gods' border
+  // (.sp-ody); one full-screen beat per arc (key), the ribbon after.
   setPiece(state, ev) {
-    if (!(ev.tags || []).includes('landmark')) return null;
-    if (ev.id.startsWith('ody_cyclops')) {
-      return { banner: 'THE CYCLOPS', sub: 'The bard sets down his cup. The fire leans in.', cls: 'sp-ody', key: 'cyclops' };
+    const tags = ev.tags || [];
+    if (tags.includes('landmark')) {
+      if (ev.id.startsWith('ody_cyclops')) {
+        return {
+          banner: 'THE CYCLOPS', sub: 'The bard sets down his cup. The fire leans in.',
+          cls: 'sp-ody sp-ody-cyclops', key: 'cyclops',
+          sceneHtml: `<span class="scene-cyclops">${cyclops()}</span>`,
+        };
+      }
+      if (ev.id === 'ody_underworld' || ev.id === 'ody_tiresias' || ev.id === 'ody_tiresias_oar') {
+        return {
+          banner: 'THE UNDERWORLD', sub: 'The fire burns low here. That is on purpose.',
+          cls: 'sp-ody sp-ody-deep', key: 'underworld',
+          sceneHtml: `<span class="scene-ash">${ashBand(96, { stretch: true })}</span>`,
+        };
+      }
+      if (ev.id.startsWith('ody_hall')) {
+        return {
+          banner: 'THE HALL OF SUITORS', sub: 'One door left — the one with your name on it.',
+          cls: 'sp-ody sp-ody-hall', key: 'hall',
+          sceneHtml: `<span class="scene-doors">${hallDoors()}</span>`,
+        };
+      }
+      return null;
     }
-    if (ev.id === 'ody_underworld' || ev.id === 'ody_tiresias') {
-      return { banner: 'THE UNDERWORLD', sub: 'The fire burns low here. That is on purpose.', cls: 'sp-ody sp-ody-deep', key: 'underworld' };
-    }
-    if (ev.id.startsWith('ody_hall')) {
-      return { banner: 'THE HALL OF SUITORS', sub: 'One door left — the one with your name on it.', cls: 'sp-ody', key: 'hall' };
+    if (tags.includes('temptation')) {
+      if (ev.id === 'ody_tempt_lotus') {
+        return { banner: 'THE MEADOW', sub: 'No one is unkind here. That is the whole of the danger.', cls: 'sp-ody-hush', mood: 'hush', key: 'lotus' };
+      }
+      if (ev.id === 'ody_tempt_circe') {
+        return { banner: 'THE SOFT YEAR', sub: 'The house is warm, the loom sings, and the year does not count itself.', cls: 'sp-ody-hush', mood: 'hush', key: 'circe' };
+      }
+      if (ev.id === 'ody_tempt_calypso') {
+        return { banner: 'THE ISLAND', sub: 'She asks for nothing. The sea asks for everything. Two silences — choose.', cls: 'sp-ody-hush', mood: 'hush', key: 'calypso' };
+      }
     }
     return null;
+  },
+  // The crowd holds its breath (I7): landmark decisions still the whole
+  // world — the pack's DOM module reads this class and pauses every
+  // vase-frame until the commit; on release the room moves at once.
+  cardClass(ev) {
+    return (ev.tags || []).includes('landmark') ? 'ody-breath-card' : null;
   },
   // The three-door grammar at maximum stakes: the pre-finale set. Every
   // door is always offered; the prophecy boons make theirs pay better —
@@ -247,38 +285,107 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
       const flag = `ody_frag_${f}`;
       if (!state.flags.includes(flag)) state.flags.push(flag);
     }
+    // The Memory Law (I8): the crowd remembers previous tellings. A
+    // snapshot of the telling-ledger rides the fresh run so the hecklers'
+    // callback pool (bard-chatter, kind 'memory') can key off it — pure
+    // knowledge, no number touched, exactly the prophecy's pattern.
+    if (meta?.odyssey?.tellings) {
+      state.tellingLedger = {
+        ...meta.odyssey.tellings,
+        heard: [...(meta.odyssey.heardCallbacks || [])],
+      };
+    }
   },
   // Run end banks tonight's turning (summarize().fragment) into the pack's
   // namespace on the shell's meta save. Union, never count — knowledge does
   // not stack.
   recordMeta(meta, summary) {
-    if (!summary?.fragment) return;
     meta.odyssey = meta.odyssey || {};
-    const frags: string[] = meta.odyssey.fragments || [];
-    if (!frags.includes(summary.fragment)) frags.push(summary.fragment);
-    meta.odyssey.fragments = frags;
-    if (summary.trueVictory) meta.odyssey.oarRoad = true;
+    if (summary?.fragment) {
+      const frags: string[] = meta.odyssey.fragments || [];
+      if (!frags.includes(summary.fragment)) frags.push(summary.fragment);
+      meta.odyssey.fragments = frags;
+      if (summary.trueVictory) meta.odyssey.oarRoad = true;
+    }
+    // The telling-ledger (I8): the fire remembers every night — how it
+    // ended, the names' habit, the dead. Counts only; the words that spend
+    // this knowledge live in bard-chatter's memory pool.
+    const t = meta.odyssey.tellings = meta.odyssey.tellings || {
+      count: 0, byEnding: {}, named: 0, nobody: 0, crewLostTotal: 0,
+    };
+    t.count += 1;
+    if (summary?.endingKey) {
+      t.byEnding[summary.endingKey] = (t.byEnding[summary.endingKey] || 0) + 1;
+      t.lastEnding = summary.endingKey;
+      t.lastResult = summary.endingResult ?? null;
+    }
+    if (summary?.named) t.named += 1;
+    if (summary?.nobody) t.nobody += 1;
+    t.crewLostLast = summary?.crewLost ?? 0;
+    t.crewLostTotal += summary?.crewLost ?? 0;
+    // No-repeat-until-exhausted for the crowd's callbacks: union what the
+    // fire heard tonight into the heard set (pickId resets it when the
+    // whole pool has been spent).
+    const heard = new Set([...(meta.odyssey.heardCallbacks || []), ...(summary?.heardCallbacks || [])]);
+    meta.odyssey.heardCallbacks = [...heard];
   },
   // The lexicon at the result (I6): at most ONE sound-event per landing —
   // the wave, the owl-note, the fragment-chime, or the Hall's bow-string —
   // plus the god-pulse (the heavy slow haptic when a god moves). The
   // mapping is pure (resultCue, unit-tested); the side effects live here,
   // browser-only (results render once; the sims never call presenter hooks).
-  resultExtras(result) {
+  resultExtras(result, state) {
+    const notices: { cls: string; html: string }[] = [];
     const cue = resultCue(result);
     if (cue) {
       speak(cue as any);
       if (cue === 'wave' || cue === 'owlNote') vibrate([120, 90, 200]);
+      // The prophecy fragment is the one gold-fret moment of the Underworld
+      // (I7): the banked turning gets its frame on the result itself.
+      if (cue === 'fragmentChime') {
+        notices.push({ cls: 'notice-ody-fret', html: '<b>The prophecy turns.</b> What the dead said tonight, every fire after this one will know.' });
+      }
     }
-    return null;
+    // Names in the sand (I8): dead rowers are never a number. Each loss,
+    // the bard names the man once — the same men, in the same order, for
+    // this telling's seed (lostMan is pure, so the amphora can find them
+    // again). The bench count on the band already emptied with this result.
+    const lost = (Array.isArray(result?.deltas) ? result.deltas : [])
+      .filter((d: any) => d.key === 'expedition' && d.amount < 0)
+      .reduce((n: number, d: any) => n + Math.abs(d.amount), 0);
+    if (lost > 0 && state) {
+      const after = Math.max(0, crewAtLaunch(state.loadout) - Math.round(state.expedition ?? 0));
+      const first = Math.max(0, after - lost);
+      const named: string[] = [];
+      for (let k = first; k < after && k - first < 3; k++) {
+        const m = lostMan(state.flavorSeed || 1, k);
+        named.push(`<b>${m.name}</b>, ${m.detail}`);
+      }
+      if (named.length) {
+        const count = lost === 1 ? 'one short' : lost === 2 ? 'two short' : `${lost} short`;
+        notices.push({ cls: 'notice-ody-loss', html: `The count comes up ${count}: ${named.join('; and ')}.` });
+      }
+    }
+    return notices.length ? { notices } : null;
   },
-  // The lexicon at the ending: dawn birds for Ithaca, the gutter when the
-  // sea or the despair takes the run; kleos already sang at the Hall, and
-  // the banked tellings keep the quiet they chose.
+  // Every ending is told at the fire (I7): the hearth scene closes the
+  // telling — the cup set down for a banked ending, the ember guttering to
+  // a cold hearth when the sea or the despair takes the run — and the
+  // lexicon speaks its one word (dawn birds for Ithaca, the gutter for a
+  // death; kleos already sang at the Hall; the banked keep their quiet).
   endingExtras(_summary, state) {
-    const cue = endingCue(state.ending?.key ?? state.path, state.ending?.result ?? null);
+    const key = state.ending?.key ?? state.path;
+    const result = state.ending?.result ?? null;
+    const cue = endingCue(key, result);
     if (cue) speak(cue as any);
-    return { lines: [], lpNote: '' };
+    const dead = key === 'wrath' || key === 'burnout' || (key === 'nostos' && result === 'failure');
+    const banked = key === 'lotus' || key === 'circe' || key === 'calypso';
+    const scene = dead
+      ? `<span class="fig fig-ember">${ember()}</span><span class="fig fig-fire">${coldHearth()}</span>`
+      : banked
+        ? `<span class="fig fig-fire">${fire()}</span><span class="fig fig-cup">${cup('down')}</span>`
+        : `<span class="fig fig-fire">${fire()}</span><span class="fig fig-cup">${cup(cupLevelFor(state.act || 3))}</span>`;
+    return { lines: [{ cls: 'ending-scene' + (dead ? ' ending-gutter' : ''), html: scene }], lpNote: '' };
   },
   // The cash-outs are BANKED tellings, not defeats: the verdict ribbon and
   // the history rows say so (told endings, never game-over screens).
