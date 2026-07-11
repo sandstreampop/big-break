@@ -150,8 +150,9 @@ const DESCRIPTORS = {
         const sp = pres.setPiece?.({ flags: [] }, ev);
         if (sp) out.push(sp.banner, sp.sub);
       }
-      // The frame chatter (bard-chatter.ts): every line, scanned at the floor.
-      for (const c of ODYSSEY_CHATTER) out.push(c.text);
+      // The frame chatter (bard-chatter.ts): every dialogue block — the
+      // bard's lines and the hecklers' — scanned at the presenter floor.
+      for (const c of ODYSSEY_CHATTER) for (const b of c.blocks) out.push(b.text);
       return out.filter(Boolean);
     },
   },

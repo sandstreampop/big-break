@@ -93,12 +93,26 @@ export function dealCard() {
   // scene is about. Packs without one leave the slot empty.
   renderStage(ev);
 
-  // A set-piece is a SEQUENCE, not a stack (ADR-0009): the framed moment —
-  // banner, scene line, stakes, feel cues — plays first as its own beat,
-  // then the card deals with the whole screen to itself. `spSeen` makes the
-  // beat once per moment — keyed by the pack's arc key when it gives one
-  // (a whole arc beats once, later cards keep the ribbon), else by card id
-  // (a resumed run goes straight to the card).
+  // The bard's own beat (presenter.preCardBeat): a named speaker's full-screen
+  // turn BEFORE the card — the odyssey bard leaning in between cards, distinct
+  // from a playable choice card. One tap to continue, then the scene/card
+  // deals. Fires ahead of the set-piece so the frame voice precedes the beat
+  // it is framing. (No re-show risk within a deal: continue calls proceedDeal,
+  // not dealCard; a resumed run simply re-hears the line, harmless.)
+  const beat = PRES.preCardBeat?.(run, ev);
+  if (beat && beat.blocks?.length) {
+    showBardBeat(beat, () => proceedDeal(ev));
+    return;
+  }
+  proceedDeal(ev);
+}
+
+// The set-piece-or-card tail of a deal, reachable directly or after a
+// preCardBeat. A set-piece is a SEQUENCE, not a stack (ADR-0009): the framed
+// moment plays as its own beat, then the card deals with the whole screen to
+// itself. `spSeen` makes the beat once per moment — keyed by the pack's arc
+// key when it gives one, else by card id (a resumed run goes straight to it).
+function proceedDeal(ev) {
   const sp = PRES.setPiece?.(run, ev);
   const spKey = sp && (sp.key || ev.id);
   if (sp && !(run.spSeen || {})[spKey]) {
@@ -108,6 +122,29 @@ export function dealCard() {
     return;
   }
   renderDealtCard(ev, sp);
+}
+
+// The bard's full-screen beat: a fireside panel of quoted dialogue — the
+// bard's own lines and any heckler's interjection, each a separate attributed
+// quote — with one tap to continue. Mirrors showSetPieceBeat's shape (a
+// dismissable overlay whose close proceeds), so it carries the same
+// no-soft-lock guarantee: dismissing always continues to the card.
+function showBardBeat(beat, cont) {
+  openOverlay((ov) => {
+    const box = el('div', 'bard-beat ' + (beat.cls || ''));
+    box.append(el('div', 'bard-beat-kicker', 'AT THE FIRE'));
+    const dlg = el('div', 'bard-beat-dialogue');
+    for (const b of beat.blocks) {
+      const isBard = !b.who || b.who === 'bard';
+      const line = el('div', 'bard-line ' + (isBard ? 'is-bard' : 'is-heckle'));
+      if (!isBard) line.append(el('div', 'bard-who', '— ' + b.who));
+      line.append(el('div', 'bard-quote', '“' + fillText(b.text) + '”'));
+      dlg.append(line);
+    }
+    box.append(dlg);
+    box.append(el('p', 'tap-hint', beat.cont || 'tap to continue'));
+    ov.append(box);
+  }, { armMs: 250, onClose: cont });
 }
 
 // The framed moment: full-screen banner + stakes, one tap to the card.

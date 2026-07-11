@@ -81,15 +81,22 @@ async function captureRun(browser, label) {
       return 'wait';
     });
     if (k === 'ending') break;
-    if (k === 'card') {
-      // A bard note present on THIS card? Screenshot it.
-      const hasNote = await page.$('#screen-game.active .overlay-note.bard-note');
-      if (hasNote && shots.length < 3) {
+    // The bard's OWN beat is a full-screen overlay (.bard-beat) shown before a
+    // card — screenshot it, then tap to continue.
+    const isBardBeat = await page.$('#overlay.active .bard-beat');
+    if (isBardBeat) {
+      await page.waitForFunction(() => document.querySelector('#overlay.active')?.hasAttribute('data-armed'), { timeout: 8000 }).catch(() => {});
+      if (shots.length < 4) {
         idx++;
         const path = join(OUT, `live-${label}-${idx}.png`);
         await page.screenshot({ path });
         shots.push(path);
       }
+      await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+      await page.waitForTimeout(80);
+      continue;
+    }
+    if (k === 'card') {
       await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
       await page.waitForTimeout(70);
     } else if (k === 'overlay') {

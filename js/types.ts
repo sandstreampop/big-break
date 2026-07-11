@@ -641,6 +641,17 @@ export interface Presenter {
   // note — because deals re-render on resume and the sims never render.
   // Result-side notes ride result.overlayNote (set by a pack plugin) instead.
   overlayNote?: (state: RunState, ev: GameEvent) => { html: string; cls?: string } | null;
+  // A narration beat shown on its OWN full screen BEFORE the card deals — a
+  // named speaker's turn, distinct from a playable choice card (the odyssey
+  // bard between cards). Returns a dialogue script (blocks: the speaker's own
+  // lines have no `who`; an interjector's `who` is the printed attribution),
+  // an optional continue label and styling class, or null to deal straight to
+  // the card. The shell wraps every block in quotes and gives it one tap to
+  // continue (mirrors the set-piece beat). Same purity rule as overlayNote —
+  // deals re-render on resume — so the pack consumes its own queue elsewhere.
+  preCardBeat?: (state: RunState, ev: GameEvent) => {
+    blocks: { who?: string; text: string }[]; cont?: string; cls?: string;
+  } | null;
   // The people in this scene: a portrait strip rendered on the dealt card
   // (name + face, an optional mood face and sub-label, an optional class for
   // mood-driven styling). Same purity rule as overlayNote. A pack without

@@ -18,7 +18,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as engine from '../dist/js/engine.js';
 import { odysseyPack } from '../dist/js/packs/odyssey/pack.js';
-import { CHATTER, bardOverlayNote } from '../dist/js/packs/odyssey/bard-chatter.js';
+import { CHATTER, bardBeat } from '../dist/js/packs/odyssey/bard-chatter.js';
 
 const BY_ID = new Map(CHATTER.map((c) => [c.id, c]));
 const BARD_CAP = 4; // mirror bard-chatter.ts
@@ -40,8 +40,8 @@ function runWithChatter(seed, { fragments = [], policy } = {}) {
     if (!ev) { state.cardsPlayedInAct = engine.actLength(state, state.act); }
     else {
       // The render read, exactly as the shell calls it at deal time.
-      const note = bardOverlayNote(state, ev);
-      if (note) shown.push(state.bardLine);
+      const beat = bardBeat(state, ev);
+      if (beat) { shown.push(state.bardLine); assert.ok(beat.blocks.length >= 1, 'a beat has at least one block'); }
       const side = policy ? policy(ev) : (meta() < 0.5 ? 'left' : 'right');
       const r = engine.resolveSwipe(state, side, play, {});
       trace.push(`${ev.id}:${side}:${r.tier}`);
@@ -95,11 +95,15 @@ test('player-caused: shouting the name surfaces the reactive potter’s-boy line
   assert.ok(sawNamed >= 1, `the caused line bc_named never surfaced across ${tried} name-shouting runs`);
 });
 
-test('overlayNote hushes on a landmark set-piece (the beat is the moment)', () => {
+test('bardBeat hushes on a landmark set-piece, and returns a dialogue script otherwise', () => {
   const state = { bardLine: 'bc_woodpile' };
-  assert.equal(bardOverlayNote(state, { tags: ['landmark'] }), null);
-  const shown = bardOverlayNote(state, { tags: [] });
-  assert.ok(shown && shown.html && shown.cls === 'bard-note');
+  assert.equal(bardBeat(state, { tags: ['landmark'] }), null, 'the bard hushes at a landmark');
+  const beat = bardBeat(state, { tags: [] });
+  assert.ok(beat && Array.isArray(beat.blocks) && beat.blocks.length >= 1, 'returns dialogue blocks');
+  // The woodpile script is real dialogue: the bard, then an attributed heckler.
+  assert.ok(beat.blocks.some((b) => !b.who), 'has a bard block (no attribution)');
+  assert.ok(beat.blocks.some((b) => b.who), 'has an attributed heckler block');
+  for (const b of beat.blocks) assert.equal(typeof b.text, 'string');
 });
 
 test('GOLDEN-SAFE: the card trace is identical with the bard plugin and without it', () => {

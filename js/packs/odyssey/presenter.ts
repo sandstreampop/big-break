@@ -5,7 +5,7 @@
 // presenterCopy lint rail (tools/lint-content.mjs).
 
 import type { Pack, RunState } from '../../types.js';
-import { bardOverlayNote } from './bard-chatter.js';
+import { bardBeat } from './bard-chatter.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -128,10 +128,11 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
       text: 'There is a beach — on Ogygia, on Aeaea, on any of them — where a man can sit down with his back to a rock and stop. Not die. Stop. The tide fills his footprints and he does not make new ones. Some men are not lost at sea, friends. The sea just outlasts them. We leave him there tonight, looking at the water. If you want him to stand up, come back tomorrow, and pay the bard, and we will see what can be done.',
     },
   },
-  // The bard's frame chatter between cards (the overlay-note channel — his
-  // voice, per odyssey.css). Pool + seeded picker live in bard-chatter.ts;
-  // this is a pure read of the line the plugin queued for this deal.
-  overlayNote: bardOverlayNote,
+  // The bard's frame chatter: his OWN full-screen beat between cards (the
+  // preCardBeat channel), not a box stacked on the choice card. Pool + seeded
+  // picker live in bard-chatter.ts; this is a pure read of the dialogue the
+  // plugin queued for this deal.
+  preCardBeat: bardBeat,
   // ── slice 3: the landmark surfaces ──
   // The boons on the HUD: the carried things (flags → chips → inspect).
   carriedChips(state) {

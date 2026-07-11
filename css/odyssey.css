@@ -179,20 +179,50 @@
   font-style: normal;
 }
 
-/* The frame-chatter note (js/packs/odyssey/bard-chatter.ts) is the bard
-   LEANING IN between cards. It rides the base overlay-note channel — a
-   popover pinned to the TOP of the card-area — which on this page is safe
-   because odyssey hides the generated card art (.card-art.art-scene), so the
-   top zone is empty and the note never covers the prompt below it. A solid
-   fill (not the base's translucent note-bg) keeps the pixel body legible over
-   the dark scene, and the double-rule is the teller's border. Held honest at
-   320px by the phone-crowding gate (test/ui/crowding.mjs). */
-#card-area .overlay-note.bard-note {
-  top: 8px;
-  width: min(92%, 372px);
-  font-size: 12.5px;
+/* The bard's OWN beat (js/packs/odyssey/bard-chatter.ts → preCardBeat →
+   showBardBeat): a full-screen fireside panel BETWEEN cards, deliberately
+   distinct from a playable choice card — no swipe, no left/right, just the
+   teller speaking and one tap on. The bard's lines and any heckler's are each
+   a quoted line; the heckler carries a dim attribution so it reads as
+   dialogue, not caption. */
+.bard-beat {
+  width: min(92%, 400px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 18px 16px;
+  text-align: left;
+}
+.bard-beat-kicker {
+  font-size: 11px;
+  letter-spacing: .22em;
+  color: var(--accent);
+  text-align: center;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 10px;
+}
+.bard-beat-dialogue { display: flex; flex-direction: column; gap: 13px; }
+.bard-beat .bard-line { display: flex; flex-direction: column; gap: 3px; }
+/* The bard: the warm ground note, a shade larger — the voice you came for. */
+.bard-beat .is-bard .bard-quote {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+/* A heckler: attributed, set in, cooler — an interruption from the dark. */
+.bard-beat .is-heckle { padding-left: 12px; border-left: 2px solid var(--line); }
+.bard-beat .is-heckle .bard-quote { font-size: 13.5px; line-height: 1.45; color: var(--dim); }
+.bard-beat .bard-who {
+  font-size: 11px;
+  letter-spacing: .04em;
   color: var(--dim);
-  background: var(--surface, #1c140d);
+  font-style: normal;
+}
+.bard-beat .tap-hint {
+  text-align: center;
+  color: var(--accent);
+  letter-spacing: .08em;
+  margin-top: 4px;
 }
 
 /* Gold is selection, not wallpaper: armed/selected states switch to the
