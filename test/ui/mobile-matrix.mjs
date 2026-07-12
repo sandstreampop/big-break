@@ -55,6 +55,10 @@ function loadChromium() {
 
 const root = fileURLToPath(new URL('../../dist', import.meta.url));
 if (!existsSync(root)) { console.error('dist/ not found — run `npm run build` first.'); process.exit(1); }
+// The per-sheet stamp key comes from the ONE shared derivation the build
+// writes with and the boot probe reads with — this gate must never grow its
+// own copy (drift here is exactly what it exists to catch).
+const { cssStampKey } = await import(new URL('js/css-key.js', `file://${root}/`).href);
 
 // ---- static gate: the delivery stamp must exist and agree everywhere ----
 // (No browser needed, so this never skips: a build that stops stamping fails
@@ -72,7 +76,7 @@ function checkDeliveryStamp() {
   // spot a stale PACK sheet next to an agreeing style.css — the skew that
   // blanked the odyssey fires (INCIDENTS.md 2026-07).
   for (const f of readdirSync(join(root, 'css')).filter((n) => n.endsWith('.css'))) {
-    const key = f.replace(/\.css$/, '').replace(/[^a-z0-9-]/gi, '');
+    const key = cssStampKey(f);
     const v = (readFileSync(join(root, 'css', f), 'utf8')
       .match(new RegExp(`--bb-css-v-${key}:\\s*"([a-f0-9]+)"`)) || [])[1];
     if (!v) errs.push(`dist/css/${f} has no per-sheet --bb-css-v-${key} stamp`);
@@ -95,7 +99,11 @@ const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css
 //   stripStamp— drop the --bb-css-v stamp unless the request carries a heal
 //               query (version-skew emulation: the first fetch is "stale",
 //               the probe's cache-busted refetch gets the true file)
-let cssMode = { stripHas: false, stripStamp: false };
+//   stalePack — serve css/odyssey.css with a WRONG per-sheet stamp while
+//               style.css stays current (legacy stamp agrees): the exact
+//               INCIDENTS.md #6 pairing, detectable ONLY via the per-sheet
+//               staleLink branch. Heal requests get the true file.
+let cssMode = { stripHas: false, stripStamp: false, stalePack: false };
 const server = createServer(async (req, res) => {
   try {
     const [rawPath, query = ''] = (req.url || '/').split('?');
@@ -108,6 +116,9 @@ const server = createServer(async (req, res) => {
       let css = body.toString();
       if (cssMode.stripHas) css = css.replace(/(^|\})\s*[^{}@]*:has\([^{]*\{[^{}]*\}/g, '$1');
       if (cssMode.stripStamp && !query.includes('heal=')) css = css.replace(/:root\s*\{\s*--bb-css-v:[^}]*\}/g, '');
+      if (cssMode.stalePack && p.endsWith('/odyssey.css') && !query.includes('heal=')) {
+        css = css.replace(/(--bb-css-v-odyssey:\s*)"[a-f0-9]+"/, '$1"0000deadc0de"');
+      }
       body = Buffer.from(css);
     }
     res.writeHead(200, { 'content-type': MIME[extname(abs)] || 'application/octet-stream' });
@@ -210,6 +221,19 @@ function auditFn() {
     if (r.left < -1 || r.right > vw + 1) problems.push('tableau overflows horizontally');
     if (tab.scrollWidth > tab.clientWidth + 1) problems.push(`tableau content clipped horizontally (${tab.scrollWidth} > ${tab.clientWidth})`);
   }
+  // ADR-0009: on a LIVE card (no overlay — a result's stage may legitimately
+  // grow under the modal) of a pack that renders a tableau, the ambient
+  // tiers (hud + stage + tableau together) yield to the prompt. crowding.mjs
+  // prices the tableau-less packs; this is the only gate that prices the
+  // frieze into the ambient spend.
+  if (tab && tab.offsetHeight
+      && document.querySelector('#screen-game.active .choice-btn.choice-left')
+      && !document.querySelector('#overlay.active')) {
+    const ambient = (document.querySelector('#hud')?.offsetHeight || 0)
+      + (document.querySelector('#stage')?.offsetHeight || 0)
+      + tab.offsetHeight;
+    if (ambient > 190) problems.push(`ambient tiers ${ambient}px > 190px budget (ADR-0009)`);
+  }
   return problems;
 }
 
@@ -279,6 +303,15 @@ async function driveSeason(browser, base, game, vp, tag) {
       } else if (k === 'card') {
         const id = await page.evaluate(() => document.querySelector('.card-context')?.textContent?.slice(0, 44) || '?');
         for (const p of await page.evaluate(auditFn)) violations.push(`card "${id}": ${p}`);
+        // The world-is-HUD contract is presence, not permission: a pack with
+        // presenter.tableau must show a VISIBLE band on every live card, in
+        // every engine class (the audit above skips a zero-height tableau —
+        // that skip must never be how a legacy-CSS or stale-sheet pass
+        // "passes" the odyssey).
+        if (game.label === 'odyssey' && cardsAudited === 0) {
+          const th = await page.evaluate(() => document.querySelector('#tableau')?.offsetHeight || 0);
+          if (th <= 0) violations.push(`card "${id}": the tableau is missing or invisible (offsetHeight=${th}) — the frieze audit would silently skip`);
+        }
         cardsAudited++;
         await page.evaluate(() => { document.querySelector('.coach')?.remove(); document.querySelector('#screen-game.active .choice-btn.choice-left')?.click(); });
         await page.waitForTimeout(70);
@@ -551,6 +584,42 @@ async function driveSkewHeal(browser, base, expectV) {
   return ok;
 }
 
+// The PACK-sheet skew pass (INCIDENTS.md #6's exact pairing): odyssey.css
+// arrives from another deploy (its per-sheet stamp disagrees) while
+// style.css — and therefore the legacy --bb-css-v — agrees with the JS.
+// Only the per-sheet staleLink branch of healStaleStylesheets can see this;
+// the pass fails if that branch regresses.
+async function drivePackSkewHeal(browser, base, expectV) {
+  cssMode = { stripHas: false, stripStamp: false, stalePack: true };
+  const ctx = await browser.newContext({
+    viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce',
+  });
+  await ctx.addInitScript(seedScript('_odyssey'));
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  let ok = false;
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    // The probe must heal the PACK sheet: its per-sheet stamp comes back
+    // matching the contract only after the ?heal= refetch lands.
+    await page.waitForFunction(
+      (v) => (getComputedStyle(document.documentElement).getPropertyValue('--bb-css-v-odyssey') || '').replace(/["'\s]/g, '') === v,
+      expectV, { timeout: 10000 },
+    );
+    ok = errors.length === 0;
+    if (!ok) console.error(`✗ pack-skew-heal: healed but with page errors:\n    ${errors.join('\n    ')}`);
+    else console.log(`✓ pack-skew-heal: stale odyssey.css beside an agreeing style.css detected via its per-sheet stamp and re-pulled — contract "${expectV}" restored`);
+  } catch (e) {
+    console.error(`✗ pack-skew-heal: a stale PACK sheet next to an agreeing style.css was not healed (${e.message.split('\n')[0]}) — the incident-#6 pairing has regressed`);
+  } finally {
+    await ctx.close();
+    cssMode = { stripHas: false, stripStamp: false, stalePack: false };
+  }
+  return ok;
+}
+
 // ---- run everything ----
 let failed = 0;
 
@@ -624,6 +693,9 @@ cssMode = { stripHas: false, stripStamp: false };
 
 // Pass 3 — DELIVERY: stale stylesheet must be detected and healed at boot.
 if (!ONLY && !stamp.errs.length && !(await driveSkewHeal(browser, base, stamp.cssV))) failed++;
+// Pass 3b — DELIVERY, the incident-#6 pairing: a stale PACK sheet beside an
+// agreeing style.css is visible only to the per-sheet stamps.
+if (!ONLY && !stamp.errs.length && !(await drivePackSkewHeal(browser, base, stamp.cssV))) failed++;
 
 await browser.close();
 server.close();

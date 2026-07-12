@@ -84,9 +84,11 @@ appendFileSync(resolve(dist, 'css/style.css'), `\n:root { --bb-css-v: "${cssV}";
 // sheet can go stale independently of style.css (INCIDENTS.md 2026-07, the
 // blank-fires skew: style.css agreed with the JS while odyssey.css was from
 // another deploy — the legacy single stamp could not see it).
+// The key derivation is the compiled runtime's own (js/css-key.ts) — writer
+// and boot-probe reader can never drift apart.
+const { cssStampKey } = await import(pathToFileURL(resolve(dist, 'js/css-key.js')).href);
 for (const f of cssFiles) {
-  const key = f.replace(/\.css$/, '').replace(/[^a-z0-9-]/gi, '');
-  appendFileSync(resolve(dist, 'css', f), `\n:root { --bb-css-v-${key}: "${cssV}"; }\n`);
+  appendFileSync(resolve(dist, 'css', f), `\n:root { --bb-css-v-${cssStampKey(f)}: "${cssV}"; }\n`);
 }
 writeFileSync(resolve(dist, 'js/version.js'),
   `// stamped by tools/build.mjs — see js/version.ts\nexport const CSS_CONTRACT = '${cssV}';\n`);
