@@ -44,7 +44,10 @@ let litThisSession = false;
 
 export const odysseyTitleScene: NonNullable<Presenter['titleScene']> = (host, ctx) => {
   if (ctx.resumed || litThisSession) {
-    // The fire is still burning from last time.
+    // The fire is still burning from last time — and it stays lit for the
+    // rest of the evening: a resumed boot counts as kindled, or the title
+    // would go cold and demand the ritual again once that run ends.
+    litThisSession = true;
     host.innerHTML = sceneHtml(true);
     return false;
   }

@@ -9,6 +9,7 @@
 
 import { sfx } from '../audio.js';
 import { CSS_CONTRACT } from '../version.js';
+import { cssStampKey } from '../css-key.js';
 import { meta, PRES } from './context.js';
 import type { ImageVariant } from '../types.js';
 
@@ -355,8 +356,10 @@ export function healStaleStylesheets() {
   const staleLink = links.some((link) => {
     const base = (link.getAttribute('href') || '').split('?')[0];
     if (!base.endsWith('.css')) return false;
-    const key = (base.split('/').pop() || '').replace(/\.css$/, '').replace(/[^a-z0-9-]/gi, '');
-    return readVar(`--bb-css-v-${key}`) !== CSS_CONTRACT;
+    // ONE key derivation, shared with the stamp writer (js/css-key.ts) — a
+    // drift between writer and reader would make heal-refetch permanent (or
+    // the detection silently dead).
+    return readVar(`--bb-css-v-${cssStampKey(base)}`) !== CSS_CONTRACT;
   });
   if (readVar('--bb-css-v') === CSS_CONTRACT && !staleLink) return;
   console.warn(`stylesheet contract mismatch (css "${readVar('--bb-css-v') || 'none'}"${staleLink ? ' + per-sheet stamp' : ''} ≠ js "${CSS_CONTRACT}") — refetching styles`);

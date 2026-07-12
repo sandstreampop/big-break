@@ -26,4 +26,9 @@ export const odysseyFeel: NonNullable<Presenter['feel']> = {
   },
   commitClass: 'ody-stroke',
   armVibrate: [14],          // one firm knock at the point of no return
+  // The Motion Law's anti-goal, at the seam: no confetti with a Greek
+  // accent — no particles, shake, or scrim-flash on results. The pack's
+  // stylesheet retires the same moves (css/odyssey.css, the Motion Law
+  // block), so neither the work nor the paint happens.
+  resultJuice: false,
 };

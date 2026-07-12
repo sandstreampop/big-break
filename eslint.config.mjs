@@ -71,7 +71,7 @@ export default [
         window: 'readonly', document: 'readonly', localStorage: 'readonly',
         sessionStorage: 'readonly',
         navigator: 'readonly', getComputedStyle: 'readonly',
-        Event: 'readonly', PointerEvent: 'readonly',
+        Event: 'readonly', PointerEvent: 'readonly', KeyboardEvent: 'readonly',
       },
     },
   },

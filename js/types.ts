@@ -897,6 +897,10 @@ export interface Presenter {
     drag?: (dx: number, dy: number) => { x: number; y: number; rot: number };
     commitClass?: string;
     armVibrate?: number[];
+    // The shell's generic result juice (confetti on 'incredible', shake +
+    // scrim-flash on bad/declined). A pack whose ceremony is earned and
+    // diegetic sets false; absent keeps today's burst exactly.
+    resultJuice?: boolean;
   };
   // A pack-rendered title stage behind the shell's menu (the odyssey's
   // threshold). The shell mounts `host` as the screen's first child and

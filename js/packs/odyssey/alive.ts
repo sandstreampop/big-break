@@ -54,20 +54,30 @@ function whisperOff(): void {
 }
 
 // A hearth is on screen when: the kindled threshold is the active screen, a
-// bard beat is up, or an act intro's fireside scene is up.
+// bard beat is up, an act intro's fireside scene is up, or the telling has
+// ended AT the fire (the Sound Law names "endings told at the fire" among
+// the whisper's beats). The gutter is the exception on purpose: a death's
+// scene is a cold hearth and a dying ember — its silence IS the cue.
 function hearthShowing(): boolean {
   if (document.querySelector('#screen-title.active .threshold.kindle-lit')) return true;
   if (document.querySelector('#overlay.active .bard-beat')) return true;
   if (document.querySelector('#overlay.active .act-card .beat-scene')) return true;
+  if (document.querySelector('#screen-ending.active .ending-scene:not(.ending-gutter)')) return true;
   return false;
 }
 
 // ── The deep-buzz: one long low pulse per step nearer the Underworld.
+// A STEP is a transition between two observed band states — a band that
+// first appears already drained (boot or resume into act 2's tail) is
+// where the run already was, not a step taken; prime silently.
 let lastDrainNear: string | null = null;
+let drainSeen = false;
 function checkDrain(): void {
-  const drain = document.querySelector('#tableau .frieze-drain');
+  const tab = document.querySelector('#tableau');
+  const drain = tab?.querySelector('.frieze-drain') ?? null;
   const near = drain ? (drain.className.match(/near-(\d)/)?.[1] ?? null) : null;
-  if (near !== null && near !== lastDrainNear) vibrate([180]);
+  if (drainSeen && near !== null && near !== lastDrainNear) vibrate([180]);
+  drainSeen = !!tab;
   lastDrainNear = near;
 }
 

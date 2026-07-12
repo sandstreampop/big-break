@@ -7,7 +7,7 @@
 import test from 'node:test';
 import assert from 'node:assert';
 
-const { LEXICON, resultCue, endingCue, odysseySoundscape } =
+const { LEXICON, EVENTS, resultCue, endingCue, odysseySoundscape } =
   await import('../dist/js/packs/odyssey/soundscape.js');
 
 test('the lexicon is the canon: sacred few, one recipe each, never reused', () => {
@@ -25,6 +25,12 @@ test('the lexicon is the canon: sacred few, one recipe each, never reused', () =
 });
 
 test('the shell cues stay silent except the stroke', () => {
+  // The SILENCE is the assertion, not the absence of a throw: the routing
+  // table voices exactly one shell cue — the swipe — and it speaks the
+  // stroke recipe itself (any second entry is a new sound the law must
+  // license first).
+  assert.deepEqual(Object.keys(EVENTS), ['swipe'], 'a shell cue beyond the stroke has been voiced');
+  assert.equal(EVENTS.swipe, LEXICON.stroke, 'the swipe must speak the canon stroke, not a copy');
   // event() must not throw for any shell cue, voiced or not.
   for (const cue of ['swipe', 'ui', 'good', 'bad', 'incredible', 'win', 'winPath', 'gameover', 'flashpoint', 'cash', 'hush', 'nonsense']) {
     odysseySoundscape.event(cue);

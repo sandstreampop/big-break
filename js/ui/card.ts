@@ -16,7 +16,7 @@ import { sfx, ambient } from '../audio.js';
 import { track } from '../analytics.js';
 import {
   el, $, activatable, btn, reducedMotion, vibrate, vibrateNamed, openOverlay, openPortrait,
-  spawnConfetti, coachMark, show, responsivePicture,
+  spawnConfetti, coachMark, show, responsivePicture, anyOverlayActive,
 } from './dom.js';
 import {
   activePack, run, PRES, meta, metaFor, fillText, itemById, vibeFor, STAT_META,
@@ -90,7 +90,16 @@ function renderTableau(ev) {
   host.classList.toggle('tableau-still', reducedMotion());
   if (spec.inspect?.length) {
     const blocks = spec.inspect;
-    activatable(host, () => { sfx.ui(); showInspectPanel(blocks); }, 'Inspect');
+    // Inert behind a modal: the tableau re-renders UNDER result overlays (the
+    // world updates with the outcome), and activatable makes it reachable by
+    // keyboard even there — opening the inspect panel on the shared #overlay
+    // would destroy the result overlay and its pending advance() (the
+    // portrait-lightbox incident's exact class). aria-modal already promises
+    // the background is inoperable; make it true.
+    activatable(host, () => {
+      if (anyOverlayActive()) return;
+      sfx.ui(); showInspectPanel(blocks);
+    }, 'Inspect');
   }
   if (old) old.replaceWith(host);
   else ($('#stage') || $('#card-area')).before(host);
@@ -172,6 +181,7 @@ function proceedDeal(ev) {
 const BEAT_STEP_MS = 1500;
 function showBardBeat(beat, cont) {
   let timer = 0;
+  const tapPacer = new AbortController();
   openOverlay((ov) => {
     // `beat-still` mirrors the player's in-game reduced-motion toggle, which
     // CSS media queries can't see (they only know the OS preference).
@@ -233,12 +243,16 @@ function showBardBeat(beat, cont) {
     // listener: while lines are pending, a tap advances the reveal and never
     // reaches the dismiss handler. Pre-arm taps (the accidental double-tap
     // window) are swallowed the same way the dismiss listener ignores them.
+    // #overlay is a PERSISTENT node (openOverlay wipes children, not the
+    // host's listeners), so this listener must die with the beat — a beat
+    // Escaped mid-reveal would otherwise leave a closure that swallows the
+    // first taps on every later overlay. The abort in onClose is the teardown.
     ov.addEventListener('click', (e) => {
       if (next >= lines.length) return; // fully revealed — the tap dismisses
       e.stopImmediatePropagation();
       if (ov.hasAttribute('data-armed')) revealNext();
-    }, true);
-  }, { armMs: 250, onClose: () => { clearTimeout(timer); cont(); } });
+    }, { capture: true, signal: tapPacer.signal });
+  }, { armMs: 250, onClose: () => { clearTimeout(timer); tapPacer.abort(); cont(); } });
 }
 
 // The framed moment: full-screen banner + stakes, one tap to the card.
@@ -506,7 +520,12 @@ function attachDrag(card, bL, bR) {
     bL.classList.toggle('armed', dx < -threshold);
     bR.classList.toggle('armed', dx > threshold);
     const isArmed = bL.classList.contains('armed') || bR.classList.contains('armed');
-    if (isArmed && !wasArmed) vibrate(PRES.feel?.armVibrate ?? 10); // tactile "past the point of no return"
+    // Tactile "past the point of no return" — except under the hush, whose
+    // whole grammar is that the haptics STOP while the temptation is live
+    // (mood-hush rides the card area; the absence is the cue).
+    if (isArmed && !wasArmed && !$('#card-area')?.classList.contains('mood-hush')) {
+      vibrate(PRES.feel?.armVibrate ?? 10);
+    }
   });
   const release = (e) => {
     if (!dragging || (pid !== null && e.pointerId !== pid)) return;
@@ -561,8 +580,9 @@ function finishSwipe(side, dx = 0, dy = 0, perf = null) {
   lastSwipeSide = side; // the result card will spring in from this side (morph)
   sfx.swipe();
   // The commit's named haptic moment (no default voice — a pack soundscape
-  // may give it one: the odyssey's oar-stroke tick).
-  vibrateNamed('swipe', []);
+  // may give it one: the odyssey's oar-stroke tick). Silent under the hush:
+  // the haptics stop while a temptation is live.
+  if (!$('#card-area')?.classList.contains('mood-hush')) vibrateNamed('swipe', []);
   // The words take: mark which line the teller committed to and which fades.
   // Pure state classes on the persistent choice buttons — a pack styles them
   // (odyssey's chosen-gold / unchosen-ash); packs without rules render
@@ -664,8 +684,14 @@ function showResult(result) {
   // previously silent for screen-reader users. role="status" makes the card a
   // polite live region, so the tier + text + deltas are read on reveal.
   box.setAttribute('role', 'status');
-  if (result.tier === 'incredible') spawnConfetti(ov);
-  if ((result.tier === 'bad' || result.tier === 'declined') && !reducedMotion()) {
+  // The shell's generic result juice (confetti / shake / scrim-flash) is a
+  // feel-profile opt-out: a pack whose ceremony is earned and diegetic (the
+  // odyssey's Motion Law) retires it wholesale with feel.resultJuice=false;
+  // its stylesheet retires the same moves as CSS (belt and braces — neither
+  // the work nor the paint happens).
+  const juice = PRES.feel?.resultJuice !== false;
+  if (result.tier === 'incredible' && juice) spawnConfetti(ov);
+  if ((result.tier === 'bad' || result.tier === 'declined') && juice && !reducedMotion()) {
     box.classList.add('shake');
     ov.classList.add('flash-bad');
     setTimeout(() => ov.classList.remove('flash-bad'), 500);

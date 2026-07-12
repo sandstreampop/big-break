@@ -305,6 +305,36 @@ body.big-text .sp-beat .sp-beat-banner { font-size: 14px; }
 .tier-incredible .tier-badge, .verdict-success { animation: none; }
 .stat-burnout.danger .stat-icon { animation: none; }
 
+/* ── The Motion Law, made binding on the SHELL's juice (ADR-0001; the
+   NORTH-STAR anti-goal: "no confetti with a Greek accent — no particles,
+   screen shake, glow, bounce easing, or celebration juice"). style.css is
+   the siblings' grammar; each rule here retires one of its moves on this
+   page, under BOTH reduced-motion prefs and neither — the law is identity,
+   not an accessibility mode. Pinned by the motion-law probe in
+   test/ui/smoke.mjs. */
+/* No particles, ever (display:none also stops the flight animation). */
+.confetti-box, .confetti { display: none; }
+/* No screen shake, no red flash: a bad landing is a still, hard record. */
+.result-card.shake { animation: none; }
+#overlay.flash-bad { background: var(--scrim); }
+/* Chrome never animates: results, ceremony beats and act cards are simply
+   THERE when the fire shows them — no rise, no overshoot morph. */
+.result-card, .result-card.morph-in { animation: none; }
+/* No whole-screen glide between screens. */
+.screen.active, .screen.active.nav-back { animation: none; }
+/* The deal does not bounce in, and a released oar returns in vase-frames —
+   steps(), never a spring (the stroke's own grammar, I1). */
+.card.deal-in { transform: none; opacity: 1; }
+.card:not(.dragging) { transition: transform .3s steps(3, end); }
+/* Despair's vignette is a STATE the room is in, not a pulse. */
+#screen-game.burnout-hot::after { animation: none; }
+/* Delta chips and notices land as records — no scale-bounce cascade. */
+.chip, .notice { animation: none; }
+/* The banked-bonus bar keeps its function and its armed state, loses the
+   shimmer loop and the glow (state reads from the solid fill + border). */
+.encore-btn.armed { animation: none; box-shadow: none; }
+.card.encore-glow { box-shadow: var(--elev-card); }
+
 /* Buttons do not inherit the body face (UA default); on this page every
    control speaks the pack's type. */
 button, input { font-family: var(--font-body); }

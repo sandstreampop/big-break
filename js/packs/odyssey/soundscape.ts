@@ -98,7 +98,9 @@ export const LEXICON: Record<string, Recipe> = {
 
 // The shell cues this pack chooses to voice. Everything absent is silence —
 // deliberately: no ui blip, no result stinger, no win fanfare (anti-goals).
-const EVENTS: Record<string, Recipe> = {
+// Exported so the sound test can pin the TABLE (exactly one voiced cue),
+// not merely that unvoiced cues don't throw.
+export const EVENTS: Record<string, Recipe> = {
   swipe: LEXICON.stroke,
 };
 

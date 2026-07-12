@@ -360,6 +360,24 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
         // already say so (the world updates WITH the outcome).
         const isResult = await page.evaluate(() => !!document.querySelector('#overlay.active .tier-badge'));
         if (isResult) await friezeTruth('result overlay');
+        // The tableau is inert behind the modal: it re-renders UNDER the
+        // result overlay and is keyboard-reachable there — activating it must
+        // NOT open the inspect panel on the shared #overlay, which would
+        // destroy the result overlay and its pending advance() (the
+        // portrait-lightbox incident's class). Drive it, then require the
+        // result overlay to still be standing.
+        if (isResult) {
+          const survived = await page.evaluate(() => {
+            const tab = document.querySelector('#tableau');
+            if (!tab) return 'no-tableau';
+            tab.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+            tab.click();
+            const ov = document.querySelector('#overlay.active');
+            return ov && ov.querySelector('.tier-badge') && !ov.querySelector('.inspect-panel') ? 'ok' : 'destroyed';
+          });
+          if (survived === 'destroyed')
+            throw new Error(`[${label}] activating the tableau behind a result overlay replaced the overlay — the pending advance() is gone`);
+        }
       }
       // Wait for the overlay to be dismissable rather than racing a fixed
       // sleep against the arm delay: either the click-to-dismiss listener is
@@ -708,7 +726,10 @@ async function checkOdysseyCeremony(browser, base) {
       }
       throw new Error(`[${label}] forced card never dealt`);
     };
-    const dismissToState = async (want, timeout = 15000) => {
+    // strict: the decisive click must END the telling by itself — if another
+    // live card or a crossroads shows up, the mechanic under test failed;
+    // never play through to a natural ending and call that a pass.
+    const dismissToState = async (want, timeout = 15000, strict = false) => {
       const deadline = Date.now() + timeout;
       while (Date.now() < deadline) {
         const k = await page.evaluate(() => {
@@ -721,6 +742,7 @@ async function checkOdysseyCeremony(browser, base) {
           return 'wait';
         });
         if (k === want) return true;
+        if (strict && (k === 'card' || k === 'cross')) return false;
         if (k === 'overlay') {
           await page.waitForFunction(() => {
             const ov = document.querySelector('#overlay.active');
@@ -763,7 +785,7 @@ async function checkOdysseyCeremony(browser, base) {
     // at a told ending (banked, terminal) — the hush is never a soft-lock.
     await force({ currentEventId: 'ody_tempt_lotus', pendingChainId: null, spSeen: {}, flags: [] });
     await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-right')?.click());
-    if (!(await dismissToState('ending'))) throw new Error(`[${label}] accepting the meadow did not reach a terminal screen`);
+    if (!(await dismissToState('ending', 15000, true))) throw new Error(`[${label}] accepting the meadow did not itself end the telling`);
 
     // Arm 3 — the wrath ceremony: the sea at the brink + the name shouted =
     // the death ending; the guttered-ember scene renders and the run ends.
@@ -781,14 +803,28 @@ async function checkOdysseyCeremony(browser, base) {
     { timeout: 15000 });
     await force({ currentEventId: 'ody_cyclops_name', pendingChainId: null, spSeen: { cyclops: true }, poseidon: 8 });
     await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-right')?.click()); // shout the name: poseidon +3 → 11
-    if (!(await dismissToState('ending'))) throw new Error(`[${label}] the sea's answer did not end the telling`);
+    if (!(await dismissToState('ending', 15000, true))) throw new Error(`[${label}] the sea's answer did not itself end the telling`);
     const wrath = await page.evaluate(() => ({
       gutter: !!document.querySelector('#screen-ending .ending-scene.ending-gutter'),
       verdict: document.querySelector('#screen-ending .verdict, #screen-ending .ending-title')?.textContent || '',
     }));
     if (!wrath.gutter) throw new Error(`[${label}] the death ending did not gutter the ember (scene missing)`);
+
+    // Later the same evening: this run booted RESUMED (force() reloads, then
+    // Resume) — that boot must count as kindled, so returning to the title
+    // after the telling ends finds the fire still lit and unveiled, never a
+    // second demand for the ritual.
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-ending button')].find((b) => /Title/.test(b.textContent || ''))?.click());
+    await page.waitForSelector('#screen-title.active', { timeout: 8000 });
+    const backLit = await page.evaluate(() => ({
+      veil: !!document.querySelector('#screen-title.title-veiled'),
+      lit: !!document.querySelector('.title-scene .threshold.kindle-lit'),
+    }));
+    if (backLit.veil || !backLit.lit)
+      throw new Error(`[${label}] the fire went cold after the telling (veil=${backLit.veil} lit=${backLit.lit}) — a resumed boot must count as kindled`);
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
-    console.log(`✓  ${label}: the meadow hushes and releases, accepting banks a terminal telling, the wrath ending gutters the ember`);
+    console.log(`✓  ${label}: the meadow hushes and releases, accepting banks a terminal telling, the wrath ending gutters the ember, the fire stays lit after the telling`);
   } finally {
     await ctx.close();
   }
@@ -860,16 +896,18 @@ async function checkOdysseyThreshold(browser, base) {
     } catch (e) {}`);
     try {
       const page = await boot(ctx);
-      await page.evaluate(() => {
+      // The skip must be the SECOND TAP's doing, not the clock's: finish()
+      // is synchronous, so the fire is lit the instant the second click
+      // returns — checked in the same evaluate, no window for the natural
+      // kindle (2×STEP_MS) to complete and fake the pass.
+      const litAtOnce = await page.evaluate(() => {
         const sc = document.querySelector('.title-scene');
         sc.click();
         sc.click();
+        return !!document.querySelector('.title-scene .threshold.kindle-lit');
       });
-      const skipped = await page.waitForFunction(() =>
-        !!document.querySelector('.title-scene .threshold.kindle-lit') &&
-        !document.querySelector('#screen-title.title-veiled'),
-      { timeout: 700 }).then(() => true).catch(() => false);
-      if (!skipped) throw new Error(`[${label}] the second tap did not skip the kindling`);
+      if (!litAtOnce) throw new Error(`[${label}] the second tap did not skip the kindling`);
+      await page.waitForFunction(() => !document.querySelector('#screen-title.title-veiled'), { timeout: 2000 });
     } finally { await ctx.close(); }
   }
 
@@ -983,6 +1021,33 @@ async function checkOdysseyStroke(browser, base) {
     }
     if (!onCard) throw new Error(`[${label}] never reached a live card`);
 
+    // The Motion Law is executable, not commentary: the pack sheet must
+    // retire the shell's juice under FULL motion (this context has no
+    // reduced-motion pref — the law is identity, not an accessibility mode).
+    // Synthetic-node computed styles, the SKEW-LAW probe's pattern.
+    const law = await page.evaluate(() => {
+      const mk = (cls) => { const n = document.createElement('div'); n.className = cls; document.body.appendChild(n); return n; };
+      const nodes = ['confetti', 'result-card', 'result-card shake', 'result-card morph-in', 'chip', 'notice'].map(mk);
+      const [conf, rise, shake, morph, chip, notice] = nodes.map((n) => getComputedStyle(n));
+      const out = {
+        confetti: conf.display,
+        rise: rise.animationName, shake: shake.animationName,
+        morph: morph.animationName, chip: chip.animationName, notice: notice.animationName,
+        screen: getComputedStyle(document.querySelector('.screen.active')).animationName,
+        snap: getComputedStyle(document.querySelector('#screen-game .card')).transitionTimingFunction,
+      };
+      nodes.forEach((n) => n.remove());
+      return out;
+    });
+    if (law.confetti !== 'none')
+      throw new Error(`[${label}] Motion Law: confetti renders on the odyssey (display=${law.confetti})`);
+    for (const k of ['rise', 'shake', 'morph', 'chip', 'notice', 'screen']) {
+      if (law[k] !== 'none')
+        throw new Error(`[${label}] Motion Law: shell juice '${k}' still animates (animation-name=${law[k]})`);
+    }
+    if (!/steps\(/.test(law.snap))
+      throw new Error(`[${label}] Motion Law: the released oar eases back (${law.snap}) — must return in vase-frames (steps)`);
+
     // Drag the card 150px right with a real pointer, sample mid-drag.
     const box = await page.evaluate(() => {
       const r = document.querySelector('#screen-game.active .card').getBoundingClientRect();
@@ -1047,14 +1112,17 @@ async function checkOdysseyStroke(browser, base) {
     await page.waitForSelector('#screen-title.active', { timeout: 15000 });
     await passThreshold(page);
     await page.evaluate(() => document.querySelector('button.btn.primary')?.click()); // Resume
+    // The band must really have frames to still (the ship's rowers are a
+    // two-frame sprite, so svg.px-anim .pxf always exists on a live run) —
+    // 'no frames found' is a FAILURE, not a vacuous pass: a sprite refactor
+    // that renamed the classes would otherwise mute this assertion forever.
     const still = await page.waitForFunction(() => {
       const t = document.querySelector('#tableau.tableau-still');
-      if (!t) return null;
-      const f = t.querySelector('svg.px-anim .pxf');
-      return f ? { anim: getComputedStyle(f).animationName } : { anim: 'no-frames' };
+      const f = t && t.querySelector('svg.px-anim .pxf');
+      return f ? { anim: getComputedStyle(f).animationName } : null;
     }, { timeout: 15000 }).then((h) => h.jsonValue()).catch(() => null);
-    if (!still || (still.anim !== 'none' && still.anim !== 'no-frames')) {
-      throw new Error(`[${label}] the in-game reduced-motion toggle does not still the frieze (got ${still && still.anim})`);
+    if (!still || still.anim !== 'none') {
+      throw new Error(`[${label}] the in-game reduced-motion toggle does not still the frieze (got ${still ? still.anim : 'no stilled band with frames'})`);
     }
     // The ember dims with Despair (I2): burnout was patched to 80 on this
     // reload, so the flame must burn low (1 − 0.55×0.8 = 0.56) — but never out.
@@ -1243,8 +1311,35 @@ async function checkBardBeatHierarchy(browser, base) {
     await page.evaluate(() => document.querySelector('#overlay.active')?.click());
     await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 10000 });
 
+    // The pacer dies with its beat: Escape a fresh beat while its reply is
+    // still pending, then prove the NEXT overlay hears its very first tap.
+    // #overlay is a persistent node — a beat whose capture listener outlived
+    // it swallowed one tap per unrevealed line on every later overlay (dead
+    // taps on progression-gated surfaces; soft-lock on a forced-choice one).
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    let paced = false;
+    for (let attempt = 0; attempt < 4 && !paced; attempt++) {
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+      await clickJS(page, 'button.btn.primary'); // ▶ Resume Run
+      paced = await page.waitForSelector('#overlay.active .bard-beat .bard-line.pending', { timeout: 6000 })
+        .then(() => true).catch(() => false);
+    }
+    if (!paced) throw new Error(`[${label}] could not surface a paced beat to Escape`);
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('#overlay.active'), { timeout: 5000 });
+    await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 10000 });
+    await page.evaluate(() => document.querySelector('#tableau')?.click());
+    await page.waitForSelector('#overlay.active .inspect-panel', { timeout: 4000 });
+    await page.waitForFunction(() => document.querySelector('#overlay.active')?.hasAttribute('data-armed'), { timeout: 5000 });
+    await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+    const heard = await page.waitForFunction(() => !document.querySelector('#overlay.active'), { timeout: 3000 })
+      .then(() => true).catch(() => false);
+    if (!heard)
+      throw new Error(`[${label}] first tap after an Escaped beat was swallowed — a stale beat listener is squatting #overlay`);
+
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
-    console.log(`✓  ${label}: heckle reads as content (${h.heckleContrast.toFixed(1)}:1, ${h.sizeRatio.toFixed(2)}× size), paced reveal in speaking order, tap jumps ahead, reduced-motion safe, beat advances to the card`);
+    console.log(`✓  ${label}: heckle reads as content (${h.heckleContrast.toFixed(1)}:1, ${h.sizeRatio.toFixed(2)}× size), paced reveal in speaking order, tap jumps ahead, reduced-motion safe, beat advances to the card, an Escaped beat leaves no stale tap-eater`);
     return true;
   } finally {
     await ctx.close();
