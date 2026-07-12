@@ -5,7 +5,7 @@
 // presenterCopy lint rail (tools/lint-content.mjs).
 
 import type { Pack, RunState } from '../../types.js';
-import { bardBeat } from './bard-chatter.js';
+import { bardBeat, cycleHeard } from './bard-chatter.js';
 import { odysseyFeel } from './feel.js';
 import { odysseySoundscape, resultCue, endingCue, speak } from './soundscape.js';
 import { friezeTableau } from './frieze.js';
@@ -75,6 +75,15 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   },
   actWord: 'ACT',
   actNames: ['', 'The Sack and the Sea', 'Witches and the Dead', 'The Narrow Way'],
+  // The banked-bonus mechanic, in the fireside register (the shell's default
+  // copy is the music pack's fireworks — wrong fire): a moment sung
+  // INCREDIBLY earns the telling a following wind, spent on one stroke.
+  // (Copy fits ONE line at the 320px floor beside the longest prompts — the
+  // worst-cards guard prices this bar into the card's height budget.)
+  encore: {
+    ready: '⛵ A following wind — spend it now',
+    armed: '⛵ THE WIND TAKEN — this stroke rides it',
+  },
   // The threshold (I5): the fireside before the telling — the player's first
   // touch kindles the fire; Resume means it still burns from last time.
   titleScene: odysseyTitleScene,
@@ -325,10 +334,12 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     t.crewLostLast = summary?.crewLost ?? 0;
     t.crewLostTotal += summary?.crewLost ?? 0;
     // No-repeat-until-exhausted for the crowd's callbacks: union what the
-    // fire heard tonight into the heard set (pickId resets it when the
-    // whole pool has been spent).
+    // fire heard tonight, then let the cycle REALLY reset — the heard set is
+    // persistent, so when everything the next telling could hear has been
+    // heard, keep only tonight's and the gags come back around (without the
+    // reset, no-repeat dies quietly after one full cycle).
     const heard = new Set([...(meta.odyssey.heardCallbacks || []), ...(summary?.heardCallbacks || [])]);
-    meta.odyssey.heardCallbacks = [...heard];
+    meta.odyssey.heardCallbacks = cycleHeard([...heard], t, summary?.heardCallbacks || []);
   },
   // The lexicon at the result (I6): at most ONE sound-event per landing —
   // the wave, the owl-note, the fragment-chime, or the Hall's bow-string —

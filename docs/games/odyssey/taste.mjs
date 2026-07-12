@@ -17,8 +17,8 @@ export const ODYSSEY_CLICHES = [
   // stock Homeric formulas
   'rosy-fingered dawn',
   'rosy fingered dawn',
-  'wine-dark sea',
-  'wine dark sea',
+  'wine-dark', // the formula dodges as an adjective too ("then wine-dark") — ban the stem
+  'wine dark',
   'wily odysseus',
   'much-enduring',
   'much enduring',

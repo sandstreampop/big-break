@@ -35,6 +35,13 @@ test('ship(n) seats exactly n rowers (rect fidelity per bench)', () => {
   // Out-of-range clamps, never throws.
   assert.equal(rectCount(ship(99)), rectCount(ship(SHIP_MAX_ROWERS)));
   assert.equal(rectCount(ship(-3)), empty);
+  // Growth alone would forgive a constant off-by-one (ship(n) seating n+1
+  // rowers passes every >= check) — pin the exact silhouettes. Re-baseline
+  // these constants deliberately when the ship's ART changes, never to
+  // quiet a seating bug.
+  assert.equal(empty, 36, 'empty hull silhouette changed — re-baseline deliberately');
+  assert.equal(rectCount(ship(1)), 42, 'one-rower silhouette changed — re-baseline deliberately');
+  assert.equal(rectCount(ship(SHIP_MAX_ROWERS)), 87, 'full-bench silhouette changed — re-baseline deliberately');
 });
 
 test('the three sea states are three different waters', () => {

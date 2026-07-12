@@ -111,10 +111,15 @@ const DESCRIPTORS = {
     // floor as the deck. State-dependent hooks are exercised across their
     // flag variants so every authored branch is scanned.
     presenterCopy(pack) {
+      // The frieze inspect strings below resolve act lengths through the
+      // engine's module-level actLength (twist-aware), which dispatches to
+      // the ACTIVE pack instance — activate this one first.
+      engine.useContentPack(pack);
       const pres = pack.presenter || {};
       const out = [pres.aboutLine];
       out.push(pres.title?.logo, ...(pres.title?.taglines || []));
       out.push(pres.actWord, ...(pres.actNames || []));
+      out.push(pres.encore?.ready, pres.encore?.armed);
       for (const a of Object.values(pres.actIntro || {})) out.push(a.name, a.text);
       out.push(pres.crossroads?.head, pres.crossroads?.sub);
       out.push(pres.loadoutPicker?.head, pres.loadoutPicker?.sub);
@@ -164,9 +169,24 @@ const DESCRIPTORS = {
       }
       // Every crew name/detail (the pool the loss lines draw from).
       for (const m of ODYSSEY_CREW) out.push(`${m.name}, ${m.detail}`);
-      // The frame chatter (bard-chatter.ts): every dialogue block — the
-      // bard's lines and the hecklers' — scanned at the presenter floor.
-      for (const c of ODYSSEY_CHATTER) for (const b of c.blocks) out.push(b.text);
+      // The frame chatter (bard-chatter.ts): every dialogue block. The shell
+      // prints each block wrapped in curly quotes — spoken mouths, exempt
+      // from the cliché blocklist per VOICE law 8 — so scan them AS the
+      // screen shows them; the `who` attributions are chrome (narration
+      // voice) and scan bare.
+      for (const c of ODYSSEY_CHATTER) {
+        for (const b of c.blocks) { out.push(`“${b.text}”`); out.push(b.who); }
+      }
+      // The frieze inspect panel (tableau one-tap truth): narration-voice UI
+      // copy across the states that vary its lines — this is the surface the
+      // 'wine-dark' lapse shipped on unscanned.
+      for (const mock of [
+        { act: 1, cardsPlayedInAct: 2, stats: { burnout: 10 }, expedition: 12, poseidon: 0, athena: 0, renown: 0, flags: [] },
+        { act: 2, cardsPlayedInAct: 4, stats: { burnout: 40 }, expedition: 9, poseidon: 5, athena: 3, renown: 4, flags: ['ody_done_cyclops'] },
+        { act: 3, cardsPlayedInAct: 6, stats: { burnout: 80 }, expedition: 14, poseidon: 9, athena: 6, renown: 12, flags: ['ody_done_cyclops', 'ody_done_underworld'] },
+      ]) {
+        for (const b of pres.tableau?.(mock, null)?.inspect || []) out.push(b.title, ...(b.lines || []));
+      }
       return out.filter(Boolean);
     },
   },

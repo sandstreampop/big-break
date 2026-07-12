@@ -138,7 +138,7 @@ export const friezeTableau: NonNullable<Presenter['tableau']> = (s) => {
     },
     {
       title: `🔱 Poseidon — ${wrath} of 10`,
-      lines: ['The sea is his mood: calm, then rough, then wine-dark. At ten it takes its answer.'],
+      lines: ['The sea is his mood: meander-calm, then chop, then oxblood. At ten it takes its answer.'],
     },
     {
       title: `🦉 Athena — ${athena}`,

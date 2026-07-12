@@ -8,7 +8,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 
 const { CREW, lostMan, crewAtLaunch } = await import('../dist/js/packs/odyssey/crew.js');
-const { CHATTER, eligibleMemory } = await import('../dist/js/packs/odyssey/bard-chatter.js');
+const { CHATTER, eligibleMemory, cycleHeard, bardPlugin } = await import('../dist/js/packs/odyssey/bard-chatter.js');
 const { odysseyPresenter } = await import('../dist/js/packs/odyssey/presenter.js');
 const { summarizeTelling } = await import('../dist/js/packs/odyssey/prophecy.js');
 
@@ -95,6 +95,64 @@ test('the crowd’s callbacks key to the ledger and never repeat until the pool 
   const allIds = eligibleMemory(led()).map((c) => c.id);
   const exhausted = eligibleMemory(led({ heard: allIds }));
   assert.ok(exhausted.length > 0, 'an exhausted pool must reset, never starve the fire');
+});
+
+test('the heard set REALLY cycles: exhaustion keeps only tonight’s, mid-cycle unions', () => {
+  const ledger = { count: 5, byEnding: {}, named: 2, nobody: 0, crewLostTotal: 0, lastEnding: 'wrath' };
+  const pool = CHATTER.filter((c) => c.kind === 'memory')
+    .filter((c) => !c.when || c.when({ tellingLedger: { ...ledger, heard: [] } }))
+    .map((c) => c.id);
+  assert.ok(pool.length >= 3, 'pool too thin to exercise the cycle');
+  // Mid-cycle: the union stands untouched.
+  assert.deepEqual(cycleHeard([pool[0]], ledger, [pool[0]]), [pool[0]]);
+  // Exhausted: everything the NEXT telling could hear has been heard — the
+  // set resets to tonight's only, so a new cycle opens without immediately
+  // repeating tonight's gags. (Without this, the persistent heard set makes
+  // eligibleMemory's whole-pool fallback permanent — no-repeat dies after
+  // one full cycle.)
+  assert.deepEqual(cycleHeard([...pool], ledger, [pool[2]]), [pool[2]]);
+  // The presenter really routes through it: an exhausted meta heard set
+  // collapses to tonight's after recordMeta.
+  const meta = { odyssey: { heardCallbacks: pool.filter((id) => id !== 'bcm_one_eye'),
+    tellings: { count: 2, byEnding: {}, named: 0, nobody: 0, crewLostTotal: 0 } } };
+  odysseyPresenter.recordMeta(meta, {
+    endingKey: 'nostos', endingResult: 'success', named: false, nobody: false,
+    crewLost: 0, heardCallbacks: ['bcm_one_eye'],
+  });
+  assert.deepEqual(meta.odyssey.heardCallbacks, ['bcm_one_eye'],
+    'recordMeta must reset the cycle when the pool is exhausted');
+});
+
+test('a landmark deal refunds the queued line — suppressed is not spent', () => {
+  // afterResolve picked a line for the NEXT deal; that deal was a landmark,
+  // so bardBeat stayed silent — the id must leave bardShown (cap + no-repeat
+  // bookkeeping) and be re-pickable later.
+  const state = {
+    flavorSeed: 7, cardsPlayedInAct: 3, flags: [], renown: 0,
+    bardLine: 'bc_woodpile', bardShown: ['bc_open_room', 'bc_woodpile'],
+  };
+  bardPlugin.afterResolve(state, { event: { id: 'ody_cyclops', tags: ['landmark'] } });
+  assert.ok(!state.bardShown.includes('bc_woodpile') || state.bardLine === 'bc_woodpile',
+    'the suppressed line must be refunded (or immediately re-picked)');
+  assert.ok(state.bardShown.includes('bc_open_room'), 'heard lines stay spent');
+  // A non-landmark resolve spends normally: the queued line stays in the set.
+  const heard = {
+    flavorSeed: 7, cardsPlayedInAct: 4, flags: [], renown: 0,
+    bardLine: 'bc_woodpile', bardShown: ['bc_open_room', 'bc_woodpile'],
+  };
+  bardPlugin.afterResolve(heard, { event: { id: 'ody_a1_squall', tags: [] } });
+  assert.ok(heard.bardShown.includes('bc_woodpile'), 'a heard line is never refunded');
+});
+
+test('summarize never ledgers a line the fire did not hear (the final queued pick)', () => {
+  const s = summarizeTelling({
+    flags: [], loadout: 'kings_hall', expedition: 12,
+    ending: { key: 'wrath', result: null },
+    // bcm_again was picked at the run's FINAL resolve (still queued in
+    // bardLine) — there was no next deal; it must not enter the ledger.
+    bardShown: ['bc_open_room', 'bcm_one_eye', 'bcm_again'], bardLine: 'bcm_again',
+  });
+  assert.deepEqual(s.heardCallbacks, ['bcm_one_eye']);
 });
 
 test('summarize carries the ledger’s raw material', () => {

@@ -88,7 +88,7 @@ export const CHATTER: Chatter[] = [
     { text: 'The sea is winning the argument, friends, and it wins the way it always wins — not by being stronger. By not being tired. Row anyway. The bard has seen worse benches than yours reach home.' },
   ] },
   { id: 'bc_hot', kind: 'reactive', when: (s) => (s.renown || 0) >= 6, blocks: [
-    { who: 'a voice at the back', text: 'Phemios sang it better.' },
+    { who: 'a man from Kyme', text: 'Phemios sang it better.' },
     { text: 'Phemios of Smyrna does this part with a drum. A DRUM, as if the sea keeps time. The man is good, friends, and the telling knows it — compare us again when he has looked at real water.' },
   ] },
 
@@ -99,7 +99,7 @@ export const CHATTER: Chatter[] = [
     { text: 'Her grandfather counted his own fingers twice and made nine, friends. Twelve ships.' },
   ] },
   { id: 'bc_horse', kind: 'ambient', blocks: [
-    { who: 'a man at the back', text: 'When do we get the horse?' },
+    { who: 'the man who wants the horse', text: 'When do we get the horse?' },
     { text: 'Wrong poem, friend — the horse was three years and one telling ago, and it is carpenters’ work besides. I have your coin, and I am keeping it.' },
   ] },
   { id: 'bc_true', kind: 'ambient', blocks: [
@@ -144,9 +144,11 @@ export const CHATTER: Chatter[] = [
     { who: 'the potter’s boy', text: 'Last night he sat down in the flowers and you just stopped singing.' },
     { text: 'And tonight he stands back up. That is what a new fire buys, boy — the meadow keeps whichever man you leave in it, and we left one. Listen for the bench with no oar in it.' },
   ] },
+  // (Law 8's fence: the needle lands on the BARD's singing — 'every night
+  // YOU give him the shout' — never a sneer at how the player played.)
   { id: 'bcm_named_habit', kind: 'memory', when: (s) => (s.tellingLedger?.named || 0) >= 2, blocks: [
-    { who: 'the man who wants the horse', text: 'He shouts his name at the giant again tonight? The horse never shouted.' },
-    { text: 'The horse, friend, was FULL of men not shouting — that was the whole art of it. Whether this captain learned the horse’s lesson, tonight will say.' },
+    { who: 'the man who wants the horse', text: 'Every night you give him that shout at the giant. The horse never shouted.' },
+    { text: 'The horse, friend, was FULL of men not shouting — that was the whole art of it. I sing the shout because the shout is what the water heard. Take it up with the water.' },
   ] },
   { id: 'bcm_fee_nights', kind: 'memory', when: (s) => (s.tellingLedger?.count || 0) >= 5, blocks: [
     { text: 'Five nights of the long way home, friends, and the bowl by the woodpile still rings like a temple at noon — which is to say, empty. The sea is not the only thing at this fire owed a debt.' },
@@ -174,6 +176,25 @@ export function eligibleMemory(s: RunState): Chatter[] {
   const heard = new Set(s.tellingLedger?.heard || []);
   const fresh = pool.filter((c) => !heard.has(c.id));
   return fresh.length ? fresh : pool;
+}
+
+// The cycle RESET made real: the heard set is persistent (pack meta-save),
+// so eligibleMemory's whole-pool fallback alone would mean "after one full
+// cycle, no-repeat is gone forever". At telling's end (presenter.recordMeta)
+// the ledger asks: could the NEXT telling still hear something fresh? When
+// every callback the updated ledger makes eligible has been heard, keep only
+// tonight's — a new cycle opens without immediately repeating tonight's gags.
+// (Memory `when` guards read only the ledger, so next-run eligibility is
+// knowable here.)
+export function cycleHeard(
+  heard: string[],
+  ledger: Omit<NonNullable<RunState['tellingLedger']>, 'heard'>,
+  tonight: string[],
+): string[] {
+  const pool = CHATTER.filter((c) => c.kind === 'memory')
+    .filter((c) => !c.when || c.when({ tellingLedger: { ...ledger, heard } } as RunState));
+  if (pool.length && pool.every((c) => heard.includes(c.id))) return [...new Set(tonight)];
+  return heard;
 }
 
 // How often the crowd spends a MEMORY on a silent card (between the
@@ -212,7 +233,14 @@ export const bardPlugin: Plugin = {
     state.bardLine = o.id;
     state.bardShown = [o.id];
   },
-  afterResolve(state) {
+  afterResolve(state, result) {
+    // Reconcile the line queued for the deal we just resolved: a landmark
+    // suppresses the beat (bardBeat returns null — its set-piece IS the
+    // moment), so the line was never heard. Refund it before re-picking, or
+    // it burns a slot of the cap and its no-repeat forever unspoken.
+    if (state.bardLine && (result?.event?.tags || []).includes('landmark')) {
+      state.bardShown = (state.bardShown || []).filter((id) => id !== state.bardLine);
+    }
     state.bardLine = pickId(state, (state.bardShown || []).length + (state.cardsPlayedInAct || 0));
   },
 };

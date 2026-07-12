@@ -38,5 +38,8 @@ export const summarizeTelling: NonNullable<Pack['summarize']> = (state) => ({
   endingResult: state.ending?.result ?? null,
   nobody: state.flags.includes('ody_nobody'),
   crewLost: Math.max(0, crewAtLaunch(state.loadout) - Math.round(state.expedition ?? 0)),
-  heardCallbacks: (state.bardShown || []).filter((id) => id.startsWith('bcm_')),
+  // A line still queued in bardLine was picked at the run's FINAL resolve —
+  // there was no next deal, so the fire never heard it; don't ledger it.
+  heardCallbacks: (state.bardShown || [])
+    .filter((id) => id.startsWith('bcm_') && id !== state.bardLine),
 });
