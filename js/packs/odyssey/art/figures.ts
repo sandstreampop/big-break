@@ -25,8 +25,6 @@ export const SHIP_MAX_ROWERS = 12;
 // own pixels (test/odyssey-frieze.test.mjs pins per-bench fidelity).
 const BENCHES = [5, 7, 9, 11, 13, 15, 21, 23, 25, 27, 29, 31];
 
-function blankRow(w: number): string { return '.'.repeat(w); }
-
 // Stamp `glyph` rows into `rows` at (x, y), transparent-safe.
 function stamp(rows: string[], glyph: string[], x: number, y: number): void {
   glyph.forEach((g, gy) => {

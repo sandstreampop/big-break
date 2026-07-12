@@ -13,7 +13,7 @@ import { hearthScene, cupLevelFor } from './hearth.js';
 import { odysseyTitleScene } from './threshold.js';
 import { cyclops, ashBand, hallDoors, fire, coldHearth, ember, cup } from './art/figures.js';
 import { lostMan, crewAtLaunch } from './crew.js';
-import { vibrate } from '../../ui/dom.js';
+import { vibrate, reducedMotion } from '../../ui/dom.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -389,7 +389,11 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
       : banked
         ? `<span class="fig fig-fire">${fire()}</span><span class="fig fig-cup">${cup('down')}</span>`
         : `<span class="fig fig-fire">${fire()}</span><span class="fig fig-cup">${cup(cupLevelFor(state.act || 3))}</span>`;
-    return { lines: [{ cls: 'ending-scene' + (dead ? ' ending-gutter' : ''), html: scene }], lpNote: '' };
+    // px-still mirrors the in-game reduced-motion toggle (ADR-0001:
+    // first-class under BOTH prefs; CSS media queries can't see this one) —
+    // the ember renders already guttered, the fire holds its first frame.
+    const still = reducedMotion() ? ' px-still' : '';
+    return { lines: [{ cls: 'ending-scene' + (dead ? ' ending-gutter' : '') + still, html: scene }], lpNote: '' };
   },
   // The cash-outs are BANKED tellings, not defeats: the verdict ribbon and
   // the history rows say so (told endings, never game-over screens).

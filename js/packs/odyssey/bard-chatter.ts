@@ -145,7 +145,7 @@ export const CHATTER: Chatter[] = [
     { text: 'And tonight he stands back up. That is what a new fire buys, boy — the meadow keeps whichever man you leave in it, and we left one. Listen for the bench with no oar in it.' },
   ] },
   { id: 'bcm_named_habit', kind: 'memory', when: (s) => (s.tellingLedger?.named || 0) >= 2, blocks: [
-    { who: 'the man at the back', text: 'He shouts his name at the giant again tonight? The horse never shouted.' },
+    { who: 'the man who wants the horse', text: 'He shouts his name at the giant again tonight? The horse never shouted.' },
     { text: 'The horse, friend, was FULL of men not shouting — that was the whole art of it. Whether this captain learned the horse’s lesson, tonight will say.' },
   ] },
   { id: 'bcm_fee_nights', kind: 'memory', when: (s) => (s.tellingLedger?.count || 0) >= 5, blocks: [

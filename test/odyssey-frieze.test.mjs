@@ -12,6 +12,11 @@ const { ship, seaStrip, sternFigures, SHIP_MAX_ROWERS } =
 const { seaStateOf, notchOf, friezeTableau, horizonOf } =
   await import('../dist/js/packs/odyssey/frieze.js');
 const { odysseyManifest } = await import('../dist/js/packs/odyssey/manifest.js');
+// horizonOf/notchOf resolve act lengths through engine.actLength (twist-
+// aware), which dispatches to the ACTIVE engine instance — activate the pack.
+const engine = await import('../dist/js/engine.js');
+const { odysseyPack } = await import('../dist/js/packs/odyssey/pack.js');
+engine.useContentPack(odysseyPack);
 
 const rectCount = (svg) => (svg.match(/<rect /g) || []).length;
 
@@ -57,12 +62,30 @@ test('sternFigures honors its count and cap', () => {
   assert.equal(rectCount(sternFigures(99)), rectCount(sternFigures(6)), 'cap at 6');
 });
 
-test('notchOf walks the manifest segments', () => {
+test('notchOf walks the manifest segments — and folds the act twist', () => {
   const total = odysseyManifest.segments.reduce((n, s) => n + s.length, 0);
   assert.deepEqual(notchOf({ act: 1, cardsPlayedInAct: 0 }), { played: 0, total });
   assert.deepEqual(notchOf({ act: 2, cardsPlayedInAct: 3 }),
     { played: odysseyManifest.segments[0].length + 3, total });
   assert.equal(notchOf({ act: 3, cardsPlayedInAct: 999 }).played, total, 'clamps at Ithaca');
+  // A twist stretches or shaves the voyage — the ship must cross the water
+  // the run actually has (engine.actLength folds state.actTwist).
+  const twisted = notchOf({ act: 3, cardsPlayedInAct: 0, actTwist: { act: 2, delta: 2 } });
+  assert.deepEqual(twisted, { played: 9 + 12, total: 28 + 2 });
+});
+
+test('the horizon looms against the REAL act end when a twist moved it', () => {
+  const base = { stats: { burnout: 0 }, expedition: 12, poseidon: 0, athena: 0, renown: 0 };
+  const c = ['ody_done_cyclops'];
+  // Act 2 shaved by 2 (end slot 9 → 7): the drain must start at played 5.
+  const shaved = { ...base, act: 2, flags: c, actTwist: { act: 2, delta: -2 } };
+  assert.equal(horizonOf({ ...shaved, cardsPlayedInAct: 4 }), null);
+  assert.deepEqual(horizonOf({ ...shaved, cardsPlayedInAct: 5 }), { kind: 'ash', near: 2 });
+  assert.deepEqual(horizonOf({ ...shaved, cardsPlayedInAct: 7 }), { kind: 'ash', near: 0 });
+  // Act 2 stretched by 2 (end slot 11): played 7 is still open water.
+  const stretched = { ...base, act: 2, flags: c, actTwist: { act: 2, delta: 2 } };
+  assert.equal(horizonOf({ ...stretched, cardsPlayedInAct: 7 }), null);
+  assert.deepEqual(horizonOf({ ...stretched, cardsPlayedInAct: 9 }), { kind: 'ash', near: 2 });
 });
 
 test('friezeTableau: data attributes state the run, inspect states the numbers', () => {

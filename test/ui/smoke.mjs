@@ -185,6 +185,7 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
         exp: Math.round(run.expedition ?? 0), pos: Math.round(run.poseidon ?? 0),
         ath: Math.round(run.athena ?? 0), ren: Math.round(run.renown ?? 0),
         act: run.act || 1, played: run.cardsPlayedInAct || 0,
+        twistAct: run.actTwist?.act ?? 0, twistDelta: run.actTwist?.delta ?? 0,
         doneCyclops: (run.flags || []).includes('ody_done_cyclops'),
         doneUnder: (run.flags || []).includes('ody_done_underworld'),
         rowers: +f.dataset.rowers, sea: f.dataset.sea,
@@ -203,8 +204,14 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
       throw new Error(`[${label}] the frieze lies on the ${where}: state exp=${t.exp} pos=${t.pos} ath=${t.ath} ren=${t.ren} vs band rowers=${t.rowers} sea=${t.sea} owl=${t.owl} deeds=${t.deeds}`);
     }
     // The horizon (I4): geography's forecast restated independently. Acts
-    // run 9/10/9 cards; landmarks close acts 1 and 2; gulls close the tale.
-    const ends = { 1: 8, 2: 9, 3: 8 };
+    // run 9/10/9 cards — plus this run's act twist, exactly as
+    // engine.actLength folds it (min length 3) — landmarks close acts 1 and
+    // 2; gulls close the tale.
+    const rawLen = { 1: 9, 2: 10, 3: 9 };
+    const ends = {};
+    for (const a of [1, 2, 3]) {
+      ends[a] = Math.max(3, rawLen[a] + (t.twistAct === a ? t.twistDelta : 0)) - 1;
+    }
     const loom = (beatAct) => (t.act > beatAct ? 0 : t.act < beatAct ? null
       : (ends[beatAct] - t.played) <= 2 ? Math.max(0, ends[beatAct] - t.played) : null);
     let wantHor = '';
@@ -739,7 +746,6 @@ async function checkOdysseyCeremony(browser, base) {
     // the run continues to a live next beat.
     await force({ currentEventId: 'ody_tempt_lotus', pendingChainId: null, spSeen: {} });
     const hush = await page.evaluate(() => ({
-      beatSeen: !!sessionStorage.getItem('bb_cer_hush') || true, // beat already passed in force(); check the card instead
       cardHush: !!document.querySelector('#card-area.mood-hush'),
       bodyHush: !!document.body.classList.contains('ody-hush'),
       banner: document.querySelector('#card-area .set-piece-banner')?.textContent || '',
@@ -938,6 +944,9 @@ async function checkOdysseyStroke(browser, base) {
       const key = 'bigbreak_meta_v1_odyssey';
       const m = JSON.parse(localStorage.getItem(key) || 'null');
       if (m) { m.settings.reducedMotion = true; localStorage.setItem(key, JSON.stringify(m)); }
+      const rkey = 'bigbreak_run_v1_odyssey';
+      const r = JSON.parse(localStorage.getItem(rkey) || 'null');
+      if (r) { r.stats.burnout = 80; localStorage.setItem(rkey, JSON.stringify(r)); }
     }
   } catch (e) {}`);
   const page = await ctx.newPage();
@@ -1047,8 +1056,18 @@ async function checkOdysseyStroke(browser, base) {
     if (!still || (still.anim !== 'none' && still.anim !== 'no-frames')) {
       throw new Error(`[${label}] the in-game reduced-motion toggle does not still the frieze (got ${still && still.anim})`);
     }
+    // The ember dims with Despair (I2): burnout was patched to 80 on this
+    // reload, so the flame must burn low (1 − 0.55×0.8 = 0.56) — but never out.
+    const emberDim = await page.waitForFunction(() => {
+      const e = document.querySelector('#ody-ember');
+      const o = e && parseFloat(e.style.opacity || '1');
+      return e && Number.isFinite(o) && o < 0.7 ? { o } : null;
+    }, { timeout: 8000 }).then((h) => h.jsonValue()).catch(() => null);
+    if (!emberDim || emberDim.o < 0.3) {
+      throw new Error(`[${label}] the ember does not dim with Despair (opacity=${emberDim && emberDim.o})`);
+    }
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
-    console.log(`✓  ${label}: resistance holds (150px pull → ${Math.round(mid)}px), the ember leans and snaps, the sweep commits, the words take, the run advances, the toggle stills the band`);
+    console.log(`✓  ${label}: resistance holds (150px pull → ${Math.round(mid)}px), the ember leans, snaps, and dims with Despair, the sweep commits, the words take, the run advances, the toggle stills the band`);
   } finally {
     await ctx.close();
   }

@@ -16,6 +16,7 @@
 // n rowers) by test/odyssey-frieze.test.mjs.
 
 import type { Presenter, RunState } from '../../types.js';
+import { actLength } from '../../engine.js';
 import { odysseyManifest } from './manifest.js';
 import { BEATS } from './itinerary.js';
 import {
@@ -27,15 +28,22 @@ export function seaStateOf(poseidon: number): SeaState {
   return poseidon >= 8 ? 'wrath' : poseidon >= 4 ? 'mid' : 'calm';
 }
 
-// The stroke count: completed segments plus this act's cards. Act twists can
-// stretch or shave an act by a card or two — the notch is the voyage's felt
-// position, and the inspect panel carries the exact count beside it.
+// The stroke count: completed segments plus this act's cards — through
+// engine.actLength, which folds the run's act twist, so a shaved or
+// stretched act never desynchronizes the ship from the water it actually
+// crossed. (The itinerary plugin resolves its 'end' slots the same way;
+// INCIDENTS #3's class — two readers of one schedule disagreeing — is
+// exactly what raw segment lengths here would reintroduce.)
 export function notchOf(s: RunState): { played: number; total: number } {
-  const segs = odysseyManifest.segments;
+  const acts = odysseyManifest.segments.length;
   let played = 0;
-  for (let a = 1; a < (s.act || 1); a++) played += segs[a - 1]?.length || 0;
+  let total = 0;
+  for (let a = 1; a <= acts; a++) {
+    const len = actLength(s, a);
+    total += len;
+    if (a < (s.act || 1)) played += len;
+  }
   played += s.cardsPlayedInAct || 0;
-  const total = segs.reduce((n, seg) => n + seg.length, 0);
   return { played: Math.min(total, played), total };
 }
 
@@ -58,7 +66,9 @@ export function horizonOf(s: RunState): Horizon {
   const flags = s.flags || [];
   const act = s.act || 1;
   const played = s.cardsPlayedInAct || 0;
-  const endSlot = (a: number) => (odysseyManifest.segments[a - 1]?.length || 1) - 1;
+  // The REAL act length (twist folded) — the landmark's 'end' window is the
+  // act's actual last slot, and the forecast must loom against that.
+  const endSlot = (a: number) => actLength(s, a) - 1;
   const looming = (beatAct: number): 0 | 1 | 2 | null => {
     if (act > beatAct) return 0; // rolled forward — due immediately
     if (act < beatAct) return null;
