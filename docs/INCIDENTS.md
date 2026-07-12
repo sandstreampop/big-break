@@ -11,6 +11,77 @@ Each entry: what broke, the 5-whys root cause, the **rule** it produced, and the
 
 ---
 
+## #7 · The design law lived in a doc, so the shell broke it twenty ways — 2026-07-12
+
+**Severity:** shipped defects (main auto-deploys), all on the odyssey, none
+gamebreaking singly, identity-breaking together: every `incredible` result
+fired the siblings' confetti; every bad result shook the card and flashed the
+scrim red; results, ceremony beats, act cards and screen transitions eased in
+with overshoot bounce; the Despair vignette pulsed; the encore bar shipped
+music copy and an infinite shimmer — all directly against the NORTH-STAR's
+flagship anti-goal ("no confetti with a Greek accent") and the Motion Law
+(ADR-0001). Plus behavioural strays the gates were blind to: a bard beat
+Escaped mid-reveal left a capture listener squatting `#overlay` that swallowed
+taps on later overlays; the tableau was keyboard-operable behind a result
+overlay and would have destroyed its pending `advance()` (the #1 lightbox
+class); a resumed boot never counted as kindled, so the title re-veiled after
+that run ended; the crowd's cross-run no-repeat quietly died after one full
+cycle; a landmark deal spent a bard line it never spoke.
+
+**Symptom:** none reported — found by this cleanup sprint's adversarial
+review (six lenses + refutation verify), all while every gate was green.
+
+**Root cause (5 whys):**
+1. Why did the shell's juice run on the odyssey → the shell applies its
+   result/transition juice universally; the pack never opted out because no
+   opt-out seam existed.
+2. Why did no gate catch it → the Motion Law's anti-goals were prose in
+   NORTH-STAR.md/ADR-0001; every executable check pinned what the pack ADDED
+   (stroke, stills, frames), none pinned what the shell must NOT do.
+3. Why were the behavioural strays invisible → the suites drive happy paths
+   to endings; none Escaped a beat mid-reveal, pressed Enter on the tableau
+   under a modal, returned to the title after a resumed run, or played enough
+   meta-runs to exhaust the memory pool.
+4. Why did the sprint find them at once → fresh-context adversarial review
+   reads the LAW first and the code against it — the writer had read the code
+   first and the law as a checklist of features to add.
+5. Why does the class recur (see #1, #5, #6) → a rule that matters was
+   commentary, not a test — the repo's own second law, unapplied to the
+   design-law layer.
+
+**Class:** design law without an executable negative — invariants that name
+what must NOT happen, left as prose while the gates only pinned what must.
+
+**Rules produced:**
+- **A design law gets a NEGATIVE probe**: for every "the pack never Xes",
+  a gate must drive the shell into the X path and assert silence/stillness —
+  the law is identity, not an accessibility mode, so it is asserted under
+  full motion, not only under reduced-motion prefs.
+- **The shell's juice is a seam, not a constant** (`feel.resultJuice`): a
+  pack retires it in one declared place, and its stylesheet retires the same
+  moves (belt and braces — neither the work nor the paint happens).
+- A listener added to a PERSISTENT node (`#overlay`) dies with its overlay
+  (AbortController in `onClose`) — `openOverlay` tears down only its own.
+- Content behind an `aria-modal` overlay is inert in fact, not just in
+  markup: interactive tableau/stage controls no-op while any overlay is up.
+
+**Guard (now in place):** the motion-law probe in `test/ui/smoke.mjs`
+(computed styles on the shell's juice classes: confetti `display:none`,
+rise/shake/morph/chip/notice/screenIn `animation: none`, the released card's
+`steps()` snap-back — under full motion); the escaped-beat pin (Escape a
+paced beat, then the next overlay must hear its first tap); the tableau-inert
+pin (activate the tableau behind a live result overlay, the overlay must
+survive); the stays-lit pin (ending → 🏠 Title after a resumed boot);
+`test/odyssey-sound.test.mjs` pins the EVENTS routing TABLE (exactly one
+voiced shell cue); `test/odyssey-memory.test.mjs` pins the heard-cycle reset,
+the landmark refund, and the final-queued-line exclusion; the worst-cards
+guard already priced the (re-voiced) encore bar into the 320px budget; and
+`test/ui/mobile-matrix.mjs` gained the ADR-0009 ambient budget with a tableau
+present, a tableau-visibility assertion, and the incident-#6 pairing pass
+(stale pack sheet beside an agreeing style.css must heal via the per-sheet
+stamp — key derivation now single-sourced in `js/css-key.ts`, pinned by
+`test/css-stamp-key.test.mjs`).
+
 ## #6 · The fire went blank: dialogue hidden by CSS, revealed only by JS, on a client running mixed deploys — 2026-07-11
 
 **Severity:** shipped defect (main auto-deploys), gamebreaking-adjacent on the
