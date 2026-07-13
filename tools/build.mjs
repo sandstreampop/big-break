@@ -93,20 +93,33 @@ for (const f of cssFiles) {
 // The release identity (js/version.ts): package.json `version` is the number,
 // git supplies the commit sha + commit date (commit date, not wall clock, so
 // rebuilding the same commit stamps identically). Outside a git checkout the
-// sha/date stamp empty and the UI simply omits them.
+// sha/date stamp empty and the UI simply omits them. The values are written
+// into generated JS, so they are gated to known shapes HERE (a stray quote in
+// package.json `version` would otherwise emit a SyntaxError that ships with
+// exit 0) and embedded via JSON.stringify, never raw interpolation. A
+// malformed git answer degrades to the empty stamp, not a broken module.
+// Deliberate cost, documented: BUILD_SHA folds the commit into version.js, so
+// the jsV hash below — and every ?v= JS URL — changes on EVERY commit; the
+// old "JS URLs stable across JS-free deploys" property is traded for a
+// deploy identity that is checkable against main at a glance.
 const appVersion = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')).version;
+if (!/^\d+\.\d+\.\d+$/.test(appVersion)) {
+  throw new Error(`package.json version '${appVersion}' is not plain MAJOR.MINOR.PATCH semver — see docs/RELEASING.md`);
+}
 let buildSha = '', buildDate = '';
 try {
   buildSha = execSync('git rev-parse --short HEAD', { cwd: root }).toString().trim();
   buildDate = execSync('git show -s --format=%cs HEAD', { cwd: root }).toString().trim();
   if (execSync('git status --porcelain', { cwd: root }).toString().trim()) buildSha += '+dev';
 } catch { /* not a git checkout — version number still stamps */ }
+if (!/^[0-9a-f]{4,40}(\+dev)?$/.test(buildSha)) buildSha = '';
+if (!/^\d{4}-\d{2}-\d{2}$/.test(buildDate)) buildDate = '';
 writeFileSync(resolve(dist, 'js/version.js'),
   `// stamped by tools/build.mjs — see js/version.ts\n` +
   `export const CSS_CONTRACT = '${cssV}';\n` +
-  `export const APP_VERSION = '${appVersion}';\n` +
-  `export const BUILD_SHA = '${buildSha}';\n` +
-  `export const BUILD_DATE = '${buildDate}';\n`);
+  `export const APP_VERSION = ${JSON.stringify(appVersion)};\n` +
+  `export const BUILD_SHA = ${JSON.stringify(buildSha)};\n` +
+  `export const BUILD_DATE = ${JSON.stringify(buildDate)};\n`);
 
 const jsFiles = [];
 (function walk(dir) {

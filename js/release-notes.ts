@@ -2,8 +2,9 @@
 //
 // One app-level log for the whole site (every game ships from one build, so
 // they share one version). The shell renders it (menus.ts: the title screen's
-// version chip and Settings → What's New); this module is data + types only
-// and imports nothing — it sits in the shared layer under the same
+// version chip and Settings → What's New); this module carries the data plus
+// the two tiny readers of the stamped identity (versionLabel/notesSkewed) and
+// imports only js/version.ts — it sits in the shared layer under the same
 // no-pack-imports rule as the rest (tools/check-engine-neutrality.mjs).
 // Prose may of course NAME a game — a changelog is product metadata, like the
 // README — it just can't import one.
@@ -14,6 +15,8 @@
 // newest first. The gate fails the build when the top entry and package.json
 // disagree, so the number on the deployed title screen always has a matching
 // note behind it.
+
+import { APP_VERSION, BUILD_SHA, BUILD_DATE } from './version.js';
 
 export interface ReleaseNote {
   /** semver, matching package.json at the commit the entry shipped in */
@@ -47,3 +50,18 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     ],
   },
 ];
+
+// The ONE assembly of the deploy's identity string — the title chip and the
+// What's-New sheet both render exactly this, so the two surfaces can never
+// drift apart on the very fact they exist to state unambiguously.
+export const versionLabel = (): string =>
+  ['v' + APP_VERSION, BUILD_SHA, BUILD_DATE].filter(Boolean).join(' · ');
+
+// Mixed-delivery detector: the SW caches ES modules individually, so this
+// module and version.js can come from different deploys. True means the
+// running build and the changelog disagree — an update is mid-delivery,
+// refresh reconciles. A no-op under unstamped tsc output ('dev'), like the
+// CSS contract's boot check. The parameter exists so the gate can drive BOTH
+// branches (test/release-notes.test.mjs); real callers use the default.
+export const notesSkewed = (appVersion: string = APP_VERSION): boolean =>
+  appVersion !== 'dev' && RELEASE_NOTES[0].version !== appVersion;

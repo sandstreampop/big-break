@@ -9,11 +9,16 @@
 import * as save from '../save.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled } from '../audio.js';
 import { track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from '../analytics.js';
-import { el, $, activatable, btn, show, openPortrait, responsivePicture, reducedMotion, hashStr, todayStr, weekStr } from './dom.js';
+import { el, $, activatable, btn, show, openPortrait, responsivePicture, reducedMotion, hashStr, todayStr, weekStr, escapeHtml } from './dom.js';
 import { activePack, PATHS, PRES, meta, run, setRun, setMeta, failLabelFor } from './context.js';
 import { showHelp, showReleaseNotes } from './inspectors.js';
 import { nav } from './nav.js';
-import { APP_VERSION, BUILD_SHA, BUILD_DATE } from '../version.js';
+import { APP_VERSION } from '../version.js';
+import { RELEASE_NOTES, versionLabel, notesSkewed } from '../release-notes.js';
+
+// Version skew (chip ⚠) is reported to telemetry once per session, not once
+// per title render.
+let versionSkewTracked = false;
 
 export function renderTitle() {
   music.setMood('title');
@@ -112,13 +117,26 @@ export function renderTitle() {
   const news = PRES.title?.news?.(dayNum);
   if (news) s.append(el('p', 'title-news', `📰 ${news.text} <span>— ${news.src}</span>`));
   if (PRES.title?.foot) s.append(el('p', 'title-foot', PRES.title.foot(meta)));
-  // The deploy's identity, always on the front door (and, on the odyssey,
-  // visible even under the threshold veil — the pack CSS exempts it): the
-  // stamped version + build, tap for the release notes. This is the "am I
-  // seeing the right version?" surface, so it renders unconditionally.
-  const chip = el('button', 'version-chip',
-    `v${APP_VERSION}${BUILD_SHA ? ` · ${BUILD_SHA}` : ''}${BUILD_DATE ? ` · ${BUILD_DATE}` : ''}`);
-  activatable(chip, () => { sfx.ui(); showReleaseNotes(); }, 'Version and release notes');
+  // The deploy's identity, always on the front door (and visible even under
+  // a pack's title veil — the chip carries data-veil-exempt, the generic
+  // contract a veiling pack's CSS honors; see css/odyssey.css): the stamped
+  // version + build (versionLabel — the SAME string the What's-New sheet
+  // shows), tap for the release notes. This is the "am I seeing the right
+  // version?" surface, so it renders unconditionally. If the changelog module
+  // and the version stamp arrived from different deploys (per-module SW
+  // caching), the chip itself wears the warning — the player shouldn't have
+  // to open the sheet to learn the identity on screen is suspect. A native
+  // <button> with its text as the accessible name: the version IS the
+  // payload, so a screen reader must hear it, not a generic label.
+  const skewed = notesSkewed();
+  const chip = el('button', 'version-chip', escapeHtml(versionLabel()) + (skewed ? ' ⚠' : ''));
+  chip.title = 'Version and release notes';
+  chip.setAttribute('data-veil-exempt', '1');
+  chip.addEventListener('click', () => { sfx.ui(); showReleaseNotes(); });
+  if (skewed && !versionSkewTracked) {
+    versionSkewTracked = true;
+    track('version_skew', { app: APP_VERSION, notes: RELEASE_NOTES[0].version });
+  }
   s.append(chip);
 }
 
@@ -365,7 +383,7 @@ function renderSettings() {
 
   menu.append(el('h3', 'contract-head', 'Career data'));
   menu.append(btn('❓ How to play', '', showHelp));
-  menu.append(btn(`📋 What’s new (v${APP_VERSION})`, '', showReleaseNotes));
+  menu.append(btn(`📋 What’s new (v${escapeHtml(APP_VERSION)})`, '', showReleaseNotes));
   if (activePack.tutorialEvents.length) menu.append(btn(PRES.tutorial?.replay || '🎓 Replay the first gig', '', () => { save.clearRun(); nav.startTutorial(); }));
   const exportBtn = btn('📤 Export save (backup code)', '', async () => {
     const code = save.exportSave();

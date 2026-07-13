@@ -18,7 +18,13 @@
 //  · The navigation fallback is per-game: an offline /odyssey/ reload gets
 //    odyssey's shell, never the music page.
 
-const CACHE = 'bigbreak-v29';
+// v30: js/version.js grew named exports (APP_VERSION/BUILD_SHA/BUILD_DATE)
+// that boot-critical modules now import. ES modules cache individually here,
+// so a stale cached version.js next to fresh importers would throw a
+// missing-export error and blank the boot — bump the cache so activation
+// evicts every pre-0.2.0 module. RULE (the INCIDENTS #6 class, JS flavor):
+// bump this name on any deploy that changes a shared module's EXPORT SHAPE.
+const CACHE = 'bigbreak-v30';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest',
   'css/style.css', 'css/love-island.css', 'css/odyssey.css',

@@ -18,7 +18,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
-const { RELEASE_NOTES } = await import(pathToFileURL(join(ROOT, 'dist/js/release-notes.js')).href);
+const { RELEASE_NOTES, versionLabel, notesSkewed } = await import(pathToFileURL(join(ROOT, 'dist/js/release-notes.js')).href);
 const version = await import(pathToFileURL(join(ROOT, 'dist/js/version.js')).href);
 
 const SEMVER = /^\d+\.\d+\.\d+$/;
@@ -31,6 +31,29 @@ test('package.json version is plain semver', () => {
 test('the build stamps APP_VERSION from package.json', () => {
   assert.equal(version.APP_VERSION, pkg.version,
     'dist/js/version.js must carry the package.json version — tools/build.mjs stamps it');
+});
+
+test('BUILD_SHA and BUILD_DATE stamp in known shapes (or empty outside git)', () => {
+  // The chip's "checkable against main at a glance" promise rests on these
+  // being a real short sha + ISO date — garbage from a git-format surprise
+  // must fail here, not ship unreadable.
+  if (version.BUILD_SHA !== '') assert.match(version.BUILD_SHA, /^[0-9a-f]{4,40}(\+dev)?$/);
+  if (version.BUILD_DATE !== '') assert.match(version.BUILD_DATE, ISO_DATE);
+});
+
+test('versionLabel is the single identity string both surfaces render', () => {
+  const label = versionLabel();
+  assert.ok(label.startsWith(`v${pkg.version}`), `label "${label}" starts with the version`);
+  if (version.BUILD_SHA) assert.ok(label.includes(version.BUILD_SHA), 'label carries the build sha');
+  if (version.BUILD_DATE) assert.ok(label.includes(version.BUILD_DATE), 'label carries the build date');
+});
+
+test('notesSkewed fires on genuine version/notes disagreement — and only then', () => {
+  // BOTH branches, driven — the mixed-delivery warning must never rot into
+  // an always-false (or always-true) condition with the gates still green.
+  assert.equal(notesSkewed(), false, 'a clean build never warns');
+  assert.equal(notesSkewed('dev'), false, 'unstamped tsc output never warns');
+  assert.equal(notesSkewed('9999.0.0'), true, 'a version the changelog has never heard of warns');
 });
 
 test('the newest release note matches the shipped version', () => {

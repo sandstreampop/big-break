@@ -11,8 +11,7 @@ import { openOverlay, openPortrait, el, activatable, escapeHtml, responsivePictu
 import { activePack, run, STAT_META, PRES, metaFor, itemById, genderLabelFor } from './context.js';
 import { sfx } from '../audio.js';
 import { artFor } from '../art.js';
-import { APP_VERSION, BUILD_SHA, BUILD_DATE } from '../version.js';
-import { RELEASE_NOTES } from '../release-notes.js';
+import { RELEASE_NOTES, versionLabel, notesSkewed } from '../release-notes.js';
 
 // The tableau's inspect panel (world-is-HUD): the numeric truth behind a
 // pack's diegetic strip, stated plainly in hard-ruled blocks at a size where
@@ -168,11 +167,10 @@ export function showReleaseNotes() {
   openOverlay((ov) => {
     const box = el('div', 'result-card help-sheet release-notes');
     box.append(el('div', 'tier-badge', 'WHAT’S NEW'));
-    const build = BUILD_SHA
-      ? ` <span class="release-build">· build ${escapeHtml(BUILD_SHA)}${BUILD_DATE ? ' · ' + escapeHtml(BUILD_DATE) : ''}</span>`
-      : '';
-    box.append(el('p', 'release-current', `You are playing <b>v${escapeHtml(APP_VERSION)}</b>${build}`));
-    if (APP_VERSION !== 'dev' && RELEASE_NOTES[0] && RELEASE_NOTES[0].version !== APP_VERSION) {
+    // The exact string the title chip shows (versionLabel) — one assembly,
+    // two surfaces, zero chance of them disagreeing about the identity.
+    box.append(el('p', 'release-current', `You are playing <b>${escapeHtml(versionLabel())}</b>`));
+    if (notesSkewed()) {
       box.append(el('p', 'release-skew',
         '⚠ These notes came from a different version than the running build — an update is mid-delivery. Refresh to finish it.'));
     }

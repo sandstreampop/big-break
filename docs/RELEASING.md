@@ -51,13 +51,18 @@ prompt for it is in CLAUDE.md.
   commit stamps identically.
 
 Every game's title screen renders the **version chip** (top-right):
-`v0.2.0 · a1b2c3d · 2026-07-13`. On the odyssey it is exempt from the
-threshold veil, so it's readable from the very first frame. Tapping it (or
-Settings → *What's new*) opens the release-notes sheet. The sheet also
-cross-checks the stamped version against the top note at runtime and shows a
-"mixed delivery — refresh" warning if they disagree (the service worker caches
-modules individually, so halves of two deploys can meet; see INCIDENTS #6 for
-the CSS flavor of this bug class).
+`v0.2.0 · a1b2c3d · 2026-07-13` — the one assembly of that string is
+`versionLabel()` in `js/release-notes.ts`, rendered identically by the chip
+and the sheet. On the odyssey the chip carries `data-veil-exempt`, the generic
+contract the threshold veil honors (`css/odyssey.css`), so it's readable from
+the very first frame; a future veiling pack copies the
+`:not([data-veil-exempt])` guards, not a shell class name. Tapping the chip
+(or Settings → *What's new*) opens the release-notes sheet. `notesSkewed()`
+cross-checks the stamped version against the top note at runtime: the chip
+wears ⚠ (and reports `version_skew` to telemetry), and the sheet explains
+"mixed delivery — refresh" (the service worker caches modules individually,
+so halves of two deploys can meet; see INCIDENTS #6 for the CSS flavor of
+this bug class).
 
 Browser coverage (`test/ui/smoke.mjs`): the chip is driven on every game's
 title — text matches the stamped version, the sheet's top note matches, the
@@ -75,6 +80,25 @@ visible under the veil, and reading the notes must not kindle the fire.
 If the chip shows the old sha, the Pages deploy hasn't finished (or failed) —
 check the "CI + Deploy to GitHub Pages" run. If the sheet shows the
 mixed-delivery warning, a client cache is mid-update — refresh.
+
+## Known limits (reviewed and accepted, 2026-07)
+
+- **Stamping the sha costs JS-cache stability.** `BUILD_SHA` lives in
+  `dist/js/version.js`, so the `jsV` hash — and every `?v=` JS URL — changes
+  on *every* commit, including CSS-only deploys. Deliberate trade: the deploy
+  identity is worth a re-fetch (the SW is network-first anyway).
+- **A stale pack stylesheet can hide the odyssey chip under the veil** (old
+  odyssey.css has no `data-veil-exempt` guard). Degrades safe — the chip
+  appears once the fire is kindled, and the boot probe self-heals stale CSS —
+  but during that exact mixed-delivery window the chip is not "first frame".
+  Unfixable for already-shipped sheets.
+- **Export-shape skew**: adding named exports to a shared module (as 0.2.0
+  did to `js/version.ts`) can crash a client whose SW cache holds the old
+  module beside fresh importers. **Rule: bump `sw.js` `CACHE` on any deploy
+  that changes a shared module's export shape** (0.2.0 → `bigbreak-v30`).
+- **A player-visible change merged with no bump at all** is not
+  machine-caught (a jsV-based gate would fire on every commit, because the
+  sha is in the hash). The author owns that half; "when in doubt, bump".
 
 ## Cutting a numbered GitHub release (optional)
 

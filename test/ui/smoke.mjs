@@ -14,7 +14,7 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { skipUnlessRequired } from './require-browser.mjs';
 
 const require = createRequire(import.meta.url);
@@ -48,9 +48,10 @@ if (!existsSync(root)) {
 
 // The stamped release identity (tools/build.mjs → dist/js/version.js): what
 // the title screen's version chip and the What's-New sheet must display.
-// Read from the BUILT file so the assertion is against what actually ships.
-const APP_VERSION = readFileSync(join(root, 'js/version.js'), 'utf8')
-  .match(/APP_VERSION = '([^']+)'/)?.[1] || '';
+// Imported from the BUILT module (the same way test/release-notes.test.mjs
+// reads it — one reader, no second regex parser to drift) so the assertion
+// is against what actually ships.
+const { APP_VERSION } = await import(pathToFileURL(join(root, 'js/version.js')).href);
 if (!APP_VERSION || APP_VERSION === 'dev') {
   console.error('dist/js/version.js carries no stamped APP_VERSION — tools/build.mjs must stamp it.');
   process.exit(1);
@@ -240,17 +241,24 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
   await page.waitForSelector('#screen-title.active', { timeout: 15000 });
   await passThreshold(page);
   // The version chip + What's-New sheet (working agreement: a new interactive
-  // control gets driven, then the run must still reach a terminal screen —
-  // the rest of this function IS that assertion). Once per game (first pass)
-  // to keep the suite fast. The chip must carry the stamped version, the
-  // sheet's top note must match it (the release-notes gate's runtime face),
-  // and a stamped build must never show its own mixed-delivery warning.
-  if (pathIndex === 0 && finaleDoor === 0) {
+  // control gets driven on EVERY surface it appears on, then the run must
+  // still reach a terminal screen — the rest of this function IS that
+  // assertion). expect.chipPass is set explicitly by the GAMES loop for each
+  // game's first pass (an explicit knob, not arithmetic re-derived from loop
+  // internals — so a future path-cycling change can't silently strand it).
+  // The chip must carry the stamped version, the sheet's top note must match
+  // it (the release-notes gate's runtime face), a stamped build must never
+  // show its own mixed-delivery warning — and the SECOND surface, Settings →
+  // What's new, gets the same drive plus the return trip back to the title.
+  // Chip taps here are REAL Playwright clicks (hit-tested), so an element
+  // stacked over the chip fails the suite instead of passing a synthetic
+  // element.click() that ignores occlusion.
+  if (expect.chipPass) {
     const chipText = await page.$eval('#screen-title .version-chip', (el) => el.textContent);
     if (!chipText.startsWith(`v${APP_VERSION}`)) {
       throw new Error(`[${label}] version chip says "${chipText}", build stamped v${APP_VERSION}`);
     }
-    await clickJS(page, '#screen-title .version-chip');
+    await page.click('#screen-title .version-chip', { timeout: 10000 });
     await page.waitForSelector('#overlay.active .release-notes', { timeout: 4000 });
     const sheet = await page.evaluate(() => ({
       current: document.querySelector('#overlay.active .release-current')?.textContent || '',
@@ -262,6 +270,24 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
     if (sheet.skew) throw new Error(`[${label}] a clean build shows the mixed-delivery warning`);
     await page.keyboard.press('Escape');
     await page.waitForFunction(() => !document.querySelector('#overlay.active'), { timeout: 4000 });
+    // Surface two: Settings → What's new, then Back must land on the title.
+    await page.evaluate(() => [...document.querySelectorAll('#screen-title .menu button')]
+      .find((b) => b.textContent.includes('Settings'))?.click());
+    await page.waitForSelector('#screen-settings.active', { timeout: 5000 });
+    const opened = await page.evaluate(() => {
+      const b = [...document.querySelectorAll('#screen-settings button')]
+        .find((x) => x.textContent.includes('What’s new'));
+      if (!b) return false;
+      b.click();
+      return true;
+    });
+    if (!opened) throw new Error(`[${label}] Settings has no What's-new entry`);
+    await page.waitForSelector('#overlay.active .release-notes', { timeout: 4000 });
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('#overlay.active'), { timeout: 4000 });
+    await page.evaluate(() => [...document.querySelectorAll('#screen-settings button')]
+      .find((b) => b.textContent.includes('← Back'))?.click());
+    await page.waitForSelector('#screen-title.active', { timeout: 5000 });
   }
   await clickJS(page, 'button.btn.primary');
   await page.waitForSelector('#screen-setup.active', { timeout: 10000 });
@@ -645,7 +671,10 @@ for (const g of GAMES) {
     try {
       await page.goto(g.url, { waitUntil: 'domcontentloaded' });
       const pathPick = g.pathCycle ? pi % g.pathCycle : pi;
-      const { lightboxRuns, cardCastRuns, feedRuns } = await playToFinale(page, `${g.label} path#${pi}`, pathPick, g.pathCycle ? pi : 0, g.expect || {});
+      // chipPass: drive the version chip + What's-New surfaces exactly once
+      // per game — an explicit knob (see playToFinale), stated here at the
+      // loop that knows what "first pass" means.
+      const { lightboxRuns, cardCastRuns, feedRuns } = await playToFinale(page, `${g.label} path#${pi}`, pathPick, g.pathCycle ? pi : 0, { ...(g.expect || {}), chipPass: pi === 0 });
       const lb = lightboxRuns ? ` (portrait-lightbox stack verified ×${lightboxRuns})` : '';
       const cc = cardCastRuns ? ` (card-cast lightbox verified ×${cardCastRuns})` : '';
       const fd = feedRuns ? ` (unread-feed notification verified ×${feedRuns})` : '';
@@ -1223,7 +1252,11 @@ async function checkOdysseyThreshold(browser, base) {
       if (!chip) throw new Error(`[${label}] no version chip on the veiled threshold`);
       if (chip.vis !== 'visible') throw new Error(`[${label}] the veil hides the version chip (visibility=${chip.vis})`);
       if (chip.pos !== 'absolute') throw new Error(`[${label}] the :not() veil lift flattened the chip (position=${chip.pos})`);
-      await page.evaluate(() => document.querySelector('#screen-title .version-chip').click());
+      // A REAL hit-tested click (not element.click()): if the full-screen
+      // kindle scene — or anything else — ever stacks over the chip, this
+      // times out and fails, instead of a synthetic dispatch quietly passing
+      // while a player's actual tap lands on the scene.
+      await page.click('#screen-title .version-chip', { timeout: 5000 });
       await page.waitForSelector('#overlay.active .release-notes', { timeout: 4000 });
       await page.keyboard.press('Escape');
       await page.waitForFunction(() => !document.querySelector('#overlay.active'), { timeout: 4000 });

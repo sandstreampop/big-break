@@ -528,18 +528,19 @@ body.ody-hidden svg.px .pxf { animation-play-state: paused; }
    veiled it is the one tappable thing, and the first touch kindles the
    fire in three steps of warmth. */
 #screen-title { position: relative; }
-#screen-title > :not(.title-scene) { position: relative; z-index: 1; }
+/* The veil honors the shell's generic exemption contract: an element marked
+   data-veil-exempt (the version chip — the "am I seeing the right deploy?"
+   surface, which must be readable from the very first frame, before the
+   ritual) is left entirely alone: not flattened by the :not() lift, not
+   hidden by the veil. Its own shell styles (absolute, z-index 2 — above the
+   scene at z 0) keep a tap on it opening the notes, never the kindling.
+   Any future veiling pack copies these two :not([data-veil-exempt]) guards,
+   not a shell class name. */
+#screen-title > :not(.title-scene):not([data-veil-exempt]) { position: relative; z-index: 1; }
 .title-scene { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .title-veiled .title-scene { pointer-events: auto; cursor: pointer; }
-/* the veil: the fireside is all there is until the fire is lit — except the
-   deploy's version chip, which answers "am I seeing the right version?" from
-   the very first frame, before the ritual. The :not() lift above would also
-   flatten the chip to position:relative, so re-pin it (same specificity,
-   later in the cascade); z-index 2 keeps a tap on it opening the notes, not
-   the kindling. */
-.title-veiled > :not(.title-scene) { visibility: hidden; }
-#screen-title > .version-chip { position: absolute; z-index: 2; }
-.title-veiled > .version-chip { visibility: visible; }
+/* the veil: the fireside is all there is until the fire is lit */
+.title-veiled > :not(.title-scene):not([data-veil-exempt]) { visibility: hidden; }
 .threshold { position: absolute; inset: 0; }
 .threshold .hearth-row {
   position: absolute;
