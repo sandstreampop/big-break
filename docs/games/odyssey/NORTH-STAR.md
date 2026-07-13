@@ -190,6 +190,23 @@ in kind:
 The gods stay *minor* (totem + sound) — several times a run must not compete
 with once a run.
 
+A narrow further exception (2026-07-13 — see
+[`adr/0002-progress-registers.md`](./adr/0002-progress-registers.md)), scoped
+to cross-run persistent progress only, adds two more surfaces to this fixed
+list:
+
+- **The fragment banked** — the mid-run result overlay where a prophecy
+  turning lands must register as a distinct, loud, non-prose beat in the
+  Odyssey's own idiom (fired clay / gold-fret / the amphora shelf), not a
+  sentence of result prose.
+- **The run-end progress ledger** — the surface, at the exact moment the
+  replay decision is made, showing the ladder's honest floor (`2 of 3 · one
+  turning remains`).
+
+Loud ≠ off-genre, and this license never reaches the siblings' confetti path
+(`spawnConfetti`, `sfx.win()`, `mood: 'triumph'`, `resultExtras.celebrate`/
+`cash`) — see ADR-0002 for the fence and its executable guard.
+
 **Temptations get the inverted grammar: the hush.** Lotus, Circe, Calypso are
 not spectacle — the world *softens*: the sea calms regardless of Poseidon, the
 frieze warms, the haptics stop, even the hearth-whisper thins. Seduction as

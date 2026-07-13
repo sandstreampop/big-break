@@ -63,7 +63,11 @@ reads as theft.
    **earned ceremony**: screen-scale motion is rationed to the fixed list
    (the three landmarks, every ending, the prophecy fragment); the gods stay
    minor. Stillness stays the ground; the deep is still; the fire flickers,
-   barely.
+   barely. A further, narrow exception (amended 2026-07-13 — see
+   [`adr/0002-progress-registers.md`](./adr/0002-progress-registers.md)):
+   cross-run persistent progress (the fragment banked, the run-end ladder)
+   is licensed to register as a distinct, loud, non-prose beat in the
+   pack's own idiom — never the siblings' confetti.
 9. **Reading order is designed, not hoped for.** The eye enters a screen at
    the biggest, highest-contrast block — not at the top (Itti–Koch saliency;
    NN/g eyetracking: hierarchy overrides the F-pattern). So on any screen
