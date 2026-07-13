@@ -137,6 +137,7 @@ import { readdirSync } from 'node:fs';
 const SHARED_ROOT = [
   'engine.ts', 'types.ts', 'config.ts', 'save.ts', 'art.ts', 'audio.ts',
   'analytics.ts', 'platform.ts', 'version.ts', 'ui.ts', 'validate.ts', 'api.ts',
+  'release-notes.ts',
 ]; // shared js/*.ts (entry points main*.ts + globals.d.ts are the exceptions)
 const shellFiles = [
   ...readdirSync(resolve(root, 'js/ui')).filter((f) => f.endsWith('.ts')).map((f) => `js/ui/${f}`),

@@ -11,6 +11,8 @@ import { openOverlay, openPortrait, el, activatable, escapeHtml, responsivePictu
 import { activePack, run, STAT_META, PRES, metaFor, itemById, genderLabelFor } from './context.js';
 import { sfx } from '../audio.js';
 import { artFor } from '../art.js';
+import { APP_VERSION, BUILD_SHA, BUILD_DATE } from '../version.js';
+import { RELEASE_NOTES } from '../release-notes.js';
 
 // The tableau's inspect panel (world-is-HUD): the numeric truth behind a
 // pack's diegetic strip, stated plainly in hard-ruled blocks at a size where
@@ -152,6 +154,37 @@ export function showHelp() {
   for (const b of PRES.helpBlocks || []) box.append(el('p', 'help-block', b));
   box.append(el('p', 'tap-hint', 'tap to close'));
   ov.append(box);
+  });
+}
+
+// ---------- What's New (the release-notes sheet) ----------
+// The answer to "am I looking at the right deploy?": the running build's
+// stamped identity (js/version.ts, written by tools/build.mjs) up top, then
+// the changelog (js/release-notes.ts), newest first. If the stamped version
+// and the top note disagree, the client is running mixed module versions
+// (the SW caches modules individually) — say so instead of leaving the
+// player to wonder, and a refresh reconciles it.
+export function showReleaseNotes() {
+  openOverlay((ov) => {
+    const box = el('div', 'result-card help-sheet release-notes');
+    box.append(el('div', 'tier-badge', 'WHAT’S NEW'));
+    const build = BUILD_SHA
+      ? ` <span class="release-build">· build ${escapeHtml(BUILD_SHA)}${BUILD_DATE ? ' · ' + escapeHtml(BUILD_DATE) : ''}</span>`
+      : '';
+    box.append(el('p', 'release-current', `You are playing <b>v${escapeHtml(APP_VERSION)}</b>${build}`));
+    if (APP_VERSION !== 'dev' && RELEASE_NOTES[0] && RELEASE_NOTES[0].version !== APP_VERSION) {
+      box.append(el('p', 'release-skew',
+        '⚠ These notes came from a different version than the running build — an update is mid-delivery. Refresh to finish it.'));
+    }
+    for (const r of RELEASE_NOTES) {
+      box.append(el('h3', 'release-head', `v${escapeHtml(r.version)} <span class="release-date">— ${escapeHtml(r.date)}</span>`));
+      box.append(el('p', 'release-title', escapeHtml(r.title)));
+      const ul = el('ul', 'release-list');
+      for (const n of r.notes) ul.append(el('li', '', escapeHtml(n)));
+      box.append(ul);
+    }
+    box.append(el('p', 'tap-hint', 'tap to close'));
+    ov.append(box);
   });
 }
 

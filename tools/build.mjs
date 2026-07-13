@@ -90,8 +90,23 @@ const { cssStampKey } = await import(pathToFileURL(resolve(dist, 'js/css-key.js'
 for (const f of cssFiles) {
   appendFileSync(resolve(dist, 'css', f), `\n:root { --bb-css-v-${cssStampKey(f)}: "${cssV}"; }\n`);
 }
+// The release identity (js/version.ts): package.json `version` is the number,
+// git supplies the commit sha + commit date (commit date, not wall clock, so
+// rebuilding the same commit stamps identically). Outside a git checkout the
+// sha/date stamp empty and the UI simply omits them.
+const appVersion = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')).version;
+let buildSha = '', buildDate = '';
+try {
+  buildSha = execSync('git rev-parse --short HEAD', { cwd: root }).toString().trim();
+  buildDate = execSync('git show -s --format=%cs HEAD', { cwd: root }).toString().trim();
+  if (execSync('git status --porcelain', { cwd: root }).toString().trim()) buildSha += '+dev';
+} catch { /* not a git checkout — version number still stamps */ }
 writeFileSync(resolve(dist, 'js/version.js'),
-  `// stamped by tools/build.mjs — see js/version.ts\nexport const CSS_CONTRACT = '${cssV}';\n`);
+  `// stamped by tools/build.mjs — see js/version.ts\n` +
+  `export const CSS_CONTRACT = '${cssV}';\n` +
+  `export const APP_VERSION = '${appVersion}';\n` +
+  `export const BUILD_SHA = '${buildSha}';\n` +
+  `export const BUILD_DATE = '${buildDate}';\n`);
 
 const jsFiles = [];
 (function walk(dir) {

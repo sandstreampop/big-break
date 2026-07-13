@@ -176,11 +176,17 @@
   missing region throws); Twoslash type-checks inline samples. Editing a pack's
   `#region` markers is comment-only — golden-safe. Dev/build: `cd docs-site &&
   npm ci && npm run dev` (or `npm run build`).
-- Releases: the managed git gateway blocks tag-ref pushes from sessions (branch
-  pushes only). Cut a tag/release via the `release.yml` workflow instead
-  (Actions → "Cut a release", or `workflow_dispatch` with `tag` + full-40-char
-  `sha`) — it uses the built-in `GITHUB_TOKEN`. `package.json` `version` is the
-  source of truth for the number.
+- Releases: **the process is `docs/RELEASING.md`** — a merge to main that
+  changes what a player sees bumps `package.json` `version` AND adds the
+  matching top entry in `js/release-notes.ts` (gated by
+  `test/release-notes.test.mjs`; the build stamps version + git sha + commit
+  date into every title screen's version chip, so the deployed URL is
+  checkable against main at a glance). The managed git gateway blocks tag-ref
+  pushes from sessions (branch pushes only) — cut a tag/release via the
+  `release.yml` workflow instead (Actions → "Cut a release", or
+  `workflow_dispatch` with `tag` + full-40-char `sha`); it uses the built-in
+  `GITHUB_TOKEN`. `package.json` `version` is the source of truth for the
+  number.
 
 Play: [music](https://sandstreampop.github.io/big-break/) ·
 [love island](https://sandstreampop.github.io/big-break/love-island/) ·

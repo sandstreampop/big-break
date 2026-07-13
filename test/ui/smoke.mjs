@@ -46,6 +46,16 @@ if (!existsSync(root)) {
   process.exit(1);
 }
 
+// The stamped release identity (tools/build.mjs → dist/js/version.js): what
+// the title screen's version chip and the What's-New sheet must display.
+// Read from the BUILT file so the assertion is against what actually ships.
+const APP_VERSION = readFileSync(join(root, 'js/version.js'), 'utf8')
+  .match(/APP_VERSION = '([^']+)'/)?.[1] || '';
+if (!APP_VERSION || APP_VERSION === 'dev') {
+  console.error('dist/js/version.js carries no stamped APP_VERSION — tools/build.mjs must stamp it.');
+  process.exit(1);
+}
+
 const MIME = {
   '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript',
   '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json',
@@ -229,6 +239,30 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
 
   await page.waitForSelector('#screen-title.active', { timeout: 15000 });
   await passThreshold(page);
+  // The version chip + What's-New sheet (working agreement: a new interactive
+  // control gets driven, then the run must still reach a terminal screen —
+  // the rest of this function IS that assertion). Once per game (first pass)
+  // to keep the suite fast. The chip must carry the stamped version, the
+  // sheet's top note must match it (the release-notes gate's runtime face),
+  // and a stamped build must never show its own mixed-delivery warning.
+  if (pathIndex === 0 && finaleDoor === 0) {
+    const chipText = await page.$eval('#screen-title .version-chip', (el) => el.textContent);
+    if (!chipText.startsWith(`v${APP_VERSION}`)) {
+      throw new Error(`[${label}] version chip says "${chipText}", build stamped v${APP_VERSION}`);
+    }
+    await clickJS(page, '#screen-title .version-chip');
+    await page.waitForSelector('#overlay.active .release-notes', { timeout: 4000 });
+    const sheet = await page.evaluate(() => ({
+      current: document.querySelector('#overlay.active .release-current')?.textContent || '',
+      topHead: document.querySelector('#overlay.active .release-head')?.textContent || '',
+      skew: !!document.querySelector('#overlay.active .release-skew'),
+    }));
+    if (!sheet.current.includes(`v${APP_VERSION}`)) throw new Error(`[${label}] What's-New sheet reports "${sheet.current}", want v${APP_VERSION}`);
+    if (!sheet.topHead.includes(`v${APP_VERSION}`)) throw new Error(`[${label}] top release note is "${sheet.topHead}", want v${APP_VERSION} (notes/version drift)`);
+    if (sheet.skew) throw new Error(`[${label}] a clean build shows the mixed-delivery warning`);
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('#overlay.active'), { timeout: 4000 });
+  }
   await clickJS(page, 'button.btn.primary');
   await page.waitForSelector('#screen-setup.active', { timeout: 10000 });
   await enterIdentity(page);
@@ -1176,6 +1210,25 @@ async function checkOdysseyThreshold(browser, base) {
       const page = await boot(ctx);
       const before = await veiled(page);
       if (!before.veil || !before.menuHidden) throw new Error(`[${label}] a fresh fire is not veiled (veil=${before.veil} hidden=${before.menuHidden})`);
+      // The version chip answers "am I on the right deploy?" from the very
+      // first frame — it must be VISIBLE under the veil (odyssey.css exempts
+      // it), and tapping it must open the notes WITHOUT kindling the fire
+      // (the chip sits above the scene; its tap is its own). Close, verify
+      // the veil is still down and the hearth still cold, then kindle as
+      // before — the ritual must survive the detour.
+      const chip = await page.evaluate(() => {
+        const c = document.querySelector('#screen-title .version-chip');
+        return c ? { vis: getComputedStyle(c).visibility, pos: getComputedStyle(c).position } : null;
+      });
+      if (!chip) throw new Error(`[${label}] no version chip on the veiled threshold`);
+      if (chip.vis !== 'visible') throw new Error(`[${label}] the veil hides the version chip (visibility=${chip.vis})`);
+      if (chip.pos !== 'absolute') throw new Error(`[${label}] the :not() veil lift flattened the chip (position=${chip.pos})`);
+      await page.evaluate(() => document.querySelector('#screen-title .version-chip').click());
+      await page.waitForSelector('#overlay.active .release-notes', { timeout: 4000 });
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(() => !document.querySelector('#overlay.active'), { timeout: 4000 });
+      const mid = await veiled(page);
+      if (!mid.veil || mid.lit) throw new Error(`[${label}] reading the notes kindled the fire (veil=${mid.veil} lit=${mid.lit})`);
       await page.evaluate(() => document.querySelector('.title-scene').click());
       await page.waitForFunction(() => !!document.querySelector('.title-scene .threshold.kindle-lit'), { timeout: 3000 });
       await page.waitForFunction(() => !document.querySelector('#screen-title.title-veiled'), { timeout: 2000 });

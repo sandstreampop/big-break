@@ -531,8 +531,15 @@ body.ody-hidden svg.px .pxf { animation-play-state: paused; }
 #screen-title > :not(.title-scene) { position: relative; z-index: 1; }
 .title-scene { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .title-veiled .title-scene { pointer-events: auto; cursor: pointer; }
-/* the veil: the fireside is all there is until the fire is lit */
+/* the veil: the fireside is all there is until the fire is lit — except the
+   deploy's version chip, which answers "am I seeing the right version?" from
+   the very first frame, before the ritual. The :not() lift above would also
+   flatten the chip to position:relative, so re-pin it (same specificity,
+   later in the cascade); z-index 2 keeps a tap on it opening the notes, not
+   the kindling. */
 .title-veiled > :not(.title-scene) { visibility: hidden; }
+#screen-title > .version-chip { position: absolute; z-index: 2; }
+.title-veiled > .version-chip { visibility: visible; }
 .threshold { position: absolute; inset: 0; }
 .threshold .hearth-row {
   position: absolute;

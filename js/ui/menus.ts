@@ -11,8 +11,9 @@ import { sfx, music, setSoundEnabled, setMusicEnabled } from '../audio.js';
 import { track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from '../analytics.js';
 import { el, $, activatable, btn, show, openPortrait, responsivePicture, reducedMotion, hashStr, todayStr, weekStr } from './dom.js';
 import { activePack, PATHS, PRES, meta, run, setRun, setMeta, failLabelFor } from './context.js';
-import { showHelp } from './inspectors.js';
+import { showHelp, showReleaseNotes } from './inspectors.js';
 import { nav } from './nav.js';
+import { APP_VERSION, BUILD_SHA, BUILD_DATE } from '../version.js';
 
 export function renderTitle() {
   music.setMood('title');
@@ -111,6 +112,14 @@ export function renderTitle() {
   const news = PRES.title?.news?.(dayNum);
   if (news) s.append(el('p', 'title-news', `📰 ${news.text} <span>— ${news.src}</span>`));
   if (PRES.title?.foot) s.append(el('p', 'title-foot', PRES.title.foot(meta)));
+  // The deploy's identity, always on the front door (and, on the odyssey,
+  // visible even under the threshold veil — the pack CSS exempts it): the
+  // stamped version + build, tap for the release notes. This is the "am I
+  // seeing the right version?" surface, so it renders unconditionally.
+  const chip = el('button', 'version-chip',
+    `v${APP_VERSION}${BUILD_SHA ? ` · ${BUILD_SHA}` : ''}${BUILD_DATE ? ` · ${BUILD_DATE}` : ''}`);
+  activatable(chip, () => { sfx.ui(); showReleaseNotes(); }, 'Version and release notes');
+  s.append(chip);
 }
 
 // ---------- Career Wall ----------
@@ -356,6 +365,7 @@ function renderSettings() {
 
   menu.append(el('h3', 'contract-head', 'Career data'));
   menu.append(btn('❓ How to play', '', showHelp));
+  menu.append(btn(`📋 What’s new (v${APP_VERSION})`, '', showReleaseNotes));
   if (activePack.tutorialEvents.length) menu.append(btn(PRES.tutorial?.replay || '🎓 Replay the first gig', '', () => { save.clearRun(); nav.startTutorial(); }));
   const exportBtn = btn('📤 Export save (backup code)', '', async () => {
     const code = save.exportSave();
