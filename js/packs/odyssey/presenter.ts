@@ -13,7 +13,9 @@ import { hearthScene, cupLevelFor } from './hearth.js';
 import { odysseyTitleScene } from './threshold.js';
 import { cyclops, ashBand, hallDoors, fire, coldHearth, ember, cup } from './art/figures.js';
 import { lostMan, crewAtLaunch } from './crew.js';
-import { vibrate, reducedMotion } from '../../ui/dom.js';
+import { reducedMotion } from '../../ui/dom.js';
+import { heldTurnings, justLanded, fragmentShelf, TURNING_NAMES } from './shelf.js';
+import { godPulse } from './alive.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -349,13 +351,36 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   resultExtras(result, state) {
     const notices: { cls: string; html: string }[] = [];
     const cue = resultCue(result);
+    // Node-safe (test/odyssey-progress-law.test.mjs calls resultExtras
+    // directly, with no DOM/meta boot): only touch the browser-only motion
+    // pref / haptic when a document actually exists — the same guard
+    // alive.ts uses for its own DOM-side checks.
+    const inBrowser = typeof document !== 'undefined';
     if (cue) {
       speak(cue as any);
-      if (cue === 'wave' || cue === 'owlNote') vibrate([120, 90, 200]);
+      if ((cue === 'wave' || cue === 'owlNote') && inBrowser) godPulse();
       // The prophecy fragment is the one gold-fret moment of the Underworld
-      // (I7): the banked turning gets its frame on the result itself.
+      // (I7) — and per ADR-0002 (replay legibility, slice 2) it is licensed
+      // to be LOUD: the turning lands as a categorically distinct shelf
+      // component (a filled amphora slot), never a sentence buried in the
+      // result prose, plus the god-pulse haptic. Still never the siblings'
+      // grammar (no celebrate/cash/spawnConfetti — the guard in
+      // test/odyssey-progress-law.test.mjs pins that fence).
       if (cue === 'fragmentChime') {
-        notices.push({ cls: 'notice-ody-fret', html: '<b>The prophecy turns.</b> What the dead said tonight, every fire after this one will know.' });
+        const held = heldTurnings(state?.flags || []);
+        const landed = justLanded(state?.flags || []);
+        if (landed) {
+          const shelf = fragmentShelf({ held, justFilled: landed, animate: inBrowser ? !reducedMotion() : true });
+          notices.push({
+            cls: 'notice-ody-fret ody-fragment-pop',
+            html: `<div class="ody-pop-kicker">A TURNING LANDS — <b>${TURNING_NAMES[landed]}</b>, banked. Every fire after this knows it.</div>${shelf}`,
+          });
+        } else {
+          // Defensive: the cue fired without a landed flag on state — never
+          // crash the result render over it, just fall back to the old line.
+          notices.push({ cls: 'notice-ody-fret', html: '<b>The prophecy turns.</b> What the dead said tonight, every fire after this one will know.' });
+        }
+        if (inBrowser) godPulse();
       }
     }
     // Names in the sand (I8): dead rowers are never a number. Each loss,

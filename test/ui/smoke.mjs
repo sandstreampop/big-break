@@ -830,6 +830,170 @@ async function checkOdysseyCeremony(browser, base) {
   }
 }
 
+// Replay legibility slice 2 (docs/games/odyssey/REPLAY-LEGIBILITY-PLAN.md,
+// ADR-0002): the fragment-banked notice is now a real Odyssey-native beat —
+// a filled amphora slot on the shelf, not a sentence in the result prose.
+// Per the working agreement's "verify the flow, gated surface first" rule
+// AND the portrait-lightbox incident (INCIDENTS.md, 2026-07): a new control
+// on a result overlay must be driven LIVE, not just asserted present in
+// isolation, and the run must still reach a terminal screen afterward — a
+// control that renders fine but eats the overlay's onClose (which is what
+// advances the run) soft-locks exactly like the lightbox did. So this drives
+// the pop off a LIVE result overlay, asserts the shelf (and the confetti
+// anti-goal) THERE, dismisses it normally, and only then checks the run
+// still finishes.
+async function checkOdysseyFragmentPop(browser, base) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    settings: { sound: false, music: false, reducedMotion: false, minigames: false, haptics: false, analytics: false },
+  };
+  const label = 'odyssey fragment pop';
+  const ctx = await browser.newContext();
+  await ctx.addInitScript(`try {
+    if (!sessionStorage.getItem('bb_pop_seeded')) {
+      sessionStorage.setItem('bb_pop_seeded', '1');
+      localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+      localStorage.removeItem('bigbreak_run_v1_odyssey');
+    }
+    const patch = sessionStorage.getItem('bb_pop_patch');
+    if (patch) {
+      const key = 'bigbreak_run_v1_odyssey';
+      const run = JSON.parse(localStorage.getItem(key) || 'null');
+      if (run) {
+        Object.assign(run, JSON.parse(patch));
+        localStorage.setItem(key, JSON.stringify(run));
+      }
+    }
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(`console.error: ${m.text()}`); });
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+    await clickJS(page, 'button.btn.primary');
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+
+    // Reach a live card (the cold-open bard beat fires first — dismiss it).
+    const reachCard = async () => {
+      const deadline = Date.now() + 30000;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left') && !document.querySelector('#overlay.active')) return 'card';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          return 'wait';
+        });
+        if (k === 'card') return;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed');
+          }, { timeout: 8000 });
+          await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+        } else await page.waitForTimeout(80);
+      }
+      throw new Error(`[${label}] never reached a live card`);
+    };
+    await reachCard();
+
+    // Force a state, resume, reach the target card through its beats — the
+    // worst-cards precedent (checkOdysseyCeremony's force()).
+    const force = async (patch) => {
+      await page.evaluate((p) => sessionStorage.setItem('bb_pop_patch', p), JSON.stringify(patch));
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+      await page.evaluate(() => document.querySelector('button.btn.primary')?.click()); // Resume
+      await reachCard();
+    };
+    const dismissToState = async (want, timeout = 15000, strict = false) => {
+      const deadline = Date.now() + timeout;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-ending.active')) return 'ending';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          if (document.querySelector('#screen-crossroads.active .pick-card')) return 'cross';
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left:not(.chosen):not(.unchosen)')) return 'card';
+          return 'wait';
+        });
+        if (k === want) return true;
+        if (strict && (k === 'card' || k === 'cross')) return false;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+          }, { timeout: 8000 });
+          await page.evaluate(() => {
+            const ov = document.querySelector('#overlay.active');
+            (ov?.querySelector('.gear-choices button') || ov)?.click();
+          });
+        } else if (k === 'cross') {
+          await page.evaluate(() => document.querySelector('#screen-crossroads.active .pick-card')?.click());
+          await page.waitForTimeout(60);
+        } else if (k === 'card' && want === 'ending') {
+          await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+          await page.waitForTimeout(70);
+        } else await page.waitForTimeout(80);
+      }
+      return false;
+    };
+
+    // Force the Tiresias card, answer it (either side banks a fore_* flag —
+    // resultCue keys off the event id, not the side chosen) — the result
+    // overlay is where the pop must fire.
+    await force({ currentEventId: 'ody_tiresias', pendingChainId: null, spSeen: {} });
+    await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+    await page.waitForSelector('#overlay.active', { timeout: 10000 });
+
+    // The gated surface first: assert the shelf LIVE, on the still-open
+    // result overlay — a filled slot (the turning landed), and the anti-goal
+    // (no confetti) right there with it, not just in the unit test.
+    const live = await page.evaluate(() => ({
+      shelf: !!document.querySelector('#overlay.active .ody-shelf'),
+      filled: document.querySelectorAll('#overlay.active .ody-slot-filled').length,
+      confetti: !!document.querySelector('#overlay.active .confetti'),
+    }));
+    if (!live.shelf) throw new Error(`[${label}] no .ody-shelf on the live result overlay — the fragment pop did not render`);
+    if (live.filled < 1) throw new Error(`[${label}] the shelf shows no filled slot on the live overlay (the turning did not land)`);
+    if (live.confetti) throw new Error(`[${label}] confetti rendered on the live overlay — INCIDENTS #7's anti-goal ("no confetti with a Greek accent") violated`);
+
+    // Dismiss the LIVE overlay exactly the way a player would, then prove
+    // firing the pop off it did NOT soft-lock the run (the portrait-
+    // lightbox class of bug: an overlay's onClose is what advances the
+    // run — a control that eats it dead-ends the telling).
+    await page.waitForFunction(() => document.querySelector('#overlay.active')?.hasAttribute('data-armed'), { timeout: 8000 });
+    await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+
+    // Localize the soft-lock concern FIRST (the portrait-lightbox class of
+    // bug): dismissing the pop overlay must ADVANCE the telling to a live
+    // next state — a card, the crossroads, another beat, or the ending —
+    // never leave the same pop overlay standing with its pending advance()
+    // eaten. This is the assertion that actually distinguishes a soft-lock
+    // from a slow traverse.
+    const advanced = await page.waitForFunction(() =>
+      document.querySelector('#screen-ending.active') ||
+      document.querySelector('#screen-crossroads.active .pick-card') ||
+      (document.querySelector('#screen-game.active .choice-btn.choice-left') && !document.querySelector('#overlay.active .ody-shelf')) ||
+      document.querySelector('#overlay.active .bard-beat, #overlay.active .sp-beat'),
+    { timeout: 10000 }).then(() => true).catch(() => false);
+    if (!advanced) throw new Error(`[${label}] dismissing the fragment pop did not advance the telling — the pop soft-locked the run (INCIDENTS #1 class)`);
+
+    // Then the WHOLE flow still reaches a terminal screen. Generous budget:
+    // the forced Tiresias sits deep in act 2, so this is a full traverse to
+    // the finale — the same span the generic playToFinale budgets 90s for.
+    if (!(await dismissToState('ending', 90000))) throw new Error(`[${label}] the run never reached the finale after the fragment pop`);
+    if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
+    console.log(`✓  ${label}: the turning lands as a filled amphora slot on the LIVE result overlay (no confetti), dismissing it advances the run, and the telling still reaches the finale`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 // The threshold (I5): the kindling title. Contract (the plan's named
 // invariant — "kindling is skippable"): a fresh visit is veiled (the menu
 // is out of reach) until a touch kindles the fire; letting it play lifts
@@ -1366,6 +1530,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyCeremony(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyFragmentPop(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

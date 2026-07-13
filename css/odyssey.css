@@ -616,6 +616,82 @@ body.ody-breath svg.px .pxf { animation-play-state: paused; }
   padding: 8px 6px;
 }
 
+/* Replay legibility slice 2 (ADR-0002): the fragment-banked beat is licensed
+   to be LOUD — a turning must land as a component categorically distinct
+   from body prose, never a sentence buried in a notice string. The kicker
+   is a short, non-prose label (uppercase, gold, display-ish) sitting above
+   the amphora shelf; the shelf itself is shared with slice 3's run-end
+   ledger (js/packs/odyssey/shelf.ts). Still fenced by the Motion Law's
+   clause 1: no chrome animation here — the notice box, the shelf, the
+   slots, the kicker are all simply THERE; only the just-filled slot's own
+   mark plays a vase-frame fill (below), and it collapses to a still,
+   already-filled state under reduced motion by construction (shelf.ts never
+   adds .ody-slot-new when motion is off) — the CSS guards belt-and-brace
+   that same collapse in case the class ever lands anyway. */
+.ody-fragment-pop {
+  padding: 10px 8px 12px;
+}
+.ody-pop-kicker {
+  font-size: .74rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+.ody-pop-kicker b {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.ody-shelf {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.ody-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 68px;
+}
+.ody-slot-mark {
+  width: 32px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ody-slot-mark svg { width: 100%; height: 100%; display: block; }
+.ody-slot-empty .ody-slot-mark svg { opacity: .3; }
+.ody-slot-label {
+  font-size: .58rem;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--dim);
+}
+.ody-slot-filled .ody-slot-label { color: var(--ink); }
+
+/* The fill: a hard vase-frame reveal (steps(), transform/opacity only,
+   ember-slow), not a bounce or a glow — Motion Law clause 1 in full. */
+.ody-slot-new .ody-slot-mark {
+  animation: ody-slot-fill .6s steps(3, end);
+}
+@keyframes ody-slot-fill {
+  0% { opacity: 0; transform: scale(.6); }
+  100% { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ody-slot-new .ody-slot-mark { animation: none; opacity: 1; transform: none; }
+}
+.px-still .ody-slot-new .ody-slot-mark,
+.beat-still .ody-slot-new .ody-slot-mark,
+.tableau-still .ody-slot-new .ody-slot-mark {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
 /* ── I8 — names in the sand: the loss line is a plain hard rule, bone on
    black — a record, not an alarm. */
 .notice-ody-loss {

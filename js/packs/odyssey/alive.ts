@@ -17,6 +17,15 @@ import { getCtx } from '../../audio.js';
 import { vibrate } from '../../ui/dom.js';
 import { meta } from '../../ui/context.js';
 
+// The god-pulse: the one heavy-slow haptic in the whole grammar, named so
+// every caller (the wave/owl-note result cue, and slice 2's fragment-banked
+// progress beat, ADR-0002) fires the exact same pattern rather than each
+// hand-rolling its own array.
+const GOD_PULSE = [120, 90, 200];
+export function godPulse(): void {
+  vibrate(GOD_PULSE);
+}
+
 // ── The whisper: sparse, tiny, filtered crackle pops while a hearth shows.
 let whisperTimer: ReturnType<typeof setTimeout> | null = null;
 
