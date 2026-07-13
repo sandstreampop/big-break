@@ -48,9 +48,17 @@ test('DISTINCT — the fragment-banked beat carries a non-prose, idiom-classed p
   const extras = odysseyPresenter.resultExtras(
     { event: { id: 'ody_tiresias' }, deltas: [] }, state);
   assert.ok(extras?.notices?.length, 'a fragment-banked result must carry at least one notice');
+  // Pin BOTH halves of "distinct, non-prose": the Odyssey progress idiom
+  // (cls ~ ody-fret) AND the amphora-shelf component itself (ody-shelf) —
+  // not merely a prose sentence that kept the class. Without the second
+  // clause a revert of slice 2 to the old faint line would slip past this
+  // Node guard, leaving the "non-prose beat" guarantee resting entirely on
+  // the browser smoke check (verifier finding, 2026-07-13).
   assert.ok(
-    extras.notices.some((n) => typeof n.cls === 'string' && n.cls.includes('ody-fret')),
-    `expected a notice classed into the Odyssey progress-beat idiom (cls containing "ody-fret"); got: ${JSON.stringify(extras.notices)}`,
+    extras.notices.some((n) =>
+      typeof n.cls === 'string' && n.cls.includes('ody-fret') &&
+      typeof n.html === 'string' && n.html.includes('ody-shelf')),
+    `expected a non-prose progress beat: a notice in the Odyssey idiom (cls ~ "ody-fret") carrying the amphora-shelf component ("ody-shelf"), not a bare prose sentence; got: ${JSON.stringify(extras.notices)}`,
   );
 });
 
