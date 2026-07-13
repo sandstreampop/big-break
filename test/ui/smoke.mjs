@@ -994,6 +994,148 @@ async function checkOdysseyFragmentPop(browser, base) {
   }
 }
 
+// Replay legibility slice 3 (REPLAY-LEGIBILITY-PLAN.md, ADR-0002): the
+// run-end progress ledger — the shelf with HONEST EMPTY SLOTS, at the exact
+// moment the replay decision is made (the surface whose absence caused the
+// museum-signal verdict). A "knowing bard" — two turnings already banked
+// from a previous telling, via meta.odyssey.fragments — reaches a terminal
+// ending; the ending screen must show the shelf (2 filled slots, reused
+// whole from shelf.ts), the "N of 3" count, and the honest floor line naming
+// the third turning (never teased, per Q5a). Forced straight to the meadow
+// temptation and accepted, well short of the Underworld — the prophecy
+// plugin reroutes Tiresias to the third-question variant the instant BOTH
+// frag_bow and frag_sea are held (prophecy.ts), so a knowing bard who
+// actually reaches the Underworld would land the third turning this same
+// telling; forcing past it keeps the held count deterministically at two.
+async function checkOdysseyLedger(browser, base) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    settings: { sound: false, music: false, reducedMotion: false, minigames: false, haptics: false, analytics: false },
+    odyssey: { fragments: ['bow', 'sea'] },
+  };
+  const label = 'odyssey run-end ledger';
+  const ctx = await browser.newContext();
+  await ctx.addInitScript(`try {
+    if (!sessionStorage.getItem('bb_ldg_seeded')) {
+      sessionStorage.setItem('bb_ldg_seeded', '1');
+      localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+      localStorage.removeItem('bigbreak_run_v1_odyssey');
+    }
+    const patch = sessionStorage.getItem('bb_ldg_patch');
+    if (patch) {
+      const key = 'bigbreak_run_v1_odyssey';
+      const run = JSON.parse(localStorage.getItem(key) || 'null');
+      if (run) {
+        Object.assign(run, JSON.parse(patch));
+        localStorage.setItem(key, JSON.stringify(run));
+      }
+    }
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(`console.error: ${m.text()}`); });
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+    await clickJS(page, 'button.btn.primary'); // New telling — applySetup stamps ody_frag_bow/ody_frag_sea from the knowing bard's meta
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+    await page.waitForFunction(() =>
+      document.querySelector('#screen-game.active .choice-btn.choice-left') || document.querySelector('#overlay.active'),
+    { timeout: 15000 });
+
+    // Force a state, resume, reach the target card (the worst-cards
+    // precedent, checkOdysseyCeremony's force()). No `flags` key in the
+    // patch — the run's existing flags (ody_frag_bow/ody_frag_sea, stamped
+    // at setup) must survive Object.assign intact.
+    const force = async (patch) => {
+      await page.evaluate((p) => sessionStorage.setItem('bb_ldg_patch', p), JSON.stringify(patch));
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+      await page.evaluate(() => document.querySelector('button.btn.primary')?.click()); // Resume
+      const deadline = Date.now() + 20000;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left') && !document.querySelector('#overlay.active')) return 'card';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          return 'wait';
+        });
+        if (k === 'card') return;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed');
+          }, { timeout: 8000 });
+          await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+        } else await page.waitForTimeout(80);
+      }
+      throw new Error(`[${label}] forced card never dealt`);
+    };
+    const dismissToState = async (want, timeout = 15000, strict = false) => {
+      const deadline = Date.now() + timeout;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-ending.active')) return 'ending';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          if (document.querySelector('#screen-crossroads.active .pick-card')) return 'cross';
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left:not(.chosen):not(.unchosen)')) return 'card';
+          return 'wait';
+        });
+        if (k === want) return true;
+        if (strict && (k === 'card' || k === 'cross')) return false;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+          }, { timeout: 8000 });
+          await page.evaluate(() => {
+            const ov = document.querySelector('#overlay.active');
+            (ov?.querySelector('.gear-choices button') || ov)?.click();
+          });
+        } else if (k === 'cross') {
+          await page.evaluate(() => document.querySelector('#screen-crossroads.active .pick-card')?.click());
+          await page.waitForTimeout(60);
+        } else if (k === 'card' && want === 'ending') {
+          await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+          await page.waitForTimeout(70);
+        } else await page.waitForTimeout(80);
+      }
+      return false;
+    };
+
+    // Jump straight to the meadow temptation and accept it — a banked,
+    // terminal ending well short of the Underworld, so the knowing bard's
+    // two turnings stay exactly two (no third turning landed THIS telling).
+    await force({ currentEventId: 'ody_tempt_lotus', pendingChainId: null, spSeen: {} });
+    await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-right')?.click());
+    if (!(await dismissToState('ending', 15000, true))) throw new Error(`[${label}] accepting the meadow did not itself end the telling`);
+
+    const ledger = await page.evaluate(() => {
+      const root = document.querySelector('#screen-ending.active .ody-ledger');
+      return {
+        present: !!root,
+        shelf: !!root?.querySelector('.ody-shelf'),
+        filled: root ? root.querySelectorAll('.ody-slot-filled').length : 0,
+        text: root ? root.textContent : '',
+      };
+    });
+    if (!ledger.present) throw new Error(`[${label}] no .ody-ledger on the ending screen — the run-end ledger did not render`);
+    if (!ledger.shelf) throw new Error(`[${label}] the ledger has no .ody-shelf (shelf.ts not reused)`);
+    if (ledger.filled < 2) throw new Error(`[${label}] the knowing bard's ledger shows fewer than 2 filled slots (${ledger.filled})`);
+    if (!/of 3/.test(ledger.text)) throw new Error(`[${label}] the ledger text is missing the "of 3" count`);
+    if (!/holds the other two/.test(ledger.text)) throw new Error(`[${label}] the ledger is missing the honest-floor line naming the third turning (${JSON.stringify(ledger.text)})`);
+    if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
+    console.log(`✓  ${label}: the knowing bard's run-end screen shows the shelf (${ledger.filled} filled slots), the "of 3" count, and the honest floor line naming the third turning — the run still terminates`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 // The threshold (I5): the kindling title. Contract (the plan's named
 // invariant — "kindling is skippable"): a fresh visit is veiled (the menu
 // is out of reach) until a touch kindles the fire; letting it play lifts
@@ -1536,6 +1678,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyFragmentPop(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyLedger(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

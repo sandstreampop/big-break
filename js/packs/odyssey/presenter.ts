@@ -429,7 +429,29 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // first-class under BOTH prefs; CSS media queries can't see this one) —
     // the ember renders already guttered, the fire holds its first frame.
     const still = reducedMotion() ? ' px-still' : '';
-    return { lines: [{ cls: 'ending-scene' + (dead ? ' ending-gutter' : '') + still, html: scene }], lpNote: '' };
+    // Replay legibility slice 3 (REPLAY-LEGIBILITY-PLAN.md, ADR-0002): the
+    // run-end progress ledger — the shelf with HONEST EMPTY SLOTS, at the
+    // exact moment the replay decision is made. Reuses shelf.ts whole (the
+    // same helpers slice 2's mid-run pop uses) — STATIC here (animate:
+    // false; the mid-run pop already owns the fill motion, Q5a's floor is
+    // read, not re-performed). Honest floor, never teased: the copy never
+    // promises what lies past the third turning, only that the third is
+    // reachable and how.
+    const held = heldTurnings(state.flags || []);
+    const landed = justLanded(state.flags || []);
+    const shelf = fragmentShelf({ held, justFilled: landed, animate: false });
+    const lead = landed
+      ? `<div class="ody-ledger-lead">You carried home ${TURNING_NAMES[landed]}.</div>`
+      : '';
+    const countLine = `<div class="ody-ledger-count">${held.count} of 3 turnings held.</div>`;
+    const floorText = held.count === 3
+      ? 'All three turnings — the prophecy is sung end to end.'
+      : held.count === 0
+        ? 'Three turnings wait in the dark. You carry none of them yet.'
+        : 'The third only reveals itself to a bard who already holds the other two.';
+    const floorLine = `<div class="ody-ledger-floor">${floorText}</div>`;
+    const ledger = { cls: 'ody-ledger', html: `${lead}${shelf}${countLine}${floorLine}` };
+    return { lines: [{ cls: 'ending-scene' + (dead ? ' ending-gutter' : '') + still, html: scene }, ledger], lpNote: '' };
   },
   // The cash-outs are BANKED tellings, not defeats: the verdict ribbon and
   // the history rows say so (told endings, never game-over screens).

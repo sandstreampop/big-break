@@ -692,6 +692,45 @@ body.ody-breath svg.px .pxf { animation-play-state: paused; }
   transform: none;
 }
 
+/* Replay legibility slice 3 (ADR-0002): the run-end progress ledger — the
+   same fired-clay/gold-fret idiom as the mid-run fragment pop (.notice-ody-
+   fret above), reusing .ody-shelf/.ody-slot whole (js/packs/odyssey/
+   shelf.ts). Distinct from body prose so it registers as a beat, not a
+   sentence — a hard double rule top and bottom, same as the fret. STATIC by
+   design (no .ody-slot-new lands here; the mid-run pop already owns the
+   fill motion) — no animation to gate under reduced motion or the Motion
+   Law's chrome-never-animates clause. */
+.ody-ledger {
+  border-top: 3px double var(--accent);
+  border-bottom: 3px double var(--accent);
+  color: var(--ink);
+  background: none;
+  padding: 10px 8px 12px;
+  margin: 10px 0 2px;
+}
+.ody-ledger-lead {
+  font-size: .8rem;
+  color: var(--dim);
+  margin: 0 0 8px;
+  text-align: center;
+}
+.ody-ledger .ody-shelf {
+  margin: 0 0 10px;
+}
+.ody-ledger-count {
+  font-size: .74rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-align: center;
+  margin: 0 0 6px;
+}
+.ody-ledger-floor {
+  font-size: .8rem;
+  color: var(--dim);
+  text-align: center;
+}
+
 /* ── I8 — names in the sand: the loss line is a plain hard rule, bone on
    black — a record, not an alarm. */
 .notice-ody-loss {
