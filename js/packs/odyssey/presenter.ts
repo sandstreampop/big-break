@@ -18,6 +18,10 @@ import { heldTurnings, justLanded, fragmentShelf, TURNING_NAMES } from './shelf.
 import { godPulse } from './alive.js';
 import { ODYSSEY_TROPHIES, ODYSSEY_TROPHY_SPECIALS } from './trophies.js';
 import { odysseyRecap, ACT_TEXT } from './recap.js';
+import {
+  ODYSSEY_STAT_INFO, ODYSSEY_HELP_BLOCKS,
+  odysseyResume, odysseyHistoryEntry, odysseyHistoryStat, odysseyTwistNote,
+} from './ledger.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -481,6 +485,16 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // predicates live in trophies.ts; invariants in test/odyssey-trophies.
   trophies: ODYSSEY_TROPHIES,
   trophySpecials: ODYSSEY_TROPHY_SPECIALS,
+  // The clarity bundle (pass 4): the tap-a-meter blurbs, the pack's half of
+  // the Help sheet, the Résumé as the bard's own ledger, the Past-Lives
+  // trailing stat, and the act twist in the bard's mouth. Data in ledger.ts;
+  // invariants in test/odyssey-ledger.test.mjs.
+  statInfo: ODYSSEY_STAT_INFO,
+  helpBlocks: ODYSSEY_HELP_BLOCKS,
+  resume: odysseyResume,
+  historyEntry: odysseyHistoryEntry,
+  historyStat: odysseyHistoryStat,
+  twistNote: odysseyTwistNote,
   // The cash-outs are BANKED tellings, not defeats: the verdict ribbon and
   // the history rows say so (told endings, never game-over screens).
   failLabels: {

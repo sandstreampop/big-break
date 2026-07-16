@@ -97,7 +97,7 @@ test('the horizon looms against the REAL act end when a twist moved it', () => {
 
 test('friezeTableau: data attributes state the run, inspect states the numbers', () => {
   const state = {
-    act: 2, cardsPlayedInAct: 4, stats: { burnout: 37 },
+    act: 2, cardsPlayedInAct: 4, stats: { burnout: 37, might: 55, guile: 41, lore: 28 },
     expedition: 9, poseidon: 5, athena: 3, renown: 4, flags: [],
   };
   const spec = friezeTableau(state, null);
@@ -107,7 +107,9 @@ test('friezeTableau: data attributes state the run, inspect states the numbers',
     ['data-owl="1"', 'owl'], ['data-deeds="2"', 'deeds'], ['data-notch="13"', 'notch'],
   ]) assert.ok(spec.html.includes(attr), `missing ${want}: ${attr}`);
   const flat = spec.inspect.map((b) => b.title).join(' | ');
-  for (const needle of ['9', '5 of 10', 'Athena — 3', 'Renown — 4', '37 of 100', 'stroke 13 of 28']) {
+  // Pass 4: the captain's stats live here too — with the numeric rail gone
+  // (world-is-HUD), this panel is the ONLY surface stating might/guile/lore.
+  for (const needle of ['9', '5 of 10', 'Athena — 3', 'Renown — 4', '37 of 100', 'stroke 13 of 28', '⚔️ 55', '🪢 41', '📜 28']) {
     assert.ok(flat.includes(needle), `inspect panel missing "${needle}" in: ${flat}`);
   }
   // The owl leaves the mast below 3; the sea calms at 3.

@@ -133,6 +133,13 @@ export const friezeTableau: NonNullable<Presenter['tableau']> = (s) => {
   const expTrue = Math.round(s.expedition ?? 0);
   const inspect = [
     {
+      // The captain's characterization (pass 4): with the numeric rail gone
+      // (world-is-HUD), this panel is the ONE place the three approaches'
+      // numbers exist — before this block they existed nowhere on screen.
+      title: `Tonight’s Odysseus — ⚔️ ${Math.round(s.stats?.might ?? 0)} · 🪢 ${Math.round(s.stats?.guile ?? 0)} · 📜 ${Math.round(s.stats?.lore ?? 0)}`,
+      lines: ['Might, Guile, Lore — fight it, trick it, know the rite against it. The stats a choice leans on are the icons on its button.'],
+    },
+    {
       title: `⛵ The Expedition — ${expTrue}${expTrue > SHIP_MAX_ROWERS ? ` (the band seats ${SHIP_MAX_ROWERS})` : ' of 12'}`,
       lines: ['Men and timber as one dwindling thing. The bench does not refill.'],
     },

@@ -31,6 +31,16 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.6.0',
+    date: '2026-07-16',
+    title: 'The Odyssey explains itself',
+    notes: [
+      'Tap the painted band: it now also states tonight’s Odysseus — your Might, Guile, and Lore, which previously appeared nowhere on screen.',
+      'The Help sheet finally speaks Odyssey: the fleet, the two gods, Renown, the two roads, the following wind, and what actually carries between tellings.',
+      'The Résumé is the bard’s ledger now — nights sung, men named in the sand, turnings held, how every telling ended — and Past Lives rows show each telling’s renown and cost.',
+    ],
+  },
+  {
     version: '0.5.0',
     date: '2026-07-16',
     title: 'The bard counts the house between acts',

@@ -1259,6 +1259,90 @@ async function checkOdysseyRecap(browser, base) {
   }
 }
 
+// The clarity bundle (pass 4): two surfaces that previously rendered the
+// shell's neutral fallbacks now carry the pack's own copy — the Help sheet
+// (❓ on the HUD) and the Résumé (title menu). Driven live, per the working
+// agreement: open each, assert the odyssey's nouns actually render, close,
+// and prove the screen underneath is still alive.
+async function checkOdysseyClarity(browser, base) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 55, runs: 3, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    lifetime: { swipes: 90, incredibles: 4, bads: 12, byLoadout: { kings_hall: { runs: 3, wins: 1 } }, byPath: {} },
+    odyssey: { fragments: ['sea'], tellings: { count: 3, byEnding: { nostos: 1, wrath: 2 }, named: 2, nobody: 1, crewLostTotal: 11 } },
+    settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
+  };
+  const label = 'odyssey clarity';
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(`try {
+    localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+    localStorage.removeItem('bigbreak_run_v1_odyssey');
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+
+    // The Résumé — the bard's ledger, from the title menu.
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-title button')].find((b) => /Résumé/.test(b.textContent || ''))?.click());
+    await page.waitForSelector('#screen-settings.active', { timeout: 8000 });
+    const resume = await page.evaluate(() => document.querySelector('#screen-settings')?.textContent || '');
+    for (const needle of ['Nights at the fire', 'Men named in the sand', '1 of 3', 'anchor-stone', 'The sea answered']) {
+      if (!resume.includes(needle)) throw new Error(`[${label}] the Résumé never says "${needle}"`);
+    }
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-settings button')].find((b) => /Back/.test(b.textContent || ''))?.click());
+    await page.waitForSelector('#screen-title.active', { timeout: 8000 });
+
+    // The Help sheet — from a live run's HUD.
+    await clickJS(page, '#screen-title.active button.btn.primary');
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+    {
+      const deadline = Date.now() + 25000;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left') && !document.querySelector('#overlay.active')) return 'card';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          return 'wait';
+        });
+        if (k === 'card') break;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed');
+          }, { timeout: 8000 });
+          await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+        } else await page.waitForTimeout(80);
+      }
+    }
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#hud .hud-btn')].find((b) => (b.textContent || '').includes('❓'))?.click());
+    await page.waitForSelector('#overlay.active .help-sheet', { timeout: 5000 });
+    const help = await page.evaluate(() => document.querySelector('#overlay.active .help-sheet')?.textContent || '');
+    for (const needle of ['Expedition', 'Poseidon', 'Athena', 'Renown', 'prophecy']) {
+      if (!help.includes(needle)) throw new Error(`[${label}] the Help sheet never says "${needle}"`);
+    }
+    // Dismiss the sheet; the card must still be live (rule 1).
+    await page.waitForFunction(() => {
+      const ov = document.querySelector('#overlay.active');
+      return !ov || ov.hasAttribute('data-armed');
+    }, { timeout: 8000 });
+    await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+    await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 8000 });
+    if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
+    console.log(`✓  ${label}: the Résumé reads as the bard's ledger and the Help sheet speaks Odyssey — both close back to a live screen`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 // Replay legibility slice 3 (REPLAY-LEGIBILITY-PLAN.md, ADR-0002): the
 // run-end progress ledger — the shelf with HONEST EMPTY SLOTS, at the exact
 // moment the replay decision is made (the surface whose absence caused the
@@ -1728,6 +1812,24 @@ async function checkOdysseyStroke(browser, base) {
     if (!emberDim || emberDim.o < 0.3) {
       throw new Error(`[${label}] the ember does not dim with Despair (opacity=${emberDim && emberDim.o})`);
     }
+    // Despair salience (pass 4): a world-is-HUD pack has no rail to wear the
+    // warn colour, so at burnout 80 the danger pip must ride the counters —
+    // and tapping it must explain itself (presenter.statInfo) and hand back
+    // a live screen.
+    const pip = await page.$('#hud .hud-danger');
+    if (!pip) throw new Error(`[${label}] Despair at 80 shows no danger pip on the diegetic HUD`);
+    await page.evaluate(() => document.querySelector('#hud .hud-danger')?.click());
+    await page.waitForSelector('#overlay.active', { timeout: 4000 });
+    const pipSheet = await page.evaluate(() => document.querySelector('#overlay.active')?.textContent || '');
+    if (!/Despair/.test(pipSheet) || !/beach|rowing|ember/i.test(pipSheet)) {
+      throw new Error(`[${label}] the Despair pip's sheet does not explain the meter (got: "${pipSheet.slice(0, 120)}")`);
+    }
+    await page.waitForFunction(() => {
+      const ov = document.querySelector('#overlay.active');
+      return !ov || ov.hasAttribute('data-armed');
+    }, { timeout: 8000 });
+    await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+    await page.waitForFunction(() => !document.querySelector('#overlay.active'), { timeout: 5000 });
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
     console.log(`✓  ${label}: resistance holds (150px pull → ${Math.round(mid)}px), the ember leans, snaps, and dims with Despair, the sweep commits, the words take, the run advances, the toggle stills the band`);
   } finally {
@@ -1972,6 +2074,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyRecap(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyClarity(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

@@ -56,16 +56,19 @@ export function renderHud() {
   // of counters is just noise on the very first cards. They arrive with the
   // real run — same gate the burnout pip and hot-streak chip use just below.
   if (!run.tutorial) for (const c of PRES.hudCounters?.(run) || []) counters.append(el('span', c.cls || 'hud-counter', c.html));
-  if (compact) {
-    // Salience over permanence (ADR-0009): the danger meter earns a chip
-    // only once it matters; the hot streak rides as a small chip, not a
-    // banner. Both tap through to their explanation.
+  // Salience over permanence (ADR-0009): on any HUD without a permanent
+  // numeric rail — compact mode AND world-is-HUD packs (whose tableau shows
+  // the world, not the danger meter) — the danger meter earns a chip only
+  // once it matters, tapping through to its explanation (presenter.statInfo).
+  if (compact || PRES.diegeticHud) {
     const b = run.stats.burnout;
     if (!run.tutorial && b >= 45) {
       const pip = el('span', 'hud-danger' + (b >= 70 ? ' danger' : ' warn'), STAT_META.burnout.icon);
       pip.addEventListener('click', () => { sfx.ui(); showInspectStat('burnout'); });
       counters.append(pip);
     }
+  }
+  if (compact) {
     if (!run.tutorial && (run.hotStreak || 0) >= CONFIG.hotStreakAt) {
       counters.append(el('span', 'hud-streak', `🔥×${run.hotStreak}`));
     }
