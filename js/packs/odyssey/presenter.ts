@@ -22,6 +22,7 @@ import {
   ODYSSEY_STAT_INFO, ODYSSEY_HELP_BLOCKS,
   odysseyResume, odysseyHistoryEntry, odysseyHistoryStat, odysseyTwistNote,
 } from './ledger.js';
+import { ODYSSEY_EXIT_INTERVIEWS, odysseyEpilogue } from './interviews.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -491,6 +492,12 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // invariants in test/odyssey-ledger.test.mjs.
   statInfo: ODYSSEY_STAT_INFO,
   helpBlocks: ODYSSEY_HELP_BLOCKS,
+  // The fire's last word (pass 6): a banked/drowned/beached telling ends
+  // with one question from the canon hecklers (the shell's exit-interview
+  // overlay); a finale telling ends with the fire's reaction (epilogue).
+  // Copy in interviews.ts; invariants in test/odyssey-interviews.test.mjs.
+  exitInterviews: ODYSSEY_EXIT_INTERVIEWS,
+  epilogue: odysseyEpilogue,
   resume: odysseyResume,
   historyEntry: odysseyHistoryEntry,
   historyStat: odysseyHistoryStat,

@@ -187,6 +187,49 @@ const DESCRIPTORS = {
       ]) {
         for (const b of pres.tableau?.(mock, null)?.inspect || []) out.push(b.title, ...(b.lines || []));
       }
+      // The player-experience passes' presenter prose (2026-07): every batch
+      // below shipped before this harvest knew its field, so its first lint
+      // runs were vacuously green — the exact trap the taste gate exists to
+      // close. Scan them all AS the screen shows them.
+      // Pass 1 — the tutorial frame (offer/skip/replay/hud + the wrap-up).
+      const tut = pres.tutorial;
+      if (tut) {
+        out.push(tut.offer, tut.skip, tut.replay, tut.hud);
+        out.push(tut.end?.verdict, tut.end?.title, tut.end?.text, tut.end?.next, tut.end?.lpNote);
+        for (const l of tut.end?.lessons || []) out.push(l.html);
+      }
+      // Pass 2 — the trophy shelf (names + descriptions).
+      for (const t of pres.trophies || []) out.push(t.name, t.desc);
+      // Pass 3 — the act recap, across the states that vary its lines and a
+      // few seeds so every variant pool member is scanned.
+      for (const seed of [1, 2, 3, 4, 5, 6, 7, 8]) {
+        for (const flags of [[], ['ody_named'], ['ody_nobody']]) {
+          for (const exp of [12, 7, 3]) {
+            const mock = { act: 2, loadout: 'kings_hall', flags, stats: { burnout: 20 }, expedition: exp, athena: 4, poseidon: seed % 10, renown: 3, flavorSeed: seed };
+            for (const b of pres.recap?.(mock, 2, seed)?.blocks || []) {
+              if (!b.cls?.includes('recap-scene')) out.push(b.label, b.html);
+            }
+          }
+        }
+      }
+      // Pass 4 — the clarity bundle (stat blurbs, help sheet, twist notes;
+      // the Résumé's row labels are ledger chrome, scanned for tells too).
+      out.push(...Object.values(pres.statInfo || {}));
+      out.push(...(pres.helpBlocks || []));
+      out.push(pres.twistNote?.(-2), pres.twistNote?.(2));
+      for (const r of pres.resume?.({ runs: 3, lpEarnedTotal: 40, lifetime: { swipes: 90, incredibles: 2, bads: 5, byLoadout: { kings_hall: { runs: 2, wins: 1 } }, byPath: {} }, odyssey: { fragments: ['sea'], oarRoad: true, tellings: { count: 3, byEnding: { nostos: 1, wrath: 2 }, named: 2, nobody: 1, crewLostTotal: 9 } } }) || []) {
+        out.push(r.label);
+      }
+      // Pass 6 — the fire's last word (exit interviews + finale epilogues,
+      // every arm and every variant; spoken lines already carry their quotes
+      // in the data, so they scan as the screen shows them).
+      for (const iv of Object.values(pres.exitInterviews || {})) {
+        out.push(iv.context, iv.prompt);
+        for (const side of ['left', 'right']) out.push(iv[side]?.label, iv[side]?.text);
+      }
+      for (const [key, result] of [['nostos', 'success'], ['kleos', 'success'], ['nostos', 'partial'], ['nostos', 'failure']]) {
+        for (let s = 1; s <= 8; s++) out.push(pres.epilogue?.({ ending: { key, result }, flavorSeed: s }));
+      }
       return out.filter(Boolean);
     },
   },

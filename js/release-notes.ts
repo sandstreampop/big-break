@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.8.0',
+    date: '2026-07-16',
+    title: 'The fire gets the last word',
+    notes: [
+      'End a telling early — banked at a temptation, taken by the sea, or left on the beach — and someone at the fire asks the bard one question on the way out. Your answer is which bard you are tonight (and it pays Legacy accordingly).',
+      'Finish a telling properly and the fire reacts: the exhale, the coins, the boy asleep on the woodpile. Different nights, different last words.',
+    ],
+  },
+  {
     version: '0.7.0',
     date: '2026-07-16',
     title: 'The Underworld reads your voyage back to you',

@@ -933,8 +933,15 @@ async function checkOdysseyCeremony(browser, base) {
     const wrath = await page.evaluate(() => ({
       gutter: !!document.querySelector('#screen-ending .ending-scene.ending-gutter'),
       verdict: document.querySelector('#screen-ending .verdict, #screen-ending .ending-title')?.textContent || '',
+      // The exit interview (pass 6): the wrath ending now asks one last
+      // question on the way out (a forced overlay the driver answers via its
+      // gear-choices button); the chosen answer must land on the ending
+      // screen as the epilogue's exit-text — proof the interview flow ran
+      // and did not eat the ending (INCIDENTS #1 class).
+      exitText: document.querySelector('#screen-ending .exit-text')?.textContent || '',
     }));
     if (!wrath.gutter) throw new Error(`[${label}] the death ending did not gutter the ember (scene missing)`);
+    if (wrath.exitText.length < 60) throw new Error(`[${label}] the exit interview's answer never reached the ending screen (exit-text: "${wrath.exitText.slice(0, 60)}")`);
 
     // Later the same evening: this run booted RESUMED (force() reloads, then
     // Resume) — that boot must count as kindled, so returning to the title
