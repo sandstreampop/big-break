@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.4.0',
+    date: '2026-07-16',
+    title: 'The Odyssey grows a trophy shelf',
+    notes: [
+      'Twenty-one trophies for The Odyssey: every way a telling can end, the feats between (a fleet brought home whole, glory won as Nobody, a telling with no bad landing…), and long-game marks the fire keeps across nights.',
+      'The Trophy Room on the Odyssey title screen — previously an honest but empty 0/0 — now has something to collect. A few only announce themselves once.',
+    ],
+  },
+  {
     version: '0.3.0',
     date: '2026-07-16',
     title: 'The Odyssey teaches you the oar',

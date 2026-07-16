@@ -16,6 +16,7 @@ import { lostMan, crewAtLaunch } from './crew.js';
 import { reducedMotion } from '../../ui/dom.js';
 import { heldTurnings, justLanded, fragmentShelf, TURNING_NAMES } from './shelf.js';
 import { godPulse } from './alive.js';
+import { ODYSSEY_TROPHIES, ODYSSEY_TROPHY_SPECIALS } from './trophies.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -477,6 +478,11 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     const ledger = { cls: 'ody-ledger', html: `${lead}${shelf}${countLine}${floorLine}` };
     return { lines: [{ cls: 'ending-scene' + (dead ? ' ending-gutter' : '') + still, html: scene }, ledger], lpNote: '' };
   },
+  // The trophy shelf (pass 2 of the player-experience series): the shell's
+  // Trophy Room was rendering "0/0 collected" for this pack. Data + ledger
+  // predicates live in trophies.ts; invariants in test/odyssey-trophies.
+  trophies: ODYSSEY_TROPHIES,
+  trophySpecials: ODYSSEY_TROPHY_SPECIALS,
   // The cash-outs are BANKED tellings, not defeats: the verdict ribbon and
   // the history rows say so (told endings, never game-over screens).
   failLabels: {

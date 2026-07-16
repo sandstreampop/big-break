@@ -901,6 +901,17 @@ async function checkOdysseyCeremony(browser, base) {
     await force({ currentEventId: 'ody_tempt_lotus', pendingChainId: null, spSeen: {}, flags: [] });
     await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-right')?.click());
     if (!(await dismissToState('ending', 15000, true))) throw new Error(`[${label}] accepting the meadow did not itself end the telling`);
+    // The trophy shelf pays on the gated surface (pass 2): a banked telling
+    // must EARN — the toast on the ending screen and the id in the meta save
+    // (behaviour, not presence: this is the write path finishRun really runs).
+    const banked = await page.evaluate(() => ({
+      toast: [...document.querySelectorAll('#screen-ending .trophy-toast')].map((t) => t.textContent || '').join(' | '),
+      metaIds: (JSON.parse(localStorage.getItem('bigbreak_meta_v1_odyssey') || '{}').trophies) || [],
+    }));
+    if (!banked.metaIds.includes('ody_banked'))
+      throw new Error(`[${label}] the banked telling earned no ody_banked trophy (meta has: ${banked.metaIds.join(',') || 'none'})`);
+    if (!/Lamp in the Window/.test(banked.toast))
+      throw new Error(`[${label}] the ending screen shows no trophy toast for the banked telling (toasts: "${banked.toast}")`);
 
     // Arm 3 — the wrath ceremony: the sea at the brink + the name shouted =
     // the death ending; the guttered-ember scene renders and the run ends.
