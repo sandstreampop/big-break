@@ -479,6 +479,9 @@ export const loveIslandPresenter: Presenter = {
   cardCast: villaCardCast,
   resultStage: villaResultStage,
   recap: villaRecap,
+  // The act-break flavour fold's label (the shell's default is neutral —
+  // this line was hard-coded in the shell until the odyssey recap shipped).
+  recapFold: '📰 Meanwhile, outside the villa…',
   setPiece: villaSetPiece,
   // The finale's reacting faces (who you leave beside / behind) and the
   // browsable "Meet the Cast" roster off the title screen — both pure reads.

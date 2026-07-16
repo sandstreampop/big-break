@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.5.0',
+    date: '2026-07-16',
+    title: 'The bard counts the house between acts',
+    notes: [
+      'The Odyssey’s act breaks now recap YOUR telling, not a script: the real count of men still rowing, what became of the name at the cave, and the gods’ actual mood — then the road ahead.',
+      'The wording rotates from telling to telling, and the hearth keeps burning through it.',
+    ],
+  },
+  {
     version: '0.4.0',
     date: '2026-07-16',
     title: 'The Odyssey grows a trophy shelf',

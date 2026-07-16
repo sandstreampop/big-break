@@ -176,13 +176,19 @@ export function actInterstitial(step) {
 
   // The Trades: procedural press about YOUR run (Pass 14). When the pack
   // ships a full-screen recap (ADR-0009), the press + inbox flavour folds
-  // behind one tap — the story blocks are the moment.
-  const flavourHost = recap ? el('details', 'recap-fold') : box;
-  if (recap) {
-    flavourHost.append(el('summary', 'recap-fold-head', '📰 Meanwhile, outside the villa…'));
+  // behind one tap — the story blocks are the moment. The fold exists only
+  // when there IS flavour to fold (a recap pack without headlines/dms must
+  // not get an empty disclosure widget), and its label is the pack's
+  // (presenter.recapFold) — the old hard-coded villa line was one genre's
+  // copy in the neutral shell (caught by the 2026-07 odyssey recap review).
+  const headlines = PRES.headlines?.(run, 2) || [];
+  const dms = PRES.dms?.(run, 2) || [];
+  const foldable = recap && (headlines.length || dms.length);
+  const flavourHost = foldable ? el('details', 'recap-fold') : box;
+  if (foldable) {
+    flavourHost.append(el('summary', 'recap-fold-head', PRES.recapFold || '📰 Meanwhile, outside…'));
     box.append(flavourHost);
   }
-  const headlines = PRES.headlines?.(run, 2) || [];
   if (headlines.length) {
     const paper = el('div', 'trades');
     paper.append(el('div', 'trades-head', '📰 MEANWHILE, IN THE TRADES'));
@@ -192,7 +198,6 @@ export function actInterstitial(step) {
     flavourHost.append(paper);
   }
   // The inbox: people from your run remember you (Pass 22)
-  const dms = PRES.dms?.(run, 2) || [];
   if (dms.length) {
     const inbox = el('div', 'inbox');
     inbox.append(el('div', 'trades-head', '💬 YOUR PHONE, MEANWHILE'));

@@ -747,6 +747,11 @@ export interface Presenter {
     kicker?: string; title: string;
     blocks: { label?: string; html: string; cls?: string }[];
   } | null;
+  // The label on the act-break flavour fold (the <details> the shell tucks
+  // headlines/dms behind when a recap takeover runs). Pack-owned copy — the
+  // shell's default is neutral, and the fold renders only when the pack
+  // actually ships headlines/dms to put in it.
+  recapFold?: string;
   // The finale's reacting faces: who you leave the season standing beside (and
   // who you left in your wake). Rendered as a row of enlargeable portraits on
   // the ending screen, above the prose. Pure read of the finished run; a pack

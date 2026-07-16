@@ -160,6 +160,21 @@
    on a 320px phone — the title needs 10 × (font + .3em) to stay unclipped. */
 body.big-text .sp-beat .sp-beat-banner { font-size: 14px; }
 .recap-card .act-name { font-size: 15px; }
+/* The act recap (pass 3): the hearth rides the first block — same stage the
+   actIntro's beat-scene slot gave it, so a recapped night keeps the fire.
+   The scene block sheds the box chrome (a picture, not a paragraph). */
+.recap-block.recap-scene { border: none; background: none; padding: 0; }
+.recap-block.recap-scene .recap-body { font-size: unset; line-height: 0; text-align: center; }
+/* The recap card is narrower than the beat panel; on the smallest phones the
+   full hearth row overflows its interior (mobile-matrix 320px cell) — the
+   ensemble sits closer and smaller there, same scene, no clipping. */
+@media (max-width: 350px) {
+  .recap-scene .hearth-row { gap: 6px; height: 44px; }
+  .recap-scene .fig { height: 32px; }
+  .recap-scene .fig-fire { height: 38px; }
+  .recap-scene .fig-boy, .recap-scene .fig-empty { height: 26px; }
+  .recap-scene .fig-cup { height: 15px; }
+}
 @media (max-height: 700px) { .set-piece-banner { font-size: 10px; } }
 
 /* Pixel body wants a touch more size and line-room to stay legible at 320px
@@ -507,6 +522,7 @@ body.ody-hidden svg.px .pxf { animation-play-state: paused; }
    tween (ADR-0001). */
 .beat-scene { display: flex; justify-content: center; margin-bottom: 4px; }
 .beat-scene .hearth-row,
+.recap-scene .hearth-row,
 .threshold .hearth-row {
   display: flex;
   align-items: flex-end;

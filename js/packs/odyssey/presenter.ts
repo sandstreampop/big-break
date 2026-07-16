@@ -17,6 +17,7 @@ import { reducedMotion } from '../../ui/dom.js';
 import { heldTurnings, justLanded, fragmentShelf, TURNING_NAMES } from './shelf.js';
 import { godPulse } from './alive.js';
 import { ODYSSEY_TROPHIES, ODYSSEY_TROPHY_SPECIALS } from './trophies.js';
+import { odysseyRecap, ACT_TEXT } from './recap.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -114,23 +115,20 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // The threshold (I5): the fireside before the telling — the player's first
   // touch kindles the fire; Resume means it still burns from last time.
   titleScene: odysseyTitleScene,
+  // The overture texts are single-sourced in recap.ts (ACT_TEXT): the
+  // recap's "road ahead" block and these intros describe the same water by
+  // construction. Acts 2-3 normally render via the recap takeover; these
+  // stay as the fallback (and act 1's opening night always uses its entry).
   actIntro: {
-    1: {
-      name: 'The Sack and the Sea',
-      scene: hearthScene({ act: 1 } as RunState),
-      text: 'Twelve ships out of Troy, friends — riding low, heavy with bronze and with men who had lived, every rower pulling for a wife who had learned to run a farm without him. And listen how the water was, that first week: easy, foam like combed wool, the kind of sea that makes a captain generous at supper. That is the sea’s oldest trick. It shows you your harbour in your mind’s eye. Then it asks your name.',
-    },
-    2: {
-      name: 'Witches and the Dead',
-      scene: hearthScene({ act: 2 } as RunState),
-      text: 'Throw on a branch; the tale goes narrow here. The islands stop being places a chart would admit to, and the dangers stop being weather. What is left of the fleet sails into waters where the right word matters more than the strong arm — and where the wrong word is very, very easy to say.',
-    },
-    3: {
-      name: 'The Narrow Way',
-      scene: hearthScene({ act: 3 } as RunState),
-      text: 'Now the fire burns low, friends, and I will sing softer, because the last sea is a corridor with teeth on both walls, and beyond it — home, wearing a stranger’s face. Everything he still has fits in one hull. Everything he wants is one island further than the sea would like.',
-    },
+    1: { name: 'The Sack and the Sea', scene: hearthScene({ act: 1 } as RunState), text: ACT_TEXT[1] },
+    2: { name: 'Witches and the Dead', scene: hearthScene({ act: 2 } as RunState), text: ACT_TEXT[2] },
+    3: { name: 'The Narrow Way', scene: hearthScene({ act: 3 } as RunState), text: ACT_TEXT[3] },
   },
+  // The act recap (pass 3): between acts the bard counts the house — the
+  // fleet's real count, the name's status, the gods' mood — before naming
+  // the road ahead (the fixed overture rides as the recap's last block).
+  // Act 1 returns null, so the opening night keeps its fixed intro above.
+  recap: odysseyRecap,
   crossroads: {
     head: 'The name in your mouth',
     sub: 'The prow is out of stone-throw, and the bard leans in: does this telling row for home, or for the song? Homecoming counts hulls and keeps the sea unprovoked; glory is bought in deeds and paid for in wrath.',

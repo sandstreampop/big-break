@@ -1120,6 +1120,145 @@ async function checkOdysseyFragmentPop(browser, base) {
   }
 }
 
+// The act recap (pass 3): the interstitial between acts is a pack takeover
+// ("previously on tonight's telling") — a NEW surface on the progression-
+// gated path, so per the working agreement it is driven live: force the
+// last card of act 2, resolve it, assert the recap overlay renders the
+// run's REAL state (the fleet count, the name's fate, the hearth scene),
+// then dismiss it and prove act 3 still deals — the interstitial must
+// never become the overlay that eats the advance (INCIDENTS #1 class).
+async function checkOdysseyRecap(browser, base) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
+  };
+  const label = 'odyssey recap';
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(`try {
+    if (!sessionStorage.getItem('bb_rec_seeded')) {
+      sessionStorage.setItem('bb_rec_seeded', '1');
+      localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+      localStorage.removeItem('bigbreak_run_v1_odyssey');
+    }
+    const patch = sessionStorage.getItem('bb_rec_patch');
+    if (patch) {
+      const key = 'bigbreak_run_v1_odyssey';
+      const run = JSON.parse(localStorage.getItem(key) || 'null');
+      if (run) {
+        Object.assign(run, JSON.parse(patch));
+        localStorage.setItem(key, JSON.stringify(run));
+      }
+    }
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(`console.error: ${m.text()}`); });
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+    await clickJS(page, 'button.btn.primary');
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+    const reachCard = async () => {
+      const deadline = Date.now() + 30000;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left') && !document.querySelector('#overlay.active')) return 'card';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          return 'wait';
+        });
+        if (k === 'card') return;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed');
+          }, { timeout: 8000 });
+          await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+        } else await page.waitForTimeout(80);
+      }
+      throw new Error(`[${label}] never reached a live card`);
+    };
+    await reachCard();
+
+    // The last card of act 2, with a telling that has a story to recap:
+    // three benches empty, the name swallowed, the sea calm, beats done.
+    await page.evaluate((p) => sessionStorage.setItem('bb_rec_patch', p), JSON.stringify({
+      act: 2, path: 'nostos', cardsPlayedInAct: 9, actTwist: null,
+      currentEventId: 'ody_a2_harbor', pendingChainId: null, spSeen: {},
+      expedition: 9, poseidon: 0, athena: 4,
+      flags: ['ody_done_cyclops', 'ody_done_underworld', 'ody_done_circe', 'ody_done_lotus', 'ody_nobody', 'ody_fore_sea'],
+    }));
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await page.evaluate(() => document.querySelector('button.btn.primary')?.click()); // Resume
+    await reachCard();
+
+    // Resolve the act's last card, clear its result — the next overlay must
+    // be the act-3 interstitial wearing the recap takeover.
+    await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+    const sawRecap = await page.waitForFunction(() => {
+      const ov = document.querySelector('#overlay.active');
+      if (!ov) return false;
+      if (ov.querySelector('.recap-card')) return 'recap';
+      // a result overlay first — clear it once armed
+      if (ov.hasAttribute('data-armed')) ov.click();
+      return false;
+    }, { timeout: 15000 }).then(() => true).catch(() => false);
+    if (!sawRecap) throw new Error(`[${label}] the act-3 interstitial never showed the recap takeover`);
+
+    const recap = await page.evaluate(() => {
+      const card = document.querySelector('#overlay.active .recap-card');
+      // The forced card's own outcome may have moved expedition (a risky
+      // side loses 1-2 hulls on a bad roll) — the truth the recap must
+      // state is the LIVE run's count, read from the same save it reads.
+      const run = JSON.parse(localStorage.getItem('bigbreak_run_v1_odyssey') || '{}');
+      return {
+        kicker: card?.querySelector('.recap-kicker')?.textContent || '',
+        blocks: [...(card?.querySelectorAll('.recap-block') || [])].map((b) => b.textContent || ''),
+        scene: !!card?.querySelector('.recap-scene .hearth-row'),
+        text: card?.textContent || '',
+        expedition: Math.round(run.expedition ?? -1),
+      };
+    });
+    if (!recap.scene) throw new Error(`[${label}] the recap lost the hearth (no .recap-scene .hearth-row)`);
+    if (!recap.kicker) throw new Error(`[${label}] the recap has no kicker`);
+    if (recap.blocks.length < 4) throw new Error(`[${label}] recap shows ${recap.blocks.length} blocks — expected scene + count + name + gods + road`);
+    if (recap.expedition < 6 || recap.expedition > 11) throw new Error(`[${label}] forced state drifted out of the mid-count band (expedition=${recap.expedition}) — retune the force patch`);
+    if (!recap.text.includes(String(recap.expedition))) throw new Error(`[${label}] the count block does not state the fleet's real count (${recap.expedition})`);
+    if (!/Nobody|anchor-stone|unprovoked/i.test(recap.text)) throw new Error(`[${label}] the name block does not tell the swallowed name`);
+    if (!/calm|mercy|patience/i.test(recap.text)) throw new Error(`[${label}] the gods block does not read the calm sea`);
+    if (!/The road ahead/i.test(recap.text)) throw new Error(`[${label}] the road-ahead overture is missing`);
+    // Negative probes (the 2026-07 recap review's escape class): the shell's
+    // act-break chrome must not leak another genre's copy onto this surface,
+    // and a pack without headlines/dms must get NO flavour fold at all —
+    // an empty disclosure widget is a lie about content.
+    const leak = await page.evaluate(() => ({
+      villa: /villa/i.test(document.querySelector('#overlay.active .act-card')?.textContent || ''),
+      fold: !!document.querySelector('#overlay.active .recap-fold'),
+    }));
+    if (leak.villa) throw new Error(`[${label}] the act break leaked villa copy onto the odyssey surface`);
+    if (leak.fold) throw new Error(`[${label}] an empty flavour fold rendered (odyssey ships no headlines/dms)`);
+
+    // Dismiss the interstitial: act 3 must still deal a live card (through
+    // any bard beat) — the takeover must never eat the advance.
+    await page.waitForFunction(() => {
+      const ov = document.querySelector('#overlay.active');
+      return !ov || ov.hasAttribute('data-armed');
+    }, { timeout: 8000 });
+    await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+    await reachCard();
+    if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
+    console.log(`✓  ${label}: act break recaps the run's real state (count ${recap.expedition}, Nobody, calm sea, hearth intact) and act 3 still deals`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 // Replay legibility slice 3 (REPLAY-LEGIBILITY-PLAN.md, ADR-0002): the
 // run-end progress ledger — the shelf with HONEST EMPTY SLOTS, at the exact
 // moment the replay decision is made (the surface whose absence caused the
@@ -1827,6 +1966,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyFragmentPop(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyRecap(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);
