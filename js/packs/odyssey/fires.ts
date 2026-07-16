@@ -9,8 +9,12 @@ export const FIRES = [
   {
     id: 'kings_hall', name: 'The King’s Hall', family: 'fire', unlockedByDefault: true,
     flavor: 'They want glory. Sing the deeds loud and count the dead later.',
-    quirk: { name: 'A name to live up to', desc: 'Begin the telling with Renown 2 — the hall has heard of this man.' },
-    grants: { renown: 2 },
+    // Renown 2 → 3 (pass 10; SIM-FINDINGS 'Fire → path'): the Hall's whole
+    // flavor is glory, yet its kleos commit rate matched the Fisherman's
+    // Hearth — 2 of the gate's 5 wasn't enough to make the Glory road feel
+    // closer at the crossroads. Three of five is a visible head start.
+    quirk: { name: 'A name to live up to', desc: 'Begin the telling with Renown 3 — the hall has heard of this man.' },
+    grants: { renown: 3 },
   },
   {
     id: 'fishermans_hearth', name: 'The Fisherman’s Hearth', family: 'fire', unlockedByDefault: true,

@@ -31,6 +31,7 @@ function sweep() {
   const beatSeen = {};        // beat → { variantId: count }
   const beatRuns = {};        // beat → runs in which it occurred
   const reachedAct = { 2: 0, 3: 0 };   // runs that survived into act N
+  let missedCyclopsUnexplained = 0;   // runs with no cyclops AND no act-1 terminal ending
   for (let i = 0; i < RUNS; i++) {
     const run = simulatePackRun(odysseyPack, nextSeed());
     const seen = new Set();
@@ -46,11 +47,23 @@ function sweep() {
     if (maxAct >= 2) reachedAct[2]++;
     if (maxAct >= 3) reachedAct[3]++;
     for (const b of seen) beatRuns[b] = (beatRuns[b] || 0) + 1;
+    // The itinerary contract, made exact: a run may miss the Cyclops ONLY by
+    // ENDING first — the meadow accepted, the despair filled, the sea's
+    // answer — never by slipping past an open window. (The old absolute
+    // ≥99% floor encoded the era when the lotus offer fired in <1% of runs;
+    // pass 10's rebalance made the meadow a real offer, so banked-in-act-1
+    // tellings are now a legitimate, sizable class.)
+    if (!seen.has('cyclops') && maxAct <= 1) {
+      const key = run.state?.ending?.key;
+      if (!['lotus', 'burnout', 'wrath'].includes(key)) missedCyclopsUnexplained++;
+    } else if (!seen.has('cyclops') && maxAct > 1) {
+      missedCyclopsUnexplained++;
+    }
   }
-  return { beatSeen, beatRuns, reachedAct };
+  return { beatSeen, beatRuns, reachedAct, missedCyclopsUnexplained };
 }
 
-const { beatSeen, beatRuns, reachedAct } = sweep();
+const { beatSeen, beatRuns, reachedAct, missedCyclopsUnexplained } = sweep();
 
 test('the LANDMARKS occur in every telling that reaches them (temptations are offers, not landmarks)', () => {
   // The itinerary contract: a landmark is never lost — a run that survives
@@ -61,7 +74,15 @@ test('the LANDMARKS occur in every telling that reaches them (temptations are of
     `cyclops fired in ${beatRuns.cyclops} runs but ${reachedAct[2]} runs survived past act 1`);
   assert.ok(beatRuns.underworld >= reachedAct[3],
     `underworld fired in ${beatRuns.underworld} runs but ${reachedAct[3]} runs survived past act 2`);
-  assert.ok(beatRuns.cyclops >= RUNS * 0.99, `cyclops fired in only ${beatRuns.cyclops}/${RUNS} runs`);
+  // Every miss is EXPLAINED: the run ended in act 1 at a told/terminal
+  // ending (meadow, beach, wave). Zero unexplained misses = the window can
+  // never be slipped, whatever the offer rates are tuned to.
+  assert.strictEqual(missedCyclopsUnexplained, 0,
+    `${missedCyclopsUnexplained} runs missed the Cyclops without an act-1 terminal ending — the window leaked (INCIDENTS #3 class)`);
+  // And the miss class stays a minority: the meadow is a real offer now
+  // (pass 10), but if most tellings bank before the cave, the itinerary's
+  // first landmark has stopped being 'every telling's defining scar'.
+  assert.ok(beatRuns.cyclops >= RUNS * 0.8, `cyclops fired in only ${beatRuns.cyclops}/${RUNS} runs — the meadow is eating the itinerary`);
 });
 
 test('cyclops variation floor: both variants live, entropy ≥ 0.4 bits', () => {

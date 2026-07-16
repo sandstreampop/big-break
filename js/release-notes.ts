@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.12.0',
+    date: '2026-07-16',
+    title: 'The meadow finally makes its offer',
+    notes: [
+      'The Lotus temptation was gated so tight it fired in fewer than 1 in 100 tellings — a no-offer. Now the flower speaks to the genuinely weary: real Despair, or a fleet already down three hulls. Sail in strong and you will still never see it.',
+      'The King’s Hall now starts the telling at Renown 3 of the Glory road’s 5 — a hall that has heard of you should feel like a head start, not a rumor.',
+    ],
+  },
+  {
     version: '0.11.0',
     date: '2026-07-16',
     title: 'Six new seas in the first water',
