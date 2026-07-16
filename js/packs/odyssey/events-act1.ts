@@ -310,6 +310,112 @@ export const ACT1_EVENTS: GameEvent[] = [
     },
   }),
 
+  // ── new in the 2026-07 player-experience series (pass 9): six more seas
+  // for the first water — the pool was eighteen cards deep and repeat
+  // players were meeting the same act-1 inside three tellings. ──
+  sea('ody_a1_trojan_cloth', 1, {
+    tags: ['omen'],
+    prompt: 'A trader’s boat comes alongside flying cloth you know — half-burned weave from Troy’s own looms, salvage cut into sail. The men at its rail sell what the fire left them. Two of the faces at the rail know yours.',
+    recap: 'Trojan salvage, and faces that knew yours.',
+    left: {
+      label: 'Trade fairly, name nothing', approach: 'guile',
+      bad: 'You keep the visor of politeness down through the whole exchange, and it slips once — a bench-mate laughs your name across the water at exactly the wrong moment. The two faces go flat. The trade finishes correct and cold, and the boat that carries your name away carries it somewhere you will never get to choose.',
+      good: 'You trade bronze for cordage with the blandness of a man with no biography, and the two faces study you and let it go — the sea is full of soldiers now, and every third one has a famous jaw. The fleet parts from them richer and unnamed, and at the steering oar you keep your famous jaw pointed at the horizon until their sail is under it.',
+      incredible: 'You trade, and as the boats part you send across a jar of the good wine — no name, no message, just the jar. It is the courtesy of one burned city to another, and both rails understand it perfectly. The two faces raise the jar to you across the widening water. Whatever they suspected, friends, they drink it down with the wine.',
+    },
+    right: {
+      label: 'Ask them what they saw fall', approach: 'lore',
+      bad: 'You ask for news of the city’s end and they give it — all of it, from the inside, from under it — and the men crowd the rail to listen, and the listening costs the fleet a day and a mood. Some accounts, friends, are owed a hearing and still arrive like cargo you cannot stow.',
+      good: 'You ask, and listen, and the two who know you watch you listen — the sacker of their city, quiet at the rail, taking the account like a debt collector taking payments. At the end the elder of them nods once. Not forgiveness, friends. Receipt. The boats part with something settled that had no other way to settle.',
+      incredible: 'You hear the account to its end, and then you give them one back: the name of the quarter where the fire was kept OFF, the households spared, the priest raised by the hand. You know it is true because you ordered it. They know it is true because they lived. The two boats sit rail to rail a long time, friends, while the men of both cities pass a cup across the gap.',
+    },
+  }),
+  sea('ody_a1_dolphins', 1, {
+    tags: ['omen', 'kleos'],
+    prompt: 'Dolphins take the bow wave at first light — a dozen of them, stitching the fleet together, and the men lean over the rails calling them by their sweethearts’ names. Old Perimedes says they carry drowned men’s luck. He does not say which way.',
+    recap: 'Dolphins on the bow wave.',
+    left: {
+      label: 'Read what they carry', approach: 'lore',
+      bad: 'You read the pod aloud — twelve of them, twelve ships, a good sign plainly — and by noon the pod is eleven, and every man aboard has done the arithmetic you taught them. Nothing sinks. Nothing happens at all. But you have handed the fleet a number to watch, friends, and a watched number always finds a way to move.',
+      good: 'You count them, read the water they favor, and call it fair: company, not omen — the sea’s own crews riding a good wake. The men relax into the escort, and the pod stays with the fleet till dusk like a promise nobody had to make. At sundown the boy at the sixth bench waves them off by name, friends — all twelve names, sweethearts every one.',
+      incredible: 'You read them the old way — not the count, the COURSE: where the pod breaks the surface, where it will not go. There is a line in the water ahead they swing wide of, all twelve, every pass. You bend the fleet’s heading two points to follow them around it, and never learn what you missed. The pilots ink the swerve into the book without a reason, friends, and the reason never once comes to collect.',
+    },
+    right: {
+      label: 'Race them', approach: 'might', risky: true,
+      bad: 'You call the sprint and the fleet answers — and the dolphins, who invented this game before men had boats, make the whole proud line of you look like furniture. A yard springs on the third ship in the surge. The pod circles back twice to watch the repairs, friends, which is the closest the sea comes to laughing out loud.',
+      good: 'You call the sprint and the benches take it laughing, and for half a glass the fleet and the pod run bow to fin down a bright sea — no one wins, no one could, and every man rows the rest of the day like his back is twenty again. At supper the benches argue which dolphin was fastest, friends, with wagers, and names for the contenders.',
+      incredible: 'You race them and — for eleven strokes, friends, the men counted — the flagship HOLDS the pod. Then the dolphins remember who they are and pour away like spilled light, and the whole fleet stands off its benches roaring, and the story is aboard every hull by dusk and ashore within the month: the captain who kept pace with the sea’s own horses. It grows in the telling. Stories with dolphins in them always do.',
+    },
+  }),
+  sea('ody_a1_night_run', 1, {
+    tags: ['deep'],
+    prompt: 'The wind is fair at dusk and promises to hold. Beach now, the pilots’ way, and lose it — or run the fleet through the dark on a sea nobody can read, and be a day closer to home by dawn.',
+    recap: 'The fair wind at dusk.',
+    left: {
+      label: 'Run through the dark', approach: 'might', risky: true,
+      bad: 'The wind holds; the formation does not. Twelve ships in a blind sea drift apart like thoughts in a tired head, and dawn spends itself regathering them — one with a sprung stay, one with a bench brawl about whose fault the night was. The day you stole from the sea, friends, the fleet pays back with interest at sunrise.',
+      good: 'You run all night with lamps hooded and the helmsmen steering by the wake ahead, and dawn finds the fleet whole, formed, and a full day nearer home. The men come off the benches grey-faced and grinning, friends, and eat their cold breakfast like conspirators dividing a haul.',
+      incredible: 'You run the dark and USE it: the middle watch sung across the water, ship answering ship down the line — a fleet holding formation by ear alone, friends, like one instrument with twelve strings. Pilots who heard of it made it doctrine within ten years. On the beaches men still call a clean night passage by the name of this one.',
+    },
+    right: {
+      label: 'Beach, and bank the wind', approach: 'lore', risky: true,
+      bad: 'You beach the prudent way, and the fair wind blows all night over twelve parked hulls, spending itself on nothing — and dawn brings its brother, foul and steady, to take its place. The men do not say anything. They just look at the sky, friends, and then at you, and set their backs into the oars the wind should have spared.',
+      good: 'You beach at dusk, fires small, watches set, and let the fair wind go — because a wind is a rumor, friends, and a reef in the dark is a fact. The men sleep whole and row hard at dawn, and if the sea kept the gift you refused, it kept its traps unpaid as well. Nobody drowns on a beach.',
+      incredible: 'You beach — and read the wind’s promise closely enough to catch it lying: by the middle watch it has swung two points foul, and any fleet caught out in it would have spent dawn clawing off a lee shore. The pilots’ way, friends, plus the one refinement the pilots leave out: check the promise’s teeth before you grieve the gift.',
+    },
+  }),
+  sea('ody_a1_drift_oar', 1, {
+    tags: ['omen'],
+    prompt: 'Mid-sea, no land in any quarter, the lookout calls something small off the bow: one broken oar, drifting alone, a name cut into the loom in a hand that took its time. No wreck around it. No gulls. Just the oar.',
+    recap: 'One oar adrift, with a name on it.',
+    left: {
+      label: 'Ship it aboard and say the name', approach: 'lore',
+      bad: 'You bring the oar aboard and give its name the rite, and the rite runs long, and the name — a common one, friends, a bench name, everyone has rowed with one — lands harder than you priced. Three men aboard knew someone who carried it. The oar rides the flagship the rest of the week like a passenger nobody can bill.',
+      good: 'You ship it, read the name aloud once — the whole custom, said plain over open water — and lash it upright at the stern where a rower’s mark belongs. Whoever he was, he is one ship’s company larger tonight. The men pull easier for it, friends. A fleet that would stop for YOUR oar is a fleet worth drowning for, which is why fewer of them drown.',
+      incredible: 'You ship the oar, say the name — and Perimedes goes still, and asks to see the loom, and runs his thumb down the cuts. He KNOWS the hand that made them, friends: a carver from his own island, who signs his work in the corners the way ships’ carpenters do. The oar has a home port now, and a family to be carried to, and the fleet has an errand on the far side of all of this that every man aboard intends to survive to run.',
+    },
+    right: {
+      label: 'Leave it to the sea', approach: 'guile',
+      bad: 'You pass it by — the sea is full of wood, friends, and the day was short — and the oar rides your wake for an hour on some trick of the current, name up, like a question repeating itself politely. Nobody says anything. Everybody rows a little harder than the stroke calls for. It takes the fleet three days to stop talking about it by not talking about it.',
+      good: 'You leave it, and give it the passing honor instead: oars shipped for one stroke, one silence, the fleet gliding past the name the way soldiers pass a stranger’s grave — owed nothing, given something. Then the stroke resumes on Perimedes’ knock, friends, and the name stands in the water astern, holding its one long note behind the fleet.',
+      incredible: 'You leave it — and mark the drift, the current, the day, in the pilot-book, in your own hand: where a rower’s oar was seen swimming for home. Years on, friends, a wreck is found where that current comes ashore, and the families of a lost crew learn at last which water took their men — because one passing captain thought a drifting name was worth a line of ink. The sea forgets nothing. Twice now, neither do you.',
+    },
+  }),
+  sea('ody_a1_council', 1, {
+    tags: ['blood'],
+    prompt: 'Eurylochos calls for a captains’ council on the beach — in front of the men, which is the point — and argues the coast route home: slower, safer, sight of land the whole way. He has charts. He has numbers. He has an audience.',
+    recap: 'The council on the beach.',
+    left: {
+      label: 'Debate him in the open', approach: 'might',
+      bad: 'You take the debate he staged and win it on the water and lose it on the beach — because his numbers were for the men, friends, not for you, and every point you score off him scores off their hopes of a shorter fear. The fleet sails your route with obedient backs and borrowed doubt. Eurylochos files the evening away. He keeps that ledger beautifully.',
+      good: 'You give him the full hearing, chart for chart — and then you take his coast route apart the way a pilot would: the lee shores, the tribes that light false harbor fires, the doubled days of water and bread. The men hear their fear argued for honestly and answered better, and break up the council arguing his weather against your reefs, friends — which is a fleet doing its thinking out loud, and no harm in it. Eurylochos rolls his charts with care. They will keep.',
+      incredible: 'You let him finish — every chart, every number — and then you adopt HALF of it, aloud, by name: his watering stops, his weather doubts, folded into your route like a splice into a line. “Eurylochos improved the passage,” you tell the fleet, and mean it. He sits down armed for a war that never came, friends, holding a victory he cannot complain about. It takes him all evening to decide he is pleased.',
+    },
+    right: {
+      label: 'Let the benches vote it', approach: 'guile', risky: true,
+      bad: 'You put it to the benches, and the benches discover they are a parliament, friends, and parliaments do not adjourn. The vote goes your way by a whisker and settles nothing; every hard order for a month is met with the eyebrows of men who were consulted once and liked it. Some doors, once opened, do not close for weather.',
+      good: 'You put it to a vote and the vote backs the open sea — because the men, given the weight honestly, weigh it honestly; most of them have wives who are not getting younger by the coast road either. Eurylochos accepts the count with grace in public, which costs him, friends, and is worth exactly what it costs. The fleet sails fast and OWNS the sailing.',
+      incredible: 'You call the vote — and before it, you have each captain speak his own water: what his ship draws, what his benches can take, what his men fear. By the time the pebbles are cast the fleet has heard itself think for the first time since Troy, and the count is not even close. Eurylochos votes for the open sea HIMSELF, friends, out loud, last. A crew that chooses its road rows it like a debt of honor.',
+    },
+  }),
+  sea('ody_a1_green_casks', 1, {
+    tags: ['deep'],
+    prompt: 'The water casks come up green — every ship, the same slick bloom, the same sweet-rot smell. The nearest watering the chart admits to is a river mouth behind a bar of surf that the pilot-book marks with one word: sometimes.',
+    recap: 'Green water, and a bad bar.',
+    left: {
+      label: 'Run the bar for fresh water', approach: 'might', risky: true,
+      bad: 'The bar is not in a sometimes mood. The first boat through takes the surf wrong and rolls, casks and rowers into the white — the men come up, friends, all of them, which is the day’s one mercy — and the fleet waters in relays under a falling tide with everyone soaked and nobody singing. The river is sweet. The price was not.',
+      good: 'You read the sets, pick the lull, and put the boats through two at a time with swimmers posted on the bar like sentries. The river runs cold and clean off the hills, and the men drink with their faces in it before they fill a single cask. A fleet re-watered, friends, is a fleet reborn. You can hear it in the stroke for days.',
+      incredible: 'You run the bar — and buoy the channel as you go, casks anchored on the line your keels proved, so every boat after the first runs a marked road through the white. The watering takes half the time and none of the swimmers. The buoys stay when you sail, friends, and the pilot-book’s “sometimes” gets a second word in your hand: “marked.” Some captains pass a place. Some improve it.',
+    },
+    right: {
+      label: 'Boil, strain, and ration through', approach: 'lore', risky: true,
+      bad: 'You doctor the green water by the book — boiled, strained through war-cloth, cut with the last of the wine — and the book is mostly right, friends. Mostly. Two benches spend a grey day at the leeward rail learning the exception, and the fleet learns the smell of the flagship downwind, and the jokes survive longer than the sickness. Everything survives. Nothing enjoys it.',
+      good: 'You boil it hard, strain it twice, and ration it out with wine enough to make it honest, and the fleet crosses to clean water on schedule with nobody worse than bored of the taste. The old rites know their business, friends: fire kills what the eye cannot fight. Perimedes supervises every kettle like a priest at an altar, which, tonight, is exactly what he is.',
+      incredible: 'You boil the water — and while the kettles work, you set the coopers on the CASKS, friends, because the bloom is the barrels’ doing, not the river’s: scorch the staves, re-pitch the seams, char the lids. The fleet sails on with water that stays sweet a week past anything the pilots promise, and the cooper’s trick rides home in three dozen memories to become, in time, just how casks are made on Ithaca.',
+    },
+  }),
+
   // ── The temptation of Act I: the Lotus (the weak offer) ──
   // A scheduled beat (pack.ts BEATS), gated to the runs it can actually
   // tempt: the flower speaks to the weary. Banking is a CHOICE, not a roll

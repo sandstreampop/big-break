@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.11.0',
+    date: '2026-07-16',
+    title: 'Six new seas in the first water',
+    notes: [
+      'Act I of The Odyssey grows a third deeper: Trojan salvage flying cloth you know, dolphins on the bow wave, a fair wind at dusk that may be lying, one drifting oar with a name cut into it, a captains’ council staged on a beach, and the water casks coming up green.',
+      'Repeat tellings meet noticeably fewer repeats before the cave.',
+    ],
+  },
+  {
     version: '0.10.0',
     date: '2026-07-16',
     title: 'The telling travels',
