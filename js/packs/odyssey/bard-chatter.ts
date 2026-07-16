@@ -84,6 +84,13 @@ export const CHATTER: Chatter[] = [
   { id: 'bc_nobody', kind: 'reactive', when: (s) => (s.flags || []).includes('ody_nobody'), blocks: [
     { text: 'He told the giant his name was Nobody. It is the stupidest joke in the poem, friends, and it saves more men than his spear ever does — and there is a lesson in it I have never once managed to live by.' },
   ] },
+  // The Scarred Telling (pass 7): the crowd notices a harder night. Sims
+  // never set the comeback flag, so this is ineligible in every seeded run —
+  // the flavor stream's picks are unchanged (golden-safe).
+  { id: 'bc_scarred', kind: 'reactive', when: (s) => (s.flags || []).includes('comeback'), blocks: [
+    { who: 'the woman by the woodpile', text: 'Nine hulls tonight? You sang twelve out of Troy before.' },
+    { text: 'Twelve is the easy telling, friends, and this fire has heard it done. Tonight the man starts where the easy telling left him — short of hulls, long one grudge — and we find out what he is made of the SECOND time.' },
+  ] },
   { id: 'bc_streak', kind: 'reactive', when: (s) => (s.badStreak || 0) >= 2, blocks: [
     { text: 'The sea is winning the argument, friends, and it wins the way it always wins — not by being stronger. By not being tired. Row anyway. The bard has seen worse benches than yours reach home.' },
   ] },

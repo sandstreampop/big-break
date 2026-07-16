@@ -18,6 +18,7 @@ import { FIRES, firesPlugin } from './fires.js';
 import { itineraryPlugin } from './itinerary.js';
 import { prophecyPlugin, summarizeTelling } from './prophecy.js';
 import { bardPlugin } from './bard-chatter.js';
+import { odysseyComeback, odysseyModesPlugin } from './modes.js';
 import { ACT1_EVENTS } from './events-act1.js';
 import { ACT2_EVENTS } from './events-act2.js';
 import { ACT3_EVENTS } from './events-act3.js';
@@ -53,7 +54,9 @@ declare module '../../types.js' {
 export const odysseyPack: Pack = {
   id: 'odyssey',
   manifest: odysseyManifest,
-  plugins: [firesPlugin, itineraryPlugin, prophecyPlugin, bardPlugin],
+  // odysseyModesPlugin carries no onConstruct/onRunStart/stateDefaults, so
+  // appending it changes no seeded draw — goldens byte-identical.
+  plugins: [firesPlugin, itineraryPlugin, prophecyPlugin, bardPlugin, odysseyModesPlugin],
   events: [...ACT1_EVENTS, ...ACT2_EVENTS, ...ACT3_EVENTS, ...LANDMARKS],
   // THE FIRST TELLING: the 3-card oar ramp (gesture → risk tell + frieze →
   // a real roll with the two ledgers). The bard's own chatter waits for the
@@ -69,5 +72,7 @@ export const odysseyPack: Pack = {
   loadouts: FIRES,
   loadoutById: (lid) => FIRES.find((f) => f.id === lid) ?? null,
   presenter: odysseyPresenter,
+  // The Scarred Telling (pass 7): unlocked by any full homecoming.
+  comeback: odysseyComeback,
   summarize: summarizeTelling,
 };

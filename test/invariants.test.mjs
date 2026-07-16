@@ -33,7 +33,11 @@ const EXPECTED_PLUGIN_ORDER = {
   'love-island': ['coupling', 'profile', 'characters', 'gossip', 'factions', 'coupleweb', 'producers', 'stirling'],
   // Pass 5 split the prophecy reroute out of the itinerary plugin — appended
   // last, RNG-silent (modifyEffects only), goldens verified byte-identical.
-  odyssey: ['odyssey_fires', 'odyssey_itinerary', 'odyssey_prophecy', 'odyssey_bard'],
+  // odyssey_modes appended 2026-07 (pass 7, the Scarred Telling): scoreMult
+  // only — no construction hooks, so the seeded stream is untouched and the
+  // goldens stayed byte-identical (verified: golden suite green across the
+  // change, no re-baseline needed).
+  odyssey: ['odyssey_fires', 'odyssey_itinerary', 'odyssey_prophecy', 'odyssey_bard', 'odyssey_modes'],
 };
 
 for (const pack of PACKS) {

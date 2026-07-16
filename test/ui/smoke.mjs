@@ -1350,6 +1350,104 @@ async function checkOdysseyClarity(browser, base) {
   }
 }
 
+// The modes (pass 7): the Scarred Telling is a NEW way to start a run —
+// driven end-to-end per the working agreement: unlock it (seeded success),
+// start it from the title, and assert the run that deals is actually
+// scarred (flag + nine hulls) with a live card up. The Same Sea's renamed
+// daily button is asserted on the same boot.
+async function checkOdysseyModes(browser, base) {
+  const meta = {
+    lp: 20, lpEarnedTotal: 60, runs: 2, unlockedWall: [], trophies: [],
+    successPaths: ['nostos'], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
+  };
+  const label = 'odyssey modes';
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(`try {
+    localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+    localStorage.removeItem('bigbreak_run_v1_odyssey');
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+    const buttons = await page.$$eval('#screen-title button', (els) => els.map((b) => b.textContent || ''));
+    if (!buttons.some((b) => /The Same Sea/.test(b))) throw new Error(`[${label}] the daily button does not say The Same Sea (got: ${buttons.join(' | ')})`);
+    if (!buttons.some((b) => /Scarred Telling/.test(b))) throw new Error(`[${label}] no Scarred Telling button after a banked success`);
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-title button')].find((b) => /Scarred Telling/.test(b.textContent || ''))?.click());
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+    {
+      const deadline = Date.now() + 25000;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left') && !document.querySelector('#overlay.active')) return 'card';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          return 'wait';
+        });
+        if (k === 'card') break;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed');
+          }, { timeout: 8000 }).catch(() => {});
+          await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+        } else await page.waitForTimeout(80);
+      }
+    }
+    await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 8000 });
+    const run = await page.evaluate(() => JSON.parse(localStorage.getItem('bigbreak_run_v1_odyssey') || '{}'));
+    if (!(run.flags || []).includes('comeback')) throw new Error(`[${label}] the scarred run carries no comeback flag`);
+    if (Math.round(run.expedition) !== 9) throw new Error(`[${label}] the scarred fleet is not nine hulls (expedition=${run.expedition})`);
+    if (Math.round(run.poseidon) !== 2) throw new Error(`[${label}] the sea is not pre-provoked (poseidon=${run.poseidon})`);
+
+    // The FLOW, not the feature (working agreement rule 1): the scarred
+    // telling must still reach a terminal screen — through its own bard
+    // beats (bc_scarred is comeback-only), the landmarks, the crossroads,
+    // and whatever interview its ending asks. Same traverse budget as the
+    // fragment pop's full run.
+    {
+      const deadline = Date.now() + 90000;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-ending.active')) return 'ending';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          if (document.querySelector('#screen-crossroads.active .pick-card')) return 'cross';
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left:not(.chosen):not(.unchosen)')) return 'card';
+          return 'wait';
+        });
+        if (k === 'ending') break;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+          }, { timeout: 8000 }).catch(() => {});
+          await page.evaluate(() => {
+            const ov = document.querySelector('#overlay.active');
+            (ov?.querySelector('.gear-choices button') || ov)?.click();
+          });
+        } else if (k === 'cross') {
+          await page.evaluate(() => document.querySelector('#screen-crossroads.active .pick-card')?.click());
+        } else if (k === 'card') {
+          await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+        }
+        await page.waitForTimeout(90);
+      }
+    }
+    if (!(await page.$('#screen-ending.active'))) throw new Error(`[${label}] the scarred telling never reached a terminal screen`);
+    if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
+    console.log(`✓  ${label}: The Same Sea is offered, the Scarred Telling deals nine hulls + the grudge + the flag, and the scarred run reaches a terminal screen`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 // Replay legibility slice 3 (REPLAY-LEGIBILITY-PLAN.md, ADR-0002): the
 // run-end progress ledger — the shelf with HONEST EMPTY SLOTS, at the exact
 // moment the replay decision is made (the surface whose absence caused the
@@ -2087,6 +2185,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyClarity(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyModes(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

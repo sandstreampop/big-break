@@ -23,6 +23,7 @@ import {
   odysseyResume, odysseyHistoryEntry, odysseyHistoryStat, odysseyTwistNote,
 } from './ledger.js';
 import { ODYSSEY_EXIT_INTERVIEWS, odysseyEpilogue } from './interviews.js';
+import { ODYSSEY_COMEBACK_COPY, ODYSSEY_DAILY_COPY } from './modes.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -498,6 +499,10 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // Copy in interviews.ts; invariants in test/odyssey-interviews.test.mjs.
   exitInterviews: ODYSSEY_EXIT_INTERVIEWS,
   epilogue: odysseyEpilogue,
+  // The modes (pass 7): the Scarred Telling's setup copy and the Same Sea's
+  // daily name + streak-aware end note. Mechanisms are shell-generic.
+  comeback: ODYSSEY_COMEBACK_COPY,
+  daily: ODYSSEY_DAILY_COPY,
   resume: odysseyResume,
   historyEntry: odysseyHistoryEntry,
   historyStat: odysseyHistoryStat,

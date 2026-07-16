@@ -31,6 +31,16 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.9.0',
+    date: '2026-07-16',
+    title: 'The Scarred Telling, and The Same Sea',
+    notes: [
+      'Bring one telling home whole and the fire asks for the harder one: The Scarred Telling starts you three hulls short, the sea already muttering, Despair already aboard — but a veteran in all three ways, and it pays half again in Legacy.',
+      'The Odyssey’s daily is now The Same Sea: every bard alive sings the same water tonight, streaks tracked, new telling at midnight.',
+      'The crowd notices a scarred night — “Nine hulls? You sang twelve out of Troy before.”',
+    ],
+  },
+  {
     version: '0.8.0',
     date: '2026-07-16',
     title: 'The fire gets the last word',

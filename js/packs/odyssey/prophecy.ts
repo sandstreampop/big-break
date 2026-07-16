@@ -8,6 +8,7 @@
 
 import type { Pack, Plugin } from '../../types.js';
 import { crewAtLaunch } from './crew.js';
+import { SCARRED_LAUNCH } from './modes.js';
 
 export const prophecyPlugin: Plugin = {
   id: 'odyssey_prophecy',
@@ -37,7 +38,11 @@ export const summarizeTelling: NonNullable<Pack['summarize']> = (state) => ({
   endingKey: state.ending?.key ?? null,
   endingResult: state.ending?.result ?? null,
   nobody: state.flags.includes('ody_nobody'),
-  crewLost: Math.max(0, crewAtLaunch(state.loadout) - Math.round(state.expedition ?? 0)),
+  // Tonight's losses, measured against tonight's launch: a scarred telling
+  // (pass 7) SETS the fleet to nine, and those missing men are last
+  // telling's dead — counting them again would salt the ledger and price
+  // the every-man-home feat out of the mode.
+  crewLost: Math.max(0, (state.flags.includes('comeback') ? SCARRED_LAUNCH : crewAtLaunch(state.loadout)) - Math.round(state.expedition ?? 0)),
   // A line still queued in bardLine was picked at the run's FINAL resolve —
   // there was no next deal, so the fire never heard it; don't ledger it.
   heardCallbacks: (state.bardShown || [])
