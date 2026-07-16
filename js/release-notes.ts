@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.13.0',
+    date: '2026-07-16',
+    title: 'Six more waters where the chart gives up',
+    notes: [
+      'Act II of The Odyssey grows a third deeper: stars that lie in small ways, a shepherd boy too clean for his hillside, a dead man’s kit to divide, one gift allowed from the witch’s table, the Troy song starting at the oars, and a charred figurehead that circles the fleet the way debris does not.',
+      'The narrow sea now repeats itself far less across tellings.',
+    ],
+  },
+  {
     version: '0.12.0',
     date: '2026-07-16',
     title: 'The meadow finally makes its offer',

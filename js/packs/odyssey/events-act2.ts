@@ -310,6 +310,112 @@ export const ACT2_EVENTS: GameEvent[] = [
     },
   }),
 
+  // ── new in the 2026-07 player-experience series (pass 11): six more
+  // waters for the narrow sea — the act the itinerary makes every telling
+  // cross at full length. ──
+  sea('ody_a2_star_lost', 2, {
+    tags: ['deep', 'omen'],
+    prompt: 'The lookout will not come down from the mast, and will not say why until you climb to him: the stars are wrong. Not shifted — WRONG, in small ways, like a room a stranger has tidied. The helmsman is steering by a sky that is lying to him.',
+    recap: 'The stars came up wrong.',
+    left: {
+      label: 'Steer by the old sky, from memory', approach: 'lore', risky: true,
+      bad: 'You con the fleet from memory, eyes shut against the imposter stars, and memory — a captain’s memory, ten years salted — holds for six hours and then invents a headland. The fleet stands off nothing until dawn, and the lookout develops the habit of checking the sky against your face before he trusts either.',
+      good: 'You shut your eyes and sail the sky you memorized as a boy on your father’s boat, calling the courses by a heaven these waters cannot counterfeit. Dawn finds the fleet where dawn should be. The lookout climbs down at last and eats his first meal since the trouble started, watching you the whole time like a man memorizing a trick.',
+      incredible: 'You steer all night by the sky behind your eyes — and where the false stars disagree with it, you MARK the disagreements, friends, one by one, until the lies make a shape: they lean toward a water in the west the way iron leans to a lodestone. Something there wants ships. You note it, name it nothing, and sail the fleet wide of a place the charts will spend a century learning to fear.',
+    },
+    right: {
+      label: 'Anchor blind till morning', approach: 'guile', risky: true,
+      bad: 'You anchor in black water rather than trust a lying sky, and the current these waters keep for anchored fools works the fleet loose by inches all night. Dawn finds twelve ships strung down a mile of strange sea, and the day is spent regathering what the night quietly dealt. Nothing is lost, friends. A day is not nothing.',
+      good: 'You anchor and wait, because a false sky costs a night and a false landfall costs a fleet. The men sleep in watches with the strange stars crawling over them, and at dawn the sun comes up — the sun at least still keeping honest books — and the fleet sails on by daylight like a crew let out of a cellar.',
+      incredible: 'You anchor — and turn the wrong sky into an instrument, friends: all night you have two boys chart the imposter stars against the masthead, and by dawn you hold a map of exactly how this water lies. Three nights later the false sky returns, and the helmsman corrects for it off the boys’ tablet like a pilot reading a tide table. The men stop fearing the stars. They have the ledger on them now.',
+    },
+  }),
+  sea('ody_a2_hermes_again', 2, {
+    tags: ['omen'],
+    prompt: 'A shepherd boy falls in beside your watering party on a goat path — barefoot, cheerful, too clean for the hillside — and gives directions nobody asked for, to a spring nobody mentioned, in a voice like a coin spinning on marble.',
+    recap: 'The shepherd boy on the goat path.',
+    left: {
+      label: 'Take the directions, and say the thanks', approach: 'lore',
+      bad: 'You thank him with the full courtesy owed to what he probably is, and the courtesy comes out a half-beat too knowing — and the boy’s smile cools a degree, because being RECOGNIZED, friends, spoils the game for that family. The spring is where he said. The water is sweet. The luck that was going to come with it stays on the hillside with him.',
+      good: 'You take the directions and thank him as a boy — a copper for the kindness, a fig from the sack — and play the scene as written. The spring runs cold and clean under a rock no search would have found, and when the party looks back from the ridge the goat path is empty in a way that empty paths are not. Perimedes pours a little out on general principle.',
+      incredible: 'You take the directions, pay the copper — and then ask, man to boy, whether the hillside has ANOTHER spring, for the next thirsty crew that comes ashore less lucky than yours. The question lands somewhere older than the face hearing it. He tells you, friends — both springs, and a third thing, small and strange, about a road you have not met yet — and is gone around a rock a goat could not have gone around. The rest of that advice spends itself much later, exactly when it must.',
+    },
+    right: {
+      label: 'Trust nothing this island offers', approach: 'guile',
+      bad: 'You wave him off and dig for your own water, and find it — brackish, slow, three hours of shovel work within sight of the rock his spring runs under. The boy watches from the ridge for a while, sitting the way boys sit, and is gone when you look again. The men say nothing. The shovels say it for them all afternoon.',
+      good: 'You decline politely — a captain in these waters learns what hillside directions from strangers with clean feet can cost — and the boy shrugs and goes, whistling something in an old mode. Your own water is found by dusk, honestly, the hard way. Whether you passed a test or failed one, friends, the fleet sails whole, which is the only grade the sea records.',
+      incredible: 'You decline — but you do it the RIGHT way, friends: you tell him why. The bag of winds, the swine, the year that went missing; a captain’s accounting of what this sea’s kindnesses have cost him, delivered straight to a barefoot boy as if he kept the ledgers. Which he does. The laugh that comes out of that small chest is three sizes too old for it. “Fairly said, sailor,” he says. “Fill your casks at the rock. This one’s no trick — and the next one won’t be yours.” You will remember that sentence at the strait.',
+    },
+  }),
+  sea('ody_a2_grief_cargo', 2, {
+    tags: ['blood'],
+    prompt: 'A dead man’s kit must be divided — sea-cloak, knife, a lamp his mother packed — and two men who loved him differently both want the knife, and the whole bench is watching how the captain splits a friend.',
+    recap: 'The dead man’s kit.',
+    left: {
+      label: 'Divide it by the old custom', approach: 'lore',
+      bad: 'The custom is clear and you apply it cleanly: knife to the benchmate, cloak to the kin. And the custom, friends, is wrong about THIS knife and THESE men — the benchmate got the blade and wanted the lamp, and the kinsman got wool he cannot look at. Both thank you correctly. Neither one sleeps near the other for a month.',
+      good: 'You divide by custom, in the open, with the reasons said — the knife to the man who rowed beside him, the cloak to the cousin, the lamp back over the water to his mother at the first honest port. The bench watches the pieces of their friend go to their right places, and when it is done the two who wanted the knife carry the cloak below TOGETHER, folding it between them like men folding a sail.',
+      incredible: 'You divide it by custom — and then add the piece custom forgot: his OAR, unshipped and passed down the bench hand to hand, every man holding it once before it goes upright at the stern. No one planned that. The lamp goes to the mother, the knife to the benchmate — and the oar, friends, goes to all of them, which is where the man himself had always kept himself.',
+    },
+    right: {
+      label: 'Let the two of them settle it alone', approach: 'guile',
+      bad: 'You send them below to settle it man to man, and they do — with fists, in a hold, over a knife, three days after a funeral. It settles nothing and splits a lip, and the kit sits between them after like a third mourner. You end up dividing it anyway, friends, later, worse, with everyone watching the bruises instead of the pieces.',
+      good: 'You put the kit between them and leave — and grief, given a room without an audience, does what it does when nobody performs: they talk about him. An hour by the water-barrel, two men trading the dead man back and forth like coins counted into a purse. They come up with it divided and their arms over each other’s shoulders. Nobody ever says who took what.',
+      incredible: 'You leave them the kit and one instruction — “decide which of you tells his mother” — and come back to find the division solved the way only that question could solve it: the man taking the knife is the man sailing home past her island, because the blade and the story of the blade, friends, travel together or not at all. They drafted the telling of it TOGETHER, at the barrel, both of them rehearsing a doorway neither wants and neither will give up.',
+    },
+  }),
+  sea('ody_a2_witch_gifts', 2, {
+    tags: ['omen'],
+    prompt: 'The witch’s parting generosity is a table with two gifts on it, and her word that you may carry ONE down the path: her charts of the dead water, or a hold’s worth of provisions cured by arts you do not want explained.',
+    recap: 'One gift from the witch’s table.',
+    left: {
+      label: 'Take the charts', approach: 'lore',
+      bad: 'You take the charts, and they are true — true the way SHE is true, friends: every reef exact, every current honest, and the margins written in a hand that assumes the reader has her nerve. Half the notations you cannot use without her arts. The fleet eats thin for a month, navigating beautifully.',
+      good: 'You take the charts, and the charts are worth three fleets’ provisions: the dead water named rock by rock, the safe anchorages starred, the places NOT to anchor marked with a small dry symbol you learn to trust completely. The men tighten their belts and complain with their mouths full of fish they at least know where to catch, friends, and the helmsman sleeps with the roll of skins under his arm like a man holding a rescued child.',
+      incredible: 'You take the charts — and spend the last evening at her table asking her to READ them to you, margin by margin, which no guest has ever thought to ask. She does it, friends, delighted: a master going over the exam with the one student who wanted the working, not the answers. What you carry down the path is not a roll of skins. It is a winter of her sea-craft, folded into your own, and it steers the fleet long after the skins wear soft.',
+    },
+    right: {
+      label: 'Take the provisions', approach: 'guile',
+      bad: 'You take the food — a fleet eats, charts do not — and the food is everything she promised: it keeps, it fills, it tastes faintly of the year you lost. That is the flaw, friends. Every meal is a small visit back to the soft table, and the men eat with their eyes closed, and the rowing after supper is slow for reasons no whip could reach.',
+      good: 'You take the provisions, because a hungry crew in known waters beats a fed chart in empty bellies — and her curing arts are beyond argument: meat that keeps like memory, bread that stays soft the way the year stayed soft. The fleet eats well past the dead water and out the other side. The reefs you meet the hard way cost you paint and prayers, friends, and nothing the larder cannot buy back.',
+      incredible: 'You take the provisions — and before you lift the crates you ask her, plainly, what the fleet should FEAR most in the water ahead, since you cannot carry her charts. She looks at you a long moment, friends, the way craftswomen look at a well-made tool, and tells you three things for free: a strait, a rumor, an island where nothing may be eaten. Then she puts a fourth loaf in your arms, unasked, and turns back to the loom before you can name it a kindness.',
+    },
+  }),
+  sea('ody_a2_old_song', 2, {
+    tags: ['kleos'],
+    prompt: 'Somewhere aft of the mast a rower starts the old Troy song at the oars — the one with every dead man’s name still in the verses — and bench by bench it spreads, and the stroke is starting to follow it.',
+    recap: 'The Troy song at the oars.',
+    left: {
+      label: 'Let it run its length', approach: 'might',
+      bad: 'You let it run, and the song runs long — every verse, every name, and the names in these waters weigh more than they weighed at anchor. By the last chorus the stroke has slowed to a funeral’s pace and the whole fleet is rowing through its own memory in the dark. The song ends. The evening does not recover, friends. The stroke-caller opens his mouth twice for the work song and twice thinks better of it.',
+      good: 'You let it run — a crew that wants to sing its dead should sing them — and the song does what it was built to do at Troy: it turns the count of the lost into the reason the living pull. The stroke comes back up under the last verses like a tide, friends, and the fleet runs into dusk with wet faces and forty backs bent to it, every man rowing somebody home.',
+      incredible: 'You let it run — and when it reaches the verse of the man who fell beside you at Troy’s gate, you stand and sing the name yourself, off the beat, so the whole fleet hears the captain carry one of the dead personally. The song gathers behind you like a sail filling. By the end, friends, the rowers of twelve ships are keeping one stroke across a mile of water, and the sea for once has the decency to keep the time.',
+    },
+    right: {
+      label: 'Turn it to a rowing song', approach: 'guile',
+      bad: 'You call for the rowing song over it, and the two songs fight for the stroke like two helmsmen fighting for one oar — and the Troy song loses, friends, which was your order, and the losing is FELT down every bench. The stroke steadies. The evening goes quiet in the wrong key. The rower who started it does not sing again for a week, and the fleet notices what it is not hearing.',
+      good: 'You let the verse finish and then lean the stroke-caller into the work song on the very next beat — grief given its bar of music, then handed an oar, which is the sailor’s whole liturgy in one maneuver. The benches take the change gratefully; nobody wanted to be the one to stop singing the dead, and nobody wanted to row to them all night either. At the barrel afterward the stroke-caller taps your shoulder once, friends, which from him is a speech.',
+      incredible: 'You do neither, friends — you BRIDGE them: you call the Troy song’s own refrain back at the benches with the work-stroke laid under it, half grief, half haul, and the fleet discovers inside four bars that the old song always had a rowing song hiding in it. It becomes THE song of this crew from that evening on — the dead keeping the count, the living keeping the stroke — and years from now, men who were never at Troy will pull to it and wonder why their arms feel watched.',
+    },
+  }),
+  sea('ody_a2_bird_wreck', 2, {
+    tags: ['deep', 'omen'],
+    prompt: 'A ship’s figurehead comes round the fleet on a slow current — just the figurehead, a carved gull, char along one wing — and it circles you all morning at the same patient distance, the way debris does not.',
+    recap: 'The carved gull on the current.',
+    left: {
+      label: 'Bring it aboard and read it', approach: 'lore', risky: true,
+      bad: 'You fish it out and read the wreck off its wounds — fire, not rock; a fight, not weather — and the reading is sound and lands wrong: a fleet that learns something out here BURNS ships spends the day counting horizons. The gull rides the flagship’s stern like a specimen, friends, and every man walks the long way around it.',
+      good: 'You bring it aboard, read the char and the tool-marks — a fired ship, a fight lost a season ago at most, somewhere upwind of everything you planned — and adjust the courses accordingly, quietly, without a speech. The gull is given to the carpenter for honest re-use. The intelligence is given to the helm. Both, friends, are proper burials for a figurehead.',
+      incredible: 'You read it aboard — and then you read the CURRENT it rode, friends, backwards, the way Perimedes reads a net: an hour of drift-casts and cross-bearings, until the water confesses where it has been carrying things from. The heading you steer for the next three days is chosen by a drowned ship’s last messenger, and it takes the fleet around a water where somebody with fire and opinions is waiting for company.',
+    },
+    right: {
+      label: 'Give it sea-room and sail on', approach: 'might', risky: true,
+      bad: 'You order the fleet past it — flotsam is flotsam — and the gull, friends, does not agree: some pleat of current holds it circling in your wake for a full day, always the same distance, always the char side showing, until men are trading watches to avoid the stern. Nothing comes of it. Nothing needs to. A crew that has been STARED AT by driftwood rows a different stroke for a week.',
+      good: 'You give it sea-room the way you would give a funeral sea-room, and put the fleet’s nose firmly on its business. Whatever story the gull was carrying, it was a finished story, friends, and a captain in these waters rations even his curiosity. It falls astern by noon. The men approve in the wordless way crews approve: the stroke never changes at all.',
+      incredible: 'You sail on — but first you have the sail dipped a hand’s breadth as it passes, the courtesy one ship pays another’s dead, and every hull down the line dips in its turn. Whatever watched you through that carved eye got the honors, friends, and honors travel in these waters faster than hulls: two islands later a harbor that fires on strangers lets your fleet water in peace, on the word of nobody anyone can name.',
+    },
+  }),
+
   // ── The temptation of Act II: Circe (the soft year, offered again) ──
   {
     id: 'ody_tempt_circe',
