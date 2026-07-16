@@ -235,7 +235,7 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
           sceneHtml: `<span class="scene-cyclops">${cyclops()}</span>`,
         };
       }
-      if (ev.id === 'ody_underworld' || ev.id === 'ody_tiresias' || ev.id === 'ody_tiresias_oar') {
+      if (ev.id.startsWith('ody_underworld') || ev.id === 'ody_tiresias' || ev.id === 'ody_tiresias_oar') {
         return {
           banner: 'THE UNDERWORLD', sub: 'The fire burns low here. That is on purpose.',
           cls: 'sp-ody sp-ody-deep', key: 'underworld',

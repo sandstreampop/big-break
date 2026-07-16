@@ -71,6 +71,18 @@ test('cyclops variation floor: both variants live, entropy ≥ 0.4 bits', () => 
   assert.ok(e.topShare <= 0.92, `one cyclops reading covers ${(e.topShare * 100).toFixed(1)}% of runs`);
 });
 
+test('underworld variation floor: the grieving reading lives (P-B half 2, raised deliberately)', () => {
+  // Pass 5 of the player-experience series: the most-seen flat beat gains a
+  // second reading, keyed to player-caused losses (expedition ≤ 6 at the
+  // trench). Measured at authoring: H=0.567 bits, grieving 13.4% of visits.
+  // Floors sit under the measurement (the cyclops precedent) to catch a
+  // gate rotting shut, not to pin the policy's exact mix.
+  const e = entropyOf(beatSeen.underworld);
+  assert.ok(e.variants >= 2, `underworld variants seen: ${e.variants} (expected ≥2 — the grieving gate rotted shut)`);
+  assert.ok(e.h >= 0.25, `underworld entropy ${e.h} bits < 0.25`);
+  assert.ok(e.topShare <= 0.95, `one underworld reading covers ${(e.topShare * 100).toFixed(1)}% of runs`);
+});
+
 test('the measured H=0 beats stay documented until half 2 raises them', () => {
   // Circe / calypso / lotus deal exactly one card today (their variation is
   // occurrence, side, and tier — not scene). This is the review's finding,

@@ -44,9 +44,11 @@ test('the itinerary is fixed: the Cyclops fires in every telling', () => {
       assert.ok(played.some((id) => id.startsWith('ody_cyclops')),
         `run ${i}: no Cyclops landmark (played: ${played.join(',')})`);
     }
-    // A run that reached judgment passed the Underworld too.
+    // A run that reached judgment passed the Underworld too — in either of
+    // its readings (the grieving variant joined in pass 5; the invariant is
+    // the BEAT, not the exact card, same as the cyclops line above).
     if (state.ending && ['nostos', 'kleos'].includes(state.ending.key)) {
-      assert.ok(played.includes('ody_underworld'),
+      assert.ok(played.some((id) => id.startsWith('ody_underworld')),
         `run ${i} reached the finale without the Underworld`);
       assert.ok(played.includes('ody_tiresias'),
         `run ${i} met the Underworld but never the prophet`);

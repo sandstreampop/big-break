@@ -145,6 +145,42 @@ export const LANDMARKS: GameEvent[] = [
   },
 
   // ── LANDMARK II: THE UNDERWORLD ──
+  // Two readings (P-B half 2, evidence: SIM-FINDINGS' entropy table named
+  // this the most-seen flat beat). The second is keyed to state the player
+  // CAUSED — a fleet bled to half or worse meets its own dead at the trench.
+  // Both chain to ody_tiresias (the prophecy reroute reads the chain id, so
+  // the knowing bard's third question works from either reading).
+  {
+    id: 'ody_underworld_grieving',
+    act: 2,
+    tags: ['landmark', 'beat:underworld'],
+    requires: { max: { expedition: 6 } },
+    context: 'The edge of the world — Landmark',
+    prompt: 'You dig the trench at the world’s grey edge and pour the honey, the wine, the blood — and the first faces up out of the dark are not strangers, friends. They are benches: the men you lost, at the front of all the dead, in rowing order, waiting to be looked at.',
+    recap: 'The trench, and the faces you knew.',
+    choices: {
+      left: {
+        label: 'Let your own drink first',
+        tags: ['landmark', 'lore'],
+        governingStats: { lore: 1 },
+        outcomes: {
+          bad: { text: 'They drink, and the drinking does not fill them — the dead are all appetite and no bottom — and while you stand among your benches saying the names, the shore behind fills with every other drowned man of the war, come for a share. By the time the prophet reaches the trench the blood runs thin, and thin blood buys thin answers. Your men, at least, went back down quiet.', effects: { lore: 3, burnout: 4, chainEventId: 'ody_tiresias' } },
+          good: { text: 'You call them forward by bench, oldest loss first, and give each man his swallow and his name said whole — a muster, friends, run for the dead. They straighten as they drink, the way they used to straighten at the oar-call. And when the prophet comes at last, it is your men who hold the crowding strangers off HIS share — benches keeping order on the far shore the way they kept it on the water.', effects: { lore: 5, burnout: -2, chainEventId: 'ody_tiresias' } },
+          incredible: { text: 'You pay your dead first and pay them whole — the swallow, the name, the one thing each man would want said back to him, and you know it for every bench, friends, every one. When the last has drunk, the company turns and stands escort, your dead marshalling the underworld itself into a queue, so that the blind man walks to a trench as orderly as a temple. “You keep a good crew,” he says. From Tiresias, that is a eulogy.', effects: { lore: 7, athena: 1, burnout: -2, chainEventId: 'ody_tiresias' } },
+        },
+      },
+      right: {
+        label: 'The prophet first — hold your grief',
+        tags: ['landmark', 'might'],
+        governingStats: { might: 1 },
+        outcomes: {
+          bad: { text: 'You hold the line against your own men, sword level over the trench, and their faces do the thing swords cannot answer: they are patient with you. They wait the way they waited out storms, eyes on their captain, and every second of that waiting is paid for out of you. The prophet drinks whole. You do not.', effects: { might: 2, burnout: 5, chainEventId: 'ody_tiresias' } },
+          good: { text: 'Duty first. You keep the blade level and the trench whole, and your dead — soldiers to the last — form up BEHIND you instead of against you, holding the strangers off the blood until the prophet has drunk his fill. It is the hardest watch you have ever stood with your own crew. It is also, friends, the proudest.', effects: { might: 5, renown: 1, chainEventId: 'ody_tiresias' } },
+          incredible: { text: 'You hold the trench and make your dead a promise out loud — every name, every rite, the moment the prophet is paid — and they believe it, friends, because in all the years on the benches you never once lied to them about weather or water or their chances. The prophet drinks; the answers come whole. And afterward you keep the promise down the whole grey shore, swallow by swallow, name by name, while the ship waits, and not one living man aboard begrudges the hours.', effects: { might: 6, athena: 1, burnout: -1, chainEventId: 'ody_tiresias' } },
+        },
+      },
+    },
+  },
   {
     id: 'ody_underworld',
     act: 2,

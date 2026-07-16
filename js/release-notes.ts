@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.7.0',
+    date: '2026-07-16',
+    title: 'The Underworld reads your voyage back to you',
+    notes: [
+      'The trench at the edge of the world has a second reading: sail in having lost half your fleet or more, and the first faces out of the grey are your own dead — in rowing order, waiting to be looked at.',
+      'Which Underworld you meet is decided by the voyage you actually sailed. The prophecy’s doors work from either reading.',
+    ],
+  },
+  {
     version: '0.6.0',
     date: '2026-07-16',
     title: 'The Odyssey explains itself',
