@@ -22,6 +22,7 @@ import { ACT1_EVENTS } from './events-act1.js';
 import { ACT2_EVENTS } from './events-act2.js';
 import { ACT3_EVENTS } from './events-act3.js';
 import { LANDMARKS } from './landmarks.js';
+import { ODYSSEY_TUTORIAL_EVENTS } from './events-tutorial.js';
 import { odysseyPresenter } from './presenter.js';
 
 // ── Effect vocabulary ────────────────────────────────────────────────────
@@ -54,7 +55,17 @@ export const odysseyPack: Pack = {
   manifest: odysseyManifest,
   plugins: [firesPlugin, itineraryPlugin, prophecyPlugin, bardPlugin],
   events: [...ACT1_EVENTS, ...ACT2_EVENTS, ...ACT3_EVENTS, ...LANDMARKS],
-  tutorialEvents: [],
+  // THE FIRST TELLING: the 3-card oar ramp (gesture → risk tell + frieze →
+  // a real roll with the two ledgers). The bard's own chatter waits for the
+  // first real telling (bardBeat's tutorial gate).
+  tutorialEvents: ODYSSEY_TUTORIAL_EVENTS,
+  // Teaching stats: all three approaches read live; the third card's real
+  // roll lands good more often than not. Expedition rides the manifest's
+  // twelve-ship start.
+  tutorialStart: {
+    loadout: 'fishermans_hearth',
+    stats: { might: 32, guile: 26, lore: 30, burnout: 6 },
+  },
   loadouts: FIRES,
   loadoutById: (lid) => FIRES.find((f) => f.id === lid) ?? null,
   presenter: odysseyPresenter,

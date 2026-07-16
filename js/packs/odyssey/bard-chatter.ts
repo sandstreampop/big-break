@@ -249,6 +249,10 @@ export const bardPlugin: Plugin = {
 // null (and never before a landmark — its set-piece IS the moment, the bard
 // hushes). Pure; the shell consumes the line when the beat is dismissed.
 export function bardBeat(run: RunState, ev: GameEvent) {
+  // The First Telling is the shell teaching the oar — the bard holds his
+  // crowd-work until the first real telling (the coach marks are the only
+  // voice-over a first hand on the card should have to read past).
+  if (run.tutorial) return null;
   if ((ev.tags || []).includes('landmark')) return null;
   const id = run.bardLine;
   if (!id || !BY_ID[id]) return null;

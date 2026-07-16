@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.3.0',
+    date: '2026-07-16',
+    title: 'The Odyssey teaches you the oar',
+    notes: [
+      'The Odyssey now opens with The First Telling — a three-beat playable intro that teaches the swipe, the risk tell, the painted band, and the two ledgers (Despair and Poseidon) before your first real telling.',
+      'First night at the fire? The title screen offers you the seat. Old hands can skip it — or replay it any time from Settings.',
+    ],
+  },
+  {
     version: '0.2.0',
     date: '2026-07-13',
     title: 'You can now tell which version you’re playing',

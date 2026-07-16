@@ -564,14 +564,21 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
 //      APPEAR for the real run;
 //   2. tutorial → wrap-up → setup → first real card actually connects (working
 //      agreement rule 1: drive the flow, assert it reaches a live card).
-// Love-island only — it's the pack whose FTUE this exercises; music's tutorial
+// Packs under guard: love-island (counters-HUD FTUE) and odyssey (diegetic
+// FTUE — the frieze, not counters, is the real-run HUD proof; its title veil
+// and cold-open bard beat are part of the driven flow). Music's tutorial
 // rides the same shell gate and is covered by construction.
-async function playTutorialFtue(page, label) {
+// opts.realHud: 'counters' (default) asserts the scoreboard appears for the
+// real run; 'tableau' asserts the pack's world-strip does instead.
+async function playTutorialFtue(page, label, opts = {}) {
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('console', (m) => { if (m.type() === 'error' && !/ERR_(TUNNEL|CONNECTION|NAME)/.test(m.text())) errors.push(`console.error: ${m.text()}`); });
 
   await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+  // A pack's title stage may veil the menu behind its ritual (the odyssey
+  // threshold) — play through it first, the way a player would.
+  await passThreshold(page);
   // Fresh install → the primary button is the playable tutorial.
   await clickJS(page, '#screen-title.active button.btn.primary');
   await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 10000 });
@@ -620,11 +627,37 @@ async function playTutorialFtue(page, label) {
   await clickJS(page, '.pick-card');
   await clickJS(page, '#start-run-btn');
 
-  // Assertion 1b + 2b: the real Season deals a live card AND the scoreboard
-  // counters now show — proving the tutorial gate flipped and the handoff works.
+  // Assertion 1b + 2b: the real run deals a live card — through any pack
+  // beats on the way (the odyssey's cold-open bard beat rides #overlay) —
+  // AND the pack's real-run HUD proof shows, proving the tutorial gate
+  // flipped and the handoff works.
+  {
+    const deadline = Date.now() + 20000;
+    while (Date.now() < deadline) {
+      const k = await page.evaluate(() => {
+        if (document.querySelector('#screen-game.active .choice-btn.choice-left') && !document.querySelector('#overlay.active')) return 'card';
+        if (document.querySelector('#overlay.active')) return 'overlay';
+        return 'wait';
+      });
+      if (k === 'card') break;
+      if (k === 'overlay') {
+        await page.waitForFunction(() => {
+          const ov = document.querySelector('#overlay.active');
+          return !ov || ov.hasAttribute('data-armed');
+        }, { timeout: 8000 }).catch(() => {});
+        await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+      }
+      await page.waitForTimeout(150);
+    }
+  }
   await page.waitForSelector('#screen-game.active .choice-btn.choice-left', { timeout: 10000 });
-  const realCounters = await page.$$eval('#hud .hud-counters > *', (els) => els.length);
-  if (realCounters === 0) throw new Error(`[${label}] real run has no scoreboard counters — the tutorial HUD gate didn't flip`);
+  if ((opts.realHud || 'counters') === 'tableau') {
+    const strip = await page.$('#tableau');
+    if (!strip) throw new Error(`[${label}] real run shows no #tableau world-strip — the diegetic HUD handoff failed`);
+  } else {
+    const realCounters = await page.$$eval('#hud .hud-counters > *', (els) => els.length);
+    if (realCounters === 0) throw new Error(`[${label}] real run has no scoreboard counters — the tutorial HUD gate didn't flip`);
+  }
 
   if (errors.length) throw new Error(`[${label}] page errors during FTUE:\n  ${errors.join('\n  ')}`);
   return { lessons };
@@ -698,6 +731,25 @@ for (const g of GAMES) {
     await page.goto(`${base}/love-island/`, { waitUntil: 'domcontentloaded' });
     const { lessons } = await playTutorialFtue(page, 'love-island FTUE');
     console.log(`✓  love-island FTUE: first-install tutorial → wrap-up (${lessons} lessons) → real Season, counters gated correctly`);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  } finally {
+    await ctx.close();
+  }
+}
+
+// FTUE guard: the odyssey's First Telling — the same first-install flow
+// through the pack's own chrome (the kindling threshold veil, the diegetic
+// frieze-not-counters HUD, the cold-open bard beat on the first real deal).
+{
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(seedScriptFresh('_odyssey'));
+  const page = await ctx.newPage();
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    const { lessons } = await playTutorialFtue(page, 'odyssey FTUE', { realHud: 'tableau' });
+    console.log(`✓  odyssey FTUE: first-install First Telling → wrap-up (${lessons} lessons) → real telling deals with the frieze up`);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

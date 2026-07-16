@@ -86,6 +86,30 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     ready: '⛵ A following wind — spend it now',
     armed: '⛵ THE WIND TAKEN — this stroke rides it',
   },
+  // THE FIRST TELLING (FTUE): the title-screen offer, the HUD strip label
+  // while the ramp runs, and the wrap-up. Teach-by-recap: only what the
+  // three cards actually taught — the oar, the tell + the band, the two
+  // ledgers — then the ONE hook that gives a telling its shape (the two
+  // roads), and the prophecy named as the thing that carries between fires.
+  tutorial: {
+    offer: '▶ Sit — The First Telling',
+    skip: 'Skip it — I know how a telling goes',
+    replay: '🎓 Hear the first telling again',
+    hud: 'THE FIRST TELLING · the fire is new',
+    end: {
+      verdict: 'THE FIRE TAKES YOU',
+      title: 'You Know the Oar Now',
+      text: 'Three beats, friend, and you pulled all three — which is the whole trade, learned. Tonight the real telling: twelve ships, three seas, landmarks no telling has ever missed, and a home that must be earned twice. The itinerary is fixed. The voyage is not. Sit anywhere. The seat nearest the fire still rows.',
+      lessons: [
+        { cls: 'notice-gear', html: '👆 <b>One swipe, one decision.</b> Drag left or right, or tap a button. That’s the whole oar.' },
+        { cls: 'notice-gear', html: '⚔️🪢📜 <b>Three ways at any trouble</b> — fight it, trick it, know the rite against it. The coloured shape is the risk: ● safe · ▲ dicey · ■ likely bad · ✦ big upside. A bad card stings; it does not sink the telling.' },
+        { cls: 'notice-bad', html: '🏺 <b>The painted band is the voyage</b> — ships, gods, the name. Tap it for plain numbers. 🌫️ <b>Despair</b> ends the telling at the top; 🔱 fill <b>Poseidon</b> to ten and the wave comes.' },
+        { cls: 'notice-good', html: '⛵🌟 <b>Two roads at the Crossroads:</b> the Homecoming (hulls kept, the goddess earned) or the Glory (renown, paid for in wrath). And the prophecy has three turnings that carry from fire to fire — some nights you bring one home.' },
+      ],
+      next: '▶ Begin tonight’s telling',
+      lpNote: '+15 Legacy Points — the fire remembers a listener who rowed. Legacy widens what later tellings can hold.',
+    },
+  },
   // The threshold (I5): the fireside before the telling — the player's first
   // touch kindles the fire; Resume means it still burns from last time.
   titleScene: odysseyTitleScene,
