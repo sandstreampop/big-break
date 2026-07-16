@@ -24,6 +24,7 @@ import {
 } from './ledger.js';
 import { ODYSSEY_EXIT_INTERVIEWS, odysseyEpilogue } from './interviews.js';
 import { ODYSSEY_COMEBACK_COPY, ODYSSEY_DAILY_COPY } from './modes.js';
+import { odysseyShareText, odysseyNews } from './share.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -82,6 +83,8 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
         ? 'The prophecy has three turnings. The bard has heard none of them. Yet.'
         : `The bard carries ${n} of the prophecy’s three turnings.`;
     },
+    // One harbor rumor a day (pass 8): the world outside the fire.
+    news: odysseyNews,
   },
   actWord: 'ACT',
   actNames: ['', 'The Sack and the Sea', 'Witches and the Dead', 'The Narrow Way'],
@@ -503,6 +506,9 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // daily name + streak-aware end note. Mechanisms are shell-generic.
   comeback: ODYSSEY_COMEBACK_COPY,
   daily: ODYSSEY_DAILY_COPY,
+  // The telling travels (pass 8): the 📣 button was sharing an empty string
+  // for this pack. Copy + the day's harbor rumor live in share.ts.
+  shareText: odysseyShareText,
   resume: odysseyResume,
   historyEntry: odysseyHistoryEntry,
   historyStat: odysseyHistoryStat,

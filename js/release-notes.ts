@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.10.0',
+    date: '2026-07-16',
+    title: 'The telling travels',
+    notes: [
+      'Sharing an Odyssey run finally shares something: which fire, which road, how it ended, the night’s weather strip, the fleet’s arithmetic, and how many turnings of the prophecy you hold. (The button used to copy an empty string. We do not speak of it.)',
+      'The title screen carries one harbor rumor a day — Phemios and his drum, the pilots’ bench, an oar planted inland that sailors will not walk past.',
+    ],
+  },
+  {
     version: '0.9.0',
     date: '2026-07-16',
     title: 'The Scarred Telling, and The Same Sea',

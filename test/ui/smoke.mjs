@@ -1583,8 +1583,34 @@ async function checkOdysseyLedger(browser, base) {
     if (ledger.filled < 2) throw new Error(`[${label}] the knowing bard's ledger shows fewer than 2 filled slots (${ledger.filled})`);
     if (!/of 3/.test(ledger.text)) throw new Error(`[${label}] the ledger text is missing the "of 3" count`);
     if (!/holds the other two/.test(ledger.text)) throw new Error(`[${label}] the ledger is missing the honest-floor line naming the third turning (${JSON.stringify(ledger.text)})`);
+
+    // The share button (pass 8): a new interactive control on the ending
+    // screen (previously it copied an EMPTY string for this pack). Headless
+    // Chromium has no navigator.share, so the shell takes the clipboard
+    // branch — stub writeText, press the button, and assert the telling's
+    // record actually travels (and the screen survives the press).
+    await page.evaluate(() => {
+      window.__shared = null;
+      Object.defineProperty(navigator, 'clipboard', {
+        value: { writeText: (t) => { window.__shared = t; return Promise.resolve(); } },
+        configurable: true,
+      });
+      // Pin the clipboard branch: a future headless Chromium exposing the
+      // Web Share API would otherwise route the text to a share sheet and
+      // starve this probe (verifier's catch — assert by pin, not omission).
+      Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+    });
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-ending button')].find((b) => /Share this run/.test(b.textContent || ''))?.click());
+    await page.waitForFunction(() => window.__shared !== null, { timeout: 5000 });
+    const shared = await page.evaluate(() => window.__shared || '');
+    if (!/^THE ODYSSEY/.test(shared)) throw new Error(`[${label}] the share text does not open with the telling's name (got: "${shared.slice(0, 60)}")`);
+    if (!/BANKED AT THE MEADOW/.test(shared)) throw new Error(`[${label}] the share text does not carry the banked verdict (got: "${shared}")`);
+    if (!/2 of 3 turnings/.test(shared)) throw new Error(`[${label}] the share text does not carry the knowing bard's honest floor (got: "${shared}")`);
+    if (/undefined|NaN/.test(shared)) throw new Error(`[${label}] the share text leaks (got: "${shared}")`);
+    if (!(await page.$('#screen-ending.active'))) throw new Error(`[${label}] pressing share left no ending screen`);
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
-    console.log(`✓  ${label}: the knowing bard's run-end screen shows the shelf (${ledger.filled} filled slots), the "of 3" count, and the honest floor line naming the third turning — the run still terminates`);
+    console.log(`✓  ${label}: the knowing bard's run-end screen shows the shelf (${ledger.filled} filled slots), the "of 3" count, the honest floor — and the telling travels (share carries the verdict + turnings)`);
   } finally {
     await ctx.close();
   }

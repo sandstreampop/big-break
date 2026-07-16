@@ -230,6 +230,19 @@ const DESCRIPTORS = {
       for (const [key, result] of [['nostos', 'success'], ['kleos', 'success'], ['nostos', 'partial'], ['nostos', 'failure']]) {
         for (let s = 1; s <= 8; s++) out.push(pres.epilogue?.({ ending: { key, result }, flavorSeed: s }));
       }
+      // Pass 8 — the telling travels: the day's harbor rumors and the share
+      // record across every ending class (the one string that leaves the app).
+      for (let d = 0; d < 12; d++) {
+        const n = pres.title?.news?.(d);
+        if (n) { out.push(n.text, n.src); }
+      }
+      const shareBase = {
+        loadout: 'kings_hall', path: 'nostos', tierLog: ['good'], flags: [],
+        expedition: 8, renown: 6, poseidon: 1, daily: null,
+      };
+      for (const [result, endingKey] of [['success', 'nostos'], ['partial', 'nostos'], ['failure', 'nostos'], [null, 'wrath'], [null, 'lotus'], [null, 'circe'], [null, 'calypso'], [null, 'burnout']]) {
+        out.push(pres.shareText?.({ ...shareBase, result, endingKey }, 30));
+      }
       return out.filter(Boolean);
     },
   },
