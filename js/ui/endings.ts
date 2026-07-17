@@ -369,8 +369,11 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   }
   // The same water again (pass 38): the ended run's own seed, re-offered
   // as a shared-water challenge — the ?sail= flow pointed at yourself.
-  // Same sea, fresh boat; roguelike players live for this button.
-  if (summary?.baseSeed) {
+  // Same sea, fresh boat; roguelike players live for this button. NOT on
+  // a gauntlet ending: the week's ritual forces ONE build, and a replay
+  // through the challenge flow would silently un-force it (the title's
+  // own Gauntlet button is the faithful replay there).
+  if (summary?.baseSeed && !summary?.gauntlet) {
     menu.append(btn(PRES.challengeCopy?.again || '🌊 Same run, one more try', '', () => {
       save.clearRun();
       nav.newRun(false, false, summary.baseSeed);
