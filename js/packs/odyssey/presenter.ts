@@ -613,7 +613,7 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
       .slice(0, 5);
     if (!painted.length) return null;
     const caption = (h: any) => h.result
-      ? (h.result === 'success' ? 'Home' : h.result === 'partial' ? 'Nearly' : 'Lost')
+      ? (h.result === 'success' ? (h.path === 'kleos' ? 'The song' : 'Home') : h.result === 'partial' ? 'Nearly' : 'Lost')
       : ({ wrath: 'The sea', lotus: 'The meadow', circe: 'The soft year', calypso: 'The island', burnout: 'The beach' } as any)[h.endingKey] || '—';
     return `<div class="ody-gallery">${painted.map(({ h, v }) =>
       `<figure class="ody-gallery-night">${v!.html}<figcaption>${caption(h)}</figcaption></figure>`).join('')}</div>`;

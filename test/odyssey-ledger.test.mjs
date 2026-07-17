@@ -54,8 +54,12 @@ test('resume tells the ledger’s truth', () => {
 });
 
 test('history entry/stat: real fields in, compact row out; legacy rows stay blank not broken', () => {
-  assert.deepStrictEqual(odysseyHistoryEntry({ renown: 7.2, crewLost: 5 }), { renown: 7, crewLost: 5 });
-  assert.deepStrictEqual(odysseyHistoryEntry({}), { renown: 0, crewLost: 0 });
+  // Pin updated deliberately in pass 24: the row also carries the Night's
+  // Vase fields (vExp/vAth/vPos/vSt) so the gallery of nights can repaint.
+  assert.deepStrictEqual(
+    odysseyHistoryEntry({ renown: 7.2, crewLost: 5, expedition: 9.4, athena: 6, poseidon: 2, flags: ['ody_done_cyclops'] }),
+    { renown: 7, crewLost: 5, vExp: 9, vAth: 6, vPos: 2, vSt: 'c' });
+  assert.deepStrictEqual(odysseyHistoryEntry({}), { renown: 0, crewLost: 0, vExp: 0, vAth: 0, vPos: 0, vSt: '' });
   assert.strictEqual(odysseyHistoryStat({ renown: 7, crewLost: 5 }), '🌟7 · ⚰5');
   assert.strictEqual(odysseyHistoryStat({}), '', 'a pre-pass-4 history row must render no stat, not garbage');
 });
