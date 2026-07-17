@@ -13,6 +13,7 @@
 import type { Presenter } from '../../types.js';
 import { nightVase } from './vase.js';
 import { shareVerdictParts } from './share.js';
+import { meta as sessionMeta } from '../../ui/context.js';
 
 const W = 1080, H = 1080;
 const NIGHT = '#120a06';
@@ -74,6 +75,13 @@ export const odysseyShareImage: NonNullable<Presenter['shareImage']> = async (su
     if (!ctx) return null;
     ctx.imageSmoothingEnabled = false;
 
+    // The red-figure glaze (pass 44): a bought cosmetic — the panel fires
+    // black and the figures stay living clay. Ground/figure colors swap;
+    // everything else identical.
+    const red = !!(sessionMeta?.unlockedWall || []).includes('gift_red_glaze');
+    const panelFill = red ? '#1a0d06' : CLAY;
+    const glaze = red ? '#c8622f' : CLAY_DARK;
+
     // The night ground.
     ctx.fillStyle = NIGHT;
     ctx.fillRect(0, 0, W, H);
@@ -88,7 +96,7 @@ export const odysseyShareImage: NonNullable<Presenter['shareImage']> = async (su
 
     // The vase panel: hard double rule (bone outline, clay-dark border).
     const px = 80, py = 280, pw = W - 160, ph = 520;
-    ctx.fillStyle = CLAY;
+    ctx.fillStyle = panelFill;
     ctx.fillRect(px, py, pw, ph);
     ctx.strokeStyle = CLAY_LIGHT; ctx.lineWidth = 3;
     ctx.strokeRect(px - 8.5, py - 8.5, pw + 17, ph + 17);
@@ -119,14 +127,14 @@ export const odysseyShareImage: NonNullable<Presenter['shareImage']> = async (su
     for (let i = 0; i < figs.length; i++) {
       const w = widths[i] * scale, h = FIG_H * scale;
       const img = await loadSvg(figs[i].svg, w, h);
-      ctx.drawImage(silhouette(img, w, h, CLAY_DARK), Math.round(x), Math.round(figY + (FIG_H * scale - h)));
+      ctx.drawImage(silhouette(img, w, h, glaze), Math.round(x), Math.round(figY + (FIG_H * scale - h)));
       x += w + GAP * scale;
     }
     // The water the sea wore, wide under the band.
     if (sea) {
       const sh = 44, sw = sh * sea.aspect;
       const img = await loadSvg(sea.svg, sw, sh);
-      ctx.drawImage(silhouette(img, sw, sh, CLAY_DARK), Math.round(px + (pw - sw) / 2), py + ph - 100);
+      ctx.drawImage(silhouette(img, sw, sh, glaze), Math.round(px + (pw - sw) / 2), py + ph - 100);
     }
 
     // The verdict — the same line the text share leads with.

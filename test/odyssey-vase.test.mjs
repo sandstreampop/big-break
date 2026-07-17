@@ -48,6 +48,14 @@ test('the powers attend only when they truly did', () => {
   assert.ok(!nightVase(ended({ poseidon: 6 })).motifs.includes('the trident'));
 });
 
+test('the red-figure glaze is a class swap, never a different band (pass 44)', () => {
+  const black = nightVase(ended());
+  const red = nightVase(ended(), false, true);
+  assert.ok(!black.html.includes('ody-vase-red'));
+  assert.ok(red.html.includes('ody-vase ody-vase-red'));
+  assert.deepStrictEqual(red.motifs, black.motifs, 'the glaze changes nothing but the firing');
+});
+
 test('pure: same telling, same vase; reduced motion stills every figure', () => {
   assert.strictEqual(nightVase(ended()).html, nightVase(ended()).html);
   assert.ok(nightVase(ended(), true).html.includes('px-still'), 'reduced motion carries into the band');

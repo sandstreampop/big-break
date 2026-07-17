@@ -32,7 +32,11 @@ import { ODYSSEY_WALL_ITEMS, ODYSSEY_WALL_COPY } from './gifts.js';
 import { nightVase, vaseFromHistory } from './vase.js';
 import { paintOtherFires } from './otherfires.js';
 import { crossroadsReading, crossroadsVoice } from './crossroads.js';
-import { activePack } from '../../ui/context.js';
+import { activePack, meta as sessionMeta } from '../../ui/context.js';
+
+// The red-figure glaze (pass 44): a bought cosmetic every vase surface
+// reads. Node-safe: sessionMeta is undefined until the shell boots.
+const redGlaze = () => !!(sessionMeta?.unlockedWall || []).includes('gift_red_glaze');
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -546,7 +550,7 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // The Night's Vase (pass 23): the telling, painted — fleet at its final
     // count, the stations actually faced, the ending's motif. Pure read of
     // the ended state; the bard hands you the keepsake with the verdict.
-    const vase = nightVase(state, reducedMotion());
+    const vase = nightVase(state, reducedMotion(), redGlaze());
     // px-still mirrors the in-game reduced-motion toggle (ADR-0001:
     // first-class under BOTH prefs; CSS media queries can't see this one) —
     // the ember renders already guttered, the fire holds its first frame.
@@ -683,7 +687,7 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // and the lint harvest, where the settings-backed toggle has no meta.
     const still = typeof window !== 'undefined' && reducedMotion();
     const painted = (rows || [])
-      .map((h) => ({ h, v: vaseFromHistory(h, still) }))
+      .map((h) => ({ h, v: vaseFromHistory(h, still, redGlaze()) }))
       .filter((x) => x.v)
       .slice(0, 5);
     if (!painted.length) return null;

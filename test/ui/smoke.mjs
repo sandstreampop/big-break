@@ -1460,7 +1460,7 @@ async function checkOdysseyGifts(browser, base) {
       [...document.querySelectorAll('#screen-title button')].find((b) => /Guest-Gifts/.test(b.textContent || ''))?.click());
     await page.waitForSelector('#screen-wall.active', { timeout: 8000 });
     const wall = await page.evaluate(() => document.querySelector('#screen-wall')?.textContent || '');
-    for (const needle of ['The Guest-Gifts', 'A gift once given rides every telling after', 'A Coin from Troy', 'Tier 3']) {
+    for (const needle of ['The Guest-Gifts', 'A gift once given rides every telling after', 'A Coin from Troy', 'Tier 3', 'Tier 4', 'The Red-Figure Glaze']) {
       if (!wall.includes(needle)) throw new Error(`[${label}] the wall never says "${needle}"`);
     }
 
@@ -2013,7 +2013,10 @@ async function checkOdysseyModes(browser, base) {
 // telling; forcing past it keeps the held count deterministically at two.
 async function checkOdysseyLedger(browser, base) {
   const meta = {
-    lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
+    lp: 0, lpEarnedTotal: 0, runs: 1,
+    // The red-figure glaze (pass 44): a bought cosmetic — this ending's
+    // vase must wear it (and the poster fires with it below).
+    unlockedWall: ['gift_red_glaze'], trophies: [],
     successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
     tutorialDone: true, coach: { card: true, result: true },
     settings: { sound: false, music: false, reducedMotion: false, minigames: false, haptics: false, analytics: false },
@@ -2146,11 +2149,15 @@ async function checkOdysseyLedger(browser, base) {
         label: v?.getAttribute('aria-label') || '',
         figs: v ? v.querySelectorAll('.ody-vase-fig').length : 0,
         sea: !!v?.querySelector('.ody-vase-sea'),
+        red: !!v?.classList.contains('ody-vase-red'),
         figHeights,
         bandHeight: v ? v.getBoundingClientRect().height : 0,
       };
     });
     if (!vase.present) throw new Error(`[${label}] no .ody-vase on the ending screen — the night went unpainted`);
+    // The red-figure glaze (pass 44): this meta bought it — the vase must
+    // wear it on a REAL ending, not just in the unit test's html string.
+    if (!vase.red) throw new Error(`[${label}] the bought red-figure glaze is not on the vase`);
     if (vase.role !== 'img' || !vase.label.includes('tonight’s vase')) throw new Error(`[${label}] the vase is not a labeled image (role=${vase.role})`);
     if (vase.figs < 2 || !vase.sea) throw new Error(`[${label}] the vase band is empty (figs=${vase.figs}, sea=${vase.sea})`);
     // SIZE is behaviour, not presence (the 2026-07 verifier catch): px.ts

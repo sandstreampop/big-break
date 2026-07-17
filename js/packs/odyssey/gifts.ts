@@ -37,6 +37,12 @@ export const ODYSSEY_PERKS: Record<string, PerkDef> = {
   mixed_bowl: { burnoutHealMult: 1.25 },
   salt_cloak: { pityPerBonus: 3, pityCapBonus: 6 },
   cheese_wind: { encoreCapBonus: 1 },
+  // ── Cosmetic gifts (no hooks — the SURFACES read the purchase) ──
+  // The red-figure glaze: every vase surface (ending, gallery, poster)
+  // checks meta.unlockedWall for gift_red_glaze. An empty PerkDef keeps the
+  // shell's generic wall/perk plumbing untouched and the seeded stream
+  // trivially safe.
+  red_glaze: {},
   // ── Act-break gifts ──
   patient_libation: {
     onActBreak: (s, notes) => {
@@ -75,6 +81,9 @@ export const ODYSSEY_WALL_ITEMS = [
     name: 'A Wind Held in Cheesecloth', desc: 'The telling can bank a THIRD following wind, one past the fire’s usual two. Aiolos owed somebody a favor; the bag is smaller and honest this time.' },
   { id: 'gift_mentor', tier: 3, cost: 150, kind: 'perk', target: 'mentors_blessing',
     name: 'The Mentor’s Blessing', desc: 'Begin with Might, Guile, and Lore each 3 higher — tonight’s Odysseus arrives already sung a little larger.' },
+  // Tier 4 — prestige, purely cosmetic (pass 44)
+  { id: 'gift_red_glaze', tier: 4, cost: 250, kind: 'perk', target: 'red_glaze',
+    name: 'The Red-Figure Glaze', desc: 'A rival workshop’s secret, bought outright: your vases fire the new way — figures left in living clay, the ground burned black. Changes nothing but how the nights look on the shelf, in the gallery, and on the poster that leaves the fire. Which is to say: everything.' },
 ];
 
 // The wall's chrome, re-voiced (Presenter.wallCopy): this fire trades in

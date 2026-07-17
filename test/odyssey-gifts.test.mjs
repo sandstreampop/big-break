@@ -13,12 +13,13 @@ const runWith = (perks, seed = 7) =>
   engine.newRun(odysseyPack, 'fishermans_hearth', [], engine.mulberry32(seed), perks);
 
 test('the catalog is sound: unique ids, real targets, priced in tiers', () => {
-  assert.strictEqual(ODYSSEY_WALL_ITEMS.length, 10);
-  assert.strictEqual(new Set(ODYSSEY_WALL_ITEMS.map((w) => w.id)).size, 10);
+  // 11 gifts across four tiers since pass 44 (tier 4 is the cosmetic glaze).
+  assert.strictEqual(ODYSSEY_WALL_ITEMS.length, 11);
+  assert.strictEqual(new Set(ODYSSEY_WALL_ITEMS.map((w) => w.id)).size, 11);
   for (const w of ODYSSEY_WALL_ITEMS) {
     assert.strictEqual(w.kind, 'perk', `${w.id}: the wall sells gifts`);
     assert.ok(ODYSSEY_PERKS[w.target], `${w.id}: target '${w.target}' missing from the perk table`);
-    assert.ok(w.cost > 0 && [1, 2, 3].includes(w.tier), `${w.id}: priced and tiered`);
+    assert.ok(w.cost > 0 && [1, 2, 3, 4].includes(w.tier), `${w.id}: priced and tiered`);
     assert.ok(w.name && w.desc, `${w.id}: full copy`);
   }
   // Every perk in the table is buyable — no orphaned mechanics.

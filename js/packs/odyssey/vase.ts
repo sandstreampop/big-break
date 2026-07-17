@@ -38,7 +38,7 @@ const STATION_CODES: [string, string][] = [
 export function encodeStations(flags: string[]): string {
   return STATION_CODES.filter(([, f]) => flags.includes(f)).map(([c]) => c).join('');
 }
-export function vaseFromHistory(h: any, still = false): NightVase | null {
+export function vaseFromHistory(h: any, still = false, red = false): NightVase | null {
   if (h?.vExp == null || typeof h.vSt !== 'string') return null;
   const flags = STATION_CODES.filter(([c]) => h.vSt.includes(c)).map(([, f]) => f);
   return nightVase({
@@ -48,7 +48,7 @@ export function vaseFromHistory(h: any, still = false): NightVase | null {
     poseidon: h.vPos ?? 0,
     ending: { key: h.endingKey ?? null, result: h.result ?? null },
     path: h.path ?? null,
-  } as RunState, still);
+  } as RunState, still, red);
 }
 
 // ── The voyage, read once (pass 32) ──
@@ -117,7 +117,9 @@ export function vaseGlyphs(state: RunState): string {
   return sea === 'wrath' ? `${band} 🌊🌊` : sea === 'mid' ? `${band} 🌊` : band;
 }
 
-export function nightVase(state: RunState, still = false): NightVase {
+// `red` (pass 44): the red-figure glaze — a bought cosmetic; callers read
+// meta.unlockedWall. Purely a class swap: the chooser is untouched.
+export function nightVase(state: RunState, still = false, red = false): NightVase {
   const motifs: string[] = [];
   const figs: string[] = [];
   const opts = still ? { cls: 'px-still' } : {};
@@ -146,7 +148,7 @@ export function nightVase(state: RunState, still = false): NightVase {
 
   const label = `tonight’s vase: ${motifs.join('; ')}`;
   const html =
-    `<div class="ody-vase" role="img" aria-label="${label.replace(/"/g, '&quot;')}">` +
+    `<div class="ody-vase${red ? ' ody-vase-red' : ''}" role="img" aria-label="${label.replace(/"/g, '&quot;')}">` +
     `<div class="ody-vase-band">${figs.join('')}</div>` +
     `<div class="ody-vase-sea">${seaStrip(sea, 96, opts)}</div>` +
     `</div>`;

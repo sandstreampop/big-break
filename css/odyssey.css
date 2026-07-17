@@ -842,6 +842,15 @@ body.ody-breath svg.px .pxf { animation-play-state: paused; }
   .ody-vase-band { gap: 7px; }
 }
 
+/* ── Pass 44 — the red-figure glaze (a bought cosmetic, tier 4 of the
+   Guest-Gifts): the ground fires black, the figures stay living clay.
+   Box law unchanged — same flat panel, same hard double rule, colors
+   swapped. The sepia/saturate chain turns the sprites terracotta the
+   way the black-figure chain turned them soot. */
+.ody-vase.ody-vase-red { background: #1a0d06; border-color: #93502e; outline-color: #6b3018; }
+.ody-vase-red .ody-vase-fig { filter: sepia(1) saturate(2.4) hue-rotate(-18deg) brightness(1.1); }
+.ody-vase-red .ody-vase-sea { filter: sepia(1) saturate(2.4) hue-rotate(-18deg) brightness(1.1); opacity: 0.9; }
+
 /* ── Pass 33 — the other fires: the shared water's fleet, counted. A hard
    single rule (a record, not an alarm — same grammar as the loss line),
    then one flat bar per ending class. STYLE.md box law: radius 0, no

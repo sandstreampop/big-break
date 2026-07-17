@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.46.0',
+    date: '2026-07-17',
+    title: 'The Red-Figure Glaze',
+    notes: [
+      'The Guest-Gifts gain a fourth tier: for 250 Legacy, a rival workshop’s secret — your vases fire the new way, figures left in living clay, the ground burned black. Purely cosmetic, and it follows the vase everywhere: the ending screen, the gallery of nights, and the poster your shares carry.',
+    ],
+  },
+  {
     version: '0.45.0',
     date: '2026-07-17',
     title: 'The vase, fired',
