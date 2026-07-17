@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.17.0',
+    date: '2026-07-17',
+    title: 'Word travels',
+    notes: [
+      'The Odyssey gets its second screen — no phones, just the word moving: the harbor wall (pilots and traders, three ports downwind of the truth), Olympus (the powers’ dry minutes — Poseidon posts in weather), and the listeners round this very fire. Word moves at landmarks, temptations, act breaks, and the ending; the quiet seas stay quiet.',
+      'The rooms are honest instruments: the harbor reads your Renown, Olympus reads the Athena–Poseidon ledger, the fire reads your Despair. Shout your name at the cave and the Sea-lord pins the receipt.',
+    ],
+  },
+  {
     version: '0.16.0',
     date: '2026-07-17',
     title: 'The last mile grows six new waters',

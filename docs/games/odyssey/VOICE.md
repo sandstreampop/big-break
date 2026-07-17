@@ -255,6 +255,29 @@ line sing. That's what this document and the worked examples are for.
 
 ---
 
+## The second screen — word travels (ADR-0014)
+
+No phones at this fire, so the odyssey's second screen reads as the WORD
+moving: **the harbor wall** (pilots, traders, the fish stalls — rumor of the
+voyage, three ports downwind of the truth), **Olympus** (the powers' dry
+minutes — Athena clipped and fond, Hermes wry, Poseidon in weather-caps, the
+Fates terse), and **round this fire** (the roster's own ensemble heckling the
+telling — the woman by the woodpile counts, the potter's boy deadpans, the
+man who wants the horse wants the horse, and Phemios needles from Smyrna).
+
+The register split (mirrored in `taste.mjs` `feeds`): **post bodies are
+sincere quoted mouths** — each room's real dialect turned up a notch — so
+they carry the quoted-speech cliché/bang exemption but keep the structural
+floor (curly apostrophes, ≤300 chars, no copy-pasted posts, ≥90 bodies so
+the word keeps traveling). **The chrome** (teasers, headlines, and the
+shell-label re-voicing in `Presenter.feedChrome`) is narration and keeps the
+house rules. Honesty is law here as everywhere: each room's mood dot reads a
+real meter (harbor ⇢ Renown under Poseidon's weather, Olympus ⇢ the
+Athena/Poseidon ledger, fire ⇢ Despair), and ambient seas stay silent —
+landmarks, temptations, act breaks, and the ending are when word moves.
+
+---
+
 ## The feedback loop
 
 Same loop as love-island (grill Q16): batches of authored copy go to the

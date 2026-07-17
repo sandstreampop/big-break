@@ -771,3 +771,37 @@ body.ody-breath svg.px .pxf { animation-play-state: paused; }
   color: var(--ink);
   padding-top: 8px;
 }
+
+/* ── Pass 15 — the second screen (ADR-0014): word travels. Three rooms, each
+   with its own light: the harbor wall (sea-glass and rope), Olympus (marble
+   and gold), and this very fire (ember). Skins only — the chrome (layout,
+   tabs, folds) is the shell's in css/style.css, same split as love-island. */
+
+.feed-chip.feed-harbor { background: #0a1a22; border-color: #3e88a8; }
+.feed-chip.feed-olympus { background: #16142a; border-color: #d4af37; }
+.feed-chip.feed-ember { background: #1c0f08; border-color: #e25822; }
+
+.feed-tab.feed-harbor.active { border-color: #3e88a8; background: #102a35; }
+.feed-tab.feed-olympus.active { border-color: #d4af37; background: #221d3d; }
+.feed-tab.feed-ember.active { border-color: #e25822; background: #2a170c; }
+
+.feed-body.feed-harbor { background: #07141b; }
+.feed-body.feed-harbor .feed-post { background: #0d1e27; border-color: #1c3a49; }
+.feed-body.feed-harbor .feed-author { color: #cfe8f4; }
+.feed-body.feed-harbor .feed-avatar { background: #0f2833; border-color: #3e88a8; }
+.feed-body.feed-harbor .feed-post-meta { color: #5f93ad; }
+.feed-body.feed-harbor .feed-header { color: #57b1d6; }
+
+.feed-body.feed-olympus { background: #100e20; }
+.feed-body.feed-olympus .feed-post { background: #171430; border-color: #2e2854; }
+.feed-body.feed-olympus .feed-author { color: #f2e4b6; letter-spacing: .04em; }
+.feed-body.feed-olympus .feed-avatar { background: #1d1836; border-color: #d4af37; }
+.feed-body.feed-olympus .feed-post-meta { color: #8f86b8; font-style: italic; }
+.feed-body.feed-olympus .feed-header { color: #d4af37; }
+
+.feed-body.feed-ember { background: #140b06; }
+.feed-body.feed-ember .feed-post { background: #1e120a; border-color: #3a2412; }
+.feed-body.feed-ember .feed-author { color: #ffd9b0; }
+.feed-body.feed-ember .feed-avatar { background: #241305; border-color: #e25822; }
+.feed-body.feed-ember .feed-post-meta { color: #b3673a; }
+.feed-body.feed-ember .feed-header { color: #ff8a50; }

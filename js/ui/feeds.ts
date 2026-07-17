@@ -21,7 +21,7 @@
 // render, never touch it and the goldens never move.
 
 import { el, vibrate, activatable } from './dom.js';
-import { fillText, run } from './context.js';
+import { fillText, run, PRES } from './context.js';
 import { sfx } from '../audio.js';
 import { mulberry32 } from '../engine.js';
 
@@ -33,6 +33,21 @@ const FEED_MOOD_LINE = {
   feral: 'the room is feral',
   soft: 'the room is soft on you',
 };
+
+// The chrome copy around the pack's bundle (Presenter.feedChrome): the pack
+// may re-voice the shell's labels so the surface speaks ITS world. Read at
+// call time (PRES is a live binding set at boot), defaults preserved exactly
+// so packs without the hook are byte-identical to before it existed.
+const chrome = () => ({
+  kicker: '📲 The second screen',
+  caughtUp: '📲 You’re all caught up on the feeds',
+  openLabel: 'Read the feeds',
+  foot: 'you can’t un-see the comments · tap ✕ to go back',
+  headline: 'The nation',
+  ...(PRES?.feedChrome || {}),
+});
+const moodLine = (mood?: string) =>
+  PRES?.feedChrome?.moodLines?.[mood as 'up'] || FEED_MOOD_LINE[mood as 'up'] || 'the room has opinions';
 
 // ---------- The nation's inbox (session-scoped) ----------
 //
@@ -61,7 +76,7 @@ function resetInbox() {
   inbox.channels.clear();
   inbox.order = [];
   inbox.accounted.clear();
-  inbox.headline = 'The nation';
+  inbox.headline = chrome().headline;
 }
 // Re-point the inbox at the current run. setRun() swaps the object on a new
 // run / reload, so pointer identity is a reliable "this is a different run".
@@ -188,12 +203,12 @@ export function feedTeaser(bundle: any, inOverlay: boolean, opts: { key?: string
     if (!active) {
       // Read everything the nation's said so far — no CTA, just quiet closure.
       wrap.classList.add('feed-teaser-quiet');
-      wrap.append(el('div', 'feed-caughtup', '📲 You’re all caught up on the feeds'));
+      wrap.append(el('div', 'feed-caughtup', chrome().caughtUp));
       return;
     }
     wrap.classList.remove('feed-teaser-quiet');
 
-    wrap.append(el('div', 'feed-teaser-kicker', '📲 The second screen'));
+    wrap.append(el('div', 'feed-teaser-kicker', chrome().kicker));
     wrap.append(el('div', 'feed-teaser-line', fillText(bundle.teaser)));
 
     const chips = el('div', 'feed-teaser-chips');
@@ -202,11 +217,12 @@ export function feedTeaser(bundle: any, inOverlay: boolean, opts: { key?: string
     }
     wrap.append(chips);
 
+    const open = chrome().openLabel;
     const label = unread > 0
-      ? `Read the feeds<span class="feed-badge">${unread > 99 ? '99+' : unread}<span class="feed-badge-lbl">new</span></span>`
-      : `Read the feeds  →`;
+      ? `${open}<span class="feed-badge">${unread > 99 ? '99+' : unread}<span class="feed-badge-lbl">new</span></span>`
+      : `${open}  →`;
     const b = el('button', 'btn feed-open-btn' + (unread > 0 ? ' feed-open-btn-new' : ''), label);
-    b.setAttribute('aria-label', unread > 0 ? `Read the feeds — ${unread} new posts` : 'Read the feeds');
+    b.setAttribute('aria-label', unread > 0 ? `${open} — ${unread} new posts` : open);
     b.addEventListener('click', (e) => {
       if (inOverlay) e.stopPropagation();
       sfx.ui();
@@ -266,7 +282,7 @@ export function openFeedBrowser(opts: { onChange?: () => void } = {}) {
   const phone = el('div', 'feed-phone');
 
   const bar = el('div', 'feed-bar');
-  bar.append(el('div', 'feed-bar-title', inbox.headline || 'The nation'));
+  bar.append(el('div', 'feed-bar-title', inbox.headline || chrome().headline));
   const barBtns = el('div', 'feed-bar-btns');
   const markAllBtn = el('button', 'feed-markall', '✓ Mark all read');
   const close = el('button', 'feed-close', '✕');
@@ -306,7 +322,7 @@ export function openFeedBrowser(opts: { onChange?: () => void } = {}) {
     body.className = 'feed-body ' + ch.skin + ' mood-' + (ch.mood || 'split');
     if (ch.header) body.append(el('div', 'feed-header', fillText(ch.header)));
     body.append(el('div', 'feed-moodline mood-' + (ch.mood || 'split'),
-      `${FEED_MOOD_DOT[ch.mood] || '⚪'} ${FEED_MOOD_LINE[ch.mood] || 'the room has opinions'}`));
+      `${FEED_MOOD_DOT[ch.mood] || '⚪'} ${moodLine(ch.mood)}`));
     // New arrivals first — highlighted, and each tappable to mark read.
     if (ch.unread.length) {
       body.append(el('div', 'feed-newmark', `✨ ${ch.unread.length} new · tap one to mark it read`));
@@ -317,7 +333,7 @@ export function openFeedBrowser(opts: { onChange?: () => void } = {}) {
       if (ch.unread.length) body.append(el('div', 'feed-divider', '· · · earlier · · ·'));
       for (const p of ch.seen) body.append(feedPostEl(p, false));
     }
-    body.append(el('div', 'feed-foot', 'you can’t un-see the comments · tap ✕ to go back'));
+    body.append(el('div', 'feed-foot', chrome().foot));
     body.scrollTop = s;
   };
 

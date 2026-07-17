@@ -42,6 +42,7 @@ import { feedBodyCorpus, feedChromeCorpus } from '../dist/js/packs/love-island/f
 // The odyssey bard's frame chatter — a flat pool of presenter-voice lines held
 // to the same taste floor as the rest of the presenter copy.
 import { CHATTER as ODYSSEY_CHATTER } from '../dist/js/packs/odyssey/bard-chatter.js';
+import { feedBodyCorpus as odysseyFeedBodies, feedChromeCorpus as odysseyFeedChrome } from '../dist/js/packs/odyssey/feeds.js';
 // The crew pool (names in the sand) — every name/detail passes the floor.
 import { CREW as ODYSSEY_CREW } from '../dist/js/packs/odyssey/crew.js';
 
@@ -103,6 +104,9 @@ const DESCRIPTORS = {
   // registers.
   odyssey: {
     tokens: [], weatherIds: [], taste: ODYSSEY_TASTE,
+    // ADR-0014 (pass 15): the second screen's copy, linted via the feed
+    // floor — bodies as quoted mouths, chrome as narration.
+    feedBodies: odysseyFeedBodies, feedChrome: odysseyFeedChrome,
     // The itinerary's requires-gated landmark variants (delivered by force —
     // the odyssey_itinerary beat windows), same delivery-owned class as LI's
     // scheduled beats.
@@ -249,6 +253,19 @@ const DESCRIPTORS = {
         for (const g of pres.roster?.(m)?.groups || []) {
           for (const mem of g.members) { out.push(mem.name, mem.sub, mem.note); }
         }
+      }
+      // Pass 15 — the second screen's shell-chrome re-voicing (narration
+      // register; the bundle's own copy is linted by the feed floor).
+      const fc = pres.feedChrome || {};
+      out.push(fc.kicker, fc.caughtUp, fc.openLabel, fc.foot, fc.headline,
+        ...Object.values(fc.moodLines || {}));
+      // And the channel chrome the bundle carries (names, handles, headers) —
+      // narration too; exercise a few states so every channel surfaces.
+      for (const exp of [12, 3]) {
+        const mock = { flags: ['ody_named'], flavorSeed: 5, cardLog: [], expedition: exp, athena: 5, poseidon: 2, renown: 6, burnout: 30, stats: {} };
+        const b = pres.feeds?.(mock, { kind: 'recap', act: 2 });
+        out.push(b?.teaser, b?.headline);
+        for (const ch of b?.channels || []) out.push(ch.name, ch.handle, ch.header);
       }
       return out.filter(Boolean);
     },

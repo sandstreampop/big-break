@@ -925,6 +925,22 @@ export interface Presenter {
   // this is (a card result, an act recap, or the ending). Return null to show
   // no feeds for a given moment (the shell then renders exactly as before).
   feeds?: (state: RunState, moment: FeedMoment) => FeedBundle | null;
+  // The second screen's CHROME copy — the shell's own labels AROUND the
+  // pack's bundle (the teaser kicker, the caught-up chip, the open-CTA label,
+  // the browser's foot line, the default browser title, and the per-mood
+  // temperature lines). Pack-owned so the shared surface names no platform
+  // era: a phones-in-a-drawer pack reads "📲 The second screen", a
+  // bard-at-the-fire pack reads however word travels in ITS world. All
+  // fields optional; the shell's original copy applies where absent, so a
+  // pack that ships `feeds` without this is byte-identical to before.
+  feedChrome?: {
+    kicker?: string;     // teaser section label
+    caughtUp?: string;   // the quiet chip when nothing is unread
+    openLabel?: string;  // the CTA button text
+    foot?: string;       // browser footer line
+    headline?: string;   // default browser title (bundle.headline overrides)
+    moodLines?: Partial<Record<'up' | 'split' | 'down' | 'feral' | 'soft', string>>;
+  };
 }
 
 export interface Pack {

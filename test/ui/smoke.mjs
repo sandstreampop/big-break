@@ -389,6 +389,13 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
         }, ctaSel);
         if (!Number.isFinite(badge0)) throw new Error(`[${label}] the feed CTA is showing without an unread badge`);
         if (badge0 < 5 || badge0 > 99) throw new Error(`[${label}] unread badge ${badge0} outside the expected pool range (5–25, 99+ cap)`);
+        // The chrome re-voicing (Presenter.feedChrome): the teaser kicker must
+        // speak the pack's world — a default leaking through here means the
+        // shell ignored the hook (or the pack lost it).
+        if (expect.feedKicker) {
+          const kick = await page.evaluate(() => document.querySelector('#overlay.active .feed-teaser-kicker')?.textContent || '');
+          if (!kick.includes(expect.feedKicker)) throw new Error(`[${label}] feed kicker reads "${kick}" — expected it to carry "${expect.feedKicker}" (feedChrome regression)`);
+        }
         await page.evaluate((s) => document.querySelector(s).click(), ctaSel);
         await page.waitForSelector('#feed-layer .feed-post-new', { timeout: 4000 });
         const view = await page.evaluate(() => ({
@@ -683,20 +690,23 @@ const GAMES = [
   // keep the numeric stat rail. Flip a pack's entry ONLY when it deliberately
   // opts into the seam.
   { label: 'music', url: `${base}/`, ns: '', paths: 3, expect: { tableau: false, rail: true } },
-  { label: 'love-island', url: `${base}/love-island/`, ns: '_love-island', paths: 3, expect: { tableau: false } },
+  { label: 'love-island', url: `${base}/love-island/`, ns: '_love-island', paths: 3, expect: { tableau: false, feedRequired: true, feedKicker: 'The second screen' } },
   // paths counts PASSES here: odyssey cycles its 2 paths and drives a
   // different Hall door each pass (the gated pre-finale surface — working
   // agreement: a new control on a gated surface gets an explicit exercise).
   // I3: odyssey opts into the tableau (the living frieze) + diegeticHud —
   // the strip must exist, the numeric rail must be gone, and the frieze's
   // data attributes must agree with the saved RunState (friezeNs).
-  { label: 'odyssey', url: `${base}/odyssey/`, ns: '_odyssey', paths: 3, pathCycle: 2, expect: { tableau: true, rail: false, friezeNs: '_odyssey' } },
+  // Pass 15: the odyssey ships feeds (word travels) with a re-voiced chrome —
+  // the kicker must read the pack's copy, never the phone-era default.
+  { label: 'odyssey', url: `${base}/odyssey/`, ns: '_odyssey', paths: 3, pathCycle: 2, expect: { tableau: true, rail: false, friezeNs: '_odyssey', feedRequired: true, feedKicker: 'Word travels' } },
 ];
 
 let failed = 0;
 for (const g of GAMES) {
   // Play each game once per summit, so every path's Final Set + ending screen
   // renders. A run that fails early (fail state) simply never reaches the pick.
+  let feedTotal = 0;
   for (let pi = 0; pi < g.paths; pi++) {
     const ctx = await browser.newContext({ reducedMotion: 'reduce' });
     await ctx.addInitScript(seedScript(g.ns));
@@ -708,6 +718,7 @@ for (const g of GAMES) {
       // per game — an explicit knob (see playToFinale), stated here at the
       // loop that knows what "first pass" means.
       const { lightboxRuns, cardCastRuns, feedRuns } = await playToFinale(page, `${g.label} path#${pi}`, pathPick, g.pathCycle ? pi : 0, { ...(g.expect || {}), chipPass: pi === 0 });
+      feedTotal += feedRuns || 0;
       const lb = lightboxRuns ? ` (portrait-lightbox stack verified ×${lightboxRuns})` : '';
       const cc = cardCastRuns ? ` (card-cast lightbox verified ×${cardCastRuns})` : '';
       const fd = feedRuns ? ` (unread-feed notification verified ×${feedRuns})` : '';
@@ -718,6 +729,13 @@ for (const g of GAMES) {
     } finally {
       await ctx.close();
     }
+  }
+  // A pack that ships feeds must actually SURFACE them in play — the generic
+  // probe only fires when a CTA appears, so a moment-grammar regression (no
+  // landmark ever speaks) would otherwise pass silently.
+  if (g.expect?.feedRequired && !feedTotal) {
+    failed++;
+    console.error(`✗  [${g.label}] ships Presenter.feeds but no unread-feed CTA ever surfaced across ${g.paths} full runs`);
   }
 }
 

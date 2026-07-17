@@ -85,4 +85,15 @@ export const ODYSSEY_TASTE = {
   // ('!!' / '!?' / '?!') stay banned everywhere; the deep's zero-bang law is
   // craft discipline the examples model, not a machine floor.
   maxBang: 2,
+  // The second screen (ADR-0014, pass 15): word travels. Post BODIES are
+  // quoted mouths — the harbor's dialect, the gods' dry minutes, the fire's
+  // heckle — so they carry the quoted-speech cliché/bang exemption but keep
+  // the structural floor (curly apostrophes, length, uniqueness). The CHROME
+  // (teasers, headlines) is narration and keeps the house rules. `minBodies`
+  // guards the corpus against being gutted — the word must keep traveling.
+  feeds: {
+    maxBody: 300,
+    minBodies: 90,
+    extraTokens: [],
+  },
 };

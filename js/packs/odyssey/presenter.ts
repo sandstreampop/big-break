@@ -26,6 +26,7 @@ import { ODYSSEY_EXIT_INTERVIEWS, odysseyEpilogue } from './interviews.js';
 import { ODYSSEY_COMEBACK_COPY, ODYSSEY_DAILY_COPY } from './modes.js';
 import { odysseyShareText, odysseyNews } from './share.js';
 import { odysseyRoster } from './roster.js';
+import { odysseyFeeds, ODYSSEY_FEED_CHROME } from './feeds.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -139,6 +140,12 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // the road ahead (the fixed overture rides as the recap's last block).
   // Act 1 returns null, so the opening night keeps its fixed intro above.
   recap: odysseyRecap,
+  // The second screen (ADR-0014, pass 15): word travels. Three rooms — the
+  // harbor wall, Olympus, and this very fire — react at landmarks,
+  // temptations, act breaks, and the ending; ambient seas stay quiet. The
+  // chrome re-voicing keeps the shell's labels in this world (no phones).
+  feeds: odysseyFeeds,
+  feedChrome: ODYSSEY_FEED_CHROME,
   crossroads: {
     head: 'The name in your mouth',
     sub: 'The prow is out of stone-throw, and the bard leans in: does this telling row for home, or for the song? Homecoming counts hulls and keeps the sea unprovoked; glory is bought in deeds and paid for in wrath.',
