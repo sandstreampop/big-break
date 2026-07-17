@@ -59,7 +59,14 @@ export const odysseyShareText: NonNullable<Presenter['shareText']> = (summary: a
     `🏺 ${held.count} of 3 turnings`,
     ...(summary.dailyStreak > 1 ? [`🔥 night ${summary.dailyStreak}`] : []),
   ];
-  return `THE ODYSSEY${mode}\n${fire} → ${road} → ${verdict}\n${strip}\n🏺 ${band}\n${bits.join(' · ')} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/odyssey/`;
+  // The sent water (pass 35): every telling with a stamped base seed
+  // travels as a PLAYABLE link — whoever opens it is offered this exact
+  // sea. The bare URL stays for summaries without one (old saves).
+  const url = summary.baseSeed
+    ? `https://sandstreampop.github.io/big-break/odyssey/?sail=${summary.baseSeed}`
+    : 'https://sandstreampop.github.io/big-break/odyssey/';
+  const dare = summary.baseSeed ? '\nSail my exact water: ' : '\n';
+  return `THE ODYSSEY${mode}\n${fire} → ${road} → ${verdict}\n${strip}\n🏺 ${band}\n${bits.join(' · ')} · +${lp} LP${dare}${url}`;
 };
 
 // One harbor rumor a day — evergreen, in-fiction, seeded by the shell's day

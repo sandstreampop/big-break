@@ -41,7 +41,7 @@ export const itineraryPlugin: Plugin = {
   // congratulate a shortfall).
   requires: {
     lastEnding: (state, arg) => {
-      if (state.daily || state.gauntlet) return false;
+      if (state.daily || state.gauntlet || state.challenge) return false;
       const rows = state.history || [];
       const last = rows[rows.length - 1];
       if (!last?.endingKey) return false;

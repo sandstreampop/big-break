@@ -17,8 +17,10 @@ import { nav } from './nav.js';
 
 // ---------- Instrument select ----------
 
-export function startNewRun(daily = false, comeback = false) {
-  const seed = daily ? dailySeed(todayStr()) : Math.floor(Math.random() * 1e9) + 1;
+export function startNewRun(daily = false, comeback = false, challengeSeed: number | null = null) {
+  // The sent water (pass 35): a ?sail= link starts a run on the sender's
+  // exact seed — a shared-water mode like the daily, but dated to nothing.
+  const seed = challengeSeed ?? (daily ? dailySeed(todayStr()) : Math.floor(Math.random() * 1e9) + 1);
   // The pack's optional pre-run selections (music: contract/genre/venue). The
   // shell treats it as an opaque bag; only the pack's setup hooks read it.
   // The player's own name/gender ride here too — universal identity the shell
@@ -51,11 +53,14 @@ export function startNewRun(daily = false, comeback = false) {
     if (sel.gender) meta.playerGender = sel.gender;
     save.saveMeta(meta);
     run.seed = seed + 2;
+    run.baseSeed = seed; // the share link's replayable seed (state.seed mutates)
     run.daily = daily ? todayStr() : null;
+    run.challenge = challengeSeed ? String(challengeSeed) : null;
     run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)
     // The pack applies its own setup choices + run-init (music: sign contract,
-    // stamp sound/venue, nemesis bias) before any comeback transform.
-    PRES.applySetup?.(run, sel, meta, daily);
+    // stamp sound/venue, nemesis bias) before any comeback transform. A
+    // challenge is shared water: the pack's daily fork-suppression applies.
+    PRES.applySetup?.(run, sel, meta, daily || !!challengeSeed);
     if (comeback) engine.applyComeback(run);
     run.firstRun = (meta.runs || 0) === 0; // a pack may key onboarding off this
     run.history = (meta.history || []).slice(); // the memory ledger (packs author off it; sims never set it)
@@ -63,7 +68,7 @@ export function startNewRun(daily = false, comeback = false) {
     // Genre-neutral spine only; the pack contributes its own taxonomy via
     // PRES.runProps.
     track('run_start', {
-      mode: daily ? 'daily' : comeback ? 'comeback' : 'normal',
+      mode: daily ? 'daily' : challengeSeed ? 'challenge' : comeback ? 'comeback' : 'normal',
       career_runs: meta.runs || 0,
       ...(PRES.runProps?.(run, 'start') || {}),
     });
@@ -86,9 +91,12 @@ export function startNewRun(daily = false, comeback = false) {
     s.innerHTML = '';
     const picker = PRES.loadoutPicker || { head: 'Choose your loadout', sub: '' };
     s.append(el('h2', 'screen-head', comeback ? (PRES.comeback?.head || 'The Second Act')
-      : daily ? `${PRES.daily?.name || 'Daily Grind'} — ${todayStr()}` : picker.head));
+      : daily ? `${PRES.daily?.name || 'Daily Grind'} — ${todayStr()}`
+      : challengeSeed ? (PRES.challengeCopy?.head || 'The Sent Water')
+      : picker.head));
     s.append(el('p', 'screen-sub', comeback ? (PRES.comeback?.sub || '')
       : daily ? 'Same run for everyone today: same loadouts, same deck, same luck. Only the swipes are yours.'
+      : challengeSeed ? (PRES.challengeCopy?.sub || 'Someone sent you this exact run: same deck, same luck they had. Only the swipes are yours.')
       : picker.sub));
 
     // The sticky commit bar's live state, recomputed on a name keystroke too
@@ -256,6 +264,7 @@ export function startGauntletGeneric() {
     sfx.commit();
     setRun(engine.newRun(activePack, inst.id, unlockedPackIds(meta), engine.mulberry32(seed + 1), unlockedPerkIds(meta)));
     engine.applyMastery(run, masteryLevel(inst.id));
+    run.baseSeed = seed; // the share link's replayable seed
     if (meta.playerName) run.name = meta.playerName;
     // Gender only where the pack didn't already derive it: a loadout-encoded
     // gender axis (the villa's personas, set by onConstruct inside newRun) is

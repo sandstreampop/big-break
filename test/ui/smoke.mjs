@@ -1393,7 +1393,7 @@ async function checkGauntletGeneric(browser, base, { label, path, ns, subNeedle 
     if (ns === '_odyssey') {
       await page.waitForFunction(
         () => document.querySelectorAll('#ody-otherfires .ody-fire-row').length > 0,
-        { timeout: 20000 });
+        null, { timeout: 20000 });
       const fires = await page.evaluate(() => ({
         total: [...document.querySelectorAll('#ody-otherfires .ody-fire-n')].reduce((n, x) => n + Number(x.textContent), 0),
         you: document.querySelectorAll('#ody-otherfires .ody-fire-you').length,
@@ -1638,6 +1638,105 @@ async function checkOdysseyClarity(browser, base) {
 // start it from the title, and assert the run that deals is actually
 // scarred (flag + nine hulls) with a live card up. The Same Sea's renamed
 // daily button is asserted on the same boot.
+// The sent water (pass 35): a ?sail= link is the share's playable half.
+// Drive the WHOLE flow: the title offers the sender's sea, the setup
+// speaks it, the minted run carries the seed and stays unforked (a
+// decorated meta's private fragments must not board shared water), the
+// telling reaches a terminal screen, and the other-fires fleet counts the
+// same seed there.
+async function checkOdysseySentWater(browser, base) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 30, runs: 2, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    playerName: 'Tester', playerGender: 'w',
+    odyssey: { fragments: ['teststub'] }, // bait: must NOT board the sent water
+    lifetime: { swipes: 40, incredibles: 1, bads: 4, byLoadout: {}, byPath: {} },
+    settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
+  };
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(`try {
+    localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+    localStorage.removeItem('bigbreak_run_v1_odyssey');
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  const label = 'odyssey sent water';
+  try {
+    await page.goto(`${base}/odyssey/?sail=777`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+    const opened = await page.evaluate(() => {
+      const b = [...document.querySelectorAll('#screen-title button')].find((x) => /Sail the sent water/.test(x.textContent || ''));
+      if (b) b.click();
+      return !!b;
+    });
+    if (!opened) throw new Error(`[${label}] the title never offers the sent water despite ?sail=`);
+    await page.waitForSelector('#screen-setup.active .pick-card', { timeout: 8000 });
+    const sheet = await page.evaluate(() => document.querySelector('#screen-setup')?.textContent || '');
+    if (!/The Sent Water/.test(sheet)) throw new Error(`[${label}] the sheet never names the mode`);
+    if (!sheet.includes('sends you its exact sea')) throw new Error(`[${label}] the sheet lost the bard's subtitle`);
+    await clickJS(page, '#screen-setup .pick-card');
+    await page.evaluate(() => document.querySelector('#start-run-btn')?.click());
+    await page.waitForFunction(() => !!localStorage.getItem('bigbreak_run_v1_odyssey'), null, { timeout: 10000 });
+    const minted = await page.evaluate(() => {
+      const run = JSON.parse(localStorage.getItem('bigbreak_run_v1_odyssey'));
+      return { challenge: run.challenge, baseSeed: run.baseSeed, daily: run.daily, flags: run.flags || [] };
+    });
+    if (minted.challenge !== '777') throw new Error(`[${label}] the run never carries the sent seed (challenge: ${minted.challenge})`);
+    if (minted.baseSeed !== 777) throw new Error(`[${label}] baseSeed ${minted.baseSeed} — the share link would resend different water`);
+    if (minted.daily) throw new Error(`[${label}] a challenge must not masquerade as the daily (daily: ${minted.daily})`);
+    if (minted.flags.some((f) => f.startsWith('ody_frag_'))) {
+      throw new Error(`[${label}] private prophecy fragments boarded the sent water: ${minted.flags.filter((f) => f.startsWith('ody_frag_'))}`);
+    }
+    {
+      const deadline = Date.now() + 90000;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-ending.active')) return 'ending';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          if (document.querySelector('#screen-crossroads.active .pick-card')) return 'cross';
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left:not(.chosen):not(.unchosen)')) return 'card';
+          return 'wait';
+        });
+        if (k === 'ending') break;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+          }, { timeout: 8000 }).catch(() => {});
+          await page.evaluate(() => {
+            const ov = document.querySelector('#overlay.active');
+            (ov?.querySelector('.gear-choices button') || ov)?.click();
+          });
+        } else if (k === 'cross') {
+          await page.evaluate(() => document.querySelector('#screen-crossroads.active .pick-card')?.click());
+        } else if (k === 'card') {
+          await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+        }
+        await page.waitForTimeout(90);
+      }
+    }
+    if (!(await page.$('#screen-ending.active'))) throw new Error(`[${label}] the sent water never reached a terminal screen`);
+    await page.waitForFunction(
+      () => document.querySelectorAll('#ody-otherfires .ody-fire-row').length > 0,
+      null, { timeout: 20000 });
+    const fires = await page.evaluate(() => ({
+      total: [...document.querySelectorAll('#ody-otherfires .ody-fire-n')].reduce((n, x) => n + Number(x.textContent), 0),
+      you: document.querySelectorAll('#ody-otherfires .ody-fire-you').length,
+      label: document.querySelector('#ody-otherfires .ody-fires-sub')?.textContent || '',
+    }));
+    if (fires.total !== 100) throw new Error(`[${label}] the fleet counted ${fires.total} tellings, not 100`);
+    if (fires.you !== 1) throw new Error(`[${label}] expected exactly one 'your fire' row, got ${fires.you}`);
+    if (!/The Sent Water/.test(fires.label)) throw new Error(`[${label}] the fleet panel lost the water's name ("${fires.label}")`);
+    if (errors.length) throw new Error(`[${label}] ${errors[0]}`);
+    console.log(`✓  ${label}: ?sail=777 offers, mints, and finishes the sender's exact sea — unforked, terminal, and the fleet counts the same seed`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 async function checkOdysseyModes(browser, base) {
   const meta = {
     lp: 20, lpEarnedTotal: 60, runs: 2, unlockedWall: [], trophies: [],
@@ -2551,6 +2650,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyModes(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseySentWater(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

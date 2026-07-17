@@ -97,6 +97,14 @@ export function renderTitle() {
       ? `📅 ${dailyName} ✓${flame} (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
       : `📅 ${dailyName}${flame} — ${today}`,
     '', () => { save.clearRun(); nav.newRun(true); }));
+  // The sent water (pass 35): a ?sail= link makes the title offer the
+  // sender's exact run — a shared-water challenge, dated to nothing.
+  // Generic mechanism; a pack may re-voice it via PRES.challengeCopy.
+  const sail = Math.floor(Number(new URLSearchParams(location.search).get('sail') || '')) || 0;
+  if (sail > 0) {
+    menu.append(btn(PRES.challengeCopy?.button || '🌊 Sail the sent water', 'primary',
+      () => { save.clearRun(); nav.newRun(false, false, sail); }));
+  }
   // Comeback mode exists only for packs that ship the transform.
   if (meta.successPaths?.length > 0 && activePack.comeback) {
     menu.append(btn(PRES.comeback?.label || '🦅 Comeback Run (×1.2 LP)', '', () => { save.clearRun(); nav.newRun(false, true); }));

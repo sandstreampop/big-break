@@ -1094,6 +1094,10 @@ export function createEngine(pack: Pack) {
       cardLog: state.cardLog || [],
       daily: state.daily || null,
       gauntlet: state.gauntlet || null,
+      // Present only when set (the browser starters stamp them; sims never
+      // do), so every existing golden summary stays byte-identical.
+      ...(state.challenge ? { challenge: state.challenge } : {}),
+      ...(state.baseSeed ? { baseSeed: state.baseSeed } : {}),
       flags: [...(state.flags || [])],
     };
     for (const r of PACK.manifest.resources) summary[r] = getRes(state, r);

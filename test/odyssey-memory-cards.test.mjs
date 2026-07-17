@@ -69,6 +69,7 @@ test('shared water refuses the fire’s memory wholesale (the P18 law)', () => {
   const history = [{ endingKey: 'wrath' }];
   assert.deepStrictEqual(eligibleMem(runWith({ history, daily: '2026-07-18' })), [], 'the daily forks on nothing personal');
   assert.deepStrictEqual(eligibleMem(runWith({ history, gauntlet: '2026-W29' })), [], 'the Gauntlet forks on nothing personal');
+  assert.deepStrictEqual(eligibleMem(runWith({ history, challenge: '555123' })), [], 'the sent water forks on nothing personal (P35)');
 });
 
 test('the bench voices’ gates read the run (pass 30 — the memory-card precedent)', () => {

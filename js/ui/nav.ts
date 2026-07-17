@@ -25,7 +25,7 @@ export interface Nav {
   finale(): void;                            // judge the run, show the ending
   gameOver(endingKey: string): void;         // a fail-state ending
   tutorialEnd(): void;                       // the First Gig wrap-up
-  newRun(daily?: boolean, comeback?: boolean): void;
+  newRun(daily?: boolean, comeback?: boolean, challengeSeed?: number | null): void;
   gauntlet(): void;                           // the weekly shared-seed ritual (generic starter)
   startTutorial(): void;
   resumeRun(): void;                          // continue a saved run at its phase

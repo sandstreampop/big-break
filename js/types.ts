@@ -856,6 +856,10 @@ export interface Presenter {
   // startGauntletGeneric) — pack-voiced; the shell's neutral line applies
   // when absent. Packs with a bespoke starter (startGauntlet) ignore this.
   gauntletCopy?: { sub?: string };
+  // The sent water (pass 35): a pack may re-voice the ?sail= challenge
+  // surfaces — the title button, the setup sheet's head/sub. The shell's
+  // neutral defaults cover packs that don't.
+  challengeCopy?: { button?: string; head?: string; sub?: string };
   // Daily-mode copy: the mode's display name (title button, persona screen)
   // and an end-screen note (streak-aware "come back tomorrow"). The daily
   // MECHANISM (shared date seed, results ledger) is engine/shell-generic.
@@ -1072,6 +1076,14 @@ export interface RunState {
   // ── mode / meta ──
   gauntlet?: string | number | null;
   daily?: string | null;
+  // The sent water (pass 35): a run started from a shared ?sail= link.
+  // Stringified base seed — a shared-water mode like daily/gauntlet
+  // (personal forks suppressed), but dated to nothing.
+  challenge?: string | null;
+  // The run's original integer seed, stamped at start (state.seed is a
+  // LIVE PRNG register and advances every draw) — what a share link needs
+  // to let someone else sail the same water. Sims never stamp it.
+  baseSeed?: number;
   tutorial?: boolean;
   firstRun?: boolean;
   firstLoadout?: string;            // id of the run's first loadout (swap detection)

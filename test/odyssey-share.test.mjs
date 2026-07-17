@@ -46,6 +46,15 @@ test('hostile summaries never leak', () => {
   assert.match(t, /\n🏺 ⛵🍶\n/, 'even an empty summary paints an honest band');
 });
 
+test('the sent water: a stamped seed makes the share link playable', () => {
+  const t = odysseyShareText({ ...base, baseSeed: 555123 }, 10);
+  assert.match(t, /Sail my exact water: https:\/\/sandstreampop\.github\.io\/big-break\/odyssey\/\?sail=555123$/);
+  // Old saves without the stamp keep the bare URL — never a broken link.
+  const bare = odysseyShareText(base, 10);
+  assert.match(bare, /big-break\/odyssey\/$/);
+  assert.ok(!bare.includes('?sail='));
+});
+
 test('the band reads the run it came from — stations, powers, weather', () => {
   const t = odysseyShareText({
     ...base, endingKey: 'wrath', result: null, poseidon: 10, athena: 7,

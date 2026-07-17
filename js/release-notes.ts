@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.37.0',
+    date: '2026-07-17',
+    title: 'The sent water — every share is a playable link',
+    notes: [
+      'An odyssey share now ends with “Sail my exact water” — a link that opens the game with the sender’s exact sea waiting on the title screen: same winds, same islands, same giant. The Sent Water is shared water, so nothing personal boards it, and when it ends, the other-fires tally counts the same hundred crews for you and the sender both. Beat their telling, send yours back.',
+    ],
+  },
+  {
     version: '0.36.0',
     date: '2026-07-17',
     title: 'The Telemachy — the son, threaded through the telling',

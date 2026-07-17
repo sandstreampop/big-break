@@ -61,6 +61,13 @@ export interface FleetTally { total: number; counts: Record<FireBucket, number>;
 export function fleetSeedFor(summary: any): { seed: number; label: string; mode: WaterMode } | null {
   if (summary?.daily) return { seed: dailySeed(summary.daily), label: `The Same Sea — ${summary.daily}`, mode: 'daily' };
   if (summary?.gauntlet) return { seed: gauntletSeed(summary.gauntlet), label: `The Gauntlet — week ${summary.gauntlet}`, mode: 'gauntlet' };
+  // The sent water (pass 35): a ?sail= challenge is shared water too — the
+  // seed IS the mode's identity, and its setup uses the daily's offer
+  // ritual, so the fleet does the same.
+  if (summary?.challenge) {
+    const seed = Math.floor(Number(summary.challenge));
+    if (seed > 0) return { seed, label: 'The Sent Water', mode: 'daily' };
+  }
   return null;
 }
 

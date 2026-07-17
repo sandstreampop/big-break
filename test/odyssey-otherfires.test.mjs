@@ -51,6 +51,28 @@ test('the fleet seed is the shell’s own derivation, not a re-typed string', ()
   assert.strictEqual(fleetSeedFor({ daily: null, gauntlet: null }), null);
 });
 
+test('the sent water is shared water: a challenge summary gets the fleet on its own seed', () => {
+  const c = fleetSeedFor({ challenge: '555123' });
+  assert.strictEqual(c.seed, 555123);
+  assert.strictEqual(c.mode, 'daily', 'a challenge uses the daily offer ritual');
+  assert.match(c.label, /The Sent Water/);
+  assert.strictEqual(fleetSeedFor({ challenge: 'nonsense' }), null, 'a hostile seed sails nothing');
+  assert.strictEqual(fleetSeedFor({ challenge: '-4' }), null);
+  const both = fleetSeedFor({ daily: '2026-07-17', challenge: '9' });
+  assert.match(both.label, /Same Sea/, 'a dated mode outranks the challenge stamp');
+});
+
+test('runSummary carries challenge/baseSeed only when set — goldens stay byte-identical', () => {
+  engine.useContentPack(odysseyPack);
+  const ended = { stats: {}, flags: [], tierLog: [], cardLog: [], path: null, loadout: 'x', ending: null };
+  const plain = engine.runSummary(ended);
+  assert.ok(!('challenge' in plain), 'no stamp, no key');
+  assert.ok(!('baseSeed' in plain), 'no stamp, no key');
+  const stamped = engine.runSummary({ ...ended, challenge: '555', baseSeed: 555 });
+  assert.strictEqual(stamped.challenge, '555');
+  assert.strictEqual(stamped.baseSeed, 555);
+});
+
 test('a gauntlet fleet all rows the week’s one fate-drawn build', () => {
   const seed = gauntletSeed('2026-W29');
   // The exact draw startGauntletGeneric makes: mulberry32(seed)'s first

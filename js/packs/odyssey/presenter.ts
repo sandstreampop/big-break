@@ -370,9 +370,10 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // Never on SHARED water: the daily and the weekly Gauntlet are the same
     // run for everyone (the musicApplySetup precedent) — a bard's private
     // repertoire (fragments, the telling-ledger, the note) must not fork
-    // the shared seed at the trench. run.gauntlet is stamped before this
-    // hook runs (js/ui/newrun.ts startGauntletGeneric).
-    if (daily || state.gauntlet) return;
+    // the shared seed at the trench. run.gauntlet/run.challenge are stamped
+    // before this hook runs (js/ui/newrun.ts), and the starter also passes
+    // daily=true for a sent-water challenge — belt and braces.
+    if (daily || state.gauntlet || state.challenge) return;
     const frags: string[] = meta?.odyssey?.fragments || [];
     for (const f of frags) {
       const flag = `ody_frag_${f}`;
@@ -437,8 +438,9 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // so the note is only ever the latest telling's mistake. A daily neither
     // writes nor clears it — the shared sea is nobody's confession, and the
     // stamp side (applySetup) already refuses dailies for the same reason.
-    // The weekly Gauntlet is the same shared water, so it keeps the same law.
-    if (!summary?.daily && !summary?.gauntlet) meta.odyssey.note = noteOf(summary);
+    // The weekly Gauntlet is the same shared water, so it keeps the same
+    // law — and so does a sent-water challenge (pass 35).
+    if (!summary?.daily && !summary?.gauntlet && !summary?.challenge) meta.odyssey.note = noteOf(summary);
     // No-repeat-until-exhausted for the crowd's callbacks: union what the
     // fire heard tonight, then let the cycle REALLY reset — the heard set is
     // persistent, so when everything the next telling could hear has been
@@ -580,7 +582,7 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // renders a placeholder; the painter fills it in idle-sized chunks
     // (the ending screen appends these lines synchronously before any
     // timeout can fire, so the placeholder is always mounted first).
-    const sharedWater = !!(_summary?.daily || _summary?.gauntlet);
+    const sharedWater = !!(_summary?.daily || _summary?.gauntlet || _summary?.challenge);
     if (sharedWater && typeof window !== 'undefined') {
       setTimeout(() => {
         const host = document.getElementById('ody-otherfires');
@@ -614,6 +616,12 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   gauntlet: true,
   gauntletCopy: {
     sub: 'One fire, one Odysseus, the same sea for every bard alive this week. The wind does not negotiate.',
+  },
+  // The sent water (pass 35): the ?sail= challenge, in the bard's mouth.
+  challengeCopy: {
+    button: '🌊 Sail the sent water',
+    head: 'The Sent Water',
+    sub: 'Another fire sends you its exact sea — same winds, same islands, same giant. Sing it better.',
   },
   // The clarity bundle (pass 4): the tap-a-meter blurbs, the pack's half of
   // the Help sheet, the Résumé as the bard's own ledger, the Past-Lives
