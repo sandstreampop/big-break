@@ -461,6 +461,16 @@ async function playToFinale(page, label, pathIndex = 0, finaleDoor = 0, expect =
         (gear || ov).click(); // gear-shelf / exit-interview button, else dismiss
       });
     } else if (k === 'cross') {
+      // The hinge reads the run (pass 36): the odyssey's crossroads must
+      // frame BOTH doors in the run's own light, plus one crowd line.
+      if (expect.friezeNs && !pickedPath) {
+        const hinge = await page.evaluate(() => ({
+          readings: document.querySelectorAll('#screen-crossroads .path-reading').length,
+          voice: !!document.querySelector('#screen-crossroads .crossroads-voice'),
+        }));
+        if (hinge.readings < 2) throw new Error(`[${label}] the crossroads frames ${hinge.readings} doors — the hinge does not read the run`);
+        if (!hinge.voice) throw new Error(`[${label}] the crossroads crowd line is missing`);
+      }
       const idx = pickedPath ? finaleDoor : pathIndex;
       pickedPath = true;
       await page.evaluate((i) => {

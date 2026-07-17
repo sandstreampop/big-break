@@ -230,6 +230,10 @@ export function renderCrossroads() {
   s.append(el('h2', 'screen-head', PRES.crossroads?.head || 'The Crossroads'));
   s.append(el('p', 'screen-sub', PRES.crossroads?.sub ||
     'Act 1 is over. Pick a summit — the deck follows your choice. No refunds. The bars show how your build lines up with each gate <i>right now</i>.'));
+  // The crowd leans in (pass 36): one pack-voiced line reading the run that
+  // arrived at this hinge. Rendered only when the pack speaks.
+  const voice = PRES.crossroads?.voice?.(run);
+  if (voice) s.append(el('p', 'crossroads-voice', voice));
   const fits = Object.keys(PATHS).map((id) => ({ id, ...pathFit(id) }));
   const bestFit = fits.reduce((a, b) => (b.fit > a.fit ? b : a));
   const row = el('div', 'pick-row');
@@ -240,6 +244,9 @@ export function renderCrossroads() {
     if (bestFit.id === p.id && bestFit.fit > 0.2) head.innerHTML += ' <span class="fit-badge">closest fit</span>';
     card.append(head);
     card.append(el('p', 'pick-flavor', p.blurb));
+    // The door, framed by tonight's run (pass 36) — pack-voiced, optional.
+    const reading = PRES.crossroads?.reading?.(run, p.id);
+    if (reading) card.append(el('p', 'path-reading', reading));
     const { readings } = fits.find((f) => f.id === p.id);
     const gates = gateReadout(readings, { className: 'gate-readout compass', prefix: false });
     card.append(gates);

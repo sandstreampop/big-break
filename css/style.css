@@ -378,6 +378,10 @@ body {
 .path-hitfactory { border-color: #2a5a3d; }
 .path-card .pick-flavor { grid-column: 2; }
 .path-card .gate-readout { grid-column: 1 / -1; margin-top: 8px; padding: 10px; }
+/* pass 36 — the hinge reads the run: a pack-voiced line per door, one crowd
+   line above the row. Rendered only when the pack's crossroads hooks speak. */
+.crossroads-voice { font-size: 13px; font-style: italic; color: var(--dim); text-align: center; margin: -2px auto 10px; max-width: 480px; }
+.path-reading { grid-column: 1 / -1; font-size: 13px; font-style: italic; color: var(--accent); border-top: 1px solid var(--line); padding-top: 7px; margin-top: 7px; line-height: 1.4; }
 .gate-readout.compass .gate-row { grid-template-columns: 76px 1fr 52px; font-size: 12px; }
 .fit-badge {
   font-size: 10px; font-weight: 800; letter-spacing: .06em;

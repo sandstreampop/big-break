@@ -616,7 +616,15 @@ export interface Presenter {
   };
   // Crossroads copy, and the pre-finale choice screen (head/sub/options; an
   // option is { title, blurb, stat, amount, label, apply(state) }).
-  crossroads?: { head: string; sub: string };
+  // The crossroads copy. `reading` (pass 36) lets a pack frame each door in
+  // the light of the run that arrived at it — one line under the path card,
+  // pure read of the state; `voice` is one crowd line above the row. The
+  // shell renders both only when present.
+  crossroads?: {
+    head: string; sub: string;
+    reading?: (state: RunState, pathId: string) => string | null;
+    voice?: (state: RunState) => string | null;
+  };
   finalSet?: (state: RunState) => { head: string; sub: string; options: any[] };
   // Share text for a finished run.
   shareText?: (summary: any, lp: number) => string;

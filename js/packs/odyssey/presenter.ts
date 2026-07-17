@@ -30,6 +30,7 @@ import { odysseyFeeds, ODYSSEY_FEED_CHROME } from './feeds.js';
 import { ODYSSEY_WALL_ITEMS, ODYSSEY_WALL_COPY } from './gifts.js';
 import { nightVase, vaseFromHistory } from './vase.js';
 import { paintOtherFires } from './otherfires.js';
+import { crossroadsReading, crossroadsVoice } from './crossroads.js';
 import { activePack } from '../../ui/context.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
@@ -172,6 +173,10 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   crossroads: {
     head: 'The name in your mouth',
     sub: 'The prow is out of stone-throw, and the bard leans in: does this telling row for home, or for the song? Homecoming counts hulls and keeps the sea unprovoked; glory is bought in deeds and paid for in wrath.',
+    // The hinge reads the run that reached it (pass 36) — one line per
+    // door, one crowd interjection; pure readers in crossroads.ts.
+    reading: crossroadsReading,
+    voice: crossroadsVoice,
   },
   // The finale reads the run that earned it (pass 19). Pure: everything a
   // variant depends on arrives as the argument. Precedence runs rarest-first;

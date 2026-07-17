@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.38.0',
+    date: '2026-07-17',
+    title: 'The crossroads reads the telling',
+    notes: [
+      'The run’s hinge — home, or the song — now speaks in the light of the run that reached it. Each door carries a line the bard reads from tonight’s telling (the name you shouted or swallowed, the hulls still answering, the sea’s grudge, the song already half-sung in two harbors), and the crowd leans in with its own opinion above the choice. The gate bars still show the arithmetic; now the story shows too.',
+    ],
+  },
+  {
     version: '0.37.0',
     date: '2026-07-17',
     title: 'The sent water — every share is a playable link',
