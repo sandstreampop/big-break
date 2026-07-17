@@ -416,6 +416,45 @@ export const ACT2_EVENTS: GameEvent[] = [
     },
   }),
 
+  // ── Circe's SECOND reading (pass 20): the professional courtesy ──
+  // The temptation below is gated to the weary (burnout ≥ 60 or a bled
+  // fleet), so ~86% of runs sailed past the witch's island without a card.
+  // A strong fleet gets this reading instead: she has no lever on hale men,
+  // so she trades — the war's tale for the sea's chart. Same beat:circe
+  // delivery; where BOTH gates hold (a strong fleet rowed to exhaustion)
+  // the seeded draw picks the reading, which is itself variance.
+  {
+    id: 'ody_circe_pilot',
+    act: 2,
+    tags: ['omen', 'beat:circe'],
+    requires: { min: { expedition: 6 } },
+    context: 'The witch’s house — a professional courtesy',
+    prompt: 'The witch of the island takes one look at a fleet she cannot tempt — hulls sound, men fed, the wind still in their captain — and finds it, friends, interesting. “Stay the night,” she says, over wine that stays wine. “Sing me the war. I will chart you the sea. Professionals, both of us.”',
+    recap: 'The witch traded charts for the tale.',
+    choices: {
+      left: {
+        label: 'Take the route as told',
+        tags: ['omen', 'lore'],
+        governingStats: { lore: 1 },
+        outcomes: {
+          bad: { text: 'The route, told true: the singers, the strait, the sun-god’s cattle, each in its right order, priced in men. It is the hearing that costs, friends — a crew can row at the unknown all year, but a NAMED dread ships aboard and takes an oar. Supper that night is quiet. She watches you carry it, and refills your cup, and does not say sorry, because she is not.', effects: { lore: 3, burnout: 3, athena: 1 } },
+          good: { text: '“North, then the singers, then the narrow water,” she says, and marks where the whirl breathes and where the cattle graze that must not be touched — exact, terrible, and YOURS now, friends, which is the whole difference between a road and a rumor. The men watch their captain fold the chart like a man who has decided something, and the benches pull easier for it.', effects: { lore: 4, athena: 1 } },
+          incredible: { text: 'She gives the route — and then, because a strong fleet amuses her more than a broken one ever could, she gives the footnotes, friends: which advice the pilots have wrong, what the singers actually sell, the one hour the strait exhales. No man has left her island better armed. At the shore she almost — almost — looks sorry to see the sails go. “Come back with the story,” she says. It is the closest thing to a blessing her kind can pour.', effects: { lore: 5, athena: 2 } },
+        },
+      },
+      right: {
+        label: 'Sing the war for stores',
+        tags: ['omen', 'guile'],
+        governingStats: { guile: 1 },
+        outcomes: {
+          bad: { text: 'She wants the war from a man who was inside it, and you give it well — too well, friends: three nights she keeps the fleet at anchor for the next verse, wine for words, while the men grow fat and slow at her tables. On the fourth morning her charts are yours as promised, and she waves you off like a season’s guest, and the sea has moved three days of weather into your road.', effects: { guile: 3, burnout: 2 } },
+          good: { text: 'A night’s telling for a season’s stores: you give her Troy from the inside — the horse’s dark, the held breath, the gates — and she pays like a queen, friends: casks, grain, dried figs, and a chart with her own pen-notes in the margins. “The singers lie,” she says at the shore, “except about me.” The fleet leaves heavier in the right places and lighter in the one that counts.', effects: { guile: 4, burnout: -2 } },
+          incredible: { text: 'You tell her the war — and then, friends, you tell her the part no one asks for: what it has cost to come home from it this far, benches empty, the name spent or hoarded. The witch, who has heard every hero polish himself for a thousand years, sets down her cup at an honest one. The stores are queenly; the chart is exact; and on the beach she says the thing you will row on for weeks: “Whatever the sea thinks, captain — it is wrong about you.”', effects: { guile: 5, burnout: -3, athena: 1 } },
+        },
+      },
+    },
+  },
+
   // ── The temptation of Act II: Circe (the soft year, offered again) ──
   {
     id: 'ody_tempt_circe',

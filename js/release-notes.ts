@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.22.0',
+    date: '2026-07-17',
+    title: 'The witch meets every fleet now',
+    notes: [
+      'Circe’s island was gated to the desperate — real Despair or a bled fleet — so six tellings in seven sailed straight past her. Arrive strong now and she has no lever on you, so she trades instead: sing her the war and she charts you the sea. The weary still get the soft year’s offer; a strong fleet rowed to exhaustion may meet either reading.',
+      'The act-2 itinerary’s quietest beat is now its second-most-varied, and the entropy gates guard both readings from rotting shut.',
+    ],
+  },
+  {
     version: '0.21.0',
     date: '2026-07-17',
     title: 'The finale reads the telling that earned it',

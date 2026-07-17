@@ -104,12 +104,28 @@ test('underworld variation floor: the grieving reading lives (P-B half 2, raised
   assert.ok(e.topShare <= 0.95, `one underworld reading covers ${(e.topShare * 100).toFixed(1)}% of runs`);
 });
 
+test('circe variation floor: the island meets every fleet now (pass 20)', () => {
+  // Pass 20: the temptation is gated to the weary (burnout ≥ 60 / hulls ≤ 5),
+  // which skipped the beat for ~86% of runs — so the strong fleet gets the
+  // professional reading (ody_circe_pilot, min expedition 6) instead.
+  // Measured at authoring (RUNS=1000, seed 0xE47): 874 runs met the island,
+  // pilot 795 / temptation 79, H=0.438 bits, top share 91%. Floors sit
+  // under the measurement (the cyclops precedent) to catch a gate rotting
+  // shut, not to pin the policy's exact mix.
+  const e = entropyOf(beatSeen.circe);
+  assert.ok(e.variants >= 2, `circe variants seen: ${e.variants} (expected ≥2 — a reading's gate rotted shut)`);
+  assert.ok(e.h >= 0.2, `circe entropy ${e.h} bits < 0.2`);
+  assert.ok(e.topShare <= 0.96, `one circe reading covers ${(e.topShare * 100).toFixed(1)}% of visits`);
+  assert.ok(beatRuns.circe >= RUNS * 0.7, `circe fired in only ${beatRuns.circe}/${RUNS} runs — the island went back to being skipped`);
+});
+
 test('the measured H=0 beats stay documented until half 2 raises them', () => {
-  // Circe / calypso / lotus deal exactly one card today (their variation is
+  // Calypso / lotus deal exactly one card today (their variation is
   // occurrence, side, and tier — not scene). This is the review's finding,
   // pinned as a fact: if authoring adds variants (P-B half 2), this test is
-  // the one to UPDATE — move the beat to the entropy-floor test above.
-  for (const beat of ['circe', 'calypso', 'lotus']) {
+  // the one to UPDATE — move the beat to the entropy-floor test above
+  // (circe graduated in pass 20).
+  for (const beat of ['calypso', 'lotus']) {
     if (!beatSeen[beat]) continue; // lotus fires in <1% of runs at this policy
     const e = entropyOf(beatSeen[beat]);
     assert.equal(e.variants, 1,
