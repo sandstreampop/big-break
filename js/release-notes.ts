@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.41.0',
+    date: '2026-07-17',
+    title: 'The recognitions — the dog and the nurse',
+    notes: [
+      'The two recognitions the poem is famous for join act 3. The old hound on the dung heap knows you through the rags — kneel to him whatever it costs, or walk past and pocket it. And at the foot-washing, the nurse’s thumbs find the boar-hunt scar — the hand on her throat says not yet, or you let her know you whole. The disguise can fool a hall; it cannot fool smell or thumbs.',
+    ],
+  },
+  {
     version: '0.40.0',
     date: '2026-07-17',
     title: 'Coming back for more',

@@ -510,4 +510,44 @@ export const ACT3_EVENTS: GameEvent[] = [
       },
     },
   },
+
+  // ── Pass 39: the recognitions — the two the poem is famous for. The dog
+  // at the gate and the nurse at the basin: the beggar-king is known, twice,
+  // by the only judges the disguise cannot fool — smell and thumbs. Plain
+  // budgets; the cost either way is carried in the words, where it belongs.
+  sea('ody_a3_argos', 3, {
+    tags: ['blood'],
+    prompt: 'On the dung heap by the gate, something raises its head — an old hound, ruined by twenty years, past standing. You trained him as a puppy, the summer before the ships. He knows you through the rags. The tail moves once. No one else has looked at you twice.',
+    recap: 'The old hound knew him first.',
+    left: {
+      label: 'Kneel to him, cover be damned', approach: 'might',
+      bad: 'You kneel — and the beggar who knows the king’s dog is suddenly interesting to men paid to notice interesting things. He goes in your arms while you count the eyes counting you: the sweetest and the most expensive minute of the disguise, friends, and the bill lands on the loyal before the day of the axes.',
+      good: 'You kneel in the muck and take his head in your hands, and the tail moves its once more, and twenty years go somewhere quiet to break. Let the hall’s men see a beggar who likes dogs — there are worse covers than kindness. He goes with your smell in his nose and your hand on his ears. Somebody buried him deep, later, and never said who ordered it.',
+      incredible: 'You kneel — and, this is the part the fire never believes, friends, and it is the truest part — you say his name. Quietly, into his ear: the first of your own words spoken on this island. Not to the son. Not to the wife. To the dog, who cannot be tortured for it and would not trade it if he could. He hears his name in the mouth that taught it to him, and then he is gone, easy as sleep. Every hard thing after was paid for in that minute.',
+    },
+    right: {
+      label: 'Walk past — the mission owns your face', approach: 'guile',
+      extra: { bad: { burnout: 2 } },
+      bad: 'You walk past, and it works, and no one ever knows what it cost — which is the problem, friends: a man can pocket only so many of those before the pocket tears. At the swineherd’s fire that night your hands shake, and the old man thinks it is hunger, and feeds you, and you let him think it.',
+      good: 'One tear, wiped with a thumb before it clears the beard — the only tax the disguise permits — and you walk past your own dog to your own door like a stranger. He watched you go, friends. And having seen you home — having finished the last of his one job — the old hound put his head down on twenty years of waiting and let it be enough.',
+      incredible: 'You walk past — and as you pass, you let your hand hang low, once: the old signal from the hunting years. HOLD. And the ruined tail goes still, friends, because the dog keeps the disguise better than the son managed. He holds like the last soldier of the first army, and dies at his post with his orders kept. The beggar at the gate owed his life to half that island by nightfall. He paid the dog first, in the only coin they ever shared: work.',
+    },
+  }),
+  sea('ody_a3_nurse_scar', 3, {
+    tags: ['blood'],
+    prompt: 'The queen orders the beggar’s feet washed, as guest-right — and of all hands in the house, the basin goes to the old nurse who raised you. Her thumbs know the way up your leg before her eyes do. The scar. The boar-hunt scar. Her breath stops in the middle of a word.',
+    recap: 'The nurse found the scar.',
+    left: {
+      label: 'The hand on her throat — not yet', approach: 'might',
+      bad: 'Too hard, too fast — she is seventy, friends, and the fright in her eyes as your hand closes is a wound you gave your own house on your first night back in it. She keeps the secret. She also keeps, for some days, a bruise-colored doubt about what exactly came home wearing her boy’s scar.',
+      good: 'Your hand takes her throat the way it took the helm in the strait — total, and gentle as arithmetic: not yet. And over your knuckles the fright in her eyes turns to the fiercest joy ever smothered in a kitchen. She nods a fraction. The basin spills. “Clumsy old woman,” she announces to the room, wringing the cloth, already lying for you like a veteran.',
+      incredible: 'Not yet, says the hand — and she does one better than silence, friends: she begins, that same hour, to sort the maids. Which sleep where; which laugh at whose jokes; which carry tales up the hill — a muster of the whole house, run under cover of laundry and delivered to the beggar in scraps: “these sheets are honest; those are not.” The day of the axes found the house already sorted into sheep and wolves by the one spy no suitor ever thought to pay: the woman who washed all their feet too.',
+    },
+    right: {
+      label: 'Let her know you whole', approach: 'lore',
+      bad: 'Joy at seventy is loud, friends. The gasp brings a maid’s head around the door, and the next hour is spent burying a sound — a story about a spider, a scolding, a dropped basin — and the maid carries her almost-tale up the hill anyway, where men who pay for almosts weigh it. The clock of the house runs faster from that night.',
+      good: 'You let the recognition land whole — and you learn why he trusted her, friends, because grief that old converts to discipline that fast in no other material: one breath of weeping into the wash-cloth, then dry eyes, then, briskly: “Your feet are filthy. The house has a hundred ears. Eat by the door and touch nothing.” The general he needed had been disguised, all these years, as the woman who scrubbed him.',
+      incredible: 'She weeps exactly once, soundlessly, into the cloth — and then she finishes washing the feet, friends, slowly, properly, all the way, twenty years of prayer being answered at the exact temperature of bathwater. And when she is done she gives the beggar-king his orders like a nurse: sleep. Eat. Let the old women handle the maids. He slept, friends — first honest sleep on his own island — because somebody he trusted was on watch. Some armies muster in kitchens.',
+    },
+  }),
 ];
