@@ -5,7 +5,7 @@
 // presenterCopy lint rail (tools/lint-content.mjs).
 
 import type { Pack, RunState } from '../../types.js';
-import { bardBeat, cycleHeard, noteOf, isNoteLine, NOTE_COVERS } from './bard-chatter.js';
+import { bardBeat, cycleHeard, noteOf, isNoteLine, NOTE_COVERS, noteVoicing } from './bard-chatter.js';
 import { odysseyFeel } from './feel.js';
 import { odysseySoundscape, resultCue, endingCue, speak } from './soundscape.js';
 import { friezeTableau } from './frieze.js';
@@ -393,12 +393,15 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // note is recomputed every run end, so a clean night clears it.
     const note = meta?.odyssey?.note;
     if (note && isNoteLine(note)) {
-      state.bardLine = note;
-      state.bardShown = [note];
+      // Which voicing speaks tonight (pass 26): the record knows one name
+      // per mistake; the fire has two ways of saying it.
+      const voiced = noteVoicing(note, state.flavorSeed || 1);
+      state.bardLine = voiced;
+      state.bardShown = [voiced];
       // The one-voice law (pass 25): the note now OWNS these endings for
       // this run — the memory deck card and the crowd's same-ending needle
       // read this and stand down. One confession, not three echoes.
-      state.noteCovers = NOTE_COVERS[note] || [];
+      state.noteCovers = NOTE_COVERS[voiced] || [];
     }
   },
   // Run end banks tonight's turning (summarize().fragment) into the pack's

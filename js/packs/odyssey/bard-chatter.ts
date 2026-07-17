@@ -155,6 +155,28 @@ export const CHATTER: Chatter[] = [
   { id: 'bn_hungry', kind: 'note', blocks: [
     { text: 'Last night the meadow took him, friends — and I will not pretend it was strange. The fleet was bled and the weight was aboard, and soft grass argues well against a hard bench. But a telling that stops in act one is a fee I cannot charge for. Tonight: further. At least as far as the cave.' },
   ] },
+  // ── Second voicings (pass 26): each note id has a sibling the stamp side
+  // picks by flavorSeed, so a veteran's confessions stop reciting. Same
+  // confession, different night at the fire. ──
+  { id: 'bn_shout_b', kind: 'note', blocks: [
+    { who: 'the woman by the woodpile', text: 'Say it before you start. Last night.' },
+    { text: 'Last night, friends, the captain introduced himself to the sea. Name, father, city — the full formal greeting, delivered to the one listener who never forgets an address. Tonight the same mouth is aboard. I make no promises about it. I only note that the water is ALREADY listening.' },
+  ] },
+  { id: 'bn_owl_b', kind: 'note', blocks: [
+    { text: 'A word about last night before the first oar goes in: the man reached his own water and the goddess was not in it. No storm, friends — worse. An absence. Tonight I will sing the rites at their full length, every one, and if the back row finds that slow, the back row may take it up with the owl.' },
+  ] },
+  { id: 'bn_beach_late_b', kind: 'note', blocks: [
+    { text: 'You will notice, friends, that the fire is built and the cup is full and the bard is HERE — which last night, two islands from home, the man I sing was not. He sat down on a beach and the tide took his footprints. I have thought about that beach all day at my nets. Tonight we row him off it.' },
+    { who: 'the potter’s boy', text: 'You don’t have nets.' },
+    { text: 'The nets, boy, are a figure. Sit.' },
+  ] },
+  { id: 'bn_bank_strong_b', kind: 'note', blocks: [
+    { who: 'the innkeeper', text: 'Before you begin — the house wants to know if tonight ends at the warm island again. For the pouring schedule.' },
+    { text: 'The house may hold its wine, friends. Last night a strong fleet took a soft harbor, and I let it, and I have heard about it from every bench between here and the well. Tonight the cup stays UP through the warm parts. Pour accordingly.' },
+  ] },
+  { id: 'bn_hungry_b', kind: 'note', blocks: [
+    { text: 'Last night, friends, the flowers won in the first water, and the fire went home early, and the woman by the woodpile did not even get to count the hulls at the cave. She has mentioned this. Twice. Tonight the telling owes her a cave, at minimum, and I intend to pay it.' },
+  ] },
 
   // ── Memory (I8): the crowd remembers previous tellings — gags accumulate
   // across runs the way the prophecy does. Keyed to the telling-ledger the
@@ -188,6 +210,24 @@ export const CHATTER: Chatter[] = [
   ] },
   { id: 'bcm_fee_nights', kind: 'memory', when: (s) => (s.tellingLedger?.count || 0) >= 5, blocks: [
     { text: 'Five nights of the long way home, friends, and the bowl by the woodpile still rings like a temple at noon — which is to say, empty. The sea is not the only thing at this fire owed a debt.' },
+  ] },
+  // ── Pass 26: the fire's memory grows — the endings that had no needle
+  // get theirs (one-voice guarded), and the long-ledger nights get texture. ──
+  { id: 'bcm_island_return', kind: 'memory', when: (s) => (s.tellingLedger?.lastEnding === 'calypso' || s.tellingLedger?.lastEnding === 'circe') && !(s.noteCovers || []).some((k) => k === 'calypso' || k === 'circe'), blocks: [
+    { who: 'the innkeeper', text: 'Last night you left him on the island and called it an ending. My wife cried. Then she asked why we never go anywhere warm.' },
+    { text: 'Tell your wife, friend, that the island asks nothing and that is its whole price. Tonight we row past it, and you may point at the man and say THERE, that is why we holiday on Ithaca like decent people.' },
+  ] },
+  { id: 'bcm_beach_return', kind: 'memory', when: (s) => s.tellingLedger?.lastEnding === 'burnout' && !(s.noteCovers || []).includes('burnout'), blocks: [
+    { who: 'the woman by the woodpile', text: 'Last night he sat down on the beach and you let the fire go out with him still sitting.' },
+    { text: 'I let the fire go LOW, which is a bard’s punctuation, not a bard’s surrender. Tonight it is built high — look at it — and we will see how long any man stays sitting beside a thing like that.' },
+  ] },
+  { id: 'bcm_sand_ledger', kind: 'memory', when: (s) => (s.tellingLedger?.crewLostTotal || 0) >= 20, blocks: [
+    { who: 'an old rower’s widow', text: 'Twenty men named in the sand at this fire now. I keep the count even when she doesn’t.' },
+    { text: 'Twenty, friends, and every one said once and properly. The sand keeps them better than marble would — marble forgets nothing and no one visits it. This fire visits. Throw on a branch and we begin.' },
+  ] },
+  { id: 'bcm_ten_nights', kind: 'memory', when: (s) => (s.tellingLedger?.count || 0) >= 10, blocks: [
+    { who: 'the man who wants the horse', text: 'Ten nights. In Smyrna they’d have done the horse by now.' },
+    { text: 'In Smyrna, friend, they would have done the horse BADLY, with a drum, and you would have come home to this fire complaining about the wheels. Ten nights of the sea done right beats one wooden horse done loud. Ask me again at twenty.' },
   ] },
 ];
 
@@ -297,7 +337,31 @@ export const NOTE_COVERS: Record<string, string[]> = {
   bn_beach_late: ['burnout'],
   bn_bank_strong: ['calypso', 'circe'],
   bn_hungry: ['lotus'],
+  // The second voicings confess the same endings as their siblings.
+  bn_shout_b: ['wrath'],
+  bn_owl_b: [],
+  bn_beach_late_b: ['burnout'],
+  bn_bank_strong_b: ['calypso', 'circe'],
+  bn_hungry_b: ['lotus'],
 };
+
+// Which voicing of tonight's note speaks (pass 26): noteOf still returns
+// the BASE id (the record side knows one name per mistake); the stamp side
+// picks between the base and its sibling by flavorSeed, so the same
+// confession stops reciting across a veteran's nights. Deterministic per
+// run; an unknown or sibling-less id passes through unchanged.
+const NOTE_VOICINGS: Record<string, string[]> = {
+  bn_shout: ['bn_shout', 'bn_shout_b'],
+  bn_owl: ['bn_owl', 'bn_owl_b'],
+  bn_beach_late: ['bn_beach_late', 'bn_beach_late_b'],
+  bn_bank_strong: ['bn_bank_strong', 'bn_bank_strong_b'],
+  bn_hungry: ['bn_hungry', 'bn_hungry_b'],
+};
+export function noteVoicing(note: string, flavorSeed: number): string {
+  const pool = NOTE_VOICINGS[note];
+  if (!pool) return note;
+  return pool[Math.abs(Math.trunc(flavorSeed || 1)) % pool.length];
+}
 
 export const bardPlugin: Plugin = {
   id: 'odyssey_bard',

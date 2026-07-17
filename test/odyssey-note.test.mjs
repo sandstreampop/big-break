@@ -41,12 +41,30 @@ test('recordMeta writes the note, a clean night clears it, shared water touches 
 });
 
 test('applySetup stamps the note as tonight’s cold open — and the beat speaks it', () => {
-  const state = { flags: [], bardLine: 'bc_open_room', bardShown: ['bc_open_room'] };
+  // flavorSeed picks the voicing (pass 26): even → the base id.
+  const state = { flags: [], flavorSeed: 2, bardLine: 'bc_open_room', bardShown: ['bc_open_room'] };
   odysseyPresenter.applySetup(state, {}, { odyssey: { note: 'bn_shout' } }, false);
   assert.strictEqual(state.bardLine, 'bn_shout');
   assert.deepStrictEqual(state.bardShown, ['bn_shout']);
   const beat = bardBeat(state, { tags: [] });
   assert.ok(beat && beat.blocks.some((b) => /the shout/i.test(b.text)), 'the beat must speak the note');
+});
+
+test('the same confession has two voicings, and both own the same endings (pass 26)', () => {
+  const stamp = (flavorSeed) => {
+    const s = { flags: [], flavorSeed, bardLine: 'bc_open_room', bardShown: ['bc_open_room'] };
+    odysseyPresenter.applySetup(s, {}, { odyssey: { note: 'bn_shout' } }, false);
+    return s;
+  };
+  const base = stamp(2), alt = stamp(1);
+  assert.strictEqual(base.bardLine, 'bn_shout');
+  assert.strictEqual(alt.bardLine, 'bn_shout_b');
+  assert.deepStrictEqual(base.noteCovers, alt.noteCovers, 'both voicings own the wrath');
+  assert.deepStrictEqual(alt.noteCovers, ['wrath']);
+  const beat = bardBeat(alt, { tags: [] });
+  assert.ok(beat && beat.blocks.some((b) => /introduced himself to the sea/i.test(b.text)), 'the sibling speaks its own words');
+  // Same seed → same voicing, every render (determinism).
+  assert.strictEqual(stamp(7).bardLine, stamp(7).bardLine);
 });
 
 test('a daily telling never carries the note (the shared sea is nobody’s confession)', () => {

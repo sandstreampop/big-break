@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.28.0',
+    date: '2026-07-17',
+    title: 'The fire’s memory grows',
+    notes: [
+      'Every bard’s-note confession now has a second voicing — same mistake, different night at the fire — so a veteran’s cold opens stop reciting. And the crowd’s memory grows four needles: the innkeeper’s wife has opinions about the warm islands, the woodpile defends her fire against the beach, the widow keeps the twenty-name count, and the man who wants the horse has heard what Smyrna does in ten nights.',
+      'The one-voice law holds everywhere: a needle stands down whenever the cold open already confessed its ending.',
+    ],
+  },
+  {
     version: '0.27.0',
     date: '2026-07-17',
     title: 'One voice owns last night, and the ending breathes',
