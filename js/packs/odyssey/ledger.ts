@@ -17,6 +17,7 @@
 // All pure reads. Voice: the bard pricing his own ledger.
 
 import { FIRES } from './fires.js';
+import { encodeStations } from './vase.js';
 
 export const ODYSSEY_STAT_INFO: Record<string, string> = {
   might: 'The strong arm — boarding, rowing-down, the spear set in the deck. Feeds every door that says <b>fight it</b>, and the Hall’s bow speaks for it at the last.',
@@ -83,6 +84,13 @@ export function odysseyResume(meta: any): { label: string; value: string; head?:
 export const odysseyHistoryEntry = (summary: any) => ({
   renown: Math.max(0, Math.round(summary.renown || 0)),
   crewLost: Math.max(0, Math.round(summary.crewLost || 0)),
+  // The gallery of nights (pass 24): the vase's needs, packed small — final
+  // hulls, the two powers, the stations faced. vaseFromHistory (vase.ts)
+  // re-hydrates these into the live vase's exact rules.
+  vExp: Math.max(0, Math.round(summary.expedition || 0)),
+  vAth: Math.max(0, Math.round(summary.athena || 0)),
+  vPos: Math.max(0, Math.round(summary.poseidon || 0)),
+  vSt: encodeStations(summary.flags || []),
 });
 export const odysseyHistoryStat = (h: any): string =>
   h.renown == null && h.crewLost == null ? '' : `🌟${h.renown ?? 0} · ⚰${h.crewLost ?? 0}`;

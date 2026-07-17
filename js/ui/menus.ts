@@ -234,6 +234,10 @@ function renderTrophies() {
 
   if (meta.runHistory?.length) {
     s.append(el('h3', 'wall-tier', 'Past Lives'));
+    // A pack may paint the remembered runs (historyGallery — the odyssey's
+    // gallery of nights); the rows below stay the neutral record.
+    const gallery = PRES.historyGallery?.(meta.runHistory);
+    if (gallery) s.append(el('div', 'history-gallery', gallery));
     const hist = el('div', 'history-list');
     for (const h of meta.runHistory) {
       const inst = activePack.loadoutById(h.loadout ?? h.instrument); // h.instrument: pre-rename saves

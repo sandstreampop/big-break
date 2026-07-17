@@ -1473,6 +1473,12 @@ async function checkOdysseyClarity(browser, base) {
     tutorialDone: true, coach: { card: true, result: true },
     lifetime: { swipes: 90, incredibles: 4, bads: 12, byLoadout: { kings_hall: { runs: 3, wins: 1 } }, byPath: {} },
     odyssey: { fragments: ['sea'], tellings: { count: 3, byEnding: { nostos: 1, wrath: 2 }, named: 2, nobody: 1, crewLostTotal: 11 } },
+    // The gallery of nights (pass 24): one painted row (vase fields) and one
+    // pre-vase row — the Trophy Room must paint exactly the one that can be.
+    runHistory: [
+      { date: '2026-07-16', loadout: 'kings_hall', path: 'nostos', result: 'success', endingKey: 'nostos', daily: false, renown: 7, crewLost: 3, vExp: 9, vAth: 6, vPos: 2, vSt: 'cui' },
+      { date: '2026-07-15', loadout: 'temple_steps', path: null, result: null, endingKey: 'wrath', daily: false, renown: 3, crewLost: 12 },
+    ],
     settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
   };
   const label = 'odyssey clarity';
@@ -1521,6 +1527,31 @@ async function checkOdysseyClarity(browser, base) {
     if (!/Phemios of Smyrna/.test(roster.text)) throw new Error(`[${label}] the empty place is not on the roster`);
     await page.evaluate(() =>
       [...document.querySelectorAll('#screen-roster button')].find((b) => /Back/.test(b.textContent || ''))?.click());
+    await page.waitForSelector('#screen-title.active', { timeout: 8000 });
+
+    // The gallery of nights (pass 24): the Trophy Room's Past Lives paints
+    // the ONE row that carries vase fields — sized, captioned, and the
+    // pre-vase row honestly unpainted.
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-title button')].find((b) => /Trophy Room/.test(b.textContent || ''))?.click());
+    await page.waitForSelector('#screen-trophies.active', { timeout: 8000 });
+    const gallery = await page.evaluate(() => {
+      const g = document.querySelector('#screen-trophies .history-gallery');
+      const nights = g ? [...g.querySelectorAll('.ody-gallery-night')] : [];
+      return {
+        present: !!g,
+        nights: nights.length,
+        caption: nights[0]?.querySelector('figcaption')?.textContent || '',
+        figHeights: nights[0] ? [...nights[0].querySelectorAll('.ody-vase-fig svg')].map((s) => s.getBoundingClientRect().height) : [],
+      };
+    });
+    if (!gallery.present || gallery.nights !== 1) throw new Error(`[${label}] the gallery paints ${gallery.nights} nights — expected exactly the one painted row`);
+    if (gallery.caption !== 'Home') throw new Error(`[${label}] the remembered homecoming captions "${gallery.caption}"`);
+    if (!gallery.figHeights.length || gallery.figHeights.some((h) => h < 4 || h > 30)) {
+      throw new Error(`[${label}] gallery vase figures mis-sized (${gallery.figHeights.map((h) => Math.round(h)).join(',')})`);
+    }
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-trophies button')].find((b) => /Back/.test(b.textContent || ''))?.click());
     await page.waitForSelector('#screen-title.active', { timeout: 8000 });
 
     // The Help sheet — from a live run's HUD.

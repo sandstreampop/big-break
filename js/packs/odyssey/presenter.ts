@@ -28,7 +28,7 @@ import { odysseyShareText, odysseyNews } from './share.js';
 import { odysseyRoster } from './roster.js';
 import { odysseyFeeds, ODYSSEY_FEED_CHROME } from './feeds.js';
 import { ODYSSEY_WALL_ITEMS, ODYSSEY_WALL_COPY } from './gifts.js';
-import { nightVase } from './vase.js';
+import { nightVase, vaseFromHistory } from './vase.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -599,6 +599,25 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   resume: odysseyResume,
   historyEntry: odysseyHistoryEntry,
   historyStat: odysseyHistoryStat,
+  // The gallery of nights (pass 24): the last remembered tellings, each
+  // painted by the SAME rules as the live Night's Vase (vaseFromHistory
+  // re-hydrates the row). Rows from before the vase existed stay unpainted
+  // — old nights don't get invented pictures.
+  historyGallery(rows) {
+    // Window-guarded like roster.ts: this hook is exercised by Node tests
+    // and the lint harvest, where the settings-backed toggle has no meta.
+    const still = typeof window !== 'undefined' && reducedMotion();
+    const painted = (rows || [])
+      .map((h) => ({ h, v: vaseFromHistory(h, still) }))
+      .filter((x) => x.v)
+      .slice(0, 5);
+    if (!painted.length) return null;
+    const caption = (h: any) => h.result
+      ? (h.result === 'success' ? 'Home' : h.result === 'partial' ? 'Nearly' : 'Lost')
+      : ({ wrath: 'The sea', lotus: 'The meadow', circe: 'The soft year', calypso: 'The island', burnout: 'The beach' } as any)[h.endingKey] || '—';
+    return `<div class="ody-gallery">${painted.map(({ h, v }) =>
+      `<figure class="ody-gallery-night">${v!.html}<figcaption>${caption(h)}</figcaption></figure>`).join('')}</div>`;
+  },
   twistNote: odysseyTwistNote,
   // The cash-outs are BANKED tellings, not defeats: the verdict ribbon and
   // the history rows say so (told endings, never game-over screens).

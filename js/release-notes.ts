@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.26.0',
+    date: '2026-07-17',
+    title: 'The gallery of nights',
+    notes: [
+      'The Night’s Vase becomes a shelf: the Trophy Room’s Past Lives now opens with your last five tellings painted small — each remembered night re-drawn by exactly the rules that painted it live, fleet count, stations, sea and all, with a one-word caption for how it ended.',
+      'Nights told before the vase existed stay unpainted. The gallery does not invent pictures for the past.',
+    ],
+  },
+  {
     version: '0.25.0',
     date: '2026-07-17',
     title: 'The night, painted',

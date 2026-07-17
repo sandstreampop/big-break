@@ -23,6 +23,34 @@ import type { SeaState } from './art/figures.js';
 // what the vase depicts, in paint order.
 export interface NightVase { html: string; motifs: string[]; }
 
+// ── The gallery of nights (pass 24) ──
+// A Past-Lives row stores the vase's needs as four tiny scalars (via
+// presenter.historyEntry): final hulls, the two powers, and the stations
+// faced packed into a short string. vaseFromHistory re-hydrates a minimal
+// state and reuses nightVase whole, so a remembered night paints with
+// exactly the live vase's rules. Rows from before pass 24 lack the fields
+// and return null — old nights stay unpainted rather than lying.
+const STATION_CODES: [string, string][] = [
+  ['c', 'ody_done_cyclops'], ['u', 'ody_done_underworld'],
+  ['L', 'ody_stayed_lotus'], ['C', 'ody_stayed_circe'], ['K', 'ody_stayed_calypso'],
+  ['l', 'ody_done_lotus'], ['i', 'ody_done_circe'], ['k', 'ody_done_calypso'],
+];
+export function encodeStations(flags: string[]): string {
+  return STATION_CODES.filter(([, f]) => flags.includes(f)).map(([c]) => c).join('');
+}
+export function vaseFromHistory(h: any, still = false): NightVase | null {
+  if (h?.vExp == null || typeof h.vSt !== 'string') return null;
+  const flags = STATION_CODES.filter(([c]) => h.vSt.includes(c)).map(([, f]) => f);
+  return nightVase({
+    flags,
+    expedition: h.vExp,
+    athena: h.vAth ?? 0,
+    poseidon: h.vPos ?? 0,
+    ending: { key: h.endingKey ?? null, result: h.result ?? null },
+    path: h.path ?? null,
+  } as RunState, still);
+}
+
 export function nightVase(state: RunState, still = false): NightVase {
   const flags = state.flags || [];
   const key = state.ending?.key ?? state.path ?? null;

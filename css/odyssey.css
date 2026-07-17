@@ -810,13 +810,15 @@ body.ody-breath svg.px .pxf { animation-play-state: paused; }
    with the run's own figures in black-figure order, the sea it earned
    running beneath. Degrades to a static band under reduced motion (the
    figures carry px-still). Fits 320px: the band wraps, never clips. */
+/* STYLE.md box law: radius 0, no gradients, no shadows — the vase is a
+   hard-ruled terracotta panel with a double bone/clay rule, flat fill. */
 .ody-vase {
   margin: 10px auto 4px;
   max-width: 340px;
-  border-radius: 8px;
-  background: linear-gradient(180deg, #7a3b22, #6b3018);
-  border: 1px solid #93502e;
-  box-shadow: inset 0 0 0 3px #23120a, inset 0 0 0 4px #93502e;
+  border-radius: 0;
+  background: #6b3018;
+  border: 2px solid #23120a;
+  outline: 1px solid #93502e;
   padding: 10px 12px 6px;
   overflow: hidden;
 }
@@ -839,3 +841,20 @@ body.ody-breath svg.px .pxf { animation-play-state: paused; }
   .ody-vase { max-width: 94vw; padding: 8px 8px 5px; }
   .ody-vase-band { gap: 7px; }
 }
+
+/* ── Pass 24 — the gallery of nights: the remembered tellings' vases, small,
+   above the Past-Lives rows. Each night shrinks the live vase's rules to a
+   shelf ornament; captions stay one word. Wraps at 320px, never clips. */
+.history-gallery .ody-gallery {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 4px 0 10px;
+}
+.ody-gallery-night { margin: 0; text-align: center; }
+.ody-gallery-night .ody-vase { max-width: 120px; padding: 5px 6px 3px; margin: 0; }
+.ody-gallery-night .ody-vase-band { gap: 4px; min-height: 16px; }
+.ody-gallery-night .ody-vase-fig { height: 14px; }
+.ody-gallery-night .ody-vase-sea svg { height: 6px; }
+.ody-gallery-night figcaption { font-size: .68rem; color: var(--dim); margin-top: 3px; }

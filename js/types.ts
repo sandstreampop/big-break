@@ -540,6 +540,10 @@ export interface Presenter {
   // names no meter; a pack without them gets the shell's minimal neutral résumé.
   resume?: (meta: any) => { label: string; value: string; head?: boolean }[];
   historyStat?: (h: any) => string;
+  // An optional pack-rendered strip ABOVE the Past-Lives rows (the odyssey's
+  // gallery of nights). Pure html from the rows the shell already stores;
+  // null/absent renders nothing — the list is unchanged without it.
+  historyGallery?: (rows: any[]) => string | null;
   // The pack's own fields to store on a Past-Lives run-history row (music: its
   // peak fame), merged over the shell's neutral row (loadout/path/result/…).
   historyEntry?: (summary: any) => Record<string, any>;
