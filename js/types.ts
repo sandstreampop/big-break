@@ -864,6 +864,14 @@ export interface Presenter {
   // startGauntletGeneric) — pack-voiced; the shell's neutral line applies
   // when absent. Packs with a bespoke starter (startGauntlet) ignore this.
   gauntletCopy?: { sub?: string };
+  // The fire re-lights (pass 37): a pack-voiced "previously, in this
+  // telling" shown when a saved run is resumed mid-act (the shell gates it
+  // to runs with three or more cards played). Same block shape as `recap`;
+  // return null to skip. Pure read — resumes must not perturb the stream.
+  resumeRecap?: (state: RunState, seed: number) => {
+    kicker?: string; title: string;
+    blocks: { label?: string; html: string; cls?: string }[];
+  } | null;
   // The sent water (pass 35): a pack may re-voice the ?sail= challenge
   // surfaces — the title button, the setup sheet's head/sub. The shell's
   // neutral defaults cover packs that don't.

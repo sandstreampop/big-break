@@ -17,7 +17,7 @@ import { reducedMotion } from '../../ui/dom.js';
 import { heldTurnings, justLanded, fragmentShelf, TURNING_NAMES } from './shelf.js';
 import { godPulse } from './alive.js';
 import { ODYSSEY_TROPHIES, ODYSSEY_TROPHY_SPECIALS } from './trophies.js';
-import { odysseyRecap, ACT_TEXT } from './recap.js';
+import { odysseyRecap, odysseyResumeRecap, ACT_TEXT } from './recap.js';
 import {
   ODYSSEY_STAT_INFO, ODYSSEY_HELP_BLOCKS,
   odysseyResume, odysseyHistoryEntry, odysseyHistoryStat, odysseyTwistNote,
@@ -164,6 +164,9 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // the road ahead (the fixed overture rides as the recap's last block).
   // Act 1 returns null, so the opening night keeps its fixed intro above.
   recap: odysseyRecap,
+  // The fire re-lights (pass 37): a resumed telling reorients its bard —
+  // count, name, gods, and the last stretch retold — before the next card.
+  resumeRecap: odysseyResumeRecap,
   // The second screen (ADR-0014, pass 15): word travels. Three rooms — the
   // harbor wall, Olympus, and this very fire — react at landmarks,
   // temptations, act breaks, and the ending; ambient seas stay quiet. The

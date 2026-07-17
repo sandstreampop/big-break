@@ -128,7 +128,10 @@ export function actInterstitial(step) {
   // takeover — kicker, title, labeled blocks — in place of the default
   // act-intro copy. The rest of the interstitial (twist note, press, inbox)
   // still rides below it.
-  const recap = PRES.recap?.(run, step.act, run.flavorSeed || 1);
+  // A resume step (pass 37) carries its own precomputed recap spec; an act
+  // start asks the pack's act recap as before.
+  const recap = step.recap || PRES.recap?.(run, step.act, run.flavorSeed || 1);
+  const resume = step.kind === 'resume';
   const box = el('div', 'result-card act-card' + (recap ? ' recap-card' : ''));
   if (recap) {
     if (recap.kicker) box.append(el('div', 'recap-kicker', recap.kicker));
@@ -168,7 +171,7 @@ export function actInterstitial(step) {
   // The act-break standings panel is the pack's (music's "This week on the Hot
   // 10"): the shell renders the rows it returns and fires the celebration beat
   // if the week earned one. Packs without standings return null.
-  const chart = PRES.actBreakChart?.(run);
+  const chart = resume ? null : PRES.actBreakChart?.(run);
   if (chart) {
     const cw = el('div', 'act-break-chart');
     cw.append(el('div', 'trades-head', chart.head));
@@ -183,8 +186,10 @@ export function actInterstitial(step) {
   // not get an empty disclosure widget), and its label is the pack's
   // (presenter.recapFold) — the old hard-coded villa line was one genre's
   // copy in the neutral shell (caught by the 2026-07 odyssey recap review).
-  const headlines = PRES.headlines?.(run, 2) || [];
-  const dms = PRES.dms?.(run, 2) || [];
+  // Act-break texture (press, inbox, feeds) stays with the act break — a
+  // resume reorients and gets out of the way.
+  const headlines = resume ? [] : PRES.headlines?.(run, 2) || [];
+  const dms = resume ? [] : PRES.dms?.(run, 2) || [];
   const foldable = recap && (headlines.length || dms.length);
   const flavourHost = foldable ? el('details', 'recap-fold') : box;
   if (foldable) {
@@ -212,7 +217,7 @@ export function actInterstitial(step) {
     flavourHost.append(inbox);
   }
   // ADR-0014 — the week from the outside: the nation's feeds at the act break.
-  const recapFeed = PRES.feeds?.(run, { kind: 'recap', act: step.act });
+  const recapFeed = resume ? null : PRES.feeds?.(run, { kind: 'recap', act: step.act });
   if (recapFeed) box.append(feedTeaser(recapFeed, true, { key: `recap:${step.act}` }));
   box.append(el('p', 'tap-hint', 'tap to continue'));
   ov.append(box);

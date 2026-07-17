@@ -293,7 +293,16 @@ export function startGauntletGeneric() {
 export function resumeRun() {
   if (run.phase === 'crossroads') nav.crossroads();
   else if (run.phase === 'finale') nav.finalSet();
-  else nav.dealCard();
+  else {
+    // The fire re-lights (pass 37): a mid-telling return gets reoriented
+    // before the next card — the pack's resume recap, when it speaks and
+    // there is a telling worth recapping (three cards in). The spec rides
+    // the step so the interstitial never recomputes it.
+    const recap = (run.cardLog || []).length >= 3
+      ? PRES.resumeRecap?.(run, run.flavorSeed || 1) : null;
+    if (recap) nav.actInterstitial({ kind: 'resume', act: run.act, notes: [], recap });
+    else nav.dealCard();
+  }
 }
 
 export function startTutorial() {

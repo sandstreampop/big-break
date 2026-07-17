@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.39.0',
+    date: '2026-07-17',
+    title: 'The fire re-lights',
+    notes: [
+      'Coming back to a telling you left mid-voyage no longer drops you on a bare card. The bard picks the thread back up first: the fleet’s count, where the name stands with the sea, the gods’ mood, and the last stretch retold in the deck’s own lines — then the next card deals. One tap and you’re rowing again, knowing exactly where you were.',
+    ],
+  },
+  {
     version: '0.38.0',
     date: '2026-07-17',
     title: 'The crossroads reads the telling',

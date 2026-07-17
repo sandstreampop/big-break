@@ -1648,6 +1648,118 @@ async function checkOdysseyClarity(browser, base) {
 // start it from the title, and assert the run that deals is actually
 // scarred (flag + nine hulls) with a live card up. The Same Sea's renamed
 // daily button is asserted on the same boot.
+// The fire re-lights (pass 37): resuming a saved mid-telling run must
+// reorient — the resume recap overlay (kicker + the house-count blocks +
+// the last stretch) shows once, dismisses clean, and the telling still
+// reaches a terminal screen. Seeding is session-guarded so the reload
+// KEEPS the saved run (the plain seedScript would wipe it).
+async function checkOdysseyResume(browser, base) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    playerName: 'Tester',
+    settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
+  };
+  const label = 'odyssey resume';
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(`try {
+    if (!sessionStorage.getItem('bb_resume_seeded')) {
+      sessionStorage.setItem('bb_resume_seeded', '1');
+      localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+      localStorage.removeItem('bigbreak_run_v1_odyssey');
+    }
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+    await clickJS(page, 'button.btn.primary');
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+    // Play six cards so the telling is worth recapping (the shell's gate
+    // is three), dismissing whatever beats land between them.
+    let played = 0;
+    const deadline = Date.now() + 45000;
+    while (played < 6 && Date.now() < deadline) {
+      const k = await page.evaluate(() => {
+        if (document.querySelector('#overlay.active')) return 'overlay';
+        if (document.querySelector('#screen-game.active .choice-btn.choice-left:not(.chosen):not(.unchosen)')) return 'card';
+        return 'wait';
+      });
+      if (k === 'overlay') {
+        await page.waitForFunction(() => {
+          const ov = document.querySelector('#overlay.active');
+          return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+        }, null, { timeout: 8000 }).catch(() => {});
+        await page.evaluate(() => {
+          const ov = document.querySelector('#overlay.active');
+          (ov?.querySelector('.gear-choices button') || ov)?.click();
+        });
+      } else if (k === 'card') {
+        await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+        played++;
+      }
+      await page.waitForTimeout(90);
+    }
+    if (played < 6) throw new Error(`[${label}] only ${played} cards played — the run never got deep enough to resume`);
+    // Step away and come back: reload keeps the run, Resume must reorient.
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await page.evaluate(() => document.querySelector('button.btn.primary')?.click()); // Resume
+    await page.waitForSelector('#overlay.active .recap-card', { timeout: 10000 });
+    const recap = await page.evaluate(() => ({
+      kicker: document.querySelector('#overlay.active .recap-kicker')?.textContent || '',
+      labels: [...document.querySelectorAll('#overlay.active .recap-label')].map((x) => x.textContent),
+      chartRows: document.querySelectorAll('#overlay.active .act-break-chart').length,
+    }));
+    if (!/FIRE|EMBERS|CUP/.test(recap.kicker)) throw new Error(`[${label}] the resume kicker is missing ("${recap.kicker}")`);
+    if (!recap.labels.includes('The count')) throw new Error(`[${label}] the resume recap never counts the house (${recap.labels})`);
+    if (!recap.labels.includes('The last stretch')) throw new Error(`[${label}] the last stretch went unretold (${recap.labels})`);
+    if (recap.chartRows) throw new Error(`[${label}] act-break texture leaked into the resume`);
+    // Dismiss and prove the run still advances to a terminal screen.
+    await page.waitForFunction(() => document.querySelector('#overlay.active')?.hasAttribute('data-armed'), null, { timeout: 8000 });
+    await page.evaluate(() => document.querySelector('#overlay.active')?.click());
+    {
+      const end = Date.now() + 90000;
+      while (Date.now() < end) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-ending.active')) return 'ending';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          if (document.querySelector('#screen-crossroads.active .pick-card')) return 'cross';
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left:not(.chosen):not(.unchosen)')) return 'card';
+          return 'wait';
+        });
+        if (k === 'ending') break;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+          }, null, { timeout: 8000 }).catch(() => {});
+          await page.evaluate(() => {
+            const ov = document.querySelector('#overlay.active');
+            (ov?.querySelector('.gear-choices button') || ov)?.click();
+          });
+        } else if (k === 'cross') {
+          await page.evaluate(() => document.querySelector('#screen-crossroads.active .pick-card')?.click());
+        } else if (k === 'card') {
+          await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+        }
+        await page.waitForTimeout(90);
+      }
+    }
+    if (!(await page.$('#screen-ending.active'))) throw new Error(`[${label}] the resumed telling never reached a terminal screen`);
+    if (errors.length) throw new Error(`[${label}] ${errors[0]}`);
+    console.log(`✓  ${label}: the fire re-lights — resume reorients (count + last stretch, no act-break texture), dismisses clean, and the telling still ends`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 // The sent water (pass 35): a ?sail= link is the share's playable half.
 // Drive the WHOLE flow: the title offers the sender's sea, the setup
 // speaks it, the minted run carries the seed and stays unforked (a
@@ -2666,6 +2778,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseySentWater(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyResume(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

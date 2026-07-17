@@ -15,7 +15,7 @@
 // actIntro.scene; a recap must not cost the fire its own picture).
 
 import type { Presenter, RunState } from '../../types.js';
-import { mulberry32 } from '../../engine.js';
+import { mulberry32, findEvent } from '../../engine.js';
 import { hearthScene } from './hearth.js';
 import { seaStateOf } from './frieze.js';
 import { crewAtLaunch } from './crew.js';
@@ -97,6 +97,52 @@ const KICKERS = [
   'THROW ON A BRANCH — THE TALE DRAWS BREATH.',
   'THE BARD REFILLS HIS CUP AND COUNTS THE HOUSE.',
 ];
+
+// ── The fire re-lights (pass 37): the resume recap ──
+// A bard picking the tale back up for a listener who stepped away: the
+// same house-count blocks the act break uses (count, name, gods — one
+// source, so a resumed night and a banked night can never disagree about
+// the same telling), plus the last stretch retold from the cardLog's own
+// recap lines. Works in EVERY act (unlike the act recap, which act 1
+// skips — a resumed act 1 still deserves reorientation).
+
+const RESUME_KICKERS = [
+  'THE FIRE RE-LIGHTS. THE TALE PICKS UP ITS THREAD.',
+  'BACK TO THE FIRE — THE CUP IS WHERE YOU LEFT IT.',
+  'THE EMBERS REMEMBER. SIT; THE TELLING WAITED.',
+];
+
+const ACT_TITLES: Record<number, string> = {
+  1: 'The Sack and the Sea', 2: 'Witches and the Dead', 3: 'The Narrow Way',
+};
+
+// The last stretch, in the deck's own recap lines (cardLog stores event
+// ids; the one-line recaps live on the events). Resolved via the active
+// engine — pure reads, no draws.
+function lastStretch(state: RunState): string | null {
+  const rows = (state.cardLog || []).slice(-3);
+  const bits = rows.map((r: any) => findEvent(r.e)?.recap).filter(Boolean);
+  return bits.length ? bits.join(' ') : null;
+}
+
+export const odysseyResumeRecap: NonNullable<Presenter['resumeRecap']> = (state, seed) => {
+  const rng = mulberry32((((seed || 1) >>> 0) ^ 0x9ea7) || 1);
+  const still = typeof window !== 'undefined' && reducedMotion() ? ' px-still' : '';
+  const blocks: { label?: string; html: string; cls?: string }[] = [
+    { html: hearthScene(state), cls: 'recap-scene' + still },
+    { label: 'The count', html: countLine(state, rng) },
+  ];
+  const name = nameLine(state, rng);
+  if (name) blocks.push({ label: 'The name', html: name });
+  blocks.push({ label: 'The gods', html: godsLine(state, rng) });
+  const last = lastStretch(state);
+  if (last) blocks.push({ label: 'The last stretch', html: last });
+  return {
+    kicker: pick(rng, RESUME_KICKERS),
+    title: ACT_TITLES[state.act] || ACT_TITLES[3],
+    blocks,
+  };
+};
 
 export const odysseyRecap: NonNullable<Presenter['recap']> = (state, act, seed) => {
   if (act <= 1 || act > 3) return null;
