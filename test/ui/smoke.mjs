@@ -2186,8 +2186,25 @@ async function checkOdysseyLedger(browser, base) {
     if (!/2 of 3 turnings/.test(shared)) throw new Error(`[${label}] the share text does not carry the knowing bard's honest floor (got: "${shared}")`);
     if (/undefined|NaN/.test(shared)) throw new Error(`[${label}] the share text leaks (got: "${shared}")`);
     if (!(await page.$('#screen-ending.active'))) throw new Error(`[${label}] pressing share left no ending screen`);
+    // The vase, fired (pass 43): the poster rasterizes IN Chromium — real
+    // SVG→canvas silhouetting, not a stub. Drive the module directly and
+    // hold the file to its own claims (a PNG of real weight, right name).
+    const poster = await page.evaluate(async () => {
+      try {
+        const m = await import('/js/packs/odyssey/sharecard.js');
+        const f = await m.odysseyShareImage({
+          endingKey: 'nostos', result: 'success', path: 'nostos',
+          expedition: 8, athena: 6, poseidon: 1,
+          flags: ['ody_done_cyclops', 'ody_done_underworld'], loadout: 'kings_hall',
+        }, 30, 'The Bed of Living Oak');
+        return f ? { name: f.name, type: f.type, size: f.size } : { err: 'null file' };
+      } catch (e) { return { err: String(e) }; }
+    });
+    if (!poster || poster.err) throw new Error(`[${label}] the vase poster failed to fire: ${poster?.err}`);
+    if (poster.type !== 'image/png' || poster.name !== 'odyssey-vase.png') throw new Error(`[${label}] wrong poster file (${poster.name}, ${poster.type})`);
+    if (poster.size < 15000) throw new Error(`[${label}] the poster weighs ${poster.size} bytes — the band did not rasterize`);
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
-    console.log(`✓  ${label}: the knowing bard's run-end screen shows the shelf (${ledger.filled} filled slots), the honest floor, the night's vase (${vase.figs} figures over the sea) — and the telling travels (share carries the verdict + turnings)`);
+    console.log(`✓  ${label}: the knowing bard's run-end screen shows the shelf (${ledger.filled} filled slots), the honest floor, the night's vase (${vase.figs} figures over the sea) — the telling travels (share carries the verdict + turnings), and the vase fires as a ${Math.round(poster.size / 1024)}KB poster`);
   } finally {
     await ctx.close();
   }

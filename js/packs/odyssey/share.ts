@@ -31,14 +31,22 @@ const END_VERDICT: Record<string, string> = {
   burnout: 'THE ROWING ENDED',
 };
 
+// The one verdict line, shared by the text and the poster (pass 43) so the
+// two shares can never disagree about the same telling.
+export function shareVerdictParts(summary: any): { fire: string; road: string; verdict: string } {
+  return {
+    fire: FIRES.find((f) => f.id === summary.loadout)?.name || 'A fire',
+    road: summary.path ? (odysseyManifest.paths[summary.path]?.name || summary.path) : 'no road chosen',
+    verdict: summary.result ? summary.result.toUpperCase()
+      : END_VERDICT[summary.endingKey] || 'THE TELLING ENDED',
+  };
+}
+
 export const odysseyShareText: NonNullable<Presenter['shareText']> = (summary: any, lp: number) => {
   const mode = summary.gauntlet ? ` · The Gauntlet ${summary.gauntlet}`
     : summary.daily ? ` · The Same Sea ${summary.daily}`
     : (summary.flags || []).includes('comeback') ? ' · The Scarred Telling' : '';
-  const fire = FIRES.find((f) => f.id === summary.loadout)?.name || 'A fire';
-  const road = summary.path ? (odysseyManifest.paths[summary.path]?.name || summary.path) : 'no road chosen';
-  const verdict = summary.result ? summary.result.toUpperCase()
-    : END_VERDICT[summary.endingKey] || 'THE TELLING ENDED';
+  const { fire, road, verdict } = shareVerdictParts(summary);
   const strip = (summary.tierLog || []).map((t: string) => TIER_EMOJI[t] || '⬜').join('');
   // The vase travels (pass 32): the Night's Vase's band, as glyphs — chosen
   // by the SAME reader the painted vase uses (vase.ts readVoyage), so what a

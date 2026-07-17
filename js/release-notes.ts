@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.45.0',
+    date: '2026-07-17',
+    title: 'The vase, fired',
+    notes: [
+      'Sharing a telling now attaches a picture where your phone supports it: the Night’s Vase as a fired poster — your run’s actual figures, silhouetted black-figure on terracotta under the verdict line, ready for the group chat. Same band the ending screen painted; the text (and the playable ?sail= link) still rides along.',
+    ],
+  },
+  {
     version: '0.44.0',
     date: '2026-07-17',
     title: 'The second audit',

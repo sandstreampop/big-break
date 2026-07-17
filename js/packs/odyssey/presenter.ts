@@ -25,6 +25,7 @@ import {
 import { ODYSSEY_EXIT_INTERVIEWS, odysseyEpilogue } from './interviews.js';
 import { ODYSSEY_COMEBACK_COPY, ODYSSEY_DAILY_COPY, SCARRED_LAUNCH } from './modes.js';
 import { odysseyShareText, odysseyNews } from './share.js';
+import { odysseyShareImage } from './sharecard.js';
 import { odysseyRoster } from './roster.js';
 import { odysseyFeeds, ODYSSEY_FEED_CHROME } from './feeds.js';
 import { ODYSSEY_WALL_ITEMS, ODYSSEY_WALL_COPY } from './gifts.js';
@@ -664,6 +665,9 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // The telling travels (pass 8): the 📣 button was sharing an empty string
   // for this pack. Copy + the day's harbor rumor live in share.ts.
   shareText: odysseyShareText,
+  // The vase, fired (pass 43): the keepsake travels as a PNG poster — the
+  // SAME band the ending screen painted, silhouetted at poster scale.
+  shareImage: odysseyShareImage,
   // The Benches (pass 12): the cast gallery — the crew the sand takes, the
   // fire's ensemble, the two powers — in the pack's own black-figure idiom.
   roster: odysseyRoster,
