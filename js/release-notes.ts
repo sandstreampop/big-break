@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.16.0',
+    date: '2026-07-17',
+    title: 'The last mile grows six new waters',
+    notes: [
+      'Act III of The Odyssey grows a third deeper — the approach, not the hall: a ferryman who carries words between the islands, your own herds driven downhill to the suitors’ table, the black ambush ship waiting in the strait, the first smoke of your own hearth, a beggar’s bowl at your own festival, and a lamp held to your face one breath too long.',
+      'The narrow way home now repeats itself far less across tellings.',
+    ],
+  },
+  {
     version: '0.15.0',
     date: '2026-07-17',
     title: 'The bard remembers what went wrong',
