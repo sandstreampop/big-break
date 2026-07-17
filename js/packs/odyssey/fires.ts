@@ -11,8 +11,9 @@ export const FIRES = [
     flavor: 'They want glory. Sing the deeds loud and count the dead later.',
     // Renown 2 → 3 (pass 10; SIM-FINDINGS 'Fire → path'): the Hall's whole
     // flavor is glory, yet its kleos commit rate matched the Fisherman's
-    // Hearth — 2 of the gate's 5 wasn't enough to make the Glory road feel
-    // closer at the crossroads. Three of five is a visible head start.
+    // Hearth — the grant needed to make the Glory road feel closer at the
+    // crossroads. (Pass 21 raised the kleos gate 5 → 8, so this is now 3 of
+    // 8 — a head start, not a half-paid gate; the finale must be earned.)
     quirk: { name: 'A name to live up to', desc: 'Begin the telling with Renown 3 — the hall has heard of this man.' },
     grants: { renown: 3 },
   },
