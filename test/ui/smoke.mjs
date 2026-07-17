@@ -1801,6 +1801,23 @@ async function checkOdysseyLedger(browser, base) {
     if (!/of 3/.test(ledger.text)) throw new Error(`[${label}] the ledger text is missing the "of 3" count`);
     if (!/holds the other two/.test(ledger.text)) throw new Error(`[${label}] the ledger is missing the honest-floor line naming the third turning (${JSON.stringify(ledger.text)})`);
 
+    // The Night's Vase (pass 23): a REAL ending must carry the painted band —
+    // the ship at final count, at least one more figure, the sea beneath, and
+    // an aria label that reads the whole thing (role=img).
+    const vase = await page.evaluate(() => {
+      const v = document.querySelector('#screen-ending.active .ody-vase');
+      return {
+        present: !!v,
+        role: v?.getAttribute('role') || '',
+        label: v?.getAttribute('aria-label') || '',
+        figs: v ? v.querySelectorAll('.ody-vase-fig').length : 0,
+        sea: !!v?.querySelector('.ody-vase-sea'),
+      };
+    });
+    if (!vase.present) throw new Error(`[${label}] no .ody-vase on the ending screen — the night went unpainted`);
+    if (vase.role !== 'img' || !vase.label.includes('tonight’s vase')) throw new Error(`[${label}] the vase is not a labeled image (role=${vase.role})`);
+    if (vase.figs < 2 || !vase.sea) throw new Error(`[${label}] the vase band is empty (figs=${vase.figs}, sea=${vase.sea})`);
+
     // The share button (pass 8): a new interactive control on the ending
     // screen (previously it copied an EMPTY string for this pack). Headless
     // Chromium has no navigator.share, so the shell takes the clipboard
@@ -1827,7 +1844,7 @@ async function checkOdysseyLedger(browser, base) {
     if (/undefined|NaN/.test(shared)) throw new Error(`[${label}] the share text leaks (got: "${shared}")`);
     if (!(await page.$('#screen-ending.active'))) throw new Error(`[${label}] pressing share left no ending screen`);
     if (errors.length) throw new Error(`[${label}] page errors:\n  ${errors.join('\n  ')}`);
-    console.log(`✓  ${label}: the knowing bard's run-end screen shows the shelf (${ledger.filled} filled slots), the "of 3" count, the honest floor — and the telling travels (share carries the verdict + turnings)`);
+    console.log(`✓  ${label}: the knowing bard's run-end screen shows the shelf (${ledger.filled} filled slots), the honest floor, the night's vase (${vase.figs} figures over the sea) — and the telling travels (share carries the verdict + turnings)`);
   } finally {
     await ctx.close();
   }

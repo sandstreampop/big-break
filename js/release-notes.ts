@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.25.0',
+    date: '2026-07-17',
+    title: 'The night, painted',
+    notes: [
+      'Every Odyssey ending now closes with the Night’s Vase: a black-figure band painted from the telling you actually gave — your fleet at its final count, the cave island only if you faced the cave, the trench’s ash only if you went down, the warm island close if you stayed, the sea wearing exactly the mood you left it in, and the ending’s own motif to close the band (the star and gulls for a homecoming, the trident for the wrath, the cup set down for a banked night).',
+      'The vase does not flatter. That is what makes it worth keeping.',
+    ],
+  },
+  {
     version: '0.24.0',
     date: '2026-07-17',
     title: 'The fire remembers last night',

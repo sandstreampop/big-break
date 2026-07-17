@@ -28,6 +28,7 @@ import { odysseyShareText, odysseyNews } from './share.js';
 import { odysseyRoster } from './roster.js';
 import { odysseyFeeds, ODYSSEY_FEED_CHROME } from './feeds.js';
 import { ODYSSEY_WALL_ITEMS, ODYSSEY_WALL_COPY } from './gifts.js';
+import { nightVase } from './vase.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -519,6 +520,10 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
       : banked
         ? `<span class="fig fig-fire">${fire()}</span><span class="fig fig-cup">${cup('down')}</span>`
         : `<span class="fig fig-fire">${fire()}</span><span class="fig fig-cup">${cup(cupLevelFor(state.act || 3))}</span>`;
+    // The Night's Vase (pass 23): the telling, painted — fleet at its final
+    // count, the stations actually faced, the ending's motif. Pure read of
+    // the ended state; the bard hands you the keepsake with the verdict.
+    const vase = nightVase(state, reducedMotion());
     // px-still mirrors the in-game reduced-motion toggle (ADR-0001:
     // first-class under BOTH prefs; CSS media queries can't see this one) —
     // the ember renders already guttered, the fire holds its first frame.
@@ -545,7 +550,14 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
         : 'The third only reveals itself to a bard who already holds the other two.';
     const floorLine = `<div class="ody-ledger-floor">${floorText}</div>`;
     const ledger = { cls: 'ody-ledger', html: `${lead}${shelf}${countLine}${floorLine}` };
-    return { lines: [{ cls: 'ending-scene' + (dead ? ' ending-gutter' : '') + still, html: scene }, ledger], lpNote: '' };
+    return {
+      lines: [
+        { cls: 'ending-scene' + (dead ? ' ending-gutter' : '') + still, html: scene },
+        { cls: 'ody-vase-line' + still, html: vase.html },
+        ledger,
+      ],
+      lpNote: '',
+    };
   },
   // The trophy shelf (pass 2 of the player-experience series): the shell's
   // Trophy Room was rendering "0/0 collected" for this pack. Data + ledger
