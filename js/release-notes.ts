@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.47.0',
+    date: '2026-07-17',
+    title: 'The living threshold',
+    notes: [
+      'Once the fire is lit, the title screen breathes: the calm sea runs at the fireside’s feet, and the stars over it cycle a slow twinkle — tide-speed, not spectacle. With reduced motion on, the same water and the same stars hold still.',
+    ],
+  },
+  {
     version: '0.46.0',
     date: '2026-07-17',
     title: 'The Red-Figure Glaze',

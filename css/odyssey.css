@@ -583,6 +583,39 @@ body.ody-hidden svg.px .pxf { animation-play-state: paused; }
 .threshold.kindle-2 .fig { opacity: .7; }
 .threshold.kindle-lit .fig { opacity: 1; }
 
+/* ── Pass 45 — the living threshold: once the fire is lit, the scene
+   breathes. The calm sea runs at the fireside's feet; the stars cycle a
+   slow twinkle. All of it gates on .kindle-lit AND :not(.px-still) — the
+   in-game reduced-motion toggle stamps px-still on the scene (CSS media
+   queries can't see it), and a still threshold keeps the same water and
+   the same stars, unmoving. Nothing here is ceremony: sub-1-opacity
+   drifts at tide speed, not spectacle (ADR-0001's rationed list stands). */
+.threshold .th-sea {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  transform: translateX(-50%);
+  width: min(60vw, 320px);
+  opacity: 0;
+}
+.threshold .th-sea svg { width: 100%; height: 14px; display: block; }
+.threshold.kindle-lit .th-sea { opacity: .5; }
+@keyframes ody-th-twinkle {
+  0%, 100% { opacity: .8; }
+  50% { opacity: .25; }
+}
+@keyframes ody-th-tide {
+  0%, 100% { transform: translateX(-50%); }
+  50% { transform: translateX(calc(-50% + 6px)); }
+}
+.threshold.kindle-lit:not(.px-still) .th-star-1 { animation: ody-th-twinkle 7s ease-in-out infinite; }
+.threshold.kindle-lit:not(.px-still) .th-star-2 { animation: ody-th-twinkle 9s ease-in-out infinite 2s; }
+.threshold.kindle-lit:not(.px-still) .th-star-3 { animation: ody-th-twinkle 11s ease-in-out infinite 4s; }
+.threshold.kindle-lit:not(.px-still) .th-sea { animation: ody-th-tide 14s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .threshold .th-star, .threshold .th-sea { animation: none !important; }
+}
+
 /* ── I7 — ceremony, rationed. Full-screen treatment belongs to exactly the
    three landmarks, every ending, and the prophecy fragment (ADR-0001's
    earned-ceremony list). Everything here is figures and states — no

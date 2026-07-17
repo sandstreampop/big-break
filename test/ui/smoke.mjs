@@ -2318,6 +2318,22 @@ async function checkOdysseyThreshold(browser, base) {
       });
       if (!litAtOnce) throw new Error(`[${label}] the second tap did not skip the kindling`);
       await page.waitForFunction(() => !document.querySelector('#screen-title.title-veiled'), { timeout: 2000 });
+      // The living threshold (pass 45): once lit, the sea runs at the
+      // fireside's feet — present, SIZED (a viewBox-only strip renders 0
+      // or 150px tall without its rule), and visible.
+      const sea = await page.evaluate(() => {
+        const s = document.querySelector('.threshold.kindle-lit .th-sea svg');
+        const box = s?.getBoundingClientRect();
+        const wrap = document.querySelector('.threshold.kindle-lit .th-sea');
+        return {
+          present: !!s,
+          h: box?.height || 0, w: box?.width || 0,
+          opacity: wrap ? Number(getComputedStyle(wrap).opacity) : 0,
+        };
+      });
+      if (!sea.present) throw new Error(`[${label}] the lit threshold has no sea at its feet`);
+      if (sea.h < 8 || sea.h > 30 || sea.w < 100) throw new Error(`[${label}] the threshold sea mis-sized (${Math.round(sea.w)}×${Math.round(sea.h)})`);
+      if (sea.opacity < 0.3) throw new Error(`[${label}] the threshold sea never surfaces (opacity ${sea.opacity})`);
     } finally { await ctx.close(); }
   }
 

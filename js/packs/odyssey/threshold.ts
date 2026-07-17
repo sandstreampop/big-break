@@ -15,7 +15,7 @@
 
 import type { Presenter } from '../../types.js';
 import { reducedMotion, activatable } from '../../ui/dom.js';
-import { fire, coldHearth, crowdWoman, crowdBoy, crowdHorseMan, emptyPlace, star } from './art/figures.js';
+import { fire, coldHearth, crowdWoman, crowdBoy, crowdHorseMan, emptyPlace, star, seaStrip } from './art/figures.js';
 
 const KINDLE_STEPS = ['kindle-1', 'kindle-2', 'kindle-lit'];
 const STEP_MS = 340; // three steps ≈ one second of catching flame
@@ -33,6 +33,11 @@ function sceneHtml(lit: boolean): string {
     `<span class="fig fig-horse">${crowdHorseMan()}</span>` +
     `<span class="fig fig-empty">${emptyPlace()}</span>` +
     `</span>` +
+    // The living threshold (pass 45): the sea the telling is about, calm,
+    // running at the fireside's feet. It drifts only once the fire is lit
+    // and only when motion is welcome (CSS gates on .kindle-lit and
+    // :not(.px-still)); reduced motion gets the same water, still.
+    `<span class="th-sea">${seaStrip('calm', 160)}</span>` +
     `</div>`
   );
 }
