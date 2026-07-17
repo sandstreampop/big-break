@@ -54,6 +54,7 @@ export const ODYSSEY_COMEBACK_COPY: NonNullable<Presenter['comeback']> = {
 
 export const ODYSSEY_DAILY_COPY: NonNullable<Presenter['daily']> = {
   name: 'The Same Sea',
+  calendarHead: '🌊 The Tide Log',
   endNote: (summary: any) => {
     const n = summary?.dailyStreak || 1;
     const streak = n > 1 ? `Night ${n} of your streak at this fire.` : 'Streak: night one.';

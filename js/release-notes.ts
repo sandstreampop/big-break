@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.40.0',
+    date: '2026-07-17',
+    title: 'Coming back for more',
+    notes: [
+      'Every ending now offers “Sail this water again” — the exact sea you just sailed, re-dealt as shared water: same winds, same islands, same giant, fresh boat. Lose the homecoming by one hull and you can immediately find out whether it was the water or the captain.',
+      'The Résumé gains the Tide Log: your last four weeks of The Same Sea as a strip of squares — days sailed, days won, today at the end — with the streak counted underneath.',
+    ],
+  },
+  {
     version: '0.39.0',
     date: '2026-07-17',
     title: 'The fire re-lights',

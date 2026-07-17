@@ -1548,6 +1548,19 @@ async function checkOdysseyClarity(browser, base) {
     for (const needle of ['Nights at the fire', 'Men named in the sand', '1 of 3', 'anchor-stone', 'The sea answered']) {
       if (!resume.includes(needle)) throw new Error(`[${label}] the Résumé never says "${needle}"`);
     }
+    // The tide log (pass 38): the seeded daily (yesterday, a win) must paint
+    // the four-week strip — 28 squares, exactly one of them won, and the
+    // streak line reading the same water the title flame does.
+    const tide = await page.evaluate(() => ({
+      days: document.querySelectorAll('#screen-settings .tide-day').length,
+      wins: document.querySelectorAll('#screen-settings .tide-day.tide-win').length,
+      head: [...document.querySelectorAll('#screen-settings .wall-tier')].some((h) => /Tide Log/.test(h.textContent || '')),
+      line: document.querySelector('#screen-settings .tide-cal-line')?.textContent || '',
+    }));
+    if (tide.days !== 28) throw new Error(`[${label}] the tide log shows ${tide.days} days, not 28`);
+    if (tide.wins !== 1) throw new Error(`[${label}] the tide log marks ${tide.wins} wins — the seeded daily should be exactly one`);
+    if (!tide.head) throw new Error(`[${label}] the tide log lost its odyssey head`);
+    if (!/🔥 1 day running/.test(tide.line)) throw new Error(`[${label}] the streak line misreads the water: "${tide.line}"`);
     await page.evaluate(() =>
       [...document.querySelectorAll('#screen-settings button')].find((b) => /Back/.test(b.textContent || ''))?.click());
     await page.waitForSelector('#screen-title.active', { timeout: 8000 });
@@ -1861,8 +1874,27 @@ async function checkOdysseySentWater(browser, base) {
     if (fires.total !== 100) throw new Error(`[${label}] the fleet counted ${fires.total} tellings, not 100`);
     if (fires.you !== 1) throw new Error(`[${label}] expected exactly one 'your fire' row, got ${fires.you}`);
     if (!/The Sent Water/.test(fires.label)) throw new Error(`[${label}] the fleet panel lost the water's name ("${fires.label}")`);
+    // Run-it-back (pass 38): the ending must offer this exact water again,
+    // and tapping it must open the challenge setup on the SAME seed — drive
+    // the control, not its presence (working agreement rule 1).
+    const again = await page.evaluate(() => {
+      const b = [...document.querySelectorAll('#screen-ending button')].find((x) => /Sail this water again/.test(x.textContent || ''));
+      if (b) b.click();
+      return !!b;
+    });
+    if (!again) throw new Error(`[${label}] the ending never offers the same water again`);
+    await page.waitForSelector('#screen-setup.active .pick-card', { timeout: 8000 });
+    const againSheet = await page.evaluate(() => document.querySelector('#screen-setup')?.textContent || '');
+    if (!/The Sent Water/.test(againSheet)) throw new Error(`[${label}] run-it-back lost the shared-water sheet`);
+    await clickJS(page, '#screen-setup .pick-card');
+    await page.evaluate(() => document.querySelector('#start-run-btn')?.click());
+    await page.waitForFunction(() => {
+      const raw = localStorage.getItem('bigbreak_run_v1_odyssey');
+      const r = raw && JSON.parse(raw);
+      return r && r.challenge === '777' && r.baseSeed === 777;
+    }, null, { timeout: 10000 });
     if (errors.length) throw new Error(`[${label}] ${errors[0]}`);
-    console.log(`✓  ${label}: ?sail=777 offers, mints, and finishes the sender's exact sea — unforked, terminal, and the fleet counts the same seed`);
+    console.log(`✓  ${label}: ?sail=777 offers, mints, and finishes the sender's exact sea — unforked, terminal, the fleet counts the same seed, and run-it-back re-mints it`);
   } finally {
     await ctx.close();
   }

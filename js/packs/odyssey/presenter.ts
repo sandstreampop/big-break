@@ -630,6 +630,7 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     button: '🌊 Sail the sent water',
     head: 'The Sent Water',
     sub: 'Another fire sends you its exact sea — same winds, same islands, same giant. Sing it better.',
+    again: '🌊 Sail this water again',
   },
   // The clarity bundle (pass 4): the tap-a-meter blurbs, the pack's half of
   // the Help sheet, the Résumé as the bard's own ledger, the Past-Lives

@@ -367,6 +367,15 @@ function renderEndingScreen(ending, lp, trophies, evalr, summary) {
     });
     menu.append(shareBtn);
   }
+  // The same water again (pass 38): the ended run's own seed, re-offered
+  // as a shared-water challenge — the ?sail= flow pointed at yourself.
+  // Same sea, fresh boat; roguelike players live for this button.
+  if (summary?.baseSeed) {
+    menu.append(btn(PRES.challengeCopy?.again || '🌊 Same run, one more try', '', () => {
+      save.clearRun();
+      nav.newRun(false, false, summary.baseSeed);
+    }));
+  }
   menu.append(btn('▶ Run It Back', 'primary', () => nav.newRun()));
   menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', nav.wall));
   menu.append(btn('🏠 Title', '', () => { nav.title(); show('#screen-title', 'back'); }));

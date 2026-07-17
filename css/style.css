@@ -1122,6 +1122,14 @@ body.big-text #app { zoom: 1.18; }
 .wall-owned { color: var(--good); font-size: 11px; font-weight: 800; letter-spacing: .08em; }
 .wall-item .btn { min-height: 40px; padding: 8px 14px; font-size: 14px; white-space: nowrap; }
 .resume-val { font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* pass 38 — the tide log: 28 days of the daily, one square each, today at
+   the end. Wraps in week-rows on narrow phones; the streak line reads it. */
+.tide-cal { display: grid; grid-template-columns: repeat(14, minmax(12px, 20px)); gap: 4px; margin: 6px 0 2px; }
+.tide-day { aspect-ratio: 1; border-radius: 3px; background: var(--panel); border: 1px solid var(--line); }
+.tide-day.tide-win { background: var(--good); border-color: var(--good); }
+.tide-day.tide-told { background: var(--dim); border-color: var(--dim); }
+.tide-day.tide-today { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tide-cal-line { font-size: 13px; color: var(--dim); margin: 6px 0 10px; }
 
 /* Discography */
 .disc-list { display: flex; flex-direction: column; gap: 7px; }

@@ -875,11 +875,11 @@ export interface Presenter {
   // The sent water (pass 35): a pack may re-voice the ?sail= challenge
   // surfaces — the title button, the setup sheet's head/sub. The shell's
   // neutral defaults cover packs that don't.
-  challengeCopy?: { button?: string; head?: string; sub?: string };
+  challengeCopy?: { button?: string; head?: string; sub?: string; again?: string };
   // Daily-mode copy: the mode's display name (title button, persona screen)
   // and an end-screen note (streak-aware "come back tomorrow"). The daily
   // MECHANISM (shared date seed, results ledger) is engine/shell-generic.
-  daily?: { name: string; endNote?: (summary: any) => string };
+  daily?: { name: string; endNote?: (summary: any) => string; calendarHead?: string };
   // Comeback-mode copy (title button, persona-screen header/sub); the
   // TRANSFORM stays Pack.comeback. Music's Second Act is the default.
   comeback?: { label: string; head: string; sub: string };

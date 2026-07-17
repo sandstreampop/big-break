@@ -325,6 +325,33 @@ function renderResume() {
   // The lifetime-stat rows are the pack's (presenter.resume) — the shell knows
   // the label/value/section layout, never the meters. A pack without the hook
   // gets this minimal neutral record.
+  // The tide log (pass 38): the daily's last four weeks, streak-readable at
+  // a glance — a filled square is a day sailed, the bright ones were won.
+  // Generic (meta.dailyResults is shell meta); a pack may retitle it.
+  const dr = meta.dailyResults || {};
+  if (Object.keys(dr).length) {
+    s.append(el('h3', 'wall-tier', PRES.daily?.calendarHead || `📅 ${PRES.daily?.name || 'Daily'} log`));
+    const cal = el('div', 'tide-cal');
+    const today = todayStr();
+    for (let i = 27; i >= 0; i--) {
+      const d = new Date(today + 'T12:00:00Z');
+      d.setUTCDate(d.getUTCDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      const r = dr[key];
+      const cls = !r ? 'tide-none' : r.result === 'success' ? 'tide-win' : 'tide-told';
+      const cell = el('span', `tide-day ${cls}${key === today ? ' tide-today' : ''}`);
+      cell.title = key + (r ? ` — ${r.result || 'told'}` : '');
+      cal.append(cell);
+    }
+    s.append(cal);
+    const yd = new Date(today + 'T12:00:00Z');
+    yd.setUTCDate(yd.getUTCDate() - 1);
+    const cur = dailyStreakFor(dr[today] ? today : yd.toISOString().slice(0, 10));
+    s.append(el('p', 'tide-cal-line', cur > 0
+      ? `🔥 ${cur} ${cur === 1 ? 'day' : 'days'} running — the last four weeks above, today at the end.`
+      : 'The last four weeks, today at the end. The water waits.'));
+  }
+
   const rows = PRES.resume?.(meta) || [
     { label: 'Careers attempted', value: String(meta.runs) },
     { label: 'Decisions swiped', value: String(meta.lifetime?.swipes || 0) },
