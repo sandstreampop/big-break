@@ -11,14 +11,14 @@ import * as save from '../save.js';
 import { track } from '../analytics.js';
 import { artFor } from '../art.js';
 import { sfx, music } from '../audio.js';
-import { el, $, activatable, btn, show, hashStr, todayStr, weekStr } from './dom.js';
+import { el, $, activatable, btn, show, dailySeed, gauntletSeed, todayStr, weekStr } from './dom.js';
 import { activePack, run, PRES, meta, setRun, STAT_META, vibeFor, unlockedPackIds, unlockedPerkIds } from './context.js';
 import { nav } from './nav.js';
 
 // ---------- Instrument select ----------
 
 export function startNewRun(daily = false, comeback = false) {
-  const seed = daily ? hashStr('bigbreak-daily-' + todayStr()) : Math.floor(Math.random() * 1e9) + 1;
+  const seed = daily ? dailySeed(todayStr()) : Math.floor(Math.random() * 1e9) + 1;
   // The pack's optional pre-run selections (music: contract/genre/venue). The
   // shell treats it as an opaque bag; only the pack's setup hooks read it.
   // The player's own name/gender ride here too — universal identity the shell
@@ -235,7 +235,7 @@ function modsText(mods) {
 // (the Gauntlet skips the setup screen, but the run is still yours).
 export function startGauntletGeneric() {
   const week = weekStr();
-  const seed = hashStr('bigbreak-gauntlet-' + week);
+  const seed = gauntletSeed(week);
   const rng = engine.mulberry32(seed);
   const pool = activePack.loadouts.filter((l) => l.unlockedByDefault);
   const inst = pool[Math.floor(rng() * pool.length)] || activePack.loadouts[0];

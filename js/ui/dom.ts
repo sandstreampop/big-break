@@ -334,6 +334,14 @@ export function hashStr(s) {
   return Math.abs(h | 0) + 1;
 }
 
+// The shared-water seeds — SINGLE-SOURCED. The daily and gauntlet starters
+// (js/ui/newrun.ts) and any pack surface that re-sails the shared water
+// (the odyssey's other-fires fleet) must derive the seed through these two
+// helpers, never a re-typed string literal — a drifted copy would silently
+// sail different water than the player did.
+export function dailySeed(day: string): number { return hashStr('bigbreak-daily-' + day); }
+export function gauntletSeed(week: string): number { return hashStr('bigbreak-gauntlet-' + week); }
+
 // ---------- Stale-stylesheet self-heal ----------
 
 // The delivery contract, verified at boot: the build stamps the stylesheet's

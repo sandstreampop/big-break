@@ -9,11 +9,12 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { odysseyPack } from '../dist/js/packs/odyssey/pack.js';
+import * as engine from '../dist/js/engine.js';
 import {
-  sailOne, sailFleet, fleetSeedFor, bucketOfSummary, fleetRows,
+  sailOne, sailFleet, fleetSeedFor, fleetPersona, bucketOfSummary, fleetRows,
   BUCKET_ORDER, BUCKET_COPY, FLEET_SIZE,
 } from '../dist/js/packs/odyssey/otherfires.js';
-import { hashStr } from '../dist/js/ui/dom.js';
+import { dailySeed, gauntletSeed } from '../dist/js/ui/dom.js';
 
 test('the fleet is deterministic: same water, same hundred endings', () => {
   const a = sailFleet(odysseyPack, 123456, 30);
@@ -35,15 +36,44 @@ test('different water sails differently', () => {
   assert.notDeepStrictEqual(a.counts, b.counts, 'two far-apart seeds should not tally identically');
 });
 
-test('the fleet seed matches the shell’s shared-water strings', () => {
+test('the fleet seed is the shell’s own derivation, not a re-typed string', () => {
+  // dailySeed/gauntletSeed live in js/ui/dom.ts and are the SAME functions
+  // startNewRun/startGauntletGeneric call — the contract is the import.
   const daily = fleetSeedFor({ daily: '2026-07-17' });
-  assert.strictEqual(daily.seed, hashStr('bigbreak-daily-2026-07-17'));
+  assert.strictEqual(daily.seed, dailySeed('2026-07-17'));
+  assert.strictEqual(daily.mode, 'daily');
   assert.match(daily.label, /The Same Sea — 2026-07-17/);
   const week = fleetSeedFor({ gauntlet: '2026-W29' });
-  assert.strictEqual(week.seed, hashStr('bigbreak-gauntlet-2026-W29'));
+  assert.strictEqual(week.seed, gauntletSeed('2026-W29'));
+  assert.strictEqual(week.mode, 'gauntlet');
   assert.match(week.label, /The Gauntlet — week 2026-W29/);
   assert.strictEqual(fleetSeedFor({}), null, 'a personal telling has no fleet');
   assert.strictEqual(fleetSeedFor({ daily: null, gauntlet: null }), null);
+});
+
+test('a gauntlet fleet all rows the week’s one fate-drawn build', () => {
+  const seed = gauntletSeed('2026-W29');
+  // The exact draw startGauntletGeneric makes: mulberry32(seed)'s first
+  // roll over the default-unlocked pool.
+  const pool = odysseyPack.loadouts.filter((l) => l.unlockedByDefault);
+  const expected = pool[Math.floor(engine.mulberry32(seed)() * pool.length)].id;
+  for (const whimSeed of [1, 7, 99, 12345]) {
+    const whim = engine.mulberry32(whimSeed);
+    assert.strictEqual(fleetPersona(odysseyPack, seed, 'gauntlet', whim), expected,
+      'every bot must sail the build every human is locked into');
+  }
+});
+
+test('a daily fleet picks among the seeded offer a fresh player sees', () => {
+  const seed = dailySeed('2026-07-17');
+  const pool = odysseyPack.loadouts.filter((l) => l.unlockedByDefault).map((l) => l.id);
+  engine.useContentPack(odysseyPack);
+  const offered = engine.offerLoadouts(pool, engine.mulberry32(seed)).map((l) => l.id);
+  for (const whimSeed of [1, 7, 99, 12345]) {
+    const whim = engine.mulberry32(whimSeed);
+    assert.ok(offered.includes(fleetPersona(odysseyPack, seed, 'daily', whim)),
+      'a bot must sail one of the day\'s offered builds');
+  }
 });
 
 test('the player’s telling lands in the same bucket space', () => {

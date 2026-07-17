@@ -11,17 +11,22 @@
 // tonight's water treats a hundred crews.
 //
 // Honesty rules:
-// - The fleet sails the player's exact run seed (same construction stream,
-//   same play stream) — the same water, the same luck. Divergence comes
-//   only from choices, exactly as it does between two real players on the
-//   daily. Each bot's choices ride its own whim stream (mulberry32 off the
-//   shared seed + bot index), never the play RNG, mirroring
+// - The fleet sails the shared run seed (same construction stream, same
+//   play stream) and the shared build ritual: a gauntlet fleet all rows
+//   the week's ONE fate-drawn build, exactly as startGauntletGeneric deals
+//   it; a daily fleet picks among the same seeded three the fresh-player
+//   setup offers. Each bot's choices ride its own whim stream (mulberry32
+//   off the shared seed + bot index), never the play RNG, mirroring
 //   tools/pack-core.mjs's proven separation.
-// - Bots carry no perks, no history, no meta — the shared-water law
-//   (applySetup early-returns for daily/gauntlet) means the player's run
-//   forked on nothing personal either, so the comparison is fair.
+// - Bots sail FRESH: no guest-gifts, no mastery, no seen-cards steering,
+//   no history. A veteran's own telling may carry gifts the fleet doesn't
+//   — the panel is "how tonight's water treats a hundred crews," not a
+//   mirror of this player's exact odds, and its copy claims only that.
 // - Deterministic by construction: no Date, no Math.random. The seed comes
-//   in; the tally comes out. Same day → same fleet for everyone.
+//   in; the tally comes out. Same day → same fleet for everyone. The seed
+//   derivation is single-sourced with the shell's starters (dailySeed /
+//   gauntletSeed in js/ui/dom.ts) so the fleet can never drift onto
+//   different water than the player's.
 //
 // The drive loop mirrors tools/pack-core.mjs (the genre-neutral driver the
 // invariants and the probe golden trust) — narrative policy: whim-swipes
@@ -30,8 +35,10 @@
 // never jank; Node tests call the synchronous core directly.
 
 import * as engine from '../../engine.js';
-import { hashStr } from '../../ui/dom.js';
+import { dailySeed, gauntletSeed } from '../../ui/dom.js';
 import type { Pack, RunState, Choice } from '../../types.js';
+
+export type WaterMode = 'daily' | 'gauntlet';
 
 // ── The buckets: every ending class the fire can name. ──
 export type FireBucket = 'home' | 'glory' | 'short' | 'banked' | 'sea' | 'despair';
@@ -48,13 +55,12 @@ export const BUCKET_COPY: Record<FireBucket, string> = {
 export interface FleetTally { total: number; counts: Record<FireBucket, number>; }
 
 // Which shared water an ended run sailed, and the seed every fire on it
-// shares. The seed strings are the cross-file contract with the shell's
-// starters (js/ui/newrun.ts startNewRun / startGauntletGeneric) — if those
-// strings ever change, this must change with them or the fleet sails
-// different water than the player did.
-export function fleetSeedFor(summary: any): { seed: number; label: string } | null {
-  if (summary?.daily) return { seed: hashStr('bigbreak-daily-' + summary.daily), label: `The Same Sea — ${summary.daily}` };
-  if (summary?.gauntlet) return { seed: hashStr('bigbreak-gauntlet-' + summary.gauntlet), label: `The Gauntlet — week ${summary.gauntlet}` };
+// shares — derived through the SAME helpers the shell's starters use
+// (js/ui/dom.ts dailySeed/gauntletSeed), so the contract is the import,
+// not a re-typed string.
+export function fleetSeedFor(summary: any): { seed: number; label: string; mode: WaterMode } | null {
+  if (summary?.daily) return { seed: dailySeed(summary.daily), label: `The Same Sea — ${summary.daily}`, mode: 'daily' };
+  if (summary?.gauntlet) return { seed: gauntletSeed(summary.gauntlet), label: `The Gauntlet — week ${summary.gauntlet}`, mode: 'gauntlet' };
   return null;
 }
 
@@ -87,12 +93,32 @@ function pathScore(pack: Pack, state: RunState, pathId: string): number {
   return s;
 }
 
+// The build a bot sails, mirroring the shell's own shared-water rituals:
+// the Gauntlet deals ONE fate-drawn build for the whole week (the same
+// mulberry32(seed) first draw startGauntletGeneric makes — every bot rows
+// it, no substitutions, exactly like every human); the daily offers the
+// seeded three a fresh player sees (engine.offerLoadouts on the default
+// pool, same rng) and the bot picks among them on its whim.
+export function fleetPersona(pack: Pack, seed: number, mode: WaterMode, whim: () => number): string {
+  const pool = pack.loadouts.filter((i) => i.unlockedByDefault);
+  if (mode === 'gauntlet') {
+    const rng = engine.mulberry32(seed);
+    return (pool[Math.floor(rng() * pool.length)] || pack.loadouts[0]).id;
+  }
+  // offerLoadouts resolves on the session's active engine; re-affirming the
+  // pack is a memoized no-op in the browser (the session IS this pack) and
+  // makes the offer resolvable when Node tests call the fleet directly.
+  engine.useContentPack(pack);
+  const offered = engine.offerLoadouts(pool.map((i) => i.id), engine.mulberry32(seed));
+  const pick = offered[Math.floor(whim() * offered.length)] || pool[0] || pack.loadouts[0];
+  return pick.id;
+}
+
 // One bot's telling of the shared water. `whimSeed` is the bot's identity;
 // `seed` is the water's. Mirrors pack-core's narrative policy.
-export function sailOne(pack: Pack, seed: number, whimSeed: number): FireBucket {
+export function sailOne(pack: Pack, seed: number, whimSeed: number, mode: WaterMode = 'daily'): FireBucket {
   const whim = engine.mulberry32(whimSeed >>> 0 || 1);
-  const personas = pack.loadouts.filter((i) => i.unlockedByDefault).map((i) => i.id);
-  const persona = personas[Math.floor(whim() * personas.length)] || pack.loadouts[0].id;
+  const persona = fleetPersona(pack, seed, mode, whim);
   const state = engine.newRun(pack, persona, [], engine.mulberry32(seed + 1), []);
   state.seed = seed + 2;
   const play = engine.stateRng(state);
@@ -136,10 +162,10 @@ export function sailOne(pack: Pack, seed: number, whimSeed: number): FireBucket 
 }
 
 // The whole fleet, synchronously (Node tests; small n). Pure in (pack,
-// seed, n) — no module state, no clock.
-export function sailFleet(pack: Pack, seed: number, n: number): FleetTally {
+// seed, n, mode) — no module state, no clock.
+export function sailFleet(pack: Pack, seed: number, n: number, mode: WaterMode = 'daily'): FleetTally {
   const counts = { home: 0, glory: 0, short: 0, banked: 0, sea: 0, despair: 0 } as Record<FireBucket, number>;
-  for (let i = 0; i < n; i++) counts[sailOne(pack, seed, (seed ^ ((i + 1) * 0x9e3779b9)) >>> 0)]++;
+  for (let i = 0; i < n; i++) counts[sailOne(pack, seed, (seed ^ ((i + 1) * 0x9e3779b9)) >>> 0, mode)]++;
   return { total: n, counts };
 }
 
@@ -175,7 +201,7 @@ export function paintOtherFires(host: HTMLElement, pack: Pack, summary: any): vo
   const step = () => {
     if (!host.isConnected) return; // the screen moved on; stop counting
     for (let i = 0; i < CHUNK && done < FLEET_SIZE; i++, done++) {
-      counts[sailOne(pack, water.seed, (water.seed ^ ((done + 1) * 0x9e3779b9)) >>> 0)]++;
+      counts[sailOne(pack, water.seed, (water.seed ^ ((done + 1) * 0x9e3779b9)) >>> 0, water.mode)]++;
     }
     if (done < FLEET_SIZE) {
       host.querySelector('.ody-fires-wait')!.textContent = `Word is coming up the beach — ${done} fires heard from…`;
@@ -183,7 +209,7 @@ export function paintOtherFires(host: HTMLElement, pack: Pack, summary: any): vo
     } else {
       host.innerHTML =
         `<div class="ody-fires-head">Word from the other fires</div>` +
-        `<div class="ody-fires-sub">${water.label} · the same water, ${FLEET_SIZE} tellings.</div>` +
+        `<div class="ody-fires-sub">${water.label} · tonight’s water, ${FLEET_SIZE} crews.</div>` +
         fleetRows({ total: FLEET_SIZE, counts }, yours);
     }
   };
