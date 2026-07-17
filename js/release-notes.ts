@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.50.0',
+    date: '2026-07-17',
+    title: 'The Scarred Telling remembers',
+    notes: [
+      'The comeback mode finally carries its own seas. A scarred fleet — and only a scarred fleet — rows past its own bleached oars in act one, is recognized mid-channel by a sea that remembers a debtor in act two, and meets the exact headland where it all went wrong in act three. Three scars, one per act, dealt often enough that a retelling usually faces what it came back for.',
+    ],
+  },
+  {
     version: '0.49.0',
     date: '2026-07-17',
     title: 'The last word learns more ways to land',

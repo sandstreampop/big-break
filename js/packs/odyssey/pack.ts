@@ -27,6 +27,7 @@ import { LANDMARKS } from './landmarks.js';
 import { ODYSSEY_TUTORIAL_EVENTS } from './events-tutorial.js';
 import { MEMORY_EVENTS } from './events-memory.js';
 import { TELEMACHY_EVENTS } from './events-telemachy.js';
+import { SCARRED_EVENTS } from './events-scarred.js';
 import { odysseyPresenter } from './presenter.js';
 import { ODYSSEY_PERKS } from './gifts.js';
 
@@ -77,7 +78,9 @@ export const odysseyPack: Pack = {
   // TELEMACHY_EVENTS: the within-run thread (pass 34) — flag-gated
   // continuations, dealt at 4x by the itinerary plugin once the thread
   // starts, so a question asked in act 1 usually gets its act-3 answer.
-  events: [...ACT1_EVENTS, ...ACT2_EVENTS, ...ACT3_EVENTS, ...TELEMACHY_EVENTS, ...LANDMARKS, ...MEMORY_EVENTS],
+  // SCARRED_EVENTS: comeback-gated (pass 48) — the transform's flag never
+  // exists in seeded sim runs, so these are golden-invisible like MEMORY.
+  events: [...ACT1_EVENTS, ...ACT2_EVENTS, ...ACT3_EVENTS, ...TELEMACHY_EVENTS, ...SCARRED_EVENTS, ...LANDMARKS, ...MEMORY_EVENTS],
   // THE FIRST TELLING: the 3-card oar ramp (gesture → risk tell + frieze →
   // a real roll with the two ledgers). The bard's own chatter waits for the
   // first real telling (bardBeat's tutorial gate).

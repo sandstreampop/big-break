@@ -67,6 +67,10 @@ export const itineraryPlugin: Plugin = {
   weightDeck(state, ev, weight) {
     if (ev.id.startsWith('ody_mem_')) return weight * 4;
     if (ev.id.startsWith('ody_tel_') && ev.requires) return weight * 4;
+    // The scars (pass 48): comeback-gated, so like the memory cards their
+    // boost is invisible to seeded runs — a scarred telling usually meets
+    // its scars.
+    if (ev.id.startsWith('ody_scar_') && ev.requires) return weight * 4;
     return weight;
   },
   refineDeck(state, pool) {
