@@ -20,7 +20,8 @@ test('six fires, unique ids, all singable tonight', () => {
 test('each fire has exactly one crisp edge', () => {
   const edge = (f) => [f.grants, f.modifiers, f.soothe].filter(Boolean).length;
   for (const f of FIRES) assert.strictEqual(edge(f), 1, `${f.id}: one edge, not ${edge(f)}`);
-  assert.strictEqual(FIRES.find((f) => f.id === 'pilots_bench').modifiers.lore, 8);
+  // Lore 8 → 6 in the pass-21 sweep (the bench ran 14pp over the coldest fire).
+  assert.strictEqual(FIRES.find((f) => f.id === 'pilots_bench').modifiers.lore, 6);
   assert.strictEqual(FIRES.find((f) => f.id === 'widows_porch').soothe, 1.5);
 });
 

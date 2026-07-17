@@ -29,16 +29,20 @@ export const odysseyManifest: PackManifest = {
       id: 'kleos',
       name: 'Kleos — the Glory',
       blurb: 'Let the return take ten years, so long as the songs last ten centuries.',
-      gateLabel: 'Renown 5',
+      gateLabel: 'Renown 8',
       icon: '🌟',
     },
   },
   // Nostos leans on the Expedition preserved and the goddess earned; Kleos
   // leans on the Renown counter. ("Poseidon contained" is enforced by the
   // wrath terminal rule below — winGates are minimums by contract.)
+  // Kleos raised 5 → 8 (pass 21, the P9–P20 evidence sweep): at 5, committed
+  // glory runs summited 66.6% with partial+failure at 0.6% — the finale was
+  // ratifying the commit, and two authored endings almost never rendered.
+  // Renown must now be EARNED past the commit, not just carried over it.
   winGates: {
     nostos: { expedition: 6, athena: 4 },
-    kleos: { renown: 5 },
+    kleos: { renown: 8 },
   },
   statMeta: {
     might: { name: 'Might', icon: '⚔️' },

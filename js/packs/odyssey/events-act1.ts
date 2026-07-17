@@ -427,9 +427,11 @@ export const ACT1_EVENTS: GameEvent[] = [
     // The flower speaks to the weary — and 'weary' is Despair OR losses.
     // The original gate (burnoutMin 18) was almost never true by the act-1
     // offer slot: SIM-FINDINGS measured the weak offer firing in <1% of
-    // runs — a no-offer. Rebalanced 2026-07 (pass 10): despair 12+, or a
-    // fleet already down three hulls, hears the meadow.
-    requires: { anyOf: [{ burnoutMin: 12 }, { max: { expedition: 9 } }] },
+    // runs — a no-offer. Rebalanced 2026-07 (pass 10) to despair 12+ or a
+    // fleet down three hulls; re-tightened despair 12 → 15 in the pass-21
+    // sweep: at 12 the meadow BANKED 13.9% of all runs — the weak offer had
+    // become the deck's second-most-common ending, eating act-1 tellings.
+    requires: { anyOf: [{ burnoutMin: 15 }, { max: { expedition: 9 } }] },
     context: 'The meadow — a place to stop',
     prompt: 'The flower does not argue. It only asks, in a voice like warm shallow water, why the trying. Three of your men already sit in the shade with their eyes full of nothing, happier than you have seen any man since Troy. There is room in the shade. There is always room.',
     recap: 'The meadow made its offer.',

@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.23.0',
+    date: '2026-07-17',
+    title: 'The Glory road earns its finale',
+    notes: [
+      'The evidence pass over everything shipped this week (8,000 simulated tellings, sliced by fire and road): the Glory road’s gate rises from Renown 5 to 8 — at 5, two of its three endings almost never rendered because the finale was ratifying a choice already made. Glory must now be earned past the crossroads, not just carried over it.',
+      'The Pilots’ Bench ran fourteen points hotter than the coldest fire, so its Lore gift eases 8 → 6 (the deep-water lean stays). And the meadow speaks at Despair 15 now — at 12 it had quietly become the deck’s second-most-common ending.',
+    ],
+  },
+  {
     version: '0.22.0',
     date: '2026-07-17',
     title: 'The witch meets every fleet now',

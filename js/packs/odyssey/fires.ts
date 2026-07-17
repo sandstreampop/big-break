@@ -38,8 +38,11 @@ export const FIRES = [
   {
     id: 'pilots_bench', name: 'The Pilots’ Bench', family: 'fire', unlockedByDefault: true,
     flavor: 'They want the courses told true — headlands, soundings, the trick that worked.',
-    quirk: { name: 'A pilot’s Odysseus', desc: 'Tonight he is characterized knowing: Lore starts 8 higher.' },
-    modifiers: { lore: 8 },
+    // Lore 8 → 6 (pass 21 sweep): at 8 the bench ran 51.2% win, 14pp over
+    // the coldest fire and above the whole band — the trade lean below
+    // already pays the room's identity.
+    quirk: { name: 'A pilot’s Odysseus', desc: 'Tonight he is characterized knowing: Lore starts 6 higher.' },
+    modifiers: { lore: 6 },
   },
   {
     id: 'widows_porch', name: 'The Widow’s Porch', family: 'fire', unlockedByDefault: true,
