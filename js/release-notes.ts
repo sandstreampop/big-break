@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.31.0',
+    date: '2026-07-17',
+    title: 'The island reads the man',
+    notes: [
+      'The last flat beat graduates: a strong fleet three days from home now meets Ogygia as the last watering — she asks nothing, everything she offers is real, and that is the whole of the danger. Take the water and run, or take the hour honestly; the wrecked and the weary still get the strong offer, and now far fewer runs end banked on that island — the finale gets to ask its question.',
+      'Every landmark and temptation now reads the fleet that arrives — the entropy gates guard all four pairs. And the two earlier graduation cards’ comforts eased a point each: the band was drifting sweet.',
+    ],
+  },
+  {
     version: '0.30.0',
     date: '2026-07-17',
     title: 'The meadow meets every fleet',

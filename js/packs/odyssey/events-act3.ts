@@ -378,6 +378,47 @@ export const ACT3_EVENTS: GameEvent[] = [
     },
   }),
 
+  // ── The island's SECOND reading (pass 29): the landfall ──
+  // Completes the beat-variance set (Underworld P5, Circe P20, lotus P28):
+  // the temptation below is gated to the wrecked and the weary, so a strong
+  // act-3 fleet sailed past the island without a card. For them Ogygia is
+  // the last watering — she asks nothing, and everything she offers is
+  // real; the danger is how good the hour feels three days from home. Not
+  // a stay-offer (no terminal flag). Honest costs on the off-tiers: the
+  // band has drifted up two graduation passes running, and leaving a place
+  // like this is PRICED.
+  {
+    id: 'ody_calypso_landfall',
+    act: 3,
+    tags: ['deep', 'beat:calypso'],
+    requires: { min: { expedition: 5 } },
+    context: 'Ogygia — the last watering',
+    prompt: 'Three days of water left, and an island that asks nothing. She is at the spring when your boats come in, friends, the jar already filled, and she hands it over like weather. Stay an hour, she says. The hour is real. Everything she offers is real. That is the whole of the danger.',
+    recap: 'The island offered an hour.',
+    choices: {
+      left: {
+        label: 'Water, and away by dusk',
+        tags: ['deep', 'might'],
+        governingStats: { might: 1 },
+        outcomes: {
+          bad: { text: 'You take the water and refuse the hour, and the refusal is correct and lands wrong — hurried where she was unhurried, loud where the island is quiet. The men feel it too: they row out of that bay in silence, each one privately doing the arithmetic of what he just rowed away from. The casks are full. The boat is heavier than the casks account for.', effects: { might: 2, burnout: 4 } },
+          good: { text: 'Watered and away by dusk, as ordered — and you keep the work brisk on purpose, friends, casks and lines and the count called twice, because busy hands cannot accept invitations. She watches the industry from the spring with something like amusement. At the last boat you thank her, properly, and she nods the way weather nods. The island drops astern. Nobody looks back twice. Once, friends, every man looked back once.', effects: { might: 4, burnout: 1 } },
+          incredible: { text: 'Away by dusk — and she walks you to the boats herself, friends, which the tale insists has never happened before or since: the goddess of the island that keeps men, escorting one out, the courtesy of equals. At the waterline she says, “You are in a hurry the way rivers are in a hurry,” and does not explain it, and you row out on the ebb with the words working in you. The men take the phrase up as a stroke-call by morning. RIVERS. Rivers, friends. All the way home.', effects: { might: 5, athena: 1 } },
+        },
+      },
+      right: {
+        label: 'The hour, honestly',
+        tags: ['deep', 'lore'],
+        governingStats: { lore: 1 },
+        outcomes: {
+          bad: { text: 'You take the hour, and the hour takes the evening — not by magic, friends, by CONVERSATION, which on that island is the same thing — and the fleet has to send a boat for its own captain. What the rowers see when you come down to the water is a man walking correctly and carefully, like someone carrying a full cup. Nobody says anything. The set of your shoulders is discussed at every bench for a week.', effects: { lore: 2, burnout: 5 } },
+          good: { text: 'One hour, taken honestly: the fruit, the shade, the talk of a hostess who has heard every traveler’s tale and wants only the true ones. You give her the war unpolished and she trades you the island’s peace, measured to the minute. At the hour’s end you stand, and she says — the tale keeps this — “You are the first to leave on time.” It is the strangest compliment of the voyage, friends, and three days from home, the most useful.', effects: { lore: 4, burnout: -1 } },
+          incredible: { text: 'You take the hour — and you spend it asking HER the question no guest has ever asked, friends: what she waits for, on an island where nothing arrives that she does not permit. And she answers. I will not sing the answer; it was given to one man in an hour that was honestly kept, and the tale respects a fair trade. What I will sing is the parting gift: the true weather for the narrow water, three days out, told plain — and a fleet that sails into the strait already knowing which morning the wind turns.', effects: { lore: 5, athena: 2 } },
+        },
+      },
+    },
+  },
+
   // ── The temptation of Act III: Calypso (the strong one) ──
   // The canonical cash-out (GUIDING_EXAMPLES §7): a real ending, offered
   // warmly. Situationally optimal by design — a wrecked run is sometimes

@@ -132,18 +132,18 @@ test('lotus variation floor: the meadow meets every fleet now (pass 28)', () => 
   assert.ok(beatRuns.lotus >= RUNS * 0.85, `lotus fired in only ${beatRuns.lotus}/${RUNS} runs — the meadow went back to being skipped`);
 });
 
-test('the measured H=0 beats stay documented until half 2 raises them', () => {
-  // Calypso deals exactly one card today (its variation is occurrence,
-  // side, and tier — not scene). This is the review's finding, pinned as a
-  // fact: if authoring adds variants (P-B half 2), this test is the one to
-  // UPDATE — move the beat to the entropy-floor test above (circe
-  // graduated in pass 20, lotus in pass 28).
-  for (const beat of ['calypso']) {
-    if (!beatSeen[beat]) continue; // lotus fires in <1% of runs at this policy
-    const e = entropyOf(beatSeen[beat]);
-    assert.equal(e.variants, 1,
-      `${beat} now deals ${e.variants} variants — raise its floor in the entropy test instead of leaving it documented as flat`);
-  }
+test('calypso variation floor: the island reads the man (pass 29)', () => {
+  // The last graduation: the H=0 documented list is EMPTY — every beat now
+  // deals ≥2 scene readings. The temptation stays gated to the wrecked and
+  // weary; the strong fleet gets the landfall (min expedition 5). Measured
+  // at authoring (RUNS=1000, seed 0xE47): 880 runs met the island, landfall
+  // 744 / temptation 136, H=0.621, top share 84.5%. Floors under
+  // measurement, same discipline as the other three beats.
+  const e = entropyOf(beatSeen.calypso);
+  assert.ok(e.variants >= 2, `calypso variants seen: ${e.variants} (a reading's gate rotted shut)`);
+  assert.ok(e.h >= 0.3, `calypso entropy ${e.h} bits < 0.3`);
+  assert.ok(e.topShare <= 0.92, `one calypso reading covers ${(e.topShare * 100).toFixed(1)}% of visits`);
+  assert.ok(beatRuns.calypso >= RUNS * 0.7, `calypso fired in only ${beatRuns.calypso}/${RUNS} runs — the island went back to being skipped`);
 });
 
 test('the underworld reads differently for the knowing bard (knowledge-gated variation)', () => {
