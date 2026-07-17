@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.30.0',
+    date: '2026-07-17',
+    title: 'The meadow meets every fleet',
+    notes: [
+      'The lotus coast was gated to the desperate — a strong fresh fleet sailed past without a card. Now the meadow reaches them as crew politics: nothing is wrong, the men are fed, and still the benches ask, reasonably, for one afternoon. Grant it watched, or row past the smell — and one of the ways of refusing lets the meadow argue its own case, and lose it.',
+      'That completes the trilogy: the Underworld, the witch, and now the meadow all read the fleet that arrives. The entropy gates guard all three pairs of readings.',
+    ],
+  },
+  {
     version: '0.29.0',
     date: '2026-07-17',
     title: 'The first ending, uncluttered',

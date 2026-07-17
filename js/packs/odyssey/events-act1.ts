@@ -416,6 +416,46 @@ export const ACT1_EVENTS: GameEvent[] = [
     },
   }),
 
+  // ── The meadow's SECOND reading (pass 28): the petition ──
+  // Completes the temptation-variance trilogy (Underworld P5, Circe P20):
+  // the temptation below is gated to the weary, so a strong fresh fleet at
+  // the beat window got no card at all. For them the meadow arrives as
+  // crew politics — nothing is wrong yet, the men are fed, and still the
+  // benches ask, reasonably, for one afternoon. Not a stay-offer (no
+  // terminal flag): the strong fleet's brush with the flower. Where BOTH
+  // gates hold (a strong fleet rowed weary) the seeded draw picks.
+  {
+    id: 'ody_lotus_watch',
+    act: 1,
+    tags: ['blood', 'beat:lotus'],
+    requires: { min: { expedition: 10 } },
+    context: 'The meadow coast — the petition',
+    prompt: 'The wind off the meadow is honey and warm bread, and every oar slows half a stroke on the inhale. Nothing is wrong, friends. The fleet is strong, the men are fed — and still the benches ask, reasonably, in the voice men use for reasonable things: one afternoon, captain. One.',
+    recap: 'The benches asked for the meadow.',
+    choices: {
+      left: {
+        label: 'One afternoon, watched',
+        tags: ['blood', 'guile'],
+        governingStats: { guile: 1 },
+        outcomes: {
+          bad: { text: 'You grant the afternoon with rules, and the rules hold until the light goes long — then two men are missing at the count, found at the meadow’s edge with their hands full of stems, not eating, just SMELLING, and they need walking back like sleepwalkers. The fleet leaves a day late with something unsaid aboard. The benches got their afternoon, friends. The afternoon nearly kept two of them.', effects: { guile: 3, burnout: 2 } },
+          good: { text: 'One afternoon, run like a watch rotation: a third ashore at a time, a bitter root in every cheek, the boats kept swimming-close, and you on the sand the whole time with your back to the flowers and your eyes on your men. Sand under the feet, a fire, wrestling — everything a beach gives except the one thing this beach sells. At dusk the fleet rows out fed and easy, friends, and nobody has to be carried.', effects: { guile: 4, burnout: -2 } },
+          incredible: { text: 'You grant it — and you make the afternoon LOUDER than the meadow, friends: beach games with prizes, a wrestling ladder, the cook’s best catch grilled in rows, all of it staged in plain sight of the flower country. The slow-eyed people watch from the grass, baffled, holding their stems, while twelve crews laugh themselves hoarse over footraces. The men sleep like children and row out singing. The meadow offered forgetting, and the fleet answered with a day worth remembering — that, friends, is the only argument it has ever lost.', effects: { guile: 5, renown: 1, burnout: -3 } },
+        },
+      },
+      right: {
+        label: 'Row past the smell',
+        tags: ['blood', 'might'],
+        governingStats: { might: 1 },
+        outcomes: {
+          bad: { text: 'You refuse without a word — the captain’s privilege — and the privilege costs what it always costs: the stroke stays honest and the benches go quiet in the wrong way, a quiet with a ledger in it. Nothing is wrong, friends. Only, for two days, nothing is easy either, and easy is worth more at sea than the strong ever price it.', effects: { might: 3, burnout: 3 } },
+          good: { text: '“That smell,” you say, pitched down the whole line of benches, “is the last thing three crews ever smelled. Ask the harbors: their ships are still on that beach. Their benches are still in that grass.” And the men pull through the honey-wind with their jaws set, friends, because you did not deny them an afternoon — you told them the price of one, and let each man refuse it himself.', effects: { might: 4, renown: 1 } },
+          incredible: { text: 'You do the opposite of hurrying, friends: you slow the fleet to a walking pace along the meadow’s edge and let every man LOOK — the figures sitting in the grass with their unhurried smiles, and beyond them, on the far sand, the hulls. Old ships. Whole ships. Rotting at their leisure, in no danger, with the rigging still on, and no one, no one at all, mending them. The fleet rows out of that water without an order given. Nobody asks about afternoons again, friends. The meadow argued its own case, and lost it.', effects: { might: 5, athena: 1, burnout: -1 } },
+        },
+      },
+    },
+  },
+
   // ── The temptation of Act I: the Lotus (the weak offer) ──
   // A scheduled beat (pack.ts BEATS), gated to the runs it can actually
   // tempt: the flower speaks to the weary. Banking is a CHOICE, not a roll

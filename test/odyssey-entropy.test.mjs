@@ -119,13 +119,26 @@ test('circe variation floor: the island meets every fleet now (pass 20)', () => 
   assert.ok(beatRuns.circe >= RUNS * 0.7, `circe fired in only ${beatRuns.circe}/${RUNS} runs — the island went back to being skipped`);
 });
 
+test('lotus variation floor: the meadow meets every fleet now (pass 28)', () => {
+  // The temptation is gated to the weary; the strong fleet gets the
+  // petition (ody_lotus_watch, min expedition 10) — the trilogy's last
+  // graduation. Measured at authoring (RUNS=1000, seed 0xE47): 1000 runs
+  // met the meadow, watch 882 / temptation 118, H=0.524, top share 88.2%.
+  // Floors under measurement, same discipline as cyclops/underworld/circe.
+  const e = entropyOf(beatSeen.lotus);
+  assert.ok(e.variants >= 2, `lotus variants seen: ${e.variants} (a reading's gate rotted shut)`);
+  assert.ok(e.h >= 0.25, `lotus entropy ${e.h} bits < 0.25`);
+  assert.ok(e.topShare <= 0.94, `one lotus reading covers ${(e.topShare * 100).toFixed(1)}% of visits`);
+  assert.ok(beatRuns.lotus >= RUNS * 0.85, `lotus fired in only ${beatRuns.lotus}/${RUNS} runs — the meadow went back to being skipped`);
+});
+
 test('the measured H=0 beats stay documented until half 2 raises them', () => {
-  // Calypso / lotus deal exactly one card today (their variation is
-  // occurrence, side, and tier — not scene). This is the review's finding,
-  // pinned as a fact: if authoring adds variants (P-B half 2), this test is
-  // the one to UPDATE — move the beat to the entropy-floor test above
-  // (circe graduated in pass 20).
-  for (const beat of ['calypso', 'lotus']) {
+  // Calypso deals exactly one card today (its variation is occurrence,
+  // side, and tier — not scene). This is the review's finding, pinned as a
+  // fact: if authoring adds variants (P-B half 2), this test is the one to
+  // UPDATE — move the beat to the entropy-floor test above (circe
+  // graduated in pass 20, lotus in pass 28).
+  for (const beat of ['calypso']) {
     if (!beatSeen[beat]) continue; // lotus fires in <1% of runs at this policy
     const e = entropyOf(beatSeen[beat]);
     assert.equal(e.variants, 1,
