@@ -23,7 +23,7 @@ import {
   odysseyResume, odysseyHistoryEntry, odysseyHistoryStat, odysseyTwistNote,
 } from './ledger.js';
 import { ODYSSEY_EXIT_INTERVIEWS, odysseyEpilogue } from './interviews.js';
-import { ODYSSEY_COMEBACK_COPY, ODYSSEY_DAILY_COPY } from './modes.js';
+import { ODYSSEY_COMEBACK_COPY, ODYSSEY_DAILY_COPY, SCARRED_LAUNCH } from './modes.js';
 import { odysseyShareText, odysseyNews } from './share.js';
 import { odysseyRoster } from './roster.js';
 import { odysseyFeeds, ODYSSEY_FEED_CHROME } from './feeds.js';
@@ -53,6 +53,25 @@ const NOSTOS_SUCCESS = {
   text: 'So the bow speaks, the hall is washed, and the queen tests him with the bed no man could move — and he answers like a carpenter, which is how she knows her husband. Ships came home. Men came home. That is the ending everyone pays for, friends. And still, some nights, he wakes before first light and goes down to stand on the shingle, and does not go into the water. The sea does not forget. There is a truer ending than this one. I do not have all of it. Yet.',
 };
 
+// ── Pass 19: the finale reads the run that earned it. Four more pure
+// variants beside the Oar Road, each keyed to something the player actually
+// did (or conspicuously didn't). Precedence: rarest and most earned first.
+const EVERY_BENCH = {
+  title: 'Every Bench Answered',
+  text: 'Hear the arithmetic first, friends, because no other fire will believe it: the fleet that left Troy is the fleet that stands on the Ithaca shingle, and at the last calling of names, every bench answers. Every one. The woman by the woodpile has checked my count three times tonight and found nothing to charge me with. There is no monument for this, because monuments are for the dead and tonight there are none — there is only a harbor full of men walking up their own paths at dusk, and doors opening, and the same small sound over and over down the water: a name, said by someone who had stopped saying it. Sing the deeds some other night, friends. Tonight the song is the muster-roll, and it rhymes all the way down.',
+};
+const NOBODY_GLORY = {
+  title: 'The Song With No Name In It',
+  text: 'Here is the trick Smyrna will never believe, friends: the name went down with the anchor-stone in the first water — and the song got made anyway. They sing the cave, the wax, the impossible middle course, and where the hero’s name should sit, the verse says only THE CAPTAIN — and the not-knowing has made him bigger. Every harbor claims him. Every kingdom swears he sailed from their quay. He sits at feasts unrecognized, hears his own deeds hung on a man two heads taller, and laughs into his cup — the one man alive rich enough to be generous about it. Glory with no name on it cannot be taxed, summoned, or shouted at the sea. Ask the fire whether that is winning, friends. The fire is still deciding.',
+};
+const SEA_OWED = {
+  title: 'The Song, and the Bill',
+  text: 'The song is made, friends — no one takes that back — but listen under the last verse and you can hear the other ledger turning its pages. He shouted his glory across water that keeps accounts, and glory is LOUD, and the sea knows exactly where he sleeps now. So the telling ends with the name secure and the harbor watched: a spear by the bed, an eye on the weather, and on the flat calm days — the flat ones especially, friends — he does not walk the shingle alone. The song will outlive him. The question the fire will not say out loud is only: by how much.',
+};
+const WRATH_UNNAMED = {
+  title: 'The Sea Needs No Name',
+  text: 'No shout, friends — I want that understood at this fire: this captain gave the water NOTHING. He kept the name drowned by his own hand and did the humble thing all the way down the chart. The sea took the fleet anyway. That is the coldest verse I know. We like the tellings where the wrath is earned — where a shout buys the storm and the arithmetic closes — they hurt cleaner. This one you take home unclosed: some water is simply owed, from before your keel ever touched it, and the debt does not read the debtor. The gulls wheeled once and went to look at other water. They were not looking for anyone in particular. That, friends, is the whole of the horror.',
+};
 const OAR_ROAD = {
   title: 'The Oar Road',
   text: 'The bow speaks. The hall is washed. And THEN, friends — then, while the island is still learning to believe in him, he takes a well-cut oar from his own ship and walks INLAND, away from everything he crossed the world for, day after climbing day, until a man at a field-edge asks, neighborly, why he carries a winnowing fan on his shoulder. There. There he plants it, and pays the sea its bull, its boar, its ram, and the oldest debt in this telling closes like water behind a keel. He walks home unarmed and unhurried through the middle of his own kingdom. The years after are an ease the songs have no meter for; and death, when it finally thinks of him, comes up from the fields and not the foam — mild as evening, OFF the water, exactly as promised. That is the whole prophecy, friends, sung end to end at one fire. I have waited a long time to finish it. Bank the fire. Some tellings you do not follow with another.',
@@ -151,10 +170,27 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     head: 'The name in your mouth',
     sub: 'The prow is out of stone-throw, and the bard leans in: does this telling row for home, or for the song? Homecoming counts hulls and keeps the sea unprovoked; glory is bought in deeds and paid for in wrath.',
   },
-  // The hollow win — unless tonight's telling walked the whole prophecy.
-  // Pure: everything the variant depends on arrives as the argument.
+  // The finale reads the run that earned it (pass 19). Pure: everything a
+  // variant depends on arrives as the argument. Precedence runs rarest-first;
+  // the static endings table is the floor every run can fall back to.
   presentFinale({ run, ending, result }) {
-    if (ending === 'nostos' && result === 'success' && oarRoadWalked(run)) return OAR_ROAD;
+    const flags = run.flags || [];
+    if (ending === 'nostos' && result === 'success') {
+      if (oarRoadWalked(run)) return OAR_ROAD;
+      // Every man home: tonight's launch count (a scarred telling launches
+      // nine — those missing men are LAST telling's dead) minus the hulls
+      // standing at the end. Same arithmetic as summarize's crewLost.
+      const launch = flags.includes('comeback') ? SCARRED_LAUNCH : crewAtLaunch(run.loadout);
+      if (launch - Math.round(run.expedition ?? 0) <= 0) return EVERY_BENCH;
+    }
+    if (ending === 'kleos' && result === 'success') {
+      if (flags.includes('ody_nobody')) return NOBODY_GLORY;
+      if ((run.poseidon ?? 0) >= 7) return SEA_OWED;
+    }
+    // The static wrath text assumes the shout ("the name was shouted at the
+    // water once too often") — true only for a NAMED wrath. An unshouted
+    // wrath is the sea's own arithmetic and deserves the colder verse.
+    if (ending === 'wrath' && !flags.includes('ody_named')) return WRATH_UNNAMED;
     return null;
   },
   endings: {

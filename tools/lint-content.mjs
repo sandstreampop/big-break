@@ -134,11 +134,18 @@ const DESCRIPTORS = {
         if (e.title) out.push(e.title, e.text);
         else for (const v of Object.values(e)) out.push(v.title, v.text);
       }
-      const oar = pres.presentFinale?.({
-        run: { ending: { result: 'success' }, flags: ['ody_oar_road'], poseidon: 0 },
-        ending: 'nostos', result: 'success', meta: {},
-      });
-      out.push(oar?.title, oar?.text);
+      // Every run-varied finale (pass 19 grew the set to five) — drive each
+      // predicate so all authored verses are scanned.
+      for (const mock of [
+        { run: { ending: { result: 'success' }, flags: ['ody_oar_road'], poseidon: 0 }, ending: 'nostos', result: 'success' },        // the Oar Road
+        { run: { ending: { result: 'success' }, flags: [], loadout: 'kings_hall', expedition: 12, poseidon: 0 }, ending: 'nostos', result: 'success' }, // every bench answered
+        { run: { ending: { result: 'success' }, flags: ['ody_nobody'], poseidon: 0 }, ending: 'kleos', result: 'success' },           // glory with no name
+        { run: { ending: { result: 'success' }, flags: [], poseidon: 8 }, ending: 'kleos', result: 'success' },                        // the song, and the bill
+        { run: { ending: {} , flags: [], poseidon: 10 }, ending: 'wrath', result: null },                                              // the sea needs no name
+      ]) {
+        const v = pres.presentFinale?.({ ...mock, meta: {} });
+        out.push(v?.title, v?.text);
+      }
       out.push(...Object.values(pres.failLabels || {}));
       for (const m of [undefined, { odyssey: { fragments: ['bow'] } }, { odyssey: { oarRoad: true } }]) {
         out.push(pres.title?.foot?.(m));

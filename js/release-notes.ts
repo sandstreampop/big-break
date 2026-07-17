@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.21.0',
+    date: '2026-07-17',
+    title: 'The finale reads the telling that earned it',
+    notes: [
+      'Four more endings that notice what you actually did: bring every bench home and the muster-roll becomes the song; win the Glory road as Nobody and the verse has no name to hang the deeds on; win it loud with the sea provoked and the last verse carries a bill; and lose an UNSHOUTED fleet to the wrath and the bard sings the colder truth — some water is simply owed.',
+      'The Oar Road still outranks everything. The static endings remain the floor every telling can fall back to.',
+    ],
+  },
+  {
     version: '0.20.0',
     date: '2026-07-17',
     title: 'The Gauntlet comes to the fire',
