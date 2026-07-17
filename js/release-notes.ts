@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.51.0',
+    date: '2026-07-17',
+    title: 'The season inspected end to end',
+    notes: [
+      'A full-voyage verification pass over everything this season shipped — every gate rerun green on the finished tree, from the seeded goldens to the phone matrix.',
+      'One plaque sharpened along the way: running the headland that beat you and losing again now lands on the old bosun counting strokes out loud until the water lets go, instead of a proverb.',
+    ],
+  },
+  {
     version: '0.50.0',
     date: '2026-07-17',
     title: 'The Scarred Telling remembers',

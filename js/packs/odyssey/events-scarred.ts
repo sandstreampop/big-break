@@ -58,7 +58,7 @@ export const SCARRED_EVENTS: GameEvent[] = [
     recap: 'The headland from last time.',
     left: {
       label: 'Run the passage that beat you', approach: 'might', risky: true,
-      bad: 'You run the old line — to prove it, friends, which is the one reason the sea always accepts — and the headland does not bother to be original: the same set, the same cross-chop, the same cold arithmetic, and the fleet pays a smaller instalment of the same bill. Lessons repeat until learned. Tuition is due at each sitting.',
+      bad: 'You run the old line — to prove it, friends, which is the one reason the sea always accepts — and the headland does not bother to be original: the same set, the same cross-chop, the same cold arithmetic, and the fleet pays a smaller instalment of the same bill. The old bosun pays it the way he paid it last time — counting strokes out loud until the water lets go.',
       good: 'The old line — but two lengths wider, one glass earlier, the sail already reefed: the same door, entered like a man who has read the room’s one trick. The headland gives its worst on schedule, and its worst finds the fleet braced for exactly that. Passing your own wreck-water clean, friends, is a wine the shore never sells.',
       incredible: 'You run it — and as the cross-set hits you call the moves BEFORE the water makes them, loud, by name, like a man reading the sea its own ledger: “Now the shove. Now the back-chop. Now the lull that lies.” The new men think it is magic. The old men know it is scar tissue, out loud. The headland, out-sung at its own game, runs out of verses first.',
     },
