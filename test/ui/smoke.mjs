@@ -1806,17 +1806,27 @@ async function checkOdysseyLedger(browser, base) {
     // an aria label that reads the whole thing (role=img).
     const vase = await page.evaluate(() => {
       const v = document.querySelector('#screen-ending.active .ody-vase');
+      const figHeights = v ? [...v.querySelectorAll('.ody-vase-fig svg')].map((s) => s.getBoundingClientRect().height) : [];
       return {
         present: !!v,
         role: v?.getAttribute('role') || '',
         label: v?.getAttribute('aria-label') || '',
         figs: v ? v.querySelectorAll('.ody-vase-fig').length : 0,
         sea: !!v?.querySelector('.ody-vase-sea'),
+        figHeights,
+        bandHeight: v ? v.getBoundingClientRect().height : 0,
       };
     });
     if (!vase.present) throw new Error(`[${label}] no .ody-vase on the ending screen — the night went unpainted`);
     if (vase.role !== 'img' || !vase.label.includes('tonight’s vase')) throw new Error(`[${label}] the vase is not a labeled image (role=${vase.role})`);
     if (vase.figs < 2 || !vase.sea) throw new Error(`[${label}] the vase band is empty (figs=${vase.figs}, sea=${vase.sea})`);
+    // SIZE is behaviour, not presence (the 2026-07 verifier catch): px.ts
+    // emits viewBox-only SVGs, so without a CSS rule they render at the
+    // browser's 300×150 default and clip inside the band's overflow:hidden.
+    if (!vase.figHeights.length || vase.figHeights.some((h) => h < 8 || h > 60)) {
+      throw new Error(`[${label}] vase figures mis-sized (heights: ${vase.figHeights.map((h) => Math.round(h)).join(',')}) — the sizing rule went missing`);
+    }
+    if (vase.bandHeight > 200) throw new Error(`[${label}] the vase towers ${Math.round(vase.bandHeight)}px — figures are rendering at SVG default size`);
 
     // The share button (pass 8): a new interactive control on the ending
     // screen (previously it copied an EMPTY string for this pack). Headless
