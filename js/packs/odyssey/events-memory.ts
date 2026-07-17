@@ -107,7 +107,7 @@ export const MEMORY_EVENTS: GameEvent[] = [
         outcomes: {
           bad: { text: '“Because the sea is worse.” True, friends, and truly said, and the room hears the tiredness under it — a bard defending the banked endings is a bard who has been defending them to himself. The innkeeper pours the next cup a little gentler. Gentleness from an innkeeper is a diagnosis.', effects: { might: 3, burnout: 3 } },
           good: { text: '“The warm islands are real offers,” you say, “made to real men, and I will not sing them as traps to make the fire feel brave.” The room chews it. Swallows it. Respects it, friends — a telling whose exits are honest makes its rowing-on mean something. The innkeeper tops your cup unasked. That is the porch’s highest review.', effects: { might: 4, athena: 1 } },
-          incredible: { text: '“Tonight,” you say, “when the island comes — and it will — I will sing the staying FAIRLY, and then we will see what this captain does.” You have promised the fire a real fight instead of a rigged one, friends, and the fire pays for real fights: men send word to their brothers, the benches fill, and the innkeeper stops charging you for the second cup. The stakes tonight are honest. Honest stakes draw crowds.', effects: { might: 5, renown: 2 } },
+          incredible: { text: '“Tonight,” you say, “when the island comes — and it will — I will sing the staying FAIRLY, and then we will see what this captain does.” You have promised the fire a real fight instead of a rigged one, friends, and the fire pays for real fights: men send word to their brothers, the benches fill, and the innkeeper stops charging you for the second cup — he wants a seat for the island verse himself, and he has never once left the till for a song.', effects: { might: 5, renown: 2 } },
         },
       },
     },
@@ -126,7 +126,7 @@ export const MEMORY_EVENTS: GameEvent[] = [
         tags: ['guile'],
         governingStats: { guile: 1 },
         outcomes: {
-          bad: { text: '“The sea decides,” you say, and the shrug is professional, friends, but the front row paid for a homecoming and heard a disclaimer. Some of the warmth banks itself for a surer night. A fire hedged against is a fire half-lit.', effects: { guile: 3, burnout: 2 } },
+          bad: { text: '“The sea decides,” you say, and the shrug is professional, friends, but the front row paid for a homecoming and heard a disclaimer. The man who asked settles back with his arms folded, friends, and keeps them folded through the whole first water — you will spend three verses earning those arms open again.', effects: { guile: 3, burnout: 2 } },
           good: { text: '“Tonight’s sea has not met tonight’s captain,” you say, and the room grins — the right answer, friends: not a promise, a CHALLENGE, and a fire that has been challenged leans forward instead of back. The man in front settles in like a judge at a contest. Good. Judges pay attention.', effects: { guile: 4, renown: 1 } },
           incredible: { text: '“You know how it CAN end now,” you tell them. “Tonight you learn what it costs when it does — or why it doesn’t when it doesn’t.” And the fire discovers, friends, the second hunger: not what happens, but what it weighs. That is the night a room stops being an audience and becomes a fire that KEEPS a bard. They will take any ending you row to now, so long as it is paid for in front of them.', effects: { guile: 5, athena: 1, renown: 1 } },
         },

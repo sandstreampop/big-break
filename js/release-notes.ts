@@ -31,6 +31,16 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.27.0',
+    date: '2026-07-17',
+    title: 'One voice owns last night, and the ending breathes',
+    notes: [
+      'The halfway audit: a returning bard was hearing about last night from THREE places before tonight’s first oar-stroke — the cold open, the fire’s question, and a heckle. Now the bard’s-note owns the confession: when it speaks, the same-ending card and needle stand down. No note, and the fire still asks — one voice a night, whoever holds it.',
+      'The ending screen breathes: the old fire-and-cup scene stood one line above a vase closing on the same cup, so the vase is now THE keepsake (the death-rite ember still gutters). A fully-sung prophecy collapses its shelf to one quiet line instead of re-serving the solved ceremony every night.',
+      'And the run-start picker finally admits there are six fires, not four.',
+    ],
+  },
+  {
     version: '0.26.0',
     date: '2026-07-17',
     title: 'The gallery of nights',

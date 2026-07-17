@@ -5,7 +5,7 @@
 // presenterCopy lint rail (tools/lint-content.mjs).
 
 import type { Pack, RunState } from '../../types.js';
-import { bardBeat, cycleHeard, noteOf, isNoteLine } from './bard-chatter.js';
+import { bardBeat, cycleHeard, noteOf, isNoteLine, NOTE_COVERS } from './bard-chatter.js';
 import { odysseyFeel } from './feel.js';
 import { odysseySoundscape, resultCue, endingCue, speak } from './soundscape.js';
 import { friezeTableau } from './frieze.js';
@@ -395,6 +395,10 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     if (note && isNoteLine(note)) {
       state.bardLine = note;
       state.bardShown = [note];
+      // The one-voice law (pass 25): the note now OWNS these endings for
+      // this run — the memory deck card and the crowd's same-ending needle
+      // read this and stand down. One confession, not three echoes.
+      state.noteCovers = NOTE_COVERS[note] || [];
     }
   },
   // Run end banks tonight's turning (summarize().fragment) into the pack's
@@ -514,12 +518,14 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     const cue = endingCue(key, result);
     if (cue) speak(cue as any);
     const dead = key === 'wrath' || key === 'burnout' || (key === 'nostos' && result === 'failure');
-    const banked = key === 'lotus' || key === 'circe' || key === 'calypso';
+    // The ending wall, thinned (pass 25, the halfway audit): the vase is
+    // THE keepsake and already closes on the ending's cup motif, so the old
+    // fire+cup scene block — which painted the same cup one line above it —
+    // stands down. The death gutter stays: guttering the ember is the rite
+    // (and the ceremony smoke pins it), not a duplicate.
     const scene = dead
       ? `<span class="fig fig-ember">${ember()}</span><span class="fig fig-fire">${coldHearth()}</span>`
-      : banked
-        ? `<span class="fig fig-fire">${fire()}</span><span class="fig fig-cup">${cup('down')}</span>`
-        : `<span class="fig fig-fire">${fire()}</span><span class="fig fig-cup">${cup(cupLevelFor(state.act || 3))}</span>`;
+      : null;
     // The Night's Vase (pass 23): the telling, painted — fleet at its final
     // count, the stations actually faced, the ending's motif. Pure read of
     // the ended state; the bard hands you the keepsake with the verdict.
@@ -538,21 +544,29 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // reachable and how.
     const held = heldTurnings(state.flags || []);
     const landed = justLanded(state.flags || []);
-    const shelf = fragmentShelf({ held, justFilled: landed, animate: false });
-    const lead = landed
-      ? `<div class="ody-ledger-lead">You carried home ${TURNING_NAMES[landed]}.</div>`
-      : '';
-    const countLine = `<div class="ody-ledger-count">${held.count} of 3 turnings held.</div>`;
-    const floorText = held.count === 3
-      ? 'All three turnings — the prophecy is sung end to end.'
-      : held.count === 0
-        ? 'Three turnings wait in the dark. You carry none of them yet.'
-        : 'The third only reveals itself to a bard who already holds the other two.';
-    const floorLine = `<div class="ody-ledger-floor">${floorText}</div>`;
-    const ledger = { cls: 'ody-ledger', html: `${lead}${shelf}${countLine}${floorLine}` };
+    // A SOLVED shelf collapses to one quiet line (pass 25): a maxed veteran
+    // was reading a static full shelf + count + floor on every ending, while
+    // the title foot already states the whole prophecy is sung. A telling
+    // that just landed the third turning still gets the full ceremony once.
+    const solved = held.count === 3 && !landed;
+    const ledger = solved
+      ? { cls: 'ody-ledger ody-ledger-solved', html: '<div class="ody-ledger-floor">All three turnings held — the prophecy is sung end to end.</div>' }
+      : (() => {
+          const shelf = fragmentShelf({ held, justFilled: landed, animate: false });
+          const lead = landed
+            ? `<div class="ody-ledger-lead">You carried home ${TURNING_NAMES[landed]}.</div>`
+            : '';
+          const countLine = `<div class="ody-ledger-count">${held.count} of 3 turnings held.</div>`;
+          const floorText = held.count === 3
+            ? 'All three turnings — the prophecy is sung end to end.'
+            : held.count === 0
+              ? 'Three turnings wait in the dark. You carry none of them yet.'
+              : 'The third only reveals itself to a bard who already holds the other two.';
+          return { cls: 'ody-ledger', html: `${lead}${shelf}${countLine}<div class="ody-ledger-floor">${floorText}</div>` };
+        })();
     return {
       lines: [
-        { cls: 'ending-scene' + (dead ? ' ending-gutter' : '') + still, html: scene },
+        ...(scene ? [{ cls: 'ending-scene ending-gutter' + still, html: scene }] : []),
         { cls: 'ody-vase-line' + still, html: vase.html },
         ledger,
       ],
@@ -630,6 +644,6 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   },
   loadoutPicker: {
     head: 'Where do you sing tonight?',
-    sub: 'Four fires want the same story told four ways. The crowd shapes the telling.',
+    sub: 'Six fires want the same story told six ways. The crowd shapes the telling.',
   },
 };

@@ -54,6 +54,17 @@ test('the banked-island card hears either warm island', () => {
   assert.ok(!eligibleMem(runWith({ history: [{ endingKey: 'lotus' }] })).includes('ody_mem_bank'), 'the meadow has its own card');
 });
 
+test('the one-voice law: a stamped note makes the same-ending card stand down (pass 25)', () => {
+  const history = [{ endingKey: 'wrath' }];
+  // Note covering wrath → the widow's card yields to the cold open.
+  assert.deepStrictEqual(eligibleMem(runWith({ history, noteCovers: ['wrath'] })), [],
+    'the note owns the confession — the deck must not echo it');
+  // A note covering a DIFFERENT ending leaves the card alone.
+  assert.ok(eligibleMem(runWith({ history, noteCovers: ['lotus'] })).includes('ody_mem_wrath'));
+  // No note (an unshouted wrath writes none) → the card still speaks.
+  assert.ok(eligibleMem(runWith({ history })).includes('ody_mem_wrath'));
+});
+
 test('shared water refuses the fire’s memory wholesale (the P18 law)', () => {
   const history = [{ endingKey: 'wrath' }];
   assert.deepStrictEqual(eligibleMem(runWith({ history, daily: '2026-07-18' })), [], 'the daily forks on nothing personal');

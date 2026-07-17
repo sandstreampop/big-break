@@ -169,11 +169,14 @@ export const CHATTER: Chatter[] = [
     { who: 'the potter’s boy', text: 'You told this one already.' },
     { text: 'I told A telling already, boy. Tonight is tonight’s. Same sea, same man — sit still and find out what the water does differently when you are watching.' },
   ] },
-  { id: 'bcm_drowned', kind: 'memory', when: (s) => s.tellingLedger?.lastEnding === 'wrath', blocks: [
+  // The one-voice law (pass 25, the halfway audit): when the bard's-note
+  // cold open already confessed an ending, the crowd's same-ending needle
+  // stands down — one surface owns last night.
+  { id: 'bcm_drowned', kind: 'memory', when: (s) => s.tellingLedger?.lastEnding === 'wrath' && !(s.noteCovers || []).includes('wrath'), blocks: [
     { who: 'the woman by the woodpile', text: 'Last night the sea took the lot of you. My grandfather always poured before the last headland.' },
     { text: 'Her grandfather, friends, poured so often he arrived everywhere dry-hulled and drunk. But pour. Tonight we row past the place it happened, and I want the god fed before we get there.' },
   ] },
-  { id: 'bcm_meadow', kind: 'memory', when: (s) => s.tellingLedger?.lastEnding === 'lotus', blocks: [
+  { id: 'bcm_meadow', kind: 'memory', when: (s) => s.tellingLedger?.lastEnding === 'lotus' && !(s.noteCovers || []).includes('lotus'), blocks: [
     { who: 'the potter’s boy', text: 'Last night he sat down in the flowers and you just stopped singing.' },
     { text: 'And tonight he stands back up. That is what a new fire buys, boy — the meadow keeps whichever man you leave in it, and we left one. Listen for the bench with no oar in it.' },
   ] },
@@ -280,6 +283,17 @@ export function noteOf(summary: any): string | null {
 
 // Whether a chatter id is a bard's-note line (applySetup stamps only these).
 export const isNoteLine = (id: string) => !!BY_ID[id] && BY_ID[id].kind === 'note';
+
+// Which ending classes each note CONFESSES — the one-voice law's map
+// (pass 25): a stamped note owns last night, so the memory deck card and
+// the crowd's same-ending needle stand down for these endings this run.
+export const NOTE_COVERS: Record<string, string[]> = {
+  bn_shout: ['wrath'],
+  bn_owl: ['nostos'],
+  bn_beach_late: ['burnout'],
+  bn_bank_strong: ['calypso', 'circe'],
+  bn_hungry: ['lotus'],
+};
 
 export const bardPlugin: Plugin = {
   id: 'odyssey_bard',

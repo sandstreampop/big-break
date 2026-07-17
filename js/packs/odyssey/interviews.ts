@@ -62,7 +62,7 @@ export const ODYSSEY_EXIT_INTERVIEWS: Record<string, any> = {
     },
     right: {
       label: '“The horse never asked me that.”', exit: 'deflect', lp: 4,
-      text: 'The laugh comes as a mercy and everyone takes it, gratefully, the way sailors take a harbor. But walking home in the dark, more than one listener stops at their own gate a moment before going in — checking, quietly, that they still want to. That is the island’s arithmetic, friends. It always collects on a delay.',
+      text: 'The laugh comes as a mercy and everyone takes it, gratefully, the way sailors take a harbor. But walking home in the dark, more than one listener stops at their own gate a moment before going in — checking, quietly, that they still want to. One of them stands there long enough that his dog comes out to fetch him.',
     },
   },
   burnout: {

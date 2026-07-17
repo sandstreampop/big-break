@@ -45,6 +45,10 @@ export const itineraryPlugin: Plugin = {
       const rows = state.history || [];
       const last = rows[rows.length - 1];
       if (!last?.endingKey) return false;
+      // The one-voice law (pass 25): when the bard's-note cold open already
+      // confessed this ending, the fire's question stands down — one
+      // surface owns last night.
+      if ((state.noteCovers || []).includes(last.endingKey)) return false;
       const hit = (want: string) => {
         const [key, res] = String(want).split(':');
         return last.endingKey === key && (!res || last.result === res);

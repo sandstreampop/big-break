@@ -50,6 +50,9 @@ declare module '../../types.js' {
     athena?: number;
     poseidon?: number;
     renown?: number;
+    // The one-voice law (pass 25): the ending classes tonight's stamped
+    // bard's-note confesses — same-ending memory surfaces stand down.
+    noteCovers?: string[];
   }
   interface Requires {
     // The Memory Law's deck gate (pass 22, owned by odyssey_bard): the
