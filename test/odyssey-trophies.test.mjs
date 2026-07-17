@@ -95,13 +95,18 @@ test('the new voyages earn their verses (pass 41)', () => {
   assert.ok(fires('ody_owls_own', { result: 'success', athena: 12 }));
   assert.ok(!fires('ody_owls_own', { result: 'partial', athena: 14 }));
   assert.ok(!fires('ody_owls_own', { result: 'success', athena: 11 }));
-  // The recognitions: the hound by cardLog, the scar by its one-voice flag
-  // (either surface that stages it counts).
+  // The recognitions: the hound by cardLog; the scar by being FOUND, not
+  // by the scene merely being told (audit #2 finding 1: the one-voice flag
+  // also rides the clean hide — a trophy must not reward it).
   assert.ok(fires('ody_last_watch', { cardLog: [{ e: 'ody_a3_argos' }] }));
   assert.ok(!fires('ody_last_watch', { cardLog: [] }));
-  assert.ok(fires('ody_thumbs_knew', { flags: ['ody_scar_scene'] }));
-  assert.ok(!fires('ody_thumbs_knew', { flags: [] }));
-  assert.ok(!fires('ody_thumbs_knew', {}), 'hostile: no flags at all');
+  assert.ok(fires('ody_thumbs_knew', { cardLog: [{ e: 'ody_a3_nurse_scar', s: 'left', t: 'good' }] }), 'the nurse finds you on either side');
+  assert.ok(fires('ody_thumbs_knew', { cardLog: [{ e: 'ody_a3_penelope', s: 'right', t: 'bad' }] }), 'her cry half-out counts as found');
+  assert.ok(fires('ody_thumbs_knew', { cardLog: [{ e: 'ody_a3_penelope', s: 'right', t: 'incredible' }] }), 'letting her know counts');
+  assert.ok(!fires('ody_thumbs_knew', { cardLog: [{ e: 'ody_a3_penelope', s: 'right', t: 'good' }] }), 'the CLEAN HIDE must not award it');
+  assert.ok(!fires('ody_thumbs_knew', { cardLog: [{ e: 'ody_a3_penelope', s: 'left', t: 'incredible' }] }), 'the interview side stages no scar');
+  assert.ok(!fires('ody_thumbs_knew', { flags: ['ody_scar_scene'] }), 'the one-voice sentinel alone is not being found');
+  assert.ok(!fires('ody_thumbs_knew', {}), 'hostile: no cardLog at all');
 });
 
 test('the ledger specials fire on the metas they describe', () => {

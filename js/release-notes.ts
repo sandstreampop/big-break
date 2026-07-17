@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.44.0',
+    date: '2026-07-17',
+    title: 'The second audit',
+    notes: [
+      'A fresh-context review of everything this season built found the game holding together — and one trophy lying: The Thumbs Knew was awarded even when you hid the scar cleanly. It now fires only when the thumbs actually found you (the nurse’s basin, or the near-miss at the queen’s fire). Three of the Telemachy’s finest moments also got their last lines re-landed on deeds instead of epigrams — the grain-ship master wades in to shout the woodpile answer up the beach himself.',
+    ],
+  },
+  {
     version: '0.43.0',
     date: '2026-07-17',
     title: 'The Repertoire grows',

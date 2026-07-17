@@ -99,7 +99,15 @@ export const ODYSSEY_TROPHIES: OdysseyTrophy[] = [
     check: (s) => Array.isArray(s.cardLog) && s.cardLog.some((r: any) => r.e === 'ody_a3_argos') },
   { id: 'ody_thumbs_knew', cat: 'feats', secret: true, name: 'The Thumbs Knew', icon: '🧺',
     desc: 'Be found by the foot-washing. Some disguises have exactly one hole, and it is shaped like childhood.',
-    check: (s) => (s.flags || []).includes('ody_scar_scene') },
+    // ody_scar_scene is the one-voice sentinel ("the scene was told"), NOT
+    // "you were caught" — the queen card's clean hide stamps it too (the
+    // second audit's finding #1). Being FOUND is read from the cardLog: the
+    // nurse card is a recognition on either side; the queen card's
+    // keep-it-hidden side only fails on its bad (her cry half-out) and
+    // incredible (you let her know, by choice) tiers.
+    check: (s) => Array.isArray(s.cardLog) && s.cardLog.some((r: any) =>
+      r.e === 'ody_a3_nurse_scar' ||
+      (r.e === 'ody_a3_penelope' && r.s === 'right' && (r.t === 'bad' || r.t === 'incredible'))) },
 
   // ── The Long Game (the fire's ledger, across nights) ──
   { id: 'ody_third_question', cat: 'career', name: 'The Third Question', icon: '🏺',
