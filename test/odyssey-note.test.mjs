@@ -6,7 +6,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert';
-import { noteOf, bardBeat, CHATTER } from '../dist/js/packs/odyssey/bard-chatter.js';
+import { noteOf, bardBeat, CHATTER, NOTE_COVERS } from '../dist/js/packs/odyssey/bard-chatter.js';
 import { odysseyPresenter } from '../dist/js/packs/odyssey/presenter.js';
 
 test('noteOf judges the mistakes it claims to judge — and only those', () => {
@@ -67,6 +67,18 @@ test('a gauntlet telling forks on NOTHING personal — fragments, ledger, note a
   assert.deepStrictEqual(state.flags, [], 'no fragment flags on shared water');
   assert.strictEqual(state.bardLine, 'bc_open_room', 'no personal cold open on shared water');
   assert.strictEqual(state.history, undefined, 'no telling-ledger stamp on shared water');
+});
+
+test('the one-voice law reaches the heckles too (pass 25)', () => {
+  const drowned = CHATTER.find((c) => c.id === 'bcm_drowned');
+  const meadow = CHATTER.find((c) => c.id === 'bcm_meadow');
+  assert.ok(drowned.when({ tellingLedger: { lastEnding: 'wrath' } }), 'no note — the woodpile needles');
+  assert.ok(!drowned.when({ tellingLedger: { lastEnding: 'wrath' }, noteCovers: ['wrath'] }), 'the note owns the wrath — the needle stands down');
+  assert.ok(meadow.when({ tellingLedger: { lastEnding: 'lotus' } }));
+  assert.ok(!meadow.when({ tellingLedger: { lastEnding: 'lotus' }, noteCovers: ['lotus'] }));
+  // The owl confesses a failed homecoming and covers nothing deck-side —
+  // it must never suppress the success-only homecoming card.
+  assert.deepStrictEqual(NOTE_COVERS.bn_owl, [], 'bn_owl covers nothing (it would only contradict)');
 });
 
 test('note lines sit outside every seeded pool (golden safety by shape)', () => {

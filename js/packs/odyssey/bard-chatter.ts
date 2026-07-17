@@ -289,7 +289,11 @@ export const isNoteLine = (id: string) => !!BY_ID[id] && BY_ID[id].kind === 'not
 // the crowd's same-ending needle stand down for these endings this run.
 export const NOTE_COVERS: Record<string, string[]> = {
   bn_shout: ['wrath'],
-  bn_owl: ['nostos'],
+  // bn_owl confesses a FAILED/partial homecoming, but the only nostos deck
+  // card asks about a success — covering 'nostos' could only ever suppress
+  // a card the note contradicts (the daily-interleave edge the P25 verifier
+  // traced). The owl covers nothing deck-side.
+  bn_owl: [],
   bn_beach_late: ['burnout'],
   bn_bank_strong: ['calypso', 'circe'],
   bn_hungry: ['lotus'],

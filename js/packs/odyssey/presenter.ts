@@ -9,9 +9,9 @@ import { bardBeat, cycleHeard, noteOf, isNoteLine, NOTE_COVERS } from './bard-ch
 import { odysseyFeel } from './feel.js';
 import { odysseySoundscape, resultCue, endingCue, speak } from './soundscape.js';
 import { friezeTableau } from './frieze.js';
-import { hearthScene, cupLevelFor } from './hearth.js';
+import { hearthScene } from './hearth.js';
 import { odysseyTitleScene } from './threshold.js';
-import { cyclops, ashBand, hallDoors, fire, coldHearth, ember, cup } from './art/figures.js';
+import { cyclops, ashBand, hallDoors, coldHearth, ember } from './art/figures.js';
 import { lostMan, crewAtLaunch } from './crew.js';
 import { reducedMotion } from '../../ui/dom.js';
 import { heldTurnings, justLanded, fragmentShelf, TURNING_NAMES } from './shelf.js';
