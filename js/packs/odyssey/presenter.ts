@@ -5,7 +5,7 @@
 // presenterCopy lint rail (tools/lint-content.mjs).
 
 import type { Pack, RunState } from '../../types.js';
-import { bardBeat, cycleHeard } from './bard-chatter.js';
+import { bardBeat, cycleHeard, noteOf, isNoteLine } from './bard-chatter.js';
 import { odysseyFeel } from './feel.js';
 import { odysseySoundscape, resultCue, endingCue, speak } from './soundscape.js';
 import { friezeTableau } from './frieze.js';
@@ -340,6 +340,15 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
         heard: [...(meta.odyssey.heardCallbacks || [])],
       };
     }
+    // The bard's-note (P-C, pass 13): last telling's judged MISTAKE opens
+    // tonight's telling — the stamp replaces the ordinary cold open (the
+    // open was never spoken, so nothing is burned). Knowledge only; the
+    // note is recomputed every run end, so a clean night clears it.
+    const note = meta?.odyssey?.note;
+    if (note && isNoteLine(note)) {
+      state.bardLine = note;
+      state.bardShown = [note];
+    }
   },
   // Run end banks tonight's turning (summarize().fragment) into the pack's
   // namespace on the shell's meta save. Union, never count — knowledge does
@@ -368,6 +377,9 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     if (summary?.nobody) t.nobody += 1;
     t.crewLostLast = summary?.crewLost ?? 0;
     t.crewLostTotal += summary?.crewLost ?? 0;
+    // The bard's-note: ALWAYS recomputed (null on a clean night), so the
+    // note is only ever the latest telling's mistake.
+    meta.odyssey.note = noteOf(summary);
     // No-repeat-until-exhausted for the crowd's callbacks: union what the
     // fire heard tonight, then let the cycle REALLY reset — the heard set is
     // persistent, so when everything the next telling could hear has been

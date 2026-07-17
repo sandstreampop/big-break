@@ -50,7 +50,7 @@ declare module '../../types.js' {
   }
 }
 
-type Kind = 'open' | 'reactive' | 'memory' | 'ambient';
+type Kind = 'open' | 'reactive' | 'memory' | 'ambient' | 'note';
 // A dialogue block: the bard's own speech (`who` omitted) or a heckler's
 // interjection (`who` = the attribution the screen prints). Text is stored
 // WITHOUT surrounding quotes; the shell wraps every block in curly quotes so
@@ -128,6 +128,32 @@ export const CHATTER: Chatter[] = [
   ] },
   { id: 'bc_deep', kind: 'ambient', when: (s) => (s.act || 1) >= 3, blocks: [
     { text: 'The fire burns low now, and I will sing softer, friends — the last sea is a corridor with teeth on both walls, and beyond it, home, wearing a stranger’s face.' },
+  ] },
+
+  // ── The bard's-note (P-C, pass 13): last night's run-ending MISTAKE —
+  // not just how it ended, but what the bard judges went wrong — becomes
+  // tonight's cold open. One note at a time, always the latest telling's
+  // (presenter.recordMeta computes it; applySetup stamps it over the
+  // ordinary cold open). Kind 'note' sits outside the normal pools, so
+  // these speak only when stamped — never from the seeded flavor draw. ──
+  { id: 'bn_shout', kind: 'note', blocks: [
+    { text: 'Before I begin, friends — about last night. The shout. Father and city and all, straight at the water, and the water took the whole fleet down for it. Tonight I sing the same man and the same mouth. We will see what he does with it.' },
+    { who: 'the potter’s boy', text: 'You could just have him not shout.' },
+    { text: 'I could have him not BREATHE, boy, and it would be about as true to the man. Sit. We begin.' },
+  ] },
+  { id: 'bn_owl', kind: 'note', blocks: [
+    { text: 'Last night the hulls came home and the man did not — hear me right: the ships were enough, the men were enough, and the goddess was looking elsewhere at the hour it counted. One owl short, friends. Tonight the bard minds the rites a little closer, and so, perhaps, should the captain.' },
+  ] },
+  { id: 'bn_beach_late', kind: 'note', blocks: [
+    { text: 'I owe this fire an apology, friends. Last night I rowed the man to within two islands of home and let the weight win — the beach, the rock, the tide filling his footprints. Two islands. Tonight we start again, and tonight I will watch the weight the way a pilot watches weather.' },
+    { who: 'the woman by the woodpile', text: 'You said the sea outlasts some men.' },
+    { text: 'It does. It has not outlasted THIS one, because this one has a bard too stubborn to leave him sitting. Throw on a branch.' },
+  ] },
+  { id: 'bn_bank_strong', kind: 'note', blocks: [
+    { text: 'A confession before the first stroke, friends: last night’s telling banked at a warm island with the home-road still open — hulls enough, deeds enough, and I set the cup down anyway. The fire has opinions about that, and the fire is right. Tonight we row past the warm parts. Hold me to it.' },
+  ] },
+  { id: 'bn_hungry', kind: 'note', blocks: [
+    { text: 'Last night the meadow took him, friends — and I will not pretend it was strange. The fleet was bled and the weight was aboard, and soft grass argues well against a hard bench. But a telling that stops in act one is a fee I cannot charge for. Tonight: further. At least as far as the cave.' },
   ] },
 
   // ── Memory (I8): the crowd remembers previous tellings — gags accumulate
@@ -228,6 +254,27 @@ function pickId(s: RunState, salt: number): string | null {
   s.bardShown = [...(s.bardShown || []), chosen.id];
   return chosen.id;
 }
+
+// The bard's judgment of a finished telling: which MISTAKE, if any, is worth
+// opening the next night with. One note at a time, latest telling's only,
+// null for a clean (or unremarkable) ending. Pure read of the run summary —
+// unit-tested directly, computed at recordMeta, spoken via applySetup.
+export function noteOf(summary: any): string | null {
+  if (!summary) return null;
+  const key = summary.endingKey;
+  const acts = (summary.cardLog || []).map((c: any) => c.a || 0);
+  const maxAct = acts.length ? Math.max(...acts) : 1;
+  if (key === 'wrath' && summary.named) return 'bn_shout';
+  if (key === 'nostos' && summary.endingResult === 'failure'
+    && (summary.expedition ?? 0) >= 6 && (summary.athena ?? 0) < 4) return 'bn_owl';
+  if (key === 'burnout' && maxAct >= 3) return 'bn_beach_late';
+  if ((key === 'calypso' || key === 'circe') && (summary.expedition ?? 0) >= 6) return 'bn_bank_strong';
+  if (key === 'lotus') return 'bn_hungry';
+  return null;
+}
+
+// Whether a chatter id is a bard's-note line (applySetup stamps only these).
+export const isNoteLine = (id: string) => !!BY_ID[id] && BY_ID[id].kind === 'note';
 
 export const bardPlugin: Plugin = {
   id: 'odyssey_bard',

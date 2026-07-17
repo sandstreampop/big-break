@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.15.0',
+    date: '2026-07-17',
+    title: 'The bard remembers what went wrong',
+    notes: [
+      'End a telling on a real mistake — the shout that drowned the fleet, the goddess left one owl short, a strong telling banked at a warm island, the beach two islands from home — and the NEXT telling opens with the bard owning it. One note at a time; a clean night clears the slate.',
+      'The confession is knowledge, not power: it changes the opening words, never the odds.',
+    ],
+  },
+  {
     version: '0.14.0',
     date: '2026-07-16',
     title: 'Meet The Benches',
