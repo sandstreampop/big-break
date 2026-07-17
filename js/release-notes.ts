@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.14.0',
+    date: '2026-07-16',
+    title: 'Meet The Benches',
+    notes: [
+      'The Odyssey’s title screen gains a cast gallery: the eighteen rowers the bard names when the sand takes them, the fire’s ensemble (the woman by the woodpile, the potter’s boy, the man who still wants the horse, and Phemios’s pointedly empty place), and the two powers keeping the ledger.',
+      'Faces are the game’s own black-figure work, and a few lines remember your tellings — how many nights you’ve sung, how many men the sand has taken.',
+    ],
+  },
+  {
     version: '0.13.0',
     date: '2026-07-16',
     title: 'Six more waters where the chart gives up',

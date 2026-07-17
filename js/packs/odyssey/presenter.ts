@@ -25,6 +25,7 @@ import {
 import { ODYSSEY_EXIT_INTERVIEWS, odysseyEpilogue } from './interviews.js';
 import { ODYSSEY_COMEBACK_COPY, ODYSSEY_DAILY_COPY } from './modes.js';
 import { odysseyShareText, odysseyNews } from './share.js';
+import { odysseyRoster } from './roster.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -509,6 +510,9 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // The telling travels (pass 8): the 📣 button was sharing an empty string
   // for this pack. Copy + the day's harbor rumor live in share.ts.
   shareText: odysseyShareText,
+  // The Benches (pass 12): the cast gallery — the crew the sand takes, the
+  // fire's ensemble, the two powers — in the pack's own black-figure idiom.
+  roster: odysseyRoster,
   resume: odysseyResume,
   historyEntry: odysseyHistoryEntry,
   historyStat: odysseyHistoryStat,

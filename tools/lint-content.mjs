@@ -243,6 +243,13 @@ const DESCRIPTORS = {
       for (const [result, endingKey] of [['success', 'nostos'], ['partial', 'nostos'], ['failure', 'nostos'], [null, 'wrath'], [null, 'lotus'], [null, 'circe'], [null, 'calypso'], [null, 'burnout']]) {
         out.push(pres.shareText?.({ ...shareBase, result, endingKey }, 30));
       }
+      // Pass 12 — The Benches: every roster note (both fresh and veteran
+      // metas, so the ledger-reactive lines are scanned too).
+      for (const m of [undefined, { odyssey: { tellings: { count: 6, crewLostTotal: 14 } } }]) {
+        for (const g of pres.roster?.(m)?.groups || []) {
+          for (const mem of g.members) { out.push(mem.name, mem.sub, mem.note); }
+        }
+      }
       return out.filter(Boolean);
     },
   },

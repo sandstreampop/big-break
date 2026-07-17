@@ -160,6 +160,14 @@
    on a 320px phone — the title needs 10 × (font + .3em) to stay unclipped. */
 body.big-text .sp-beat .sp-beat-banner { font-size: 14px; }
 .recap-card .act-name { font-size: 15px; }
+/* The Benches (pass 12): roster faces are the pack's black-figure sprites,
+   not emoji — size them into the shell's face slot. The ship spans wide;
+   the oar stands small and repeated (a bench is a bench). */
+.roster-face .roster-fig { display: inline-flex; justify-content: center; align-items: flex-end; height: 44px; }
+.roster-face .roster-fig svg { display: block; height: 100%; width: auto; }
+.roster-face .roster-fig-wide svg { height: 34px; }
+.roster-face .roster-fig-oar svg { height: 34px; }
+
 /* The act recap (pass 3): the hearth rides the first block — same stage the
    actIntro's beat-scene slot gave it, so a recapped night keeps the fire.
    The scene block sheds the box chrome (a picture, not a paragraph). */

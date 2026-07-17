@@ -1306,6 +1306,28 @@ async function checkOdysseyClarity(browser, base) {
       [...document.querySelectorAll('#screen-settings button')].find((b) => /Back/.test(b.textContent || ''))?.click());
     await page.waitForSelector('#screen-title.active', { timeout: 8000 });
 
+    // The Benches (pass 12): the roster gallery is a NEW title-screen surface
+    // — open it, assert the three circles render with sprite faces, and close
+    // back to a live title (flow, not presence).
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-title button')].find((b) => /Meet the Cast/.test(b.textContent || ''))?.click());
+    await page.waitForSelector('#screen-roster.active', { timeout: 8000 });
+    const roster = await page.evaluate(() => ({
+      heads: [...document.querySelectorAll('#screen-roster .wall-tier')].map((h) => h.textContent || ''),
+      cells: document.querySelectorAll('#screen-roster .roster-cell').length,
+      sprites: document.querySelectorAll('#screen-roster .roster-face svg').length,
+      text: document.querySelector('#screen-roster')?.textContent || '',
+    }));
+    for (const needle of ['The powers', 'The fire', 'The benches']) {
+      if (!roster.heads.some((h) => h.includes(needle))) throw new Error(`[${label}] roster missing the "${needle}" circle`);
+    }
+    if (roster.cells < 20) throw new Error(`[${label}] roster shows only ${roster.cells} cells — the crew is missing`);
+    if (roster.sprites < 20) throw new Error(`[${label}] roster faces are not the pack's sprites (${roster.sprites} svgs)`);
+    if (!/Phemios of Smyrna/.test(roster.text)) throw new Error(`[${label}] the empty place is not on the roster`);
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-roster button')].find((b) => /Back/.test(b.textContent || ''))?.click());
+    await page.waitForSelector('#screen-title.active', { timeout: 8000 });
+
     // The Help sheet — from a live run's HUD.
     await clickJS(page, '#screen-title.active button.btn.primary');
     await enterIdentity(page);
