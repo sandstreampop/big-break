@@ -72,7 +72,7 @@ export const ODYSSEY_WALL_ITEMS = [
   { id: 'gift_libation', tier: 3, cost: 120, kind: 'perk', target: 'patient_libation',
     name: 'The Patient Libation', desc: 'At every act break, if the sea holds a grudge, pour: Poseidon eases 1. Jaw creaking is normal and expected.' },
   { id: 'gift_cheese_wind', tier: 3, cost: 130, kind: 'perk', target: 'cheese_wind',
-    name: 'A Wind Held in Cheesecloth', desc: 'The telling can bank a SECOND following wind. Aiolos owed somebody a favor; the bag is smaller and honest this time.' },
+    name: 'A Wind Held in Cheesecloth', desc: 'The telling can bank a THIRD following wind, one past the fire’s usual two. Aiolos owed somebody a favor; the bag is smaller and honest this time.' },
   { id: 'gift_mentor', tier: 3, cost: 150, kind: 'perk', target: 'mentors_blessing',
     name: 'The Mentor’s Blessing', desc: 'Begin with Might, Guile, and Lore each 3 higher — tonight’s Odysseus arrives already sung a little larger.' },
 ];

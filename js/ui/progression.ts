@@ -160,7 +160,9 @@ export function actInterstitial(step) {
       box.append(el('p', 'act-twist-note', twist));
       continue;
     }
-    box.append(el('p', 'upkeep-note', n.startsWith('🧳') || n.startsWith('🔥') ? n : `💸 ${n}`));
+    // A note that opens with its own glyph keeps it; the 💸 prefix is only
+    // for bare money lines (a libation is not a transaction).
+    box.append(el('p', 'upkeep-note', n.startsWith('🧳') || n.startsWith('🔥') || n.startsWith('🍷') ? n : `💸 ${n}`));
   }
 
   // The act-break standings panel is the pack's (music's "This week on the Hot
