@@ -880,6 +880,14 @@ export interface Presenter {
   // and an end-screen note (streak-aware "come back tomorrow"). The daily
   // MECHANISM (shared date seed, results ledger) is engine/shell-generic.
   daily?: { name: string; endNote?: (summary: any) => string; calendarHead?: string };
+  // The Trophy Room, re-voiced (pass 41): title button, room head, the
+  // count line, and the category headers. Neutral defaults cover packs
+  // that don't speak.
+  trophyCopy?: {
+    button?: string; head?: string;
+    sub?: (owned: number, total: number) => string;
+    cats?: Record<string, string>;
+  };
   // Comeback-mode copy (title button, persona-screen header/sub); the
   // TRANSFORM stays Pack.comeback. Music's Second Act is the default.
   comeback?: { label: string; head: string; sub: string };

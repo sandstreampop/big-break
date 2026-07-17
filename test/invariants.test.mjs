@@ -290,6 +290,23 @@ for (const pack of PACKS) {
     }
   });
 
+  // ── Gate labels tell the truth (pass 41; the P40 sweep found the odyssey's
+  // labels still selling last balance-pass's numbers, and music's had drifted
+  // three retunes ago). A gateLabel is authored display copy with no render
+  // binding to winGates — so this is the executable binding: every target a
+  // path's winGates names must appear in its label, when a label exists. ──
+  test(`[${pack.id}] gateLabel strings match the winGates they describe`, () => {
+    for (const [pathId, p] of Object.entries(pack.manifest.paths || {})) {
+      if (!p.gateLabel) continue;
+      const gates = pack.manifest.winGates?.[pathId] || {};
+      for (const [key, target] of Object.entries(gates)) {
+        const re = new RegExp(`(^|[^0-9])${target}([^0-9]|$)`);
+        assert.ok(re.test(p.gateLabel),
+          `${pathId}: gateLabel "${p.gateLabel}" does not state the ${key} gate (${target}) — display copy drifted from the mechanism`);
+      }
+    }
+  });
+
   // ── Plugin registration order (per-pack, seeded-stream-critical). ──
   test(`[${pack.id}] plugin registration order is stable`, () => {
     const ids = (pack.plugins || []).map((p) => p.id);

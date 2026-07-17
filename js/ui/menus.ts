@@ -123,7 +123,7 @@ export function renderTitle() {
   if ((PRES.wallItems || []).length) menu.append(btn(`${PRES.wallCopy?.button || '🏆 Career Wall'} (${meta.lp} LP)`, '', nav.wall));
   // Packs with a fixed named cast (the villa's 16) offer a browsable gallery.
   if (PRES.roster) menu.append(btn('👥 Meet the Cast', '', renderRoster));
-  menu.append(btn('🎖 Trophy Room', '', renderTrophies));
+  menu.append(btn(PRES.trophyCopy?.button || '🎖 Trophy Room', '', renderTrophies));
   if (meta.runs > 0) menu.append(btn('📊 The Résumé', '', renderResume));
   menu.append(btn('⚙ Settings', '', renderSettings));
   s.append(menu);
@@ -208,9 +208,10 @@ export function renderWall() {
 function renderTrophies() {
   const s = $('#screen-trophies');
   s.innerHTML = '';
-  s.append(el('h2', 'screen-head', 'Trophy Room'));
+  s.append(el('h2', 'screen-head', PRES.trophyCopy?.head || 'Trophy Room'));
   const allTrophies = PRES.trophies || [];
-  s.append(el('p', 'screen-sub', `${meta.trophies.length}/${allTrophies.length} collected. Each one cost you something.`));
+  s.append(el('p', 'screen-sub', PRES.trophyCopy?.sub?.(meta.trophies.length, allTrophies.length)
+    || `${meta.trophies.length}/${allTrophies.length} collected. Each one cost you something.`));
 
   const owned = new Set(meta.trophies);
   const pct = allTrophies.length ? Math.round((100 * meta.trophies.length) / allTrophies.length) : 0;
@@ -220,7 +221,12 @@ function renderTrophies() {
   meter.append(fill);
   s.append(meter);
 
-  const CATS = [['endings', 'Ways It Ends'], ['feats', 'Feats'], ['career', 'The Long Game']];
+  const catNames = PRES.trophyCopy?.cats || {};
+  const CATS = [
+    ['endings', catNames.endings || 'Ways It Ends'],
+    ['feats', catNames.feats || 'Feats'],
+    ['career', catNames.career || 'The Long Game'],
+  ];
   for (const [cat, label] of CATS) {
     const group = allTrophies.filter((t) => (t.cat || 'feats') === cat);
     if (!group.length) continue;

@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.43.0',
+    date: '2026-07-17',
+    title: 'The Repertoire grows',
+    notes: [
+      'The Trophy Room speaks Odyssey now — it’s The Repertoire, verses earned fire to fire — and five new verses join the shelf: answer a sent water, carry the thread of the boy from the grain-ship to its act-three answer, win with the owl at full attendance, and two secret ones the gate and the wash-basin know about.',
+    ],
+  },
+  {
     version: '0.42.0',
     date: '2026-07-17',
     title: 'The owl’s edge — the balance sweep',

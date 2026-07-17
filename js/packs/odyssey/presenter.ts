@@ -633,6 +633,18 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     sub: 'Another fire sends you its exact sea — same winds, same islands, same giant. Sing it better.',
     again: '🌊 Sail this water again',
   },
+  // The Trophy Room in the bard's mouth (pass 41): the shelf is a
+  // repertoire — verses earned, priced, and performed on request.
+  trophyCopy: {
+    button: '🎖 The Repertoire',
+    head: 'The Repertoire',
+    sub: (owned, total) => `${owned} of ${total} verses earned. Each one cost somebody something.`,
+    cats: {
+      endings: 'Ways It Ends',
+      feats: 'Feats of the Telling',
+      career: 'The Long Game — fire to fire',
+    },
+  },
   // The clarity bundle (pass 4): the tap-a-meter blurbs, the pack's half of
   // the Help sheet, the Résumé as the bard's own ledger, the Past-Lives
   // trailing stat, and the act twist in the bard's mouth. Data in ledger.ts;

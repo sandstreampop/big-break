@@ -80,6 +80,30 @@ test('the load-bearing predicates fire on the summaries they describe', () => {
   assert.ok(!fires('ody_unprovoked', { result: null, endingKey: 'lotus', poseidon: 0 }));
 });
 
+test('the new voyages earn their verses (pass 41)', () => {
+  const fires = (id, s) => !!ODYSSEY_TROPHIES.find((t) => t.id === id).check(s);
+  // The sent water: any told ending on a challenge run; never on a plain one.
+  assert.ok(fires('ody_sent_sailed', { challenge: '555', endingKey: 'wrath' }));
+  assert.ok(!fires('ody_sent_sailed', { challenge: null, endingKey: 'wrath' }));
+  assert.ok(!fires('ody_sent_sailed', { challenge: '555', endingKey: null }));
+  // The thread held: either act-3 payoff in the cardLog, nothing else.
+  assert.ok(fires('ody_thread_held', { cardLog: [{ e: 'ody_tel_strait_word' }] }));
+  assert.ok(fires('ody_thread_held', { cardLog: [{ e: 'ody_tel_swineherd_door' }] }));
+  assert.ok(!fires('ody_thread_held', { cardLog: [{ e: 'ody_tel_traders_return' }] }), 'the middle of the thread is not the answer');
+  assert.ok(!fires('ody_thread_held', { cardLog: null }));
+  // The owl's own: a WON telling at athena 12+.
+  assert.ok(fires('ody_owls_own', { result: 'success', athena: 12 }));
+  assert.ok(!fires('ody_owls_own', { result: 'partial', athena: 14 }));
+  assert.ok(!fires('ody_owls_own', { result: 'success', athena: 11 }));
+  // The recognitions: the hound by cardLog, the scar by its one-voice flag
+  // (either surface that stages it counts).
+  assert.ok(fires('ody_last_watch', { cardLog: [{ e: 'ody_a3_argos' }] }));
+  assert.ok(!fires('ody_last_watch', { cardLog: [] }));
+  assert.ok(fires('ody_thumbs_knew', { flags: ['ody_scar_scene'] }));
+  assert.ok(!fires('ody_thumbs_knew', { flags: [] }));
+  assert.ok(!fires('ody_thumbs_knew', {}), 'hostile: no flags at all');
+});
+
 test('the ledger specials fire on the metas they describe', () => {
   const sp = ODYSSEY_TROPHY_SPECIALS;
   assert.ok(sp.threeTurnings({ odyssey: { fragments: ['sea', 'bow', 'oar'] } }));

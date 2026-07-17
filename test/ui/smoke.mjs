@@ -1591,8 +1591,13 @@ async function checkOdysseyClarity(browser, base) {
     // the ONE row that carries vase fields — sized, captioned, and the
     // pre-vase row honestly unpainted.
     await page.evaluate(() =>
-      [...document.querySelectorAll('#screen-title button')].find((b) => /Trophy Room/.test(b.textContent || ''))?.click());
+      [...document.querySelectorAll('#screen-title button')].find((b) => /Repertoire|Trophy Room/.test(b.textContent || ''))?.click());
     await page.waitForSelector('#screen-trophies.active', { timeout: 8000 });
+    // The room speaks Odyssey (pass 41): the shelf is a repertoire.
+    const roomText = await page.evaluate(() => document.querySelector('#screen-trophies')?.textContent || '');
+    for (const needle of ['The Repertoire', 'verses earned', 'Feats of the Telling']) {
+      if (!roomText.includes(needle)) throw new Error(`[${label}] the trophy room never says "${needle}"`);
+    }
     const gallery = await page.evaluate(() => {
       const g = document.querySelector('#screen-trophies .history-gallery');
       const nights = g ? [...g.querySelectorAll('.ody-gallery-night')] : [];

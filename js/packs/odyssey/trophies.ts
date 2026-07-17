@@ -84,6 +84,22 @@ export const ODYSSEY_TROPHIES: OdysseyTrophy[] = [
   { id: 'ody_week_water', cat: 'feats', name: 'A Week on One Water', icon: '🌊',
     desc: 'Seven straight nights of the shared sea. The other bards have started timing their fires to yours.',
     check: (s) => !!s.daily && (s.dailyStreak || 0) >= 7 },
+  { id: 'ody_sent_sailed', cat: 'feats', name: 'The Water, Answered', icon: '📨',
+    desc: 'Finish a sent water — somebody’s exact sea, sailed back at them. Any told ending counts; the answering is the feat.',
+    check: (s) => !!s.challenge && s.endingKey != null },
+  { id: 'ody_thread_held', cat: 'feats', name: 'The Thread Held', icon: '🧵',
+    desc: 'Carry word of the boy from the grain-ship all the way to the last water. A question asked in act one, answered in act three.',
+    check: (s) => Array.isArray(s.cardLog) &&
+      s.cardLog.some((r: any) => r.e === 'ody_tel_strait_word' || r.e === 'ody_tel_swineherd_door') },
+  { id: 'ody_owls_own', cat: 'feats', name: 'The Owl’s Own', icon: '🪶',
+    desc: 'Win a telling with Athena at twelve or more. Her hand is on every roll by then; the fire calls it luck. The fire is wrong.',
+    check: (s) => s.result === 'success' && (s.athena ?? 0) >= 12 },
+  { id: 'ody_last_watch', cat: 'feats', secret: true, name: 'The Last Watch', icon: '🐕',
+    desc: 'Meet the old hound at the gate. However you chose, he saw you home — the first on the island to know.',
+    check: (s) => Array.isArray(s.cardLog) && s.cardLog.some((r: any) => r.e === 'ody_a3_argos') },
+  { id: 'ody_thumbs_knew', cat: 'feats', secret: true, name: 'The Thumbs Knew', icon: '🧺',
+    desc: 'Be found by the foot-washing. Some disguises have exactly one hole, and it is shaped like childhood.',
+    check: (s) => (s.flags || []).includes('ody_scar_scene') },
 
   // ── The Long Game (the fire's ledger, across nights) ──
   { id: 'ody_third_question', cat: 'career', name: 'The Third Question', icon: '🏺',
