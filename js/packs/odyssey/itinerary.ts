@@ -30,6 +30,35 @@ const beatTag = (ev: GameEvent) => (ev.tags || []).find((t) => t.startsWith('bea
 
 export const itineraryPlugin: Plugin = {
   id: 'odyssey_itinerary',
+  // The Memory Law's deck gate (pass 22): a card may require that the
+  // PREVIOUS telling ended a certain way (run.history, newest last). Lives
+  // HERE, not on the bard plugin — the bard is removable flavor (its test
+  // pins trace-identity without it), while the itinerary already shapes the
+  // deck. The predicate refuses shared water (daily/Gauntlet — the P18 law:
+  // a shared seed forks on nothing personal), and accepts either a bare
+  // endingKey ('wrath'), several ('circe'/'calypso' as an array), or a
+  // key:result compound ('nostos:success' — the homecoming card must not
+  // congratulate a shortfall).
+  requires: {
+    lastEnding: (state, arg) => {
+      if (state.daily || state.gauntlet) return false;
+      const rows = state.history || [];
+      const last = rows[rows.length - 1];
+      if (!last?.endingKey) return false;
+      const hit = (want: string) => {
+        const [key, res] = String(want).split(':');
+        return last.endingKey === key && (!res || last.result === res);
+      };
+      return Array.isArray(arg) ? arg.some(hit) : hit(arg);
+    },
+  },
+  // The fire does not mumble: while a memory card is eligible it draws at
+  // four times deck weight, so "the fire brings it up" is usually true
+  // within the act. Never eligible in sims/goldens, so seeded runs are
+  // untouched.
+  weightDeck(state, ev, weight) {
+    return ev.id.startsWith('ody_mem_') ? weight * 4 : weight;
+  },
   refineDeck(state, pool) {
     const beats = pool.filter((e) => beatTag(e));
     const rest = pool.filter((e) => !beatTag(e));

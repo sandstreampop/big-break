@@ -33,10 +33,19 @@ test('a fresh bard sees none of them (and neither do sims/goldens)', () => {
 });
 
 test('the fire remembers exactly the last telling', () => {
-  const s = runWith({ history: [{ endingKey: 'nostos' }, { endingKey: 'wrath' }] });
+  const s = runWith({ history: [{ endingKey: 'nostos', result: 'success' }, { endingKey: 'wrath' }] });
   const ids = eligibleMem(s);
   assert.ok(ids.includes('ody_mem_wrath'), 'last night was the wrath — the widow asks');
   assert.ok(!ids.includes('ody_mem_home'), 'the nostos was two nights ago — the fire has moved on');
+});
+
+test('the homecoming card only fires on a REAL homecoming (nostos:success)', () => {
+  // The card is act 2 (the demand comes once the telling has its legs).
+  assert.ok(eligibleMem(runWith({ act: 2, history: [{ endingKey: 'nostos', result: 'success' }] })).includes('ody_mem_home'));
+  for (const result of ['partial', 'failure', null]) {
+    assert.ok(!eligibleMem(runWith({ act: 2, history: [{ endingKey: 'nostos', result }] })).includes('ody_mem_home'),
+      `a ${result} nostos is not "he got home" — the fire must not congratulate a shortfall`);
+  }
 });
 
 test('the banked-island card hears either warm island', () => {
@@ -54,7 +63,8 @@ test('shared water refuses the fire’s memory wholesale (the P18 law)', () => {
 test('every memory card resolves through the real engine and leaves the run playable', () => {
   for (const ev of MEMORY_EVENTS) {
     const gate = ev.requires.lastEnding;
-    const s = runWith({ history: [{ endingKey: Array.isArray(gate) ? gate[0] : gate }] });
+    const want = String(Array.isArray(gate) ? gate[0] : gate).split(':');
+    const s = runWith({ history: [{ endingKey: want[0], result: want[1] || null }] });
     const before = s.cardLog.length;
     s.currentEventId = ev.id;
     const result = engine.resolveSwipe(s, 'left', engine.mulberry32(11));

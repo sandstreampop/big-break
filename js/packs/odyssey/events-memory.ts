@@ -2,12 +2,14 @@
 // gated on how the PREVIOUS telling ended (run.history, stamped at run
 // start from the meta ledger): the crowd carries last night into tonight,
 // and for once the bard must answer for it in play, not just in the cold
-// open. One card per ending class; each deals at most once, early, as the
-// fire interrupts the telling.
+// open. Five cards covering the confession-worthy endings (a kleos return
+// gets no question — the fire is still humming it); each deals at most
+// once per run (usedEvents), at 4× weight while eligible.
 //
-// The gate is the bardPlugin's `lastEnding` predicate (bard-chatter.ts),
-// which REFUSES shared water (daily/gauntlet) — the P18 law: a shared seed
-// forks on nothing personal. Sims and goldens never stamp history, so these
+// The gate is the ITINERARY plugin's `lastEnding` predicate (itinerary.ts —
+// the bard plugin is removable flavor and may not gate the deck), which
+// REFUSES shared water (daily/gauntlet) — the P18 law: a shared seed forks
+// on nothing personal. Sims and goldens never stamp history, so these
 // cards are invisible to the seeded corpus by construction: the eligible
 // pool a fresh run draws from is unchanged.
 //
@@ -114,7 +116,7 @@ export const MEMORY_EVENTS: GameEvent[] = [
     id: 'ody_mem_home',
     act: 2,
     tags: ['kleos'],
-    requires: { lastEnding: 'nostos' },
+    requires: { lastEnding: 'nostos:success' },
     context: 'The fire, greedy',
     prompt: 'A man near the front says what the whole fire is thinking: “Last night he got home. Do it again.” They know the ending now, friends — and a room that knows the ending listens differently: for the seams, for the changes, for the price.',
     recap: 'They asked for the homecoming again.',
