@@ -34,6 +34,20 @@ export const FIRES = [
     quirk: { name: 'The goddess attends', desc: 'Begin with Athena 2 — someone here has her ear.' },
     grants: { athena: 2 },
   },
+  // ── Pass 16: two more rooms to sing in ──
+  {
+    id: 'pilots_bench', name: 'The Pilots’ Bench', family: 'fire', unlockedByDefault: true,
+    flavor: 'They want the courses told true — headlands, soundings, the trick that worked.',
+    quirk: { name: 'A pilot’s Odysseus', desc: 'Tonight he is characterized knowing: Lore starts 8 higher.' },
+    modifiers: { lore: 8 },
+  },
+  {
+    id: 'widows_porch', name: 'The Widow’s Porch', family: 'fire', unlockedByDefault: true,
+    flavor: 'They have already paid the sea. Sing it gentle, sing it true, and name every man.',
+    quirk: { name: 'The quiet between verses', desc: 'Despair relief lands half again as deep — this porch has held worse nights than yours.' },
+    // No grants/modifiers: the porch's edge is the soothe multiplier below.
+    soothe: 1.5,
+  },
 ];
 
 // Resource grants are not loadout `modifiers` (those touch stats only), so a
@@ -48,6 +62,10 @@ const FIRE_WEIGHTS: Record<string, Partial<Record<string, number>>> = {
   fishermans_hearth: { deep: 0.6 },
   soldiers_camp: { blood: 1.6 },
   temple_steps: { omen: 1.6 },
+  // The bench respects the hard water and distrusts god-talk; the porch
+  // wants neither blood nor brag — name the men and mind the sea.
+  pilots_bench: { deep: 1.5, omen: 0.8 },
+  widows_porch: { blood: 0.5, kleos: 0.8 },
 };
 
 export const firesPlugin: Plugin = {
@@ -57,6 +75,14 @@ export const firesPlugin: Plugin = {
     for (const [k, v] of Object.entries(fire?.grants ?? {})) {
       (state as any)[k] = ((state as any)[k] || 0) + v;
     }
+  },
+  // The Widow's Porch (pass 16): Despair RELIEF lands half again as deep —
+  // a room that has grieved already steadies the bard. Folded by the engine's
+  // burnout loop via the generic gain-bag; consumes no rng, so seeded draws
+  // are untouched for every other fire.
+  gainHooks(state) {
+    const fire = FIRES.find((f) => f.id === state.loadout);
+    return fire?.soothe ? { burnoutHealMult: fire.soothe } : null;
   },
   weightDeck(state, ev, weight) {
     const lean = FIRE_WEIGHTS[state.loadout || ''];

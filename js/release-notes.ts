@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.18.0',
+    date: '2026-07-17',
+    title: 'Two more rooms to sing in',
+    notes: [
+      'The Odyssey gains two fires: The Pilots’ Bench, where the professionals want the courses told true (Lore starts 8 higher, and the deck leans toward the hard water), and The Widow’s Porch, where the sea has already been paid (Despair relief lands half again as deep, and the deck spares you the blood and the brag).',
+      'Six rooms now, six different tellings — the crowd you sing to has always shaped the sea you get.',
+    ],
+  },
+  {
     version: '0.17.0',
     date: '2026-07-17',
     title: 'Word travels',
