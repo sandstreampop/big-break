@@ -71,6 +71,19 @@ test('shared water refuses the fire’s memory wholesale (the P18 law)', () => {
   assert.deepStrictEqual(eligibleMem(runWith({ history, gauntlet: '2026-W29' })), [], 'the Gauntlet forks on nothing personal');
 });
 
+test('the bench voices’ gates read the run (pass 30 — the memory-card precedent)', () => {
+  engine.useContentPack(odysseyPack);
+  const at = (over) => {
+    const s = engine.newRun(odysseyPack, 'kings_hall', [], engine.mulberry32(7), []);
+    Object.assign(s, over);
+    return engine.eligibleEvents(s).map((e) => e.id);
+  };
+  assert.ok(at({ act: 2, expedition: 9 }).includes('ody_a2_youngest'), 'losses open the question');
+  assert.ok(!at({ act: 2, expedition: 10 }).includes('ody_a2_youngest'), 'a whole fleet keeps its veterans quiet');
+  assert.ok(at({ act: 3, poseidon: 5 }).includes('ody_a3_bow_watch'), 'a provoked sea keeps station');
+  assert.ok(!at({ act: 3, poseidon: 4 }).includes('ody_a3_bow_watch'), 'a calm sea sends no wave');
+});
+
 test('every memory card resolves through the real engine and leaves the run playable', () => {
   for (const ev of MEMORY_EVENTS) {
     const gate = ev.requires.lastEnding;

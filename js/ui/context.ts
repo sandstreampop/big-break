@@ -73,6 +73,18 @@ export function failLabelFor(endingKey): string | undefined {
 // — `meta.unlockedWall` is a neutral list of purchased ids; the pack's catalog
 // maps each to its kind + target. (Music-specific unlock pools — instruments,
 // contracts — live in the music pack and call through here.)
+// The count of consecutive completed dailies ending at day `d`, inclusive —
+// the shared streak math (endings.ts stamps it on summaries; menus.ts wears
+// it as the title's flame). Lives here because screen modules never import
+// each other (the DAG law) and this is a pure meta reader.
+export function dailyStreakFor(d: string): number {
+  const done = (meta as any).dailyResults || {};
+  let n = 0;
+  const day = new Date(d + 'T12:00:00Z');
+  while (done[day.toISOString().slice(0, 10)]) { n++; day.setUTCDate(day.getUTCDate() - 1); }
+  return n;
+}
+
 export function wallUnlocks(m: any, kind: string): string[] {
   const owned = new Set(m.unlockedWall);
   return (PRES?.wallItems || []).filter((w: any) => w.kind === kind && owned.has(w.id)).map((w: any) => w.target);

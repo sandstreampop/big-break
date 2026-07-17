@@ -10,7 +10,7 @@ import * as save from '../save.js';
 import { sfx, music, setSoundEnabled, setMusicEnabled } from '../audio.js';
 import { track, setAnalyticsEnabled, analyticsEnabled, exportEvents } from '../analytics.js';
 import { el, $, activatable, btn, show, openPortrait, responsivePicture, reducedMotion, hashStr, todayStr, weekStr, escapeHtml } from './dom.js';
-import { activePack, PATHS, PRES, meta, run, setRun, setMeta, failLabelFor } from './context.js';
+import { activePack, PATHS, PRES, meta, run, setRun, setMeta, failLabelFor, dailyStreakFor } from './context.js';
 import { showHelp, showReleaseNotes } from './inspectors.js';
 import { nav } from './nav.js';
 import { APP_VERSION } from '../version.js';
@@ -85,10 +85,17 @@ export function renderTitle() {
   const today = todayStr();
   const dailyDone = meta.dailyResults?.[today];
   const dailyName = PRES.daily?.name || 'Daily Grind';
+  // The streak flame (pass 31): a LIVE streak — today done, or yesterday
+  // done with today still open — rides the button, so the habit the daily
+  // builds is visible where the habit is exercised. Generic: any pack.
+  const yesterday = new Date(today + 'T12:00:00Z');
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  const streak = dailyStreakFor(dailyDone ? today : yesterday.toISOString().slice(0, 10));
+  const flame = streak > 1 || (streak === 1 && !dailyDone) ? ` 🔥${streak}` : '';
   menu.append(btn(
     dailyDone
-      ? `📅 ${dailyName} ✓ (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
-      : `📅 ${dailyName} — ${today}`,
+      ? `📅 ${dailyName} ✓${flame} (${dailyDone.result ? dailyDone.result.toUpperCase() : 'DNF'} — replay?)`
+      : `📅 ${dailyName}${flame} — ${today}`,
     '', () => { save.clearRun(); nav.newRun(true); }));
   // Comeback mode exists only for packs that ship the transform.
   if (meta.successPaths?.length > 0 && activePack.comeback) {

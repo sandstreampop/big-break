@@ -15,7 +15,7 @@ import { artFor } from '../art.js';
 import { sfx, music } from '../audio.js';
 import { track } from '../analytics.js';
 import { el, $, btn, show, openOverlay, openPortrait, activatable, todayStr, responsivePicture } from './dom.js';
-import { activePack, run, PRES, PATHS, meta, metaFor, fillText, vibeFor, failLabelFor } from './context.js';
+import { activePack, run, PRES, PATHS, meta, metaFor, fillText, vibeFor, failLabelFor, dailyStreakFor } from './context.js';
 import { gateReadout } from './gates.js';
 import { feedTeaser } from './feeds.js';
 import { nav } from './nav.js';
@@ -242,13 +242,8 @@ const TIER_EMOJI: Record<string, string> = { bad: '🟥', good: '🟩', incredib
 
 // Consecutive daily-mode days ending at `d` (inclusive) — the streak the
 // share card and the pack's end note read. Pure ledger walk.
-function dailyStreakFor(d) {
-  const done = meta.dailyResults || {};
-  let n = 0;
-  const day = new Date(d + 'T12:00:00Z');
-  while (done[day.toISOString().slice(0, 10)]) { n++; day.setUTCDate(day.getUTCDate() - 1); }
-  return n;
-}
+// The streak math moved to context.ts (pass 31): menus.ts needs it for the
+// title's flame, and screen modules never import each other (the DAG law).
 
 function renderEndingScreen(ending, lp, trophies, evalr, summary) {
   if (summary?.daily) summary.dailyStreak = dailyStreakFor(summary.daily);

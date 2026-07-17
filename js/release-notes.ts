@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.33.0',
+    date: '2026-07-17',
+    title: 'The streak lives on the title screen',
+    notes: [
+      'A live Same Sea streak now burns on the daily button itself — 🔥 and the count — so the habit is visible where it’s exercised, and you can see at a glance whether tonight’s water keeps it alive. (Every game’s daily gets the flame, not just the odyssey’s.)',
+      'Two trophies for the long tide: Three Tides Running and A Week on One Water.',
+    ],
+  },
+  {
     version: '0.32.0',
     date: '2026-07-17',
     title: 'The benches speak',

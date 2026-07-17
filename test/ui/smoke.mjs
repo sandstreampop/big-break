@@ -1480,6 +1480,9 @@ async function checkOdysseyClarity(browser, base) {
     tutorialDone: true, coach: { card: true, result: true },
     lifetime: { swipes: 90, incredibles: 4, bads: 12, byLoadout: { kings_hall: { runs: 3, wins: 1 } }, byPath: {} },
     odyssey: { fragments: ['sea'], tellings: { count: 3, byEnding: { nostos: 1, wrath: 2 }, named: 2, nobody: 1, crewLostTotal: 11 } },
+    // The streak flame (pass 31): yesterday's daily done + today's open →
+    // the title's daily button must wear 🔥1 (a live streak, not a dead one).
+    dailyResults: { [new Date(Date.now() - 864e5).toISOString().slice(0, 10)]: { result: 'success', path: 'nostos' } },
     // The gallery of nights (pass 24): one painted row (vase fields) and one
     // pre-vase row — the Trophy Room must paint exactly the one that can be.
     runHistory: [
@@ -1501,6 +1504,12 @@ async function checkOdysseyClarity(browser, base) {
     await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('#screen-title.active', { timeout: 15000 });
     await passThreshold(page);
+
+    // The streak flame (pass 31): yesterday's Same Sea is done and today is
+    // open — the daily button must carry the live flame.
+    const dailyBtn = await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-title button')].map((b) => b.textContent || '').find((t) => /Same Sea/.test(t)) || '');
+    if (!/🔥1/.test(dailyBtn)) throw new Error(`[${label}] the live streak wears no flame: "${dailyBtn}"`);
 
     // The Résumé — the bard's ledger, from the title menu.
     await page.evaluate(() =>

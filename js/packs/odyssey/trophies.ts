@@ -78,6 +78,12 @@ export const ODYSSEY_TROPHIES: OdysseyTrophy[] = [
   { id: 'ody_long_watch', cat: 'feats', name: 'The Long Watch', icon: '⚔️',
     desc: 'Finish the week’s Gauntlet — one fire, drawn by fate, the same for every bard alive. No substitutions were available.',
     check: (s) => !!s.gauntlet && s.endingKey != null },
+  { id: 'ody_three_tides', cat: 'feats', name: 'Three Tides Running', icon: '🔥',
+    desc: 'Three nights of The Same Sea in a row. The water starts to expect you.',
+    check: (s) => !!s.daily && (s.dailyStreak || 0) >= 3 },
+  { id: 'ody_week_water', cat: 'feats', name: 'A Week on One Water', icon: '🌊',
+    desc: 'Seven straight nights of the shared sea. The other bards have started timing their fires to yours.',
+    check: (s) => !!s.daily && (s.dailyStreak || 0) >= 7 },
 
   // ── The Long Game (the fire's ledger, across nights) ──
   { id: 'ody_third_question', cat: 'career', name: 'The Third Question', icon: '🏺',
