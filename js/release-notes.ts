@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.52.0',
+    date: '2026-07-17',
+    title: 'The fires see each other — and the odyssey’s season closes',
+    notes: [
+      'Every title screen now names the other games. BIG BREAK, THE VILLA, and THE ODYSSEY have always shipped side by side; from today each front door links the other two, so finding the rest of the site no longer requires knowing the URL.',
+      'This closes a fifty-pass season on The Odyssey. Since it began, the telling gained its tutorial, trophies (29), guest-gifts, daily and Gauntlet fires, the Telemachy, the recognitions, the scarred seas, the Night’s Vase and its fired poster, sent-water challenge links, the fleet of other fires, the Tide Log, crossroads readings, resume recaps, a living threshold — and two balance sweeps, two fresh-context audits, and a final end-to-end verification to keep it honest. Fair winds.',
+    ],
+  },
+  {
     version: '0.51.0',
     date: '2026-07-17',
     title: 'The season inspected end to end',

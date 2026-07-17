@@ -15,6 +15,7 @@ import { showHelp, showReleaseNotes } from './inspectors.js';
 import { nav } from './nav.js';
 import { APP_VERSION } from '../version.js';
 import { RELEASE_NOTES, versionLabel, notesSkewed } from '../release-notes.js';
+import { otherGames, gameHref } from '../games.js';
 
 // Version skew (chip ⚠) is reported to telemetry once per session, not once
 // per title render.
@@ -132,6 +133,18 @@ export function renderTitle() {
   const news = PRES.title?.news?.(dayNum);
   if (news) s.append(el('p', 'title-news', `📰 ${news.text} <span>— ${news.src}</span>`));
   if (PRES.title?.foot) s.append(el('p', 'title-foot', PRES.title.foot(meta)));
+  // The site directory (pass 50): one build ships every game, so every front
+  // door names the others. Rendered generically from js/games.ts (product
+  // metadata, like the changelog — the shell still imports no pack); plain
+  // anchors, because this is real navigation to a sibling app, not a screen
+  // transition — the nav seam governs screens, not sites. Not veil-exempt: a
+  // veiled title keeps its ritual, and the row appears when the veil lifts.
+  const others = otherGames(activePack.id);
+  if (others.length) {
+    const links = others.map((g) =>
+      `<a href="${gameHref(activePack.id, g.id)}" title="${escapeHtml(g.tag)}">${escapeHtml(g.name)}</a>`).join(' · ');
+    s.append(el('p', 'title-games', `Also from Big Break: ${links}`));
+  }
   // The deploy's identity, always on the front door (and visible even under
   // a pack's title veil — the chip carries data-veil-exempt, the generic
   // contract a veiling pack's CSS honors; see css/odyssey.css): the stamped

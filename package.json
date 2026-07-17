@@ -1,6 +1,6 @@
 {
   "name": "big-break",
-  "version": "0.51.0",
+  "version": "0.52.0",
   "private": true,
   "type": "module",
   "description": "Big Break — an LLM-friendly content-pack engine for generating, validating, and running replayable narrative (swipe-roguelike) games; ships a music-career game and a villa game on one genre-agnostic core.",

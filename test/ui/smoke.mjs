@@ -1671,6 +1671,59 @@ async function checkOdysseyClarity(browser, base) {
 // the last stretch) shows once, dismisses clean, and the telling still
 // reaches a terminal screen. Seeding is session-guarded so the reload
 // KEEPS the saved run (the plain seedScript would wipe it).
+// The site directory (pass 50): every title screen names the other games,
+// and the links REALLY navigate (working agreement: drive the control, then
+// assert the destination is alive — presence is not behaviour). Music's
+// front door is driven to the odyssey with a real hit-tested click; the
+// odyssey's (veiled) door is checked for the return road and driven back
+// home through the kindled veil. Love-island's row is asserted for shape —
+// the href arithmetic itself is pinned in test/games-directory.test.mjs.
+async function checkGamesDirectory(browser, base) {
+  const label = 'games directory';
+  const ctx = await browser.newContext();
+  try {
+    const page = await ctx.newPage();
+    // After every load/navigation, wait for the DIRECTORY ROW itself, not
+    // the screen node: #screen-title.active exists in the static HTML
+    // skeleton, so waiting on it resolves before boot renders the content.
+    const rowRendered = (p) => p.waitForFunction(
+      () => document.querySelectorAll('.title-games a').length === 2, null, { timeout: 15000 });
+    await page.goto(`${base}/`, { waitUntil: 'domcontentloaded' });
+    await rowRendered(page);
+    const music = await page.evaluate(() =>
+      [...document.querySelectorAll('.title-games a')].map((a) => a.getAttribute('href')));
+    if (music.length !== 2 || !music.includes('odyssey/') || !music.includes('love-island/'))
+      throw new Error(`[${label}] music's row is [${music.join(', ')}], want odyssey/ + love-island/`);
+    await page.click('.title-games a[href="odyssey/"]', { timeout: 5000 });
+    await rowRendered(page);
+    if (!page.url().includes('/odyssey/'))
+      throw new Error(`[${label}] the odyssey link landed on ${page.url()}`);
+    const ody = await page.evaluate(() =>
+      [...document.querySelectorAll('.title-games a')].map((a) => a.getAttribute('href')));
+    if (ody.length !== 2 || !ody.includes('../') || !ody.includes('../love-island/'))
+      throw new Error(`[${label}] odyssey's row is [${ody.join(', ')}], want ../ + ../love-island/`);
+    // The return road, through the veil: kindle first (the row is NOT
+    // veil-exempt — the threshold ritual owns the front door), then a real
+    // hit-tested click home must land on a booted BIG BREAK title.
+    await passThreshold(page);
+    await page.click('.title-games a[href="../"]', { timeout: 5000 });
+    await rowRendered(page);
+    const homeLogo = await page.evaluate(() => document.querySelector('.title-logo')?.textContent || '');
+    if (!/BIG\s*BREAK/i.test(homeLogo))
+      throw new Error(`[${label}] the road home landed on "${homeLogo}" at ${page.url()}`);
+    await page.goto(`${base}/love-island/`, { waitUntil: 'domcontentloaded' });
+    await rowRendered(page);
+    const li = await page.evaluate(() =>
+      [...document.querySelectorAll('.title-games a')].map((a) => a.getAttribute('href')));
+    if (li.length !== 2 || !li.includes('../') || !li.includes('../odyssey/'))
+      throw new Error(`[${label}] love-island's row is [${li.join(', ')}], want ../ + ../odyssey/`);
+    console.log('✓  games directory: every front door names the others; music→odyssey and odyssey→home navigate for real');
+    return true;
+  } finally {
+    await ctx.close();
+  }
+}
+
 async function checkOdysseyResume(browser, base) {
   const meta = {
     lp: 0, lpEarnedTotal: 0, runs: 1, unlockedWall: [], trophies: [],
@@ -2804,6 +2857,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyThreshold(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkGamesDirectory(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);
