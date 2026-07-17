@@ -1688,9 +1688,18 @@ async function checkOdysseyResume(browser, base) {
     while (played < 6 && Date.now() < deadline) {
       const k = await page.evaluate(() => {
         if (document.querySelector('#overlay.active')) return 'overlay';
+        if (document.querySelector('#screen-crossroads.active .pick-card')) return 'cross';
         if (document.querySelector('#screen-game.active .choice-btn.choice-left:not(.chosen):not(.unchosen)')) return 'card';
         return 'wait';
       });
+      if (k === 'cross') {
+        // Future-proofing (verifier note): act 1 is 9 cards today, so six
+        // plays never reach the crossroads — but a retune must not stall
+        // this loop into a false "never got deep enough".
+        await page.evaluate(() => document.querySelector('#screen-crossroads.active .pick-card')?.click());
+        await page.waitForTimeout(90);
+        continue;
+      }
       if (k === 'overlay') {
         await page.waitForFunction(() => {
           const ov = document.querySelector('#overlay.active');
