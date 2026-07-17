@@ -35,11 +35,22 @@ export function crossroadsReading(state: RunState, pathId: string): string | nul
     return 'The long way, counted in hulls. The bed that does not move.';
   }
   if (pathId === 'kleos') {
-    if (nobody) return 'Nobody blinded the giant. A song with an empty space where the name goes — no bard has landed one that bold.';
-    if (named) return 'You shouted the name; the song started itself that day. It only lacks an ending now.';
-    if (renown >= 5) return 'Two harbors are already singing it wrong. Half the song exists, friends — finish it before they do.';
-    if (poseidon >= 7) return 'The sea hates you properly now. Hatred like that, sung right, makes a very good verse.';
-    if (athena >= 5) return 'The owl backs clever men, and the Glory is the cleverest bet on the board. Also the dearest.';
+    // The cave answers before the crossroads opens, so exactly one of
+    // named/nobody is ALWAYS set at this hinge (the verifier proved it
+    // across 800 seeds) — the flag is the AXIS, not a rare signal. Rarer
+    // states vary the line WITHIN each answer, so none of this is dead
+    // copy the way a flat priority list would be.
+    if (nobody) {
+      if (renown >= 5) return 'Nobody blinded the giant, and two harbors already sing it wrong. Imagine the verse when the empty space gets its name back.';
+      return 'Nobody blinded the giant. A song with an empty space where the name goes — no bard has landed one that bold.';
+    }
+    if (named) {
+      if (poseidon >= 7) return 'You shouted the name, and the sea has hated you properly since. Hatred like that, sung right, makes a very good verse.';
+      if (renown >= 5) return 'You shouted the name, and two harbors are already singing it wrong. Half the song exists, friends — finish it before they do.';
+      return 'You shouted the name; the song started itself that day. It only lacks an ending now.';
+    }
+    // Unreachable in real play (the cave always answers first); the floor
+    // exists for hostile or hand-built states, never for the fire.
     return 'The short life, the long name. Ask the fire which one it remembers.';
   }
   return null;

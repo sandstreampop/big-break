@@ -35,11 +35,17 @@ test('the doors read the run, rarest first', () => {
   assert.match(crossroadsReading(at({ flags: ['ody_named'], poseidon: 6 }), 'nostos'), /knows your name/);
   assert.match(crossroadsReading(at({ expedition: 3 }), 'nostos'), /Few benches/);
   assert.match(crossroadsReading(at(), 'nostos'), /bed that does not move/, 'the floor');
-  // Kleos: Nobody outranks the shout; the shout outranks mere renown.
-  assert.match(crossroadsReading(at({ flags: ['ody_nobody'], renown: 9 }), 'kleos'), /Nobody blinded/);
-  assert.match(crossroadsReading(at({ flags: ['ody_named'], renown: 9 }), 'kleos'), /shouted the name/);
-  assert.match(crossroadsReading(at({ renown: 6 }), 'kleos'), /singing it wrong/);
-  assert.match(crossroadsReading(at(), 'kleos'), /short life, the long name/, 'the floor');
+  // Kleos: the cave has ALWAYS answered by the hinge (exactly one of
+  // named/nobody is set — engine drains the chain before the crossroads
+  // opens), so the flag is the axis and rarer states vary within it.
+  assert.match(crossroadsReading(at({ flags: ['ody_nobody'], renown: 9 }), 'kleos'), /empty space gets its name back/);
+  assert.match(crossroadsReading(at({ flags: ['ody_nobody'] }), 'kleos'), /no bard has landed one that bold/);
+  assert.match(crossroadsReading(at({ flags: ['ody_named'], poseidon: 8, renown: 9 }), 'kleos'), /hated you properly/);
+  assert.match(crossroadsReading(at({ flags: ['ody_named'], renown: 6 }), 'kleos'), /singing it wrong/);
+  assert.match(crossroadsReading(at({ flags: ['ody_named'] }), 'kleos'), /song started itself/);
+  // The flag-less floor exists only for hostile states — real play never
+  // reaches it (see the reachability probe in the pass 36 review).
+  assert.match(crossroadsReading(at(), 'kleos'), /short life, the long name/, 'the hostile floor');
 });
 
 test('the crowd leans in by what it saw', () => {
