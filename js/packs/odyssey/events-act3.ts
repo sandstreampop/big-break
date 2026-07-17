@@ -167,6 +167,14 @@ export const ACT3_EVENTS: GameEvent[] = [
     },
     right: {
       label: 'Keep the scar hidden', approach: 'lore',
+      // One voice per moment (P39 review): this side stages the scar scene,
+      // so it stamps the flag that stands the dedicated nurse card down —
+      // the fire tells the foot-washing once per telling.
+      extra: {
+        bad: { addFlag: 'ody_scar_scene' },
+        good: { addFlag: 'ody_scar_scene' },
+        incredible: { addFlag: 'ody_scar_scene' },
+      },
       bad: 'You angle the bad leg from the firelight all evening — and the old nurse, washing the guest’s feet by the queen’s courtesy, finds the boar-scar anyway with hands that KNEW it before Troy was a rumor. Her cry is half out of her throat before your grip and your look strangle it, friends, and the bowl rings on the floor, and the queen — the gods were merciful — is gazing into the fire and asks only if the water was too hot. The secret survives on one heartbeat’s luck. Luck, friends, is not a plan. You have spent tonight’s ration of it.',
       good: 'You keep the scar hidden the professional way: the foot-washing accepted (refusal would itself be a signature), but steered to the young maid who never knew your legs, the old nurse thanked and blessed and BODILY out-maneuvered with a guest’s humble fussing. Eurykleia goes to bed suspicious of nothing but her own aching hands. The scar stays a scar. Two days, friends. Even your childhood must wait two days.',
       incredible: 'You keep it hidden — from everyone but ONE, friends, and by choice: when the old nurse’s fingers find the boar-scar and her eyes fly up with your name filling her mouth, you are already there — hand, look, whisper: “Yes. You are the first. If you love him, the ONLY.” And Eurykleia becomes, in one silent heartbeat, the conspiracy’s first soldier: mistress of every key, mother of the servants’ loyalties. The tale pretends the scar was found by accident. At this fire we may admit: the best recruitments always look like accidents.',
@@ -535,16 +543,31 @@ export const ACT3_EVENTS: GameEvent[] = [
   }),
   sea('ody_a3_nurse_scar', 3, {
     tags: ['blood'],
+    // One voice per moment: if the queen's-interview card already staged
+    // the scar (its 'keep it hidden' side), this telling has had its
+    // foot-washing — the dedicated card stands down. And this card stamps
+    // the same flag, so any future scar surface can honor the law too.
+    requires: { flagsNone: ['ody_scar_scene'] },
     prompt: 'The queen orders the beggar’s feet washed, as guest-right — and of all hands in the house, the basin goes to the old nurse who raised you. Her thumbs know the way up your leg before her eyes do. The scar. The boar-hunt scar. Her breath stops in the middle of a word.',
     recap: 'The nurse found the scar.',
     left: {
       label: 'The hand on her throat — not yet', approach: 'might',
+      extra: {
+        bad: { addFlag: 'ody_scar_scene' },
+        good: { addFlag: 'ody_scar_scene' },
+        incredible: { addFlag: 'ody_scar_scene' },
+      },
       bad: 'Too hard, too fast — she is seventy, friends, and the fright in her eyes as your hand closes is a wound you gave your own house on your first night back in it. She keeps the secret. She also keeps, for some days, a bruise-colored doubt about what exactly came home wearing her boy’s scar.',
       good: 'Your hand takes her throat the way it took the helm in the strait — total, and gentle as arithmetic: not yet. And over your knuckles the fright in her eyes turns to the fiercest joy ever smothered in a kitchen. She nods a fraction. The basin spills. “Clumsy old woman,” she announces to the room, wringing the cloth, already lying for you like a veteran.',
       incredible: 'Not yet, says the hand — and she does one better than silence, friends: she begins, that same hour, to sort the maids. Which sleep where; which laugh at whose jokes; which carry tales up the hill — a muster of the whole house, run under cover of laundry and delivered to the beggar in scraps: “these sheets are honest; those are not.” The day of the axes found the house already sorted into sheep and wolves by the one spy no suitor ever thought to pay: the woman who washed all their feet too.',
     },
     right: {
       label: 'Let her know you whole', approach: 'lore',
+      extra: {
+        bad: { addFlag: 'ody_scar_scene' },
+        good: { addFlag: 'ody_scar_scene' },
+        incredible: { addFlag: 'ody_scar_scene' },
+      },
       bad: 'Joy at seventy is loud, friends. The gasp brings a maid’s head around the door, and the next hour is spent burying a sound — a story about a spider, a scolding, a dropped basin — and the maid carries her almost-tale up the hill anyway, where men who pay for almosts weigh it. The clock of the house runs faster from that night.',
       good: 'You let the recognition land whole — and you learn why he trusted her, friends, because grief that old converts to discipline that fast in no other material: one breath of weeping into the wash-cloth, then dry eyes, then, briskly: “Your feet are filthy. The house has a hundred ears. Eat by the door and touch nothing.” The general he needed had been disguised, all these years, as the woman who scrubbed him.',
       incredible: 'She weeps exactly once, soundlessly, into the cloth — and then she finishes washing the feet, friends, slowly, properly, all the way, twenty years of prayer being answered at the exact temperature of bathwater. And when she is done she gives the beggar-king his orders like a nurse: sleep. Eat. Let the old women handle the maids. He slept, friends — first honest sleep on his own island — because somebody he trusted was on watch. Some armies muster in kitchens.',
