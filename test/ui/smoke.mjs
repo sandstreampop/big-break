@@ -1289,6 +1289,87 @@ async function checkOdysseyRecap(browser, base) {
 // (❓ on the HUD) and the Résumé (title menu). Driven live, per the working
 // agreement: open each, assert the odyssey's nouns actually render, close,
 // and prove the screen underneath is still alive.
+// The Guest-Gifts (pass 17): the odyssey's LP wall is a NEW title surface
+// with a purchase control — drive the FLOW (working agreement rule 1): open
+// the re-voiced wall, buy a gift with real LP, then start a telling and
+// assert the gift actually landed in the live run's state. Presence of the
+// wall is nothing; a coin that mints Renown in play is the feature.
+async function checkOdysseyGifts(browser, base) {
+  const meta = {
+    lp: 100, lpEarnedTotal: 100, runs: 2, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    lifetime: { swipes: 40, incredibles: 1, bads: 4, byLoadout: {}, byPath: {} },
+    settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
+  };
+  const label = 'odyssey guest-gifts';
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(`try {
+    localStorage.setItem('bigbreak_meta_v1_odyssey', ${JSON.stringify(JSON.stringify(meta))});
+    localStorage.removeItem('bigbreak_run_v1_odyssey');
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  try {
+    await page.goto(`${base}/odyssey/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    await passThreshold(page);
+
+    // The wall button wears the pack's chrome, never the career default.
+    const btnText = await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-title button')].map((b) => b.textContent || '').find((t) => /Guest-Gifts/.test(t)) || '');
+    if (!btnText) throw new Error(`[${label}] the title screen never offers The Guest-Gifts`);
+    if (!/100 LP/.test(btnText)) throw new Error(`[${label}] the wall button hides the balance: "${btnText}"`);
+    if (await page.evaluate(() => [...document.querySelectorAll('#screen-title button')].some((b) => /Career Wall/.test(b.textContent || '')))) {
+      throw new Error(`[${label}] the career-era label leaked through the wallCopy hook`);
+    }
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-title button')].find((b) => /Guest-Gifts/.test(b.textContent || ''))?.click());
+    await page.waitForSelector('#screen-wall.active', { timeout: 8000 });
+    const wall = await page.evaluate(() => document.querySelector('#screen-wall')?.textContent || '');
+    for (const needle of ['The Guest-Gifts', 'A gift once given rides every telling after', 'A Coin from Troy', 'Tier 3']) {
+      if (!wall.includes(needle)) throw new Error(`[${label}] the wall never says "${needle}"`);
+    }
+
+    // Buy the coin (25 LP): the row flips to UNLOCKED and the balance drops.
+    await page.evaluate(() => {
+      const row = [...document.querySelectorAll('#screen-wall .wall-item')].find((r) => /A Coin from Troy/.test(r.textContent || ''));
+      row?.querySelector('button')?.click();
+    });
+    await page.waitForFunction(() => {
+      const row = [...document.querySelectorAll('#screen-wall .wall-item')].find((r) => /A Coin from Troy/.test(r.textContent || ''));
+      return row && /UNLOCKED/.test(row.textContent || '');
+    }, { timeout: 4000 });
+    const balance = await page.evaluate(() => document.querySelector('#screen-wall .wall-balance')?.textContent || '');
+    if (!/75 LP/.test(balance)) throw new Error(`[${label}] 100 − 25 should leave 75, wall says "${balance}"`);
+
+    // Now the flow: back to the fire, start a telling, and the coin MINTS —
+    // the live run holds the extra Renown (kings_hall starts 3+1, others 0+1).
+    await page.evaluate(() =>
+      [...document.querySelectorAll('#screen-wall button')].find((b) => /Back/.test(b.textContent || ''))?.click());
+    await page.waitForSelector('#screen-title.active', { timeout: 8000 });
+    await clickJS(page, 'button.btn.primary');
+    await page.waitForSelector('#screen-setup.active', { timeout: 10000 });
+    await enterIdentity(page);
+    await clickJS(page, '.pick-card');
+    await clickJS(page, '#start-run-btn');
+    await page.waitForFunction(() => !!localStorage.getItem('bigbreak_run_v1_odyssey'), { timeout: 10000 });
+    const minted = await page.evaluate(() => {
+      const run = JSON.parse(localStorage.getItem('bigbreak_run_v1_odyssey'));
+      return { renown: run.renown || 0, loadout: run.loadout, perks: run.perks || [] };
+    });
+    if (!minted.perks.includes('troy_coin')) throw new Error(`[${label}] the bought gift never reached newRun (perks: ${JSON.stringify(minted.perks)})`);
+    const expected = (minted.loadout === 'kings_hall' ? 3 : 0) + 1;
+    if (minted.renown !== expected) throw new Error(`[${label}] the coin did not mint: renown ${minted.renown}, expected ${expected} at ${minted.loadout}`);
+
+    if (errors.length) throw new Error(`[${label}] ${errors[0]}`);
+    console.log(`✓  odyssey guest-gifts: the wall wears xenia chrome, the coin buys (100→75 LP), and the bought gift mints Renown ${minted.renown} in the live telling at ${minted.loadout}`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 async function checkOdysseyClarity(browser, base) {
   const meta = {
     lp: 0, lpEarnedTotal: 55, runs: 3, unlockedWall: [], trophies: [],
@@ -2251,6 +2332,12 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyClarity(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkOdysseyGifts(browser, base);
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

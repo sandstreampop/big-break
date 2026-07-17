@@ -254,6 +254,9 @@ const DESCRIPTORS = {
           for (const mem of g.members) { out.push(mem.name, mem.sub, mem.note); }
         }
       }
+      // Pass 17 — the Guest-Gifts: the wall catalog + its re-voiced chrome.
+      for (const w of pres.wallItems || []) out.push(w.name, w.desc);
+      out.push(pres.wallCopy?.button, pres.wallCopy?.head, pres.wallCopy?.sub);
       // Pass 15 — the second screen's shell-chrome re-voicing (narration
       // register; the bundle's own copy is linted by the feed floor).
       const fc = pres.feedChrome || {};

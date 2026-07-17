@@ -507,6 +507,10 @@ export interface Presenter {
   }) => { title: string; text: string } | null | undefined;
   exitInterviews?: Record<string, any>;
   wallItems?: any[];
+  // The LP wall's chrome (title button, screen head, screen sub) — pack-owned
+  // so the shared shop names no career. All optional; the shell's original
+  // music-era copy applies where absent (byte-identical without the hook).
+  wallCopy?: { button?: string; head?: string; sub?: string };
   trophies?: any[];
   // Flavor generators (pure: state → copy). The UI calls these for the act
   // interstitial (headlines/dms) and the ending screen (epilogue/discography).

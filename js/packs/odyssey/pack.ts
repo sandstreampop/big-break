@@ -25,6 +25,7 @@ import { ACT3_EVENTS } from './events-act3.js';
 import { LANDMARKS } from './landmarks.js';
 import { ODYSSEY_TUTORIAL_EVENTS } from './events-tutorial.js';
 import { odysseyPresenter } from './presenter.js';
+import { ODYSSEY_PERKS } from './gifts.js';
 
 // ── Effect vocabulary ────────────────────────────────────────────────────
 // Might / Guile / Lore: the three approaches to any confrontation — fight
@@ -71,6 +72,9 @@ export const odysseyPack: Pack = {
   },
   loadouts: FIRES,
   loadoutById: (lid) => FIRES.find((f) => f.id === lid) ?? null,
+  // The Guest-Gifts (pass 17): the engine's generic perk table — purchased on
+  // the wall (presenter.wallItems), applied by id at newRun.
+  perks: ODYSSEY_PERKS,
   presenter: odysseyPresenter,
   // The Scarred Telling (pass 7): unlocked by any full homecoming.
   comeback: odysseyComeback,

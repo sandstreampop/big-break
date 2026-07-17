@@ -105,7 +105,7 @@ export function renderTitle() {
         : `⚔️ The Gauntlet — ${week}`,
       '', () => { save.clearRun(); PRES.startGauntlet?.(); }));
   }
-  if ((PRES.wallItems || []).length) menu.append(btn(`🏆 Career Wall (${meta.lp} LP)`, '', nav.wall));
+  if ((PRES.wallItems || []).length) menu.append(btn(`${PRES.wallCopy?.button || '🏆 Career Wall'} (${meta.lp} LP)`, '', nav.wall));
   // Packs with a fixed named cast (the villa's 16) offer a browsable gallery.
   if (PRES.roster) menu.append(btn('👥 Meet the Cast', '', renderRoster));
   menu.append(btn('🎖 Trophy Room', '', renderTrophies));
@@ -146,8 +146,8 @@ export function renderWall() {
   const s = $('#screen-wall');
   const keepScroll = s.scrollTop;
   s.innerHTML = '';
-  s.append(el('h2', 'screen-head', 'The Career Wall'));
-  s.append(el('p', 'screen-sub', 'Spend Legacy Points to widen the random pools.'));
+  s.append(el('h2', 'screen-head', PRES.wallCopy?.head || 'The Career Wall'));
+  s.append(el('p', 'screen-sub', PRES.wallCopy?.sub || 'Spend Legacy Points to widen the random pools.'));
   // balance rides along while you shop
   s.append(el('div', 'wall-balance', `Balance: <b>${meta.lp} LP</b>`));
 

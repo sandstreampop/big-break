@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.19.0',
+    date: '2026-07-17',
+    title: 'Legacy finally buys something',
+    notes: [
+      'The Odyssey gets The Guest-Gifts: ten gifts on three shelves, bought with the Legacy your tellings have been quietly banking all along. A coin from Troy that starts your Renown, a carved owl the goddess notices, a libation that eases the sea’s grudge every act, a cheesecloth wind that banks a second following wind.',
+      'A gift once given rides every telling after — xenia, the old law. Prices run one night’s Legacy for the small gifts to a good week at the fire for the great ones.',
+    ],
+  },
+  {
     version: '0.18.0',
     date: '2026-07-17',
     title: 'Two more rooms to sing in',

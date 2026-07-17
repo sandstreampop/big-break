@@ -27,6 +27,7 @@ import { ODYSSEY_COMEBACK_COPY, ODYSSEY_DAILY_COPY } from './modes.js';
 import { odysseyShareText, odysseyNews } from './share.js';
 import { odysseyRoster } from './roster.js';
 import { odysseyFeeds, ODYSSEY_FEED_CHROME } from './feeds.js';
+import { ODYSSEY_WALL_ITEMS, ODYSSEY_WALL_COPY } from './gifts.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -512,6 +513,10 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // predicates live in trophies.ts; invariants in test/odyssey-trophies.
   trophies: ODYSSEY_TROPHIES,
   trophySpecials: ODYSSEY_TROPHY_SPECIALS,
+  // The Guest-Gifts (pass 17): the fire's LP wall — ten gifts, three tiers,
+  // chrome re-voiced (xenia, not careers).
+  wallItems: ODYSSEY_WALL_ITEMS,
+  wallCopy: ODYSSEY_WALL_COPY,
   // The clarity bundle (pass 4): the tap-a-meter blurbs, the pack's half of
   // the Help sheet, the Résumé as the bard's own ledger, the Past-Lives
   // trailing stat, and the act twist in the bard's mouth. Data in ledger.ts;
