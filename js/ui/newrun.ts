@@ -257,7 +257,11 @@ export function startGauntletGeneric() {
     setRun(engine.newRun(activePack, inst.id, unlockedPackIds(meta), engine.mulberry32(seed + 1), unlockedPerkIds(meta)));
     engine.applyMastery(run, masteryLevel(inst.id));
     if (meta.playerName) run.name = meta.playerName;
-    if (meta.playerGender) run.gender = meta.playerGender;
+    // Gender only where the pack didn't already derive it: a loadout-encoded
+    // gender axis (the villa's personas, set by onConstruct inside newRun) is
+    // MECHANICAL — the rival draws from that gender's pool — so the player's
+    // remembered pick must not overwrite the week's drawn persona.
+    if (meta.playerGender && !run.gender) run.gender = meta.playerGender;
     run.seed = seed + 2;
     run.gauntlet = week;
     run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)

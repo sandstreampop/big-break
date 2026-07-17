@@ -1332,12 +1332,54 @@ async function checkGauntletGeneric(browser, base, { label, path, ns, subNeedle 
     await page.waitForFunction((key) => !!localStorage.getItem(key), `bigbreak_run_v1${ns}`, { timeout: 10000 });
     const minted = await page.evaluate((key) => {
       const run = JSON.parse(localStorage.getItem(key));
-      return { gauntlet: run.gauntlet || null, loadout: run.loadout };
+      return { gauntlet: run.gauntlet || null, loadout: run.loadout, gender: run.gender || null, flags: run.flags || [] };
     }, `bigbreak_run_v1${ns}`);
     if (!/^\d{4}-W\d+$/.test(minted.gauntlet || '')) throw new Error(`[${label}] the run never carries the week (gauntlet: ${minted.gauntlet})`);
-    await page.waitForSelector('#screen-game.active, #overlay.active', { timeout: 10000 });
+    // The shared-seed contract, both halves the verifier caught (2026-07):
+    // a gendered persona keeps its OWN gender (the remembered player pick
+    // must not overwrite the mechanical axis the rival pool hangs off)...
+    if (/_girl$|_boy$/.test(minted.loadout)) {
+      const encoded = minted.loadout.endsWith('_boy') ? 'boy' : 'girl';
+      if (minted.gender !== encoded) throw new Error(`[${label}] the week's ${minted.loadout} plays as '${minted.gender}' — the persona's own gender was overwritten`);
+    }
+    // ...and a bard's private repertoire never forks the week: no fragment
+    // flags in a gauntlet run, however decorated the meta is.
+    if (minted.flags.some((f) => f.startsWith('ody_frag_'))) {
+      throw new Error(`[${label}] personal prophecy fragments leaked into the shared week: ${minted.flags.filter((f) => f.startsWith('ody_frag_'))}`);
+    }
+    // The FLOW (working agreement rule 1): the week's build must still carry
+    // a full run to a terminal screen, not just deal its first card.
+    {
+      const deadline = Date.now() + 90000;
+      while (Date.now() < deadline) {
+        const k = await page.evaluate(() => {
+          if (document.querySelector('#screen-ending.active')) return 'ending';
+          if (document.querySelector('#overlay.active')) return 'overlay';
+          if (document.querySelector('#screen-crossroads.active .pick-card')) return 'cross';
+          if (document.querySelector('#screen-game.active .choice-btn.choice-left:not(.chosen):not(.unchosen)')) return 'card';
+          return 'wait';
+        });
+        if (k === 'ending') break;
+        if (k === 'overlay') {
+          await page.waitForFunction(() => {
+            const ov = document.querySelector('#overlay.active');
+            return !ov || ov.hasAttribute('data-armed') || !!ov.querySelector('.gear-choices button');
+          }, { timeout: 8000 }).catch(() => {});
+          await page.evaluate(() => {
+            const ov = document.querySelector('#overlay.active');
+            (ov?.querySelector('.gear-choices button') || ov)?.click();
+          });
+        } else if (k === 'cross') {
+          await page.evaluate(() => document.querySelector('#screen-crossroads.active .pick-card')?.click());
+        } else if (k === 'card') {
+          await page.evaluate(() => document.querySelector('#screen-game.active .choice-btn.choice-left')?.click());
+        }
+        await page.waitForTimeout(90);
+      }
+    }
+    if (!(await page.$('#screen-ending.active'))) throw new Error(`[${label}] the week's run never reached a terminal screen`);
     if (errors.length) throw new Error(`[${label}] ${errors[0]}`);
-    console.log(`✓  ${label}: the Gauntlet button deals the week's build (${minted.loadout}) and the live run carries ${minted.gauntlet}`);
+    console.log(`✓  ${label}: the Gauntlet deals the week's build (${minted.loadout}), keeps the shared seed unforked, and the run reaches a terminal screen`);
   } finally {
     await ctx.close();
   }

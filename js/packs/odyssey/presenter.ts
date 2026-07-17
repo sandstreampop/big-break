@@ -328,10 +328,12 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // the ONLY thing that crosses tellings, and it is knowledge, not power:
   // the flags gate the third question; they add no number to anything.
   applySetup(state, _sel, meta, daily) {
-    // Never on a daily: the shared telling is the same run for everyone
-    // (the musicApplySetup precedent) — a bard's private repertoire must
-    // not fork the day's seed at the trench.
-    if (daily) return;
+    // Never on SHARED water: the daily and the weekly Gauntlet are the same
+    // run for everyone (the musicApplySetup precedent) — a bard's private
+    // repertoire (fragments, the telling-ledger, the note) must not fork
+    // the shared seed at the trench. run.gauntlet is stamped before this
+    // hook runs (js/ui/newrun.ts startGauntletGeneric).
+    if (daily || state.gauntlet) return;
     const frags: string[] = meta?.odyssey?.fragments || [];
     for (const f of frags) {
       const flag = `ody_frag_${f}`;

@@ -55,6 +55,20 @@ test('a daily telling never carries the note (the shared sea is nobody’s confe
   assert.strictEqual(state.bardLine, 'bc_open_room');
 });
 
+test('a gauntlet telling forks on NOTHING personal — fragments, ledger, note all refused', () => {
+  // The verifier's 2026-07 catch: the weekly Gauntlet is shared water like
+  // the daily, but applySetup only guarded `daily` — a bard's fragment flags
+  // reroute the prophecy chain, so two metas got mechanically different
+  // weeks from the same seed. The guard now reads state.gauntlet too.
+  const state = { flags: [], gauntlet: '2026-W29', bardLine: 'bc_open_room', bardShown: ['bc_open_room'] };
+  odysseyPresenter.applySetup(state, {}, {
+    odyssey: { note: 'bn_shout', fragments: ['sea', 'bow'], tellings: { count: 4 } },
+  }, false);
+  assert.deepStrictEqual(state.flags, [], 'no fragment flags on shared water');
+  assert.strictEqual(state.bardLine, 'bc_open_room', 'no personal cold open on shared water');
+  assert.strictEqual(state.history, undefined, 'no telling-ledger stamp on shared water');
+});
+
 test('note lines sit outside every seeded pool (golden safety by shape)', () => {
   for (const c of CHATTER.filter((c) => c.kind === 'note')) {
     assert.ok(!c.when, `${c.id}: a note line must have no when() — it is stamped, never drawn`);
