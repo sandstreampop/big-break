@@ -101,7 +101,7 @@ export function renderTitle() {
   // sender's exact run — a shared-water challenge, dated to nothing.
   // Generic mechanism; a pack may re-voice it via PRES.challengeCopy.
   const sail = Math.floor(Number(new URLSearchParams(location.search).get('sail') || '')) || 0;
-  if (sail > 0) {
+  if (Number.isFinite(sail) && sail > 0) {
     menu.append(btn(PRES.challengeCopy?.button || '🌊 Sail the sent water', 'primary',
       () => { save.clearRun(); nav.newRun(false, false, sail); }));
   }
