@@ -26,6 +26,7 @@ export interface Nav {
   gameOver(endingKey: string): void;         // a fail-state ending
   tutorialEnd(): void;                       // the First Gig wrap-up
   newRun(daily?: boolean, comeback?: boolean): void;
+  gauntlet(): void;                           // the weekly shared-seed ritual (generic starter)
   startTutorial(): void;
   resumeRun(): void;                          // continue a saved run at its phase
   title(): void;                             // the title screen

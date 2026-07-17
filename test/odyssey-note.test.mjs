@@ -26,12 +26,15 @@ test('noteOf judges the mistakes it claims to judge — and only those', () => {
   assert.strictEqual(noteOf(undefined), null);
 });
 
-test('recordMeta writes the note, a clean night clears it, a daily touches nothing', () => {
+test('recordMeta writes the note, a clean night clears it, shared water touches nothing', () => {
   const meta = {};
   odysseyPresenter.recordMeta(meta, { endingKey: 'wrath', named: true, heardCallbacks: [] });
   assert.strictEqual(meta.odyssey.note, 'bn_shout');
   // A daily's ending neither writes nor clears — the shared sea is nobody's confession.
   odysseyPresenter.recordMeta(meta, { endingKey: 'lotus', daily: '2026-07-17', heardCallbacks: [] });
+  assert.strictEqual(meta.odyssey.note, 'bn_shout');
+  // The weekly Gauntlet is the same shared water — same law.
+  odysseyPresenter.recordMeta(meta, { endingKey: 'lotus', gauntlet: '2026-W29', heardCallbacks: [] });
   assert.strictEqual(meta.odyssey.note, 'bn_shout');
   odysseyPresenter.recordMeta(meta, { endingKey: 'nostos', endingResult: 'success', expedition: 9, athena: 6, heardCallbacks: [] });
   assert.strictEqual(meta.odyssey.note, null);

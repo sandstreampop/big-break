@@ -848,6 +848,10 @@ export interface Presenter {
   compactHud?: boolean;
   // This pack ships the weekly Gauntlet mode (its build draws on pack data).
   gauntlet?: boolean;
+  // The generic weekly-Gauntlet sheet's subtitle (js/ui/newrun.ts
+  // startGauntletGeneric) — pack-voiced; the shell's neutral line applies
+  // when absent. Packs with a bespoke starter (startGauntlet) ignore this.
+  gauntletCopy?: { sub?: string };
   // Daily-mode copy: the mode's display name (title button, persona screen)
   // and an end-screen note (streak-aware "come back tomorrow"). The daily
   // MECHANISM (shared date seed, results ledger) is engine/shell-generic.

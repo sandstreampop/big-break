@@ -31,7 +31,8 @@ const END_VERDICT: Record<string, string> = {
 };
 
 export const odysseyShareText: NonNullable<Presenter['shareText']> = (summary: any, lp: number) => {
-  const mode = summary.daily ? ` · The Same Sea ${summary.daily}`
+  const mode = summary.gauntlet ? ` · The Gauntlet ${summary.gauntlet}`
+    : summary.daily ? ` · The Same Sea ${summary.daily}`
     : (summary.flags || []).includes('comeback') ? ' · The Scarred Telling' : '';
   const fire = FIRES.find((f) => f.id === summary.loadout)?.name || 'A fire';
   const road = summary.path ? (odysseyManifest.paths[summary.path]?.name || summary.path) : 'no road chosen';

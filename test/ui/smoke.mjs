@@ -1289,6 +1289,60 @@ async function checkOdysseyRecap(browser, base) {
 // (❓ on the HUD) and the Résumé (title menu). Driven live, per the working
 // agreement: open each, assert the odyssey's nouns actually render, close,
 // and prove the screen underneath is still alive.
+// The weekly Gauntlet via the GENERIC starter (pass 18): before it existed,
+// a pack with presenter.gauntlet and no bespoke startGauntlet had a title
+// button that cleared your run and then did NOTHING (love-island shipped
+// exactly that dead button). Drive the FLOW for both generic-starter packs:
+// title → Gauntlet → the week's one drawn build → tap → a live dealt run
+// whose saved state carries run.gauntlet = this week.
+async function checkGauntletGeneric(browser, base, { label, path, ns, subNeedle }) {
+  const meta = {
+    lp: 0, lpEarnedTotal: 30, runs: 2, unlockedWall: [], trophies: [],
+    successPaths: [], firstTimeBonuses: [], best: { fame: 0, lp: 0 },
+    tutorialDone: true, coach: { card: true, result: true },
+    playerName: 'Tester', playerGender: 'w',
+    lifetime: { swipes: 40, incredibles: 1, bads: 4, byLoadout: {}, byPath: {} },
+    settings: { sound: false, music: false, reducedMotion: true, minigames: false, haptics: false, analytics: false },
+  };
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  await ctx.addInitScript(`try {
+    localStorage.setItem('bigbreak_meta_v1${ns}', ${JSON.stringify(JSON.stringify(meta))});
+    localStorage.removeItem('bigbreak_run_v1${ns}');
+  } catch (e) {}`);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
+  try {
+    await page.goto(`${base}${path}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    if (ns === '_odyssey') await passThreshold(page);
+    const opened = await page.evaluate(() => {
+      const b = [...document.querySelectorAll('#screen-title button')].find((x) => /The Gauntlet/.test(x.textContent || ''));
+      if (b) b.click();
+      return !!b;
+    });
+    if (!opened) throw new Error(`[${label}] the title never offers The Gauntlet`);
+    await page.waitForSelector('#screen-setup.active', { timeout: 8000 });
+    const sheet = await page.evaluate(() => document.querySelector('#screen-setup')?.textContent || '');
+    if (!/The Gauntlet — \d{4}-W\d/.test(sheet)) throw new Error(`[${label}] the sheet never names the week`);
+    if (!sheet.includes(subNeedle)) throw new Error(`[${label}] the sheet subtitle never says "${subNeedle}"`);
+    await clickJS(page, '#screen-setup .pick-card');
+    // The tap must mint a live run: a card deals (or an opening beat renders)
+    // and the SAVED run carries the week — flow, not presence.
+    await page.waitForFunction((key) => !!localStorage.getItem(key), `bigbreak_run_v1${ns}`, { timeout: 10000 });
+    const minted = await page.evaluate((key) => {
+      const run = JSON.parse(localStorage.getItem(key));
+      return { gauntlet: run.gauntlet || null, loadout: run.loadout };
+    }, `bigbreak_run_v1${ns}`);
+    if (!/^\d{4}-W\d+$/.test(minted.gauntlet || '')) throw new Error(`[${label}] the run never carries the week (gauntlet: ${minted.gauntlet})`);
+    await page.waitForSelector('#screen-game.active, #overlay.active', { timeout: 10000 });
+    if (errors.length) throw new Error(`[${label}] ${errors[0]}`);
+    console.log(`✓  ${label}: the Gauntlet button deals the week's build (${minted.loadout}) and the live run carries ${minted.gauntlet}`);
+  } finally {
+    await ctx.close();
+  }
+}
+
 // The Guest-Gifts (pass 17): the odyssey's LP wall is a NEW title surface
 // with a purchase control — drive the FLOW (working agreement rule 1): open
 // the re-voiced wall, buy a gift with real LP, then start a telling and
@@ -2338,6 +2392,24 @@ async function checkBardBeatHierarchy(browser, base) {
   }
   try {
     await checkOdysseyGifts(browser, base);
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkGauntletGeneric(browser, base, {
+      label: 'odyssey gauntlet', path: '/odyssey/', ns: '_odyssey',
+      subNeedle: 'the same sea for every bard alive this week',
+    });
+  } catch (e) {
+    failed++;
+    console.error(`✗  ${e.message}`);
+  }
+  try {
+    await checkGauntletGeneric(browser, base, {
+      label: 'love-island gauntlet (resurrected button)', path: '/love-island/', ns: '_love-island',
+      subNeedle: 'One build, chosen by fate',
+    });
   } catch (e) {
     failed++;
     console.error(`✗  ${e.message}`);

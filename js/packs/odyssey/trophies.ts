@@ -75,6 +75,9 @@ export const ODYSSEY_TROPHIES: OdysseyTrophy[] = [
   { id: 'ody_same_sea', cat: 'feats', name: 'Same Sea as Everyone', icon: '📅',
     desc: 'Finish a shared telling — any told ending counts, even a banked one. Every fire tonight fought the same water.',
     check: (s) => !!s.daily && s.endingKey != null },
+  { id: 'ody_long_watch', cat: 'feats', name: 'The Long Watch', icon: '⚔️',
+    desc: 'Finish the week’s Gauntlet — one fire, drawn by fate, the same for every bard alive. No substitutions were available.',
+    check: (s) => !!s.gauntlet && s.endingKey != null },
 
   // ── The Long Game (the fire's ledger, across nights) ──
   { id: 'ody_third_question', cat: 'career', name: 'The Third Question', icon: '🏺',

@@ -389,7 +389,8 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // so the note is only ever the latest telling's mistake. A daily neither
     // writes nor clears it — the shared sea is nobody's confession, and the
     // stamp side (applySetup) already refuses dailies for the same reason.
-    if (!summary?.daily) meta.odyssey.note = noteOf(summary);
+    // The weekly Gauntlet is the same shared water, so it keeps the same law.
+    if (!summary?.daily && !summary?.gauntlet) meta.odyssey.note = noteOf(summary);
     // No-repeat-until-exhausted for the crowd's callbacks: union what the
     // fire heard tonight, then let the cycle REALLY reset — the heard set is
     // persistent, so when everything the next telling could hear has been
@@ -517,6 +518,12 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
   // chrome re-voiced (xenia, not careers).
   wallItems: ODYSSEY_WALL_ITEMS,
   wallCopy: ODYSSEY_WALL_COPY,
+  // The weekly Gauntlet (pass 18): the shared-seed ritual, switched on —
+  // the generic starter (js/ui/newrun.ts) draws the week's fire.
+  gauntlet: true,
+  gauntletCopy: {
+    sub: 'One fire, one Odysseus, the same sea for every bard alive this week. The wind does not negotiate.',
+  },
   // The clarity bundle (pass 4): the tap-a-meter blurbs, the pack's half of
   // the Help sheet, the Résumé as the bard's own ledger, the Past-Lives
   // trailing stat, and the act twist in the bard's mouth. Data in ledger.ts;

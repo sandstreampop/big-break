@@ -11,7 +11,7 @@ import * as save from '../save.js';
 import { track } from '../analytics.js';
 import { artFor } from '../art.js';
 import { sfx, music } from '../audio.js';
-import { el, $, activatable, btn, show, hashStr, todayStr } from './dom.js';
+import { el, $, activatable, btn, show, hashStr, todayStr, weekStr } from './dom.js';
 import { activePack, run, PRES, meta, setRun, STAT_META, vibeFor, unlockedPackIds, unlockedPerkIds } from './context.js';
 import { nav } from './nav.js';
 
@@ -221,6 +221,60 @@ function modsText(mods) {
   return Object.entries(mods || {})
     .map(([k, v]: [string, any]) => `${v > 0 ? '+' : ''}${v} ${STAT_META[k]?.name || k}`)
     .join(' · ');
+}
+
+// ---------- The weekly Gauntlet (generic) ----------
+// The shared-seed ritual for any pack that flips presenter.gauntlet on
+// WITHOUT shipping a bespoke starter (music keeps its own — contracts and
+// genres are its setup ritual). Before this existed, PRES.startGauntlet?.()
+// silently no-opped for such packs: the title button cleared your run and
+// then did nothing. One build, drawn by the week's seed from the
+// default-unlocked loadouts — same for everyone, no substitutions. The
+// shell owns the mechanism; a pack may re-voice the sheet's subtitle via
+// presenter.gauntletCopy.sub. Identity carries from the remembered meta
+// (the Gauntlet skips the setup screen, but the run is still yours).
+export function startGauntletGeneric() {
+  const week = weekStr();
+  const seed = hashStr('bigbreak-gauntlet-' + week);
+  const rng = engine.mulberry32(seed);
+  const pool = activePack.loadouts.filter((l) => l.unlockedByDefault);
+  const inst = pool[Math.floor(rng() * pool.length)] || activePack.loadouts[0];
+
+  const s = $('#screen-setup');
+  s.innerHTML = '';
+  s.append(el('h2', 'screen-head', `The Gauntlet — ${week}`));
+  s.append(el('p', 'screen-sub', PRES.gauntletCopy?.sub
+    || 'One build, chosen by fate, same for everyone this week. No substitutions.'));
+  const sheet = el('div', 'pick-row');
+  const card = el('div', 'pick-card');
+  if (inst.art) card.append(artFor(inst.art, 'pick-art'));
+  card.append(el('h3', '', inst.name));
+  card.append(el('p', 'pick-flavor', inst.flavor));
+  if (inst.modifiers) card.append(el('p', 'pick-mods', modsText(inst.modifiers)));
+  if (inst.quirk) card.append(el('p', 'pick-quirk', `<b>${inst.quirk.name}:</b> ${inst.quirk.desc}`));
+  activatable(card, () => {
+    sfx.commit();
+    setRun(engine.newRun(activePack, inst.id, unlockedPackIds(meta), engine.mulberry32(seed + 1), unlockedPerkIds(meta)));
+    engine.applyMastery(run, masteryLevel(inst.id));
+    if (meta.playerName) run.name = meta.playerName;
+    if (meta.playerGender) run.gender = meta.playerGender;
+    run.seed = seed + 2;
+    run.gauntlet = week;
+    run.seenCards = (meta.seenCards || []).slice(); // novelty steering (R2)
+    // The pack's run-init (the bard's cold open, a stamped sound) — with an
+    // empty selection bag; packs with mandatory pickers ship bespoke starters.
+    PRES.applySetup?.(run, {}, meta, false);
+    run.history = (meta.history || []).slice();
+    save.saveRun(run);
+    track('run_start', { mode: 'gauntlet', career_runs: meta.runs || 0, ...(PRES.runProps?.(run, 'start') || {}) });
+    nav.dealCard();
+  }, inst.name);
+  sheet.append(card);
+  s.append(sheet);
+  const menu = el('div', 'menu');
+  menu.append(btn('← Back', '', () => { nav.title(); show('#screen-title', 'back'); }));
+  s.append(menu);
+  show('#screen-setup');
 }
 
 export function resumeRun() {

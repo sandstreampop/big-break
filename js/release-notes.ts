@@ -31,6 +31,16 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.20.0',
+    date: '2026-07-17',
+    title: 'The Gauntlet comes to the fire',
+    notes: [
+      'The Odyssey gets the weekly Gauntlet: one fire, drawn by fate, the same sea for every bard alive that week — one attempt, results kept, a trophy for standing The Long Watch. The share line carries the week so rival bards can compare scars.',
+      'And a confession from the villa: Love Island’s Gauntlet button has been quietly doing nothing when pressed (it cleared your run and stopped there). It now actually deals the week’s Islander. We do not speak of the weeks before.',
+      'Shared water stays nobody’s confession: neither the daily nor the Gauntlet touches the bard’s-note.',
+    ],
+  },
+  {
     version: '0.19.0',
     date: '2026-07-17',
     title: 'Legacy finally buys something',

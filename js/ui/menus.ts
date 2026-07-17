@@ -103,7 +103,7 @@ export function renderTitle() {
       gDone
         ? `⚔️ The Gauntlet ✓ (${gDone.result ? gDone.result.toUpperCase() : 'DNF'} — replay?)`
         : `⚔️ The Gauntlet — ${week}`,
-      '', () => { save.clearRun(); PRES.startGauntlet?.(); }));
+      '', () => { save.clearRun(); if (PRES.startGauntlet) PRES.startGauntlet(); else nav.gauntlet(); }));
   }
   if ((PRES.wallItems || []).length) menu.append(btn(`${PRES.wallCopy?.button || '🏆 Career Wall'} (${meta.lp} LP)`, '', nav.wall));
   // Packs with a fixed named cast (the villa's 16) offer a browsable gallery.
