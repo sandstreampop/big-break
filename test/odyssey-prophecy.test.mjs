@@ -78,7 +78,7 @@ test('the Oar Road renders as the nostos-success variant, and only then', () => 
   for (let i = 0; i < 400 && !walked; i++) {
     const { state } = driveRun(11000 + i, { fragments: ['bow', 'sea'], policy });
     if (state.ending?.key === 'nostos' && state.ending?.result === 'success'
-      && state.flags.includes('ody_oar_road') && (state.poseidon || 0) <= 3) walked = state;
+      && state.flags.includes('ody_oar_road') && (state.poseidon || 0) <= 2) walked = state;
   }
   assert.ok(walked, 'no seed in 400 produced an oar-road-qualifying success');
   const present = (run) => PRES.presentFinale({ run, ending: 'nostos', result: 'success', meta: {} })

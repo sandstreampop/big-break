@@ -8,7 +8,7 @@
 //
 // The in-genre fix is the poem's own engine: the grey-eyed one backs
 // clever men. Athena's favor above a devotion floor adds to every roll —
-// +1 per point past 3, capped at +8 — so a pious, well-run telling can
+// +1 per point past 4, capped at +8 — so a pious, well-run telling can
 // actually reach the verses the fire waits for, and the risk tell (the
 // odds readout folds plugin bonuses in automatically) shows her hand on
 // the numbers the moment she attends.
