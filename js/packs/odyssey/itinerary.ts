@@ -58,10 +58,12 @@ export const itineraryPlugin: Plugin = {
   },
   // The fire does not mumble: while a memory card is eligible it draws at
   // four times deck weight, so "the fire brings it up" is usually true
-  // within the act. Never eligible in sims/goldens, so seeded runs are
-  // untouched. The Telemachy's CONTINUATIONS (pass 34 — the gated cards,
-  // never the ungated act-1 opener) ride the same law: once the thread
-  // starts, the answer usually arrives.
+  // within the act. Memory cards are history-gated — never eligible in
+  // sims/goldens, so their boost leaves seeded runs untouched. The
+  // Telemachy's CONTINUATIONS (pass 34 — the gated cards, never the
+  // ungated act-1 opener) ride the same law but are FLAG-gated, so their
+  // boost IS visible to seeded runs — the pass 34 golden re-baseline
+  // carries it deliberately.
   weightDeck(state, ev, weight) {
     if (ev.id.startsWith('ody_mem_')) return weight * 4;
     if (ev.id.startsWith('ody_tel_') && ev.requires) return weight * 4;
