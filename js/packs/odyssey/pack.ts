@@ -25,6 +25,7 @@ import { ACT3_EVENTS } from './events-act3.js';
 import { LANDMARKS } from './landmarks.js';
 import { ODYSSEY_TUTORIAL_EVENTS } from './events-tutorial.js';
 import { MEMORY_EVENTS } from './events-memory.js';
+import { TELEMACHY_EVENTS } from './events-telemachy.js';
 import { odysseyPresenter } from './presenter.js';
 import { ODYSSEY_PERKS } from './gifts.js';
 
@@ -69,7 +70,10 @@ export const odysseyPack: Pack = {
   plugins: [firesPlugin, itineraryPlugin, prophecyPlugin, bardPlugin, odysseyModesPlugin],
   // MEMORY_EVENTS last: history-gated (the fire remembers), invisible to
   // sims/goldens by construction (history is never stamped there).
-  events: [...ACT1_EVENTS, ...ACT2_EVENTS, ...ACT3_EVENTS, ...LANDMARKS, ...MEMORY_EVENTS],
+  // TELEMACHY_EVENTS: the within-run thread (pass 34) — flag-gated
+  // continuations, dealt at 4x by the itinerary plugin once the thread
+  // starts, so a question asked in act 1 usually gets its act-3 answer.
+  events: [...ACT1_EVENTS, ...ACT2_EVENTS, ...ACT3_EVENTS, ...TELEMACHY_EVENTS, ...LANDMARKS, ...MEMORY_EVENTS],
   // THE FIRST TELLING: the 3-card oar ramp (gesture → risk tell + frieze →
   // a real roll with the two ledgers). The bard's own chatter waits for the
   // first real telling (bardBeat's tutorial gate).

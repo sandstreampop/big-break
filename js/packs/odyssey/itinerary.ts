@@ -59,9 +59,13 @@ export const itineraryPlugin: Plugin = {
   // The fire does not mumble: while a memory card is eligible it draws at
   // four times deck weight, so "the fire brings it up" is usually true
   // within the act. Never eligible in sims/goldens, so seeded runs are
-  // untouched.
+  // untouched. The Telemachy's CONTINUATIONS (pass 34 — the gated cards,
+  // never the ungated act-1 opener) ride the same law: once the thread
+  // starts, the answer usually arrives.
   weightDeck(state, ev, weight) {
-    return ev.id.startsWith('ody_mem_') ? weight * 4 : weight;
+    if (ev.id.startsWith('ody_mem_')) return weight * 4;
+    if (ev.id.startsWith('ody_tel_') && ev.requires) return weight * 4;
+    return weight;
   },
   refineDeck(state, pool) {
     const beats = pool.filter((e) => beatTag(e));

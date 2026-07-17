@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.36.0',
+    date: '2026-07-17',
+    title: 'The Telemachy — the son, threaded through the telling',
+    notes: [
+      'The poem opens with the boy, and the game never mentioned him until the Hall. Now a grain-ship out of Pylos can carry the question into act 1 — send word down the trade road, or send silence to shield him — and the telling remembers your answer: the trade road brings news of his sailing in act 2, and the last water pays the thread off in act 3 two different ways, depending on what kind of father you chose to be. The odyssey’s first story arc that crosses the whole voyage.',
+      'Once a thread starts, the fire keeps it: continuations deal at four times deck weight, so a question asked usually gets its answer.',
+    ],
+  },
+  {
     version: '0.35.0',
     date: '2026-07-17',
     title: 'Word from the other fires',

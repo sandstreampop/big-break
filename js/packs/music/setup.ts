@@ -14,7 +14,7 @@ import { venueById, offerVenues } from './data/venues.js';
 import { INSTRUMENTS } from './data/instruments.js';
 import { artFor } from '../../art.js';
 import { sfx } from '../../audio.js';
-import { el, $, keyable, btn, show, hashStr, weekStr } from '../../ui/dom.js';
+import { el, $, keyable, btn, show, gauntletSeed, weekStr } from '../../ui/dom.js';
 import { activePack, run, meta, setRun, PRES, unlockedPackIds, unlockedPerkIds } from '../../ui/context.js';
 import { nav } from '../../ui/nav.js';
 import { musicUnlockedInstrumentIds, musicUnlockedContractIds } from './save.js';
@@ -103,7 +103,7 @@ const modsText = (mods: any) => Object.entries(mods)
 // instrument, genre, and contract for everyone. Often cursed. Always fair.
 export function musicStartGauntlet() {
   const week = weekStr();
-  const seed = hashStr('bigbreak-gauntlet-' + week);
+  const seed = gauntletSeed(week);
   const rng = engine.mulberry32(seed);
   const basics = INSTRUMENTS.filter((i) => i.unlockedByDefault);
   const inst = basics[Math.floor(rng() * basics.length)];
