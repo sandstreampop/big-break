@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.34.0',
+    date: '2026-07-17',
+    title: 'The vase travels',
+    notes: [
+      'Sharing an odyssey telling now carries the Night’s Vase as a glyph band — ship, stations faced, the powers that attended, the ending’s motif, the sea’s mood — chosen by the exact rules that paint your ending screen. Paste your voyage anywhere; every band is different because every telling is.',
+      'Big-text mode is now gated on the keepsake surfaces: the vase, the run-end ledger, and the Guest-Gifts wall are all verified unclipped under the accessibility zoom on the smallest phones.',
+    ],
+  },
+  {
     version: '0.33.0',
     date: '2026-07-17',
     title: 'The streak lives on the title screen',

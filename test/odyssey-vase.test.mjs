@@ -4,7 +4,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert';
-import { nightVase } from '../dist/js/packs/odyssey/vase.js';
+import { nightVase, vaseGlyphs } from '../dist/js/packs/odyssey/vase.js';
 
 const ended = (over = {}) => ({
   flags: [], expedition: 9, athena: 3, poseidon: 2,
@@ -52,6 +52,37 @@ test('pure: same telling, same vase; reduced motion stills every figure', () => 
   assert.strictEqual(nightVase(ended()).html, nightVase(ended()).html);
   assert.ok(nightVase(ended(), true).html.includes('px-still'), 'reduced motion carries into the band');
   assert.ok(!nightVase(ended(), false).html.includes('px-still'), 'a moving band carries no stills');
+});
+
+// The vase travels (pass 32): the glyph band the share text carries is
+// chosen by the SAME reader as the painted vase — one glyph per figure, in
+// paint order, the sea's mood trailing. If these drift, a player's paste
+// lies about their ending screen.
+test('the glyph band agrees with the painted vase, figure for figure', () => {
+  const cases = [
+    ended(),
+    ended({ flags: ['ody_done_cyclops', 'ody_done_underworld', 'ody_done_circe'], athena: 6 }),
+    ended({ flags: ['ody_stayed_calypso'], ending: { key: 'calypso', result: null } }),
+    ended({ ending: { key: 'wrath', result: null }, poseidon: 10 }),
+    ended({ ending: { key: 'burnout', result: null } }),
+    ended({ ending: { key: 'kleos', result: 'success' }, path: 'kleos' }),
+  ];
+  for (const s of cases) {
+    const figures = nightVase(s).motifs.length - 1; // minus the sea line
+    const band = vaseGlyphs(s).split(' ')[0]; // minus the sea suffix
+    assert.strictEqual([...band].length, figures,
+      `band "${vaseGlyphs(s)}" ≠ ${figures} figures for ${JSON.stringify(s.ending)} ${s.flags}`);
+  }
+});
+
+test('the glyph band closes honestly, ending by ending', () => {
+  assert.strictEqual(vaseGlyphs(ended()), '⛵⭐🕊', 'the homecoming: ship, star, gulls');
+  assert.strictEqual(vaseGlyphs(ended({ ending: { key: 'kleos', result: 'success' }, path: 'kleos' })), '⛵🍷');
+  assert.strictEqual(vaseGlyphs(ended({ ending: { key: 'lotus', result: null } })), '⛵🫗', 'a banked telling sets the cup down');
+  assert.strictEqual(vaseGlyphs(ended({ ending: { key: 'burnout', result: null } })), '⛵🌫');
+  assert.strictEqual(vaseGlyphs(ended({ ending: { key: 'wrath', result: null }, poseidon: 10 })), '⛵🔱 🌊🌊',
+    'the wrath carries the trident and the sea it earned');
+  assert.strictEqual(vaseGlyphs(ended({ poseidon: 5 })), '⛵⭐🕊 🌊', 'a middling sea shows one wave');
 });
 
 test('the aria label reads the whole band', () => {

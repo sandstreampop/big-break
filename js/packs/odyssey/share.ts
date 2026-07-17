@@ -4,19 +4,20 @@
 // SHARE: the ending screen's 📣 button is shell chrome that was sharing an
 // EMPTY STRING for this pack (PRES.shareText?.() || ''). Now a finished
 // telling travels as a compact record: which fire, which road, how it
-// ended, the night's weather strip, the fleet's arithmetic, and the
-// prophecy's honest floor. Pure read of the summary — same purity law as
-// everything else here.
+// ended, the night's weather strip, the vase's band as glyphs (pass 32),
+// the fleet's arithmetic, and the prophecy's honest floor. Pure read of the
+// summary — same purity law as everything else here.
 //
 // NEWS: the title screen's flavor-news slot (title.news), previously empty
 // for this pack — one harbor rumor a day, rotating on the shell's day
 // number. The world outside the fire, in the bard's economy: rival bards,
 // guild notices, the trade road.
 
-import type { Presenter } from '../../types.js';
+import type { Presenter, RunState } from '../../types.js';
 import { odysseyManifest } from './manifest.js';
 import { FIRES } from './fires.js';
 import { heldTurnings } from './shelf.js';
+import { vaseGlyphs } from './vase.js';
 
 const TIER_EMOJI: Record<string, string> = { bad: '🟥', good: '🟩', incredible: '🟪', declined: '🟨' };
 
@@ -39,6 +40,17 @@ export const odysseyShareText: NonNullable<Presenter['shareText']> = (summary: a
   const verdict = summary.result ? summary.result.toUpperCase()
     : END_VERDICT[summary.endingKey] || 'THE TELLING ENDED';
   const strip = (summary.tierLog || []).map((t: string) => TIER_EMOJI[t] || '⬜').join('');
+  // The vase travels (pass 32): the Night's Vase's band, as glyphs — chosen
+  // by the SAME reader the painted vase uses (vase.ts readVoyage), so what a
+  // player pastes is what their ending screen painted.
+  const band = vaseGlyphs({
+    flags: summary.flags || [],
+    expedition: summary.expedition,
+    athena: summary.athena,
+    poseidon: summary.poseidon,
+    ending: { key: summary.endingKey ?? null, result: summary.result ?? null },
+    path: summary.path ?? null,
+  } as RunState);
   const held = heldTurnings(summary.flags || []);
   const bits = [
     `⛵ ${Math.max(0, Math.round(summary.expedition ?? 0))} hulls`,
@@ -47,7 +59,7 @@ export const odysseyShareText: NonNullable<Presenter['shareText']> = (summary: a
     `🏺 ${held.count} of 3 turnings`,
     ...(summary.dailyStreak > 1 ? [`🔥 night ${summary.dailyStreak}`] : []),
   ];
-  return `THE ODYSSEY${mode}\n${fire} → ${road} → ${verdict}\n${strip}\n${bits.join(' · ')} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/odyssey/`;
+  return `THE ODYSSEY${mode}\n${fire} → ${road} → ${verdict}\n${strip}\n🏺 ${band}\n${bits.join(' · ')} · +${lp} LP\nhttps://sandstreampop.github.io/big-break/odyssey/`;
 };
 
 // One harbor rumor a day — evergreen, in-fiction, seeded by the shell's day

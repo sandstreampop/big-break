@@ -19,6 +19,7 @@ test('a finale telling shares its full record', () => {
   assert.match(t, /^THE ODYSSEY\n/);
   assert.match(t, /The King’s Hall → Nostos — the Homecoming → SUCCESS/);
   assert.match(t, /🟩🟥🟪🟩/);
+  assert.match(t, /\n🏺 ⛵⭐🕊\n/, 'the vase travels: the band rides its own line');
   assert.match(t, /⛵ 8 hulls · 🌟 6 renown · 🔱 sea at 1 · 🏺 1 of 3 turnings · \+41 LP/);
   assert.match(t, /big-break\/odyssey\/$/);
   assert.ok(!/undefined|NaN/.test(t));
@@ -42,6 +43,15 @@ test('hostile summaries never leak', () => {
   const t = odysseyShareText({}, 0);
   assert.ok(!/undefined|NaN/.test(t), t);
   assert.match(t, /THE TELLING ENDED|no road chosen/);
+  assert.match(t, /\n🏺 ⛵🍶\n/, 'even an empty summary paints an honest band');
+});
+
+test('the band reads the run it came from — stations, powers, weather', () => {
+  const t = odysseyShareText({
+    ...base, endingKey: 'wrath', result: null, poseidon: 10, athena: 7,
+    flags: ['ody_done_cyclops', 'ody_done_underworld'],
+  }, 5);
+  assert.match(t, /\n🏺 ⛵👁🕳🦉🔱 🌊🌊\n/, `band missing from:\n${t}`);
 });
 
 test('the harbor has a rumor every day, and the same one for everyone', () => {

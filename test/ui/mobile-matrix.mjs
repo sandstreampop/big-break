@@ -351,6 +351,7 @@ async function driveBigTextBeatCheck(browser, base) {
   const page = await ctx.newPage();
   const violations = [];
   let beatsChecked = 0;
+  let endingChecked = false;
   page.on('pageerror', (e) => violations.push(`pageerror: ${e.message}`));
   try {
     await page.goto(`${base}${game.path}`, { waitUntil: 'domcontentloaded' });
@@ -377,7 +378,34 @@ async function driveBigTextBeatCheck(browser, base) {
         if (q('#screen-game.active .choice-btn.choice-left')) return 'card';
         return 'wait';
       });
-      if (k === 'ending') break;
+      if (k === 'ending') {
+        // The keepsake surfaces (the night's vase + the run-end ledger) under
+        // 1.18× zoom: the painting stays inside its band and the ending screen
+        // never scrolls sideways. These render only here — the set-piece loop
+        // above can't see them.
+        await page.waitForSelector('#screen-ending.active .ody-vase', { timeout: 8000 });
+        const end = await page.evaluate(() => {
+          document.body.classList.add('big-text');
+          const box = (sel) => {
+            const el = document.querySelector(sel);
+            return el ? { sw: el.scrollWidth, cw: el.clientWidth } : null;
+          };
+          const m = {
+            vase: box('#screen-ending .ody-vase'),
+            ledger: box('#screen-ending .ody-ledger'),
+            doc: { sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth },
+          };
+          document.body.classList.remove('big-text');
+          return m;
+        });
+        if (!end.vase) violations.push('big-text ending: no .ody-vase to measure');
+        else if (end.vase.sw > end.vase.cw + 1) violations.push(`big-text vase clipped horizontally (${end.vase.sw} > ${end.vase.cw})`);
+        if (!end.ledger) violations.push('big-text ending: no .ody-ledger to measure');
+        else if (end.ledger.sw > end.ledger.cw + 1) violations.push(`big-text ledger clipped horizontally (${end.ledger.sw} > ${end.ledger.cw})`);
+        if (end.doc.sw > end.doc.cw + 1) violations.push(`big-text ending screen scrolls sideways (${end.doc.sw} > ${end.doc.cw})`);
+        endingChecked = true;
+        break;
+      }
       if (k === 'overlay') {
         await page.waitForFunction(() => {
           const ov = document.querySelector('#overlay.active');
@@ -412,6 +440,37 @@ async function driveBigTextBeatCheck(browser, base) {
       }
     }
     if (beatsChecked < 2) violations.push(`only ${beatsChecked} set-piece beats measured — the landmarks did not play out`);
+    if (!endingChecked) violations.push('the run never reached an ending — the keepsake surfaces went unmeasured');
+
+    // The Guest-Gifts wall (a title surface): reload to the title — the seed
+    // script resets the saved run, meta persists — open the wall, and require
+    // every row unclipped under big-text, with no sideways scroll.
+    await page.goto(`${base}${game.path}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#screen-title.active', { timeout: 15000 });
+    const wallOpened = await page.evaluate(() => {
+      const b = [...document.querySelectorAll('#screen-title button')].find((x) => /Guest-Gifts/.test(x.textContent || ''));
+      if (!b) return false;
+      b.click();
+      return true;
+    });
+    if (!wallOpened) {
+      violations.push('the title screen never offered The Guest-Gifts — the wall went unmeasured');
+    } else {
+      await page.waitForSelector('#screen-wall.active', { timeout: 8000 });
+      const wall = await page.evaluate(() => {
+        document.body.classList.add('big-text');
+        const rows = [...document.querySelectorAll('#screen-wall .wall-item')]
+          .map((r) => ({ sw: r.scrollWidth, cw: r.clientWidth }));
+        const doc = { sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth };
+        document.body.classList.remove('big-text');
+        return { rows, doc };
+      });
+      if (!wall.rows.length) violations.push('the wall rendered no .wall-item rows');
+      for (const [i, r] of wall.rows.entries()) {
+        if (r.sw > r.cw + 1) violations.push(`big-text wall row ${i} clipped horizontally (${r.sw} > ${r.cw})`);
+      }
+      if (wall.doc.sw > wall.doc.cw + 1) violations.push(`big-text wall screen scrolls sideways (${wall.doc.sw} > ${wall.doc.cw})`);
+    }
   } catch (e) {
     violations.push(`drive error: ${e.message}`);
   } finally {
@@ -422,7 +481,7 @@ async function driveBigTextBeatCheck(browser, base) {
     console.error(`✗ big-text ${game.label} @ ${vp.label} (${vp.w}×${vp.h}) — ${uniq.length} violation(s):\n    ${uniq.slice(0, 10).join('\n    ')}`);
     return false;
   }
-  console.log(`✓ big-text ${game.label} @ ${vp.label} (${vp.w}×${vp.h}): ${beatsChecked} set-piece beats unclipped under 1.18× zoom`);
+  console.log(`✓ big-text ${game.label} @ ${vp.label} (${vp.w}×${vp.h}): ${beatsChecked} set-piece beats + the keepsakes (vase, ledger) + the Guest-Gifts wall, unclipped under 1.18× zoom`);
   return true;
 }
 
