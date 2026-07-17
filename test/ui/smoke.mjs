@@ -957,8 +957,15 @@ async function checkOdysseyCeremony(browser, base) {
       // screen as the epilogue's exit-text — proof the interview flow ran
       // and did not eat the ending (INCIDENTS #1 class).
       exitText: document.querySelector('#screen-ending .exit-text')?.textContent || '',
+      // Progressive disclosure (pass 27): this run holds NO turnings, so
+      // the ledger must be the single inviting line — no shelf, no count.
+      firstLine: document.querySelector('#screen-ending .ody-ledger-first')?.textContent || '',
+      shelf: !!document.querySelector('#screen-ending .ody-shelf'),
     }));
     if (!wrath.gutter) throw new Error(`[${label}] the death ending did not gutter the ember (scene missing)`);
+    if (!/The trench teaches the first/.test(wrath.firstLine) || wrath.shelf) {
+      throw new Error(`[${label}] a no-turnings ending should show one inviting line, not the shelf ceremony (shelf=${wrath.shelf})`);
+    }
     if (wrath.exitText.length < 60) throw new Error(`[${label}] the exit interview's answer never reached the ending screen (exit-text: "${wrath.exitText.slice(0, 60)}")`);
 
     // Later the same evening: this run booted RESUMED (force() reloads, then

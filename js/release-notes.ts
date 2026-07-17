@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.29.0',
+    date: '2026-07-17',
+    title: 'The first ending, uncluttered',
+    notes: [
+      'Your first endings no longer lecture you about a prophecy you haven’t met: until you hold a turning, the ending screen offers one line — somewhere past the cave, the dead hold three turnings; the trench teaches the first — instead of an empty shelf and a count of nothing.',
+      'The shelf ceremony now lives where it belongs: in the middle of the hunt. Empty collapses to an invitation, solved collapses to a quiet line, and the night a turning actually lands always gets the full ceremony.',
+    ],
+  },
+  {
     version: '0.28.0',
     date: '2026-07-17',
     title: 'The fire’s memory grows',

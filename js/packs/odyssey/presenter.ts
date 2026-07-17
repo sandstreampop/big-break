@@ -547,13 +547,18 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     // reachable and how.
     const held = heldTurnings(state.flags || []);
     const landed = justLanded(state.flags || []);
-    // A SOLVED shelf collapses to one quiet line (pass 25): a maxed veteran
-    // was reading a static full shelf + count + floor on every ending, while
-    // the title foot already states the whole prophecy is sung. A telling
-    // that just landed the third turning still gets the full ceremony once.
+    // The shelf ceremony lives in the MIDDLE of the progression (pass 27,
+    // the audit's first-ending finding): an EMPTY shelf collapses to one
+    // inviting line — a first-timer was reading three lines of scaffolding
+    // ('you carry none of them yet') about a system they haven't met — and
+    // a SOLVED shelf collapses to one quiet line (pass 25). A telling that
+    // just landed a turning always gets the full ceremony.
     const solved = held.count === 3 && !landed;
+    const empty = held.count === 0 && !landed;
     const ledger = solved
       ? { cls: 'ody-ledger ody-ledger-solved', html: '<div class="ody-ledger-floor">All three turnings held — the prophecy is sung end to end.</div>' }
+      : empty
+      ? { cls: 'ody-ledger ody-ledger-first', html: '<div class="ody-ledger-floor">Somewhere past the cave, the dead hold three turnings of a prophecy. The trench teaches the first.</div>' }
       : (() => {
           const shelf = fragmentShelf({ held, justFilled: landed, animate: false });
           const lead = landed
