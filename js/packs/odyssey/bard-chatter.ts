@@ -283,6 +283,20 @@ export const isNoteLine = (id: string) => !!BY_ID[id] && BY_ID[id].kind === 'not
 
 export const bardPlugin: Plugin = {
   id: 'odyssey_bard',
+  // The Memory Law's deck gate (pass 22): a card may require that the
+  // PREVIOUS telling ended a certain way (run.history, newest last). The
+  // predicate itself refuses shared water — daily and Gauntlet runs stamp
+  // history like any run, but a shared seed forks on nothing personal
+  // (the P18 law), so the fire's memory stays out of those tellings.
+  requires: {
+    lastEnding: (state, arg) => {
+      if (state.daily || state.gauntlet) return false;
+      const rows = state.history || [];
+      const last = rows[rows.length - 1];
+      if (!last?.endingKey) return false;
+      return Array.isArray(arg) ? arg.includes(last.endingKey) : last.endingKey === arg;
+    },
+  },
   onRunStart(state) {
     state.bardShown = [];
     const opens = CHATTER.filter((c) => c.kind === 'open');

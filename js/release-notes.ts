@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.24.0',
+    date: '2026-07-17',
+    title: 'The fire remembers last night',
+    notes: [
+      'Come back after a telling and the fire brings it up IN PLAY: end on the wrath and the widow asks whether tonight’s captain also shouts at the water; sit down in the meadow and the potter’s boy wants to know if he’ll sit again; bank a warm island and the innkeeper mentions, while pouring, how the tale keeps ending there; get home and they demand it again; stop on the beach and they just build your fire higher and say nothing.',
+      'Five cards, one per ending, each a real choice about what kind of bard faces the room. The daily and the Gauntlet never see them — shared water forks on nothing personal.',
+    ],
+  },
+  {
     version: '0.23.0',
     date: '2026-07-17',
     title: 'The Glory road earns its finale',

@@ -24,6 +24,7 @@ import { ACT2_EVENTS } from './events-act2.js';
 import { ACT3_EVENTS } from './events-act3.js';
 import { LANDMARKS } from './landmarks.js';
 import { ODYSSEY_TUTORIAL_EVENTS } from './events-tutorial.js';
+import { MEMORY_EVENTS } from './events-memory.js';
 import { odysseyPresenter } from './presenter.js';
 import { ODYSSEY_PERKS } from './gifts.js';
 
@@ -50,6 +51,11 @@ declare module '../../types.js' {
     poseidon?: number;
     renown?: number;
   }
+  interface Requires {
+    // The Memory Law's deck gate (pass 22, owned by odyssey_bard): the
+    // previous telling's endingKey (or one of several). Refuses shared water.
+    lastEnding?: string | string[];
+  }
 }
 
 export const odysseyPack: Pack = {
@@ -58,7 +64,9 @@ export const odysseyPack: Pack = {
   // odysseyModesPlugin carries no onConstruct/onRunStart/stateDefaults, so
   // appending it changes no seeded draw — goldens byte-identical.
   plugins: [firesPlugin, itineraryPlugin, prophecyPlugin, bardPlugin, odysseyModesPlugin],
-  events: [...ACT1_EVENTS, ...ACT2_EVENTS, ...ACT3_EVENTS, ...LANDMARKS],
+  // MEMORY_EVENTS last: history-gated (the fire remembers), invisible to
+  // sims/goldens by construction (history is never stamped there).
+  events: [...ACT1_EVENTS, ...ACT2_EVENTS, ...ACT3_EVENTS, ...LANDMARKS, ...MEMORY_EVENTS],
   // THE FIRST TELLING: the 3-card oar ramp (gesture → risk tell + frieze →
   // a real roll with the two ledgers). The bard's own chatter waits for the
   // first real telling (bardBeat's tutorial gate).
