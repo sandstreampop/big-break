@@ -312,30 +312,42 @@ const FAMILY_POOL: Record<Family, Record<Ch, Record<Valence, Frag[]>>> = {
       good: [
         { author: 'the Same pilot', avatar: '⚓', body: 'Word is the fleet touched the sweet coast and LEFT. First crew in my lifetime. Mark the log.' },
         { author: 'a Cretan wine trader', avatar: '🍇', body: 'A witch turns your crew to pigs and you leave her table with charts and provisions? Some men negotiate better drunk on strangeness than I do sober.' },
+        { author: 'the harbormaster', avatar: '📜', body: 'Logged: one fleet, inbound past the sweet coast, all masts standing. I made the clerk read it back twice.' },
+        { author: 'a Phoenician captain', avatar: '🚢', body: 'We give that shore a wide berth and a spat prayer. He anchored IN it and rowed out again. I have stopped quoting odds on the man.' },
       ],
       bad: [
         { author: 'the salt-fish wife', avatar: '🐟', body: 'Three crews I have known went in at that green shore. The boats come back. It is the men that stay.' },
         { author: 'the ferry oarsman', avatar: '🛶', body: 'The sweet coasts do not wreck you. That is the trick of them. A wreck at least sends wood ashore to say what happened.' },
+        { author: 'the harbormaster', avatar: '📜', body: 'No entry this month. No entry is its own entry, at that latitude.' },
+        { author: 'a Phoenician captain', avatar: '🚢', body: 'We hailed a hull off the sweet coast riding light and steady, and nobody hailed back. Crewed boats answer. Kept boats drift.' },
       ],
     },
     olympus: {
       good: [
         { author: 'Athena', avatar: '🦉', body: 'Offered the easy harbor. Chose the oar. This is why I keep petitioning for him.' },
         { author: 'Hermes', avatar: '🪽', body: 'I handed him the herb against the cup. He did the rest himself — and the rest was the hard part.' },
+        { author: 'the Muses', avatar: '🎶', body: 'A refusal scans better than a rescue. We have updated the working draft.' },
+        { author: 'Zeus', avatar: '⚡', body: 'He turned down a soft eternity. On this mountain that is considered eccentric. She looked PROUD at dinner.' },
       ],
       bad: [
         { author: 'the Fates', avatar: '🧵', body: 'Threads that stop moving are the quietest work we do.' },
         { author: 'Poseidon', avatar: '🔱', body: 'Let the sweet coasts keep him. It spares my weather.' },
+        { author: 'the Muses', avatar: '🎶', body: 'A song that stops mid-verse is not a song. We keep the fragment on file. The file is large.' },
+        { author: 'Hermes', avatar: '🪽', body: 'No deliveries to that address. The resident has stopped asking what day it is, which is the whole service the island sells.' },
       ],
     },
     fire: {
       good: [
         { author: 'the innkeeper', avatar: '🍯', body: 'He looked at forever and asked for the bill instead. My kind of customer. Sing on.' },
         { author: 'the potter’s boy', avatar: '🏺', body: 'He left. Good. I had a question saved up in case he stayed and it was not a kind one.' },
+        { author: 'the boy in the third row', avatar: '🧒', body: 'I held my breath at the soft part. The woodpile woman put her hand on my shoulder until he rowed.' },
+        { author: 'an old rower’s widow', avatar: '🕯️', body: 'Mine would have stayed. I say that with love and twenty years of practice at saying it. This one rowed.' },
       ],
       bad: [
         { author: 'the man who wants the horse', avatar: '🐴', body: 'A YEAR at the witch’s table? We could have done the horse TWICE.' },
         { author: 'the woman by the woodpile', avatar: '🪵', body: 'A year in one verse. I counted the seasons on my fingers and he was done before my thumb.' },
+        { author: 'the boy in the third row', avatar: '🧒', body: 'The fire went quiet and the bard let it. I looked around and all the grown-ups were somewhere else in their faces.' },
+        { author: 'the innkeeper', avatar: '🍯', body: 'A stayed telling empties the room slow. They pay, they nod, they stand at the door a moment like the harbor is in the yard.' },
       ],
     },
   },
@@ -344,30 +356,42 @@ const FAMILY_POOL: Record<Family, Record<Ch, Record<Valence, Frag[]>>> = {
       good: [
         { author: 'the Same pilot', avatar: '⚓', body: 'The word runs ahead of that fleet like gulls ahead of weather. Half of it is even true.' },
         { author: 'a Cretan wine trader', avatar: '🍇', body: 'I have started paying rowers for news of the fleet by the jar. The price of the story is up in every port.' },
+        { author: 'the harbormaster', avatar: '📜', body: 'Three ships this week swore they crossed his wake. Three wakes, three headings. Either the man sails in circles or the story does.' },
+        { author: 'a Phoenician captain', avatar: '🚢', body: 'We pay a premium to sail one day behind that fleet. Where it has already been is the safest water on the chart.' },
       ],
       bad: [
         { author: 'the Same pilot', avatar: '⚓', body: 'Fewer masts every time the story is told. The arithmetic of rumor is bad, and the real one is usually worse.' },
         { author: 'the salt-fish wife', avatar: '🐟', body: 'The widows have started coming to the quay on the good-wind days. Nobody told them anything. That is the point.' },
+        { author: 'the harbormaster', avatar: '📜', body: 'Chalked the odds-board twice this month, smaller both times. Nobody bets the middle of a story.' },
+        { author: 'a Phoenician captain', avatar: '🚢', body: 'We altered course around his last known heading. Nothing personal. Weather follows that man like a debt.' },
       ],
     },
     olympus: {
       good: [
         { author: 'Athena', avatar: '🦉', body: 'Interim report: alive, clever, mostly deserving it. Continuing.' },
         { author: 'Hermes', avatar: '🪽', body: 'Between acts I run the numbers to the mountain. The mountain is, and I quote, “watching with interest.” That is warm, for us.' },
+        { author: 'the Muses', avatar: '🎶', body: 'Interim notes: strong middle. The middle is where mortals usually sag. Pens down until the ending.' },
+        { author: 'Zeus', avatar: '⚡', body: 'Two omens dispatched, both read correctly. Do you know how rare that is? We usually have to send a third, in flames.' },
       ],
       bad: [
         { author: 'Poseidon', avatar: '🔱', body: 'Interim report: the sea is winning. As the sea does.' },
         { author: 'the Fates', avatar: '🧵', body: 'The middle of a thread tells you nothing. We measure at the end. Everyone measures at the end.' },
+        { author: 'the Muses', avatar: '🎶', body: 'Notes at the break: the theme is grief and the tempo is slipping. Historically that resolves one of two ways.' },
+        { author: 'Ares', avatar: '🗡️', body: 'I do not follow this one closely. But the sea talks at dinner, and the sea is smug this month.' },
       ],
     },
     fire: {
       good: [
         { author: 'the innkeeper', avatar: '🍯', body: 'Good act. The cups are up, the fire is fed, and nobody has asked for their coin back.' },
         { author: 'the potter’s boy', avatar: '🏺', body: 'Act’s done. The counts mostly held. I wrote down the ones that did not.' },
+        { author: 'the boy in the third row', avatar: '🧒', body: 'I counted along the whole act and only lost it once. The bard slowed down for me. Do not tell him I noticed.' },
+        { author: 'Phemios (from Smyrna)', avatar: '🥁', body: 'A clean act, I hear. No drum. A whole act, no drum. I could not work under those conditions.' },
       ],
       bad: [
         { author: 'an old rower’s widow', avatar: '🕯️', body: 'Act’s over. He tallied the benches too fast again. Slower, bard.' },
         { author: 'Phemios (from Smyrna)', avatar: '🥁', body: 'Heard the act break went quiet. In Smyrna we fill those with a drum solo. Just saying it travels.' },
+        { author: 'the boy in the third row', avatar: '🧒', body: 'Nobody is finishing their bread. It was that kind of act.' },
+        { author: 'the man who wants the horse', avatar: '🐴', body: 'An entire act and not one wooden anything. The classics exist for a reason.' },
       ],
     },
   },
@@ -376,30 +400,42 @@ const FAMILY_POOL: Record<Family, Record<Ch, Record<Valence, Frag[]>>> = {
       good: [
         { author: 'the Same pilot', avatar: '⚓', body: 'It ends the way the pilots always said it could not: the man came HOME. Redraw the charts. Reprice the odds.' },
         { author: 'the salt-fish wife', avatar: '🐟', body: 'Twenty years, and the smoke goes up on Ithaca again. I sold fish to that house before the war. I will again.' },
+        { author: 'the harbormaster', avatar: '📜', body: 'Entry, final: one fleet, Ithaca, arrived. I waited twenty years to write one line. It took four words.' },
+        { author: 'a Phoenician captain', avatar: '🚢', body: 'So the route is real. We will not be taking it. Some water earns one crossing and then closes.' },
       ],
       bad: [
         { author: 'the Same pilot', avatar: '⚓', body: 'Take the name off the odds-board. The sea has settled the account.' },
         { author: 'a Cretan wine trader', avatar: '🍇', body: 'A story keeps a port warm for a while. Then it is just weather again.' },
+        { author: 'the harbormaster', avatar: '📜', body: 'Struck the entry. The ledger does not grieve. The clerk gets the evening off anyway.' },
+        { author: 'the salt-fish wife', avatar: '🐟', body: 'The house on Ithaca will hear it from a trader with bad timing and a worse face. It is always that man. It is never me.' },
       ],
     },
     olympus: {
       good: [
         { author: 'Athena', avatar: '🦉', body: 'Closed as petitioned. My favorite case. Do not tell the others.' },
         { author: 'Zeus', avatar: '⚡', body: 'She has been insufferable all evening. Justified, but insufferable.' },
+        { author: 'Hermes', avatar: '🪽', body: 'Case closed and couriered. The mountain signed without reading, as usual. SHE read every line twice.' },
+        { author: 'the Fates', avatar: '🧵', body: 'Measured. The thread ran longer than the pattern suggested. That happens once a century, and we discuss it for two.' },
       ],
       bad: [
         { author: 'Poseidon', avatar: '🔱', body: 'The ledger is settled. The sea keeps what it is owed. It was never personal. No — it was ENTIRELY personal.' },
         { author: 'the Fates', avatar: '🧵', body: 'Cut clean. Measured true. Filed.' },
+        { author: 'Athena', avatar: '🦉', body: 'Filed under: mortals, limits of. I do not lose often. I remember each one.' },
+        { author: 'Zeus', avatar: '⚡', body: 'The sea-court adjourned loudly tonight. My brother is unbearable in victory. Motion to shorten the next war.' },
       ],
     },
     fire: {
       good: [
         { author: 'the woman by the woodpile', avatar: '🪵', body: 'The counts held to the end. I have no notes. First time in years I have no notes.' },
         { author: 'the man who wants the horse', avatar: '🐴', body: 'Fine. FINE. It was better than the horse. Tell nobody I said it.' },
+        { author: 'the innkeeper', avatar: '🍯', body: 'Ended well. The room paid without being asked and left slow, the way a crowd leaves when it wants the story to stay lit.' },
+        { author: 'the boy in the third row', avatar: '🧒', body: 'He got HOME. I ran and told the sailors on the porch and one of them looked at the sea for a long time.' },
       ],
       bad: [
         { author: 'an old rower’s widow', avatar: '🕯️', body: 'It ended the way the sea ends things. Sing it again tomorrow anyway. That is what the fire is FOR.' },
         { author: 'the potter’s boy', avatar: '🏺', body: 'So the man on the beach never stood up, then.' },
+        { author: 'the boy in the third row', avatar: '🧒', body: 'I asked why the bard sings it if it ends like that. The woodpile woman said you sing the whole sea or none of it.' },
+        { author: 'the innkeeper', avatar: '🍯', body: 'A quiet room drinks slow. I have stopped minding, on nights like this. Some tabs are best left open until tomorrow.' },
       ],
     },
   },
@@ -557,6 +593,21 @@ export function feedBodyCorpus(): string[] {
   eat(NAMED_POST);
   return out;
 }
+// The rooms' depth, measurable (pass 46): cell sizes for the variety floor
+// test — the every-run families must never thin back to the two-post cells
+// that repeated within a player's first week.
+export function familyPoolSizes(): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const fam of Object.keys(FAMILY_POOL) as Family[]) {
+    for (const ch of Object.keys(FAMILY_POOL[fam]) as Ch[]) {
+      for (const v of Object.keys(FAMILY_POOL[fam][ch]) as Valence[]) {
+        out[`${fam}.${ch}.${v}`] = FAMILY_POOL[fam][ch][v].length;
+      }
+    }
+  }
+  return out;
+}
+
 export function feedChromeCorpus(): string[] {
   const out: string[] = [];
   for (const fam of Object.keys(TEASERS) as Family[]) out.push(...TEASERS[fam]);

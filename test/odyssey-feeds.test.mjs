@@ -6,7 +6,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert';
-import { odysseyFeeds, ODYSSEY_FEED_CHROME, feedBodyCorpus, feedChromeCorpus } from '../dist/js/packs/odyssey/feeds.js';
+import { odysseyFeeds, ODYSSEY_FEED_CHROME, feedBodyCorpus, feedChromeCorpus, familyPoolSizes } from '../dist/js/packs/odyssey/feeds.js';
 
 const state = (over = {}) => ({
   flags: [], flavorSeed: 7, cardLog: [{ id: 'x' }],
@@ -98,6 +98,18 @@ test('the lint corpus is real: ≥90 unique bodies, chrome present, lengths sane
   assert.strictEqual(bodies.length, new Set(bodies).size, 'no copy-pasted posts');
   for (const b of bodies) assert.ok(b.length <= 300, `body over 300: ${b.slice(0, 40)}…`);
   assert.ok(feedChromeCorpus().length >= 10);
+});
+
+test('the every-run rooms stay wide (pass 46): temptation/recap/ending cells hold four voices', () => {
+  const sizes = familyPoolSizes();
+  for (const fam of ['temptation', 'recap', 'ending']) {
+    for (const ch of ['harbor', 'olympus', 'fire']) {
+      for (const v of ['good', 'bad']) {
+        const k = `${fam}.${ch}.${v}`;
+        assert.ok(sizes[k] >= 4, `${k} has ${sizes[k]} posts — the room thinned back to a repeat`);
+      }
+    }
+  }
 });
 
 test('the chrome re-voicing is whole — no phone leaks into the fire’s world', () => {

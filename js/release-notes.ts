@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.48.0',
+    date: '2026-07-17',
+    title: 'The rooms grow louder',
+    notes: [
+      'The second screen’s three rooms — the harbor wall, Olympus, this very fire — doubled their voices for the moments you hit every run: the temptations, the act breaks, and the endings. New regulars join the talk: the harbormaster and his ledger, a Phoenician captain who pays to sail one day behind you, the Muses with their pens down, and the boy in the third row who counts along.',
+    ],
+  },
+  {
     version: '0.47.0',
     date: '2026-07-17',
     title: 'The living threshold',
