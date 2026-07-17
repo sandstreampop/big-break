@@ -47,9 +47,10 @@ import { activePack } from '../../ui/context.js';
 // homecoming judged a full success. Well under one telling in ten, even
 // for the bard who knows all three turnings — the knowing is the easy half.
 function oarRoadWalked(s: RunState): boolean {
+  // poseidon 3 → 2 (pass 40 sweep) — lockstep with prophecy.ts trueVictory.
   return s.ending?.result === 'success'
     && s.flags.includes('ody_oar_road')
-    && (s.poseidon || 0) <= 3;
+    && (s.poseidon || 0) <= 2;
 }
 
 const NOSTOS_SUCCESS = {

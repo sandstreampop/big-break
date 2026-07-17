@@ -37,7 +37,10 @@ const EXPECTED_PLUGIN_ORDER = {
   // only — no construction hooks, so the seeded stream is untouched and the
   // goldens stayed byte-identical (verified: golden suite green across the
   // change, no re-baseline needed).
-  odyssey: ['odyssey_fires', 'odyssey_itinerary', 'odyssey_prophecy', 'odyssey_bard', 'odyssey_modes'],
+  // odyssey_owl inserted 2026-07 (pass 40, the balance sweep): the owl's
+  // edge is a modifyRoll bonus — it CHANGES seeded rolls by design, and the
+  // sweep re-baselined the odyssey golden deliberately with it.
+  odyssey: ['odyssey_fires', 'odyssey_itinerary', 'odyssey_prophecy', 'odyssey_owl', 'odyssey_bard', 'odyssey_modes'],
 };
 
 for (const pack of PACKS) {

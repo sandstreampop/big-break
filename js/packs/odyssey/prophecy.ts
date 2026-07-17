@@ -29,8 +29,11 @@ export const summarizeTelling: NonNullable<Pack['summarize']> = (state) => ({
       : state.flags.includes('ody_fore_sea') ? 'sea' : null,
   // The truer ending: the whole prophecy carried, the sea kept unprovoked,
   // the homecoming judged whole. Same predicate the ending variant reads.
+  // Tightened poseidon 3 → 2 (pass 40 sweep): the owl's edge raised nostos
+  // successes, and the crown must stay rare — the whole prophecy demands a
+  // cleaner ledger. Keep in lockstep with presenter.ts oarRoadWalked.
   trueVictory: state.ending?.result === 'success' && state.path === 'nostos'
-    && state.flags.includes('ody_oar_road') && (state.poseidon || 0) <= 3,
+    && state.flags.includes('ody_oar_road') && (state.poseidon || 0) <= 2,
   named: state.flags.includes('ody_named'),
   // The telling-ledger's raw material (I8, the Memory Law): how tonight
   // ended, who was lost, whether the name went down with the anchor-stone,

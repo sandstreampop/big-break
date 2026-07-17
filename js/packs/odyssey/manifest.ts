@@ -40,9 +40,14 @@ export const odysseyManifest: PackManifest = {
   // glory runs summited 66.6% with partial+failure at 0.6% — the finale was
   // ratifying the commit, and two authored endings almost never rendered.
   // Renown must now be EARNED past the commit, not just carried over it.
+  // Kleos raised again 8 → 9 (pass 40 sweep): committed glory runs were
+  // summiting at 71.5% against the homecoming's 54.8% — the short life
+  // was the SAFER bet, which inverts the fiction. And nostos athena 4 → 5
+  // (same sweep): the owl's edge (owl.ts) makes her favor mechanically
+  // valuable every card, so the homecoming's devotion gate keeps pace.
   winGates: {
-    nostos: { expedition: 6, athena: 4 },
-    kleos: { renown: 8 },
+    nostos: { expedition: 6, athena: 5 },
+    kleos: { renown: 9 },
   },
   statMeta: {
     might: { name: 'Might', icon: '⚔️' },

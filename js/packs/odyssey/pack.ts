@@ -18,6 +18,7 @@ import { FIRES, firesPlugin } from './fires.js';
 import { itineraryPlugin } from './itinerary.js';
 import { prophecyPlugin, summarizeTelling } from './prophecy.js';
 import { bardPlugin } from './bard-chatter.js';
+import { owlPlugin } from './owl.js';
 import { odysseyComeback, odysseyModesPlugin } from './modes.js';
 import { ACT1_EVENTS } from './events-act1.js';
 import { ACT2_EVENTS } from './events-act2.js';
@@ -67,7 +68,10 @@ export const odysseyPack: Pack = {
   manifest: odysseyManifest,
   // odysseyModesPlugin carries no onConstruct/onRunStart/stateDefaults, so
   // appending it changes no seeded draw — goldens byte-identical.
-  plugins: [firesPlugin, itineraryPlugin, prophecyPlugin, bardPlugin, odysseyModesPlugin],
+  // owlPlugin (pass 40): Athena's favor as a roll edge — the pack's one
+  // roll-bonus subsystem. It changes seeded rolls, so its landing came
+  // with a deliberate golden re-baseline and the sweep's counterweights.
+  plugins: [firesPlugin, itineraryPlugin, prophecyPlugin, owlPlugin, bardPlugin, odysseyModesPlugin],
   // MEMORY_EVENTS last: history-gated (the fire remembers), invisible to
   // sims/goldens by construction (history is never stamped there).
   // TELEMACHY_EVENTS: the within-run thread (pass 34) — flag-gated

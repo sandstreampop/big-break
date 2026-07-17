@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.42.0',
+    date: '2026-07-17',
+    title: 'The owl’s edge — the balance sweep',
+    notes: [
+      'Athena’s favor now rides every roll: past four devotion, each point adds to your chances (capped at eight) — the owl backs clever men, and the legendary outcomes the fire waits for are finally within reach of a pious, well-run telling. The odds readout shows her hand the moment she attends.',
+      'The sweep’s counterweights: the Glory now asks Renown 9 (committed glory runs were winning more often than the homecoming — the short life should not be the safer bet), the homecoming asks Athena 5 to match her new value, and the Oar Road demands a cleaner sea (Poseidon 2 or less). Net: legendary moments up by half, overall difficulty a touch harder, the crown as rare as ever.',
+    ],
+  },
+  {
     version: '0.41.0',
     date: '2026-07-17',
     title: 'The recognitions — the dog and the nurse',
