@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.35.0',
+    date: '2026-07-17',
+    title: 'Word from the other fires',
+    notes: [
+      'The Same Sea and the Gauntlet finally have something to compare against: when a shared-water telling ends, the fire hears how tonight’s exact water treated a hundred other crews — the same seed, sailed a hundred more ways, counted honestly by ending. Your own fire is marked in the tally. Same day, same fleet, on every phone — no server involved.',
+    ],
+  },
+  {
     version: '0.34.0',
     date: '2026-07-17',
     title: 'The vase travels',

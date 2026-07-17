@@ -842,6 +842,22 @@ body.ody-breath svg.px .pxf { animation-play-state: paused; }
   .ody-vase-band { gap: 7px; }
 }
 
+/* ── Pass 33 — the other fires: the shared water's fleet, counted. A hard
+   single rule (a record, not an alarm — same grammar as the loss line),
+   then one flat bar per ending class. STYLE.md box law: radius 0, no
+   shadows, no gradients; the player's own fire takes the accent. */
+.ody-fires { border-top: 2px solid var(--ink); padding-top: 8px; margin: 10px 0 2px; }
+.ody-fires-head { font-size: .74rem; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); text-align: center; margin: 0 0 2px; }
+.ody-fires-sub { font-size: .72rem; color: var(--dim); text-align: center; margin: 0 0 8px; }
+.ody-fires-wait { font-size: .78rem; color: var(--dim); text-align: center; font-style: italic; }
+.ody-fire-row { display: flex; align-items: center; gap: 8px; margin: 3px 0; font-size: .78rem; }
+.ody-fire-label { flex: 0 0 46%; min-width: 0; text-align: right; color: var(--dim); }
+.ody-fire-you .ody-fire-label { color: var(--accent); font-weight: 700; }
+.ody-fire-bar { flex: 1; min-width: 0; height: 8px; border: 1px solid var(--line); display: block; }
+.ody-fire-bar i { display: block; height: 100%; background: var(--dim); }
+.ody-fire-you .ody-fire-bar i { background: var(--accent); }
+.ody-fire-n { flex: 0 0 2.2em; text-align: left; font-variant-numeric: tabular-nums; color: var(--ink); }
+
 /* ── Pass 24 — the gallery of nights: the remembered tellings' vases, small,
    above the Past-Lives rows. Each night shrinks the live vase's rules to a
    shelf ornament; captions stay one word. Wraps at 320px, never clips. */

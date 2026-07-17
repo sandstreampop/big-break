@@ -29,6 +29,8 @@ import { odysseyRoster } from './roster.js';
 import { odysseyFeeds, ODYSSEY_FEED_CHROME } from './feeds.js';
 import { ODYSSEY_WALL_ITEMS, ODYSSEY_WALL_COPY } from './gifts.js';
 import { nightVase, vaseFromHistory } from './vase.js';
+import { paintOtherFires } from './otherfires.js';
+import { activePack } from '../../ui/context.js';
 
 // The prophecy meta-arc (slice 6). The Oar Road — the truer ending — is a
 // VARIANT of the nostos success (same ending key; the run decides which
@@ -572,11 +574,28 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
               : 'The third only reveals itself to a bard who already holds the other two.';
           return { cls: 'ody-ledger', html: `${lead}${shelf}${countLine}<div class="ody-ledger-floor">${floorText}</div>` };
         })();
+    // The other fires (pass 33): a shared-water telling (daily/gauntlet)
+    // closes with the fleet — the same seed sailed a hundred more ways, so
+    // "compare endings" finally has endings to compare against. The line
+    // renders a placeholder; the painter fills it in idle-sized chunks
+    // (the ending screen appends these lines synchronously before any
+    // timeout can fire, so the placeholder is always mounted first).
+    const sharedWater = !!(_summary?.daily || _summary?.gauntlet);
+    if (sharedWater && typeof window !== 'undefined') {
+      setTimeout(() => {
+        const host = document.getElementById('ody-otherfires');
+        if (host) paintOtherFires(host, activePack, _summary);
+      }, 0);
+    }
     return {
       lines: [
         ...(scene ? [{ cls: 'ending-scene ending-gutter' + still, html: scene }] : []),
         { cls: 'ody-vase-line' + still, html: vase.html },
         ledger,
+        ...(sharedWater ? [{
+          cls: 'ody-fires',
+          html: '<div id="ody-otherfires"><div class="ody-fires-wait">Word is coming up the beach…</div></div>',
+        }] : []),
       ],
       lpNote: '',
     };

@@ -1385,8 +1385,27 @@ async function checkGauntletGeneric(browser, base, { label, path, ns, subNeedle 
       }
     }
     if (!(await page.$('#screen-ending.active'))) throw new Error(`[${label}] the week's run never reached a terminal screen`);
+    // The other fires (pass 33, odyssey): a shared-water ending must count
+    // the fleet — the placeholder fills asynchronously, so wait for rows,
+    // then hold the panel to its own arithmetic: all 100 tellings counted,
+    // exactly one row marked as the player's own fire.
+    let firesNote = '';
+    if (ns === '_odyssey') {
+      await page.waitForFunction(
+        () => document.querySelectorAll('#ody-otherfires .ody-fire-row').length > 0,
+        { timeout: 20000 });
+      const fires = await page.evaluate(() => ({
+        total: [...document.querySelectorAll('#ody-otherfires .ody-fire-n')].reduce((n, x) => n + Number(x.textContent), 0),
+        you: document.querySelectorAll('#ody-otherfires .ody-fire-you').length,
+        head: document.querySelector('#ody-otherfires .ody-fires-head')?.textContent || '',
+      }));
+      if (fires.total !== 100) throw new Error(`[${label}] the other fires counted ${fires.total} tellings, not 100`);
+      if (fires.you !== 1) throw new Error(`[${label}] expected exactly one 'your fire' row, got ${fires.you}`);
+      if (!/other fires/i.test(fires.head)) throw new Error(`[${label}] the fleet panel lost its heading ("${fires.head}")`);
+      firesNote = ', and the other fires count all 100 tellings with the player\'s own marked';
+    }
     if (errors.length) throw new Error(`[${label}] ${errors[0]}`);
-    console.log(`✓  ${label}: the Gauntlet deals the week's build (${minted.loadout}), keeps the shared seed unforked, and the run reaches a terminal screen`);
+    console.log(`✓  ${label}: the Gauntlet deals the week's build (${minted.loadout}), keeps the shared seed unforked, and the run reaches a terminal screen${firesNote}`);
   } finally {
     await ctx.close();
   }
