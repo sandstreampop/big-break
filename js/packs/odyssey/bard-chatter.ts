@@ -265,7 +265,12 @@ export function noteOf(summary: any): string | null {
   const acts = (summary.cardLog || []).map((c: any) => c.a || 0);
   const maxAct = acts.length ? Math.max(...acts) : 1;
   if (key === 'wrath' && summary.named) return 'bn_shout';
-  if (key === 'nostos' && summary.endingResult === 'failure'
+  // The owl note covers the failure AND the thin homecoming: hulls enough,
+  // goddess short. (Pure failure with hulls met needs athena ≤ 1 under the
+  // 0.72 partial threshold — reachable but rare; the partial case is the
+  // one players actually live: 'Home, and Unrecognized' with the gate bars
+  // showing exactly which god was looking elsewhere.)
+  if (key === 'nostos' && (summary.endingResult === 'failure' || summary.endingResult === 'partial')
     && (summary.expedition ?? 0) >= 6 && (summary.athena ?? 0) < 4) return 'bn_owl';
   if (key === 'burnout' && maxAct >= 3) return 'bn_beach_late';
   if ((key === 'calypso' || key === 'circe') && (summary.expedition ?? 0) >= 6) return 'bn_bank_strong';

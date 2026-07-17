@@ -12,8 +12,10 @@ import { odysseyPresenter } from '../dist/js/packs/odyssey/presenter.js';
 test('noteOf judges the mistakes it claims to judge — and only those', () => {
   assert.strictEqual(noteOf({ endingKey: 'wrath', named: true }), 'bn_shout');
   assert.strictEqual(noteOf({ endingKey: 'wrath', named: false }), null, 'an unshouted wrath is the sea’s doing, not a note');
-  assert.strictEqual(noteOf({ endingKey: 'nostos', endingResult: 'failure', expedition: 7, athena: 2 }), 'bn_owl');
+  assert.strictEqual(noteOf({ endingKey: 'nostos', endingResult: 'failure', expedition: 7, athena: 1 }), 'bn_owl');
+  assert.strictEqual(noteOf({ endingKey: 'nostos', endingResult: 'partial', expedition: 7, athena: 2 }), 'bn_owl', 'the thin homecoming is the owl’s case too');
   assert.strictEqual(noteOf({ endingKey: 'nostos', endingResult: 'failure', expedition: 4, athena: 2 }), null, 'a bled fleet is not the owl’s fault');
+  assert.strictEqual(noteOf({ endingKey: 'nostos', endingResult: 'partial', expedition: 7, athena: 5 }), null, 'a thin homecoming with the goddess aboard is some other story');
   assert.strictEqual(noteOf({ endingKey: 'burnout', cardLog: [{ a: 1 }, { a: 2 }, { a: 3 }] }), 'bn_beach_late');
   assert.strictEqual(noteOf({ endingKey: 'burnout', cardLog: [{ a: 1 }] }), null, 'an early beach is exhaustion, not a late collapse');
   assert.strictEqual(noteOf({ endingKey: 'calypso', expedition: 8 }), 'bn_bank_strong');
@@ -24,9 +26,12 @@ test('noteOf judges the mistakes it claims to judge — and only those', () => {
   assert.strictEqual(noteOf(undefined), null);
 });
 
-test('recordMeta writes the note and a clean night clears it', () => {
+test('recordMeta writes the note, a clean night clears it, a daily touches nothing', () => {
   const meta = {};
   odysseyPresenter.recordMeta(meta, { endingKey: 'wrath', named: true, heardCallbacks: [] });
+  assert.strictEqual(meta.odyssey.note, 'bn_shout');
+  // A daily's ending neither writes nor clears — the shared sea is nobody's confession.
+  odysseyPresenter.recordMeta(meta, { endingKey: 'lotus', daily: '2026-07-17', heardCallbacks: [] });
   assert.strictEqual(meta.odyssey.note, 'bn_shout');
   odysseyPresenter.recordMeta(meta, { endingKey: 'nostos', endingResult: 'success', expedition: 9, athena: 6, heardCallbacks: [] });
   assert.strictEqual(meta.odyssey.note, null);

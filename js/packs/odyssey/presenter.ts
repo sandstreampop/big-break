@@ -377,9 +377,11 @@ export const odysseyPresenter: NonNullable<Pack['presenter']> = {
     if (summary?.nobody) t.nobody += 1;
     t.crewLostLast = summary?.crewLost ?? 0;
     t.crewLostTotal += summary?.crewLost ?? 0;
-    // The bard's-note: ALWAYS recomputed (null on a clean night), so the
-    // note is only ever the latest telling's mistake.
-    meta.odyssey.note = noteOf(summary);
+    // The bard's-note: recomputed every NORMAL night (null on a clean one),
+    // so the note is only ever the latest telling's mistake. A daily neither
+    // writes nor clears it — the shared sea is nobody's confession, and the
+    // stamp side (applySetup) already refuses dailies for the same reason.
+    if (!summary?.daily) meta.odyssey.note = noteOf(summary);
     // No-repeat-until-exhausted for the crowd's callbacks: union what the
     // fire heard tonight, then let the cycle REALLY reset — the heard set is
     // persistent, so when everything the next telling could hear has been
