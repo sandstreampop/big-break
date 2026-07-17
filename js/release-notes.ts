@@ -31,6 +31,14 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.49.0',
+    date: '2026-07-17',
+    title: 'The last word learns more ways to land',
+    notes: [
+      'The fire’s closing beat after a finale — the epilogue under your ending — doubled its repertoire: the sailor who pays with both hands flat on the bowl, the fisherman’s fish accepted like minted silver, the widow’s receipt at the door, the man who by his own doorstep strung the bow himself. Two wins no longer exhaust the fire’s goodbyes.',
+    ],
+  },
+  {
     version: '0.48.0',
     date: '2026-07-17',
     title: 'The rooms grow louder',

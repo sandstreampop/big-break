@@ -6,7 +6,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert';
-import { ODYSSEY_EXIT_INTERVIEWS, odysseyEpilogue } from '../dist/js/packs/odyssey/interviews.js';
+import { ODYSSEY_EXIT_INTERVIEWS, odysseyEpilogue, epilogueSizes } from '../dist/js/packs/odyssey/interviews.js';
 import { odysseyManifest } from '../dist/js/packs/odyssey/manifest.js';
 
 test('every terminal ending key has a complete interview (both arms: label/exit/lp/text)', () => {
@@ -54,4 +54,18 @@ test('hostile state never leaks', () => {
   assert.strictEqual(odysseyEpilogue({}), '');
   assert.strictEqual(odysseyEpilogue({ ending: null }), '');
   assert.ok(!/undefined/.test(odysseyEpilogue({ ending: { key: 'nostos', result: 'success' } })));
+});
+
+test('the last word stays wide (pass 47): every epilogue pool holds four', () => {
+  const sizes = epilogueSizes();
+  for (const k of ['nostos:success', 'kleos:success', 'partial', 'failure']) {
+    assert.ok(sizes[k] >= 4, `${k} has ${sizes[k]} epilogues — the last word thinned back to a repeat`);
+  }
+  // And the rotation actually reaches the new variants: distinct flavor
+  // seeds must produce more than two distinct closings per pool.
+  const seen = new Set();
+  for (let seed = 1; seed <= 24; seed++) {
+    seen.add(odysseyEpilogue({ flavorSeed: seed, ending: { key: 'nostos', result: 'success' } }));
+  }
+  assert.ok(seen.size >= 3, `24 seeds reached only ${seen.size} homecoming closings`);
 });

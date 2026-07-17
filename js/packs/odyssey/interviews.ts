@@ -84,20 +84,37 @@ const EPILOGUES: Record<string, string[]> = {
   'nostos:success': [
     'The fire holds its breath to the last word, and then, friends, no one claps — they exhale, all together, like a crew shipping oars at the end of a passage. The woman by the woodpile says, “That was how my grandfather told it,” which at this fire is the highest honor a telling can carry. The potter’s boy is asleep against the wood, still holding the coin he meant to pay with.',
     'Coins in the bowl, real ones — and the man who wants the horse, friends, this is sworn, says nothing about the horse. He stands at the edge of the firelight a moment and says, “My father rowed. A bench like those.” Then he goes. Some fees are paid in kind.',
+    'An old man at the back — new to this fire, a sailor once, you can tell by how he sat facing the door — stands, puts both hands flat on the rim of the bowl, and leaves without a coin. “He paid,” the innkeeper says, before anyone can say otherwise. “Keep pouring.”',
+    'The woman by the woodpile stays to bank the fire herself. “Twenty years,” she says — to the embers, not to you — “and the bed still standing.” She is not talking about the poem, friends. The good tellings are never only about the poem.',
   ],
   'kleos:success': [
     'They go out singing it — badly, in the wrong meter, with the names in the wrong order — and the bard lets them, friends, because that is what glory IS: your song in other mouths, getting the details wrong and the name right, all the way down the dark road home.',
     'The potter’s boy stays to help bank the fire, which means he wants something: the shout, one more time — just the shout. You give it to him at half voice, over the embers, and he mouths every word along. Somewhere in that boy a fire has been lit that no meadow will ever put out.',
+    'Two harbors away, in a tavern this bard has never entered, somebody tonight is being paid for a shout they learned third-hand. Let them. A song with a strong keel, friends, tows any number of small boats.',
+    'The man who wants the horse goes out reciting the arrow-count to himself — twelve axes, the number right and everything else gloriously wrong. By the crossroads he has promoted himself to eyewitness. By his own door, friends, HE strung the bow.',
   ],
   partial: [
     'The bowl comes back half-full, which is fair, friends — the telling came back half-full. The crowd goes home comparing what they would have done differently, and that is not failure. A telling argued about is a telling remembered.',
     'The woman by the woodpile pays in full, then stands over the bowl a moment. “The middle sagged,” she says. It did, friend. The middles always sag when the gods stop pushing. She knows it, the bard knows it, and tomorrow’s middle will be tighter for tonight’s sag.',
+    'A fisherman pays with a fish, and the innkeeper accepts it with the gravity of minted silver. “Half a homecoming,” the man says, “is still a coast in sight.” Half the room rows home a little straighter for that, friends, whatever the ledger says.',
+    '“You will sing it again,” the potter’s boy says — not a question, an instruction. He has decided the telling wants another firing, like a pot come out sound but dull. Tomorrow, friends. The kiln keeps its own counsel, and so does the sea.',
   ],
   failure: [
     'No one speaks first. The fire spits. Someone puts a branch on unasked — not for warmth, friends; for something to do with their hands. When a telling ends short of the harbor, the fire always burns a little longer after it. Nobody wants to be first into the dark toward their own unfinished things.',
     'The crowd files out quiet, and the last to go — a sailor, by his hands — stops at the bowl and pays double. You do not ask. Men who have seen the light on the water go out always pay double, friends, and never say why.',
+    'The widow is the last one out. At the door she turns: “You counted them right, at least. Every empty bench got its name.” She says it like a receipt, friends — proof of goods delivered. Some nights that is the only line of the ledger that matters.',
+    'Nobody argues on the road home tonight. The arguing will come tomorrow, at the nets and the ovens, the way soreness comes the day after labor. A failure that size takes a night to become a story. It always becomes one, friends. That is the mercy of fires.',
   ],
 };
+
+// The pools' depth, measurable (pass 47; the P26/P46 law): the last word
+// must never thin back to the two-variant pools that repeated after a
+// player's second win.
+export function epilogueSizes(): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const k of Object.keys(EPILOGUES)) out[k] = EPILOGUES[k].length;
+  return out;
+}
 
 export const odysseyEpilogue: NonNullable<Presenter['epilogue']> = (state: RunState) => {
   const key = state.ending?.key ?? null;
