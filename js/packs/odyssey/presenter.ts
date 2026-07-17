@@ -66,7 +66,7 @@ const NOBODY_GLORY = {
 };
 const SEA_OWED = {
   title: 'The Song, and the Bill',
-  text: 'The song is made, friends — no one takes that back — but listen under the last verse and you can hear the other ledger turning its pages. He shouted his glory across water that keeps accounts, and glory is LOUD, and the sea knows exactly where he sleeps now. So the telling ends with the name secure and the harbor watched: a spear by the bed, an eye on the weather, and on the flat calm days — the flat ones especially, friends — he does not walk the shingle alone. The song will outlive him. The question the fire will not say out loud is only: by how much.',
+  text: 'The song is made, friends — no one takes that back — but listen under the last verse and you can hear the other ledger turning its pages. His glory went out over water that keeps accounts — sung, boasted, carried port to port; glory is LOUD however it travels — and the sea knows exactly where he sleeps now. So the telling ends with the name secure and the harbor watched: a spear by the bed, an eye on the weather, and on the flat calm days — the flat ones especially, friends — he does not walk the shingle alone. The song will outlive him. The question the fire will not say out loud is only: by how much.',
 };
 const WRATH_UNNAMED = {
   title: 'The Sea Needs No Name',
