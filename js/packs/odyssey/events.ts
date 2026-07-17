@@ -83,6 +83,10 @@ function side(s: SeaSide) {
 
 export function sea(id: string, act: number | number[], opts: {
   tags?: string[];
+  // A state gate for the rare sea that reads the run (pass 30: the
+  // youngest bench asks after losses; the bow watch sees the wave only on
+  // a provoked sea). Passed through verbatim; most seas carry none.
+  requires?: GameEvent['requires'];
   prompt: string; recap: string;
   left: SeaSide; right: SeaSide;
 }): GameEvent {
@@ -90,6 +94,7 @@ export function sea(id: string, act: number | number[], opts: {
     id,
     act,
     tags: opts.tags,
+    requires: opts.requires,
     prompt: opts.prompt,
     recap: opts.recap,
     choices: { left: side(opts.left), right: side(opts.right) },

@@ -31,6 +31,15 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '0.32.0',
+    date: '2026-07-17',
+    title: 'The benches speak',
+    notes: [
+      'Six new waters where the crew steps forward: the helmsman asks for a course he can steer through lying stars, the cook counts the days aloud, the youngest bench asks the question veterans stopped asking (only after real losses), the stroke-oar hides his going hands, the bow watch swears the same wave keeps station (only on a provoked sea), and the sailmaker wants one day ashore for the sail with one storm left in her.',
+      'Roles, not names — the sand keeps the names. The bench roles can’t contradict a grave.',
+    ],
+  },
+  {
     version: '0.31.0',
     date: '2026-07-17',
     title: 'The island reads the man',

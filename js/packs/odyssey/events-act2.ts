@@ -416,6 +416,61 @@ export const ACT2_EVENTS: GameEvent[] = [
     },
   }),
 
+  // ── The benches speak (pass 30): role voices — the helmsman, the cook,
+  // the youngest bench. ROLES, never the loss pool's named dead (crew.ts
+  // owns the sand's names; a role cannot contradict a grave). ──
+  sea('ody_a2_helmsman', 2, {
+    prompt: 'The helmsman waits until the others sleep, then asks it, professionally, the way a man asks for tools: “Give me a course I can steer, captain. Any course. The stars here lie, and I would rather hold a wrong line than no line.”',
+    recap: 'The helmsman asked for a line.',
+    left: {
+      label: 'Work him a true course', approach: 'lore',
+      bad: 'You build him a course from soundings and swell and the one honest star in this crooked sky, and it is TRUE, friends, and truth in strange water is slow: two days of short tacks and lead-line readings, the fleet crawling while the course proves itself. He holds the line without complaint. The men watch the horizon not move. Patience is also a cargo, and it spends.',
+      good: 'Soundings, swell-set, the one star this water has not bent — you work the course out loud at the steering oar so he can see the WHY of every leg of it, friends, and the helmsman takes it the way a smith takes good iron. All night the wake runs straight as a rule. In the morning he says, “That held,” which from a helmsman is a feast of praise.',
+      incredible: 'You work the course together, friends — your soundings, his hands, the argument conducted in grunts and thumb-widths past midnight — and what comes out is better than either man carried aboard: a line that reads the crooked stars AGAINST themselves, error cancelling error. He teaches it to the other helms at dawn like scripture. For the rest of the voyage the fleet steers by a thing that does not have a name, friends, because two tired men built it at night and forgot to give it one.',
+    },
+    right: {
+      label: 'Give him conviction instead', approach: 'guile',
+      bad: 'You invent a heading with a captain’s face on, and he steers it beautifully, friends, because his craft is real even when the course is not — and by noon the lie needs a second lie to explain the landfall that has not come, and by dusk a third. A helmsman can steer anything except a captain he has caught pretending. You correct course at night, quietly, and he lets you pretend THAT too. It costs exactly what it looks like it costs.',
+      good: '“South-southwest, on my word,” you say, with the flat certainty helmsmen feed on — and the fleet settles the moment his shoulders do, friends, because a crew reads its helmsman the way a helmsman reads the water. The heading is your best guess wearing a uniform. By morning the guess has proved half right, which is what best guesses do, and you correct it at breakfast like a man refining, not retreating.',
+      incredible: 'You give him the heading — and then, friends, the thing under it: “I am half sure. Steer it like I am whole sure, and wake me the moment the swell says otherwise.” The truth and the performance, both, handed over like watch and watch-word. He never wakes you. He TRIMS, all night, inside the line you gave him, and in the morning he reports the swell’s three arguments and how he answered each — a helmsman promoted, in one sentence, to what he always was: the man who steers while the captain is honest enough to sleep.',
+    },
+  }),
+  sea('ody_a2_cook', 2, {
+    tags: ['blood'],
+    prompt: 'The cook comes aft with the ledger he keeps in his head and says it plain, because cooks are the only honest officers: “Nine days of grain if nobody is hungry. Six if they are. They are, captain.”',
+    recap: 'The cook counted the days aloud.',
+    left: {
+      label: 'Ration by rank — captain eats last', approach: 'might',
+      bad: 'You cut rations from the top down and eat last at the rail where the benches can see it — and the gesture, friends, is read correctly and RESENTED anyway, because hungry men want grain, not theater, and a captain conspicuously starving is one more weight the rowers feel obliged to carry. The cook shortens your portion as ordered and hates it. Six days become eight by arithmetic and everyone is angrier the whole way.',
+      good: 'Top down: your bowl last and lightest, the mates’ after, the benches touched least — and you eat at the rail in full view, friends, not as theater but as POLICY, posted where every man can audit it. Hunger with a visible ledger is a hardship; hunger with a suspected one is a mutiny. The cook stretches six days to nine by trust alone, because nobody hoards against a captain they can see eating last.',
+      incredible: 'Rank-rationed, captain last — and you give the cook the one power that multiplies grain, friends: the SPOON is law, his portions final, no officer may argue the ladle. Genius. A cook with real authority feeds a fleet like a quartermaster general: the thin days get soup that lies about its bones, the awful days get bread saved secretly for exactly that morning. Nine days of grain feed twelve days of rowing, and when it is over the benches toast HIM first, which he pretends not to notice, and the ladle trembles, friends. Only the ladle.',
+    },
+    right: {
+      label: 'Stretch it — lines out, every watch', approach: 'guile',
+      bad: 'Fishing rotations on every watch, friends, which works exactly until the water stops cooperating: two days of empty hooks in dead-fish water, and the rotations have cost sleep the benches needed for rowing. The grain runs its six days regardless. What the sea declined to give, the men take out of each other in small change — a snapped word here, a hoarded fig there. The cook says nothing. His ledger, friends, was never wrong.',
+      good: 'Lines out on every watch, the young ones taught to jig by the sailmaker who learned it from his mother — and the sea, asked politely and often, pays a little most days, friends: a bonito here, a squid the cook turns into something men argue for seconds of. Six days of grain become ten of eating. Not feasting — eating. The difference between those words is the whole science of getting home.',
+      incredible: 'Lines, yes — and then the cook’s own idea, friends, which you have the sense to adopt out loud with his name on it: the DARK trawl, hooks run deep on the night watches when the big lazy fish rise. First night, nothing. Second night, a tunny the size of a boy, hauled up by four men swearing in whispers so as not to wake the fleet — which wakes the fleet. By the third night every watch wants the honor. Hunger, friends, converted whole into sport: the one alchemy that always pays. The ledger in the cook’s head adds a column it has never had before: SURPLUS.',
+    },
+  }),
+  sea('ody_a2_youngest', 2, {
+    tags: ['blood'],
+    requires: { max: { expedition: 9 } },
+    prompt: 'The youngest bench waits for the dogwatch, when questions cost less, and asks the one the veterans have stopped asking: “Do you get used to the empty benches, captain? Tell me true. I want to know which way to grow.”',
+    recap: 'The youngest asked about the benches.',
+    left: {
+      label: 'Answer him true', approach: 'lore',
+      bad: 'You answer true — that no, you do not get used to it, that every empty bench stays exactly as loud as the day it emptied — and the truth, friends, is a man’s answer given to a boy’s shoulders: he carries it stiffly for days, rowing like someone balancing a jar. True was right. True needed a handle on it, and you sent it bare.',
+      good: '“No,” you tell him. “You get ACCURATE about it. You learn each man’s weight to the ounce and you carry it on purpose, and the carrying is the respect.” He is quiet a while, friends, and then he nods the way men nod at a tool they can use. The next time the sand takes a name, the youngest bench is the one who says it clearly at the rail when the others’ voices go rough.',
+      incredible: 'You answer true — and then you show him the TOOL, friends: the muster you run in your head at every dawn, oldest loss first, each man’s name and his one detail, the whole dead fleet walked bench by bench before breakfast. “They row with us,” you say. “Orderly. Invited. That is the trick of it — invited, not haunting.” The boy starts running his own muster; you hear him at it some mornings, quiet, getting the details right. Twenty years from now, friends, on some other ship, a young rower will ask HIM — and he has the answer already stowed.',
+    },
+    right: {
+      label: 'Move him to the stroke oar', approach: 'might',
+      bad: 'You answer with an order — the stroke bench, beside you, where the work is heaviest — and the work does what work does, friends: it fills the hours and leaves the question exactly where it was, waiting for the first idle dusk. He rows well. He watches you at the empty-bench moments with the unasked thing in his face, and you row on, and the fire may judge for itself which of the two of you was avoiding what.',
+      good: 'You move him to the stroke oar beside you, friends — the answer given in seating, the oldest dialect captains have. He learns what the stroke bench teaches: that the boat is heaviest at the front, that someone chooses to sit there, that the choosing is the whole answer to his question. A month on, a new man asks HIM about the benches, and the youngest — not the youngest anymore — says, “Row up front a while,” and moves over to make room.',
+      incredible: 'The stroke oar, beside you — and on the first hard pull you say, over the water, the sentence that turns seating into scripture: “This bench answers questions. Not fast.” And it does, friends, it does: three weeks of shared weight, of matching his stroke to a captain’s, of hearing you say the dead men’s names at dawn without breaking rhythm — and one morning he says them WITH you, unprompted, in stroke, and the question he asked at dogwatch is answered so completely that neither of you ever mentions it again. Some answers, friends, are a place at an oar.',
+    },
+  }),
+
   // ── Circe's SECOND reading (pass 20): the professional courtesy ──
   // The temptation below is gated to the weary (burnout ≥ 60 or a bled
   // fleet), so ~86% of runs sailed past the witch's island without a card.

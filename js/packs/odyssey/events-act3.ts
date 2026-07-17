@@ -276,6 +276,61 @@ export const ACT3_EVENTS: GameEvent[] = [
     },
   }),
 
+  // ── The benches speak, act 3 (pass 30): the stroke-oar's hands, the bow
+  // watch's wave, the sailmaker's day. Role voices, never the loss pool's
+  // named dead. ──
+  sea('ody_a3_stroke_hands', 3, {
+    tags: ['blood'],
+    prompt: 'The stroke-oar’s hands are going — you have seen him soak them at night and flex them before the pull — and he has hidden it well enough that only a captain who watches hands would know. He has not asked for anything. He will not.',
+    recap: 'The stroke-oar’s hands, going.',
+    left: {
+      label: 'Rest him without naming it', approach: 'guile',
+      bad: 'You invent a reason — the bow watch needs a steady man, you say — and he takes the transfer like a sentence read out, friends, because a stroke-oar knows exactly what the bow watch is and exactly why captains invent reasons. He goes without a word. The hands heal. The pride does not, quite, and the new stroke sets a rhythm the boat keeps having small arguments with.',
+      good: 'You restructure the watches fleet-wide — every senior oar rotated through the light duties in turn, a policy with his name nowhere in it — and he takes his rotation like everyone else, friends, because everyone else is taking it. The hands come back over a week of bow watches and line work. He never learns the policy was a letter addressed to him. Or he learns it years later, at a fire like this one, and says nothing, because it was correctly sent.',
+      incredible: 'The rotation policy — and during his light week you ask him, publicly, to teach the stroke to the three youngest, friends, because “a rhythm that lives in one man is a rope with one strand.” So the week his hands rest is the week his craft multiplies: three young backs learning the long pull from the man himself, the whole fleet’s stroke deepening while its keeper soaks his hands in the evening sea with something to SHOW for the ache. He comes back to the bench with apprentices, friends. No man in the tale is prouder of a week ashore from his own oar.',
+    },
+    right: {
+      label: 'Take the stroke yourself a watch', approach: 'might',
+      bad: 'You take his oar for a watch, friends, and your stroke is strong and WRONG — a captain’s rhythm, not a stroke-oar’s, and the boat feels the difference in its teeth. The benches adjust politely. He watches from the rail with his ruined hands folded, suffering the specific agony of the craftsman watching his work done almost right. The gesture was love. The rhythm was not, and a boat runs on rhythm.',
+      good: 'You take the stroke for the dogwatch — and you take his COUNSEL with it, friends, loudly: “Call it for me,” you say, and he stands at your shoulder calling the rhythm while your back does the labor, the craft and the strength split between two men in plain sight of every bench. The boat runs true. The hands rest. And the fleet learns without a word being spent on it that at this captain’s stroke, no man’s worth is his grip.',
+      incredible: 'You take the oar — and you row it BADLY on purpose for three strokes, friends, until he cannot bear it and comes off the rail to correct you, hands and all, guiding the loom the way a father guides a plow: light-fingered, all knowledge, no weight. And that is how the fleet crosses that day’s water — the captain’s back, the stroke-oar’s hands resting ON the captain’s, the rhythm perfect and belonging to no one man. The rowers behind have the sense not to grin where he can see. The tale, friends, grins for them.',
+    },
+  }),
+  sea('ody_a3_bow_watch', 3, {
+    tags: ['omen'],
+    requires: { min: { poseidon: 5 } },
+    prompt: 'The bow watch has stopped reporting it because reporting it sounds mad, friends, but you have watched him watching: the same wave, he swears — the SAME one — keeping station off the starboard bow since yesterday, in a sea where no two waves are kin.',
+    recap: 'The wave that kept station.',
+    left: {
+      label: 'Read it for what it is', approach: 'lore',
+      bad: 'You read the wave, friends, and the wave is exactly what the bow watch feared and you suspected: attention. The sea keeping an eye. You say so, plainly, because a crew rows better on a named dread than a nameless one — and mostly that is true, but this dread has a NAME with a trident in it, and for two days the fleet rows like men being watched, which is tiring in the way no labor is. The wave holds station through all of it, patient as a creditor.',
+      good: 'You take the bow watch yourself at dusk and read it properly: the set, the interval, the way it keeps station against wind and current both — no wave, friends, but a WATCHING, and old water-craft says a watching answers courtesy. So at dawn you pour the sea its cup, unhurried, in plain sight of the starboard bow, and by noon the wave has lost its shape into ordinary sea. The bow watch reports open water in a voice that has stopped apologizing. You log it as weather. Every man aboard knows it was not.',
+      incredible: 'You read it — and then, friends, you do the thing the pilots’ guild would faint at: you have the helm bring the fleet a point TOWARD it, and you stand at the bow and address the water like a neighbor over a wall — not prayer, not challenge, the third register nobody teaches: acknowledgment. “We see you. We are rowing home. Watch if you like.” The wave holds one more day, escort-close, and slips astern at the strait’s mouth like a pilot boat leaving a ship it has seen safely in. The bow watch tells it at every fire for the rest of his life, friends, and no one ever believes him, and he does not care.',
+    },
+    right: {
+      label: 'Double the watch, say nothing', approach: 'guile',
+      bad: 'You double the watch without a reason given, friends, and a fleet reads an unexplained order the way a village reads smoke: by dusk the starboard wave has been noticed by every bench, discussed at every oar, and grown in the retelling from a wave to a fin to a green hand breaking water. The thing itself does nothing. The story of it costs you two nights of sleep fleet-wide. Silence, friends, is a rationing of the wrong supply.',
+      good: 'You double the bow watch on a plain word — “strange water, more eyes” — which is true enough to need no lie and vague enough to start no story. The wave keeps its station; the watches keep theirs; and whatever is being measured out there gets to measure a fleet that does not startle, friends, which may be the whole examination. On the third dawn the sea is just sea. The bow watch and you exchange one look and no words, the treaty of men who will discuss it ashore or never.',
+      incredible: 'Doubled watch, plain word — and you pair the bow watch with the DEAF rower for the night shifts, friends, the old man who reads water by feel through the hull timbers, and it is he who solves it with his palm flat on the bow planks: a rhythm under the wave, regular as rowing. Not the sea watching. The sea COUNTING — matching the fleet’s stroke, learning it. You change the stroke pattern at the next dawn, syncopated, a beat no water expects, and the wave loses the count and dissolves. The old man laughs for the first time in the whole tale, friends: the sea, outsung by a man who cannot hear it.',
+    },
+  }),
+  sea('ody_a3_sailmaker', 3, {
+    prompt: 'The sailmaker holds up the mainsail’s belly to the light and the light comes through in a way it should not, friends. “One storm left in her,” he says. “Maybe. Give me a day ashore and thread, and I will give you a sail. Keep sailing her and we will discuss it in the water.”',
+    recap: 'The sailmaker asked for his day.',
+    left: {
+      label: 'Grant the day — beach and re-cut', approach: 'lore',
+      bad: 'You grant the day on a beach that grants nothing back, friends: wind on the sand, thread that snaps in the cold, and a sailmaker working against the light with his mouth full of pins while the fleet fidgets at anchor. The day becomes a day and a half. The sail comes back strong and the schedule comes back bleeding, and somewhere ahead the season is moving its own pieces at its own pace.',
+      good: 'A day ashore, granted whole — and you make it a WORKING day for every hull, friends: lines re-served, hulls scraped where the weed drags, the cook’s fires hot on the sand, and at the center of it all the sailmaker at his frame like a priest at an altar, re-cutting the main with the whole fleet’s thread pooled at his knee. The sail that goes back up is a better sail than Troy saw. The day was never lost, friends. It was BANKED, at interest, against the strait.',
+      incredible: 'The day, granted — and while he works you sit with him an hour, friends, holding the cloth off the sand, and get the sermon nobody asks the sailmaker for: how a sail is cut for the wind you EXPECT, and how this one, re-cut, will be shaped for the narrow water’s snatching gusts — a sail made for one specific strait by a man who has been listening at every port. When the wind turns violent between the cliffs a week on, the main takes it with a shrug, and the sailmaker does not even look up from his mending. He knew, friends. The hour you held cloth for him, you were holding the whole fleet.',
+    },
+    right: {
+      label: 'Run on oars, save the cloth', approach: 'might',
+      bad: 'Oars, then, and the sail saved like festival clothes — and the backs pay for the cloth, friends, day on day of pulling what the wind would have carried, until the fleet is strong-armed and slow and the sailmaker mends in the dark with a lamp anyway because the schedule you saved on shore you are spending at sea. The sail survives to the strait in its weakness. So do the men, in theirs. The ledger calls it even. The benches call it other things.',
+      good: 'You bag the main and run on oars through the fair days, friends, spending the cloth only where the water demands it — a hoarding, frankly, and the benches know what they are subsidizing and row it anyway, because every man aboard has seen what a blown-out main means in narrow water. When the strait’s gusts come snatching, the sail meets them young: half its storms unsailed, all its strength saved. The backs that bought that strength, friends, straighten to watch it hold.',
+      incredible: 'Oars, and the hoarded sail — and the sailmaker, unbidden, spends the fair days doing what sailmakers do when a captain buys them time, friends: needle in her belly ANYWAY, at sea, between duties — a mend here, a doubled seam there, the day ashore he asked for taken in stolen hours across a week. What runs up at the strait is a sail both YOUNG and MENDED, the only one in the tale to be both, and it takes the narrow water’s worst gust as a horse takes a fence it has walked before. He never says he did it, friends. Sailmakers say it with the sail.',
+    },
+  }),
+
   // ── new in slice 5: the last mile — Ithaca before the hall ──
   sea('ody_a3_ferryman', 3, {
     prompt: 'A ferryman works the channel between the islands, alone, too old for it, and he will carry anything anywhere for a coin — a fish, a rumor, a word to whoever the stranger cares to name.',
