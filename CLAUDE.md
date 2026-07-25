@@ -42,10 +42,9 @@
   repo's spine, applied everywhere — not just `engine.ts`. A shared file stays
   genre-neutral (mechanism, types, generic tools); anything specific to one game
   lives with that game. Per-game artifacts go under `docs/games/<game>/` (design
-  record, ADRs, `IMPLEMENTATION-PLAN.md`, and the writing-taste layer:
-  `VOICE.md`, `GUIDING_EXAMPLES.md`, and `taste.mjs` — the machine-readable
-  cliché blocklist + caps); per-game runtime code goes under `js/packs/<game>/`.
-  Shared tools follow the same rule: `tools/lint-content.mjs` and
+  record, ADRs, and the writing-taste layer: `VOICE.md`, `GUIDING_EXAMPLES.md`,
+  `taste.mjs`); per-game runtime code goes under `js/packs/<game>/`. Shared
+  tools follow the same rule: `tools/lint-content.mjs` and
   `tools/taste-core.mjs` are the genre-neutral checkers; they *import* each
   game's taste data from that game's folder rather than hard-coding it. Extract
   generic mechanism to a testable `tools/*-core.mjs` (see `pack-core`,
@@ -90,31 +89,21 @@
   TypeScript guards hand-written packs at compile time; this guards *generated
   or imported* packs — treat those as hostile input until
   `node tools/validate-packs.mjs` (a `npm run check` gate) passes.
-- Before pushing a balance/content change: `npm run build`, then
-  `node tools/validate-packs.mjs && node tools/lint-content.mjs &&
-  node tools/simulate.mjs --check &&
-  node --test && node test/ui/smoke.mjs && node test/ui/crowding.mjs &&
-  node test/ui/mobile-matrix.mjs`
-  (`npm run check` runs all but `node --test`; `npm run ci` runs both, and
-  `npm run test:ui` runs just the three browser suites). The UI smoke test drives each
-  game to its finale in headless Chromium — the only coverage the goldens
-  don't have. Judge feel with `node tools/simulate.mjs 4000 narrative` (music)
-  or `node tools/simulate-pack.mjs <packId> 3000` (any pack, generic driver).
+- Before pushing a balance/content change: `npm run ci` (build + every gate +
+  `node --test`; `npm run check` is the same minus `node --test`, and
+  `npm run test:ui` runs just the browser suites — see `package.json` for the
+  exact chains). The UI smoke test drives each game to its finale in headless
+  Chromium — the only coverage the goldens don't have. Judge feel with
+  `node tools/simulate.mjs 4000 narrative` (music) or
+  `node tools/simulate-pack.mjs <packId> 3000` (any pack, generic driver).
 - **Ship UI the way it's played: verify the FLOW, not the feature.** A change
   isn't done when the new thing renders — it's done when the game still reaches
   an ending *after you interact with it*. Presence ≠ behaviour. This rule is
   written in blood: the portrait lightbox (2026-07) rendered perfectly and
   passed every gate, but tapping-to-close it on a **result** overlay soft-locked
-  the run. Root cause (5 whys): (1) the lightbox rendered into the single shared
-  `#overlay`; (2) `openOverlay` is a strict **singleton per node** — on open it
-  wipes the node and drops the previous overlay's listeners *without running its
-  `onClose`*; (3) the result overlay's `onClose` is what calls
-  `routeAdvance(engine.advance(run))`, so the run never advanced → dead end;
-  (4) the "one overlay at a time / never nest on `#overlay`" invariant lived
-  only in a code comment; (5) verification checked the *benign* path
-  (stage→inspector→lightbox, which isn't progression-gated) and asserted "the
-  image shows", never the *gated* path (result→lightbox→continue). The process
-  fixes, now mandatory:
+  the run — a second overlay on the shared `#overlay` destroyed the first
+  without running the `onClose` that calls `advance()` (full 5 whys:
+  `docs/INCIDENTS.md` #1). The process fixes, now mandatory:
   - **A new interactive control must be driven on EVERY surface it appears on —
     and the progression-gated surfaces first** (result / ceremony / finale
     overlays, the crossroads, the finale). A control that's harmless on one
@@ -152,41 +141,24 @@
   never a blank surface (INCIDENTS.md #6; SKEW-LAW probe in
   test/ui/smoke.mjs, per-sheet `--bb-css-v-<name>` stamps in the boot probe).
 - **Raster images have ONE road: preprocess, then serve responsively — never a
-  raw `<img>`.** A master image is never shipped or rendered directly (the cast
-  portraits' first drop did that: 750KB 1024² files served to 30px chips — see
-  ADR-0015, love-island). The two generic halves: authoring is
-  `tools/image-core.mjs` `buildResponsiveSet` (master → a `[96,192,384,768]` ×
-  `{AVIF,WebP,JPEG}` ladder + a descriptor; sharp-backed, a devDependency, NEVER
-  in the Pages build — variants are committed and copied 1:1); serving is
-  `js/ui/dom.ts` `responsivePicture(src, opts)`, which emits a `<picture>`
-  (AVIF→WebP sources + an `<img>` with `srcset`/`sizes`, intrinsic `width`/
-  `height`, and loading hints). A pack registers its `src → ImageVariant` map via
-  `Presenter.imageVariants` (wired at boot like `registerArt`); the shell stays
-  genre-neutral. EVERY portrait render site routes through `responsivePicture`,
-  so a new image is SOTA by construction — a raw portrait `<img>` string
-  anywhere in `js/` is a regression `test/portrait-serving.test.mjs` fails on. Paved road
-  for new art: masters → the pack's `--wire` (preprocess + regen manifest) →
-  `Presenter.imageVariants` → render via `responsivePicture`.
+  raw `<img>`.** A master is never shipped or rendered directly; EVERY portrait
+  render site goes through `responsivePicture` (`js/ui/dom.ts`), fed by the
+  pack's `Presenter.imageVariants`. A raw portrait `<img>` string anywhere in
+  `js/` is a regression `test/portrait-serving.test.mjs` fails on. The pipeline
+  — preprocess, ladder, wiring — is the `pack-art` skill (design record:
+  ADR-0015, love-island).
 - Docs site lives in `docs-site/` (Starlight, isolated toolchain — its own
-  `package.json`/`node_modules`, never touches the engine's pinned tsc). It
-  deploys as a sibling at `/big-break/docs/` from the same Pages workflow, and
-  `npm run build` there is a CI gate. Drift-proof by construction: reference is
-  autogenerated by TypeDoc from `js/types.ts` + `js/engine.ts`; prose samples
-  are transcluded from real pack source via `?raw` + `// #region` markers (a
-  missing region throws); Twoslash type-checks inline samples. Editing a pack's
-  `#region` markers is comment-only — golden-safe. Dev/build: `cd docs-site &&
-  npm ci && npm run dev` (or `npm run build`).
-- Releases: **the process is `docs/RELEASING.md`** — a merge to main that
-  changes what a player sees bumps `package.json` `version` AND adds the
-  matching top entry in `js/release-notes.ts` (gated by
-  `test/release-notes.test.mjs`; the build stamps version + git sha + commit
-  date into every title screen's version chip, so the deployed URL is
-  checkable against main at a glance). The managed git gateway blocks tag-ref
-  pushes from sessions (branch pushes only) — cut a tag/release via the
-  `release.yml` workflow instead (Actions → "Cut a release", or
-  `workflow_dispatch` with `tag` + full-40-char `sha`); it uses the built-in
-  `GITHUB_TOKEN`. `package.json` `version` is the source of truth for the
-  number.
+  `package.json`/`node_modules`, never the engine's pinned tsc; conventions in
+  `docs-site/CLAUDE.md`). It deploys as a sibling at `/big-break/docs/` from the
+  same Pages workflow and its `npm run build` is a CI gate. In pack source:
+  `// #region` markers are transcluded by the docs and a missing region throws —
+  editing inside them is comment-only and golden-safe, but don't delete them.
+- Releases: a merge to main that changes what a player sees bumps
+  `package.json` `version` (the source of truth for the number) AND adds the
+  matching top entry in `js/release-notes.ts` — gated by
+  `test/release-notes.test.mjs`. Sessions cannot push tag refs (branch pushes
+  only), so tags/releases are cut by the `release.yml` workflow. Full process:
+  `docs/RELEASING.md` / the `releasing` skill.
 
 Play: [music](https://sandstreampop.github.io/big-break/) ·
 [love island](https://sandstreampop.github.io/big-break/love-island/) ·

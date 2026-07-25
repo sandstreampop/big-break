@@ -15,11 +15,10 @@ plan, not a spec — each session's *what* comes from the design record.
 **Every session lands on `main` green.** The green gate, per `CLAUDE.md`:
 
 ```
-npm run build
-node tools/lint-content.mjs && node tools/simulate.mjs --check && node --test && node test/ui-smoke.mjs
+npm run ci
 ```
 
-(`npm run check` runs all but `node --test`.) Each session is *one coherent layer*.
+(`npm run check` is the same minus `node --test`.) Each session is *one coherent layer*.
 Mechanics ship with a **minimal stub deck** so they're testable in isolation; the
 big content mass fills that deck only once the mechanical vocabulary and the voice
 both exist. Adding the genre edits **new files only** — no engine line (ADR-0004

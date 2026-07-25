@@ -110,7 +110,7 @@ Before the agent says "merged to `main`," **all** of these are true, and the
 agent has said so:
 
 1. **Built clean**, and the **full gate suite ran green** — named, not assumed
-   (`npm run ci`, or the explicit list in `CLAUDE.md`).
+   (`npm run ci`; `package.json` holds the exact chain).
 2. Every **new interactive control** was driven on every surface — **gated
    surfaces first** — and the flow **reached a terminal state** afterward.
 3. Every **invariant** relied on is enforced by a test / hook / type, not a comment.
