@@ -8,18 +8,18 @@
     "results": [
       [
         "swipe",
-        2736,
-        13
+        2875,
+        14
       ],
       [
         "$pageview",
-        310,
-        27
+        320,
+        28
       ],
       [
         "$pageleave",
-        232,
-        8
+        243,
+        9
       ],
       [
         "minigame",
@@ -28,17 +28,17 @@
       ],
       [
         "run_start",
-        128,
-        8
+        135,
+        9
       ],
       [
         "trophy",
-        83,
+        93,
         3
       ],
       [
         "run_end",
-        69,
+        73,
         5
       ],
       [
@@ -50,6 +50,16 @@
         "tutorial_complete",
         7,
         6
+      ],
+      [
+        "tutorial_skip",
+        2,
+        2
+      ],
+      [
+        "version_skew",
+        1,
+        1
       ]
     ]
   },
@@ -63,9 +73,9 @@
     "results": [
       [
         "2026-07-02T11:11:48.171000Z",
-        "2026-07-16T21:55:10.061000Z",
-        3716,
-        27
+        "2026-07-24T21:51:48.264000Z",
+        3900,
+        28
       ]
     ]
   },
@@ -78,8 +88,8 @@
     "results": [
       [
         "2.3",
-        1257,
-        8
+        1420,
+        9
       ],
       [
         "2.2",
@@ -93,8 +103,8 @@
       ],
       [
         null,
-        542,
-        27
+        563,
+        28
       ],
       [
         "2.1",
@@ -216,6 +226,27 @@
         0,
         14,
         1
+      ],
+      [
+        "2026-07-17",
+        5,
+        4,
+        137,
+        2
+      ],
+      [
+        "2026-07-18",
+        1,
+        0,
+        1,
+        1
+      ],
+      [
+        "2026-07-24",
+        1,
+        0,
+        1,
+        1
       ]
     ]
   },
@@ -227,9 +258,9 @@
     ],
     "results": [
       [
-        27,
-        16,
-        27
+        28,
+        17,
+        28
       ]
     ]
   },
@@ -242,16 +273,16 @@
     ],
     "results": [
       [
+        "prod",
+        "false",
+        16,
+        2252
+      ],
+      [
         "(untagged)",
         "(untagged)",
         15,
         1648
-      ],
-      [
-        "prod",
-        "false",
-        15,
-        2068
       ]
     ]
   },
@@ -265,9 +296,9 @@
     "results": [
       [
         "sandstreampop.github.io",
-        26,
-        3715,
-        69
+        27,
+        3899,
+        73
       ],
       [
         "raw.githack.com",
@@ -286,8 +317,8 @@
     "results": [
       [
         "SE",
-        26,
-        3715
+        27,
+        3899
       ],
       [
         "NL",
@@ -309,8 +340,8 @@
         "Mobile",
         "Mobile Safari",
         "iOS",
-        16,
-        3611
+        17,
+        3795
       ],
       [
         "Mobile",
@@ -357,7 +388,7 @@
         1
       ],
       [
-        58,
+        62,
         1
       ]
     ]
@@ -370,7 +401,7 @@
     "results": [
       [
         1,
-        22
+        23
       ],
       [
         2,
@@ -381,11 +412,11 @@
         1
       ],
       [
-        7,
+        8,
         1
       ],
       [
-        14,
+        16,
         1
       ]
     ]
@@ -423,6 +454,10 @@
       [
         "2026-07-13",
         4
+      ],
+      [
+        "2026-07-18",
+        1
       ]
     ]
   },
@@ -445,20 +480,20 @@
         5
       ],
       [
-        "ody_cyclops_name",
-        21,
-        19,
-        81,
-        81,
-        0
-      ],
-      [
         "a2_shop_gearhead",
         41,
         78,
         22,
         78,
         7
+      ],
+      [
+        "ody_cyclops_name",
+        25,
+        24,
+        76,
+        76,
+        0
       ],
       [
         "a1_pawn_shop",
@@ -486,11 +521,11 @@
       ],
       [
         "ody_cyclops_escape",
-        21,
-        38,
-        62,
-        62,
-        14
+        25,
+        40,
+        60,
+        60,
+        12
       ],
       [
         "li_enc_rival_1",
@@ -507,6 +542,14 @@
         57,
         57,
         3
+      ],
+      [
+        "ody_cyclops",
+        20,
+        55,
+        45,
+        55,
+        20
       ],
       [
         "li_enc_partner_3close",
@@ -569,12 +612,12 @@
         10
       ],
       [
-        "ody_a3_raft",
+        "ody_a3_signs",
         8,
         0,
         100,
         100,
-        0
+        25
       ],
       [
         "a2_image_consultant",
@@ -599,22 +642,6 @@
         0,
         100,
         0
-      ],
-      [
-        "ody_a3_signs",
-        7,
-        0,
-        100,
-        100,
-        29
-      ],
-      [
-        "ody_a3_swineherd",
-        7,
-        0,
-        100,
-        100,
-        29
       ],
       [
         "a2_hf_ai_demo",
@@ -697,12 +724,20 @@
         0
       ],
       [
-        "ody_a3_sun_isle",
+        "ody_a3_wax",
+        10,
+        90,
+        10,
+        90,
+        10
+      ],
+      [
+        "ody_hall_kleos",
         10,
         10,
         90,
         90,
-        20
+        10
       ],
       [
         "a2_venue_trouble",
@@ -713,7 +748,15 @@
         0
       ],
       [
-        "ody_a2_bag_winds",
+        "ody_a3_phaeacia",
+        9,
+        89,
+        11,
+        89,
+        33
+      ],
+      [
+        "ody_a3_raft",
         9,
         11,
         89,
@@ -721,36 +764,20 @@
         0
       ],
       [
-        "ody_a3_wax",
-        9,
-        89,
-        11,
-        89,
-        11
-      ],
-      [
-        "ody_a2_pigs_memory",
+        "ody_a3_swineherd",
         8,
         12,
         88,
         88,
-        12
+        25
       ],
       [
-        "ody_a3_phaeacia",
-        8,
-        88,
-        12,
-        88,
-        38
-      ],
-      [
-        "ody_hall_kleos",
-        8,
-        12,
-        88,
-        88,
-        12
+        "ody_a1_goat_island",
+        14,
+        14,
+        86,
+        86,
+        36
       ],
       [
         "a1_docu_pitch",
@@ -841,30 +868,6 @@
         0
       ],
       [
-        "ody_a1_lotus_shore",
-        7,
-        86,
-        14,
-        86,
-        29
-      ],
-      [
-        "ody_a2_black_goat",
-        7,
-        86,
-        14,
-        86,
-        0
-      ],
-      [
-        "ody_a2_fog",
-        7,
-        14,
-        86,
-        86,
-        29
-      ],
-      [
         "ody_a3_disguise",
         7,
         14,
@@ -881,14 +884,6 @@
         14
       ],
       [
-        "ody_a1_elpenor",
-        13,
-        15,
-        85,
-        85,
-        8
-      ],
-      [
         "li_daybed_2",
         19,
         84,
@@ -897,12 +892,12 @@
         11
       ],
       [
-        "ody_a1_goat_island",
+        "ody_a3_sun_isle",
         12,
         17,
         83,
         83,
-        33
+        17
       ],
       [
         "a2_label_showcase",
@@ -945,14 +940,6 @@
         0
       ],
       [
-        "ody_a2_dead_calm",
-        6,
-        83,
-        17,
-        83,
-        17
-      ],
-      [
         "wt_tokyo",
         6,
         83,
@@ -982,6 +969,22 @@
         18,
         82,
         82,
+        0
+      ],
+      [
+        "ody_a1_race",
+        15,
+        80,
+        20,
+        80,
+        40
+      ],
+      [
+        "ody_a2_bag_winds",
+        10,
+        20,
+        80,
+        80,
         0
       ],
       [
@@ -1113,14 +1116,6 @@
         20
       ],
       [
-        "ody_a1_race",
-        14,
-        79,
-        21,
-        79,
-        43
-      ],
-      [
         "a1_fragment",
         9,
         78,
@@ -1137,12 +1132,28 @@
         22
       ],
       [
-        "ody_a2_circe_road",
+        "ody_a2_fog",
+        9,
+        22,
+        78,
+        78,
+        22
+      ],
+      [
+        "ody_a2_night_landing",
         9,
         78,
         22,
         78,
-        22
+        44
+      ],
+      [
+        "ody_a1_first_watch",
+        16,
+        75,
+        25,
+        75,
+        44
       ],
       [
         "a2_playlist",
@@ -1193,20 +1204,44 @@
         25
       ],
       [
-        "ody_a2_night_landing",
+        "ody_a2_black_goat",
         8,
         75,
         25,
         75,
-        38
+        0
       ],
       [
-        "ody_a1_first_watch",
+        "ody_a2_laestrygon",
+        8,
+        25,
+        75,
+        75,
+        12
+      ],
+      [
+        "ody_a2_widow_ship",
+        8,
+        75,
+        25,
+        75,
+        12
+      ],
+      [
+        "ody_a1_elpenor",
         15,
+        27,
+        73,
+        73,
+        13
+      ],
+      [
+        "ody_a2_circe_road",
+        11,
         73,
         27,
         73,
-        40
+        27
       ],
       [
         "li_casa_return",
@@ -1225,11 +1260,19 @@
         11
       ],
       [
+        "ody_a1_gear",
+        18,
+        28,
+        72,
+        72,
+        17
+      ],
+      [
         "ody_a1_wind_gate",
-        17,
-        29,
-        71,
-        71,
+        18,
+        28,
+        72,
+        72,
         6
       ],
       [
@@ -1289,36 +1332,28 @@
         14
       ],
       [
-        "ody_a2_laestrygon",
+        "ody_a2_dead_calm",
         7,
+        71,
         29,
         71,
-        71,
-        14
+        29
       ],
       [
-        "ody_a2_swine",
+        "ody_a2_year_isle",
         7,
         71,
         29,
         71,
-        14
+        29
       ],
       [
-        "ody_a2_widow_ship",
+        "ody_a3_fig_tree",
         7,
         71,
         29,
         71,
-        14
-      ],
-      [
-        "ody_a3_bow_night",
-        7,
-        71,
-        29,
-        71,
-        14
+        0
       ],
       [
         "a1_battle",
@@ -1351,6 +1386,14 @@
         30,
         70,
         0
+      ],
+      [
+        "ody_a1_wake_dead",
+        10,
+        30,
+        70,
+        70,
+        20
       ]
     ]
   },
@@ -1366,7 +1409,7 @@
     "results": [
       [
         1,
-        990,
+        1045,
         18,
         77,
         3,
@@ -1374,16 +1417,16 @@
       ],
       [
         2,
-        897,
+        941,
         9,
-        75,
-        14,
+        76,
+        13,
         1
       ],
       [
         3,
-        659,
-        7,
+        699,
+        8,
         58,
         34,
         1
@@ -1446,10 +1489,17 @@
       ],
       [
         "kleos",
-        8,
-        88,
+        10,
+        90,
         0,
-        12
+        10
+      ],
+      [
+        "nostos",
+        8,
+        62,
+        12,
+        25
       ],
       [
         "realthing",
@@ -1457,13 +1507,6 @@
         57,
         29,
         14
-      ],
-      [
-        "nostos",
-        6,
-        50,
-        17,
-        33
       ],
       [
         "winvilla",
@@ -1494,7 +1537,7 @@
     "results": [
       [
         "success",
-        45,
+        49,
         31,
         161,
         2.7,
@@ -1539,8 +1582,8 @@
     "results": [
       [
         "normal",
-        43,
-        65
+        47,
+        68
       ],
       [
         null,
@@ -1623,7 +1666,7 @@
       ],
       [
         32,
-        8
+        12
       ],
       [
         33,
@@ -1663,11 +1706,11 @@
     ],
     "results": [
       [
-        27,
+        28,
         10,
         6,
-        0,
-        8,
+        2,
+        9,
         5,
         6
       ]
@@ -1682,7 +1725,7 @@
     ],
     "results": [
       [
-        8,
+        9,
         3,
         3,
         2
@@ -1699,9 +1742,9 @@
     "results": [
       [
         null,
-        19,
-        35,
-        63
+        23,
+        34,
+        70
       ],
       [
         "electric_guitar",
@@ -1858,8 +1901,8 @@
     "results": [
       [
         "normal",
-        119,
-        7
+        126,
+        8
       ],
       [
         "comeback",
@@ -1882,8 +1925,8 @@
     "results": [
       [
         null,
-        28,
-        64
+        32,
+        69
       ],
       [
         "none",
@@ -1935,7 +1978,7 @@
     "results": [
       [
         null,
-        56
+        63
       ],
       [
         "none",
@@ -4199,67 +4242,91 @@
       ],
       [
         "ody_a1_cape_maleia",
-        7
+        8
       ],
       [
         "ody_a1_cicones",
-        11
+        12
+      ],
+      [
+        "ody_a1_council",
+        1
+      ],
+      [
+        "ody_a1_dolphins",
+        2
+      ],
+      [
+        "ody_a1_drift_oar",
+        1
       ],
       [
         "ody_a1_elpenor",
-        13
+        15
       ],
       [
         "ody_a1_feast",
-        10
-      ],
-      [
-        "ody_a1_first_watch",
-        15
-      ],
-      [
-        "ody_a1_gear",
-        16
-      ],
-      [
-        "ody_a1_goat_island",
-        12
-      ],
-      [
-        "ody_a1_lookout",
-        12
-      ],
-      [
-        "ody_a1_lotus_shore",
-        7
-      ],
-      [
-        "ody_a1_maron",
-        15
-      ],
-      [
-        "ody_a1_omen",
         11
       ],
       [
-        "ody_a1_race",
+        "ody_a1_first_watch",
+        16
+      ],
+      [
+        "ody_a1_gear",
+        18
+      ],
+      [
+        "ody_a1_goat_island",
         14
       ],
       [
+        "ody_a1_green_casks",
+        3
+      ],
+      [
+        "ody_a1_lookout",
+        14
+      ],
+      [
+        "ody_a1_lotus_shore",
+        9
+      ],
+      [
+        "ody_a1_maron",
+        17
+      ],
+      [
+        "ody_a1_night_run",
+        2
+      ],
+      [
+        "ody_a1_omen",
+        12
+      ],
+      [
+        "ody_a1_race",
+        15
+      ],
+      [
         "ody_a1_ration",
-        10
+        11
       ],
       [
         "ody_a1_spoils",
-        13
+        14
       ],
       [
         "ody_a1_squall",
-        10
+        12
       ],
       [
         "ody_a1_stranger",
-        9
+        10
+      ],
+      [
+        "ody_a1_trojan_cloth",
+        3
       ],
       [
         "ody_a1_wake_dead",
@@ -4267,95 +4334,143 @@
       ],
       [
         "ody_a1_wind_gate",
-        17
+        18
       ],
       [
         "ody_a2_aiolos_hall",
-        8
+        9
       ],
       [
         "ody_a2_bag_winds",
-        9
+        10
+      ],
+      [
+        "ody_a2_bird_wreck",
+        2
       ],
       [
         "ody_a2_black_goat",
-        7
+        8
       ],
       [
         "ody_a2_circe_road",
-        9
+        11
+      ],
+      [
+        "ody_a2_cook",
+        1
       ],
       [
         "ody_a2_dead_calm",
-        6
+        7
       ],
       [
         "ody_a2_elpenor_roof",
-        7
-      ],
-      [
-        "ody_a2_fog",
-        7
-      ],
-      [
-        "ody_a2_harbor",
-        7
-      ],
-      [
-        "ody_a2_laestrygon",
-        7
-      ],
-      [
-        "ody_a2_moly",
         9
       ],
       [
+        "ody_a2_fog",
+        9
+      ],
+      [
+        "ody_a2_grief_cargo",
+        1
+      ],
+      [
+        "ody_a2_harbor",
+        8
+      ],
+      [
+        "ody_a2_helmsman",
+        1
+      ],
+      [
+        "ody_a2_hermes_again",
+        1
+      ],
+      [
+        "ody_a2_laestrygon",
+        8
+      ],
+      [
+        "ody_a2_moly",
+        10
+      ],
+      [
         "ody_a2_mutiny_talk",
-        6
+        7
       ],
       [
         "ody_a2_night_landing",
-        8
+        9
       ],
       [
         "ody_a2_offering",
         10
       ],
       [
+        "ody_a2_old_song",
+        2
+      ],
+      [
         "ody_a2_pigs_memory",
-        8
+        10
       ],
       [
         "ody_a2_siren_rumor",
-        7
+        8
+      ],
+      [
+        "ody_a2_star_lost",
+        1
       ],
       [
         "ody_a2_swine",
-        7
+        8
       ],
       [
         "ody_a2_widow_ship",
-        7
+        8
+      ],
+      [
+        "ody_a2_witch_gifts",
+        1
       ],
       [
         "ody_a2_year_isle",
-        6
+        7
+      ],
+      [
+        "ody_a3_beggars_bowl",
+        3
       ],
       [
         "ody_a3_bow_night",
-        7
+        8
       ],
       [
         "ody_a3_disguise",
         7
       ],
       [
+        "ody_a3_ferryman",
+        2
+      ],
+      [
         "ody_a3_fig_tree",
-        6
+        7
+      ],
+      [
+        "ody_a3_goat_hills",
+        3
       ],
       [
         "ody_a3_hall_watch",
-        4
+        6
+      ],
+      [
+        "ody_a3_hearth_smoke",
+        1
       ],
       [
         "ody_a3_hunger_month",
@@ -4363,39 +4478,51 @@
       ],
       [
         "ody_a3_nausicaa",
-        6
+        9
       ],
       [
         "ody_a3_penelope",
-        6
+        7
       ],
       [
         "ody_a3_phaeacia",
-        8
+        9
       ],
       [
         "ody_a3_raft",
-        8
+        9
+      ],
+      [
+        "ody_a3_sailmaker",
+        2
+      ],
+      [
+        "ody_a3_scout_ship",
+        2
       ],
       [
         "ody_a3_signs",
-        7
+        8
       ],
       [
         "ody_a3_sirens_offer",
-        5
-      ],
-      [
-        "ody_a3_strait",
         6
       ],
       [
+        "ody_a3_strait",
+        8
+      ],
+      [
+        "ody_a3_stroke_hands",
+        1
+      ],
+      [
         "ody_a3_sun_isle",
-        10
+        12
       ],
       [
         "ody_a3_swineherd",
-        7
+        8
       ],
       [
         "ody_a3_taunts",
@@ -4403,31 +4530,51 @@
       ],
       [
         "ody_a3_wax",
-        9
+        10
+      ],
+      [
+        "ody_calypso_landfall",
+        4
+      ],
+      [
+        "ody_circe_pilot",
+        4
       ],
       [
         "ody_cyclops",
-        17
+        20
       ],
       [
         "ody_cyclops_escape",
-        21
+        25
       ],
       [
         "ody_cyclops_name",
-        21
+        25
       ],
       [
         "ody_cyclops_strong",
-        4
+        6
       ],
       [
         "ody_hall_kleos",
-        8
+        10
       ],
       [
         "ody_hall_nostos",
-        4
+        6
+      ],
+      [
+        "ody_lotus_watch",
+        5
+      ],
+      [
+        "ody_mem_home",
+        1
+      ],
+      [
+        "ody_tel_grain_ship",
+        1
       ],
       [
         "ody_tempt_calypso",
@@ -4439,15 +4586,15 @@
       ],
       [
         "ody_tiresias",
-        5
+        7
       ],
       [
         "ody_tiresias_oar",
-        8
+        10
       ],
       [
         "ody_underworld",
-        13
+        17
       ],
       [
         "sm_meet",
@@ -4525,7 +4672,7 @@
       [
         "kleos",
         "success",
-        7
+        9
       ],
       [
         "megastar",
@@ -4545,7 +4692,7 @@
       [
         "nostos",
         "success",
-        3
+        5
       ],
       [
         "realthing",
@@ -4592,7 +4739,7 @@
     "results": [
       [
         null,
-        56
+        63
       ],
       [
         "none",
@@ -4656,7 +4803,7 @@
     "results": [
       [
         null,
-        40
+        44
       ],
       [
         "baron",
@@ -4732,7 +4879,7 @@
     "results": [
       [
         null,
-        64
+        68
       ],
       [
         "cliffhanger",
@@ -4932,6 +5079,46 @@
       ],
       [
         "multi_inst",
+        1
+      ],
+      [
+        "ody_all_hands",
+        1
+      ],
+      [
+        "ody_named_win",
+        1
+      ],
+      [
+        "ody_oar_road",
+        1
+      ],
+      [
+        "ody_owl_shoulder",
+        1
+      ],
+      [
+        "ody_paid_bard",
+        1
+      ],
+      [
+        "ody_renown_ten",
+        1
+      ],
+      [
+        "ody_stood_up",
+        1
+      ],
+      [
+        "ody_third_question",
+        1
+      ],
+      [
+        "ody_win_kleos",
+        1
+      ],
+      [
+        "ody_win_nostos",
         1
       ],
       [
