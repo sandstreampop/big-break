@@ -39,13 +39,29 @@ Machine-readable version: `telemetry/latest.json`.
 
 ## Activity by day
 
-Query error: `/api/projects/214372/query/ -> 504 <html>
-<head><title>504 Gateway Time-out</title></head>
-<body>
-<center><h1>504 Gateway Time-out</h1></center>
-</body>
-</html>
-`
+| day | run_starts | run_ends | swipes | players |
+|---|---|---|---|---|
+| 2026-07-02 | 35 | 34 | 1068 | 14 |
+| 2026-07-03 | 11 | 7 | 245 | 6 |
+| 2026-07-04 | 11 | 6 | 215 | 4 |
+| 2026-07-05 | 11 | 3 | 169 | 3 |
+| 2026-07-06 | 11 | 2 | 215 | 4 |
+| 2026-07-07 | 5 | 0 | 53 | 3 |
+| 2026-07-08 | 5 | 0 | 33 | 1 |
+| 2026-07-09 | 1 | 1 | 48 | 1 |
+| 2026-07-10 | 8 | 3 | 136 | 3 |
+| 2026-07-11 | 18 | 10 | 359 | 1 |
+| 2026-07-12 | 2 | 0 | 12 | 1 |
+| 2026-07-13 | 8 | 3 | 162 | 5 |
+| 2026-07-14 | 1 | 0 | 7 | 1 |
+| 2026-07-15 | 0 | 0 | 0 | 2 |
+| 2026-07-16 | 1 | 0 | 14 | 1 |
+| 2026-07-17 | 5 | 4 | 137 | 2 |
+| 2026-07-18 | 1 | 0 | 1 | 1 |
+| 2026-07-24 | 1 | 0 | 1 | 1 |
+| 2026-08-07 | 1 | 0 | 8 | 1 |
+| 2026-08-10 | 1 | 0 | 1 | 1 |
+| 2026-08-18 | 0 | 0 | 0 | 1 |
 
 ## Unique players (distinct installs = ceiling; real_players_est = testing stripped)
 
@@ -62,13 +78,10 @@ Query error: `/api/projects/214372/query/ -> 504 <html>
 
 ## Players by host (localhost / 127.* / file: is owner testing; the github.io host is real play)
 
-Query error: `/api/projects/214372/query/ -> 504 <html>
-<head><title>504 Gateway Time-out</title></head>
-<body>
-<center><h1>504 Gateway Time-out</h1></center>
-</body>
-</html>
-`
+| host | players | events | run_ends |
+|---|---|---|---|
+| sandstreampop.github.io | 27 | 3916 | 73 |
+| raw.githack.com | 1 | 1 | 0 |
 
 ## Players by country (spread beyond your own = genuine reach)
 
