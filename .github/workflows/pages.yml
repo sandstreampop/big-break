@@ -51,8 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: 'npm' # cache ~/.npm keyed on package-lock.json — cold npm ci was uncached
@@ -115,7 +115,7 @@ jobs:
         # The browser binaries were re-downloaded cold every run — the single
         # largest wall-clock item. Cache them keyed on the pinned Playwright
         # version; a miss just downloads as before.
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -173,12 +173,12 @@ jobs:
           cp -r docs-site/dist/. dist/docs/
       - name: Configure Pages
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
         with:
           enablement: true
       - name: Upload the Pages artifact (the gated dist/)
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           # Ship the built site, not the source tree.
           path: dist
@@ -195,7 +195,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         with:
           # Pages' deploy queue sometimes stalls for minutes platform-side;
           # 600000ms (10 min) is the action's max — wait it out rather than abort.
