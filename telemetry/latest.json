@@ -1,9 +1,83 @@
 {
   "overview_by_event": {
-    "error": "/api/projects/214372/query/ -> 504 {\"type\":\"server_error\",\"code\":\"error\",\"detail\":\"Query has hit the max execution time before completing. See our docs for how to improve your query performance. You may need to materialize.\",\"attr\":null}"
+    "columns": [
+      "event",
+      "n",
+      "players"
+    ],
+    "results": [
+      [
+        "swipe",
+        2884,
+        14
+      ],
+      [
+        "$pageview",
+        324,
+        28
+      ],
+      [
+        "$pageleave",
+        245,
+        9
+      ],
+      [
+        "minigame",
+        139,
+        5
+      ],
+      [
+        "run_start",
+        137,
+        9
+      ],
+      [
+        "trophy",
+        93,
+        3
+      ],
+      [
+        "run_end",
+        73,
+        5
+      ],
+      [
+        "tutorial_start",
+        12,
+        10
+      ],
+      [
+        "tutorial_complete",
+        7,
+        6
+      ],
+      [
+        "tutorial_skip",
+        2,
+        2
+      ],
+      [
+        "version_skew",
+        1,
+        1
+      ]
+    ]
   },
   "date_range": {
-    "error": "/api/projects/214372/query/ -> 504 {\"type\":\"server_error\",\"code\":\"error\",\"detail\":\"Query has hit the max execution time before completing. See our docs for how to improve your query performance. You may need to materialize.\",\"attr\":null}"
+    "columns": [
+      "first_event",
+      "last_event",
+      "events",
+      "players"
+    ],
+    "results": [
+      [
+        "2026-07-02T11:11:48.171000Z",
+        "2026-08-18T19:25:41.611000Z",
+        3917,
+        28
+      ]
+    ]
   },
   "by_app_version": {
     "columns": [
