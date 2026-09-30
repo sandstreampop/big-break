@@ -92,13 +92,7 @@ Machine-readable version: `telemetry/latest.json`.
 
 ## Players by device / browser / OS (many browsers, one human = inflated player count)
 
-| device | browser | os | players | events |
-|---|---|---|---|---|
-| Mobile | Mobile Safari | iOS | 17 | 3812 |
-| Mobile | Facebook Mobile | iOS | 5 | 48 |
-| Mobile | Chrome | Android | 4 | 49 |
-| Desktop | Chrome | Mac OS X | 1 | 7 |
-| Desktop | Chrome | Windows | 1 | 1 |
+Query error: `/api/projects/214372/query/ -> 503 upstream connect error or disconnect/reset before headers. reset reason: connection termination`
 
 ## Distribution of finished runs per player (is it one whale or many players?)
 
