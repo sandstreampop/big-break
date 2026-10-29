@@ -268,7 +268,16 @@ Machine-readable version: `telemetry/latest.json`.
 
 ## Win rate per path (target band: 25–40% success)
 
-Query error: `/api/projects/214372/query/ -> 504 {"type":"server_error","code":"error","detail":"Query has hit the max execution time before completing. See our docs for how to improve your query performance. You may need to materialize.","attr":null}`
+| path | runs | win_pct | partial_pct | loss_pct |
+|---|---|---|---|---|
+| megastar | 16 | 81 | 19 | 0 |
+| studio | 14 | 57 | 43 | 0 |
+| hitfactory | 11 | 64 | 36 | 0 |
+| kleos | 10 | 90 | 0 | 10 |
+| nostos | 8 | 62 | 12 | 25 |
+| realthing | 7 | 57 | 29 | 14 |
+| winvilla | 4 | 50 | 25 | 25 |
+| brand | 3 | 33 | 33 | 33 |
 
 ## Outcomes overall
 
